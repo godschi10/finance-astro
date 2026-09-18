@@ -1,0 +1,13 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+<Layout title="404 — Page not found - GWill Finance" description="This page does not exist on GWill Finance." noCanonical={true}>
+<section class="con sg" aria-labelledby="nf-h">
+<div class="hold">
+<span class="phase-tag">404</span>
+<h1 class="hold-title" id="nf-h">This page doesn't exist.</h1>
+<p style="margin-top:8px">The link you followed is broken, or the page moved. The calculators, archive, and search you may be looking for land with Phase 2.</p>
+<p style="margin-top:12px"><a class="btn b-gold" href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/`}>Back to the homepage →</a></p>
+</div>
+</section>
+</Layout>

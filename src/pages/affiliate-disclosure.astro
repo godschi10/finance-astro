@@ -1,0 +1,43 @@
+---
+import Layout from "../layouts/Layout.astro";
+const updated = "September 2026";
+---
+<Layout title="Affiliate Disclosure - GWill Finance" description="How GWill Finance handles affiliate links and stays independent." crumb="Affiliate Disclosure">
+<section class="legal-hero"><div class="hero-grain" aria-hidden="true"></div>
+<div class="con legal-hero-inner">
+<p class="crumbs"><a href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/`}>Home</a> › Affiliate Disclosure</p>
+<p class="legal-hero-label">Legal</p>
+<h1 class="legal-hero-title">Affiliate <span class="g">Disclosure</span></h1>
+<p class="legal-seal">Last reviewed — {updated} · v0.1.0</p>
+</div>
+</section>
+<section class="legal-section"><div class="con legal-layout">
+<nav class="legal-toc" aria-label="On this page">
+<p class="legal-toc-label">On this page</p>
+<ol class="legal-toc-list">
+<li><a href="#how-it-works">How it works</a></li>
+<li><a href="#independence">Independence promise</a></li>
+<li><a href="#identification">How links are identified</a></li>
+<li><a href="#cost-to-you">Cost to you</a></li>
+</ol>
+</nav>
+<div class="legal-body">
+<div class="legal-block" id="how-it-works">
+<h2>How it works</h2>
+<p>GWill Finance may earn a commission when you open an account or buy through links to banks, fintech apps, and services recommended on this site. That commission is paid by the company, and it is what keeps every guide free to read.</p>
+</div>
+<div class="legal-block" id="independence">
+<h2>Independence promise</h2>
+<p>Commissions never decide what gets recommended. Apps are tested with real use first, downsides are published alongside upsides, and a company cannot pay for a better verdict or to suppress criticism.</p>
+</div>
+<div class="legal-block" id="identification">
+<h2>How links are identified</h2>
+<p>Articles that contain affiliate links say so in a disclosure box near the top of the page. Where a link earns a commission, the surrounding text makes that relationship clear before you click.</p>
+</div>
+<div class="legal-block" id="cost-to-you">
+<h2>Cost to you</h2>
+<p>Using an affiliate link costs you nothing extra — you pay the same price or fee the company publishes. If you would rather not use an affiliate link, you can always reach the same company by searching for it directly.</p>
+</div>
+</div>
+</div></section>
+</Layout>

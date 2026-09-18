@@ -1,0 +1,14 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+<Layout title="Search - GWill Finance" description="Site search lands with Phase 2." crumb="Search">
+<section class="con sg" aria-labelledby="search-h">
+<p class="crumbs" style="color:var(--text-dim);font-size:12px;margin-bottom:16px"><a href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/`} style="color:var(--gold)">Home</a> › Search</p>
+<div class="hold">
+<span class="phase-tag">Lands with Phase 2</span>
+<h1 class="hold-title" id="search-h">Search</h1>
+<p style="margin-top:8px">Full-text search across every guide — with category pills, term highlighting, and spelling suggestions — lands with Phase 2 alongside the article archive. There is deliberately no search box on this page yet: a box that cannot search would be a fake control.</p>
+<p style="margin-top:12px"><a class="slink" href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/#latest`}>Browse the latest articles instead →</a></p>
+</div>
+</section>
+</Layout>

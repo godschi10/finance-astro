@@ -1,0 +1,145 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { SITE, CATEGORIES, POSTS, catBySlug } from "../data/site";
+const featured = POSTS[0];
+const rest = POSTS.slice(1);
+const fcat = catBySlug(featured.category);
+const year = new Date().getFullYear();
+---
+<Layout title="Nigerian Money, Explained - GWill Finance" description={SITE.description} crumb="">
+<!-- 2. hero -->
+<section class="hero" aria-labelledby="hero-title">
+<div class="hero-grain" aria-hidden="true"></div>
+<div class="con">
+<p class="hero-tag">₦ Nigerian Finance · Honest Guides</p>
+<h1 class="hero-h" id="hero-title"><span class="g">Nigerian money.</span><br><span class="c">Explained.</span></h1>
+<p class="hero-sub">Savings, investing, dollar accounts, crypto, and every fintech app worth your attention. Tested by Gwill. No jargon. No AI slop.</p>
+<div class="ledger" aria-hidden="true"></div>
+<div class="hero-acts">
+<a class="btn b-gold" href="#latest">Browse All Articles →</a>
+<a class="btn b-ghost" href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/tools/`}>Money Calculators</a>
+</div>
+<div class="hero-cats">
+<span class="hero-cats-lbl">Topics:</span>
+{CATEGORIES.map((c) => (<span class="chip">{c.emoji} {c.name}</span>))}
+</div>
+<!-- 3. stats strip -->
+<div class="stat-strip" aria-label="Site statistics">
+<div class="si"><div class="si-n" data-count="10" data-suffix="+">10+</div><div class="si-l">In-depth guides</div></div>
+<div class="si"><div class="si-n" data-count="12" data-suffix="+">12+</div><div class="si-l">Finance apps reviewed</div></div>
+<div class="si"><div class="si-n" data-count={year}>{year}</div><div class="si-l">All data current</div></div>
+<div class="si"><div class="si-n">₦ 0</div><div class="si-l">Free to read</div></div>
+</div>
+<div class="ad-bg">Ad slot — fills when ads are configured.</div>
+</div>
+</section>
+
+<!-- 4. featured article -->
+<section class="con sg" aria-labelledby="feat-h">
+<div class="shd"><h2 class="stitle" id="feat-h">Featured Article</h2></div>
+<article class="feat">
+<div class="feat-img" role="img" aria-label={`${fcat.name} article artwork`}><span aria-hidden="true">{fcat.emoji}</span><span class={`tile-wm ${fcat.badge}`} aria-hidden="true">{fcat.name}</span></div>
+<div class="feat-body">
+<span class={`badge ${fcat.badge}`}>{fcat.name}</span>
+<p class="feat-t">{featured.title}</p>
+<p class="feat-ex">{featured.excerpt}</p>
+<div class="feat-meta">
+<span>{featured.date}</span><span class="feat-dot" aria-hidden="true"></span>
+<span>{featured.readMins} min read</span><span class="feat-dot" aria-hidden="true"></span>
+<span>{featured.author}</span>
+</div>
+</div>
+</article>
+</section>
+
+<!-- 5–6. latest grid + filter pills -->
+<section class="con sg" id="latest" aria-labelledby="latest-h">
+<div class="shd">
+<h2 class="stitle" id="latest-h">Latest Articles</h2>
+<span class="slink" aria-hidden="true">Full archive lands with Phase 2 →</span>
+</div>
+<div class="cp-strip" data-gwill-filter role="group" aria-label="Filter articles by category">
+<button type="button" class="cp on" data-gwill-cat="" aria-pressed="true">All</button>
+{CATEGORIES.map((c) => (<button type="button" class="cp" data-gwill-cat={c.slug} aria-pressed="false">{c.name}</button>))}
+</div>
+<div class="g3" id="gwill-posts-grid" style="margin-top:20px">
+{rest.map((p) => {
+  const c = catBySlug(p.category);
+  return (
+  <article class="card" data-cat={p.category}>
+  <div class="card-art" role="img" aria-label={`${c.name} article artwork`}><span aria-hidden="true">{c.emoji}</span><span class={`tile-wm ${c.badge}`} aria-hidden="true">{c.name}</span></div>
+  <div class="card-body">
+  <span class={`badge ${c.badge}`}>{c.name}</span>
+  <p class="card-t">{p.title}</p>
+  <p class="card-ex">{p.excerpt}</p>
+  <p class="card-meta">{p.date} · {p.readMins} min read · {p.author}</p>
+  </div>
+  </article>
+  );
+})}
+</div>
+<p class="card-meta" id="filter-empty" hidden>No articles in this category yet — more guides land with Phase 2.</p>
+<div class="ad-bg">Ad slot — fills when ads are configured.</div>
+</section>
+
+<!-- 7. newsletter hold band (static UI only — capture lands with Phase 2) -->
+<section class="con sg" id="newsletter" aria-labelledby="nl-h">
+<div class="nl-s">
+<div class="nl-copy">
+<h2 class="nl-h" id="nl-h">Nigerian money news, weekly.</h2>
+<p>Rate changes, app reviews, and the financial moves worth making. Free, no spam, unsubscribe anytime.</p>
+<div class="nl-meta"><span>✓ Free</span><span class="dot" aria-hidden="true"></span><span>✓ No spam</span><span class="dot" aria-hidden="true"></span><span>✓ Unsubscribe anytime</span></div>
+</div>
+<div>
+<p style="color:#c4b89a;font-size:15px">Email signup lands with Phase 2 — no form here yet on purpose.</p>
+<p style="margin-top:12px"><a class="btn b-gold" href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/newsletter/`}>About the newsletter →</a></p>
+</div>
+</div>
+</section>
+
+<script is:inline>
+(function(){
+try{
+var strip=document.querySelector("[data-gwill-filter]");
+if(strip){
+var btns=Array.prototype.slice.call(strip.querySelectorAll("[data-gwill-cat]"));
+var cards=Array.prototype.slice.call(document.querySelectorAll("#gwill-posts-grid .card"));
+var empty=document.getElementById("filter-empty");
+btns.forEach(function(b){b.addEventListener("click",function(){
+btns.forEach(function(x){x.classList.toggle("on",x===b);x.setAttribute("aria-pressed",x===b?"true":"false")});
+var cat=b.getAttribute("data-gwill-cat")||"";
+var shown=0;
+cards.forEach(function(c){
+var on=!cat||c.getAttribute("data-cat")===cat;
+c.hidden=!on;
+if(on)shown++;
+});
+if(empty)empty.hidden=shown!==0;
+})});
+}
+var nums=Array.prototype.slice.call(document.querySelectorAll("[data-count]"));
+if(nums.length && !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) && "IntersectionObserver" in window){
+var fmt=function(n){return n.toLocaleString("en-US")};
+var run=function(el){
+var target=parseInt(el.getAttribute("data-count"),10);
+if(isNaN(target))return;
+var suf=el.getAttribute("data-suffix")||"";
+var t0=null,D=800;
+var step=function(ts){
+if(!t0)t0=ts;
+var p=Math.min(1,(ts-t0)/D);
+var v=Math.round(target*(1-Math.pow(1-p,3)));
+el.textContent=fmt(v)+suf;
+if(p<1)window.requestAnimationFrame(step);
+};
+window.requestAnimationFrame(step);
+};
+var io=new IntersectionObserver(function(es){
+es.forEach(function(e){if(e.isIntersecting){run(e.target);io.unobserve(e.target)}});
+},{threshold:.4});
+nums.forEach(function(n){io.observe(n)});
+}
+}catch(e){}
+})();
+</script>
+</Layout>

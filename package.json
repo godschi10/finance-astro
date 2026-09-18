@@ -1,0 +1,12 @@
+{
+  "name": "finance-astro",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "astro build",
+    "check": "node scripts/check.mjs"
+  },
+  "dependencies": {
+    "astro": "^5.0.0"
+  }
+}

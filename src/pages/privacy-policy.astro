@@ -1,0 +1,57 @@
+---
+import Layout from "../layouts/Layout.astro";
+const updated = "September 2026";
+---
+<Layout title="Privacy Policy - GWill Finance" description="How GWill Finance collects, uses, and protects your information." crumb="Privacy Policy">
+<section class="legal-hero"><div class="hero-grain" aria-hidden="true"></div>
+<div class="con legal-hero-inner">
+<p class="crumbs"><a href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/`}>Home</a> › Privacy Policy</p>
+<p class="legal-hero-label">Legal</p>
+<h1 class="legal-hero-title">Privacy <span class="g">Policy</span></h1>
+<p class="legal-seal">Last reviewed — {updated} · v0.1.0</p>
+</div>
+</section>
+<section class="legal-section"><div class="con legal-layout">
+<nav class="legal-toc" aria-label="On this page">
+<p class="legal-toc-label">On this page</p>
+<ol class="legal-toc-list">
+<li><a href="#what-we-collect">What we collect</a></li>
+<li><a href="#how-we-use-it">How we use it</a></li>
+<li><a href="#cookies">Cookies</a></li>
+<li><a href="#third-parties">Third parties</a></li>
+<li><a href="#your-rights">Your rights</a></li>
+<li><a href="#contact">Contact</a></li>
+</ol>
+</nav>
+<div class="legal-body">
+<div class="legal-block" id="what-we-collect">
+<h2>What we collect</h2>
+<p>GWill Finance is a static reading site. We do not run accounts, comments, or analytics in Phase 1. When email signup and calculators launch in Phase 2, this policy will name exactly what each feature stores before it goes live.</p>
+</div>
+<div class="legal-block" id="how-we-use-it">
+<h2>How we use it</h2>
+<p>Because nothing is collected on this static version of the site, there is nothing to use, share, or sell. Any future data use will be described here first, in plain language.</p>
+</div>
+<div class="legal-block" id="cookies">
+<h2>Cookies</h2>
+<p>This site sets two kinds of local storage, both on your own device:</p>
+<ul>
+<li>A theme preference (light or dark) so the site remembers your choice.</li>
+<li>No tracking cookies, no advertising cookies, no cross-site identifiers.</li>
+</ul>
+</div>
+<div class="legal-block" id="third-parties">
+<h2>Third parties</h2>
+<p>Pages load no third-party scripts in Phase 1. Outbound links (for example to app stores or partner publications) open on those sites, which carry their own privacy policies.</p>
+</div>
+<div class="legal-block" id="your-rights">
+<h2>Your rights</h2>
+<p>You can clear the theme preference at any time by clearing site data in your browser. If you contact us by email, your message is used only to reply and is never added to a mailing list without your explicit consent.</p>
+</div>
+<div class="legal-block" id="contact">
+<h2>Contact</h2>
+<p>Questions about this policy: reach out via the contact details published on the site once the contact page launches with Phase 2. Until then, this static version collects nothing to ask about.</p>
+</div>
+</div>
+</div></section>
+</Layout>
