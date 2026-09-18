@@ -1,0 +1,71 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+import { compoundGrowth, compoundSchedule } from "../../lib/savings";
+import { formatGrouped } from "../../lib/format";
+const n = (v: number) => formatGrouped(v, 0);
+const seed = compoundGrowth(100000, 50000, 0.10, 60, "monthly", "monthly");
+const rows = compoundSchedule(100000, 50000, 0.10, 60, "monthly", "monthly");
+---
+<ToolShell title="Compound Interest Calculator, Nigeria - GWill Finance" description="Project compound growth with flexible deposits: principal, monthly top-ups, rate, and year-by-year balance schedule." slug="compound-interest-calculator" tool="Compound-Interest Calculator" lede="Small deposits, boring consistency, absurd endings. Set your principal and top-up, then watch each year's balance in the schedule." verified="Monthly compounding default · deposit frequency aware" faqs={[
+  { q: "Why does the schedule matter more than the final number?", a: "Because year three is where most people quit. Seeing the curve bend upward is what keeps the deposits going." },
+  { q: "What rate should I assume?", a: "Use a rate you can actually get — check the savings-rate comparator — not the 30% a friend's plug promised." },
+]}>
+<div class="tgrid c3">
+<div class="field"><label for="ci-prin">Starting principal ₦</label><input id="ci-prin" type="number" min="0" step="any" value="100000" inputmode="decimal"></div>
+<div class="field"><label for="ci-dep">Deposit per period ₦</label><input id="ci-dep" type="number" min="0" step="any" value="50000" inputmode="decimal"></div>
+<div class="field"><label for="ci-freq">Deposit frequency</label><select id="ci-freq"><option value="monthly" selected>Monthly</option><option value="weekly">Weekly</option><option value="biweekly">Bi-weekly</option><option value="quarterly">Quarterly</option><option value="annual">Annual</option></select></div>
+<div class="field"><label for="ci-rate">Annual rate %</label><input id="ci-rate" type="number" min="0" step="any" value="10" inputmode="decimal"></div>
+<div class="field"><label for="ci-yrs">Years</label><input id="ci-yrs" type="number" min="1" step="1" value="5" inputmode="numeric"></div>
+<div class="field"><label for="ci-cmp">Compounding</label><select id="ci-cmp"><option value="monthly" selected>Monthly</option><option value="quarterly">Quarterly</option><option value="daily">Daily</option><option value="annual">Annual</option></select></div>
+</div>
+<div class="receipt" aria-live="polite">
+<p class="receipt-lbl">Future value</p>
+<p class="receipt-fig" id="ci-fig">₦{n(seed.future)}</p>
+<p class="receipt-sub" id="ci-sub">You put in ₦{n(seed.deposited)} · interest earned ₦{n(seed.interest)}</p>
+<div class="receipt-div" aria-hidden="true"></div>
+<div class="receipt-row"><span>Deposited</span><b id="ci-dep2">₦{n(seed.deposited)}</b></div>
+<div class="receipt-row"><span>Interest</span><b id="ci-int">₦{n(seed.interest)}</b></div>
+<p class="receipt-foot">Compounding does the heavy lifting</p>
+</div>
+<div class="hr"></div>
+<h2 class="tool-h2">Year by year</h2>
+<div class="st-wrap"><table class="st" id="ci-table">
+<thead><tr><th>Year</th><th class="n">Balance</th><th class="n">Deposited</th><th class="n">Interest</th></tr></thead>
+<tbody>
+{rows.map((r) => (<tr><td>{r.year}</td><td class="n">₦{n(r.balance)}</td><td class="n">₦{n(r.deposited)}</td><td class="n">₦{n(r.interest)}</td></tr>))}
+</tbody>
+</table></div>
+</ToolShell>
+<script>
+import { compoundGrowth, compoundSchedule } from "../../lib/savings";
+import { formatGrouped } from "../../lib/format";
+const nn = (v: number) => "₦" + formatGrouped(v, 0);
+const g = (id: string) => document.getElementById(id) as HTMLInputElement;
+const t = (id: string) => document.getElementById(id) as HTMLElement;
+const sel = (id: string) => (document.getElementById(id) as HTMLSelectElement).value;
+function render() {
+  const p = Math.max(0, Number(g("ci-prin").value) || 0);
+  const d = Math.max(0, Number(g("ci-dep").value) || 0);
+  const rate = Math.max(0, Number(g("ci-rate").value) || 0) / 100;
+  const yrs = Math.max(1, Math.trunc(Number(g("ci-yrs").value) || 5));
+  const r = compoundGrowth(p, d, rate, yrs * 12, sel("ci-cmp"), sel("ci-freq"));
+  t("ci-fig").textContent = nn(r.future);
+  t("ci-sub").textContent = `You put in ${nn(r.deposited)} · interest earned ${nn(r.interest)}`;
+  t("ci-dep2").textContent = nn(r.deposited);
+  t("ci-int").textContent = nn(r.interest);
+  const tb = document.querySelector("#ci-table tbody") as HTMLElement;
+  tb.innerHTML = "";
+  for (const row of compoundSchedule(p, d, rate, yrs * 12, sel("ci-cmp"), sel("ci-freq"))) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td></td><td class="n"></td><td class="n"></td><td class="n"></td>`;
+    (tr.children[0] as HTMLElement).textContent = String(row.year);
+    (tr.children[1] as HTMLElement).textContent = nn(row.balance);
+    (tr.children[2] as HTMLElement).textContent = nn(row.deposited);
+    (tr.children[3] as HTMLElement).textContent = nn(row.interest);
+    tb.appendChild(tr);
+  }
+}
+["ci-prin", "ci-dep", "ci-rate", "ci-yrs"].forEach((id) => g(id).addEventListener("input", render));
+["ci-freq", "ci-cmp"].forEach((id) => (document.getElementById(id) as HTMLSelectElement).addEventListener("change", render));
+render();
+</script>

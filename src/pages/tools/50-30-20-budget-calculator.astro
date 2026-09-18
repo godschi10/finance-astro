@@ -1,0 +1,58 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+import { budget503020, budget503020Compare, budget503020SeedIncome } from "../../lib/budget";
+import { formatGrouped } from "../../lib/format";
+const n = (v: number) => formatGrouped(v, 0);
+const income = budget503020SeedIncome();
+const seed = budget503020(income);
+const chk = budget503020Compare(income, 0.5, 0.3, 0.2, 140000, 90000, 30000);
+---
+<ToolShell title="50/30/20 Budget Calculator, Nigeria - GWill Finance" description="Split any income into needs, wants, savings — then check real spending against the plan and see what is left." slug="50-30-20-budget-calculator" tool="50/30/20 Budget Calculator" lede="Half for needs, a third for wants, a fifth for future-you. Set the income, check your actual spending, keep the remainder." verified="Plan vs actual checker · splits adjustable" faqs={[
+  { q: "Is 50/30/20 realistic on a Nigerian salary?", a: "As a direction, yes; as law, adjust. High rent cities may need 60/20/20 for a season — the tool accepts custom splits." },
+  { q: "What counts as savings?", a: "Anything future-you keeps: emergency fund, investments, debt repayment. Not the money sitting in your spending account." },
+]}>
+<div class="tgrid c3">
+<div class="field"><label for="bg-inc">Monthly income ₦</label><input id="bg-inc" type="number" min="0" step="any" value={income} inputmode="decimal"></div>
+<div class="field"><label for="bg-needs">Needs %</label><input id="bg-needs" type="number" min="0" max="100" step="any" value="50" inputmode="decimal"></div>
+<div class="field"><label for="bg-wants">Wants %</label><input id="bg-wants" type="number" min="0" max="100" step="any" value="30" inputmode="decimal"></div>
+<div class="field"><label for="bg-spn">Spent on needs ₦</label><input id="bg-spn" type="number" min="0" step="any" value="140000" inputmode="decimal"></div>
+<div class="field"><label for="bg-spw">Spent on wants ₦</label><input id="bg-spw" type="number" min="0" step="any" value="90000" inputmode="decimal"></div>
+<div class="field"><label for="bg-sps">Put to savings ₦</label><input id="bg-sps" type="number" min="0" step="any" value="30000" inputmode="decimal"></div>
+</div>
+<div class="receipt" aria-live="polite">
+<p class="receipt-lbl">Your three buckets</p>
+<p class="receipt-fig" id="bg-fig">₦{n(seed.needs)} · ₦{n(seed.wants)} · ₦{n(seed.savings)}</p>
+<p class="receipt-sub" id="bg-sub">Needs · wants · savings — leftover <span id="bg-else">₦{n(seed.else)}</span></p>
+<div class="receipt-div" aria-hidden="true"></div>
+<div class="receipt-row"><span>Needs left</span><b id="bg-rn">₦{n(chk.needs_remaining)}</b></div>
+<div class="receipt-row"><span>Wants left</span><b id="bg-rw">₦{n(chk.wants_remaining)}</b></div>
+<div class="receipt-row"><span>Savings gap</span><b id="bg-rs">₦{n(chk.savings_remaining)}</b></div>
+<p class="receipt-foot">Plan vs actual · unassigned stays visible</p>
+</div>
+</ToolShell>
+<script>
+import { budget503020, budget503020Compare } from "../../lib/budget";
+import { formatGrouped } from "../../lib/format";
+const nn = (v: number) => "₦" + formatGrouped(v, 0);
+const g = (id: string) => document.getElementById(id) as HTMLInputElement;
+const t = (id: string) => document.getElementById(id) as HTMLElement;
+function render() {
+  const inc = Math.max(0, Number(g("bg-inc").value) || 0);
+  const np = Math.max(0, Number(g("bg-needs").value) || 0) / 100;
+  const wp = Math.max(0, Number(g("bg-wants").value) || 0) / 100;
+  const sp = Math.max(0, 1 - np - wp);
+  const plan = budget503020(inc, np, wp, sp);
+  t("bg-fig").textContent = `${nn(plan.needs)} · ${nn(plan.wants)} · ${nn(plan.savings)}`;
+  t("bg-else").textContent = nn(plan.else);
+  const c = budget503020Compare(inc, np, wp, sp,
+    Math.max(0, Number(g("bg-spn").value) || 0),
+    Math.max(0, Number(g("bg-spw").value) || 0),
+    Math.max(0, Number(g("bg-sps").value) || 0));
+  t("bg-sub").textContent = `Needs · wants · savings — leftover ${nn(plan.else)}`;
+  (document.getElementById("bg-rn") as HTMLElement).textContent = nn(c.needs_remaining);
+  (document.getElementById("bg-rw") as HTMLElement).textContent = nn(c.wants_remaining);
+  (document.getElementById("bg-rs") as HTMLElement).textContent = nn(c.savings_remaining);
+}
+["bg-inc", "bg-needs", "bg-wants", "bg-spn", "bg-spw", "bg-sps"].forEach((id) => g(id).addEventListener("input", render));
+render();
+</script>

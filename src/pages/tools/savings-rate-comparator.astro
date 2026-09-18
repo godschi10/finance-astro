@@ -1,0 +1,62 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+import { savingsRateData, savingsRateVerified } from "../../lib/savings-rate";
+const rows = [...savingsRateData()].sort((a, b) => b.rate - a.rate);
+const max = Math.max(...rows.map((r) => r.rate));
+const verified = `Rates verified ${savingsRateVerified()} · indicative, not live quotes`;
+---
+<ToolShell title="Best Savings Rates in Nigeria Compared - GWill Finance" description="Who pays the most on your savings right now: PiggyVest, Cowrywise, Kuda, FairMoney, Carbon, Renmoney and bank benchmarks, compared." slug="savings-rate-comparator" tool="Savings-Rate Comparator" lede="Headline annual rates, best first. These are marketing figures that move monthly — indicative, never live quotes." verified={verified} faqs={[
+  { q: "Is the highest rate automatically best?", a: "No. Locked plans pay more but trap your money; flexible plans pay less but let you withdraw. Match the plan to when you need the cash." },
+  { q: "How fresh are these rates?", a: "The table is a maintained snapshot, verified September 2026. Confirm the current figure with the provider before locking funds." },
+]}>
+<div class="field" style="max-width:320px;margin-top:18px"><label for="sr-amt">Test an amount (₦)</label><input id="sr-amt" type="number" min="0" step="any" value="500000" inputmode="decimal"><p class="hint">Yearly interest each plan would pay on it.</p></div>
+<div class="receipt" aria-live="polite">
+<p class="receipt-lbl">Top payer · <span id="sr-top">{rows[0].provider} {rows[0].product}</span></p>
+<p class="receipt-fig" id="sr-fig">{rows[0].rate.toFixed(1)}%</p>
+<p class="receipt-sub" id="sr-sub">on ₦500,000 ≈ ₦{(500000 * rows[0].rate / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })} a year</p>
+<div class="receipt-div" aria-hidden="true"></div>
+<p class="receipt-note">Indicative marketing rates — confirm before you lock funds.</p>
+<p class="receipt-foot">{verified}</p>
+</div>
+<div class="hr"></div>
+<h2 class="tool-h2">Every plan, best first</h2>
+<div id="sr-bars">
+{rows.map((r) => (
+<div class="bar-row" data-sr-rate={r.rate}>
+<div class="bar-top"><span><b>{r.provider}</b> · {r.product} <span class="bar-note">({r.type})</span></span><b data-sr-out>{r.rate.toFixed(1)}%</b></div>
+<div class="bar" aria-hidden="true"><i style={`width:${(r.rate / max * 100).toFixed(1)}%`}></i></div>
+<p class="bar-note" data-sr-note>{r.note}</p>
+</div>
+))}
+</div>
+<div class="hr"></div>
+<h2 class="tool-h2">Full table</h2>
+<div class="st-wrap"><table class="st">
+<thead><tr><th>Provider</th><th>Product</th><th class="n">Rate %/yr</th><th class="n">Min ₦</th></tr></thead>
+<tbody>
+{rows.map((r, i) => (
+<tr class={i === 0 ? "win" : ""}><td>{r.provider}{i === 0 && <span class="btag">Best</span>}</td><td>{r.product}</td><td class="n">{r.rate.toFixed(1)}%</td><td class="n">{r.min.toLocaleString("en-US")}</td></tr>
+))}
+</tbody>
+</table></div>
+</ToolShell>
+<script>
+import { savingsRateData } from "../../lib/savings-rate";
+const rows = [...savingsRateData()].sort((a, b) => b.rate - a.rate);
+const max = Math.max(...rows.map((r) => r.rate));
+const amt = document.getElementById("sr-amt") as HTMLInputElement;
+function render() {
+  const a = Math.max(0, Number(amt.value) || 0);
+  const fmt = (n: number) => "₦" + Math.round(n).toLocaleString("en-US");
+  const top = rows[0];
+  (document.getElementById("sr-fig") as HTMLElement).textContent = top.rate.toFixed(1) + "%";
+  (document.getElementById("sr-sub") as HTMLElement).textContent = `on ${fmt(a)} ≈ ${fmt(a * top.rate / 100)} a year`;
+  document.querySelectorAll("#sr-bars .bar-row").forEach((el, i) => {
+    const r = rows[i];
+    (el.querySelector("[data-sr-out]") as HTMLElement).textContent = `${r.rate.toFixed(1)}% · ${fmt(a * r.rate / 100)}/yr`;
+    ((el.querySelector(".bar i") as HTMLElement).style.width = (r.rate / max * 100).toFixed(1) + "%");
+  });
+}
+amt.addEventListener("input", render);
+render();
+</script>

@@ -1,20 +1,47 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import { amountSlugs, amountSeo, amountConfig } from "../../lib/amount";
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const tools = [
+  { slug: "currency-converter", name: "Currency Converter", desc: "16 currencies to naira at the live mid-market rate, plus an honest parallel-market estimate." },
+  { slug: "money-transfer-comparator", name: "Money-Transfer Comparator", desc: "Wise, Remitly, WU, WorldRemit, LemFi — ranked by what actually lands after fee and rate." },
+  { slug: "exchange-rate-history", name: "Exchange-Rate History", desc: "USD→NGN trend over 30 or 90 days, built from real fetched points on your device." },
+  { slug: "salary-tax-calculator", name: "Salary Tax (NTA 2026)", desc: "PAYE under the 2026 bands vs the old bands — rent relief, minimum-wage exemption, band table." },
+  { slug: "gross-to-net-calculator", name: "Gross → Net", desc: "Start from the take-home you want; reverse-solve the gross you must negotiate." },
+  { slug: "compound-interest-calculator", name: "Compound Interest", desc: "Principal plus top-ups, compounding your way to the future value, year by year." },
+  { slug: "savings-goal-calculator", name: "Savings Goal", desc: "Name the target and deadline — get the exact monthly price, plus the path." },
+  { slug: "naira-value-calculator", name: "Naira Value", desc: "What your naira still buys after N years of inflation — and what standing still costs." },
+  { slug: "inflation-savings-calculator", name: "Inflation Savings", desc: "Inflate the goal first, then price nominal vs real monthly. The gap is the insight." },
+  { slug: "50-30-20-budget-calculator", name: "50/30/20 Budget", desc: "Split any income into needs, wants, savings — then check real spending against plan." },
+  { slug: "budget-allocator", name: "Budget Allocator", desc: "The needs half itemized: rent, food, transport, data, bills — shares you can tune." },
+  { slug: "loan-repayment-calculator", name: "Loan Repayment", desc: "Lender quote in, real cost out: installment, total interest, true effective APR." },
+  { slug: "emergency-fund-calculator", name: "Emergency Fund", desc: "Runway in months, inflation-adjusted target, and the saving that closes the gap." },
+  { slug: "dividend-calculator", name: "Dividend / ROI Estimator", desc: "NGX shares year by year: DRIP vs cash, yield, gain, and CAGR." },
+  { slug: "crypto-profit-calculator", name: "Crypto Profit", desc: "P2P profit in naira: spread, both-side fees, break-even rate, true ROI." },
+  { slug: "savings-rate-comparator", name: "Savings-Rate Comparator", desc: "Who pays the most right now: fintech plans vs bank benchmarks, best first." },
+];
+const amounts = amountSlugs().map((s) => ({ slug: s, h1: amountSeo(s, amountConfig(s)!).h1 }));
 ---
-<Layout title="Money Calculators - GWill Finance" description="Interactive Nigerian finance calculators. Landing with Phase 2." crumb="Money Calculators">
+<Layout title="Money Calculators - GWill Finance" description="Sixteen Nigerian finance calculators with tested math, plus live amount conversions — currency, tax, savings, loans, and more." crumb="Money Calculators">
 <section class="con sg" aria-labelledby="tools-h">
-<p class="crumbs" style="color:var(--text-dim);font-size:12px;margin-bottom:16px"><a href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/`} style="color:var(--gold)">Home</a> › Money Calculators</p>
-<div class="hold">
-<span class="phase-tag">Lands with Phase 2</span>
-<h1 class="hold-title" id="tools-h">Money Calculators</h1>
-<p style="margin-top:8px">The interactive calculators — currency converter, salary tax, compound interest, and the rest of the toolkit — are being ported with tested math and land with Phase 2. This page holds their place so no link breaks in the meantime.</p>
-<ul>
-<li>Currency converter (16 currencies, parallel-market estimate)</li>
-<li>Salary tax (current vs old bands, rent relief)</li>
-<li>Compound interest, savings goal, 50/30/20 budget</li>
-<li>Loan repayment, emergency fund, crypto profit and more</li>
-</ul>
-<p style="margin-top:12px"><a class="slink" href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/`}>← Back to the homepage</a></p>
+<p class="crumbs"><a href={`${base}`}>Home</a> › Money Calculators</p>
+<h1 class="hold-title" id="tools-h" style="font-size:clamp(1.5rem,4vw,2.25rem);font-weight:800;letter-spacing:-.02em">Money Calculators</h1>
+<p style="margin-top:8px;color:var(--text-mid);max-width:62ch">Sixteen tools with tested math — every engine verified figure-for-figure against the reference implementation. Amount pages compute live from the same converter.</p>
+<div class="g3" style="margin-top:20px">
+{tools.map((t) => (
+<article class="card">
+<div class="card-body">
+<p class="card-t"><a class="slink" href={`${base}tools/${t.slug}/`} style="text-decoration:none;color:inherit">{t.name}</a></p>
+<p class="card-ex">{t.desc}</p>
+<p class="card-meta"><a class="slink" href={`${base}tools/${t.slug}/`}>Open →</a></p>
 </div>
+</article>
+))}
+</div>
+<h2 class="stitle" id="amount-h" style="margin-top:32px">Popular conversions, live</h2>
+<div class="hero-cats" style="margin-top:12px">
+{amounts.map((a) => (<a class="chip" href={`${base}tools/${a.slug}/`} style="text-decoration:none">{a.h1}</a>))}
+</div>
+<p style="margin-top:16px"><a class="slink" href={`${base}`}>← Back to the homepage</a></p>
 </section>
 </Layout>

@@ -1,0 +1,53 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+import { inflationAdjustedGoal } from "../../lib/inflation";
+import { formatGrouped } from "../../lib/format";
+const n = (v: number) => formatGrouped(v, 0);
+const seed = inflationAdjustedGoal(10000000, 1000000, 0.15, 0.20, 5, 0, "monthly", "monthly");
+---
+<ToolShell title="Inflation Savings Calculator, Real Goal Top-Up - GWill Finance" description="Saving ₦10m in 5 years? Inflation moves the goalpost. See the nominal monthly, the real monthly, and the gap." slug="inflation-savings-calculator" tool="Inflation-Savings Calculator" lede="A fixed goal is a shrinking goal. This inflates your target first, then prices both monthlies — the gap is the insight." verified="Target inflated at your rate · gap is the monthly truth" faqs={[
+  { q: "Why save for an inflated target?", a: "Because the house, fees, or capital you are saving toward inflates too. Saving the nominal figure guarantees arriving short." },
+  { q: "How is this different from the naira-value tool?", a: "That shows what money loses. This solves what you must save monthly so inflation does not win." },
+]}>
+<div class="tgrid c3">
+<div class="field"><label for="is-target">Goal today ₦</label><input id="is-target" type="number" min="0" step="any" value="10000000" inputmode="decimal"></div>
+<div class="field"><label for="is-cur">Have now ₦</label><input id="is-cur" type="number" min="0" step="any" value="1000000" inputmode="decimal"></div>
+<div class="field"><label for="is-rate">Return %/yr</label><input id="is-rate" type="number" min="0" step="any" value="15" inputmode="decimal"></div>
+<div class="field"><label for="is-infl">Inflation %/yr</label><input id="is-infl" type="number" min="0" step="any" value="20" inputmode="decimal"></div>
+<div class="field"><label for="is-yrs">Years</label><input id="is-yrs" type="number" min="1" step="1" value="5" inputmode="numeric"></div>
+</div>
+<div class="receipt" aria-live="polite">
+<p class="receipt-lbl">Real monthly (inflation-proof)</p>
+<p class="receipt-fig" id="is-fig">₦{n(seed.real_monthly)}</p>
+<p class="receipt-sub" id="is-sub">Goal grows ₦{n(seed.target)} → ₦{n(seed.real_target)} · nominal monthly only ₦{n(seed.nominal_monthly)}</p>
+<div class="receipt-div" aria-hidden="true"></div>
+<div class="receipt-row"><span>Nominal monthly</span><b id="is-nom">₦{n(seed.nominal_monthly)}</b></div>
+<div class="receipt-row"><span>Real monthly</span><b id="is-real">₦{n(seed.real_monthly)}</b></div>
+<div class="receipt-row"><span>Monthly gap</span><b id="is-gap">₦{n(seed.gap_monthly)}</b></div>
+<p class="receipt-foot">The gap is the monthly truth</p>
+</div>
+</ToolShell>
+<script>
+import { inflationAdjustedGoal } from "../../lib/inflation";
+import { formatGrouped } from "../../lib/format";
+const nn = (v: number) => "₦" + formatGrouped(v, 0);
+const g = (id: string) => document.getElementById(id) as HTMLInputElement;
+const t = (id: string) => document.getElementById(id) as HTMLElement;
+function render() {
+  const r = inflationAdjustedGoal(
+    Math.max(0, Number(g("is-target").value) || 0),
+    Math.max(0, Number(g("is-cur").value) || 0),
+    Math.max(0, Number(g("is-rate").value) || 0) / 100,
+    Math.max(0, Number(g("is-infl").value) || 0) / 100,
+    Math.max(1, Math.trunc(Number(g("is-yrs").value) || 5)),
+    0, "monthly", "monthly",
+  );
+  t("is-fig").textContent = nn(r.real_monthly);
+  t("is-sub").textContent = `Goal grows ${nn(r.target)} → ${nn(r.real_target)} · nominal monthly only ${nn(r.nominal_monthly)}`;
+  t("is-nom").textContent = nn(r.nominal_monthly);
+  t("is-real").textContent = nn(r.real_monthly);
+  t("is-gap").textContent = nn(r.gap_monthly);
+}
+["is-target", "is-cur", "is-rate", "is-infl", "is-yrs"].forEach((id) => g(id).addEventListener("input", render));
+render();
+</script>

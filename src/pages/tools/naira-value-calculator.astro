@@ -1,0 +1,66 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+import { nairaValue, nairaValueHistory, nairaValueSeed } from "../../lib/naira-value";
+import { formatGrouped } from "../../lib/format";
+const n = (v: number) => formatGrouped(v, 0);
+const s = nairaValueSeed();
+const seed = nairaValue(s.value, s.infl, s.years, s.months);
+const hist = nairaValueHistory(s.value, s.infl, s.years);
+---
+<ToolShell title="Naira Value Calculator, Inflation Erosion - GWill Finance" description="What will your naira be worth in 5 years? Present vs future purchasing power, erosion share, and year-by-year decay." slug="naira-value-calculator" tool="Naira-Value Calculator" lede="Inflation is a silent debit. Enter any sum and see what it still buys after N years — and what you must save to stand still." verified="Purchasing-power view · 20% default inflation" faqs={[
+  { q: "What does lost fraction mean?", a: "The share of today's buying power gone. 0.60 means ₦1,000,000 buys what ₦400,000 buys today." },
+  { q: "Which inflation rate should I use?", a: "20% is the default working figure. Food inflation has run hotter — test 25–30% if your spending is mostly food and transport." },
+]}>
+<div class="tgrid c3">
+<div class="field"><label for="nv-val">Amount ₦</label><input id="nv-val" type="number" min="0" step="any" value={s.value} inputmode="decimal"></div>
+<div class="field"><label for="nv-infl">Inflation %/yr</label><input id="nv-infl" type="number" min="0" step="any" value="20" inputmode="decimal"></div>
+<div class="field"><label for="nv-yrs">Years</label><input id="nv-yrs" type="number" min="1" step="1" value={s.years} inputmode="numeric"></div>
+</div>
+<div class="receipt" aria-live="polite">
+<p class="receipt-lbl">To buy the same in <span id="nv-yr">5</span> years you need</p>
+<p class="receipt-fig" id="nv-fig">₦{n(seed.future)}</p>
+<p class="receipt-sub" id="nv-sub">₦{n(seed.value)} today loses {(seed.lost_fraction * 100).toFixed(1)}% of its buying power</p>
+<div class="receipt-div" aria-hidden="true"></div>
+<div class="receipt-row"><span>Future price tag</span><b id="nv-fut">₦{n(seed.future)}</b></div>
+<div class="receipt-row"><span>Buying power lost</span><b id="nv-lost">{(seed.lost_fraction * 100).toFixed(1)}%</b></div>
+<p class="receipt-foot">Purchasing-power view · inflation compounds</p>
+</div>
+<div class="hr"></div>
+<h2 class="tool-h2">Erosion, year by year</h2>
+<div class="st-wrap"><table class="st" id="nv-table">
+<thead><tr><th>Year</th><th class="n">Price tag ₦</th><th class="n">Lost</th></tr></thead>
+<tbody>
+{hist.map((r) => (<tr><td>{r.year}</td><td class="n">₦{n(r.amount)}</td><td class="n">{(r.lost * 100).toFixed(1)}%</td></tr>))}
+</tbody>
+</table></div>
+</ToolShell>
+<script>
+import { nairaValue, nairaValueHistory } from "../../lib/naira-value";
+import { formatGrouped } from "../../lib/format";
+const nn = (v: number) => "₦" + formatGrouped(v, 0);
+const g = (id: string) => document.getElementById(id) as HTMLInputElement;
+const t = (id: string) => document.getElementById(id) as HTMLElement;
+function render() {
+  const v = Math.max(0, Number(g("nv-val").value) || 0);
+  const infl = Math.max(0, Number(g("nv-infl").value) || 0) / 100;
+  const yrs = Math.max(1, Math.trunc(Number(g("nv-yrs").value) || 5));
+  const r = nairaValue(v, infl, yrs, 0);
+  t("nv-yr").textContent = String(yrs);
+  t("nv-fig").textContent = nn(r.future);
+  t("nv-sub").textContent = `${nn(r.value)} today loses ${(r.lost_fraction * 100).toFixed(1)}% of its buying power`;
+  t("nv-fut").textContent = nn(r.future);
+  t("nv-lost").textContent = (r.lost_fraction * 100).toFixed(1) + "%";
+  const tb = document.querySelector("#nv-table tbody") as HTMLElement;
+  tb.innerHTML = "";
+  for (const row of nairaValueHistory(v, infl, yrs)) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td></td><td class="n"></td><td class="n"></td>`;
+    (tr.children[0] as HTMLElement).textContent = String(row.year);
+    (tr.children[1] as HTMLElement).textContent = nn(row.amount);
+    (tr.children[2] as HTMLElement).textContent = (row.lost * 100).toFixed(1) + "%";
+    tb.appendChild(tr);
+  }
+}
+["nv-val", "nv-infl", "nv-yrs"].forEach((id) => g(id).addEventListener("input", render));
+render();
+</script>

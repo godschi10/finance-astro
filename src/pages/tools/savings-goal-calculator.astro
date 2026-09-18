@@ -1,0 +1,67 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+import { savingsCalculate, savingsSchedule } from "../../lib/savings";
+import { formatGrouped } from "../../lib/format";
+const n = (v: number) => formatGrouped(v, 0);
+const seed = savingsCalculate(5000000, 500000, 0.15, 24, "monthly");
+const rows = savingsSchedule(5000000, 500000, 0.15, 24, "monthly");
+---
+<ToolShell title="Savings Goal Calculator, Monthly Target - GWill Finance" description="What must you save monthly to hit your target? Exact monthly figure plus a year-by-year path from where you stand." slug="savings-goal-calculator" tool="Savings-Goal Calculator" lede="Name the target and the deadline — the calculator names the monthly price. Already there? It tells you straight." verified="Annuity-solved monthly · monthly compounding default" faqs={[
+  { q: "What if I already passed the target?", a: "Monthly drops to zero and the receipt says the goal is reached. Protect the win — move the surplus to the next goal." },
+  { q: "Does a higher rate really change the monthly?", a: "Dramatically over long deadlines. Compare 0% vs 15% above — the interest pays part of your goal for you." },
+]}>
+<div class="tgrid c3">
+<div class="field"><label for="sg-target">Target ₦</label><input id="sg-target" type="number" min="0" step="any" value="5000000" inputmode="decimal"></div>
+<div class="field"><label for="sg-cur">Have now ₦</label><input id="sg-cur" type="number" min="0" step="any" value="500000" inputmode="decimal"></div>
+<div class="field"><label for="sg-rate">Annual rate %</label><input id="sg-rate" type="number" min="0" step="any" value="15" inputmode="decimal"></div>
+<div class="field"><label for="sg-mo">Months</label><input id="sg-mo" type="number" min="1" step="1" value="24" inputmode="numeric"></div>
+</div>
+<div class="receipt" aria-live="polite">
+<p class="receipt-lbl">Save monthly</p>
+<p class="receipt-fig" id="sg-fig">{seed.goal_reached ? "₦0 — goal reached" : `₦${n(seed.monthly)}`}</p>
+<p class="receipt-sub" id="sg-sub">Total ₦{n(seed.total)} · interest ₦{n(seed.interest)}</p>
+<div class="receipt-div" aria-hidden="true"></div>
+<div class="receipt-row"><span>Total at deadline</span><b id="sg-tot">₦{n(seed.total)}</b></div>
+<div class="receipt-row"><span>Interest earned</span><b id="sg-int">₦{n(seed.interest)}</b></div>
+<p class="receipt-foot">Annuity-solved · monthly compounding</p>
+</div>
+<div class="hr"></div>
+<h2 class="tool-h2">Path to the goal</h2>
+<div class="st-wrap"><table class="st" id="sg-table">
+<thead><tr><th>Year</th><th class="n">Balance</th><th class="n">Deposited</th><th class="n">Interest</th></tr></thead>
+<tbody>
+{rows.map((r) => (<tr><td>{r.year}</td><td class="n">₦{n(r.balance)}</td><td class="n">₦{n(r.deposited)}</td><td class="n">₦{n(r.interest)}</td></tr>))}
+</tbody>
+</table></div>
+</ToolShell>
+<script>
+import { savingsCalculate, savingsSchedule } from "../../lib/savings";
+import { formatGrouped } from "../../lib/format";
+const nn = (v: number) => "₦" + formatGrouped(v, 0);
+const g = (id: string) => document.getElementById(id) as HTMLInputElement;
+const t = (id: string) => document.getElementById(id) as HTMLElement;
+function render() {
+  const target = Math.max(0, Number(g("sg-target").value) || 0);
+  const cur = Math.max(0, Number(g("sg-cur").value) || 0);
+  const rate = Math.max(0, Number(g("sg-rate").value) || 0) / 100;
+  const mo = Math.max(1, Math.trunc(Number(g("sg-mo").value) || 24));
+  const r = savingsCalculate(target, cur, rate, mo, "monthly");
+  t("sg-fig").textContent = r.goal_reached ? "₦0 — goal reached" : nn(r.monthly);
+  t("sg-sub").textContent = `Total ${nn(r.total)} · interest ${nn(r.interest)}`;
+  t("sg-tot").textContent = nn(r.total);
+  t("sg-int").textContent = nn(r.interest);
+  const tb = document.querySelector("#sg-table tbody") as HTMLElement;
+  tb.innerHTML = "";
+  for (const row of savingsSchedule(target, cur, rate, mo, "monthly")) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td></td><td class="n"></td><td class="n"></td><td class="n"></td>`;
+    (tr.children[0] as HTMLElement).textContent = String(row.year);
+    (tr.children[1] as HTMLElement).textContent = nn(row.balance);
+    (tr.children[2] as HTMLElement).textContent = nn(row.deposited);
+    (tr.children[3] as HTMLElement).textContent = nn(row.interest);
+    tb.appendChild(tr);
+  }
+}
+["sg-target", "sg-cur", "sg-rate", "sg-mo"].forEach((id) => g(id).addEventListener("input", render));
+render();
+</script>

@@ -1,0 +1,54 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+import { cryptoProfit, CRYPTO_SEED } from "../../lib/crypto";
+import { formatGrouped } from "../../lib/format";
+const n = (v: number) => formatGrouped(v, 0);
+const seed = cryptoProfit(CRYPTO_SEED.invest, CRYPTO_SEED.buy_rate, CRYPTO_SEED.sell_rate, CRYPTO_SEED.buy_fee, CRYPTO_SEED.sell_fee, CRYPTO_SEED.flat_ngn);
+---
+<ToolShell title="Crypto Profit Calculator, P2P Spread - GWill Finance" description="P2P crypto profit in naira: buy/sell spread, platform fees, flat charges, break-even rate, and true ROI." slug="crypto-profit-calculator" tool="Crypto-Profit Calculator" lede="The spread is the fee nobody quotes. Enter buy and sell rates plus every charge — profit, ROI, and break-even come out honest." verified="P2P-aware · fees modeled both sides" faqs={[
+  { q: "Why model fees as explicit costs?", a: "Because a 1% fee on each side eats more than most spreads earn. Ignoring fees is how winning trades lose money." },
+  { q: "What is the break-even rate?", a: "The sell rate at which this trade makes exactly zero. If your expected sell sits below it, do not enter." },
+]}>
+<div class="tgrid c3">
+<div class="field"><label for="cp-inv">To invest ₦</label><input id="cp-inv" type="number" min="0" step="any" value={CRYPTO_SEED.invest} inputmode="decimal"></div>
+<div class="field"><label for="cp-buy">Buy rate ₦</label><input id="cp-buy" type="number" min="0" step="any" value={CRYPTO_SEED.buy_rate} inputmode="decimal"></div>
+<div class="field"><label for="cp-sell">Sell rate ₦</label><input id="cp-sell" type="number" min="0" step="any" value={CRYPTO_SEED.sell_rate} inputmode="decimal"></div>
+<div class="field"><label for="cp-bf">Buy fee %</label><input id="cp-bf" type="number" min="0" step="any" value="1" inputmode="decimal"></div>
+<div class="field"><label for="cp-sf">Sell fee %</label><input id="cp-sf" type="number" min="0" step="any" value="1" inputmode="decimal"></div>
+<div class="field"><label for="cp-flat">Flat charges ₦</label><input id="cp-flat" type="number" min="0" step="any" value="0" inputmode="decimal"></div>
+</div>
+<div class="receipt" aria-live="polite">
+<p class="receipt-lbl">Profit</p>
+<p class="receipt-fig" id="cp-fig">₦{n(seed.profit)}</p>
+<p class="receipt-sub" id="cp-sub">ROI {(seed.roi * 100).toFixed(2)}% · {n(seed.coins, 4)} coins · sell nets ₦{n(seed.sell_net)}</p>
+<div class="receipt-div" aria-hidden="true"></div>
+<div class="receipt-row"><span>Total fees</span><b id="cp-fees">₦{n(seed.fees_ngn)}</b></div>
+<div class="receipt-row"><span>Break-even sell rate</span><b id="cp-be">₦{n(seed.break_even_rate, 2)}</b></div>
+<div class="receipt-row"><span>Price gap value</span><b id="cp-gap">₦{n(seed.price_gap)}</b></div>
+<p class="receipt-foot">P2P-aware · not financial advice</p>
+</div>
+</ToolShell>
+<script>
+import { cryptoProfit } from "../../lib/crypto";
+import { formatGrouped } from "../../lib/format";
+const nn = (v: number, d = 0) => "₦" + formatGrouped(v, d);
+const g = (id: string) => document.getElementById(id) as HTMLInputElement;
+const t = (id: string) => document.getElementById(id) as HTMLElement;
+function render() {
+  const r = cryptoProfit(
+    Math.max(0, Number(g("cp-inv").value) || 0),
+    Math.max(0, Number(g("cp-buy").value) || 0),
+    Math.max(0, Number(g("cp-sell").value) || 0),
+    Math.max(0, Number(g("cp-bf").value) || 0) / 100,
+    Math.max(0, Number(g("cp-sf").value) || 0) / 100,
+    Math.max(0, Number(g("cp-flat").value) || 0),
+  );
+  t("cp-fig").textContent = (r.profit < 0 ? "−" : "") + nn(Math.abs(r.profit));
+  t("cp-sub").textContent = `ROI ${(r.roi * 100).toFixed(2)}% · ${formatGrouped(r.coins, 4)} coins · sell nets ${nn(r.sell_net)}`;
+  t("cp-fees").textContent = nn(r.fees_ngn);
+  t("cp-be").textContent = nn(r.break_even_rate, 2);
+  t("cp-gap").textContent = nn(r.price_gap);
+}
+["cp-inv", "cp-buy", "cp-sell", "cp-bf", "cp-sf", "cp-flat"].forEach((id) => g(id).addEventListener("input", render));
+render();
+</script>

@@ -1,0 +1,96 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+import { transferQuote, transferVerified, TRANSFER_SEED } from "../../lib/transfer";
+import { fxNumber } from "../../lib/fx";
+import { FX_SNAPSHOT } from "../../data/fx-snapshot";
+const fx = { rates: FX_SNAPSHOT.rates, as_of: FX_SNAPSHOT.as_of, ok: true };
+const seed = transferQuote(TRANSFER_SEED.amount, "from-nigeria", TRANSFER_SEED.source, TRANSFER_SEED.dest, fx);
+const best = seed.rows[0]?.id ?? "";
+---
+<ToolShell title="Send Money to Nigeria, Best Rate Comparator - GWill Finance" description="Compare Wise, Western Union, Remitly, WorldRemit and LemFi on fee and real exchange rate. See who gets you the most naira, live." slug="money-transfer-comparator" tool="Money-Transfer Comparator" lede="Fees lie, rates lie — the received amount does not. Every provider below is scored on what actually lands after both fee and rate markup." verified={`Fee model verified ${transferVerified()} · FX base: indicative snapshot`} faqs={[
+  { q: "Should I compare the fee or the exchange rate?", a: "Neither alone. Compare the total the recipient receives — exactly what this table sorts by." },
+  { q: "Which service is cheapest for sending to Nigeria?", a: "It depends on the amount. Enter yours above; the BEST tag moves with it." },
+  { q: "Are these exact live quotes?", a: "The base exchange rate refreshes live; the fee and markup figures are maintained estimates. Confirm the final quote with your provider before sending." },
+]}>
+<div class="tgrid c3">
+<div class="field"><label for="tc-amt">Amount to send</label><input id="tc-amt" type="number" min="0" step="any" value={TRANSFER_SEED.amount} inputmode="decimal"></div>
+<div class="field"><label for="tc-dir">Direction</label><select id="tc-dir"><option value="to-nigeria">Send to Nigeria (USD→NGN)</option><option value="from-nigeria" selected>Send from Nigeria (NGN→USD)</option></select></div>
+<div class="field"><label for="tc-src">Send currency</label><select id="tc-src"><option>USD</option><option>GBP</option><option>EUR</option><option>CAD</option></select><p class="hint">Foreign leg only; naira side is automatic.</p></div>
+</div>
+<div class="receipt" aria-live="polite">
+<p class="receipt-lbl">Best payout for <span id="tc-sum-amt">₦100,000</span></p>
+<p class="receipt-fig" id="tc-fig">{seed.rows[0] ? fxNumber(seed.rows[0].received, 2) : "—"}</p>
+<p class="receipt-sub" id="tc-sub">{seed.rows[0]?.name ?? ""} · mid-market {fxNumber(seed.mid, 6)}</p>
+<div class="receipt-div" aria-hidden="true"></div>
+<p class="receipt-note">Fee model verified {transferVerified()} · FX base refreshes live when the feed answers.</p>
+<p class="receipt-foot">Estimates — confirm with your provider</p>
+</div>
+<div class="hr"></div>
+<h2 class="tool-h2">Every provider, ranked</h2>
+<div class="st-wrap"><table class="st" id="tc-table">
+<thead><tr><th>Provider</th><th class="n">Fee</th><th class="n">Rate applied</th><th class="n">Recipient gets</th></tr></thead>
+<tbody>
+{seed.rows.map((r) => (
+<tr data-tc-row={r.id} class={r.id === best ? "win" : ""}>
+<td>{r.name}{r.id === best && <span class="btag">Best</span>}</td>
+<td class="n" data-c="fee">{fxNumber(r.fee, 2)}</td>
+<td class="n" data-c="rate">{fxNumber(r.rate, 4)}</td>
+<td class="n" data-c="rec">{fxNumber(r.received, 2)}</td>
+</tr>
+))}
+</tbody>
+</table></div>
+<p class="bar-note" id="tc-fresh" style="margin-top:10px">{FX_SNAPSHOT.as_of} (indicative snapshot)</p>
+</ToolShell>
+<script>
+import { transferQuote, transferVerified } from "../../lib/transfer";
+import { fxNumber, fxFetchLive } from "../../lib/fx";
+import { FX_SNAPSHOT } from "../../data/fx-snapshot";
+let rates = FX_SNAPSHOT.rates;
+let asOf = FX_SNAPSHOT.as_of;
+const amt = document.getElementById("tc-amt") as HTMLInputElement;
+const dir = document.getElementById("tc-dir") as HTMLSelectElement;
+const src = document.getElementById("tc-src") as HTMLSelectElement;
+function render() {
+  const a = Math.max(0, Number(amt.value) || 0);
+  const d = dir.value === "from-nigeria" ? "from-nigeria" : "to-nigeria";
+  const s = d === "from-nigeria" ? "NGN" : src.value;
+  const q = transferQuote(a, d, s, d === "from-nigeria" ? src.value : "NGN", { rates, as_of: asOf, ok: true });
+  const sym = q.dest === "NGN" ? "₦" : "$";
+  const osym = q.origin === "NGN" ? "₦" : "$";
+  (document.getElementById("tc-sum-amt") as HTMLElement).textContent = `${osym}${fxNumber(a, 0)}`;
+  const top = q.rows[0];
+  (document.getElementById("tc-fig") as HTMLElement).textContent = top ? `${sym}${fxNumber(top.received, top.received < 100 ? 2 : 0)}` : "—";
+  (document.getElementById("tc-sub") as HTMLElement).textContent = top ? `${top.name} · mid-market ${fxNumber(q.mid, 6)}` : "";
+  const tb = document.querySelector("#tc-table tbody") as HTMLElement;
+  tb.innerHTML = "";
+  q.rows.forEach((r, i) => {
+    const tr = document.createElement("tr");
+    if (i === 0) tr.className = "win";
+    tr.innerHTML = `<td></td><td class="n"></td><td class="n"></td><td class="n"></td>`;
+    (tr.children[0] as HTMLElement).textContent = r.name;
+    if (i === 0) { const b = document.createElement("span"); b.className = "btag"; b.textContent = "Best"; tr.children[0].appendChild(b); }
+    (tr.children[1] as HTMLElement).textContent = `${osym}${fxNumber(r.fee, 2)}`;
+    (tr.children[2] as HTMLElement).textContent = fxNumber(r.rate, 4);
+    (tr.children[3] as HTMLElement).textContent = `${sym}${fxNumber(r.received, r.received < 100 ? 2 : 0)}`;
+    tb.appendChild(tr);
+  });
+}
+amt.addEventListener("input", render);
+dir.addEventListener("change", render);
+src.addEventListener("change", render);
+render();
+(async () => {
+  try {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), 8000);
+    const live = await fxFetchLive(ctl.signal);
+    clearTimeout(t);
+    if (live.rates?.["NGN"] > 0) {
+      rates = live.rates; asOf = live.as_of || "just now";
+      (document.getElementById("tc-fresh") as HTMLElement).textContent = "live · " + asOf;
+      render();
+    }
+  } catch { /* snapshot stands, honestly labeled */ }
+})();
+</script>

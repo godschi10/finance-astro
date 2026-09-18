@@ -1,0 +1,47 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+import { reverseGross } from "../../lib/gross-to-net";
+import { formatGrouped } from "../../lib/format";
+const n = (v: number) => formatGrouped(v, 0);
+const seed = reverseGross(250000, 0.08);
+---
+<ToolShell title="Gross to Net Salary Calculator, Nigeria - GWill Finance" description="What gross salary do you need for your target take-home? Reverse-solved through NTA 2026 PAYE with pension and reliefs." slug="gross-to-net-calculator" tool="Gross → Net Calculator" lede="Start from the take-home you want, work backwards to the gross you must negotiate — pension, NHF, and rent relief accounted for." verified="Reverse-solved over NTA 2026 PAYE · 8% pension default" faqs={[
+  { q: "Why is the gross so much higher than my target?", a: "Pension (8%) comes off even in the minimum-wage exempt zone, then PAYE stacks on top. The gap is real — negotiate to the gross, not the net." },
+  { q: "Does rent lower the gross I need?", a: "Yes — 20% of annual rent (capped ₦500k) cuts taxable income, so slightly less gross reaches the same net." },
+]}>
+<div class="tgrid c3">
+<div class="field"><label for="gn-net">Target take-home ₦/mo</label><input id="gn-net" type="number" min="0" step="any" value="250000" inputmode="decimal"></div>
+<div class="field"><label for="gn-pen">Pension %</label><input id="gn-pen" type="number" min="0" max="100" step="any" value="8" inputmode="decimal"></div>
+<div class="field"><label for="gn-rent">Annual rent ₦</label><input id="gn-rent" type="number" min="0" step="any" value="0" inputmode="decimal"></div>
+</div>
+<div class="receipt" aria-live="polite">
+<p class="receipt-lbl">Gross to negotiate</p>
+<p class="receipt-fig" id="gn-fig">₦{n(seed.gross_monthly)}</p>
+<p class="receipt-sub" id="gn-sub">Nets ₦{n(seed.net_monthly)}/mo after ₦{n(seed.tax_monthly)} tax</p>
+<div class="receipt-div" aria-hidden="true"></div>
+<div class="receipt-row"><span>Pension /mo</span><b id="gn-pen2">₦{n(seed.pension_monthly)}</b></div>
+<div class="receipt-row"><span>Rent relief /mo</span><b id="gn-rel">₦{n(seed.relief_monthly)}</b></div>
+<div class="receipt-row"><span>Deductions /mo</span><b id="gn-ded">₦{n(seed.deductions_monthly)}</b></div>
+<p class="receipt-foot">NTA 2026 bands · binary-solved</p>
+</div>
+</ToolShell>
+<script>
+import { reverseGross } from "../../lib/gross-to-net";
+import { formatGrouped } from "../../lib/format";
+const n = (v: number) => "₦" + formatGrouped(v, 0);
+const g = (id: string) => document.getElementById(id) as HTMLInputElement;
+const t = (id: string) => document.getElementById(id) as HTMLElement;
+function render() {
+  const net = Math.max(0, Number(g("gn-net").value) || 0);
+  const pen = Math.min(100, Math.max(0, Number(g("gn-pen").value) || 0)) / 100;
+  const rent = Math.max(0, Number(g("gn-rent").value) || 0);
+  const r = reverseGross(net, pen, 0, rent);
+  t("gn-fig").textContent = n(r.gross_monthly);
+  t("gn-sub").textContent = `Nets ${n(r.net_monthly)}/mo after ${n(r.tax_monthly)} tax`;
+  t("gn-pen2").textContent = n(r.pension_monthly);
+  t("gn-rel").textContent = n(r.relief_monthly);
+  t("gn-ded").textContent = n(r.deductions_monthly);
+}
+["gn-net", "gn-pen", "gn-rent"].forEach((id) => g(id).addEventListener("input", render));
+render();
+</script>

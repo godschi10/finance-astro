@@ -1,0 +1,60 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+import { budgetAllocator, budgetAllocatorSeedIncome } from "../../lib/allocator";
+import { formatGrouped } from "../../lib/format";
+const n = (v: number) => formatGrouped(v, 0);
+const seed = budgetAllocator(budgetAllocatorSeedIncome());
+---
+<ToolShell title="Budget Allocator, Naira Needs Buckets - GWill Finance" description="Drill the needs half into Nigerian naira buckets: rent, food, transport, data, bills — with shares you can tune." slug="budget-allocator" tool="Budget Allocator" lede="The needs half, itemized for real Nigerian spending. Tune any bucket's share — the naira follows instantly." verified="Needs-half buckets · rent 40% default" faqs={[
+  { q: "Why does rent take 40% of needs?", a: "Because in Lagos and Abuja it does. If yours is lower, cut the share and watch the freed naira." },
+  { q: "What is Other needs?", a: "Whatever your shares do not cover. If it grows, a bucket share is understated — adjust, don't ignore." },
+]}>
+<div class="field" style="max-width:320px;margin-top:18px"><label for="al-inc">Monthly income ₦</label><input id="al-inc" type="number" min="0" step="any" value={budgetAllocatorSeedIncome()} inputmode="decimal"></div>
+<div class="tgrid c3" style="margin-top:14px">
+{seed.buckets.filter((b) => b.id !== "other").map((b) => (
+<div class="field"><label for={`al-${b.id}`}>{b.label} % of needs</label><input id={`al-${b.id}`} type="number" min="0" max="100" step="any" value={(b.share * 100).toFixed(0)} inputmode="decimal" data-al-bucket={b.id}></div>
+))}
+</div>
+<div class="receipt" aria-live="polite">
+<p class="receipt-lbl">Needs half: <span id="al-needs">₦{n(seed.needs)}</span></p>
+<p class="receipt-fig" id="al-fig">₦{n(seed.needs)}</p>
+<p class="receipt-sub">Wants <span id="al-wants">₦{n(seed.wants)}</span> · savings <span id="al-sav">₦{n(seed.savings)}</span></p>
+<div class="receipt-div" aria-hidden="true"></div>
+<div id="al-rows">
+{seed.buckets.map((b) => (
+<div class="receipt-row"><span>{b.label}</span><b data-al-amt={b.id}>₦{n(b.amount)}</b></div>
+))}
+</div>
+<p class="receipt-foot">Shares of needs · naira follows instantly</p>
+</div>
+</ToolShell>
+<script>
+import { budgetAllocator } from "../../lib/allocator";
+import { formatGrouped } from "../../lib/format";
+const nn = (v: number) => "₦" + formatGrouped(v, 0);
+const inc = document.getElementById("al-inc") as HTMLInputElement;
+function render() {
+  const shares: Record<string, number> = {};
+  document.querySelectorAll("[data-al-bucket]").forEach((el) => {
+    const inp = el as HTMLInputElement;
+    shares[inp.dataset.alBucket as string] = Math.max(0, Number(inp.value) || 0) / 100;
+  });
+  const r = budgetAllocator(Math.max(0, Number(inc.value) || 0), 0.5, 0.3, 0.2, shares);
+  (document.getElementById("al-needs") as HTMLElement).textContent = nn(r.needs);
+  (document.getElementById("al-fig") as HTMLElement).textContent = nn(r.needs);
+  (document.getElementById("al-wants") as HTMLElement).textContent = nn(r.wants);
+  (document.getElementById("al-sav") as HTMLElement).textContent = nn(r.savings);
+  const box = document.getElementById("al-rows") as HTMLElement;
+  box.innerHTML = "";
+  for (const b of r.buckets) {
+    const div = document.createElement("div");
+    div.className = "receipt-row";
+    const s = document.createElement("span"); s.textContent = b.label;
+    const amt = document.createElement("b"); amt.textContent = nn(b.amount);
+    div.appendChild(s); div.appendChild(amt); box.appendChild(div);
+  }
+}
+inc.addEventListener("input", render);
+document.querySelectorAll("[data-al-bucket]").forEach((el) => el.addEventListener("input", render));
+render();
+</script>

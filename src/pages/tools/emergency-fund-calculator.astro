@@ -1,0 +1,55 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+import { emergencyFund, EMERGENCY_SEED } from "../../lib/emergency";
+import { formatGrouped } from "../../lib/format";
+const n = (v: number) => formatGrouped(v, 0);
+const seed = emergencyFund(EMERGENCY_SEED.essentials, EMERGENCY_SEED.saved, EMERGENCY_SEED.monthly, EMERGENCY_SEED.cover, EMERGENCY_SEED.inflation);
+const pct = Math.min(100, Math.round(seed.progress_pct));
+---
+<ToolShell title="Emergency Fund Calculator, Runway Months - GWill Finance" description="How many months could you survive job loss? Runway now, inflation-adjusted target, and the monthly saving that closes the gap." slug="emergency-fund-calculator" tool="Emergency-Fund Calculator" lede="A fund measured in months, not naira. See your runway today, the target that survives inflation, and exactly what closes the gap." verified="Inflation-adjusted target · 6-month default cover" faqs={[
+  { q: "How many months should I cover?", a: "Six is the default for salaried earners; freelancers and single-income households should aim higher. Start with three and build." },
+  { q: "Why is the real target bigger?", a: "Prices rise while you save. The real target prices your essentials at the inflation you set, so the fund still covers six months when you finish it." },
+  { q: "Where should the fund sit?", a: "Liquid and boring: a high-yield savings pocket, not stocks or locked plans. Compare current rates on the savings-rate comparator." },
+]}>
+<div class="tgrid c3">
+<div class="field"><label for="em-ess">Monthly essentials ₦</label><input id="em-ess" type="number" min="0" step="any" value={EMERGENCY_SEED.essentials} inputmode="decimal"></div>
+<div class="field"><label for="em-saved">Saved so far ₦</label><input id="em-saved" type="number" min="0" step="any" value={EMERGENCY_SEED.saved} inputmode="decimal"></div>
+<div class="field"><label for="em-mo">Monthly saving ₦</label><input id="em-mo" type="number" min="0" step="any" value={EMERGENCY_SEED.monthly} inputmode="decimal"></div>
+<div class="field"><label for="em-cover">Cover (months)</label><input id="em-cover" type="number" min="1" step="any" value={EMERGENCY_SEED.cover} inputmode="decimal"></div>
+<div class="field"><label for="em-infl">Inflation %/yr</label><input id="em-infl" type="number" min="0" step="any" value="20" inputmode="decimal"></div>
+</div>
+<div class="receipt" aria-live="polite">
+<p class="receipt-lbl">Your runway today</p>
+<p class="receipt-fig" id="em-fig">{seed.runway_now.toFixed(1)} months</p>
+<p class="receipt-sub" id="em-sub">Target ₦{n(seed.target)} · gap ₦{n(seed.gap)} · real (inflated) target ₦{n(seed.real_target)}</p>
+<div class="prog" aria-hidden="true"><i id="em-bar" style={`width:${pct}%`}></i></div>
+<div class="receipt-div" aria-hidden="true"></div>
+<div class="receipt-row"><span>Months to finish</span><b id="em-mtr">{seed.months_to_reach > 0 ? seed.months_to_reach.toFixed(1) : "— (save something monthly)"}</b></div>
+<div class="receipt-row"><span>Progress</span><b id="em-pct">{pct}%</b></div>
+<p class="receipt-foot">6-month default · inflation-adjusted</p>
+</div>
+</ToolShell>
+<script>
+import { emergencyFund } from "../../lib/emergency";
+import { formatGrouped } from "../../lib/format";
+const nn = (v: number) => "₦" + formatGrouped(v, 0);
+const g = (id: string) => document.getElementById(id) as HTMLInputElement;
+const t = (id: string) => document.getElementById(id) as HTMLElement;
+function render() {
+  const r = emergencyFund(
+    Math.max(0, Number(g("em-ess").value) || 0),
+    Math.max(0, Number(g("em-saved").value) || 0),
+    Math.max(0, Number(g("em-mo").value) || 0),
+    Math.max(1, Number(g("em-cover").value) || 6),
+    Math.max(0, Number(g("em-infl").value) || 0) / 100,
+  );
+  t("em-fig").textContent = r.runway_now.toFixed(1) + " months";
+  t("em-sub").textContent = `Target ${nn(r.target)} · gap ${nn(r.gap)} · real (inflated) target ${nn(r.real_target)}`;
+  t("em-mtr").textContent = r.months_to_reach > 0 ? r.months_to_reach.toFixed(1) : "— (save something monthly)";
+  const p = Math.min(100, Math.round(r.progress_pct));
+  t("em-pct").textContent = p + "%";
+  (document.getElementById("em-bar") as HTMLElement).style.width = p + "%";
+}
+["em-ess", "em-saved", "em-mo", "em-cover", "em-infl"].forEach((id) => g(id).addEventListener("input", render));
+render();
+</script>

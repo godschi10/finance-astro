@@ -1,0 +1,83 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+import { fxConvert, fxCurrencies, fxParallelNgnUsd, fxParallelSpread, fxNumber } from "../../lib/fx";
+import { FX_SNAPSHOT, FX_SNAPSHOT_LABEL } from "../../data/fx-snapshot";
+const cur = fxCurrencies();
+const codes = Object.keys(cur);
+const seed = { amount: 100, from: "USD", to: "NGN" };
+const converted = fxConvert(seed.amount, seed.from, seed.to, FX_SNAPSHOT.rates);
+const unit = fxConvert(1, seed.from, seed.to, FX_SNAPSHOT.rates);
+const parallel = fxParallelNgnUsd(FX_SNAPSHOT.rates.NGN, fxParallelSpread());
+---
+<ToolShell title="Currency Converter, Live NGN Rates - GWill Finance" description="Convert USD, GBP, EUR and 13 more currencies to naira at the live mid-market rate, plus an honest parallel-market estimate." slug="currency-converter" tool="Currency Converter" lede="Sixteen currencies, one honest mid-market number. The figure below is pre-rendered from a build-time snapshot and refreshes live in your browser when the feed answers." verified="Rates: indicative snapshot, Sep 2026 — refresh for live" faqs={[
+  { q: "Is this the rate my bank will give me?", a: "No. This is the mid-market rate before fees or margins. Banks and apps add their own spread — compare the final naira that lands, not headline rates." },
+  { q: "What is the parallel-market estimate?", a: "What dollars trade for between individuals outside official channels, roughly 4.5% above official. It is an estimate, always labeled as one." },
+  { q: "Why does the page show a snapshot?", a: "Static pages cannot call the rate feed at build time and stay fresh. Your browser retries the live feed on every visit; when it fails you see the snapshot, honestly labeled." },
+]}>
+<div class="tgrid c3">
+<div class="field"><label for="cc-amt">Amount</label><input id="cc-amt" type="number" min="0" step="any" value="100" inputmode="decimal"></div>
+<div class="field"><label for="cc-from">From</label><select id="cc-from">{codes.map((c) => (<option value={c} selected={c === seed.from}>{c} — {cur[c].name}</option>))}</select></div>
+<div class="field"><label for="cc-to">To</label><select id="cc-to">{codes.map((c) => (<option value={c} selected={c === seed.to}>{c} — {cur[c].name}</option>))}</select></div>
+</div>
+<div style="margin-top:12px"><button class="swapbtn" id="cc-swap" type="button" aria-label="Swap currencies">⇄</button> <span class="hint" id="cc-fresh" style="font-size:12px;color:var(--text-dim)">{FX_SNAPSHOT.as_of} ({FX_SNAPSHOT_LABEL})</span></div>
+<div class="receipt" aria-live="polite">
+<p class="receipt-lbl">You get</p>
+<p class="receipt-fig" id="cc-fig">{fxNumber(converted, 2)}</p>
+<p class="receipt-sub" id="cc-unit">1 {seed.from} = {fxNumber(unit, 2)} {seed.to}</p>
+<div class="receipt-div" aria-hidden="true"></div>
+<p class="receipt-note" id="cc-par">Parallel estimate ≈ ₦{fxNumber(seed.amount * parallel, 0)} (estimated, not a quote)</p>
+<p class="receipt-foot" id="cc-foot">Snapshot · Sep 2026</p>
+</div>
+</ToolShell>
+<script>
+import { fxConvert, fxParallelNgnUsd, fxParallelSpread, fxNumber, fxFetchLive } from "../../lib/fx";
+import { FX_SNAPSHOT, FX_SNAPSHOT_LABEL } from "../../data/fx-snapshot";
+let rates = FX_SNAPSHOT.rates;
+const amt = document.getElementById("cc-amt") as HTMLInputElement;
+const from = document.getElementById("cc-from") as HTMLSelectElement;
+const to = document.getElementById("cc-to") as HTMLSelectElement;
+const fig = document.getElementById("cc-fig") as HTMLElement;
+const unitEl = document.getElementById("cc-unit") as HTMLElement;
+const par = document.getElementById("cc-par") as HTMLElement;
+const fresh = document.getElementById("cc-fresh") as HTMLElement;
+const foot = document.getElementById("cc-foot") as HTMLElement;
+function money(v: number, code: string): string {
+  const sym: Record<string, string> = { NGN: "₦", USD: "$", GBP: "£", EUR: "€" };
+  const dec = code === "NGN" ? 0 : v < 100 ? 2 : 0;
+  return (sym[code] ?? "") + fxNumber(v, dec);
+}
+function render() {
+  const a = Math.max(0, Number(amt.value) || 0);
+  const f = from.value, t = to.value;
+  const c = fxConvert(a, f, t, rates);
+  const u = fxConvert(1, f, t, rates);
+  fig.textContent = (t === "NGN" ? "₦" : "") + fxNumber(c, t === "NGN" ? 0 : 2);
+  unitEl.textContent = `1 ${f} = ${money(u, t)}`;
+  if (t === "NGN" && rates["NGN"] > 0) {
+    const p = fxParallelNgnUsd(fxConvert(1, f, "USD", rates) * rates["NGN"], fxParallelSpread());
+    par.textContent = `Parallel estimate ≈ ₦${fxNumber(a * p, 0)} (estimated, not a quote)`;
+    par.hidden = false;
+  } else par.hidden = true;
+}
+amt.addEventListener("input", render);
+from.addEventListener("change", render);
+to.addEventListener("change", render);
+document.getElementById("cc-swap")?.addEventListener("click", () => {
+  const v = from.value; from.value = to.value; to.value = v; render();
+});
+render();
+(async () => {
+  try {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), 8000);
+    const live = await fxFetchLive(ctl.signal);
+    clearTimeout(t);
+    if (live.rates && live.rates["NGN"] > 0) {
+      rates = live.rates;
+      fresh.textContent = "live · " + (live.as_of || "just now");
+      foot.textContent = "Live · " + (live.as_of || "just now");
+      render();
+    }
+  } catch { fresh.textContent = FX_SNAPSHOT.as_of + " (" + FX_SNAPSHOT_LABEL + ")"; }
+})();
+</script>

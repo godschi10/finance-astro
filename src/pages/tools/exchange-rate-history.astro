@@ -1,0 +1,89 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+import { fxHistorySummary } from "../../lib/fx-history";
+import { fxNumber } from "../../lib/fx";
+import { FX_SNAPSHOT } from "../../data/fx-snapshot";
+// SSG: honest snapshot anchor only — the trend paints client-side from the
+// live feed plus points your device has collected (never invented history).
+const anchor = FX_SNAPSHOT.rates.NGN;
+const seed = fxHistorySummary([{ date: "2026-09-01", ngn: anchor }], anchor);
+---
+<ToolShell title="Dollar to Naira Trend, 30/90-Day History - GWill Finance" description="USD to NGN trend over 30 or 90 days. The chart builds from live feed points your device collects — no invented history." slug="exchange-rate-history" tool="Exchange-Rate History" lede="The dollar-naira rate steps, it does not drift. Watch the window below — every point is a real fetched rate, timestamped." verified="Snapshot anchor ₦1,482 · Sep 2026 — live points added on each visit" faqs={[
+  { q: "Where does the history come from?", a: "Your browser fetches the current rate on each visit and keeps dated points on this device. No backfilled or invented points — the chart starts empty and earns its shape." },
+  { q: "Why only 30 or 90 days?", a: "Those are the windows that matter for sending, pricing, and holding decisions. Older points age out automatically." },
+]}>
+<div class="tgrid c2">
+<div class="field"><label for="xh-days">Window</label><select id="xh-days"><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option></select></div>
+<div class="field"><label for="xh-base">Base</label><select id="xh-base" disabled><option>USD → NGN (more bases land later)</option></select></div>
+</div>
+<div class="receipt" aria-live="polite">
+<p class="receipt-lbl">USD → NGN · <span id="xh-n">0 points on this device</span></p>
+<p class="receipt-fig" id="xh-fig">₦{fxNumber(seed.current, 0)}</p>
+<p class="receipt-sub" id="xh-sub">Snapshot anchor — fetch live to start the trend</p>
+<div class="receipt-div" aria-hidden="true"></div>
+<div id="xh-chart" role="img" aria-label="Dollar to naira trend chart"></div>
+<p class="receipt-foot" id="xh-foot">Snapshot · Sep 2026</p>
+</div>
+</ToolShell>
+<script>
+import { fxHistoryRange, fxHistorySummary } from "../../lib/fx-history";
+import { fxNumber, fxFetchLive } from "../../lib/fx";
+import { FX_SNAPSHOT } from "../../data/fx-snapshot";
+const KEY = "gwill-fx-pts";
+type Pt = { date: string; ngn: number };
+function load(): Pt[] {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.filter((p) => p && p.date && p.ngn > 0).slice(-120) : [];
+  } catch { return []; }
+}
+function save(pts: Pt[]) { try { localStorage.setItem(KEY, JSON.stringify(pts.slice(-120))); } catch {} }
+function draw(pts: Pt[]) {
+  const box = document.getElementById("xh-chart") as HTMLElement;
+  if (pts.length < 2) {
+    box.innerHTML = `<p class="receipt-note">Not enough history points yet — visit again and the trend starts here.</p>`;
+    return;
+  }
+  const w = 640, h = 220, pt = 24, pb = 28, pl = 52, pr = 16;
+  const vals = pts.map((p) => p.ngn);
+  const min = Math.min(...vals), max = Math.max(...vals);
+  const span = Math.max(1e-9, max - min);
+  const lo = min - span * 0.1, hi = max + span * 0.1, rg = hi - lo;
+  const X = (i: number) => pl + (i / (pts.length - 1)) * (w - pl - pr);
+  const Y = (v: number) => pt + (1 - (v - lo) / rg) * (h - pt - pb);
+  const line = pts.map((p, i) => `${X(i).toFixed(1)},${Y(p.ngn).toFixed(1)}`).join(" ");
+  box.innerHTML = `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto;display:block" role="img" aria-label="US dollar to naira trend">` +
+    `<polyline points="${line}" fill="none" stroke="var(--gold-b)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+}
+async function render() {
+  const days = Number((document.getElementById("xh-days") as HTMLSelectElement).value) || 30;
+  let pts = load();
+  try {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), 8000);
+    const live = await fxFetchLive(ctl.signal);
+    clearTimeout(t);
+    if (live.rates?.["NGN"] > 0) {
+      const today = new Date().toISOString().slice(0, 10);
+      if (!pts.length || pts[pts.length - 1].date !== today) {
+        pts = [...pts, { date: today, ngn: Number(live.rates["NGN"]) }];
+        save(pts);
+      }
+    }
+  } catch { /* stored points stand */ }
+  const win = fxHistoryRange(pts, days);
+  const s = fxHistorySummary(win.length ? win : [{ date: "2026-09-01", ngn: FX_SNAPSHOT.rates.NGN }], FX_SNAPSHOT.rates.NGN);
+  (document.getElementById("xh-n") as HTMLElement).textContent = `${win.length} point${win.length === 1 ? "" : "s"} on this device`;
+  (document.getElementById("xh-fig") as HTMLElement).textContent = "₦" + fxNumber(s.current, 0);
+  const arrow = s.direction === "up" ? "▲" : "▼";
+  (document.getElementById("xh-sub") as HTMLElement).textContent = win.length > 1
+    ? `${arrow} ₦${fxNumber(Math.abs(s.change), 0)} (${s.change_pct.toFixed(1)}%) across the window · low ₦${fxNumber(s.min, 0)} · high ₦${fxNumber(s.max, 0)}`
+    : "Snapshot anchor — fetch live to start the trend";
+  (document.getElementById("xh-foot") as HTMLElement).textContent = win.length > 1 ? `${win.length} device-collected points` : "Snapshot · Sep 2026";
+  draw(win);
+}
+document.getElementById("xh-days")?.addEventListener("change", render);
+render();
+</script>

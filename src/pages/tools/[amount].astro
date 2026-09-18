@@ -1,0 +1,66 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+import {
+  amountSlugs, amountPageData, amountTokens, amountRenderText,
+  amountSiblings, amountOpposite, amountSeo, amountConfig, amountFmt,
+} from "../../lib/amount";
+import { FX_SNAPSHOT, FX_SNAPSHOT_LABEL } from "../../data/fx-snapshot";
+export function getStaticPaths() {
+  return amountSlugs().map((slug) => ({ params: { amount: slug } }));
+}
+const slug = Astro.params.amount as string;
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const fx = { rates: FX_SNAPSHOT.rates, as_of: FX_SNAPSHOT.as_of, cached: false, ok: true };
+const d = amountPageData(slug, fx);
+if (!d) throw new Error(`unknown amount slug: ${slug}`);
+const pageUrl = (s: string) => `${base}tools/${s}/`;
+const tokens = amountTokens(slug, d, pageUrl);
+const lede = amountRenderText(d.cfg.content.lede, tokens);
+const sections = d.cfg.content.sections.map((s) => ({ h2: s.h2, body: s.body.map((p) => amountRenderText(p, tokens)) }));
+const faqs = d.cfg.content.faqs.map((f) => ({ q: f.q, a: amountRenderText(f.a, tokens) }));
+const sibs = amountSiblings(slug).map((s) => ({ slug: s, h1: amountSeo(s, amountConfig(s)!).h1 }));
+const opps = amountOpposite(slug).map((s) => ({ slug: s, h1: amountSeo(s, amountConfig(s)!).h1 }));
+const equation = `${amountFmt(d.amount, d.from)} = ${amountFmt(d.converted, d.to)}`;
+const unitLine = `1 ${d.from} = ${amountFmt(d.unit_rate, d.to)} · 1 ${d.to} = ${amountFmt(d.rev_rate, d.from)}`;
+---
+<ToolShell title={`${d.seo.title} - GWill Finance`} description={d.seo.meta_desc} slug={slug} tool={d.seo.h1} lede={lede} verified={`Mid-market ${FX_SNAPSHOT.as_of} (${FX_SNAPSHOT_LABEL}) · receipt refreshes live`} faqs={faqs} rawFaq>
+<div class="receipt" aria-live="polite">
+<p class="receipt-lbl">{d.seo.h1} · mid-market</p>
+<p class="receipt-fig" id="am-fig">{equation}</p>
+<p class="receipt-sub" id="am-unit">{unitLine}</p>
+<div class="receipt-div" aria-hidden="true"></div>
+<p class="receipt-note">Computed from the shared converter engine — the same math as the main converter, never a hardcoded figure.</p>
+<p class="receipt-foot" id="am-foot">Snapshot · Sep 2026</p>
+</div>
+<div class="hr"></div>
+{sections.map((s) => (
+<div><h2 class="tool-h2">{s.h2}</h2>{s.body.map((p) => (<p set:html={p} style="margin-top:10px;color:var(--text-mid);font-size:.95rem"></p>))}</div>
+))}
+<div class="hr"></div>
+<h2 class="tool-h2">Neighbouring conversions</h2>
+<p style="margin-top:8px">{sibs.map((s, i) => (<span><a class="slink" href={pageUrl(s.slug)}>{s.h1}</a>{i < sibs.length - 1 ? " · " : ""}</span>))}</p>
+<h2 class="tool-h2">The other direction</h2>
+<p style="margin-top:8px">{opps.map((s, i) => (<span><a class="slink" href={pageUrl(s.slug)}>{s.h1}</a>{i < opps.length - 1 ? " · " : ""}</span>))}</p>
+</ToolShell>
+<script define:vars={{ slug }}>
+import { amountPageData, amountFmt } from "../../lib/amount";
+import { fxFetchLive } from "../../lib/fx";
+import { FX_SNAPSHOT } from "../../data/fx-snapshot";
+(async () => {
+  try {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), 8000);
+    const live = await fxFetchLive(ctl.signal);
+    clearTimeout(t);
+    if (!live.rates) return;
+    const d = amountPageData(slug, { rates: live.rates, as_of: live.as_of || "just now", cached: false, ok: true });
+    if (!d || d.unit_rate <= 0) return;
+    const fig = document.getElementById("am-fig");
+    const unit = document.getElementById("am-unit");
+    const foot = document.getElementById("am-foot");
+    if (fig) fig.textContent = `${amountFmt(d.amount, d.from)} = ${amountFmt(d.converted, d.to)}`;
+    if (unit) unit.textContent = `1 ${d.from} = ${amountFmt(d.unit_rate, d.to)} · 1 ${d.to} = ${amountFmt(d.rev_rate, d.from)}`;
+    if (foot) foot.textContent = "Live · " + (live.as_of || "just now");
+  } catch { /* snapshot stands, honestly labeled */ }
+})();
+</script>

@@ -1,0 +1,99 @@
+---
+import Layout from "../layouts/Layout.astro";
+// Shared tool shell: hero (title + lede + verified stamp), receipt styles,
+// input/table/FAQ system. Pages slot in their inputs + receipt + tables and
+// add one per-page <script> importing the TS engine for interactivity.
+interface Faq { q: string; a: string; }
+interface Props {
+  title: string;
+  description: string;
+  slug: string;
+  tool: string;
+  lede: string;
+  verified: string;
+  faqs?: Faq[];
+  rawFaq?: boolean;
+}
+const { title, description, slug, tool, lede, verified, faqs = [], rawFaq = false } = Astro.props;
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const ld = (obj: unknown) => JSON.stringify(obj).replace(/</g, "\\u003c");
+const pageUrl = `${(Astro.site?.toString() ?? "https://godschi10.github.io").replace(/\/$/, "")}${base}tools/${slug}/`;
+const graph: unknown[] = [{
+  "@type": "WebApplication", "@id": pageUrl + "#webapp", name: tool, url: pageUrl,
+  applicationCategory: "FinanceApplication", operatingSystem: "Any",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "NGN" }, description,
+}];
+if (faqs.length) graph.push({
+  "@type": "FAQPage", "@id": pageUrl + "#faq",
+  mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+});
+---
+<Layout title={title} description={description} crumb={tool}>
+<script type="application/ld+json" set:html={ld({ "@context": "https://schema.org", "@graph": graph })}></script>
+<section class="con tool-hero" aria-labelledby="tool-h">
+<p class="crumbs"><a href={`${base}`}>Home</a> › <a href={`${base}tools/`}>Money Calculators</a> › {tool}</p>
+<h1 class="tool-h" id="tool-h">{tool}</h1>
+<p class="vstamp"><span aria-hidden="true">◆</span> {verified}</p>
+<p class="tool-lede">{lede}</p>
+</section>
+<section class="con tool-body">
+<slot />
+{faqs.length > 0 && (
+<div class="tool-faq" aria-label="Frequently asked questions">
+<h2 class="tool-h2">Questions, answered</h2>
+{faqs.map((f) => (<details class="faq"><summary>{f.q}</summary>{rawFaq ? <p set:html={f.a}></p> : <p>{f.a}</p>}</details>))}
+</div>
+)}
+<p style="margin-top:20px"><a class="slink" href={`${base}tools/`}>← All money calculators</a></p>
+</section>
+<style is:global>
+.tool-hero{padding:40px 0 28px}
+.tool-h{font-size:clamp(1.5rem,4vw,2.25rem);line-height:1.15;letter-spacing:-.02em;font-weight:800}
+.vstamp{font-size:11px;color:var(--text-dim);margin-top:8px}
+.vstamp span{color:var(--gold-b)}
+.tool-lede{margin-top:10px;max-width:62ch;color:var(--text-mid)}
+.tool-body{padding-bottom:48px}
+.tool-h2{font-size:1.125rem;font-weight:800;letter-spacing:-.02em;margin:28px 0 12px}
+@media(min-width:768px){.tool-hero{padding:48px 0 32px}.tool-h2{font-size:1.25rem}}
+.tgrid{display:grid;gap:14px;margin-top:18px}
+@media(min-width:560px){.tgrid.c2{grid-template-columns:1fr 1fr}.tgrid.c3{grid-template-columns:1fr 1fr 1fr}}
+.field label{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px}
+.field input,.field select{width:100%;min-height:48px;padding:12px 14px;font:inherit;font-size:1rem;background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:10px}
+.field input:focus,.field select:focus{outline:2px solid var(--gold-b);outline-offset:1px;border-color:var(--gold-b)}
+.field .hint{font-size:12px;color:var(--text-dim);margin-top:4px}
+.receipt{background:#0d0b08;color:#f0ede6;border-radius:16px;padding:18px;margin-top:18px;box-shadow:var(--sh-md)}
+.receipt-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#8f8575}
+.receipt-fig{font-size:clamp(1.9rem,6vw,3rem);line-height:1.1;letter-spacing:-.03em;font-weight:800;color:var(--gold-b);margin-top:6px;overflow-wrap:anywhere}
+.receipt-sub{font-size:.85rem;color:#c4b89a;margin-top:6px}
+.receipt-div{border-top:1px dashed rgba(245,158,11,.35);margin:14px 0 10px}
+.receipt-note{font-size:.8rem;color:#c4b89a}
+.receipt-foot{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#8f8575;margin-top:10px}
+.receipt-row{display:flex;justify-content:space-between;gap:12px;font-size:.85rem;padding:6px 0;color:#e8e4dc}
+.receipt-row b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.hr{border-top:1px solid var(--border-dim);margin:26px 0 0}
+.st-wrap{overflow-x:auto;margin:18px calc(-1 * 16px) 0;padding:0 16px}
+@media(min-width:768px){.st-wrap{margin-left:0;margin-right:0;padding:0}}
+table.st{width:100%;min-width:560px;border-collapse:collapse;font-size:.75rem;font-variant-numeric:tabular-nums}
+table.st th{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)}
+table.st td{padding:10px;border-bottom:1px solid var(--border-dim)}
+table.st td.n,table.st th.n{text-align:right}
+table.st tr.win td{background:var(--gold-muted);border-left:3px solid var(--gold-b)}
+.btag{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.12em;background:var(--gold-b);color:#0d0b08;border-radius:100px;padding:2px 8px;margin-left:8px;vertical-align:middle}
+.bar-row{display:grid;grid-template-columns:1fr;gap:4px;padding:10px 0;border-bottom:1px solid var(--border-dim);font-size:.8rem}
+.bar-top{display:flex;justify-content:space-between;gap:10px}
+.bar-top b{font-variant-numeric:tabular-nums}
+.bar{height:10px;border-radius:100px;background:var(--border-dim);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--gold-b);border-radius:100px}
+.bar-note{font-size:.75rem;color:var(--text-dim)}
+details.faq{border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-top:10px;background:var(--surface)}
+details.faq summary{font-weight:700;cursor:pointer;min-height:44px}
+details.faq p{margin-top:8px;font-size:.9rem;color:var(--text-mid)}
+.swapbtn{width:44px;height:44px;border-radius:50%;border:1px solid var(--gold-b);background:var(--surface);color:var(--gold);font-size:18px;line-height:1}
+.swapbtn:hover{transform:rotate(180deg);transition:transform var(--t-md)}
+.crumbs{font-size:12px;color:var(--text-dim);margin-bottom:16px}
+.crumbs a{color:var(--gold)}
+.slink{color:var(--gold);font-weight:700}
+.prog{height:10px;border-radius:100px;background:var(--border-dim);overflow:hidden;margin-top:8px}
+.prog i{display:block;height:100%;background:var(--green-btn)}
+</style>
+</Layout>
