@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /
+Sitemap: https://godschi10.github.io/finance-astro/sitemap.xml
