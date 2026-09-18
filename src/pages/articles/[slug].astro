@@ -1,0 +1,169 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ArticleCard from "../../components/ArticleCard.astro";
+import { catBySlug } from "../../data/site";
+import { allArticles, authorBySlug, fmtMonthYear, relatedTo, tocOf } from "../../data/content";
+
+export async function getStaticPaths() {
+  const posts = await allArticles();
+  return posts.map((p) => ({ params: { slug: p.slug }, props: { slug: p.slug } }));
+}
+
+const { slug } = Astro.props;
+const all = await allArticles();
+const entry = all.find((p) => p.slug === slug)!;
+const { Content } = await entry.render();
+const d = entry.data;
+const cat = catBySlug(d.category);
+const author = authorBySlug(d.authorSlug);
+const related = relatedTo(all, entry, 3);
+const toc = tocOf(entry.body);
+const alsoRead = all.filter((p) => p.slug !== entry.slug).slice(0, 3);
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const url = `${base}articles/${entry.slug}/`;
+const origin = (Astro.site?.toString() ?? "https://godschi10.github.io").replace(/\/$/, "");
+const pageUrl = `${origin}${url}`;
+const ld = (obj: unknown) => JSON.stringify(obj).replace(/</g, "\\u003c");
+const articleLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: d.title,
+  description: d.description,
+  author: { "@type": "Person", name: d.author },
+  datePublished: d.pubDate.toISOString().slice(0, 10),
+  ...(d.updated ? { dateModified: d.updated.toISOString().slice(0, 10) } : {}),
+  mainEntityOfPage: pageUrl,
+};
+const ytId = d.videoUrl ? (d.videoUrl.match(/(?:v=|youtu\.be\/)([\w-]{6,})/)?.[1] ?? "") : "";
+---
+<Layout title={`${d.title} - GWill Finance`} description={d.description} crumb={d.title}>
+<script type="application/ld+json" set:html={ld(articleLd)}></script>
+<div class="progress" aria-hidden="true"><span id="read-progress"></span></div>
+<section class="con sg" aria-labelledby="art-h" style="padding-bottom:0">
+  <p class="crumbs"><a href={base}>Home</a> › <a href={`${base}articles/`}>All Articles</a> › <a href={`${base}category/${cat.slug}/`}>{cat.name}</a> › {d.title}</p>
+  <span class={`badge ${cat.badge}`}>{cat.name}</span>
+  <h1 class="art-h" id="art-h">{d.title}</h1>
+  <p class="art-lede">{d.description}</p>
+  <div class="feat-meta" style="margin-top:12px">
+    <a href={`${base}author/${d.authorSlug}/`} style="color:var(--gold);font-weight:700">{d.author}</a>
+    <span class="feat-dot" aria-hidden="true"></span>
+    <span>{fmtMonthYear(d.pubDate)}</span>
+    <span class="feat-dot" aria-hidden="true"></span>
+    <span>{d.readMins} min read</span>
+    {d.updated && (<><span class="feat-dot" aria-hidden="true"></span><span>Updated {fmtMonthYear(d.updated)}</span></>)}
+  </div>
+</section>
+<section class="con art-section" aria-label="Article content">
+  <div class="legal-layout art-layout">
+    <div class="art-main">
+      <div class="disc-box" role="note">
+        <strong>Affiliate note.</strong> Some links to apps may earn us a commission at no cost to you. Rankings are by testing, never by payment.
+      </div>
+      {ytId ? (
+        <div class="video-facade" data-video={ytId}>
+          <span class="video-emoji" aria-hidden="true">▶</span>
+          <p><strong>Video walkthrough</strong><br><span>Watch on YouTube — loads only when you press play.</span></p>
+          <button type="button" class="btn b-gold b-sm" data-play>Play video</button>
+        </div>
+      ) : (
+        <div class="feat-img art-hero" role="img" aria-label={`${cat.name} article artwork`}>
+          <span aria-hidden="true">{cat.emoji}</span>
+          <span class={`tile-wm ${cat.badge}`} aria-hidden="true">{cat.name}</span>
+        </div>
+      )}
+      <div class="art-body" id="art-body">
+        <Content />
+      </div>
+      <div class="share-row" aria-label="Share this article">
+        <span class="share-label">Share:</span>
+        <button type="button" class="chip" id="copy-link">Copy link</button>
+        <a class="chip" href={`https://x.com/intent/tweet?text=${encodeURIComponent(d.title)}`} target="_blank" rel="noopener noreferrer" style="text-decoration:none">Post on X</a>
+        <a class="chip" href={`https://wa.me/?text=${encodeURIComponent(d.title + " " + pageUrl)}`} target="_blank" rel="noopener noreferrer" style="text-decoration:none">WhatsApp</a>
+      </div>
+      <div class="author-bio">
+        <div class="author-mark" aria-hidden="true">₦</div>
+        <div>
+          <p class="author-role">Written by</p>
+          <p><a href={`${base}author/${d.authorSlug}/`} style="color:var(--gold);font-weight:800">{author.name}</a> <span class="author-role">· {author.role}</span></p>
+          <p class="author-text">{author.bio}</p>
+        </div>
+      </div>
+      <div class="comments-hold" aria-label="Comments">
+        <span class="phase-tag">Comments — read-only in v1</span>
+        <p><strong>Discussion opens with the community launch.</strong> This static edition ships without a comment thread on purpose: no login wall, no third-party tracker, no fake box that swallows your words. Replies live on X meanwhile — every article links its share thread there.</p>
+      </div>
+    </div>
+    <aside class="art-side" aria-label="Article sidebar">
+      {toc.length > 0 && (
+        <nav class="legal-toc" aria-label="On this page">
+          <p class="legal-toc-label">On this page</p>
+          <ol class="legal-toc-list" style="list-style:none inside" id="toc-list">
+            {toc.map((t) => (<li><a href={`#${t.id}`} data-toc={t.id}>{t.text}</a></li>))}
+          </ol>
+        </nav>
+      )}
+      <nav class="legal-toc" aria-label="Also read" style="margin-top:20px">
+        <p class="legal-toc-label">Also read</p>
+        <ol class="legal-toc-list" style="list-style:none inside">
+          {alsoRead.map((p) => (<li><a href={`${base}articles/${p.slug}/`}>{p.data.title}</a></li>))}
+        </ol>
+      </nav>
+    </aside>
+  </div>
+</section>
+<section class="con sg" aria-labelledby="rel-h">
+  <div class="shd"><h2 class="stitle" id="rel-h">Keep reading</h2><a class="slink" href={`${base}articles/`}>All articles →</a></div>
+  <div class="g3">
+    {related.map((p) => (
+      <ArticleCard slug={p.slug} title={p.data.title} excerpt={p.data.description} category={p.data.category} date={fmtMonthYear(p.data.pubDate)} readMins={p.data.readMins} author={p.data.author} />
+    ))}
+  </div>
+</section>
+<script is:inline define:vars={{ tocIds: toc.map((t) => t.id) }}>
+(function(){
+try{
+var body=document.getElementById("art-body");
+if(body){
+var hs=Array.prototype.slice.call(body.querySelectorAll("h2"));
+hs.forEach(function(h,i){ if(tocIds[i]) h.id=tocIds[i]; });
+}
+var wrap=document.querySelector(".video-facade");
+if(wrap){
+var btn=wrap.querySelector("[data-play]");
+if(btn)btn.addEventListener("click",function(){
+var id=wrap.getAttribute("data-video")||"";
+var f=document.createElement("iframe");
+f.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(id)+"?autoplay=1&rel=0";
+f.title="Video walkthrough";
+f.allow="accelerometer; autoplay; encrypted-media; picture-in-picture";
+f.setAttribute("allowfullscreen","");
+f.style.cssText="position:absolute;inset:0;width:100%;height:100%;border:0";
+wrap.innerHTML="";
+wrap.style.position="relative";
+wrap.appendChild(f);
+});
+}
+var copy=document.getElementById("copy-link");
+if(copy)copy.addEventListener("click",function(){
+var done=function(){copy.textContent="Copied ✓";setTimeout(function(){copy.textContent="Copy link"},2000);};
+try{
+if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(window.location.href).then(done,done);}
+else{done();}
+}catch(e){done();}
+});
+var bar=document.getElementById("read-progress");
+var reduced=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if(bar&&!reduced){
+var onScroll=function(){
+var h=document.documentElement;
+var max=h.scrollHeight-h.clientHeight;
+var p=max>0?(h.scrollTop||document.body.scrollTop)/max:0;
+bar.style.width=(p*100).toFixed(2)+"%";
+};
+document.addEventListener("scroll",onScroll,{passive:true});
+onScroll();
+}
+}catch(e){}
+})();
+</script>
+</Layout>

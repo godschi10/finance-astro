@@ -1,0 +1,37 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { SITE } from "../data/site";
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+---
+<Layout title="Contact - GWill Finance" description="Contact GWill Finance: corrections, app tips, partnerships. No inbox black hole." crumb="Contact">
+<section class="legal-hero" aria-labelledby="contact-h">
+  <div class="con legal-hero-inner">
+    <p class="crumbs"><a href={base}>Home</a> › Contact</p>
+    <p class="legal-hero-label">Contact</p>
+    <h1 class="legal-hero-title" id="contact-h">Talk <span class="g">money.</span></h1>
+    <div class="ledger" aria-hidden="true"></div>
+    <p class="hero-sub">Corrections, app tips, partnership enquiries. Rate corrections jump the queue — wrong numbers hurt people.</p>
+  </div>
+</section>
+<section class="con sg" aria-label="Contact options">
+  <div class="legal-layout">
+    <div class="art-body" style="max-width:62ch">
+      <h2>Fastest routes</h2>
+      <ul>
+        <li><strong>X:</strong> <a href={SITE.socials.x} target="_blank" rel="noopener noreferrer">message on X</a> — fastest for tips and corrections.</li>
+        <li><strong>LinkedIn:</strong> <a href={SITE.socials.linkedin} target="_blank" rel="noopener noreferrer">connect on LinkedIn</a> — best for partnerships.</li>
+        <li><strong>GitHub:</strong> <a href={SITE.socials.github} target="_blank" rel="noopener noreferrer">open an issue</a> — best for calculator bugs (numbers included).</li>
+      </ul>
+      <h2>What to include</h2>
+      <p>For corrections: the page, the wrong figure, and your source. For app tips: the app name and what it did with your money. Screenshots beat paragraphs.</p>
+    </div>
+    <aside aria-label="Contact form status">
+      <div class="hold">
+        <span class="phase-tag">Form lands with the server leg</span>
+        <h2 class="hold-title" style="font-size:1.25rem">No form here yet — on purpose.</h2>
+        <p style="margin-top:8px">The routed inbox needs a delivery endpoint the site does not have yet. A form that silently drops your message would be worse than none — use the routes above meanwhile.</p>
+      </div>
+    </aside>
+  </div>
+</section>
+</Layout>

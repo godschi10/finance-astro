@@ -1,0 +1,53 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ArticleCard from "../../components/ArticleCard.astro";
+import { CATEGORIES, catBySlug } from "../../data/site";
+import { allArticles, fmtMonthYear } from "../../data/content";
+
+export async function getStaticPaths() {
+  const posts = await allArticles();
+  return CATEGORIES.map((c) => ({
+    params: { slug: c.slug },
+    props: {
+      posts: posts
+        .filter((p) => p.data.category === c.slug)
+        .map((p) => ({
+          slug: p.slug,
+          title: p.data.title,
+          excerpt: p.data.description,
+          date: fmtMonthYear(p.data.pubDate),
+          readMins: p.data.readMins,
+          author: p.data.author,
+        })),
+    },
+  }));
+}
+
+const { slug } = Astro.params;
+const { posts } = Astro.props;
+const cat = catBySlug(slug ?? "");
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+---
+<Layout title={`${cat.name} Guides in Nigeria - GWill Finance`} description={`Every ${cat.name.toLowerCase()} guide for Nigerians: tested, priced in naira, free to read.`} crumb={cat.name}>
+<section class="con sg" aria-labelledby="cat-h">
+  <p class="crumbs"><a href={base}>Home</a> › <a href={`${base}articles/`}>All Articles</a> › {cat.name}</p>
+  <span class={`badge ${cat.badge}`}>{cat.emoji} {cat.name}</span>
+  <h1 class="hold-title" id="cat-h">{cat.name} in Nigeria</h1>
+  <p style="margin-top:8px;color:var(--text-mid);max-width:62ch">Every {cat.name.toLowerCase()} guide, newest first.</p>
+  <div class="cp-strip" style="margin-top:20px" role="group" aria-label="Browse other categories">
+    {CATEGORIES.map((c) => (
+      <a class="chip" href={`${base}category/${c.slug}/`} style="text-decoration:none" aria-current={c.slug === slug ? "page" : undefined}>{c.name}</a>
+    ))}
+  </div>
+  {posts.length === 0 ? (
+    <p class="card-meta" style="margin-top:20px">No guides here yet — the next batch lands in this category first.</p>
+  ) : (
+    <div class="g3" style="margin-top:20px">
+      {posts.map((p) => (
+        <ArticleCard slug={p.slug} title={p.title} excerpt={p.excerpt} category={slug!} date={p.date} readMins={p.readMins} author={p.author} />
+      ))}
+    </div>
+  )}
+  <div class="ad-bg">Ad slot — fills when ads are configured.</div>
+</section>
+</Layout>

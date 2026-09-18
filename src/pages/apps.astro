@@ -1,0 +1,63 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { APPS } from "../data/content";
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const cats = ["All", ...Array.from(new Set(APPS.map((a) => a.category)))];
+---
+<Layout title="Finance Apps - GWill Finance" description="Nigerian finance apps, tested with real money: savings, dollar accounts, investing. No sponsored order." crumb="Finance Apps">
+<section class="legal-hero" aria-labelledby="apps-h">
+  <div class="con legal-hero-inner">
+    <p class="crumbs"><a href={base}>Home</a> › Apps</p>
+    <p class="legal-hero-label">App directory</p>
+    <h1 class="legal-hero-title" id="apps-h">Apps worth <span class="g">your naira.</span></h1>
+    <div class="ledger" aria-hidden="true"></div>
+    <p class="hero-sub">Every listing below held real money in testing. Order is by usefulness, never by payment — sponsored placement does not exist here.</p>
+  </div>
+</section>
+<section class="con sg" aria-label="App listings">
+  <div class="cp-strip" data-apps-filter role="group" aria-label="Filter apps by category">
+    {cats.map((c, i) => (
+      <button type="button" class={`cp${i === 0 ? " on" : ""}`} data-acat={c === "All" ? "" : c} aria-pressed={i === 0 ? "true" : "false"}>{c}</button>
+    ))}
+  </div>
+  <div class="g3" id="apps-grid" style="margin-top:20px">
+    {APPS.map((a) => (
+      <article class="card" data-acat={a.category}>
+        <div class="card-art" role="img" aria-label={`${a.name} artwork`}><span aria-hidden="true">{a.emoji}</span><span class={`tile-wm ${a.badge}`} aria-hidden="true">{a.category}</span></div>
+        <div class="card-body">
+          <span class={`badge ${a.badge}`}>{a.category}</span>
+          <p class="card-t">{a.name}</p>
+          <p class="card-ex" style="-webkit-line-clamp:4">{a.desc}</p>
+          <div class="app-stats">
+            {a.stats.map(([k, v]) => (<span><strong>{v}</strong> {k}</span>))}
+          </div>
+          <p class="card-meta app-links">
+            <a class="slink" href={`${base}articles/${a.reviewSlug}/`}>Read the review →</a>
+            <a class="slink" href={a.url} target="_blank" rel="noopener noreferrer sponsored">Visit ↗</a>
+          </p>
+        </div>
+      </article>
+    ))}
+  </div>
+  <p class="card-meta" id="apps-empty" hidden>No apps in this category yet.</p>
+  <div class="ad-bg">Ad slot — fills when ads are configured.</div>
+</section>
+<script is:inline>
+(function(){
+try{
+var strip=document.querySelector("[data-apps-filter]");
+if(!strip)return;
+var btns=Array.prototype.slice.call(strip.querySelectorAll("[data-acat]"));
+var cards=Array.prototype.slice.call(document.querySelectorAll("#apps-grid .card"));
+var empty=document.getElementById("apps-empty");
+btns.forEach(function(b){b.addEventListener("click",function(){
+btns.forEach(function(x){x.classList.toggle("on",x===b);x.setAttribute("aria-pressed",x===b?"true":"false")});
+var cat=b.getAttribute("data-acat")||"";
+var shown=0;
+cards.forEach(function(c){var on=!cat||c.getAttribute("data-acat")===cat;c.hidden=!on;if(on)shown++;});
+if(empty)empty.hidden=shown!==0;
+});});
+}catch(e){}
+})();
+</script>
+</Layout>

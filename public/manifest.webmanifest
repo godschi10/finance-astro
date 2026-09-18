@@ -1,0 +1,13 @@
+{
+  "name": "GWill Finance",
+  "short_name": "GWill Finance",
+  "description": "Nigerian money. Explained.",
+  "start_url": "/finance-astro/",
+  "scope": "/finance-astro/",
+  "display": "standalone",
+  "background_color": "#0d0b08",
+  "theme_color": "#0d0b08",
+  "icons": [
+    { "src": "/finance-astro/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

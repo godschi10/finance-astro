@@ -1,10 +1,14 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { SITE, CATEGORIES, POSTS, catBySlug } from "../data/site";
-const featured = POSTS[0];
-const rest = POSTS.slice(1);
-const fcat = catBySlug(featured.category);
+import ArticleCard from "../components/ArticleCard.astro";
+import { SITE, CATEGORIES, catBySlug } from "../data/site";
+import { allArticles, fmtMonthYear } from "../data/content";
+const posts = await allArticles();
+const featured = posts[0];
+const fcat = catBySlug(featured.data.category);
+const rest = posts.slice(1);
 const year = new Date().getFullYear();
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
 <Layout title="Nigerian Money, Explained - GWill Finance" description={SITE.description} crumb="">
 <!-- 2. hero -->
@@ -16,16 +20,16 @@ const year = new Date().getFullYear();
 <p class="hero-sub">Savings, investing, dollar accounts, crypto, and every fintech app worth your attention. Tested by Gwill. No jargon. No AI slop.</p>
 <div class="ledger" aria-hidden="true"></div>
 <div class="hero-acts">
-<a class="btn b-gold" href="#latest">Browse All Articles →</a>
-<a class="btn b-ghost" href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/tools/`}>Money Calculators</a>
+<a class="btn b-gold" href={`${base}articles/`}>Browse All Articles →</a>
+<a class="btn b-ghost" href={`${base}tools/`}>Money Calculators</a>
 </div>
 <div class="hero-cats">
 <span class="hero-cats-lbl">Topics:</span>
-{CATEGORIES.map((c) => (<span class="chip">{c.emoji} {c.name}</span>))}
+{CATEGORIES.map((c) => (<a class="chip" href={`${base}category/${c.slug}/`} style="text-decoration:none">{c.emoji} {c.name}</a>))}
 </div>
 <!-- 3. stats strip -->
 <div class="stat-strip" aria-label="Site statistics">
-<div class="si"><div class="si-n" data-count="10" data-suffix="+">10+</div><div class="si-l">In-depth guides</div></div>
+<div class="si"><div class="si-n" data-count={posts.length} data-suffix="">{posts.length}</div><div class="si-l">In-depth guides</div></div>
 <div class="si"><div class="si-n" data-count="12" data-suffix="+">12+</div><div class="si-l">Finance apps reviewed</div></div>
 <div class="si"><div class="si-n" data-count={year}>{year}</div><div class="si-l">All data current</div></div>
 <div class="si"><div class="si-n">₦ 0</div><div class="si-l">Free to read</div></div>
@@ -36,18 +40,19 @@ const year = new Date().getFullYear();
 
 <!-- 4. featured article -->
 <section class="con sg" aria-labelledby="feat-h">
-<div class="shd"><h2 class="stitle" id="feat-h">Featured Article</h2></div>
+<div class="shd"><h2 class="stitle" id="feat-h">Featured Article</h2><a class="slink" href={`${base}articles/`}>All articles →</a></div>
 <article class="feat">
 <div class="feat-img" role="img" aria-label={`${fcat.name} article artwork`}><span aria-hidden="true">{fcat.emoji}</span><span class={`tile-wm ${fcat.badge}`} aria-hidden="true">{fcat.name}</span></div>
 <div class="feat-body">
 <span class={`badge ${fcat.badge}`}>{fcat.name}</span>
-<p class="feat-t">{featured.title}</p>
-<p class="feat-ex">{featured.excerpt}</p>
+<p class="feat-t"><a href={`${base}articles/${featured.slug}/`} style="text-decoration:none;color:inherit">{featured.data.title}</a></p>
+<p class="feat-ex">{featured.data.description}</p>
 <div class="feat-meta">
-<span>{featured.date}</span><span class="feat-dot" aria-hidden="true"></span>
-<span>{featured.readMins} min read</span><span class="feat-dot" aria-hidden="true"></span>
-<span>{featured.author}</span>
+<span>{fmtMonthYear(featured.data.pubDate)}</span><span class="feat-dot" aria-hidden="true"></span>
+<span>{featured.data.readMins} min read</span><span class="feat-dot" aria-hidden="true"></span>
+<span>{featured.data.author}</span>
 </div>
+<p style="margin-top:16px"><a class="btn b-gold b-sm" href={`${base}articles/${featured.slug}/`}>Read →</a></p>
 </div>
 </article>
 </section>
@@ -56,43 +61,32 @@ const year = new Date().getFullYear();
 <section class="con sg" id="latest" aria-labelledby="latest-h">
 <div class="shd">
 <h2 class="stitle" id="latest-h">Latest Articles</h2>
-<span class="slink" aria-hidden="true">Full archive lands with Phase 2 →</span>
+<a class="slink" href={`${base}articles/`}>View all →</a>
 </div>
 <div class="cp-strip" data-gwill-filter role="group" aria-label="Filter articles by category">
 <button type="button" class="cp on" data-gwill-cat="" aria-pressed="true">All</button>
 {CATEGORIES.map((c) => (<button type="button" class="cp" data-gwill-cat={c.slug} aria-pressed="false">{c.name}</button>))}
 </div>
 <div class="g3" id="gwill-posts-grid" style="margin-top:20px">
-{rest.map((p) => {
-  const c = catBySlug(p.category);
-  return (
-  <article class="card" data-cat={p.category}>
-  <div class="card-art" role="img" aria-label={`${c.name} article artwork`}><span aria-hidden="true">{c.emoji}</span><span class={`tile-wm ${c.badge}`} aria-hidden="true">{c.name}</span></div>
-  <div class="card-body">
-  <span class={`badge ${c.badge}`}>{c.name}</span>
-  <p class="card-t">{p.title}</p>
-  <p class="card-ex">{p.excerpt}</p>
-  <p class="card-meta">{p.date} · {p.readMins} min read · {p.author}</p>
-  </div>
-  </article>
-  );
-})}
+{rest.map((p) => (
+<ArticleCard slug={p.slug} title={p.data.title} excerpt={p.data.description} category={p.data.category} date={fmtMonthYear(p.data.pubDate)} readMins={p.data.readMins} author={p.data.author} />
+))}
 </div>
-<p class="card-meta" id="filter-empty" hidden>No articles in this category yet — more guides land with Phase 2.</p>
+<p class="card-meta" id="filter-empty" hidden>No articles in this category yet — check the full archive.</p>
 <div class="ad-bg">Ad slot — fills when ads are configured.</div>
 </section>
 
-<!-- 7. newsletter hold band (static UI only — capture lands with Phase 2) -->
+<!-- 7. newsletter band (honest hold — capture opens at launch) -->
 <section class="con sg" id="newsletter" aria-labelledby="nl-h">
 <div class="nl-s">
 <div class="nl-copy">
 <h2 class="nl-h" id="nl-h">Nigerian money news, weekly.</h2>
-<p>Rate changes, app reviews, and the financial moves worth making. Free, no spam, unsubscribe anytime.</p>
+<p>Rate changes, app reviews, and the financial moves worth making. Free, no spam, unsubscribe anytime. The list opens at launch.</p>
 <div class="nl-meta"><span>✓ Free</span><span class="dot" aria-hidden="true"></span><span>✓ No spam</span><span class="dot" aria-hidden="true"></span><span>✓ Unsubscribe anytime</span></div>
 </div>
 <div>
-<p style="color:#c4b89a;font-size:15px">Email signup lands with Phase 2 — no form here yet on purpose.</p>
-<p style="margin-top:12px"><a class="btn b-gold" href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/newsletter/`}>About the newsletter →</a></p>
+<p style="color:#c4b89a;font-size:15px">No email field here yet — a form that cannot subscribe you would be a fake control.</p>
+<p style="margin-top:12px"><a class="btn b-gold" href={`${base}newsletter/`}>About the newsletter →</a></p>
 </div>
 </div>
 </section>

@@ -1,14 +1,119 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { CATEGORIES } from "../data/site";
+import { TOOLS, allArticles, fmtMonthYear } from "../data/content";
+
+// Build-time index: every article (with body text for full-text match) +
+// every tool. No backend — the client filters this JSON in-page.
+const posts = await allArticles();
+const index = {
+  articles: posts.map((p) => ({
+    kind: "article",
+    slug: p.slug,
+    title: p.data.title,
+    desc: p.data.description,
+    category: p.data.category,
+    categoryName: CATEGORIES.find((c) => c.slug === p.data.category)?.name ?? "Finance",
+    date: fmtMonthYear(p.data.pubDate),
+    readMins: p.data.readMins,
+    author: p.data.author,
+    body: p.body.slice(0, 2000),
+  })),
+  tools: TOOLS.map((t) => ({ kind: "tool", slug: t.slug, title: t.name, desc: t.desc, category: "tools", categoryName: "Calculator" })),
+};
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const initialQ = (Astro.url.searchParams.get("q") ?? "").slice(0, 80);
 ---
-<Layout title="Search - GWill Finance" description="Site search lands with Phase 2." crumb="Search">
+<Layout title="Search - GWill Finance" description="Search every Nigerian money guide and calculator — instant, on your device, no tracking." crumb="Search">
 <section class="con sg" aria-labelledby="search-h">
-<p class="crumbs" style="color:var(--text-dim);font-size:12px;margin-bottom:16px"><a href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/`} style="color:var(--gold)">Home</a> › Search</p>
-<div class="hold">
-<span class="phase-tag">Lands with Phase 2</span>
-<h1 class="hold-title" id="search-h">Search</h1>
-<p style="margin-top:8px">Full-text search across every guide — with category pills, term highlighting, and spelling suggestions — lands with Phase 2 alongside the article archive. There is deliberately no search box on this page yet: a box that cannot search would be a fake control.</p>
-<p style="margin-top:12px"><a class="slink" href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/#latest`}>Browse the latest articles instead →</a></p>
-</div>
+  <p class="crumbs"><a href={base}>Home</a> › Search</p>
+  <h1 class="hold-title" id="search-h">Search</h1>
+  <p style="margin-top:8px;color:var(--text-mid);max-width:62ch">Every guide and calculator, searched on your device. Nothing you type leaves this page.</p>
+  <form class="search-form" id="search-form" role="search" action={`${base}search/`} method="get">
+    <label class="sr-only" for="search-input">Search guides and calculators</label>
+    <input class="form-input" id="search-input" name="q" type="search" value={initialQ} placeholder="Try “dollar account”, “tax”, “PiggyVest”…" autocomplete="off" minlength="2" maxlength="80">
+    <button class="btn b-gold b-sm" type="submit">Search</button>
+  </form>
+  <div class="cp-strip" style="margin-top:16px" role="group" aria-label="Filter by section">
+    <button type="button" class="cp on" data-scat="" aria-pressed="true">Everything</button>
+    {CATEGORIES.map((c) => (<button type="button" class="cp" data-scat={c.slug} aria-pressed="false">{c.name}</button>))}
+    <button type="button" class="cp" data-scat="tools" aria-pressed="false">Calculators</button>
+  </div>
+  <p class="result-count" id="result-count" role="status" aria-live="polite"></p>
+  <div class="g3" id="search-results" style="margin-top:16px"></div>
+  <div id="search-empty" hidden>
+    <div class="hold" style="margin-top:16px">
+      <span class="phase-tag">No matches</span>
+      <h2 class="hold-title" style="font-size:1.25rem">Nothing found for that search.</h2>
+      <p style="margin-top:8px">Check the spelling, try fewer words — or start from one of these:</p>
+      <div class="cp-strip" style="margin-top:12px" id="also-searched">
+        <button type="button" class="cp" data-q="savings">savings</button>
+        <button type="button" class="cp" data-q="dollar">dollar</button>
+        <button type="button" class="cp" data-q="tax">tax</button>
+        <button type="button" class="cp" data-q="crypto">crypto</button>
+        <button type="button" class="cp" data-q="transfer">transfer</button>
+      </div>
+    </div>
+  </div>
+  <script type="application/json" id="search-index" set:html={JSON.stringify(index)}></script>
 </section>
+<script is:inline>
+(function(){
+try{
+var idx=JSON.parse(document.getElementById("search-index").textContent||'{"articles":[],"tools":[]}');
+var input=document.getElementById("search-input");
+var form=document.getElementById("search-form");
+var results=document.getElementById("search-results");
+var count=document.getElementById("result-count");
+var empty=document.getElementById("search-empty");
+var pills=Array.prototype.slice.call(document.querySelectorAll("[data-scat]"));
+var also=Array.prototype.slice.call(document.querySelectorAll("[data-q]"));
+var cat="";
+var homeHref=(function(){var c=document.querySelector(".crumbs a");return c?c.getAttribute("href"):"./";})();
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function hi(text,q){
+  if(!q)return esc(text);
+  var i=text.toLowerCase().indexOf(q.toLowerCase());
+  if(i<0)return esc(text);
+  return esc(text.slice(0,i))+"<mark>"+esc(text.slice(i,i+q.length))+"</mark>"+esc(text.slice(i+q.length));
+}
+function href(it){return it.kind==="tool"?homeHref+"tools/"+it.slug+"/":homeHref+"articles/"+it.slug+"/";}
+function run(){
+  var q=(input.value||"").trim();
+  var ql=q.toLowerCase();
+  var pool=idx.articles.concat(idx.tools);
+  var hits=pool.filter(function(it){
+    if(cat&&it.category!==cat)return false;
+    if(!ql)return true;
+    return (it.title+" "+it.desc+" "+(it.body||"")+" "+it.categoryName).toLowerCase().indexOf(ql)>=0;
+  });
+  results.innerHTML=hits.map(function(it){
+    var meta=it.kind==="tool"?"Calculator":(it.categoryName+" · "+it.date+" · "+it.readMins+" min read");
+    return '<article class="card"><div class="card-body">'+
+      '<span class="badge bsl">'+esc(it.categoryName)+'</span>'+
+      '<p class="card-t"><a href="'+href(it)+'" style="text-decoration:none;color:inherit">'+hi(it.title,q)+'</a></p>'+
+      '<p class="card-ex">'+hi(it.desc,q)+'</p>'+
+      '<p class="card-meta">'+esc(meta)+'</p></div></article>';
+  }).join("");
+  var label=!ql?("Showing all "+hits.length+" entries"):(hits.length+" "+(hits.length===1?"result":"results")+' for “'+q+'”');
+  count.textContent=label;
+  empty.hidden=hits.length!==0;
+  try{
+    var u=new URL(window.location.href);
+    if(q)u.searchParams.set("q",q);else u.searchParams.delete("q");
+    window.history.replaceState(null,"",u.toString());
+  }catch(e){}
+}
+pills.forEach(function(p){p.addEventListener("click",function(){
+  pills.forEach(function(x){x.classList.toggle("on",x===p);x.setAttribute("aria-pressed",x===p?"true":"false");});
+  cat=p.getAttribute("data-scat")||"";
+  run();
+});});
+also.forEach(function(b){b.addEventListener("click",function(){input.value=b.getAttribute("data-q")||"";run();input.focus();});});
+form.addEventListener("submit",function(e){e.preventDefault();run();});
+input.addEventListener("input",run);
+run();
+}catch(e){}
+})();
+</script>
 </Layout>

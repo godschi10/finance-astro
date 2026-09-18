@@ -1,0 +1,40 @@
+---
+import Layout from "../layouts/Layout.astro";
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const doing = [
+  { emoji: "📚", title: "In-depth guides", text: "Savings, investing, crypto, banking, remittance, dollar accounts — each one tested, each one priced in naira." },
+  { emoji: "🧪", title: "App reviews", text: "Real transfers through PiggyVest, Grey, Geegpay and the rest, so you know the true cost before your money moves." },
+  { emoji: "🧮", title: "Money calculators", text: "Sixteen tools with verified maths — tax, transfers, savings, loans — plus live amount conversions." },
+  { emoji: "✉️", title: "Weekly letter", text: "Rate changes and money moves, launching soon. No spam, unsubscribe anytime." },
+];
+---
+<Layout title="About - GWill Finance" description="About GWill Finance: independent Nigerian money guides — tested with real transfers, free to read." crumb="About">
+<section class="legal-hero" aria-labelledby="about-h">
+  <div class="con legal-hero-inner">
+    <p class="crumbs"><a href={base}>Home</a> › About</p>
+    <p class="legal-hero-label">About</p>
+    <h1 class="legal-hero-title" id="about-h">Nigerian money, <span class="g">tested —</span> not theorised.</h1>
+    <div class="ledger" aria-hidden="true"></div>
+    <p class="hero-sub">GWill Finance is an independent personal-finance publication for Nigerians. Every guide is tried with real money before it is published. No sponsored rankings. No jargon. No AI slop.</p>
+  </div>
+</section>
+<section class="con sg" aria-label="What this site does">
+  <div class="shd"><h2 class="stitle">What I do</h2></div>
+  <div class="g3">
+    {doing.map((d) => (
+      <article class="card"><div class="card-body">
+        <span style="font-size:32px" aria-hidden="true">{d.emoji}</span>
+        <p class="card-t">{d.title}</p>
+        <p class="card-ex" style="-webkit-line-clamp:4">{d.text}</p>
+      </div></article>
+    ))}
+  </div>
+  <div class="art-body" style="margin-top:28px;max-width:62ch">
+    <h2>How testing works</h2>
+    <p>When an app is reviewed here, it held real naira. Transfers are timed, spreads are measured against the mid-market rate, withdrawal penalties are triggered on purpose — so the numbers you read are the numbers you will meet.</p>
+    <h2>How the site stays free</h2>
+    <p>Selected links to apps may earn a commission at no cost to you. It never buys placement: the cheapest honest option wins every comparison, commission or not. Anything paid for is labelled.</p>
+  </div>
+  <p style="margin-top:20px"><a class="btn b-gold" href={`${base}articles/`}>Browse all articles →</a></p>
+</section>
+</Layout>

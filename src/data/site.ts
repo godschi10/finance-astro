@@ -1,7 +1,7 @@
-// Phase 1 static data — baked-in theme defaults (ACF absent in v1).
+// Static data — baked-in theme defaults (ACF absent in v1).
 // Source: gwill-finance-theme inc/finance-helpers.php, inc/footer-links.php,
 // inc/acf-field-groups.php defaults. Maintained tables (FX, transfer fees,
-// savings rates) land with Phase 2 as dated src/data/*.ts files.
+// savings rates) live as dated src/data/*.ts files.
 export const SITE = {
   name: "GWill Finance",
   tagline: "Nigerian money. Explained.",
@@ -35,11 +35,13 @@ export const CATEGORIES: Category[] = [
   { slug: "dollar-accounts", name: "Dollar Accounts", emoji: "\u{1F4B5}", badge: "bsl", art: "i-dol" },
 ];
 
-// Phase 1 nav: only routes that exist in this phase (honest chrome —
-// articles/apps/about land in later phases and join the nav then).
+// Phase 3 nav: every shipped route (honest chrome — nothing links nowhere).
 export const NAV = [
-  { label: "Home", href: "./" },
-  { label: "Money Calculators", href: "tools/" },
+  { label: "Articles", href: "articles/" },
+  { label: "Calculators", href: "tools/" },
+  { label: "Apps", href: "apps/" },
+  { label: "About", href: "about/" },
+  { label: "Contact", href: "contact/" },
   { label: "Search", href: "search/" },
   { label: "Newsletter", href: "newsletter/" },
 ];
@@ -54,8 +56,8 @@ export interface Post {
   author: string;
 }
 
-// Phase 1 static sample posts — one per brand category + one extra.
-// Real content collections land with Phase 2.
+// Homepage seed excerpts mirror the article collection (src/content/articles/).
+// The collection is the source of truth at render time.
 export const POSTS: Post[] = [
   {
     slug: "piggyvest-vs-cowrywise-2026",
@@ -138,7 +140,7 @@ export const catBySlug = (slug: string): Category =>
     art: "i-dol",
   };
 
-// Static ticker snapshot — honest placeholder. Live refresh lands Phase 2 (R3).
+// Static ticker snapshot — honest placeholder. Live refresh per R3.
 export const TICKER_STATIC = [
   { label: "USD/NGN", value: "—" },
   { label: "GBP/NGN", value: "—" },

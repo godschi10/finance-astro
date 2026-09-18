@@ -40,6 +40,7 @@ const fontFaces = [400, 700, 800].map((weight) =>
 <meta name="deployment" content="GitHub Pages staging — not production">
 {!noCanonical && <link rel="canonical" href={canonical}>}
 <link rel="icon" type="image/svg+xml" href={`${base}icons/icon.svg`}>
+<link rel="manifest" href={`${base}manifest.webmanifest`}>
 <link rel="apple-touch-icon" sizes="180x180" href={`${base}icons/icon-180.png`}>
 <meta property="og:type" content="website">
 <meta property="og:url" content={ogUrl}>
@@ -254,6 +255,58 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--gold-b);outline-off
 .hold p{color:var(--text-mid);font-size:15px;max-width:62ch}
 .hold ul{margin-top:12px;padding-left:20px;color:var(--text-mid);font-size:15px;display:flex;flex-direction:column;gap:6px}
 .phase-tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);background:var(--gold-muted);border:1px solid var(--gold-border);border-radius:var(--pill);padding:4px 12px;margin-bottom:12px}
+.sg .crumbs a{color:var(--gold)}
+/* Phase 3 — articles, search, forms */
+/* Article single */
+.art-h{font-size:clamp(1.75rem,3.8vw,2.5rem);font-weight:800;line-height:1.08;letter-spacing:-.035em;margin-top:12px;overflow-wrap:anywhere}
+.art-lede{margin-top:12px;color:var(--text-mid);font-size:1rem;line-height:1.8;max-width:62ch}
+.art-section{padding-block:8px 56px}
+.art-main{min-width:0}
+.disc-box{background:var(--gold-muted);border:1px solid var(--gold-border);border-left:3px solid var(--gold);border-radius:var(--r-md);padding:14px 18px;font-size:14px;line-height:1.7;color:var(--text-mid);margin-top:20px;overflow-wrap:anywhere}
+.art-hero{border-radius:var(--r-md);overflow:hidden;margin-top:20px;min-height:180px}
+.art-body{margin-top:20px;color:var(--art-copy);font-size:1rem;line-height:1.8;min-width:0;overflow-wrap:anywhere}
+.art-body h2{font-size:1.125rem;font-weight:800;letter-spacing:-.02em;margin:28px 0 8px;overflow-wrap:anywhere}
+.art-body h2::before{content:"";display:block;width:48px;height:3px;background:var(--gold);margin-bottom:12px}
+.art-body p{margin-top:12px;max-width:72ch}
+.art-body ul,.art-body ol{margin-top:12px;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-width:72ch}
+.art-body a{color:var(--gold)}
+.art-body table{display:block;width:100%;overflow-x:auto;border:1px solid var(--border);border-radius:var(--r-md);margin-top:16px;font-size:.75rem;border-collapse:collapse}
+.art-body th,.art-body td{padding:12px 14px;border-bottom:1px solid var(--border-dim);text-align:left;white-space:normal;min-width:120px}
+.art-body thead th{background:var(--surface-2);font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);white-space:nowrap}
+.art-body tbody tr:hover{background:var(--gold-muted)}
+.art-body tbody tr:last-child th,.art-body tbody tr:last-child td{border-bottom:none}
+.share-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:24px;padding-top:20px;border-top:1px solid var(--border-dim)}
+.share-label{font-size:13px;font-weight:700;color:var(--text-dim)}
+.author-bio{display:flex;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;margin-top:24px;min-width:0}
+.author-bio>div{min-width:0}
+.author-mark{flex-shrink:0;width:48px;height:48px;display:grid;place-items:center;background:var(--dark);color:var(--gold-b);font-weight:800;font-size:22px;border-radius:var(--r-md)}
+.author-role{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim)}
+.author-text{margin-top:8px;font-size:15px;line-height:1.7;color:var(--text-mid)}
+.author-socials{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:8px}
+.author-socials a{color:var(--gold);font-size:13px;font-weight:700;min-height:44px;display:inline-flex;align-items:center;text-transform:capitalize}
+.comments-hold{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;margin-top:24px}
+.comments-hold p{font-size:14px;line-height:1.7;color:var(--text-mid);margin-top:8px;max-width:68ch}
+.video-facade{position:relative;display:grid;place-items:center;gap:12px;text-align:center;background:var(--dark);color:#f0ede6;border-radius:var(--r-lg);margin-top:20px;padding:48px 20px;min-height:220px;overflow:hidden}
+.video-facade p{font-size:14px;color:#c4b89a}
+.video-emoji{font-size:40px;color:var(--gold-b);line-height:1}
+.progress{position:fixed;top:0;left:0;right:0;z-index:600;height:3px;background:transparent;pointer-events:none}
+.progress span{display:block;height:100%;width:0;background:var(--gold-b)}
+/* Search + forms */
+.search-form{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.search-form .form-input{flex:1 1 220px;min-width:0}
+.form-input{width:100%;min-height:48px;padding:12px 14px;border-radius:var(--r-md);border:1px solid var(--border);background:var(--surface-2);color:var(--text);font:inherit;font-size:1rem}
+.form-input:focus{outline:2px solid var(--gold);outline-offset:1px}
+.form-input:disabled{opacity:.6;cursor:not-allowed}
+.form-input::placeholder{color:var(--text-dim)}
+.nl-form{display:grid;gap:8px;margin-top:16px;grid-template-columns:minmax(0,1fr)}
+mark{background:var(--gold-border);color:inherit;border-radius:2px;padding:0 2px}
+.result-count{margin-top:16px;font-size:13px;color:var(--text-dim)}
+/* Apps */
+.app-stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.app-stats span{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--pill);padding:4px 10px;color:var(--text-mid)}
+.app-stats strong{color:var(--gold)}
+.app-links{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.chip[aria-current="page"]{border-color:var(--gold);color:var(--gold-b)}
 main{display:block;min-width:0}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
@@ -344,7 +397,11 @@ main{display:block;min-width:0}
 <div>
 <p class="fct">Project</p>
 <ul class="flink-list">
+<li><a href={`${base}articles/`}>All Articles</a></li>
 <li><a href={`${base}tools/`}>Money Calculators</a></li>
+<li><a href={`${base}apps/`}>Finance Apps</a></li>
+<li><a href={`${base}about/`}>About</a></li>
+<li><a href={`${base}contact/`}>Contact</a></li>
 <li><a href={`${base}search/`}>Search</a></li>
 <li><a href={`${base}newsletter/`}>Newsletter</a></li>
 </ul>

@@ -1,0 +1,25 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ArticleCard from "../components/ArticleCard.astro";
+import { CATEGORIES } from "../data/site";
+import { allArticles, fmtMonthYear } from "../data/content";
+const posts = await allArticles();
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+---
+<Layout title="All Articles - GWill Finance" description="Every Nigerian money guide: savings, investing, crypto, banking, remittance, and dollar accounts. Tested by Gwill, free to read." crumb="All Articles">
+<section class="con sg" aria-labelledby="articles-h">
+  <p class="crumbs"><a href={base}>Home</a> › All Articles</p>
+  <h1 class="hold-title" id="articles-h">All articles</h1>
+  <p style="margin-top:8px;color:var(--text-mid);max-width:62ch">Every guide, newest first. Pick a topic to narrow the shelf.</p>
+  <div class="cp-strip" style="margin-top:20px" role="group" aria-label="Filter articles by category">
+    <a class="chip" href={`${base}articles/`} aria-current="page" style="text-decoration:none">All</a>
+    {CATEGORIES.map((c) => (<a class="chip" href={`${base}category/${c.slug}/`} style="text-decoration:none">{c.name}</a>))}
+  </div>
+  <div class="g3" style="margin-top:20px">
+    {posts.map((p) => (
+      <ArticleCard slug={p.slug} title={p.data.title} excerpt={p.data.description} category={p.data.category} date={fmtMonthYear(p.data.pubDate)} readMins={p.data.readMins} author={p.data.author} />
+    ))}
+  </div>
+  <div class="ad-bg">Ad slot — fills when ads are configured.</div>
+</section>
+</Layout>
