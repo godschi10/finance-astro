@@ -1,5 +1,6 @@
 ---
-import { SITE, NAV, TICKER_STATIC } from "../data/site";
+import { SITE, NAV, TICKER_STATIC, POSTS, catBySlug, type NavItem } from "../data/site";
+import "../styles/header.css";
 // Shared chrome: head, self-hosted fonts, finance tokens (light + dark),
 // skip-link, ticker, desktop nav + mobile drawer, footer. Staging-safe SEO:
 // Pages origin + /finance-astro base everywhere, site-wide noindex on staging.
@@ -24,6 +25,57 @@ const breadcrumb = { "@context": "https://schema.org", "@type": "BreadcrumbList"
 const fontFaces = [400, 700, 800].map((weight) =>
   `@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:${weight};font-display:swap;src:url("${base}fonts/jetbrains-mono-latin-${weight}-normal.woff2") format("woff2")}`
 ).join("\n");
+
+// ── Faithful WP header port helpers ──────────────────────────────
+// Prefix any site-root-relative nav href (e.g. "/all-articles/") with the
+// ${base} (repo base "/finance-astro/") so every link targets this GitHub
+// Pages subpath, exactly like the peer routes in the old header.
+const linkFor = (href: string) => `${base}${href.replace(/^\//, "")}`;
+const hasKids = (n: NavItem) => !!n.children && n.children.length > 0;
+
+// Desktop .snav-list (top-level parent rows get menu-item-has-children +
+// a server-rendered .nav-caret-desktop ⌄ like the WP nav; children render
+// as .sub-menu dropdowns, nested one level deep exactly like the WP menu).
+const desktopNavItem = (n: NavItem): string => {
+  const kids = hasKids(n);
+  const cls = `menu-item menu-item-type-custom menu-item-object-custom${kids ? " menu-item-has-children" : ""}`;
+  const caret = kids ? `<span class="nav-caret-desktop" aria-hidden="true">⌄</span>` : "";
+  const sub = kids
+    ? `<ul class="sub-menu">${(n.children ?? []).map(desktopNavItem).join("")}</ul>`
+    : "";
+  return `<li class="${cls}"><a href="${linkFor(n.href)}">${n.label}${caret}</a>${sub}</li>`;
+};
+const desktopNavHtml = `<ul class="snav-list">${NAV.map(desktopNavItem).join("")}</ul>`;
+
+// Mobile drawer .mno-list: same nested tree as an accordion. The gold
+// .nav-caret handle buttons are injected by JS exactly like WP main.js
+// (split-tap accordion: tap ⌄ toggles the sibling .sub-menu, tap the row
+// text navigates). Sub-menu ul.sub-menu markup is server-rendered.
+const mobileNavItem = (n: NavItem): string => {
+  const kids = hasKids(n);
+  const cls = `menu-item menu-item-type-custom menu-item-object-custom${kids ? " menu-item-has-children" : ""}`;
+  const sub = kids
+    ? `<ul class="sub-menu">${(n.children ?? []).map(mobileNavItem).join("")}</ul>`
+    : "";
+  return `<li class="${cls}"><a href="${linkFor(n.href)}">${n.label}</a>${sub}</li>`;
+};
+const mobileNavHtml = `<ul class="mno-list">${NAV.map(mobileNavItem).join("")}</ul>`;
+
+const newsletterHref = `${base}#newsletter`;
+
+// Spotlight search index: title + excerpt from the POSTS array, the same
+// source the Astro pages render from. Kept tiny so the inline script can
+// search fully client-side (no REST index on a static site).
+const searchIndex = POSTS.map((p) => ({
+  title: p.title,
+  excerpt: p.excerpt,
+  url: `${base}articles/${p.slug}/`,
+  date: p.date,
+  mins: p.readMins,
+  cat: catBySlug(p.category).name,
+}));
+const searchIndexJson = JSON.stringify(searchIndex).replace(/</g, "\\u003c");
+const searchBase = `${base}search/`;
 ---
 <!doctype html>
 <html lang="en">
@@ -57,8 +109,112 @@ const fontFaces = [400, 700, 800].map((weight) =>
 {isHome && <script type="application/ld+json" set:html={ld(organization)}></script>}
 {showBreadcrumbs && <script type="application/ld+json" set:html={ld(breadcrumb)}></script>}
 <script is:inline>
-/* No-flash theme restore: stored choice wins, default light. Runs pre-paint. */
-try{var t=localStorage.getItem("gwill-fin-theme");if(t==="dark"||t==="light"){document.documentElement.setAttribute("data-theme",t)}}catch(e){}
+/* GWill Finance — first-paint theme restore + tri-state pill (WP finance-home.html). */
+(function(){
+	// ── Part A: read persisted choice + paint before first paint ──
+	var K = 'gwill-finance-theme-v3';
+	var K2 = 'gwill-finance-theme-v2';
+	var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+	var t = null;
+	try { t = localStorage.getItem(K); } catch(e) {}
+
+	// Migrate legacy v2 -> v3 once (v2 had no 'system' value; no-key = system).
+	if (t === null) {
+		var t2 = null;
+		try { t2 = localStorage.getItem(K2); } catch(e) {}
+		if (t2 === 'dark' || t2 === 'light') {
+			t = t2;
+			try { localStorage.setItem(K, t); } catch(e) {}
+			try { localStorage.removeItem(K2); } catch(e) {}
+		}
+	}
+
+	// Normalize: anything other than the three known values falls back to 'system'.
+	if (t !== 'dark' && t !== 'light' && t !== 'system') t = 'system';
+
+	var effective = t;
+	if (effective === 'system') {
+		effective = (mq && mq.matches) ? 'dark' : 'light';
+	}
+	if (effective === 'dark') document.documentElement.setAttribute('data-theme','dark');
+	else document.documentElement.removeAttribute('data-theme');
+
+	// ── Part B: wire the pill from the REAL stored state ──
+	document.addEventListener('DOMContentLoaded', function(){
+		var groups = document.querySelectorAll('[data-theme-group]');
+		if (!groups.length) return;
+
+		function paint(mode) {
+			if (mode === 'dark') document.documentElement.setAttribute('data-theme','dark');
+			else document.documentElement.removeAttribute('data-theme');
+		}
+
+		function persist(choice) {
+			if (choice === 'system') {
+				try { localStorage.removeItem(K); } catch(e) {}
+			} else {
+				try { localStorage.setItem(K, choice); } catch(e) {}
+			}
+		}
+
+		function syncPressed(g, choice) {
+			g.querySelectorAll('[data-theme-set]').forEach(function(btn){
+				btn.setAttribute('aria-pressed', btn.getAttribute('data-theme-set') === choice ? 'true' : 'false');
+			});
+		}
+
+		groups.forEach(function(g){
+			g.setAttribute('data-current', t);
+			syncPressed(g, t);
+		});
+
+		groups.forEach(function(g){
+			g.querySelectorAll('[data-theme-set]').forEach(function(btn){
+				if (!btn.getAttribute('aria-label')) { btn.setAttribute('aria-label','Theme'); }
+				btn.addEventListener('click', function(){
+					var pick = btn.getAttribute('data-theme-set');
+					groups.forEach(function(g2){
+						g2.setAttribute('data-current', pick);
+						syncPressed(g2, pick);
+					});
+					persist(pick);
+					paint(pick === 'system' ? ((mq && mq.matches) ? 'dark' : 'light') : pick);
+				});
+			});
+			g.addEventListener('keydown', function(ev){
+				var order = ['dark','system','light'];
+				var segs = g.querySelectorAll('[data-theme-set]');
+				var cur = g.getAttribute('data-current') || 'system';
+				var i = order.indexOf(cur);
+				if (ev.key === 'ArrowLeft' || ev.key === 'ArrowUp') {
+					ev.preventDefault();
+					segs[(i - 1 + order.length) % order.length].click();
+					segs[(i - 1 + order.length) % order.length].focus();
+				} else if (ev.key === 'ArrowRight' || ev.key === 'ArrowDown') {
+					ev.preventDefault();
+					segs[(i + 1) % order.length].click();
+					segs[(i + 1) % order.length].focus();
+				} else if (ev.key === 'Home') {
+					ev.preventDefault(); segs[0].click(); segs[0].focus();
+				} else if (ev.key === 'End') {
+					ev.preventDefault(); segs[segs.length-1].click(); segs[segs.length-1].focus();
+				}
+			});
+		});
+
+		function onSys(e) {
+			groups.forEach(function(g){
+				if ((g.getAttribute('data-current') || 'system') === 'system') {
+					paint(e.matches ? 'dark' : 'light');
+				}
+			});
+		}
+		if (mq) {
+			if (mq.addEventListener) mq.addEventListener('change', onSys);
+			else if (mq.addListener) mq.addListener(onSys);
+		}
+	});
+})();
 </script>
 <style is:inline set:html={fontFaces}></style>
 <style is:global>
@@ -105,40 +261,13 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--gold-b);outline-off
 .wrap{width:calc(100% - 32px);max-width:var(--wide);margin-inline:auto}
 .skip{position:fixed;top:8px;left:16px;transform:translateY(-200%);background:var(--surface);color:var(--text);z-index:1000;padding:12px 16px;min-height:48px;border:2px solid var(--gold);border-radius:var(--r-sm)}
 .skip:focus{transform:none}
-/* Ticker */
-.ticker{background:var(--dark);color:#f0ede6;overflow:hidden;border-bottom:1px solid #211f1a;min-height:36px}
-.ticker-inner{display:flex;gap:0;width:max-content;animation:tick 40s linear infinite}
-.ticker:hover .ticker-inner{animation-play-state:paused}
-.ti{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;font-size:11px;font-weight:700;letter-spacing:.06em;white-space:nowrap}
-.ti b{color:var(--gold-b)}
-.ti-live{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-b);white-space:nowrap}
-.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:livepulse 2s ease-in-out infinite}
-@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-@keyframes livepulse{0%,100%{opacity:1}50%{opacity:.3}}
-/* Header */
-.site-header{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid rgba(245,158,11,.22);min-height:var(--header-h)}
-.header-inner{min-height:var(--header-h);display:flex;align-items:center;gap:8px}
+/* Header chrome lives in src/styles/header.css (WP port) — .sh/.mh/.mno/.gs/.ticker/.tp/.ncta/.nsearch. .brand + .wordmark remain here for the FOOTER brand only. */
 .brand{display:inline-flex;align-items:center;gap:8px;margin-right:auto;min-height:48px;text-decoration:none;flex-shrink:0}
 .brand-naira{color:var(--gold);font-weight:800;font-size:22px;line-height:1}
 .wordmark{position:relative;font-weight:800;font-size:clamp(18px,2.6vw,22px);letter-spacing:-.03em;white-space:nowrap}
 .wordmark::after{content:"";position:absolute;bottom:-6px;left:0;right:0;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--gold-b),var(--green));opacity:.8}
-.desktop-nav{display:none}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 24px;border-radius:var(--r-md);border:1px solid transparent;font-weight:700;font-size:15px;text-decoration:none;transition:background var(--t),transform var(--t)}
 .btn:active{transform:translateY(1px)}
-.b-gold{background:var(--gold-btn);border-color:var(--gold-btn);color:#fff}
-.b-gold:hover{background:var(--gold-b);border-color:var(--gold-b);color:#0d0b08}
-.b-ghost{background:transparent;border-color:var(--border);color:var(--text)}
-.b-ghost:hover{border-color:var(--gold);color:var(--gold)}
-.b-sm{min-height:44px;padding:8px 16px;font-size:14px}
-.theme-toggle,.menu-toggle{width:48px;height:48px;display:grid;place-items:center;background:transparent;border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);flex-shrink:0;font-size:18px}
-.theme-toggle:hover,.menu-toggle:hover{border-color:var(--gold);color:var(--gold)}
-.nav-overlay{position:fixed;inset:0;z-index:490;background:rgba(13,11,8,.6);opacity:0;pointer-events:none;transition:opacity var(--t-md)}
-.nav-overlay.is-visible{opacity:1;pointer-events:auto}
-.nav-mobile{position:fixed;top:0;right:0;bottom:0;z-index:500;width:min(320px,85vw);background:var(--dark);color:#f0ede6;padding:64px 24px 32px;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 400ms ease;overflow-y:auto}
-.nav-mobile[aria-hidden="false"]{transform:translateX(0)}
-.nav-mobile-close{position:absolute;top:12px;right:12px;width:48px;height:48px;background:none;border:none;color:#f0ede6;font-size:24px}
-.nav-mobile-list{list-style:none;display:flex;flex-direction:column}
-.nav-mobile-link{display:flex;align-items:center;min-height:56px;font-weight:700;font-size:15px;color:#f0ede6;text-decoration:none;border-bottom:1px solid rgba(240,237,230,.1)}
 /* Hero */
 /* Hero — dark ledger slab */
 .hero{position:relative;overflow:hidden;text-align:left;background:var(--dark);color:#f0ede6;padding-block:56px 52px}
@@ -328,17 +457,13 @@ main{display:block;min-width:0}
   .nl-s{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);align-items:center;padding:36px 44px}
 }
 @media(min-width:1024px){
-  .desktop-nav{display:flex;align-items:center;gap:4px;margin-right:8px}
-  .desktop-nav a{display:inline-flex;align-items:center;min-height:48px;padding:0 12px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap}
-  .desktop-nav a:hover{color:var(--gold)}
-  .menu-toggle{display:none}
+  /* WP desktop nav (.snav/.snav-list) styles live in header.css */
   .hero{padding-block:72px 68px}
   .sg{padding-block:72px}
   .g3{grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
   .card-ex{-webkit-line-clamp:3}
 }
 @media(max-width:359px){
-  .header-inner{display:grid;grid-template-columns:minmax(0,1fr) 48px 48px;padding-block:8px}
   .brand{grid-column:1;grid-row:1;min-width:0}
   .wordmark{font-size:16px}
 }
@@ -347,36 +472,73 @@ main{display:block;min-width:0}
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<div class="ticker" role="marquee" aria-label="Market rates snapshot">
-<div class="ticker-inner" aria-hidden="false">
-<span class="ti-live"><span class="live-dot" aria-hidden="true"></span>Live</span>
-{TICKER_STATIC.map((t) => (<span class="ti">{t.label} <b>{t.value}</b></span>))}
-{TICKER_STATIC.map((t) => (<span class="ti" aria-hidden="true">{t.label} <b>{t.value}</b></span>))}
-<span class="ti-live" aria-hidden="true"><span class="live-dot" aria-hidden="true"></span>Live</span>
-</div>
-</div>
-<header class="site-header" id="top"><div class="wrap header-inner">
-<a class="brand" href={base} aria-label="GWill Finance — home"><span class="brand-naira" aria-hidden="true">₦</span><span class="wordmark">gwillfinance</span></a>
-<nav class="desktop-nav" aria-label="Primary">
-{NAV.map((n) => (<a href={`${base}${n.href}`}>{n.label}</a>))}
+<div id="top"></div>
+<nav class="ticker" aria-label="Market ticker"><div class="ticker-drag"><div class="ticker-inner">
+{TICKER_STATIC.map((t) => (<div class="ti" data-src={t.src} data-pair={t.label}><span class="t-pair">{t.label}</span><span class="t-rate">{t.value}</span></div>))}
+{TICKER_STATIC.map((t) => (<div class="ti" aria-hidden="true" data-src={t.src} data-pair={t.label}><span class="t-pair">{t.label}</span><span class="t-rate">{t.value}</span></div>))}
+</div></div></nav>
+<header class="sh">
+<a class="logo" href={homeUrl}><span class="n">₦</span><span class="nm">gwillchijioke</span></a>
+<nav class="snav" aria-label="Primary Navigation">
+<ul class="snav-list" set:html={desktopNavHtml}></ul>
+<div class="tp" role="group" aria-label="Theme" data-theme-group data-current="system"><button type="button" class="tp-seg" data-theme-set="dark"    aria-label="Dark" aria-pressed="false" title="Always dark"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span class="tp-tx">Dark</span></button><button type="button" class="tp-seg" data-theme-set="system"  aria-label="System default" aria-pressed="true"  title="Follow my device"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span class="tp-tx">System</span></button><button type="button" class="tp-seg" data-theme-set="light"   aria-label="Light" aria-pressed="false" title="Always light"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M1.5 12H4M20 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"/></svg><span class="tp-tx">Light</span></button></div>
+<button class="nsearch" type="button" aria-label="Search the site" aria-expanded="false" aria-controls="gwill-search-panel" data-gwill-search-toggle>
+<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+</button>
+<a class="ncta" href={newsletterHref}>Newsletter →</a>
 </nav>
-<button class="theme-toggle" type="button" id="theme-toggle" aria-label="Toggle dark mode">◐</button>
-<button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="nav-mobile">☰</button>
-</div></header>
-<div class="nav-overlay" id="nav-overlay"></div>
-<nav class="nav-mobile" id="nav-mobile" aria-hidden="true" aria-label="Mobile">
-<button class="nav-mobile-close" type="button" aria-label="Close navigation">×</button>
-<div class="nav-mobile-list">
-{NAV.map((n) => (<a class="nav-mobile-link" href={`${base}${n.href}`}>{n.label}</a>))}
+</header>
+<header class="mh">
+<a class="mlogo" href={homeUrl}><span class="n">₦</span><span class="nm">gwillchijioke</span></a>
+<div class="mhr">
+<button class="msearch" type="button" aria-label="Search the site" aria-expanded="false" aria-controls="gwill-search-panel" data-gwill-search-toggle>
+<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+</button>
+<div class="tp tp--m" role="group" aria-label="Theme" data-theme-group data-current="system"><button type="button" class="tp-seg" data-theme-set="dark"    aria-label="Dark" aria-pressed="false" title="Always dark"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span class="tp-tx">Dark</span></button><button type="button" class="tp-seg" data-theme-set="system"  aria-label="System default" aria-pressed="true"  title="Follow my device"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span class="tp-tx">System</span></button><button type="button" class="tp-seg" data-theme-set="light"   aria-label="Light" aria-pressed="false" title="Always light"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M1.5 12H4M20 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"/></svg><span class="tp-tx">Light</span></button></div>
+<button class="hbg" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open navigation menu">
+<span></span><span></span><span></span>
+</button>
 </div>
-</nav>
+</header>
+<div class="mno" id="mobile-nav" role="dialog" aria-modal="false" aria-label="Mobile navigation" aria-hidden="true" inert>
+<div class="mno-top">
+<a class="mlogo" href={homeUrl}><span class="n">₦</span><span class="nm">gwillchijioke</span></a>
+<button class="mno-close" type="button" aria-label="Close navigation menu">✕</button>
+</div>
+<div class="mno-items">
+<ul class="mno-list" set:html={mobileNavHtml}></ul>
+</div>
+<div class="mno-bot">
+<a class="mno-cta" href={newsletterHref}>Subscribe to Newsletter →</a>
+</div>
+</div>
+<div class="gs" id="gwill-search-panel" hidden>
+<div class="gs-inner">
+<form class="gs-form" action={base} method="get" role="search">
+<span class="gs-glyph" aria-hidden="true">₦</span>
+<span class="gs-input-wrap">
+<input class="gs-input" type="text" id="gwill-search-input" name="s" value="" placeholder="Search savings, investing, cards…" autocomplete="off" aria-label="Search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="gwill-search-results">
+<button class="gs-clear" type="button" id="gwill-search-clear" aria-label="Clear search text" hidden>
+<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+</span>
+<button class="gs-close" type="button" id="gwill-search-close" aria-label="Close search">✕</button>
+</form>
+<div class="gs-results" id="gwill-search-results" role="listbox" aria-live="polite" aria-label="Search results"></div>
+<div class="gs-foot">
+<span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+<span class="gs-foot-mid"><kbd>Enter</kbd> open</span>
+<span class="gs-foot-end"><kbd>Esc</kbd> close</span>
+</div>
+</div>
+</div>
 <main id="main" tabindex="-1">
 <slot />
 </main>
 <footer class="footer"><div class="wrap">
 <div class="footer-grid">
 <div>
-<a class="brand" href={base} aria-label="GWill Finance — home"><span class="brand-naira" aria-hidden="true">₦</span><span class="wordmark" style="color:#f0ede6">gwillfinance</span></a>
+<a class="brand" href={base} aria-label="GWill Finance — home"><span class="brand-naira" aria-hidden="true">₦</span><span class="wordmark" style="color:#f0ede6">gwillchijioke</span></a>
 <p class="ftag">{SITE.description}</p>
 <div class="socials">
 <a href={SITE.socials.x} target="_blank" rel="noopener noreferrer" aria-label="GWill Finance on X">X</a>
@@ -421,29 +583,373 @@ main{display:block;min-width:0}
 <p>Designed &amp; built by G-will Chijioke.</p>
 </div>
 </div></footer>
+<script type="application/json" id="gwill-search-index" set:html={searchIndexJson}></script>
 <script is:inline>
+/* GWill Finance — mobile nav (main.js) + spotlight search (spotlight-search.js), ported. */
 (function(){
-try{
-var t=document.getElementById("theme-toggle");
-if(t){t.addEventListener("click",function(){
-var d=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";
-document.documentElement.setAttribute("data-theme",d);
-try{localStorage.setItem("gwill-fin-theme",d)}catch(e){}
-});}
-var open=document.querySelector(".menu-toggle"),panel=document.getElementById("nav-mobile"),
-overlay=document.getElementById("nav-overlay"),close=document.querySelector(".nav-mobile-close");
-function setNav(on){
-if(!panel)return;
-panel.setAttribute("aria-hidden",on?"false":"true");
-if(open)open.setAttribute("aria-expanded",on?"true":"false");
-if(overlay)overlay.classList.toggle("is-visible",on);
-try{document.body.style.overflow=on?"hidden":""}catch(e){}
+'use strict';
+/* ── 1. Mobile nav overlay: open/close + split-tap submenu accordion ──
+   .mno-list li.menu-item-has-children: gold chevron toggles the sibling
+   .sub-menu (preventDefault); tapping the row text navigates. Siblings
+   close for a clean accordion. Caret buttons injected like WP main.js. */
+var mnav = document.getElementById('mobile-nav');
+var openers = document.querySelectorAll('.hbg');
+var closers = document.querySelectorAll('.mno-close');
+var lastFocused = null;
+
+if (mnav) {
+  var subSeq = 0;
+  Array.prototype.forEach.call(mnav.querySelectorAll('.mno-list li.menu-item-has-children > a'), function (a) {
+    if (a.querySelector('.nav-caret')) return;
+    var caret = document.createElement('button');
+    caret.type = 'button';
+    caret.className = 'nav-caret';
+    caret.setAttribute('aria-expanded', 'false');
+    var sub = a.parentElement ? a.parentElement.querySelector('.sub-menu') : null;
+    if (sub) {
+      subSeq++;
+      if (!sub.id) sub.id = 'mno-sub-' + subSeq;
+      caret.setAttribute('aria-controls', sub.id);
+    }
+    caret.setAttribute('aria-label', 'Open ' + a.textContent.trim() + ' submenu');
+    caret.textContent = '⌄';
+    a.appendChild(caret);
+  });
+  document.addEventListener('click', function (e) {
+    var caret = e.target.closest ? e.target.closest('.mno-list .nav-caret') : null;
+    if (!caret) return;
+    var li = caret.closest('li');
+    if (!li) return;
+    var wasOpen = li.classList.contains('open');
+    if (li.parentElement) {
+      Array.prototype.forEach.call(li.parentElement.children, function (s) {
+        if (s !== li) s.classList.remove('open');
+      });
+    }
+    li.classList.toggle('open', !wasOpen);
+    caret.setAttribute('aria-expanded', !wasOpen ? 'true' : 'false');
+    e.preventDefault();
+    e.stopPropagation();
+  });
 }
-if(open)open.addEventListener("click",function(){setNav(true)});
-if(close)close.addEventListener("click",function(){setNav(false)});
-if(overlay)overlay.addEventListener("click",function(){setNav(false)});
-document.addEventListener("keydown",function(e){if(e.key==="Escape")setNav(false)});
-}catch(e){}
+
+/* ── 2. Desktop nav submenu chevron (server-rendered, guard for safety) ── */
+Array.prototype.forEach.call(document.querySelectorAll('.snav-list li.menu-item-has-children > a'), function (a) {
+  if (a.querySelector('.nav-caret-desktop')) return;
+  var caret = document.createElement('span');
+  caret.className = 'nav-caret-desktop';
+  caret.setAttribute('aria-hidden', 'true');
+  caret.textContent = '⌄';
+  a.appendChild(caret);
+});
+
+var lockScroll = function (lock) {
+  if (lock) {
+    document.documentElement.dataset.scrollY = String(window.scrollY);
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+    var restoreY = Number(document.documentElement.dataset.scrollY || 0);
+    try {
+      window.scrollTo({ top: restoreY, behavior: 'instant' });
+    } catch (e) {
+      var htmlEl = document.documentElement;
+      var prevBehavior = htmlEl.style.scrollBehavior;
+      htmlEl.style.scrollBehavior = 'auto';
+      window.scrollTo(0, restoreY);
+      htmlEl.style.scrollBehavior = prevBehavior;
+    }
+  }
+};
+
+var openNav = function () {
+  if (!mnav) return;
+  mnav.classList.add('open');
+  mnav.removeAttribute('inert');
+  mnav.setAttribute('aria-hidden', 'false');
+  lockScroll(true);
+  document.querySelectorAll('.hbg').forEach(function (b) { b.setAttribute('aria-expanded', 'true'); });
+  var closeBtn = mnav.querySelector('.mno-close');
+  if (closeBtn) {
+    lastFocused = document.activeElement;
+    closeBtn.focus({ preventScroll: true });
+  }
+};
+var closeNav = function () {
+  if (!mnav) return;
+  mnav.classList.remove('open');
+  mnav.setAttribute('inert', '');
+  mnav.setAttribute('aria-hidden', 'true');
+  lockScroll(false);
+  document.querySelectorAll('.hbg').forEach(function (b) { b.setAttribute('aria-expanded', 'false'); });
+  if (lastFocused && lastFocused.focus) {
+    lastFocused.focus({ preventScroll: true });
+    lastFocused = null;
+  }
+};
+
+openers.forEach(function (b) { b.addEventListener('click', openNav); });
+closers.forEach(function (b) { b.addEventListener('click', closeNav); });
+if (mnav) {
+  mnav.querySelectorAll('a').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      if (e.target.closest && e.target.closest('.nav-caret')) return;
+      closeNav();
+    });
+  });
+}
+document.addEventListener('keydown', function (e) {
+  if ('Escape' === e.key && mnav && mnav.classList.contains('open')) closeNav();
+});
+if (mnav) {
+  mnav.addEventListener('keydown', function (e) {
+    if ('Tab' !== e.key || !mnav.classList.contains('open')) return;
+    var focusables = mnav.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+    if (!focusables.length) return;
+    var first = focusables[0];
+    var last = focusables[focusables.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+    } else {
+      if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+}
+if (mnav && window.matchMedia) {
+  var mqDesktop = window.matchMedia('(min-width: 768px)');
+  var onDesktop = function (e) {
+    if (e.matches && mnav.classList.contains('open')) closeNav();
+  };
+  if (mqDesktop.addEventListener) mqDesktop.addEventListener('change', onDesktop);
+  else if (mqDesktop.addListener) mqDesktop.addListener(onDesktop);
+}
+/* Desktop dropdowns on touch tablets: first tap expands, not navigate. */
+if (window.matchMedia && window.matchMedia('(hover: none)').matches) {
+  var hasDesktopNav = document.querySelector('.snav-list');
+  if (hasDesktopNav) {
+    document.addEventListener('click', function (e) {
+      var parent = e.target.closest ? e.target.closest('.snav-list li.menu-item-has-children') : null;
+      Array.prototype.forEach.call(document.querySelectorAll('.snav-list li.open'), function (li) {
+        if (!parent || !parent.contains(li)) li.classList.remove('open');
+      });
+      if (!parent) return;
+      var link = parent.querySelector(':scope > a');
+      if (link && (e.target === link || link.contains(e.target)) && !parent.classList.contains('open')) {
+        e.preventDefault();
+        parent.classList.add('open');
+      }
+    });
+  }
+}
+
+/* ── 3. Spotlight search (spotlight-search.js) — client-side over POSTS ──
+   The WP fetch path pulls a REST search index; a static Astro site has no
+   endpoint, so the embedded POSTS index (title + excerpt + link + cat +
+   date + mins) is searched locally. Same UI/UX contract: combobox input,
+   .gs-row role=option, arrow-key nav with aria-activedescendant, view-all
+   fallback, .gs-state row when nothing matches, close() keeps the text. */
+(function () {
+  var INDEX = [];
+  try {
+    var idxEl = document.getElementById('gwill-search-index');
+    if (idxEl) INDEX = JSON.parse(idxEl.textContent || '[]');
+  } catch (e) {}
+  var INDEX_BASE = '';
+  try {
+    var form = document.querySelector('.gs-form');
+    if (form) INDEX_BASE = form.getAttribute('action') || '';
+    if (!INDEX_BASE) INDEX_BASE = window.location.origin + '/finance-astro/';
+  } catch (e) { INDEX_BASE = window.location.origin + '/finance-astro/'; }
+  if (!INDEX || !INDEX.length) return;
+
+  var toggles = document.querySelectorAll('[data-gwill-search-toggle]');
+  var panel = document.getElementById('gwill-search-panel');
+  var input = document.getElementById('gwill-search-input');
+  var results = document.getElementById('gwill-search-results');
+  var clearBtn = document.getElementById('gwill-search-clear');
+  var closeBtn = document.getElementById('gwill-search-close');
+  if (!toggles.length || !panel || !input) return;
+
+  var timer = null;
+  var sel = -1;
+  var data = [];
+  var lastTrigger = null;
+  var DEBOUNCE = 120;
+  var MIN_CHARS = 2;
+  var MAX_RESULTS = 8;
+
+  function escHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function norm(s) {
+    return String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
+  }
+
+  function search(query) {
+    var q = norm(query);
+    if (!q) return [];
+    var words = q.split(' ');
+    var out = [];
+    for (var i = 0; i < INDEX.length; i++) {
+      var p = INDEX[i];
+      var hay = norm((p.title || '') + ' ' + (p.excerpt || '') + ' ' + (p.cat || ''));
+      var score = 0;
+      var all = true;
+      for (var k = 0; k < words.length; k++) {
+        if (hay.indexOf(words[k]) === -1) { all = false; break; }
+        score += words[k].length;
+      }
+      if (all) {
+        // Bing-y: title matches rank far above excerpt/category-only hits.
+        if (norm(p.title || '').indexOf(q) !== -1) score += 40;
+        out.push({ p: p, s: score });
+      }
+    }
+    out.sort(function (a, b) { return b.s - a.s; });
+    return out.slice(0, MAX_RESULTS);
+  }
+
+  function highlight(text, q) {
+    var safe = escHtml(text);
+    var qq = norm(q);
+    if (!qq) return safe;
+    try {
+      var re = new RegExp('(' + qq.split(' ').sort(function (a, b) { return b.length - a.length; }).join('|') + ')', 'gi');
+      return safe.replace(re, '<mark>$1</mark>');
+    } catch (e) { return safe; }
+  }
+
+  function row(p, i, q) {
+    var mins = p.mins || 1;
+    var date = p.date ? p.date : '';
+    var cat = p.cat ? p.cat : '';
+    return '<a href="' + escHtml(p.url || '#') + '" class="gs-row" id="gwill-gs-' + i + '" role="option" aria-selected="false" data-i="' + i + '">'
+      + '<span class="gs-arrow">→</span>'
+      + '<span class="gs-main">'
+      + '<span class="gs-title">' + highlight(p.title || '', q) + '</span>'
+      + (p.excerpt ? '<span class="gs-excerpt">' + highlight(p.excerpt, q) + '</span>' : '')
+      + '<span class="gs-meta">'
+      + (date ? '<span class="gs-date">' + escHtml(date) + '</span><span class="gs-dot">·</span>' : '')
+      + '<span>' + mins + ' min read</span></span>'
+      + '</span>'
+      + '<span class="gs-pill">' + escHtml(cat || 'article') + '</span>'
+      + '</a>';
+  }
+
+  function renderResults(q) {
+    data = search(q);
+    sel = -1;
+    var html = '';
+    if (!data.length) {
+      results.innerHTML = '<div class="gs-state" role="option" aria-disabled="true">No matches for "' + escHtml(q) + '". Try a different term.</div>';
+      results.classList.add('has-results');
+      return;
+    }
+    for (var i = 0; i < data.length; i++) html += row(data[i].p, i, q);
+    html += '<a class="gs-viewall" role="option" href="' + escHtml(INDEX_BASE) + 'search/?q=' + encodeURIComponent(q) + '">View all results →</a>';
+    results.innerHTML = html;
+    results.classList.add('has-results');
+  }
+
+  function showState(msg) {
+    results.innerHTML = '<div class="gs-state" role="option" aria-disabled="true">' + escHtml(msg) + '</div>';
+    results.classList.add('has-results');
+  }
+
+  function items() {
+    return Array.prototype.slice.call(results.querySelectorAll('.gs-row'));
+  }
+  function highlightActive() {
+    var rows = items();
+    rows.forEach(function (el, i) {
+      el.classList.toggle('cur', i === sel);
+      el.setAttribute('aria-selected', i === sel ? 'true' : 'false');
+    });
+    if (rows[sel]) {
+      input.setAttribute('aria-activedescendant', 'gwill-gs-' + sel);
+      rows[sel].scrollIntoView({ block: 'nearest' });
+    } else {
+      input.removeAttribute('aria-activedescendant');
+    }
+  }
+
+  function syncClear() {
+    if (clearBtn) clearBtn.hidden = !(input && input.value.length > 0);
+  }
+
+  function open(trigger) {
+    lastTrigger = trigger || null;
+    panel.hidden = false;
+    toggles.forEach(function (t) { t.setAttribute('aria-expanded', 'true'); });
+    input.setAttribute('aria-expanded', 'true');
+    syncClear();
+    setTimeout(function () { input.focus(); }, 80);
+  }
+
+  function close() {
+    panel.hidden = true;
+    toggles.forEach(function (t) { t.setAttribute('aria-expanded', 'false'); });
+    input.setAttribute('aria-expanded', 'false');
+    input.removeAttribute('aria-activedescendant');
+    results.innerHTML = '';
+    results.classList.remove('has-results');
+    data = [];
+    sel = -1;
+    syncClear();
+    if (lastTrigger && lastTrigger.focus) {
+      lastTrigger.focus({ preventScroll: true });
+      lastTrigger = null;
+    }
+  }
+
+  function clearOnly() {
+    input.value = '';
+    results.innerHTML = '';
+    results.classList.remove('has-results');
+    data = [];
+    sel = -1;
+    input.removeAttribute('aria-activedescendant');
+    syncClear();
+    input.focus();
+  }
+
+  if (clearBtn) clearBtn.addEventListener('click', clearOnly);
+  if (closeBtn) closeBtn.addEventListener('click', function () { close(); syncClear(); });
+
+  toggles.forEach(function (t) {
+    t.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (panel.hidden) open(t); else close();
+    });
+  });
+
+  input.addEventListener('keydown', function (e) {
+    if ('Escape' === e.key) { e.preventDefault(); close(); }
+    if ('ArrowDown' === e.key) { e.preventDefault(); sel = Math.min(sel + 1, data.length - 1); highlightActive(); }
+    if ('ArrowUp' === e.key) { e.preventDefault(); sel = Math.max(sel - 1, 0); highlightActive(); }
+    if ('Enter' === e.key && sel >= 0 && data[sel] && data[sel].p && data[sel].p.url) {
+      e.preventDefault();
+      window.location = data[sel].p.url;
+    }
+  });
+
+  input.addEventListener('input', function () {
+    clearTimeout(timer);
+    syncClear();
+    var v = this.value.trim();
+    if (v.length < MIN_CHARS) {
+      results.innerHTML = '';
+      results.classList.remove('has-results');
+      if (v.length) showState('Keep typing…');
+      return;
+    }
+    timer = setTimeout(function () { renderResults(v); }, DEBOUNCE);
+  });
+
+  syncClear();
+})();
 })();
 </script>
 </body>

@@ -35,15 +35,45 @@ export const CATEGORIES: Category[] = [
   { slug: "dollar-accounts", name: "Dollar Accounts", emoji: "\u{1F4B5}", badge: "bsl", art: "i-dol" },
 ];
 
-// Phase 3 nav: every shipped route (honest chrome — nothing links nowhere).
-export const NAV = [
-  { label: "Articles", href: "articles/" },
-  { label: "Calculators", href: "tools/" },
-  { label: "Apps", href: "apps/" },
-  { label: "About", href: "about/" },
-  { label: "Contact", href: "contact/" },
-  { label: "Search", href: "search/" },
-  { label: "Newsletter", href: "newsletter/" },
+// NESTED nav tree — faithful port of the WP primary-navigation menu
+// (menu-primary-navigation / .snav-list). Parent rows with a `children`
+// array are rendered as .menu-item-has-children with a chevron caret +
+// .sub-menu dropdown (desktop) / accordion (mobile drawer). hrefs are
+// site-root-relative ("/all-articles/") and get the ${base} prefix at
+// render time in Layout.astro.
+export interface NavItem {
+  label: string;
+  href: string;
+  children?: NavItem[];
+}
+
+export const NAV: NavItem[] = [
+  { label: "Home", href: "/" },
+  {
+    label: "All Articles",
+    href: "/all-articles/",
+    children: [
+      { label: "Savings", href: "/category/savings/" },
+      {
+        label: "Investing",
+        href: "/category/investing/",
+        children: [
+          { label: "Fixed Income", href: "/category/investing/fixed-income/" },
+        ],
+      },
+      { label: "Crypto", href: "/category/crypto/" },
+    ],
+  },
+  {
+    label: "Finance Apps",
+    href: "/apps/",
+    children: [
+      { label: "Dollar Accounts", href: "/category/dollar-accounts/" },
+      { label: "Remittance", href: "/category/remittance/" },
+    ],
+  },
+  { label: "Money Calculators", href: "/tools/" },
+  { label: "About", href: "/about/" },
 ];
 
 export interface Post {
@@ -140,12 +170,14 @@ export const catBySlug = (slug: string): Category =>
     art: "i-dol",
   };
 
-// Static ticker snapshot — honest placeholder. Live refresh per R3.
+// Static ticker snapshot — real fetched values from header-truth.html.
+// label = data-pair, value = the rendered .t-rate for that pair. The
+// data-src lets the live ticker script target the right source per pair.
 export const TICKER_STATIC = [
-  { label: "USD/NGN", value: "—" },
-  { label: "GBP/NGN", value: "—" },
-  { label: "EUR/NGN", value: "—" },
-  { label: "BTC/USD", value: "—" },
-  { label: "ETH/USD", value: "—" },
-  { label: "XAU/USD", value: "—" },
+  { label: "USD/NGN", value: "₦1,336", src: "fx" },
+  { label: "GBP/NGN", value: "₦1,786", src: "fx" },
+  { label: "EUR/NGN", value: "₦1,533", src: "fx" },
+  { label: "BTC/USD", value: "$80,469", src: "btc" },
+  { label: "ETH/USD", value: "$2,583", src: "eth" },
+  { label: "XAU/USD", value: "$4,379", src: "gold" },
 ];
