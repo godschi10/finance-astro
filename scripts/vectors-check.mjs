@@ -47,6 +47,18 @@ for (let i = 0; i < 100; i++) {
   });
 }
 
+// Frozen clock for the fx-history window contract.
+//
+// vectors.json is a PHP snapshot: gwill_fx_history_range() windows on
+// strtotime('-N days'), i.e. the REAL clock at the moment the oracle was
+// generated. Passing live Date.now() here makes the gate compare a moving
+// window against a frozen count, so it fails a little more each day (found
+// live: 16/76 vs the oracle's 20/80 — exactly 4 days of drift). The engine
+// already takes a clock argument; pin it to the oracle's generation instant.
+// Bump this in the SAME change whenever scripts/php-harness/vectors.json is
+// regenerated, or the two clocks disagree again by design.
+const HIST_ORACLE_MS = Date.parse("2026-09-18T12:00:00Z");
+
 const S = E.salaryTax, G = E.grossToNet, SV = E.savings, NV = E.nairaValue,
   IN = E.inflation, B = E.budget, AL = E.allocator, L = E.loan, C = E.crypto,
   D = E.dividend, EM = E.emergency, FH = E.fxHistory, SR = E.savingsRate, M = E.maintained;
@@ -131,8 +143,8 @@ const cases = [
   ["fx_fallback_convert", F.fxConvert(100.0, "USD", "NGN", F.fxFallbackRates().rates)],
   ["fx_fallback_ngn_rate", F.fxFallbackRates().rates.NGN],
   ["fxhist_summary", FH.fxHistorySummary(pts, LIVE.NGN)],
-  ["fxhist_range_count", FH.fxHistoryRange(pts, 30).length],
-  ["fxhist_range90_count", FH.fxHistoryRange(pts, 90).length],
+  ["fxhist_range_count", FH.fxHistoryRange(pts, 30, HIST_ORACLE_MS).length],
+  ["fxhist_range90_count", FH.fxHistoryRange(pts, 90, HIST_ORACLE_MS).length],
   ["fxhist_single", FH.fxHistorySummary([{ date: "2026-09-01", ngn: 1482.0 }], F.fxFallbackRates().rates.NGN)],
   ["savings_rate_data", SR.savingsRateData()],
   ["maintained_verified", M.maintainedVerified()],

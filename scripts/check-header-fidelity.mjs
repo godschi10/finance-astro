@@ -58,6 +58,11 @@ const checks = [
   ["mobile accordion sub-menu class", /\bsub-menu\b/.test(layout)],
   ["header.css ticker/theme/search rules present", css.includes(".ticker") && css.includes(".tp-seg") && css.includes(".gs-row") && css.includes(".snav-list")],
   ["header.css imported", layout.includes("header.css")],
+  ["tablet token contract matches WP (28px gutters, 56px header)", layout.includes("@media(max-width:1023px){") && layout.includes(":root{--con-pad:28px;--header-h:56px}")],
+  ["body clips horizontal overflow like WP (clip on body, not only html)", /body\{[^}]*overflow-x:\s*clip/.test(layout)],
+  ["tablet ticker rhythm matches WP section 49 (30px strip, 16px item padding)", /@media \(max-width: 1023px\)\s*\{[\s\S]*?\.ticker\s*\{\s*height:\s*30px;\s*\}[\s\S]*?\.ticker \.ti\s*\{\s*padding:\s*0 16px;\s*height:\s*30px;\s*\}/.test(css)],
+  ["mobile breakpoint hides desktop header and shows mobile header", /@media \(max-width: 767px\)\s*\{[\s\S]*?\.sh\s*\{\s*display:\s*none;\s*\}[\s\S]*?\.mh\s*\{\s*display:\s*flex;\s*\}[\s\S]*?\.ticker\s*\{\s*height:\s*28px;\s*\}/.test(css)],
+  ["desktop breakpoint hides mobile header and drawer", /@media \(min-width: 768px\)\s*\{\s*\.mh,\s*\.mno\s*\{\s*display:\s*none;\s*\}\s*\}/.test(css)],
   ["theme pill first-paint (v3 localStorage)", layout.includes("gwill-finance-theme-v3")],
   ["mobile-nav .open class + inert handling", layout.includes(".mno") && layout.includes("inert") && layout.includes(".open")],
 ];

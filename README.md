@@ -1,0 +1,76 @@
+# finance-astro
+
+Static port of the **GWill Finance** WordPress theme (the Nigerian personal-finance
+blog) to [Astro](https://astro.build). Same gold-on-dark identity, same header
+contract, same calculator engines — served as a static bundle instead of PHP.
+
+**Live (staging branch):** https://godschi10.github.io/finance-astro/
+**WP original (parity target):** https://finance.fitnesslova.qzz.io/
+
+## Source of truth
+
+The WordPress theme lives at `gwill-finance-theme/` (production:
+`/var/www/finance/wp-content/themes/gwill-finance-theme/`). This repo is a **port**,
+not a redesign: where the two disagree, the WP theme wins unless the CHANGELOG
+records a deliberate, reasoned divergence.
+
+## Commands
+
+```bash
+npm install
+npm run build     # astro build → dist/ (53 pages)
+npm run check     # ALL gates: header-fidelity contract + PHP-vector parity
+npx astro dev     # local dev server
+```
+
+`npm run check` is the release gate. It runs every gate in `scripts/` and exits
+non-zero if any of them fail, so a green build alone never means "shippable".
+
+### Gates
+
+| Gate | What it proves |
+| --- | --- |
+| `scripts/check-header-fidelity.mjs` | Every MUST clause of the WP header port spec — brand, theme pill, search spotlight, ticker, nav nesting, and the **responsive show/hide contract** — asserted against the layout source and `header.css`. |
+| `scripts/vectors-check.mjs` | Every TypeScript calculator engine reproduces the PHP engine's numbers, vector-for-vector, against the PHP truth oracle in `scripts/php-harness/vectors.json`. |
+
+Both are wrapped by `scripts/check.mjs`.
+
+## Layout
+
+```
+src/layouts/Layout.astro     # chrome: <head>, tokens, header, footer, inline scripts
+src/styles/header.css        # header/ticker/search/theme-pill styles + responsive blocks
+src/lib/                     # calculator engines (TS ports of inc/*.php)
+src/pages/                   # routes: home, articles, tools/*, amount pages, legal
+src/data/site.ts             # nav tree, ticker pairs, page config
+scripts/php-harness/         # PHP truth oracle + generator (vectors.php, stubs.php)
+docs/evidence/               # screenshots proving responsive behaviour per breakpoint
+```
+
+## The PHP oracle
+
+`scripts/php-harness/vectors.php` runs the *actual* PHP engines from the WP theme
+and dumps JSON reference values; `vectors.json` is that frozen snapshot, committed.
+The TS gate compares against it.
+
+Two consequences worth knowing before you touch either side:
+
+1. **The oracle is a snapshot of a live clock.** `gwill_fx_history_range()` windows
+   on `strtotime('-N days')`, so its point counts encode the instant it was
+   generated. The TS gate therefore pins `HIST_ORACLE_MS` in `vectors-check.mjs` to
+   that instant — regenerate `vectors.json` and you must bump that constant in the
+   same change.
+2. **`vectors.php` expects the theme's `inc/` on disk.** Its `$INC` path is
+   machine-specific; adjust it when running the generator on a new box.
+
+## Deploy
+
+Two branches, both on `origin` (GitHub — no GitLab remote exists for this repo):
+
+- `main` — source of truth.
+- `pages-dist` — the built `dist/` mirror that GitHub Pages serves. Rebuilding and
+  pushing it **is** the staging deploy; keep `public/.nojekyll` in place or Pages
+  skips the underscore-prefixed `_astro/` assets.
+
+Verify a deploy against the served bytes and the Pages build for *your* commit —
+a green push is not a live fix.

@@ -236,6 +236,9 @@ const searchBase = `${base}search/`;
   --t:160ms ease;--t-md:240ms ease;
   --header-h:64px;--con-pad:48px;--wide:1200px;
 }
+@media(max-width:1023px){
+  :root{--con-pad:28px;--header-h:56px}
+}
 [data-theme="dark"]{
   --bg:#0d0b08;--surface:#131210;--surface-2:#171512;
   --text:#f0ede6;--art-copy:#e8e4dc;--art-dim:#8a8070;
@@ -251,7 +254,7 @@ const searchBase = `${base}search/`;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{overflow-x:hidden;overflow-x:clip;scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 20px);background:var(--bg)}
-body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%;overflow-x:hidden;overflow-x:clip;overflow-wrap:break-word}
 img{max-width:100%;height:auto}
 a{color:inherit}
 button{font:inherit;cursor:pointer;touch-action:manipulation}

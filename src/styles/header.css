@@ -713,3 +713,24 @@
 .mno-bot { padding: 16px 20px; border-top: 1px solid var(--dark-b); }
 .mno-cta { display: block; width: 100%; text-align: center; background: var(--gold); color: #fff; border: none; font-size: 13px; font-weight: 700; padding: 14px; border-radius: var(--r-sm); transition: background var(--t); text-decoration: none; }
 .mno-cta:hover { background: var(--gold-b); }
+
+/* ── RESPONSIVE: header show/hide switch ─────────────
+   Faithful port of wp-style.css sections 49/50/51 (the WP only shows the
+   desktop .sh OR the mobile .mh per breakpoint — never both). Without
+   these rules both headers render stacked on mobile. */
+@media (max-width: 1023px) {
+  /* WP section 49 — tablet ticker rhythm (shorter strip, wider item padding).
+     Omitted in the first port pass; without it the tablet ticker ran at the
+     36px desktop height and disagreed with production. */
+  .ticker { height: 30px; }
+  .ticker .ti { padding: 0 16px; height: 30px; }
+}
+@media (max-width: 767px) {
+  .sh { display: none; }
+  .mh { display: flex; }
+  .ticker { height: 28px; }
+  .ticker .ti { padding: 0 14px; height: 28px; }
+}
+@media (min-width: 768px) {
+  .mh, .mno { display: none; }
+}
