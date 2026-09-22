@@ -3,6 +3,64 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.1.2] — 2026-09-22
+
+Theme control rebuilt as a single button. Requested change: one button, default
+**System**, click to open — without losing any dark-mode feature or adding weight
+to the page.
+
+### Changed
+
+- **One button instead of a three-segment pill.** The header used to render
+  Dark · System · Light side by side in both headers. It is now a single compact
+  pill showing the *current* choice (monitor / sun / moon icon + label) which
+  opens a small popover containing the three options, System first.
+- **Default is System**, unchanged: no stored key means "follow the device", and
+  the trigger shows the monitor icon and the word *System* out of the box.
+- **Same engine, same storage.** Still `gwill-finance-theme-v3`; still the inline
+  pre-paint restore in `<head>` (so no flash of the wrong theme); System still
+  tracks the OS live through the existing `prefers-color-scheme` listener, and a
+  pinned Light/Dark still ignores the OS. No feature was dropped.
+- **Keyboard support extended, not reduced.** With the menu closed the arrow keys
+  still cycle the theme (legacy behaviour); with it open they move the focus ring
+  and never change the theme. Escape and outside-click close it; the choice
+  returns focus to the trigger.
+- Active row now uses the brand amber (`--gold-b`, the accent used by the
+  headline and stat numbers) in both themes, instead of the light-mode burnt
+  orange, and the popover is sized to its trigger (`min-width: 100%`) so the two
+  are flush; the panel radius is 12px so the 6px rows nest concentrically.
+
+### Added
+
+- Two gate assertions: exactly one theme trigger per header with the menu closed
+  by default, and the popover styled + `hidden` until opened.
+- `docs/evidence/theme-menu-{light-1280,dark-1280,dark-390}.png`.
+
+### Verified (Chrome for Testing 153, CDP)
+
+- One button per header; `aria-expanded="false"`, `aria-haspopup="true"`, menu
+  `hidden` at first paint; label `System`; theme follows the OS (light here).
+- Click → opens: `data-open="true"`, `display:flex`, `z-index:60`, focus lands on
+  the current option, popover fully inside the viewport.
+- Pick Dark → `data-theme="dark"`, storage `dark`, label/aria/label icon update,
+  both headers' pressed state sync, menu closes, body background flips to ink.
+- Reload → still dark, label `Dark`, menus closed (persistence intact).
+- Pick System → storage key **removed**, theme matches the OS.
+- **Forced-dark OS preference, no stored key** → page painted dark
+  (`prefers-color-scheme: dark`, `data-theme="dark"`, no storage key): the System
+  default genuinely follows the device.
+- Escape closes; outside-click closes; 390px mobile variant opens 134px wide,
+  fully inside the viewport, zero horizontal overflow, icon-only trigger with the
+  label hidden as designed.
+- Geometry: trigger and popover both 118px wide, identical left/right edges
+  (922 → 1040) at 1280px.
+
+### Cost
+
+- Inline markup + CSS + ~45 lines of vanilla JS. **No new network request, no
+  library, no build change** — the page stays a single HTML document (92.7 KB raw,
+  5 resource requests), so there is no site-speed cost.
+
 ## [0.1.1] — 2026-09-22
 
 Header-fidelity release. Closes the responsive header defects found once a real

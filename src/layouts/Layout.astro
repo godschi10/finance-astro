@@ -157,15 +157,71 @@ const searchBase = `${base}search/`;
 			}
 		}
 
+		var LABEL = { system: 'System', light: 'Light', dark: 'Dark' };
+
 		function syncPressed(g, choice) {
 			g.querySelectorAll('[data-theme-set]').forEach(function(btn){
 				btn.setAttribute('aria-pressed', btn.getAttribute('data-theme-set') === choice ? 'true' : 'false');
 			});
 		}
 
+		// The trigger shows the CURRENT choice: icon via CSS on [data-current], text here.
+		function syncLabel(g, choice) {
+			var name = LABEL[choice] || LABEL.system;
+			var lab = g.querySelector('.tp-lab');
+			if (lab) lab.textContent = name;
+			var trg = g.querySelector('[data-theme-trigger]');
+			if (trg) trg.setAttribute('aria-label', 'Theme: ' + name);
+		}
+
+		function setOpen(g, on) {
+			var menu = g.querySelector('[data-theme-menu]');
+			var trg = g.querySelector('[data-theme-trigger]');
+			if (!menu || !trg) return;
+			menu.hidden = !on;
+			g.setAttribute('data-open', on ? 'true' : 'false');
+			trg.setAttribute('aria-expanded', on ? 'true' : 'false');
+		}
+
+		function closeMenus(except) {
+			groups.forEach(function(g2){ if (g2 !== except) setOpen(g2, false); });
+		}
+
+		// Click to open · outside click / Escape to close · choice applies + closes.
+		groups.forEach(function(g){
+			var trigger = g.querySelector('[data-theme-trigger]');
+			var menu = g.querySelector('[data-theme-menu]');
+			if (!trigger || !menu) return;
+
+			trigger.addEventListener('click', function(ev){
+				ev.stopPropagation();
+				var willOpen = g.getAttribute('data-open') !== 'true';
+				closeMenus(g);
+				setOpen(g, willOpen);
+				if (willOpen) {
+					var cur = g.getAttribute('data-current') || 'system';
+					var sel = menu.querySelector('[data-theme-set="' + cur + '"]') || menu.querySelector('[data-theme-set]');
+					if (sel) sel.focus();
+				}
+			});
+
+			menu.addEventListener('click', function(ev){
+				setOpen(g, false);
+				groups.forEach(function(g2){ syncLabel(g2, g2.getAttribute('data-current') || 'system'); });
+				if (ev.isTrusted && trigger) trigger.focus();
+			});
+		});
+
+		document.addEventListener('click', function(ev){
+			groups.forEach(function(g){
+				if (!g.contains(ev.target)) setOpen(g, false);
+			});
+		});
+
 		groups.forEach(function(g){
 			g.setAttribute('data-current', t);
 			syncPressed(g, t);
+			syncLabel(g, t);
 		});
 
 		groups.forEach(function(g){
@@ -182,22 +238,35 @@ const searchBase = `${base}search/`;
 				});
 			});
 			g.addEventListener('keydown', function(ev){
-				var order = ['dark','system','light'];
+				var isOpen = g.getAttribute('data-open') === 'true';
+				var order = ['system','light','dark'];
 				var segs = g.querySelectorAll('[data-theme-set]');
 				var cur = g.getAttribute('data-current') || 'system';
-				var i = order.indexOf(cur);
-				if (ev.key === 'ArrowLeft' || ev.key === 'ArrowUp') {
-					ev.preventDefault();
-					segs[(i - 1 + order.length) % order.length].click();
-					segs[(i - 1 + order.length) % order.length].focus();
-				} else if (ev.key === 'ArrowRight' || ev.key === 'ArrowDown') {
-					ev.preventDefault();
-					segs[(i + 1) % order.length].click();
-					segs[(i + 1) % order.length].focus();
-				} else if (ev.key === 'Home') {
-					ev.preventDefault(); segs[0].click(); segs[0].focus();
-				} else if (ev.key === 'End') {
-					ev.preventDefault(); segs[segs.length-1].click(); segs[segs.length-1].focus();
+				var trigger = g.querySelector('[data-theme-trigger]');
+				if (ev.key === 'Escape') {
+					if (isOpen) {
+						ev.preventDefault();
+						setOpen(g, false);
+						if (trigger) trigger.focus();
+					}
+					return;
+				}
+				var back = (ev.key === 'ArrowLeft' || ev.key === 'ArrowUp');
+				var fwd = (ev.key === 'ArrowRight' || ev.key === 'ArrowDown');
+				if (!back && !fwd) return;
+				ev.preventDefault();
+				if (isOpen) {
+					// Menu open: arrows move the focus ring only, never the theme.
+					var idx = Array.prototype.indexOf.call(segs, document.activeElement);
+					if (idx < 0) idx = order.indexOf(cur);
+					var step = back ? -1 : 1;
+					var next = segs[(idx + step + segs.length) % segs.length];
+					if (next) next.focus();
+				} else {
+					// Menu closed: arrows still cycle the theme (legacy pill behaviour).
+					var pick = order[(order.indexOf(cur) + (back ? -1 : 1) + order.length) % order.length];
+					var target = g.querySelector('[data-theme-set="' + pick + '"]');
+					if (target) target.click();
 				}
 			});
 		});
@@ -484,7 +553,7 @@ main{display:block;min-width:0}
 <a class="logo" href={homeUrl}><span class="n">₦</span><span class="nm">gwillchijioke</span></a>
 <nav class="snav" aria-label="Primary Navigation">
 <ul class="snav-list" set:html={desktopNavHtml}></ul>
-<div class="tp" role="group" aria-label="Theme" data-theme-group data-current="system"><button type="button" class="tp-seg" data-theme-set="dark"    aria-label="Dark" aria-pressed="false" title="Always dark"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span class="tp-tx">Dark</span></button><button type="button" class="tp-seg" data-theme-set="system"  aria-label="System default" aria-pressed="true"  title="Follow my device"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span class="tp-tx">System</span></button><button type="button" class="tp-seg" data-theme-set="light"   aria-label="Light" aria-pressed="false" title="Always light"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M1.5 12H4M20 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"/></svg><span class="tp-tx">Light</span></button></div>
+<div class="tp" data-theme-group data-current="system" data-open="false"><button type="button" class="tp-btn" data-theme-trigger aria-haspopup="true" aria-expanded="false" aria-label="Theme: System" title="Theme"><span class="tp-ico" aria-hidden="true"><svg data-theme-ico="system" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><svg data-theme-ico="light" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M1.5 12H4M20 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"/></svg><svg data-theme-ico="dark" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span><span class="tp-tx tp-lab">System</span><svg class="tp-caret" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="tp-menu" data-theme-menu hidden role="group" aria-label="Theme choices"><button type="button" class="tp-seg" data-theme-set="system" aria-pressed="true" aria-label="System (follow my device)" title="Follow my device"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span class="tp-tx">System</span></button><button type="button" class="tp-seg" data-theme-set="light" aria-pressed="false" aria-label="Light" title="Always light"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M1.5 12H4M20 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"/></svg><span class="tp-tx">Light</span></button><button type="button" class="tp-seg" data-theme-set="dark" aria-pressed="false" aria-label="Dark" title="Always dark"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span class="tp-tx">Dark</span></button></div></div>
 <button class="nsearch" type="button" aria-label="Search the site" aria-expanded="false" aria-controls="gwill-search-panel" data-gwill-search-toggle>
 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
 </button>
@@ -497,7 +566,7 @@ main{display:block;min-width:0}
 <button class="msearch" type="button" aria-label="Search the site" aria-expanded="false" aria-controls="gwill-search-panel" data-gwill-search-toggle>
 <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
 </button>
-<div class="tp tp--m" role="group" aria-label="Theme" data-theme-group data-current="system"><button type="button" class="tp-seg" data-theme-set="dark"    aria-label="Dark" aria-pressed="false" title="Always dark"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span class="tp-tx">Dark</span></button><button type="button" class="tp-seg" data-theme-set="system"  aria-label="System default" aria-pressed="true"  title="Follow my device"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span class="tp-tx">System</span></button><button type="button" class="tp-seg" data-theme-set="light"   aria-label="Light" aria-pressed="false" title="Always light"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M1.5 12H4M20 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"/></svg><span class="tp-tx">Light</span></button></div>
+<div class="tp tp--m" data-theme-group data-current="system" data-open="false"><button type="button" class="tp-btn" data-theme-trigger aria-haspopup="true" aria-expanded="false" aria-label="Theme: System" title="Theme"><span class="tp-ico" aria-hidden="true"><svg data-theme-ico="system" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><svg data-theme-ico="light" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M1.5 12H4M20 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"/></svg><svg data-theme-ico="dark" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span><span class="tp-tx tp-lab">System</span><svg class="tp-caret" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="tp-menu" data-theme-menu hidden role="group" aria-label="Theme choices"><button type="button" class="tp-seg" data-theme-set="system" aria-pressed="true" aria-label="System (follow my device)" title="Follow my device"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span class="tp-tx">System</span></button><button type="button" class="tp-seg" data-theme-set="light" aria-pressed="false" aria-label="Light" title="Always light"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M1.5 12H4M20 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"/></svg><span class="tp-tx">Light</span></button><button type="button" class="tp-seg" data-theme-set="dark" aria-pressed="false" aria-label="Dark" title="Always dark"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span class="tp-tx">Dark</span></button></div></div>
 <button class="hbg" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open navigation menu">
 <span></span><span></span><span></span>
 </button>

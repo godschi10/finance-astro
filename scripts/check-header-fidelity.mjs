@@ -40,6 +40,13 @@ const checks = [
   ["NOT id=\"nav-mobile\"", !layout.includes('id="nav-mobile"')],
   ["theme pill data-theme-group + data-current=system", layout.includes("data-theme-group") && layout.includes('data-current="system"')],
   ["data-theme-set dark/system/light", tpSegs.every((s) => layout.includes(`data-theme-set="${s}"`))],
+  [
+    "theme control is ONE button per group, menu closed by default",
+    (layout.match(/\sdata-theme-trigger\b/g) || []).length === 2 &&
+      (layout.match(/\sdata-theme-group\b/g) || []).length === 2 &&
+      (layout.match(/\sdata-theme-menu hidden/g) || []).length === 2,
+  ],
+  ["theme popover styled, hidden until opened", css.includes(".tp-btn") && css.includes(".tp-menu") && css.includes(".tp-menu[hidden]")],
   ["data-gwill-search-toggle", layout.includes("data-gwill-search-toggle")],
   ["spotlight panel id=gwill-search-panel", layout.includes('id="gwill-search-panel"')],
   [`placeholder ${placeholder}`, layout.includes(placeholder)],
