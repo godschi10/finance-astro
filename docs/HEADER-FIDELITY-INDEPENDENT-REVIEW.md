@@ -42,7 +42,29 @@ at L897, `.ncta` 106px at L951). The only difference was `documentElement.scroll
 production 768, port 1056 → traced to `body { overflow-x: clip }`, present in WP,
 absent in the port.
 
-Evidence files: `docs/evidence/header-{phone-390x844,tablet-768x1024,desktop-1280x800}.png`.
+Evidence files: `docs/evidence/header-{phone-390x844,tablet-768x1024,desktop-1280x800}.png`
+(local preview) and `docs/evidence/live-header-*.png` (the same matrix re-run against
+the deployed staging URL).
+
+### Live-staging verification (post-deploy)
+
+Pushed `main` → `1f04b92`, then rebuilt and published the staging branch
+(`pages-dist` `c9274fd..88b28d6`). Verified in this order:
+
+1. **Pages reached `built` for our exact commit** —
+   `gh api repos/godschi10/finance-astro/pages/builds/latest` →
+   `{"status":"built","commit":"88b28d63ee73d0de24b4730498d66a0dd0933bf6"}`,
+   matching `git rev-parse origin/pages-dist`. The byte check is therefore gated on
+   *our* deploy, not the previous one.
+2. **Served bytes carry every fix** — `curl -s https://godschi10.github.io/finance-astro/`
+   → HTTP 200, 86061 bytes, containing
+   `body{...overflow-x:hidden;overflow-x:clip;overflow-wrap:break-word}`,
+   `@media(max-width:1023px){.ticker{height:30px}`, and
+   `@media(max-width:767px){.sh{display:none}.mh{display:flex}.ticker{height:28px}}`.
+3. **Rendered matrix against the live URL** (Chrome 153, cache-busted) returned
+   exactly the local numbers: 390 → `.sh` hidden/ticker 28px/overflow 0; 768 →
+   `.sh` flex/ticker 30px/overflow 0; 1280 → ticker 36px/overflow 0; no duplicate
+   headers at any width.
 
 ## Findings and dispositions
 

@@ -63,6 +63,12 @@ nothing.
 
   No duplicate headers at any width.
 
+- **Live staging** (`pages-dist` `88b28d6`, GitHub Pages reported `built` for that
+  exact commit): served bytes carry all three CSS fixes, and the same matrix re-run
+  against https://godschi10.github.io/finance-astro/ returned identical numbers —
+  overflow 0 at 390/768/1280, ticker 28/30/36px, no duplicate headers. Evidence
+  shots: `docs/evidence/live-header-*.png`.
+
 ### Known gaps (not in this release)
 
 - WP's `@media (max-width: 1023px)` block also carries non-header tablet rules
