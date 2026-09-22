@@ -25,6 +25,27 @@ Read this at session start.
       three CSS fixes; Chrome 153 matrix against the live URL → overflow 0 at
       390/768/1280, ticker 28/30/36px, no duplicate headers.
 
+## DONE — 2026-09-22 · Theme control: one button + popover (v0.1.2)
+
+- [x] Replaced the always-visible Dark · System · Light pill with ONE button per
+      header that opens a small popover. Default is still **System**.
+- [x] Same engine, same `gwill-finance-theme-v3` key, same pre-paint restore (no
+      flash); System still tracks the OS live, pinned Light/Dark still ignores it.
+- [x] Keyboard extended (arrows cycle when closed, move focus when open; Escape /
+      outside-click close); `aria-haspopup` + `aria-expanded` wired.
+- [x] Review-pass polish: popover sized to its trigger so the edges are flush,
+      brand amber (`--gold-b`) active row in both themes, 12px panel radius with
+      6px nested rows, label hidden only below 480px.
+- [x] Gate: +2 assertions. `npm run check` → 2/2 green (vectors 95/95).
+- [x] Shipped: `main` `8223dc9`; staging `pages-dist` `934fe58`.
+- [x] Verified live: Pages `built` for `934fe58`; served bytes carry the new
+      markup + CSS; full behavioural pass against the live URL (first paint closed
+      → open → pick Dark → reload persists → pick System removes key → Escape /
+      outside-click close → 390px variant); no regression in the responsive header
+      matrix (overflow 0 at 390/768/1280, ticker 28/30/36px).
+- [x] Cost: no new request, no library, no build change (single HTML doc, 5
+      resource requests).
+
 ## PENDING
 
 - [ ] **M-TABLET-PARITY** — WP's `@media (max-width: 1023px)` block also carries
