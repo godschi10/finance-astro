@@ -45,6 +45,11 @@ Read this at session start.
       matrix (overflow 0 at 390/768/1280, ticker 28/30/36px).
 - [x] Cost: no new request, no library, no build change (single HTML doc, 5
       resource requests).
+- [x] **v0.1.3 fix (reported on a phone, 2026-09-22):** the ≤480px rule that hides
+      the trigger's text (`.tp .tp-tx`) also matched the popover's option rows, so
+      the dropdown came up icon-only on handsets. Scoped to `.tp-btn .tp-tx`; the
+      option labels are readable again at 360/390/480px, and a gate assertion now
+      pins the hide rule to the trigger.
 
 ## PENDING
 

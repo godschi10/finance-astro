@@ -319,7 +319,7 @@
 .tp--m { margin-left: 4px; }
 .tp--m .tp-btn { padding: 5px 8px; }
 @media (max-width: 480px) {
-  .tp .tp-tx { display: none; }
+  .tp-btn .tp-tx { display: none; }
   .tp-btn { padding: 5px 8px; }
   .tp-menu { min-width: 134px; }
 }

@@ -39,6 +39,10 @@ const checks = [
   ["NOT id=\"theme-toggle\"", !layout.includes('id="theme-toggle"')],
   ["NOT id=\"nav-mobile\"", !layout.includes('id="nav-mobile"')],
   ["theme pill data-theme-group + data-current=system", layout.includes("data-theme-group") && layout.includes('data-current="system"')],
+  [
+    "mobile text-hide is scoped to the trigger (menu option labels stay readable)",
+    /\.tp-btn\s+\.tp-tx\s*\{/.test(css) && !/\.tp\s+\.tp-tx\s*\{/.test(css),
+  ],
   ["data-theme-set dark/system/light", tpSegs.every((s) => layout.includes(`data-theme-set="${s}"`))],
   [
     "theme control is ONE button per group, menu closed by default",

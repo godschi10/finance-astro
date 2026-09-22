@@ -3,6 +3,26 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.1.3] — 2026-09-22
+
+### Fixed
+
+- **On phones the popover came up icon-only — no words.** The
+  `@media (max-width: 480px)` rule that hides the *trigger's* text was written as
+  `.tp .tp-tx`, which also matched the three option rows inside the popover. On a
+  handset the dropdown therefore showed three unlabelled icons. The rule is now
+  scoped to `.tp-btn .tp-tx`: the trigger stays compact (icon + caret) while
+  **System / Light / Dark stay readable inside the popover**. Reported after
+  checking on a phone.
+- Gate: new assertion pins the text-hide to the trigger, so `.tp .tp-tx` cannot
+  come back.
+
+### Verified
+
+- 360 / 390 / 480px: all three option labels `SHOWN`; trigger label hidden as
+  designed; popover 134px wide, fully inside the viewport; horizontal overflow 0.
+- Screenshot: `docs/evidence/theme-menu-390-labels-fixed.png`.
+
 ## [0.1.2] — 2026-09-22
 
 Theme control rebuilt as a single button. Requested change: one button, default
