@@ -82,8 +82,16 @@ Read this at session start.
       (461 @1280, 667 @768).
 - [x] Evidence: `docs/evidence/footer-port-{390,768,1280}.png`; record in
       `docs/port/05-port-verification.md`; rule diff tool `docs/port/footer-css-diff.py`.
-- [ ] **Shipped:** `main` `<sha>`; staging `pages-dist` `<sha>` — fill in after the
-      push, then confirm the served bytes.
+- [x] **Shipped:** `main` `fe08a64`; staging `pages-dist` `96245a0` (82 files, nojekyll).
+- [x] **Served bytes verified:** Pages build `built` for `96245a0`; 200 OK, 110,271 B;
+      footer markup + inlined `footer.css` (`.footer{…padding:48px var(--con-pad) 24px}`
+      / `.mfooter{…padding:32px 20px 24px}`) present; 0 escaped SVGs; 8 socials.
+- [x] **Verified live** on https://godschi10.github.io/finance-astro/ at 390/768/1280:
+      `.ftop` grids `435.188px 217.609px 217.594px 217.609px` (1280) and `340px 340px`
+      (768) — identical to WP; CTA 234×40; Google News 203×40; socials 34×34; bottom bar
+      1184×37 / 712×65; `.mfgrid` 350×290 `165px 165px`; footer ≥768 desktop 461 @1280,
+      667 @768, phone 770 @390; overflow 0; install CTA visible; no escaped icon text.
+      Shots: `docs/evidence/footer-live-{390,768,1280}.png`.
 
 ## PENDING
 
