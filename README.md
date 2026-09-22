@@ -31,15 +31,18 @@ non-zero if any of them fail, so a green build alone never means "shippable".
 | Gate | What it proves |
 | --- | --- |
 | `scripts/check-header-fidelity.mjs` | Every MUST clause of the WP header port spec — brand, theme pill, search spotlight, ticker, nav nesting, and the **responsive show/hide contract** — asserted against the layout source and `header.css`. |
+| `scripts/check-footer-fidelity.mjs` | The footer port: WP `footer.php` sections 2–5 plus the footer slice of stylesheet section 19 — markup and copy, class-by-class CSS values, the responsive contract (`≤767px` phone / `≥768px` desktop), the icon-escape guard, and the print rules. 64 assertions. |
 | `scripts/vectors-check.mjs` | Every TypeScript calculator engine reproduces the PHP engine's numbers, vector-for-vector, against the PHP truth oracle in `scripts/php-harness/vectors.json`. |
 
-Both are wrapped by `scripts/check.mjs`.
+All three are wrapped by `scripts/check.mjs`.
 
 ## Layout
 
 ```
 src/layouts/Layout.astro     # chrome: <head>, tokens, header, footer, inline scripts
+src/components/Footer.astro  # desktop + phone footers (WP footer.php sections 2–5)
 src/styles/header.css        # header/ticker/search/theme-pill styles + responsive blocks
+src/styles/footer.css        # footer grid, CTAs, socials, bottom bar + responsive/touch blocks
 src/lib/                     # calculator engines (TS ports of inc/*.php)
 src/pages/                   # routes: home, articles, tools/*, amount pages, legal
 src/data/site.ts             # nav tree, ticker pairs, page config

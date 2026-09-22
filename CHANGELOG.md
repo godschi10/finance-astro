@@ -3,6 +3,76 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.2.0] — 2026-09-22
+
+**The footer is ported.** `footer.php` sections 2–5 — the desktop grid, the follow
+CTAs, the social nav, the bottom bar, and the phone-only `.mfooter` — now render
+from Astro, with the same visibility switch the header uses (`.footer` hidden at
+≤767px, `.mfooter` hidden at ≥768px).
+
+### Added
+
+- `src/components/Footer.astro` — desktop and phone footers extracted against
+  theme 1.13.39: the brand block and blurb, the four link columns of
+  `inc/footer-links.php`, the network column, the four socials, the bell /
+  Google News / install CTAs (including the iOS "Add to Home Screen" guide), the
+  legal + credit bottom bar and the `#top` back-to-top link. Every icon is the
+  theme's own SVG, copied verbatim.
+- `src/styles/footer.css` — 94 lines, 65 rules: the footer's slice of stylesheet
+  section 19 plus every media query and touch rule that touches those classes,
+  declarations and breakpoints intact, and the custom properties it depends on.
+- `scripts/check-footer-fidelity.mjs` — **64 assertions** against the WP source:
+  markup structure and copy, class-by-class CSS values, the responsive contract,
+  the icon-escape guard and the print rules. Wired into `npm run check`
+  (now 3/3 green).
+
+### Fixed — both found by measuring, not by looking
+
+- **Four footer icons were rendered as literal text.** `{ICON.bell}` — and the
+  install, iOS and Google News glyphs, in both footers — were interpolated
+  without `set:html`, so Astro escaped them and the buttons printed
+  `&lt;svg …&gt;` on the page. The bell measured 320×178 instead of 234×40. All
+  ten icon interpolations now use `<Fragment set:html={…} />`, and the gate fails
+  if a bare `>{ICON.x}` ever comes back.
+- **A tablet rule was missing.** WP section 49's `@media (max-width: 1023px)
+  { .footer { padding: 36px var(--con-pad) 20px } }` was not ported — 12px of
+  extra height at 768px. A rule-by-rule diff of every footer selector against
+  `style.css` is what caught it; it located nothing else in scope.
+- **The bell no longer pretends to subscribe.** There is no push service behind a
+  static build, so tapping it appends the theme's own inline-note style
+  explaining that push needs a backend. `PUSH_ENDPOINT` is the single switch.
+- Touch rule ported: `@media (hover: none) { .fsoc .soci:hover … }` (WP §54), so a
+  tap on a social button no longer leaves the hover style stuck on a phone.
+
+### Verified — measured against the live WordPress footer
+
+| Viewport | `.ftop` grid template | `.fpush` | `.fgooglenews` | `.soci` | `.fbot` | overflow |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1280px | `435.188px 217.609px 217.594px 217.609px` — identical | 234×40 | 203×40 | 34×34 | 1184×37 | 0 |
+| 768px | `340px 340px` — identical | 234×40 | 203×40 | 34×34 | 712×65 | 0 |
+| 390px | 2×2 `165px 165px`, `.mfgrid` 350×290 — identical | 234×40 | 203×40 | 34×34 | — | 0 |
+
+Footer height: **461px at 1280** and **667px at 768** — exactly WP's own CSS
+arithmetic (48 + 312 + 40 + 37 + 24, and 36 + 506 + 40 + 65 + 20). Two explained
+deltas versus the live site:
+
+- the live site's docked ad bar zeroes the footer's bottom padding
+  (`body.ad-sticky-bottom`), so it measures 20–24px shorter; the port has no ad
+  bar and keeps WP's designed padding;
+- on a phone the port's install CTA is genuinely visible (Chrome fires
+  `beforeinstallprompt` — the build is installable), which adds one 40px row plus
+  the 10px gap. WP's headless render never qualified for it.
+
+Screenshots: `docs/evidence/footer-port-{390,768,1280}.png`. Full record:
+`docs/port/05-port-verification.md`.
+
+### Not ported (deliberate)
+
+Footer sections 6 (consent banner) and 7 (sticky ad bar), the bell's push panel,
+the `.fs-lg` font-scale variants and the `no-flex-gap` Safari-14 fallbacks — all
+need a service a static build lacks, or are inert without the JS class the WP
+theme adds. Tracked in `PENDING-WORK.md`.
+
 ## [0.1.3] — 2026-09-22
 
 ### Fixed

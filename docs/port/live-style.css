@@ -1,0 +1,3470 @@
+/*
+Theme Name:  GWill Finance
+Theme URI:   https://gwillchijioke.com
+Author:      G-will Chijioke
+Author URI:  https://gwillchijioke.com
+Description: finance.gwillchijioke.com, Nigerian personal finance blog. Honest guides on savings, investing, dollar accounts, crypto, banking and remittance. Built from the GWill starter theme. Light by default, warm-tinted dark mode, JetBrains Mono, ₦ wordmark.
+Version:      1.13.39
+Requires at least: 6.0
+Requires PHP: 7.4
+License:     GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: gwill-finance
+Tags:        blog, finance, custom
+*/
+
+/*
+Table of Contents
+1. DESIGN TOKENS
+2. RESET / BASE
+3. BRAND SCROLLBAR (v1.0.121)
+4. TICKER
+5. HEADER (desktop)
+6. SPOTLIGHT SEARCH (finance live-search panel)
+7. HEADER (mobile)
+8. MOBILE NAV OVERLAY
+9. BADGES
+10. BUTTONS
+11. HERO (home)
+12. STATS STRIP
+13. ARTICLE CARD
+14. FEATURED
+15. SECTION HEADER / PILLS
+16. DISCLOSURE
+17. SIDEBAR WIDGET
+18. NEWSLETTER
+19. FOOTER
+20. AD SLOTS
+21. PER-DEVICE SLOT SIZES (v1.0.96)
+22. CONSENT BANNER
+23. STICKY FOOTER AD BAR
+24. BRAND TEXT SELECTION
+25. ARTICLE PAGE
+26. Article, desktop editorial polish (≥1024px)
+27. Lightbox (ported from tech theme, click any article image to zoom)
+28. TOC SIDEBAR
+29. PAGE HEADER
+30. Author archive profile header (v1.0.217)
+31. ABOUT HERO
+32. MOBILE TOC dropdown (wireframe: no sidebar on mobile)
+33. FIREFOX ANDROID (Fenix): hide scrollbars entirely (v1.0.165)
+34. CONTACT
+35. ABOUT CARDS / NETWORK TILES
+36. APP CARDS (Finance Apps page)
+37. SEARCH FORM (theme searchform.php)
+38. PAGINATION
+39. 404
+40. EMPTY STATE (404 + no search results)
+41. SEARCH SEMANTICS (v1.0.191, Google-style, ported from tech)
+42. CONTENT PAGES
+43. LEGAL PAGES (page-legal.php, v1.0.115 dark-hero redesign)
+44. NEWSLETTER PAGE (page-newsletter.php)
+45. NEWSLETTER PAGE (v1.0.114 redesign)
+46. FORMS (contact)
+47. COMMENTS (minimal)
+48. LAYOUT UTILITIES
+49. RESPONSIVE: tablet 768-1023px
+50. RESPONSIVE: mobile ≤767px
+51. RESPONSIVE AUDIT, TOUCH ERGONOMICS (coarse pointers only)
+52. RESPONSIVE AUDIT v1.0.233, remaining findings
+53. ACCESSIBILITY, global focus indicator + reduced-motion guard
+54. FLEX-GAP FALLBACK (Safari 14.0 / iOS 14.0-14.4)
+55. :hover STICKINESS RESET (touch devices only)
+56. FIREFOX AUTOFILL (:-moz-autofill)
+57. PWA INSTALL PROMPT (v1.0.219)
+*/
+
+/*
+ * ── FILE CHANGELOG ──────────────────────────────────────────────────────────
+ * style.css, cleanup pass (2026-08-07, v1.0.156)
+ * Removed 63 lines of dead CSS (2204 → 2141 before this block):
+ *   .mni family (4), .b-out (2), .b-fw (1), INPUTS section (.lbl + .inp ×4),
+ *   COMPARISON TABLE section (.cmp ×10 + .an/.as/.cy/.cn/.cm/.wp),
+ *   .nl-f family (3), SEARCH section (.search-b ×4), .search-result family (7),
+ *   .gwill-form__submit--full, .gwill-form__status--success,
+ *   RELATED POSTS section (2 + .related-posts__grid in @media 767),
+ *   .legal-toc-list a.is-active, plus dead utility tokens on shared lines
+ *   (.mt8/12/16/24/32, .mb8/16/32, .g6/8/10/12/20, .fw7/8, .fz10/13,
+ *   .ct/.cg/.cgr, .ls/.lsup) and pruned dead selectors from two live rules
+ *   (.ac .ac-rd; .legal-toc-list a.is-active).
+ * All deletions grep-proven dead: zero refs in PHP/JS/templates, zero in
+ * rendered DOM (14 page types), zero in published post/page content.
+ * Live siblings kept (.mt20/40/48, .mb12/20/24, .g16, .fw3, .fz11/12/14,
+ * .cm-c/.cd, .lh, .badge, .ac, .pagination, .ad-*, .gs-*, .wp-block-*).
+ */
+
+/* ── 1. DESIGN TOKENS ────────────────────────────── */
+:root {
+  --font: 'JetBrains Mono', monospace;
+  --font-mono: 'JetBrains Mono', monospace;
+  --bg: #f7f6f2;
+  --surface: #ffffff;
+  --surface-2: #faf9f6;
+  --border: #e4e2dc;
+  --border-dim: #eeece7;
+  --text: #0d0d0d;
+  --text-mid: #3a3a3a;
+  --text-dim: #6b6b6b;
+  /* Full-bleed article copy, near-black text on the cream page bg (light mode) */
+  --art-copy: #262626;
+  --art-dim: #3a3a3a;
+  --gold: #b45309;
+  --gold-b: #f59e0b;
+  --gold-btn: #b45309;
+  --gold-muted: #fef9ee;
+  --gold-border: #fcd97a;
+  --gold-glow: rgba(217,119,6,0.22);
+  --gold-input-border: rgba(245,158,11,0.4); /* dark newsletter email input border, matches gold button weight */
+  --green: #15803d;
+  --green-btn: #15803d; /* button bg (a11y v1.0.146) */
+  --green-muted: #f0fdf4;
+  --green-border: #86efac;
+  --purple: #7c3aed;
+  --red: #b91c1c; /* was #dc2626, 4.40:1 on red-muted, now 5.6:1 (a11y v1.0.146) */
+  --red-muted: #fff1f2;
+  --red-border: #fecdd3;
+  --dark: #0d0b08;
+  --dark-s: #131210;
+  --dark-b: #211f1a;
+  --dark-dim: #8f8575;
+  --r-sm: 6px; --r-md: 10px; --r-lg: 16px; --r-xl: 24px; --pill: 100px;
+  --sh-sm: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.05);
+  --sh-md: 0 2px 8px rgba(0,0,0,0.05), 0 8px 28px rgba(0,0,0,0.08);
+  --sh-gold: 0 4px 24px rgba(217,119,6,0.14);
+  --t: 160ms ease; --t-md: 240ms ease;
+  --header-h: 64px;
+  --con-pad: 48px;
+}
+
+/* Dark mode, warm-tinted blacks (brand identity v1.0: #0d0b08 not #0d0d0d) */
+[data-theme="dark"] {
+  --bg: #0d0b08;
+  --surface: #131210;
+  --surface-2: #171512;
+  --text: #f0ede6;
+  /* Full-bleed article copy, light-mode steps up (cream bg), dark-mode stays warm-white */
+  --art-copy: #e8e4dc;
+  --art-dim: #8a8070;
+  --border: #211f1a;
+  --border-dim: #1d1a16;
+  --text-mid: #c4b89a;
+  --text-dim: #8f8575;
+  --gold: #f59e0b;
+  --gold-btn: #b45309;
+  --gold-muted: rgba(245,158,11,0.08);
+  --gold-border: rgba(245,158,11,0.25);
+  --gold-glow: rgba(245,158,11,0.35);
+  --green: #22c55e;
+  --green-btn: #15803d; /* button bg, bright green fails white text 2.3:1 (a11y v1.0.146) */
+  --green-muted: rgba(34,197,94,0.08);
+  --green-border: rgba(34,197,94,0.25);
+  --purple: #a78bfa;
+  --red: #f87171;
+  --red-muted: rgba(248,113,113,0.1);
+  --red-border: rgba(248,113,113,0.3);
+  --sh-sm: 0 1px 3px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.35);
+  --sh-md: 0 2px 8px rgba(0,0,0,0.4), 0 8px 28px rgba(0,0,0,0.5);
+  --sh-gold: 0 4px 24px rgba(245,158,11,0.12);
+}
+
+/* ── 2. RESET / BASE ─────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { overflow-x: hidden; overflow-x: clip; scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h, 64px) + 20px); background: var(--bg); color-scheme: light; }
+[data-theme="dark"] { color-scheme: dark; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+  overflow-wrap: break-word;
+  line-height: 1.6;
+  transition: background var(--t-md), color var(--t-md);
+}
+img, picture, video, canvas, svg, iframe, input, textarea, select, table { max-width: 100%; }
+img { height: auto; display: block; }
+a { text-decoration: none; color: inherit; }
+button { font-family: var(--font); cursor: pointer; }
+input, select, textarea { font-family: var(--font); }
+h1, h2, h3, h4 { letter-spacing: -0.02em; }
+.skip-link, .screen-reader-text {
+  position: absolute !important; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(1px,1px,1px,1px); clip-path: inset(50%);
+}
+.skip-link:focus {
+  position: fixed; top: 8px; left: 8px; z-index: 9999; width: auto; height: auto;
+  clip: auto; clip-path: none; background: var(--gold); color: #fff;
+  padding: 8px 16px; border-radius: var(--r-sm); font-size: 12px; font-weight: 700;
+}
+
+/* ── 3. BRAND SCROLLBAR (v1.0.121) ───────────────── */
+/* Thin gold-accented scrollbar on WebKit/Blink (Chrome, Edge, Safari, Android) */
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--gold-b), var(--gold));
+  border-radius: var(--pill);
+  border: 3px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+/* Firefox, brand gold, thin */
+* { scrollbar-width: thin; scrollbar-color: var(--gold) var(--bg); }
+/* Dark mode, darker track so the gold pops */
+[data-theme="dark"] ::-webkit-scrollbar-track { background: var(--dark); }
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--gold-b), var(--gold));
+  border-color: var(--dark);
+}
+[data-theme="dark"] * { scrollbar-color: var(--gold-b) var(--dark); }
+/* Gold scrollbar on the spotlight-search results panel */
+.gs-results::-webkit-scrollbar { width: 8px; }
+.gs-results::-webkit-scrollbar-thumb { border-width: 2px; }
+
+/* ── 4. TICKER ───────────────────────────────────── */
+.ticker { background: var(--dark); border-bottom: 1px solid var(--dark-b); overflow: hidden; height: 36px; display: flex; align-items: center; }
+.ticker-inner { display: flex; align-items: center; animation: tick 64s linear infinite; white-space: nowrap; }
+@keyframes tick { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+/* v1.0.155: pause + scrub + auto-resume marquee (user request) .
+   hover (desktop) or press-and-drag (any device) freezes the loop so a
+   price can be read; letting go resumes it. .ticker-drag carries the
+   manual offset (inner keeps the animation). touch-action pan-y keeps
+   vertical page scrolling intact while horizontal drags scrub. */
+.ticker { cursor: grab; touch-action: pan-y; }
+.ticker-drag { will-change: transform; }
+.ticker.is-paused .ticker-inner,
+.ticker.is-dragging .ticker-inner { animation-play-state: paused; }
+.ticker.is-dragging { cursor: grabbing; }
+.ticker-drag.gwill-returning { transition: transform 0.4s ease; }
+@media (hover: hover) and (pointer: fine) {
+  .ticker:hover .ticker-inner { animation-play-state: paused; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-inner { animation-duration: 192s; }
+}
+.ti { display: inline-flex; align-items: center; gap: 8px; padding: 0 24px; border-right: 1px solid #2c2822; height: 36px; }
+.t-pair { font-size: 10px; font-weight: 700; color: var(--dark-dim); letter-spacing: 0.1em; }
+.t-rate { font-size: 11px; font-weight: 700; color: #f0ede6; letter-spacing: 0.04em; }
+.t-up { font-size: 9px; font-weight: 700; color: #22c55e; }
+.t-dn { font-size: 9px; font-weight: 700; color: #f87171; }
+.t-cm { font-size: 9px; color: var(--dark-dim); }
+
+/* ── 5. HEADER (desktop) ─────────────────────────── */
+.sh {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 0 var(--con-pad); display: flex; align-items: center; justify-content: space-between;
+  height: var(--header-h); position: sticky; top: 0; z-index: 100; box-shadow: var(--sh-sm);
+}
+.logo { display: inline-flex; align-items: baseline; font-weight: 800; font-size: 18px; letter-spacing: -0.03em; position: relative; flex-shrink: 0; }
+.logo .n { color: var(--gold); text-shadow: 0 0 14px var(--gold-glow); margin-right: 0.14em; }
+.logo .nm { color: var(--text); }
+.logo::after {
+  content: ''; position: absolute; bottom: -3px; left: 0; right: 0; height: 1.5px;
+  background: linear-gradient(90deg, var(--gold), var(--green)); border-radius: 2px; opacity: 0.65;
+}
+.snav { display: flex; align-items: center; gap: 10px; }
+.snav-list { display: flex; align-items: center; gap: 6px; list-style: none; margin: 0; padding: 0; }
+.snav-list > li { position: relative; }
+/* Parent rows: pill background on hover, chevron indicator */
+.snav-list > li > a {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 9px 14px; font-size: 12px; font-weight: 500; color: var(--text-dim);
+  border-radius: var(--r-sm); transition: color var(--t), background var(--t);
+  white-space: nowrap;
+}
+.snav-list > li > a:hover { color: var(--text); background: var(--surface-2); }
+.snav-list > li > a .nav-caret-desktop {
+  font-size: 8px; color: var(--gold); opacity: 0.85;
+  transition: transform var(--t);
+}
+.snav-list li:hover > a .nav-caret-desktop,
+.snav-list li:focus-within > a .nav-caret-desktop,
+.snav-list li.open > a .nav-caret-desktop { transform: rotate(180deg); }
+/* Dropdown panel: card + fade/slide entrance, gold accent rail */
+.snav-list .sub-menu {
+  display: block; visibility: hidden; opacity: 0; pointer-events: none;
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(4px);
+  min-width: 210px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-md); padding: 8px; list-style: none; margin: 0; z-index: 120;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.16);
+  transition: opacity var(--t-md), transform var(--t-md), visibility 0s linear var(--t-md);
+}
+/* Invisible hover bridge, fills gap between parent <a> and dropdown
+   so cursor can't pass through dead zone. */
+.snav-list > li.menu-item-has-children::after {
+  content: ''; position: absolute; top: 100%; left: 0; right: 0; height: 12px;
+  z-index: 119; pointer-events: auto;
+}
+.snav-list .sub-menu::before {
+  content: ''; position: absolute; top: 10px; bottom: 10px; left: 0; width: 2px;
+  background: linear-gradient(180deg, var(--gold), var(--green)); border-radius: 2px;
+}
+.snav-list > li:hover > .sub-menu,
+.snav-list > li:focus-within > .sub-menu,
+/* .open = touch tablet tap-to-expand (main.js adds it on coarse pointers
+   only, desktop mouse/keyboard never sees the class). */
+.snav-list > li.open > .sub-menu,
+.snav-list > li > .sub-menu:hover {
+  visibility: visible; opacity: 1; pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+  transition: opacity var(--t-md), transform var(--t-md), visibility 0s linear 0s;
+}
+/* Edge guards (cross-browser audit v1.13.16): a dropdown on the LAST nav
+   item would centre on its parent and spill past the viewport's right edge;
+   flip it to right-align under the item instead. Same for the last nested
+   fly-out, which would otherwise fly right off-screen; flip it left.
+   Reviewer D1 (v1.13.18): the nested guard is scoped under the LAST nav
+   item only; the descendant form matched every top-level dropdown's last
+   row and flipped left-positioned panels off the LEFT viewport edge. */
+.snav-list > li:last-child > .sub-menu { left: auto; right: 0; transform: translateX(0) translateY(4px); }
+.snav-list > li:last-child:hover > .sub-menu,
+.snav-list > li:last-child:focus-within > .sub-menu,
+.snav-list > li:last-child.open > .sub-menu { transform: translateX(0) translateY(0); }
+.snav-list > li:last-child .sub-menu li:last-child > .sub-menu { left: auto; right: 100%; transform: translateX(0) translateY(4px); border-left: none; border-right: 1px solid rgba(245, 158, 11, 0.25); }
+/* Reviewer D2: flip the gold rail to the parent-adjacent edge on the
+   left-flying panel (the rail is otherwise left-positioned for all). */
+.snav-list > li:last-child .sub-menu li:last-child > .sub-menu::before { left: auto; right: 0; }
+/* Nested (level 3) sub-menus, fly out to the right of their parent item.
+   Left-aligned (not centred like the top-level panel) so the rail + bullets
+   line up with the parent row. */
+.snav-list .sub-menu .sub-menu {
+  top: -9px; left: 100%; transform: translateX(0) translateY(4px);
+  border-left: 1px solid rgba(245, 158, 11, 0.25);
+}
+/* Invisible hover bridge for nested fly-outs, fills the gap between the
+   level-2 row ("Investing") and its level-3 panel ("Fixed Income") so the
+   cursor never crosses a dead zone travelling right. */
+.snav-list .sub-menu li.menu-item-has-children::after {
+  content: ''; position: absolute; top: -9px; bottom: -9px; left: 100%;
+  width: 12px; z-index: 119; pointer-events: auto;
+}
+.snav-list .sub-menu li:hover > .sub-menu,
+.snav-list .sub-menu li:focus-within > .sub-menu,
+.snav-list .sub-menu li.open > .sub-menu,
+.snav-list .sub-menu li > .sub-menu:hover {
+  visibility: visible; opacity: 1; pointer-events: auto;
+  transform: translateX(0) translateY(0);
+}
+.snav-list .sub-menu li { position: relative; }
+.snav-list .sub-menu a {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px 10px 16px;
+  font-size: 12px; font-weight: 400;
+  color: var(--text-dim); border-radius: var(--r-sm); width: 100%;
+  transition: color var(--t), background var(--t), padding-left var(--t);
+}
+.snav-list .sub-menu a::before { content: '◆'; font-size: 6px; color: var(--gold); opacity: 0.8; flex-shrink: 0; }
+.snav-list .sub-menu a:hover { color: var(--text); background: var(--surface-2); padding-left: 20px; }
+.snav-list > li.current-menu-item > a, .snav-list .current-menu-ancestor > a {
+  color: var(--text); font-weight: 700; background: var(--gold-muted);
+}
+[data-theme="dark"] .snav-list .sub-menu { background: var(--dark-s); border-color: var(--dark-b); box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55); }
+[data-theme="dark"] .snav-list .sub-menu a:hover { background: var(--dark); color: #f0ede6; }
+[data-theme="dark"] .snav-list > li.current-menu-item > a, [data-theme="dark"] .snav-list .current-menu-ancestor > a { background: rgba(245, 158, 11, 0.1); }
+/* Tablet (768-1023px): compact spacing so all items fit */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .snav-list { gap: 2px; }
+  .snav-list > li > a { padding: 8px 10px; font-size: 11px; }
+  .snav .ncta { padding: 8px 12px; font-size: 11px; }
+}
+.nl { font-size: 12px; font-weight: 400; color: var(--text-dim); padding: 6px 12px; border-radius: var(--r-sm); transition: all var(--t); }
+.nl:hover { color: var(--text); background: var(--surface-2); }
+.nl.cur, .current-menu-item > .nl, .snav .current-menu-item > a { color: var(--text); font-weight: 700; }
+/* ── tri-state theme pill (Dark · System · Light) ──
+   Replaces the old binary .ntog/.mtog knobs. One pill, three equal
+   segments; the active segment is filled (light = gold, dark = gold-b)
+   while the inactive segments sit on the pill's muted background. The
+   whole pill inverts cleanly between light and dark themes via the
+   existing --gold-muted / --gold / --gold-b / --surface-2 palette. */
+.tp {
+  display: inline-flex; align-items: stretch; gap: 2px; padding: 2px;
+  background: var(--gold-muted); border: 1px solid var(--gold-border);
+  border-radius: var(--pill); margin-left: 8px; flex-shrink: 0;
+  transition: background var(--t), border-color var(--t);
+}
+.tp-seg {
+  appearance: none; -webkit-appearance: none; background: transparent; border: 0;
+  display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px;
+  border-radius: var(--pill); cursor: pointer; color: var(--text-dim);
+  font: inherit; font-size: 12px; font-weight: 600; line-height: 1;
+  transition: background var(--t), color var(--t);
+  /* WCAG 2.5.8 AA, the inner clickable area is 24px+ tall after padding+border. */
+  min-height: 24px;
+}
+.tp-seg:hover { color: var(--text); }
+.tp-seg:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.tp-seg svg { width: 14px; height: 14px; flex: 0 0 14px; }
+.tp-seg[aria-pressed="true"] {
+  background: var(--gold); color: #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,.08);
+}
+/* dark theme: invert the active segment to the bright gold-b so it reads
+   against the dark pill background. */
+[data-theme="dark"] .tp { background: var(--surface-2); border-color: var(--gold-border); }
+[data-theme="dark"] .tp-seg[aria-pressed="true"] {
+  background: var(--gold-b); color: var(--dark);
+  box-shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+/* hide text labels on narrow viewports (mobile); keep the icon for the
+   segment. The desktop pill always shows text. */
+.tp--m .tp-tx { display: none; }
+.tp--m { margin-left: 4px; }
+.tp--m .tp-seg { padding: 4px 5px; min-width: 22px; }
+.tp--m .tp-seg svg { width: 13px; height: 13px; flex: 0 0 13px; }
+@media (max-width: 480px) {
+  /* even on the desktop pill, on very small screens text is dropped .
+     the icons + tooltip + aria-label carry meaning. */
+  .tp .tp-tx { display: none; }
+  .tp .tp-seg { padding: 4px 5px; min-width: 22px; }
+  .tp .tp-seg svg { width: 13px; height: 13px; flex: 0 0 13px; }
+}
+.ncta {
+  background: var(--gold-btn); color: #fff; border: none; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.02em; padding: 8px 18px; border-radius: var(--r-sm); margin-left: 10px;
+  white-space: nowrap; transition: background var(--t); text-decoration: none; flex-shrink: 0;
+}
+.ncta:hover { background: #92400e; color: #fff; }
+.nsearch {
+  width: 34px; height: 34px; border-radius: var(--r-sm); border: 1px solid var(--border);
+  background: var(--surface); color: var(--text-mid); display: inline-flex; align-items: center;
+  justify-content: center; margin-left: 10px; transition: all var(--t); text-decoration: none;
+}
+.nsearch:hover { border-color: var(--gold-border); color: var(--gold); }
+.msearch {
+  width: 36px; height: 36px; border-radius: var(--r-sm); border: 1px solid var(--border);
+  background: var(--surface); color: var(--text-mid); display: inline-flex; align-items: center;
+  justify-content: center; transition: all var(--t); text-decoration: none;
+}
+.msearch:hover { border-color: var(--gold-border); color: var(--gold); }
+
+/* ── 6. SPOTLIGHT SEARCH (finance live-search panel) ─── */
+.gs {
+  position: fixed; top: 64px; left: 50%; transform: translateX(-50%);
+  z-index: 9999; width: 560px; width: min(560px, calc(100% - 24px));
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
+  box-shadow: 0 24px 60px rgba(13, 11, 8, 0.28);
+  overflow: hidden;
+}
+.gs[hidden] { display: none; }
+/* gold accent bar across the top of the panel */
+.gs::before { content: ''; display: block; height: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-b) 60%, transparent); }
+.gs-inner { padding: 16px 18px 14px; }
+.gs-form { display: flex; align-items: center; gap: 10px; }
+.gs-glyph {
+  font-family: var(--font); font-weight: 800; font-size: 15px; color: var(--gold);
+  flex-shrink: 0; width: 18px; text-align: center;
+}
+.gs-input-wrap { position: relative; flex: 1; min-width: 0; display: flex; }
+.gs-input {
+  flex: 1; min-width: 0; background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 11px 40px 11px 14px; font-size: 16px; font-weight: 400;
+  color: var(--text); outline: none; transition: border-color var(--t), box-shadow var(--t);
+  font-family: var(--font);
+}
+.gs-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.12); }
+.gs-input::placeholder { color: var(--text-dim); }
+.gs-clear {
+  position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
+  width: 28px; height: 28px; border: 0; border-radius: 50%;
+  background: transparent; color: var(--text-dim); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: color var(--t), background var(--t);
+}
+.gs-clear:hover { color: var(--gold); background: var(--gold-muted); }
+.gs-clear:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+/* Author-level display:flex above would defeat the HTML hidden attribute
+   (UA [hidden] rule loses to any author display), the in-field x must
+   truly vanish when the input holds zero text (King: "the inner x should
+   disappear if there are zero texts"). v1.0.191. */
+.gs-clear[hidden] { display: none !important; }
+.gs-close {
+  width: 36px; height: 36px; border-radius: var(--r-sm); border: 1px solid var(--border);
+  background: var(--surface); color: var(--text-mid); flex-shrink: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 11px;
+  transition: all var(--t);
+}
+.gs-close:hover { border-color: var(--gold-border); color: var(--gold); }
+.gs-results { max-height: 320px; overflow-y: auto; -webkit-overflow-scrolling: touch; margin-top: 4px; }
+.gs-results.has-results { border-top: 1px solid var(--border-dim); margin-top: 12px; padding-top: 6px; }
+.gs-row {
+  display: flex; align-items: center; gap: 12px; padding: 12px 10px;
+  border-bottom: 1px solid var(--border-dim); text-decoration: none; border-radius: var(--r-sm);
+  transition: background var(--t);
+}
+.gs-row:last-of-type { border-bottom: none; }
+.gs-row:hover { background: var(--surface-2); }
+.gs-row.cur { background: var(--gold-muted); }
+.gs-arrow {
+  flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+  border: 1px solid var(--border); color: var(--text-dim); font-size: 11px;
+  display: flex; align-items: center; justify-content: center; transition: all var(--t);
+}
+.gs-row:hover .gs-arrow, .gs-row.cur .gs-arrow { background: var(--gold); border-color: var(--gold); color: #fff; }
+.gs-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.gs-title {
+  font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: -0.01em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.gs-excerpt {
+  font-size: 11px; line-height: 1.45; color: var(--text-mid);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.gs-title mark, .gs-excerpt mark {
+  background: var(--gold-muted); color: var(--gold);
+  border-radius: 2px; padding: 0 1px; font-weight: 800;
+}
+.gs-meta {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em;
+}
+.gs-dot { color: var(--gold); }
+.gs-pill {
+  flex-shrink: 0; font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+  background: var(--gold-muted); border: 1px solid var(--gold-border); color: var(--gold);
+  padding: 4px 9px; border-radius: var(--pill); white-space: nowrap;
+}
+.gs-pill--plain { background: var(--surface-2); border-color: var(--border); color: var(--text-dim); }
+.gs-viewall {
+  display: block; text-align: center; padding: 11px; margin-top: 4px;
+  font-size: 11px; font-weight: 700; color: var(--gold); text-decoration: none;
+  border-top: 1px solid var(--border-dim); transition: background var(--t);
+}
+.gs-viewall:hover { background: var(--gold-muted); }
+.gs-state {
+  padding: 26px 10px; text-align: center; color: var(--text-dim);
+  font-size: 12px; font-style: italic; font-family: var(--font-mono);
+}
+.gs-foot {
+  display: flex; gap: 14px; margin-top: 10px; padding-top: 10px;
+  border-top: 1px solid var(--border-dim);
+  font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em;
+}
+.gs-foot kbd {
+  font-family: var(--font-mono); font-size: 9px; background: var(--surface-2);
+  border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px;
+  padding: 1px 5px; color: var(--text-mid);
+}
+.gs-foot-end { margin-left: auto; }
+[data-theme="dark"] .gs { background: var(--dark-s); border-color: var(--dark-b); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6); }
+[data-theme="dark"] .gs-input { background: var(--dark); border-color: var(--dark-b); color: #f0ede6; }
+[data-theme="dark"] .gs-input::placeholder { color: #8f8575; }
+[data-theme="dark"] .gs-row:hover { background: #1c1a16; }
+[data-theme="dark"] .gs-row.cur { background: #1c1a16; }
+[data-theme="dark"] .gs-pill { background: rgba(217, 119, 6, 0.12); border-color: rgba(217, 119, 6, 0.3); }
+[data-theme="dark"] .gs-close, [data-theme="dark"] .gs-arrow { background: var(--dark); border-color: var(--dark-b); color: #8a8070; }
+[data-theme="dark"] .gs-clear:hover { background: rgba(217, 119, 6, 0.14); }
+[data-theme="dark"] .gs-viewall:hover, [data-theme="dark"] .gs-state { background: #1c1a16; }
+[data-theme="dark"] .gs-foot kbd { background: var(--dark); border-color: var(--dark-b); color: #8a8070; }
+[data-theme="dark"] .gs-title mark, [data-theme="dark"] .gs-excerpt mark { background: rgba(245, 158, 11, 0.16); color: #fbbf24; }
+@media (max-width: 767px) {
+  .gs { top: 56px; width: calc(100% - 16px); }
+  .gs-inner { padding: 12px 12px 10px; }
+  .gs-foot-mid { display: none; }
+}
+
+/* ── 7. HEADER (mobile) ──────────────────────────── */
+.mh {
+  background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 20px;
+  height: 56px; display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100; box-shadow: var(--sh-sm);
+}
+.mlogo { display: inline-flex; align-items: baseline; font-weight: 800; font-size: 16px; letter-spacing: -0.03em; position: relative; }
+.mlogo .n { color: var(--gold); text-shadow: 0 0 10px var(--gold-glow); margin-right: 0.12em; }
+.mlogo .nm { color: var(--text); }
+.mlogo::after {
+  content: ''; position: absolute; bottom: -3px; left: 0; right: 0; height: 1.5px;
+  background: linear-gradient(90deg, var(--gold), var(--green)); border-radius: 2px; opacity: 0.6;
+}
+.mhr { display: flex; align-items: center; gap: 10px; }
+.hbg {
+  width: 36px; height: 36px; border: 1px solid var(--border); border-radius: var(--r-sm);
+  background: var(--surface); display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 5px; cursor: pointer;
+}
+.hbg span { width: 16px; height: 1.5px; background: var(--text); border-radius: 2px; }
+
+/* v1.12.69, tighten the mobile right cluster (search · theme pill ·
+   hamburger). The King: the pill must sit closer to the search and
+   hamburger so the cluster is narrower and the search icon keeps clear
+   space from the full logo. Buttons stay 44px on coarse pointers
+   (WCAG 2.5.5 tap target, the .tp-seg pill stays 24px+ tall), only
+   the GAPS shrink. Must come AFTER the base .mhr/.msearch/.hbg rules
+   above so the cascade resolves in its favour. */
+@media (max-width: 767px) {
+  .mhr { gap: 4px; }
+  .tp--m { margin-left: 0; }
+}
+
+/* ── 8. MOBILE NAV OVERLAY ───────────────────────── */
+.mno {
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0; inset: 0; background: var(--dark); z-index: 500; display: flex;
+  flex-direction: column; transform: translateX(100%); transition: transform .28s cubic-bezier(0.4,0,0.2,1);
+}
+.mno.open { transform: translateX(0); }
+.mno-top { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--dark-b); }
+.mno-top .mlogo .nm { color: #f0ede6; }
+.mno-close {
+  width: 36px; height: 36px; border: 1px solid var(--dark-b); border-radius: var(--r-sm);
+  background: var(--dark-s); display: flex; align-items: center; justify-content: center;
+  color: #f0ede6; font-size: 16px; cursor: pointer;
+}
+.mno-items { flex: 1; padding: 8px 12px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.mno-list { list-style: none; margin: 0; padding: 0; }
+/* Full-row tap targets: the <a> IS the bar (padding on the link, not the li) */
+.mno-list li { position: relative; border-radius: var(--r-sm); }
+.mno-list > li > a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 12px; font-size: 14px; font-weight: 700;
+  color: #f0ede6; letter-spacing: -0.02em;
+  border-bottom: 1px solid var(--dark-b); border-radius: var(--r-sm);
+  min-height: 48px; /* comfortable touch target */
+}
+.mno-list li:last-child > a { border-bottom: none; }
+.mno-list > li.current-menu-item > a { color: var(--gold-b); }
+/* Leaf rows get a subtle gold arrow on the right */
+.mno-list > li:not(.menu-item-has-children) > a::after {
+  content: '→'; margin-left: auto; font-size: 13px; color: var(--dark-dim);
+  transition: color var(--t), transform var(--t);
+}
+.mno-list > li:not(.menu-item-has-children) > a:active::after { color: var(--gold-b); transform: translateX(2px); }
+/* Parent rows get a tappable gold chevron (the accordion handle) */
+.mno-list .nav-caret {
+  margin-left: auto; width: 32px; height: 32px; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--dark-b); border-radius: 8px;
+  color: var(--gold); font-size: 11px; line-height: 1;
+  background: var(--dark-s); padding: 0; font-family: inherit;
+  transition: transform var(--t), background var(--t), border-color var(--t);
+}
+.mno-list li.open > a .nav-caret {
+  transform: rotate(180deg);
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: var(--gold-b);
+}
+/* Sub-menus, hidden by default, accordion via .open. Finance styling:
+   indented warm-black panel with gold rail, JetBrains Mono-ish smaller rows
+   (NOT the tech theme's green/left-pad look). */
+.mno-list .sub-menu {
+  display: none; list-style: none; margin: 4px 0 8px 18px; padding: 0 0 0 14px;
+  border-left: 2px solid rgba(245, 158, 11, 0.35);
+  background: rgba(13, 11, 8, 0.55);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+}
+.mno-list li.open > .sub-menu { display: block; }
+.mno-list .sub-menu li { border-radius: 0; }
+.mno-list .sub-menu a {
+  display: flex; align-items: center;
+  padding: 12px 12px; font-size: 13px; font-weight: 400;
+  color: #c9c0b0; letter-spacing: 0; border-radius: 0;
+  min-height: 44px;
+}
+.mno-list .sub-menu a::before { content: '◆'; font-size: 7px; color: var(--gold); margin-right: 10px; opacity: 0.8; }
+.mno-list .sub-menu a:active { color: var(--gold-b); }
+.mno-bot { padding: 16px 20px; border-top: 1px solid var(--dark-b); }
+.mno-cta { display: block; width: 100%; text-align: center; background: var(--gold); color: #fff; border: none; font-size: 13px; font-weight: 700; padding: 14px; border-radius: var(--r-sm); transition: background var(--t); }
+.mno-cta:hover { background: var(--gold-b); }
+/* Mobile-nav ad: breathing room on ALL sides, never skin-to-skin with
+   the menu items above or the CTA below (user: "mobile nav ad already
+   breaks the skin to skin rule"). */
+.mno-bot .ad-menu { height: 80px; margin: 14px 0 16px; }
+.mno-bot .ad-menu .ad-txt { font-size: 9px; }
+
+/* ── 9. BADGES ───────────────────────────────────── */
+.badge {
+  display: inline-flex; align-items: center; font-size: 9px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px;
+  border-radius: var(--pill); border: 1px solid;
+}
+.bg { background: var(--gold-muted); border-color: var(--gold-border); color: var(--gold); }
+.bgn { background: var(--green-muted); border-color: var(--green-border); color: var(--green); }
+.bpu { background: #f5f0ff; border-color: #d0b4fe; color: var(--purple); }
+.bsl { background: #f1f5f9; border-color: #cbd5e1; color: #475569; }
+.brd { background: var(--red-muted); border-color: var(--red-border); color: var(--red); }
+[data-theme="dark"] .bpu { background: rgba(124,58,237,0.12); border-color: rgba(124,58,237,0.25); color: #a78bfa; }
+[data-theme="dark"] .bsl { background: rgba(148,163,184,0.08); border-color: rgba(148,163,184,0.2); color: #94a3b8; }
+[data-theme="dark"] .brd { background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.2); color: #f87171; }
+
+/* ── 10. BUTTONS ─────────────────────────────────── */
+.btn { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 12px; border-radius: var(--r-sm); border: none; cursor: pointer; transition: all var(--t); }
+.b-gold { background: var(--gold-btn); color: #fff; padding: 10px 20px; }
+.b-gold:hover { background: #92400e; transform: translateY(-1px); }
+.b-ghost { background: transparent; color: var(--text-mid); border: 1px solid var(--border); padding: 9px 20px; }
+.b-ghost:hover { border-color: var(--text-dim); color: var(--text); }
+.b-green { background: var(--green-btn); color: #fff; padding: 10px 20px; }
+.b-green:hover { background: #166534; transform: translateY(-1px); }
+.b-sm { font-size: 11px; padding: 7px 14px; }
+.bh { background: var(--gold-b); color: var(--dark); border: none; font-size: 13px; font-weight: 800; padding: 12px 24px; border-radius: var(--r-sm); transition: all var(--t); }
+.bh:hover { background: #e09009; transform: translateY(-1px); }
+.bhg { background: transparent; color: #f0ede6; border: 1px solid var(--dark-b); font-size: 13px; font-weight: 700; padding: 11px 24px; border-radius: var(--r-sm); transition: all var(--t); }
+.bhg:hover { border-color: var(--dark-dim); }
+
+/* ── 11. HERO (home) ─────────────────────────────── */
+.hero { background: var(--dark); padding: 72px var(--con-pad) 68px; position: relative; overflow: hidden; }
+.hero::before {
+  content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size: 28px 28px; pointer-events: none;
+}
+.hero::after {
+  content: ''; position: absolute; top: -100px; right: -100px; width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(217,119,6,0.1) 0%, transparent 65%); pointer-events: none;
+}
+.hero-grain {
+  position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-b);
+  background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2);
+  padding: 5px 14px; border-radius: var(--pill); margin-bottom: 22px; position: relative; z-index: 1;
+}
+.hero-h {
+  font-size: 48px; font-size: clamp(38px, 5.5vw, 62px); font-weight: 800; letter-spacing: -0.045em;
+  line-height: 1.0; margin-bottom: 16px; max-width: 640px; position: relative; z-index: 1;
+}
+.hero-h .g { color: var(--gold-b); }
+.hero-h .w { color: #f0ede6; }
+.hero-sub { font-size: 15px; font-weight: 300; color: var(--dark-dim); line-height: 1.75; max-width: 460px; margin-bottom: 28px; position: relative; z-index: 1; }
+.hero-acts { display: flex; align-items: center; gap: 12px; position: relative; z-index: 1; }
+.hero-cats { display: flex; align-items: center; gap: 8px; margin-top: 36px; flex-wrap: wrap; position: relative; z-index: 1; }
+.hero-cats-lbl { font-size: 10px; font-weight: 300; color: var(--dark-dim); font-style: italic; }
+.db { display: inline-flex; align-items: center; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border-radius: var(--pill); border: 1px solid; }
+.db-g { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.2); color: var(--gold-b); }
+.db-gr { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.18); color: #22c55e; }
+.db-p { background: rgba(124,58,237,0.1); border-color: rgba(124,58,237,0.2); color: #a78bfa; }
+.db-s { background: rgba(148,163,184,0.08); border-color: rgba(148,163,184,0.18); color: #94a3b8; }
+
+/* ── 12. STATS STRIP ─────────────────────────────── */
+.stat-strip { background: var(--gold-muted); border-top: 1px solid var(--gold-border); border-bottom: 1px solid var(--gold-border); display: flex; }
+.si { flex: 1; padding: 20px 32px; border-right: 1px solid var(--gold-border); text-align: center; }
+.si:last-child { border-right: none; }
+.si-n { font-size: 24px; font-weight: 800; color: var(--gold); letter-spacing: -0.04em; }
+.si-l { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-mid); margin-top: 3px; }
+
+/* ── 13. ARTICLE CARD ────────────────────────────── */
+.ac {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md);
+  overflow: hidden; transition: border-color var(--t-md), transform var(--t-md), box-shadow var(--t-md);
+  position: relative;
+}
+.ac:hover { border-color: var(--gold-border); transform: translateY(-3px); box-shadow: var(--sh-gold); }
+.ac-img {
+  width: 100%; min-height: 150px; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center;
+  border-bottom: 1px solid var(--border-dim); font-size: 28px; position: relative; overflow: hidden;
+}
+.ac-img::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.45), transparent); pointer-events: none; }
+/* v1.0.235 (cross-browser audit finding): Safari <=12 has no
+   aspect-ratio support, without this the card image box collapsed to
+   min-height:150px instead of true 16/9. Scoped behind @supports so
+   modern engines never apply the padding-box mechanism (their layout
+   stays governed solely by aspect-ratio; byte-identical rendering). */
+@supports not (aspect-ratio: 16/9) {
+  .ac-img::before { content: ''; display: block; padding-top: 56.25%; }
+}
+.ac-img img { width: 100%; height: 100%; object-fit: cover; }
+.ac-emoji { position: relative; z-index: 1; font-size: 28px; }
+.ac-body { padding: 16px 20px 20px; position: relative; }
+.ac-body .badge { margin-bottom: 10px; }
+.ac-t { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.35; letter-spacing: -0.02em; margin-bottom: 8px; }
+.ac-ex { font-size: 11px; font-weight: 300; color: var(--text-dim); line-height: 1.65; margin-bottom: 12px; }
+.ac-ft { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border-dim); }
+.a-dt { font-size: 10px; color: var(--text-dim); font-weight: 300; }
+.a-rd { font-size: 10px; color: var(--gold); font-weight: 700; }
+/* Fully clickable card */
+.ac h3 a::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; z-index: 1; }
+.ac .badge { position: relative; z-index: 2; }
+
+/* Category art gradients */
+.i-sav { background: linear-gradient(135deg, #fef3c7, #fcd34d); }
+.i-inv { background: linear-gradient(135deg, #dcfce7, #86efac); }
+.i-cry { background: linear-gradient(135deg, #f5f0ff, #ddd6fe); }
+.i-ban { background: linear-gradient(135deg, #eff6ff, #bfdbfe); }
+.i-rem { background: linear-gradient(135deg, #fff7ed, #fed7aa); }
+.i-dol { background: linear-gradient(135deg, #fef9ee, #fde68a); }
+
+/* ── 14. FEATURED ────────────────────────────────── */
+.feat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; }
+.feat-img { display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--border); font-size: 40px; min-height: 260px; position: relative; overflow: hidden; }
+.feat-img::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.4), transparent); pointer-events: none; }
+.feat-img img { width: 100%; height: 100%; object-fit: cover; }
+.feat-emoji { position: relative; z-index: 1; font-size: 56px; }
+.feat-body { padding: 32px 36px; display: flex; flex-direction: column; gap: 12px; position: relative; }
+.feat-body .badge { align-self: flex-start; }
+.feat-t { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.03em; line-height: 1.2; }
+.feat-ex { font-size: 13px; font-weight: 300; color: var(--text-dim); line-height: 1.75; flex: 1; }
+.feat-meta { display: flex; align-items: center; gap: 12px; padding-top: 14px; border-top: 1px solid var(--border-dim); font-size: 10px; color: var(--text-dim); font-weight: 300; flex-wrap: wrap; }
+.feat-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border); }
+.feat-body .feat-t a::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; z-index: 1; }
+.feat-body .badge, .feat-body .btn { position: relative; z-index: 2; }
+
+/* ── 15. SECTION HEADER / PILLS ──────────────────── */
+.shd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.stitle { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); }
+.slink { font-size: 11px; font-weight: 700; color: var(--gold); }
+.cp-strip { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 2px; }
+.cp-strip::-webkit-scrollbar { display: none; }
+.cp {
+  font-size: 11px; font-weight: 700; padding: 7px 16px; border-radius: var(--pill);
+  border: 1px solid var(--border); background: var(--surface); color: var(--text-dim);
+  cursor: pointer; white-space: nowrap; transition: all var(--t); flex-shrink: 0;
+}
+/* Gold ghost scroll buttons for the pill row, appear on EVERY device
+   (PC, tablet, mobile) when the strip overflows. Buttons fade by scroll
+   position: prev (‹) stays hidden at position 0 and only appears once
+   the user scrolls right; next (›) hides at the end. No overflow = no
+   buttons at all (buttons + edge fade stay hidden). */
+.cp-strip-wrap { position: relative; min-width: 0; }
+/* Soft edge fade behind the buttons so pills slide under them cleanly.
+   Gated by scroll position like the buttons themselves, the left fade
+   must NOT show at position 0 (it faded the first pill without any
+   scrolling, user: "Why fading the first pill without even scrolling,
+   terrible UI and UX"). v1.0.147: fade color comes from --strip-bg (the
+   ACTUAL background behind the strip, archive .pill-strip #faf9f6 /
+   #171512, apps .apps-tabs #fff / #131210, the old var(--bg)/var(--dark)
+   ended a shade off, leaving a visible rectangle; worst in dark mode) and
+   narrowed 44→32px so it can't eat a whole pill. */
+.cp-strip-wrap.has-overflow.can-prev::before,
+.cp-strip-wrap.has-overflow.can-next::after {
+  content: ''; position: absolute; top: 0; bottom: 0; width: 32px;
+  pointer-events: none; z-index: 4;
+}
+.cp-strip-wrap.has-overflow.can-prev::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--strip-bg, var(--bg)), transparent);
+}
+.cp-strip-wrap.has-overflow.can-next::after {
+  right: 0;
+  background: linear-gradient(270deg, var(--strip-bg, var(--bg)), transparent);
+}
+[data-theme="dark"] .cp-strip-wrap.has-overflow.can-prev::before {
+  background: linear-gradient(90deg, var(--strip-bg, var(--dark)), transparent);
+}
+[data-theme="dark"] .cp-strip-wrap.has-overflow.can-next::after {
+  background: linear-gradient(270deg, var(--strip-bg, var(--dark)), transparent);
+}
+/* v1.0.147: strip containers declare the fade's backdrop color (the fade
+   must end in the surface the strip actually sits on, not the page bg). */
+.pill-strip { --strip-bg: var(--surface-2); }
+.apps-tabs { --strip-bg: var(--surface); }
+.cp-scroll-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--gold); font-size: 15px; font-weight: 700; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; z-index: 5; box-shadow: var(--sh-sm);
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--t), border-color var(--t), color var(--t), background var(--t);
+}
+.cp-strip-wrap.has-overflow.can-next .cp-scroll-next,
+.cp-strip-wrap.has-overflow.can-prev .cp-scroll-prev { opacity: 1; pointer-events: auto; }
+.cp-scroll-prev { left: 0; }
+.cp-scroll-next { right: 0; }
+.cp-scroll-btn:hover { border-color: var(--gold-border); color: var(--gold); background: var(--gold-muted); }
+.cp-scroll-btn:disabled { opacity: 0; pointer-events: none; }
+[data-theme="dark"] .cp-scroll-btn { background: var(--dark-s); border-color: var(--dark-b); color: var(--gold-b); }
+[data-theme="dark"] .cp-scroll-btn:hover { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.35); }
+.cp:hover { border-color: var(--gold-border); color: var(--gold); }
+.cp.on { background: var(--gold-btn); border-color: var(--gold-btn); color: #fff; }
+/* Category filter, grid loading state + image fade-in
+   v1.0.148: dim + centered gold spinner during fetches so slow loads
+   read as "working", not broken (user: "no loading animation ... users
+   know it's not broken and it's actually loading"). The dim targets the
+   grid's CHILDREN (:not(.gwill-spinner)), a parent-level opacity would
+   compound onto the spinner itself and wash it out (caught in pixel
+   verification: gold ring rendered at 35% = invisible). */
+#gwill-posts-grid { position: relative; transition: min-height 240ms ease; }
+#gwill-posts-grid.gwill-loading { pointer-events: none; }
+#gwill-posts-grid.gwill-loading > :not(.gwill-spinner) { opacity: 0.35; }
+#gwill-posts-grid > * { transition: opacity var(--t-md); }
+#gwill-posts-grid .gwill-spinner {
+  position: absolute; top: 56px; left: 0; right: 0; margin: 0 auto;
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 3px solid var(--border); border-top-color: var(--gold);
+  animation: gwill-spin 0.8s linear infinite;
+  z-index: 2;
+}
+@keyframes gwill-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  #gwill-posts-grid .gwill-spinner { animation-duration: 2s; }
+}
+#gwill-posts-grid img { opacity: 0; transition: opacity var(--t-md); }
+#gwill-posts-grid img.gwill-img-in { opacity: 1; }
+.gwill-filter-empty { font-size: 13px; color: var(--text-dim); font-weight: 300; padding: 24px 0; }
+
+/* Gutenberg table → comparison look */
+.wp-block-table { border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; }
+.wp-block-table table { border-collapse: collapse; width: 100%; font-size: 12px; }
+.wp-block-table figure, .wp-block-table { max-width: 100%; }
+.wp-block-table table { min-width: 0; }
+/* Mobile: table scrolls inside its own box, never blows the page wide */
+@media (max-width: 767px) {
+  .art-body .wp-block-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .art-body .wp-block-table table { width: max-content; min-width: 100%; }
+}
+/* Flat square table scrollbar, GOLD BY DEFAULT so it is ALWAYS visible
+   until the user scrolls (user: "It must always be visible until user
+   scrolls" + "Make sure table Scrollbar is visible initially but fades
+   after scrolling the table"). Inverted logic: no class = visible;
+   main.js adds .tbl-idle after 1.5s of no scrolling following the
+   first user scroll (and removes it on scroll). Fail-safe: if JS ever
+   breaks, the scrollbar stays visible, never invisible. */
+.wp-block-table { scrollbar-width: thin; scrollbar-color: var(--gold-border) transparent; }
+.wp-block-table::-webkit-scrollbar { width: 6px; height: 6px; }
+.wp-block-table::-webkit-scrollbar-track { background: transparent; }
+.wp-block-table::-webkit-scrollbar-thumb { background: var(--gold-border); border-radius: 0; }
+.wp-block-table.tbl-idle { scrollbar-color: transparent transparent; }
+.wp-block-table.tbl-idle::-webkit-scrollbar-thumb { background: transparent; }
+[data-theme="dark"] .wp-block-table { scrollbar-color: rgba(217, 119, 6, 0.45) transparent; }
+[data-theme="dark"] .wp-block-table::-webkit-scrollbar-thumb { background: rgba(217, 119, 6, 0.45); }
+.wp-block-table thead { background: var(--surface-2); }
+.wp-block-table th { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+.wp-block-table td { padding: 12px 14px; border-bottom: 1px solid var(--border-dim); color: var(--text-mid); }
+.wp-block-table tr:last-child td { border-bottom: none; }
+.wp-block-table tbody tr:hover { background: var(--gold-muted); }
+
+/* ── 16. DISCLOSURE ──────────────────────────────── */
+.discl { background: var(--gold-muted); border: 1px solid var(--gold-border); border-radius: var(--r-sm); padding: 12px 16px; display: flex; gap: 10px; align-items: flex-start; }
+.discl-i { color: var(--gold); font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.discl-t { font-size: 11px; font-weight: 300; color: var(--text-mid); line-height: 1.65; }
+.discl-t strong { color: var(--gold); font-weight: 700; }
+
+/* ── 17. SIDEBAR WIDGET ──────────────────────────── */
+.sw { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); padding: 20px; margin-bottom: 14px; }
+.sw-t { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border-dim); }
+.sw .gwill-newsletter__prompt { display: none; }
+.sw .gwill-form__status { font-size: 11px; }
+
+/* ── 18. NEWSLETTER ──────────────────────────────── */
+.nl-s { background: var(--dark); border-radius: var(--r-xl); padding: 36px 44px; display: flex; align-items: center; justify-content: space-between; gap: 24px; position: relative; overflow: hidden; border: 1px solid var(--dark-b); }
+[data-theme="dark"] .nl-s { background: #1e1b16; border-color: rgba(245, 158, 11, 0.25); box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5); }
+.nl-s::before {
+  content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; pointer-events: none;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 28px 28px;
+}
+.nl-s::after {
+  content: ''; position: absolute; top: -120px; right: -120px; width: 380px; height: 380px;
+  background: radial-gradient(circle, rgba(217,119,6,0.14) 0%, transparent 65%); pointer-events: none;
+}
+.nl-s > * { position: relative; z-index: 1; }
+.nl-s .nl-h { font-size: 20px; font-weight: 800; color: #f0ede6; letter-spacing: -0.03em; margin-bottom: 6px; }
+.nl-s p { font-size: 12px; font-weight: 300; color: var(--dark-dim); line-height: 1.7; max-width: 420px; }
+.nl-meta { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 9px; font-weight: 300; color: var(--dark-dim); letter-spacing: 0.08em; text-transform: uppercase; }
+.nl-meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--dark-b); }
+/* Starter newsletter form inside .nl-s */
+.nl-s .gwill-newsletter { display: flex; flex-direction: column; gap: 14px; flex: 1; max-width: 420px; }
+.nl-s .gwill-newsletter__prompt { display: none; }
+.nl-s .gwill-form--newsletter__fields { display: flex; gap: 8px; }
+.nl-s .gwill-form--newsletter__fields .gwill-form__field { flex: 1; min-width: 0; }
+.nl-s .gwill-form input[type="email"] { background: var(--dark-s); border: 1px solid var(--gold-input-border); color: #f0ede6; }
+.nl-s .gwill-form input[type="email"]:-webkit-autofill,
+.nl-s .gwill-form input[type="email"]:-webkit-autofill:hover,
+.nl-s .gwill-form input[type="email"]:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--dark-s) inset !important;
+  -webkit-text-fill-color: #f0ede6 !important;
+  caret-color: #f0ede6 !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+.nl-s .gwill-form input[type="email"]::placeholder { color: var(--dark-dim); }
+.nl-s .gwill-form__submit { background: var(--gold-btn); color: #fff; border: none; font-size: 12px; font-weight: 700; padding: 0 20px; border-radius: var(--r-md); white-space: nowrap; transition: background var(--t); height: 46px; }
+.nl-s .gwill-form__submit:hover { background: #92400e; }
+.nl-s .gwill-form__status { font-size: 11px; color: #c4b89a; }
+.nl-s .gwill-form__status.error { color: #f87171; }
+.m-nl { background: var(--dark); border-radius: var(--r-lg); padding: 24px 20px; }
+[data-theme="dark"] .m-nl { background: #1e1b16; border: 1px solid rgba(245, 158, 11, 0.25); box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5); }
+.m-nl h3 { font-size: 18px; font-weight: 800; color: #f0ede6; letter-spacing: -0.03em; margin-bottom: 4px; }
+.m-nl p { font-size: 12px; font-weight: 300; color: var(--dark-dim); line-height: 1.65; margin-bottom: 14px; }
+.m-nl .gwill-newsletter__prompt { display: none; }
+.m-nl .gwill-form input[type="email"] { background: var(--dark-s); border: 1px solid var(--gold-input-border); color: #f0ede6; }
+.m-nl .gwill-form input[type="email"]::placeholder { color: var(--dark-dim); }
+/* Sidebar Weekly Digest form, stack input + full-width button */
+.sw .gwill-form--newsletter__fields { display: flex; flex-direction: column; gap: 8px; }
+[data-theme="dark"] .sw .gwill-form input[type="email"] { border-color: var(--gold-input-border); }
+.sw .gwill-form__submit { width: 100%; justify-content: center; height: 38px; padding: 0 20px; }
+/* These inputs' high-specificity border rules override the generic
+   .gwill-form input:focus (style.css:2915), so give them an explicit
+   bright-gold focus border to keep the keyboard/touch affordance. */
+.nl-s .gwill-form input[type="email"]:focus,
+.m-nl .gwill-form input[type="email"]:focus,
+[data-theme="dark"] .sw .gwill-form input[type="email"]:focus { border-color: var(--gold-b); box-shadow: 0 0 0 3px rgba(245,158,11,0.18); outline: none; }
+/* Newsletter submit buttons match the 46px input height EXACTLY, the
+   38px button sat 8px shorter than the input in the mobile digest row
+   (user: "weekly digest button and text field are not equally aligned").
+   Stretch alignment guarantees equal tops/bottoms in flex rows. */
+.m-nl .gwill-form__submit,
+.nl-s .gwill-form__submit,
+.nl-hero-form .gwill-form__submit,
+.sw .gwill-form__submit { height: 48px; }
+.m-nl .gwill-form--newsletter__fields,
+.nl-s .gwill-form--newsletter__fields,
+.nl-hero-form .gwill-form--newsletter__fields { align-items: stretch; }
+/* Mobile-only newsletter block on singles (wireframe m-nl) */
+.m-nl-wrap { display: none; }
+@media (max-width: 767px) {
+  .m-nl-wrap { display: block; margin-top: 24px; }
+  .article-sidebar { display: none; }
+  .m-nl .gwill-form--newsletter__fields { display: flex; gap: 8px; }
+  .m-nl .gwill-form--newsletter__fields .gwill-form__field { flex: 1; min-width: 0; }
+  .m-nl .gwill-form__submit { background: var(--gold-btn); color: #fff; border: none; font-size: 12px; font-weight: 700; padding: 0 20px; border-radius: var(--r-md); white-space: nowrap; height: 46px; }
+}
+/* The sidebar must NEVER clip its widgets (user: "why did you cut off
+   the bottom of the ad widget"). The TOC square (.toc-scroll) handles
+   long heading lists internally; the sidebar itself stays natural
+   height so the ad + digest always render fully. Slightly tighter
+   widget padding here so the whole stack (square TOC + ad + digest)
+   fits within a 1080p viewport when the sidebar is stuck.
+   padding-top: 40px ALIGNS the TOC card with the breadcrumb line:
+   equal space from the site header for both (user: "Make sure toc and
+   breadcrumbs are on the same and have equal space between the header
+   and them"). */
+.article-sidebar { padding-top: 20px; }
+.article-sidebar .sw { padding: 16px; margin-bottom: 10px; }
+
+/* ── 19. FOOTER ──────────────────────────────────── */
+.footer { background: var(--dark); padding: 48px var(--con-pad) 24px; margin-top: 72px; }
+.ftop { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 40px; }
+.fcol--brand { max-width: 320px; }
+.flogo { display: inline-flex; align-items: baseline; font-weight: 800; font-size: 16px; letter-spacing: -0.03em; margin-bottom: 12px; }
+.flogo .n { color: var(--gold-b); text-shadow: 0 0 12px rgba(245,158,11,0.35); margin-right: 0.12em; }
+.flogo .nm { color: #f0ede6; }
+.ftag { font-size: 12px; font-weight: 300; color: var(--dark-dim); line-height: 1.75; margin-bottom: 10px; }
+.fnet { font-size: 10px; color: var(--dark-dim); font-weight: 300; margin-bottom: 14px; }
+.fsoc { display: flex; gap: 8px; }
+.fsoc .soci {
+  width: 34px; height: 34px; border-radius: 8px; background: var(--dark-s);
+  border: 1px solid var(--dark-b); color: var(--dark-dim);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; transition: all var(--t);
+}
+.fsoc .soci:hover { border-color: var(--gold-border); color: var(--gold-b); transform: translateY(-1px); }
+/* ── 2b. follow CTAs (push + Google News) ── */
+.ffollow {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+	margin: 14px 0 4px;
+}
+/* Breathing space between the follow buttons and the social icons below them
+   on desktop/large screens, v1.9.3 (King: "no breathing space with the icons
+   on PC and big screens"). The .ffollow + .fsoc pair only occurs in the
+   desktop brand column; the mobile footer has .fsoc ABOVE .ffollow + a
+   separate block, so this does not touch mobile. */
+.ffollow + .fsoc { margin-top: 18px; }
+.fpush, .fgooglenews {
+	font: inherit;
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 1;
+	letter-spacing: 0.01em;
+	padding: 10px 16px;
+	border-radius: 10px;
+	cursor: pointer;
+	border: 1px solid var(--gold-border);
+	background: var(--dark-s);
+	color: var(--gold-b);
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	transition: background var(--t), color var(--t), border-color var(--t), transform var(--t);
+	-webkit-tap-highlight-color: transparent;
+}
+.fpush svg, .fgooglenews svg {
+	flex: none;
+	width: 18px;
+	height: 18px;
+}
+.fpush:hover, .fgooglenews:hover {
+	border-color: var(--gold-b);
+	background: var(--gold-b);
+	color: #0d0b08;
+	transform: translateY(-1px);
+}
+.fpush:active, .fgooglenews:active { transform: translateY(0); }
+.fpush[data-push-state="on"] {
+	background: var(--gold-b);
+	color: #0d0b08;
+	border-color: var(--gold-b);
+}
+.fpush[disabled], .fpush[data-push-state="unsupported"] {
+	opacity: 0.55;
+	cursor: not-allowed;
+	transform: none;
+}
+.fpush[data-push-state="unsupported"] {
+	text-decoration: line-through;
+}
+/* cap OS/browser text scaling where the engine respects it (Chrome/Safari/Edge).
+   Firefox Android intentionally obeys the OS font scale, JS + .fs-lg handle that. */
+html {
+	-webkit-text-size-adjust: 100%;
+	-moz-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+}
+
+/* ── 2b1. smart push bell panel (v1.0.262, ported from tech v1.19.32) ── */
+.gwill-bell-panel {
+	position: fixed;
+	z-index: 9999;
+	left: 50%;
+	bottom: 16px;
+	transform: translateX(-50%);
+	width: min(92vw, 380px);
+	background: var(--dark-s);
+	color: var(--gold-b);
+	border: 1px solid var(--gold-border);
+	border-radius: 14px;
+	padding: 18px;
+	box-shadow: 0 12px 40px rgba(13, 13, 13, 0.35);
+}
+.gwill-bell-panel.is-open { animation: gbp-rise .18s ease-out; }
+@keyframes gbp-rise {
+	from { opacity: 0; transform: translate(-50%, 10px); }
+	to   { opacity: 1; transform: translate(-50%, 0); }
+}
+.gbp-x {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	width: 30px;
+	height: 30px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid transparent;
+	border-radius: var(--r-sm);
+	background: transparent;
+	color: var(--gold-border);
+	cursor: pointer;
+}
+.gbp-x:hover { color: var(--gold-b); border-color: var(--gold-border); }
+.gbp-title {
+	font-family: var(--font-mono);
+	font-size: 15px;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	color: var(--gold-b);
+	margin: 0 0 6px;
+	padding-right: 30px;
+}
+.gbp-status {
+	font-family: var(--font-mono);
+	font-size: 12px;
+	color: var(--gold-border);
+	margin: 0 0 8px;
+}
+.gbp-status--on { color: var(--green-b, #4ade80); }
+.gbp-status--bad { color: var(--red, #f87171); }
+.gbp-body {
+	font-size: 13.5px;
+	line-height: 1.6;
+	color: #f5f2ea;
+	margin: 0 0 12px;
+}
+.gbp-steps {
+	margin: 0 0 10px;
+	padding-left: 0;
+	list-style: none;
+	counter-reset: gbp-step;
+}
+.gbp-steps li {
+	counter-increment: gbp-step;
+	position: relative;
+	padding-left: 26px;
+	font-family: var(--font-mono);
+	font-size: 12px;
+	line-height: 1.7;
+	color: #f5f2ea;
+}
+.gbp-steps li::before {
+	content: counter(gbp-step);
+	position: absolute;
+	left: 0;
+	top: 2px;
+	width: 17px;
+	height: 17px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid var(--gold-border);
+	border-radius: var(--r-sm);
+	color: var(--gold-b);
+	font-size: 10px;
+	background: rgba(245, 158, 11, 0.14);
+}
+.gbp-other {
+	font-size: 12px;
+	line-height: 1.6;
+	color: var(--gold-border);
+	margin: 0 0 12px;
+}
+.gbp-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.gbp-btn {
+	font-family: var(--font-mono);
+	font-size: 13px;
+	font-weight: 700;
+	min-height: 44px;
+	padding: 0 16px;
+	border-radius: var(--r-md);
+	cursor: pointer;
+	border: 1px solid var(--gold-border);
+	background: transparent;
+	color: var(--gold-b);
+}
+.gbp-btn--primary {
+	background: var(--gold-b);
+	border-color: var(--gold-b);
+	color: #0d0b08;
+}
+.gbp-btn--primary:hover { background: var(--gold-border); border-color: var(--gold-border); }
+.gbp-btn--ghost:hover { color: #f5f2ea; border-color: var(--gold-b); }
+.gbp-btn:focus-visible, .gbp-x:focus-visible {
+	outline: 2px solid var(--gold);
+	outline-offset: 2px;
+}
+/* ── loading state (v1.0.266), shows the user the action is in progress ── */
+.gbp-btn:disabled { opacity: 0.65; cursor: progress; }
+.gbp-btn.is-loading { pointer-events: none; }
+.gbp-btn.is-loading .gbp-spin {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	margin-right: 8px;
+	vertical-align: -2px;
+	border: 2px solid currentColor;
+	border-top-color: transparent;
+	border-radius: 50%;
+	animation: gbp-spin 0.7s linear infinite;
+}
+@keyframes gbp-spin { to { transform: rotate(360deg); } }
+.gbp-btn[hidden], .gbp-x[hidden] { display: none; }
+
+/* ── 2b1a. currency converter (v1.1.0) ── */
+.fx-card {
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: var(--r-md); /* aligned to blog .app-card/.ac */
+	padding: 20px;
+	box-shadow: var(--sh-md);
+}
+.fx-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 14px;
+	align-items: flex-end;
+}
+.fx-field { flex: 1 1 140px; min-width: 120px; display: flex; flex-direction: column; gap: 6px; }
+.fx-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); }
+.fx-input, .fx-select {
+	font: inherit;
+	font-family: var(--font-mono);
+	font-size: 16px;
+	background: var(--surface-2);
+	border: 1px solid var(--border);
+	border-radius: var(--r-md); /* aligned to blog .gwill-form input */
+	color: var(--text);
+	padding: 12px 14px;
+	width: 100%;
+}
+.fx-input:focus, .fx-select:focus { outline: 2px solid var(--gold); outline-offset: 1px; border-color: var(--gold-border); }
+.fx-swap-wrap { align-self: center; }
+.fx-swap {
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	border: 1px solid var(--gold-border);
+	background: var(--surface);
+	color: var(--gold-b);
+	font-size: 20px;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	transition: background var(--t), transform var(--t), color var(--t);
+}
+.fx-swap:hover { background: var(--gold-b); color: #0d0b08; transform: rotate(180deg); }
+.fx-result {
+	margin-top: 18px;
+	padding: 18px;
+	background: var(--dark);
+	border-radius: var(--r-md);
+	text-align: center;
+}
+.fx-big {
+	font-family: var(--font-mono);
+	font-size: 34px;
+	font-weight: 800;
+	letter-spacing: -0.03em;
+	color: var(--gold-b);
+	overflow-wrap: anywhere;
+}
+.fx-result-note { margin-top: 6px; font-size: 12px; color: var(--dark-dim); }
+.fx-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.fx-chip {
+	font-size: 12px;
+	font-weight: 700;
+	padding: 8px 14px;
+	border-radius: var(--pill);
+	border: 1px solid var(--gold-border);
+	color: var(--gold);
+	background: transparent;
+	text-decoration: none;
+	transition: background var(--t), color var(--t), border-color var(--t);
+}
+.fx-chip:hover { background: var(--gold-b); color: #0d0b08; border-color: var(--gold-b); }
+.fx-rate {
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: var(--r-md);
+	padding: 16px 18px;
+}
+.fx-trend {
+	background: var(--surface-2);
+	border: 1px solid var(--border);
+	border-radius: var(--r-md);
+	padding: 14px 18px;
+	margin-top: 16px;
+}
+.fx-trend-dot {
+	width: 9px; height: 9px; border-radius: 50%;
+	display: inline-block; flex: 0 0 9px;
+}
+.fx-rate-top { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+.fx-rate-code { font-size: 13px; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
+.fx-rate-name { font-size: 11px; font-weight: 300; color: var(--text-dim); }
+.fx-rate-main { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.fx-rate-sym { font-family: var(--font-mono); font-size: 14px; color: var(--text-mid); }
+.fx-rate-arrow { color: var(--text-dim); }
+.fx-rate-val { font-family: var(--font-mono); font-size: 18px; font-weight: 800; color: var(--gold); }
+.fx-rate-rev { margin-top: 4px; font-size: 11px; color: var(--text-dim); }
+.fx-copy { font-size: 15px; line-height: 1.8; color: var(--art-copy); max-width: 720px; }
+.fx-copy h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; color: var(--text); margin: 28px 0 10px; }
+.fx-copy h3 { font-size: 17px; font-weight: 800; color: var(--text); margin: 22px 0 8px; }
+.fx-copy p { margin: 0 0 14px; }
+.fx-aff { background: var(--gold-muted); border: 1px solid var(--gold-border); border-radius: var(--r-md); padding: 18px; }
+
+/* ── tools hub cards (page-tools.php, v1.1.1) ── */
+.tool-card {
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: var(--r-md);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	box-shadow: var(--sh-sm);
+	transition: transform var(--t), box-shadow var(--t), border-color var(--t);
+}
+/* v1.13.1: tool-card inner structure moved from inline styles to classes
+   (design-system consistency - the markup no longer hardcodes padding/font/
+   gap; only the per-tool icon gradient stays inline as --tile so each tool
+   keeps its color identity). */
+.tool-card__head { padding: 20px 20px 16px; border-bottom: 1px solid var(--border-dim); }
+.tool-card__top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.tool-card__icon {
+	width: 48px; height: 48px; flex-shrink: 0;
+	background: linear-gradient(135deg, var(--tile, #fef3c7), var(--tile-b, #fcd34d));
+	border-radius: 12px;
+	display: flex; align-items: center; justify-content: center;
+	font-size: 22px; line-height: 1;
+}
+.tool-card__title { font-size: 15px; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
+.tool-card__badge { font-size: 10px; font-weight: 300; color: var(--text-dim); }
+.tool-card__desc { font-size: 12px; font-weight: 300; color: var(--text-dim); line-height: 1.65; margin: 0; }
+.tool-card__foot { padding: 14px 20px; }
+.tool-card__foot .btn { flex: 1; justify-content: center; }
+/* v1.13.1: shared pad helper for the calculator result-bucket cards (was
+   inline style="padding:20px" on 5 calculator pages). */
+.tool-card__pad { padding: 20px; }
+.tool-card:hover { transform: translateY(-2px); box-shadow: var(--sh-md); border-color: var(--gold-border); }
+.tool-card .btn { width: 100%; }
+
+/* ── tools: result/table styles, aligned to blog-post .wp-block-table look ── */
+.fx-result-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dark-dim); margin-bottom: 4px; }
+/* a11y v1.12.60: a label that is a DIRECT child of a white .fx-card must use a
+   white-passing color, dark-dim (#8f8575) is 3.63:1 on white (FAIL) but 5.41:1
+   on the dark .fx-result panel (PASS). Scope the override to the direct-child
+   case so dark panel labels stay dark-dim. */
+.fx-card > .fx-result-label { color: var(--text-dim); }
+.fx-per { font-size: 12px; font-weight: 300; color: var(--dark-dim); margin-left: 8px; }
+/* Tool tables mirror the blog-post .wp-block-table design: bordered rounded
+   wrapper, uppercase headers on --surface-2, row hover, gold scrollbar. The
+   .st-label / .st-amt / data-kind semantics below are tool-specific. */
+.st-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border); border-radius: var(--r-md); scrollbar-width: thin; scrollbar-color: var(--gold-border) transparent; }
+.st-table-wrap::-webkit-scrollbar { width: 6px; height: 6px; }
+.st-table-wrap::-webkit-scrollbar-track { background: transparent; }
+.st-table-wrap::-webkit-scrollbar-thumb { background: var(--gold-border); border-radius: 0; }
+.st-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.st-table thead { background: var(--surface-2); }
+.st-table th { text-align: left; font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.st-table td { padding: 12px 14px; border-bottom: 1px solid var(--border-dim); color: var(--text-mid); }
+.st-table tbody tr:last-child td { border-bottom: none; }
+.st-table tbody tr:hover { background: var(--gold-muted); }
+.st-table .st-label { font-weight: 300; color: var(--text-dim); }
+.st-table .st-amt { font-family: var(--font-mono); text-align: right; font-weight: 700; white-space: nowrap; color: var(--text); }
+.st-table tr[data-kind="net"] .st-amt { color: var(--gold); }
+.st-table tr[data-kind="tax"] .st-amt { color: var(--text); }
+.st-table .st-amt[data-signed="1"] { color: var(--text-dim) !important; }
+.st-table tr[data-kind="net"] td { font-weight: 800; }
+.st-table tr[data-kind="net"] .st-label { color: var(--text); font-weight: 700; }
+.fx-disclaimer { font-size: 11px; line-height: 1.7; color: var(--text-dim); max-width: 720px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-dim); }
+
+/* ── tools: old-vs-new comparison card (salary tax, v1.2.5) ── */
+.st-compare {
+	margin-top: 16px;
+	padding: 16px 18px;
+	background: var(--surface-2);
+	border: 1px solid var(--border);
+	border-radius: var(--r-md);
+}
+.st-compare-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px; }
+.st-compare-grid { display: flex; gap: 12px; flex-wrap: wrap; }
+.st-compare-col { flex: 1 1 160px; }
+.st-compare-regime { font-size: 11px; font-weight: 300; color: var(--text-dim); margin-bottom: 4px; }
+.st-compare-amt { font-family: var(--font-mono); font-size: 18px; font-weight: 800; color: var(--text); }
+.st-compare-save {
+	margin-top: 12px;
+	font-size: 13px;
+	font-weight: 700;
+	padding: 10px 12px;
+	border-radius: var(--r-sm);
+}
+.st-compare--save .st-compare-save { background: var(--green-muted); border: 1px solid var(--green-border); color: var(--green); }
+.st-compare--lose .st-compare-save { background: var(--red-muted); border: 1px solid var(--red-border); color: var(--red); }
+
+/* ── tools: savings rate comparator (v1.12.0) ── */
+.sr-chart { display: flex; flex-direction: column; gap: 12px; padding: 6px 0; }
+.sr-row { display: grid; grid-template-columns: 190px 1fr 56px; gap: 12px; align-items: center; }
+.sr-label { font-size: 12px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sr-prod { display: block; font-size: 10px; font-weight: 400; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sr-barwrap { background: var(--surface-2); border-radius: var(--r-sm); height: 20px; overflow: hidden; }
+.sr-bar { height: 100%; border-radius: var(--r-sm); background: linear-gradient(90deg, var(--gold) , var(--gold-b)); min-width: 4px; }
+.sr-rate { font-size: 13px; font-weight: 800; font-family: var(--font-mono); color: var(--text); text-align: right; }
+@media (max-width: 480px) {
+	.sr-row { grid-template-columns: 1fr 44px; }
+	.sr-label { grid-column: 1 / -1; }
+	.sr-barwrap { grid-column: 1; }
+	.sr-rate { grid-column: 2; }
+}
+
+/* ── tools: full-bleed tables on mobile, match the blog's .wp-block-table break-out.
+   `.st-table-wrap` is a tool-only class (never in blog content) and is a DIRECT child
+   of `.con`. On ≤767px the blog breaks `.art-body > figure/.wp-block-table` to the
+   true page edge (margin: -con-pad) while text stays padded. Tool tables get the SAME
+   break-out so comparison/data tables read edge-to-edge like the King's reference.
+   (v1.12.8) */
+@media (max-width: 767px) {
+  .con > .st-table-wrap { margin-left: calc(-1 * var(--con-pad)); margin-right: calc(-1 * var(--con-pad)); border-radius: 0; border-left: none; border-right: none; }
+}
+
+/* ── COMPARISON-TABLE feature matrix (unified: blog .wp-block-table + tools .st-table)
+   ✓ / ✗ / ★ cells are auto-exposed by main.js §6b (no content edits needed);
+   the winner row (.tbl-best) is auto-detected from the highest ★ rating, else
+   the most ✓ marks. Same design language everywhere. (v1.12.5) ── */
+/* check / cross / star chips */
+.wp-block-table td .tbl-yes, .st-table td .tbl-yes { color: var(--green); font-weight: 800; }
+.wp-block-table td .tbl-no,  .st-table td .tbl-no  { color: var(--red); font-weight: 800; }
+.wp-block-table td .tbl-star, .st-table td .tbl-star { color: var(--gold-b); letter-spacing: 0.06em; }
+/* faint pill behind a check/cross chip for scanability */
+.wp-block-table td .tbl-ck, .st-table td .tbl-ck { border-radius: 999px; padding: 2px 8px; }
+.wp-block-table td .tbl-ck.tbl-yes, .st-table td .tbl-ck.tbl-yes { background: var(--green-muted); }
+.wp-block-table td .tbl-ck.tbl-no,  .st-table td .tbl-ck.tbl-no  { background: var(--red-muted); }
+/* winner / best row, gold accent bar + tinted surface, SAME in blog & tools
+   (.tf-winner = transfer-comparator's own winner; .tbl-best = auto-detected) */
+.wp-block-table tr.tbl-best, .st-table tr.tbl-best, .st-table tr.tf-winner { background: var(--gold-muted); }
+.wp-block-table tr.tbl-best td:first-child, .st-table tr.tbl-best td:first-child, .st-table tr.tf-winner td:first-child { border-left: 3px solid var(--gold-b); }
+.wp-block-table tr.tbl-best td, .st-table tr.tbl-best td, .st-table tr.tf-winner td { color: var(--text); font-weight: 700; }
+.wp-block-table tr.tbl-best .tbl-star, .st-table tr.tbl-best .tbl-star, .st-table tr.tf-winner .tbl-star { color: var(--gold); }
+/* small "BEST" corner tag on the winner row label cell */
+.wp-block-table tr.tbl-best td:first-child::after, .st-table tr.tbl-best td:first-child::after, .st-table tr.tf-winner td:first-child::after {
+	content: '\00a0\00a0BEST'; font-size: 8px; font-weight: 800; letter-spacing: 0.12em;
+	color: var(--gold); vertical-align: middle;
+}
+
+/* ── tools: official vs parallel rate toggle (v1.3.1) ── */
+.fx-rate-mode { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; align-items: center; width: fit-content; max-width: 100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--pill); padding: 4px; margin: 0 auto 10px; }
+.fx-mode-btn { flex: 0 0 auto; font-size: 12px; font-weight: 700; padding: 8px 16px; border-radius: var(--pill); border: none; background: transparent; color: var(--text-dim); cursor: pointer; transition: background var(--t), color var(--t); white-space: nowrap; }
+.fx-mode-btn:hover { color: var(--text); }
+.fx-mode-btn.is-active { background: var(--gold-b); color: #0d0b08; }
+.fx-mode-note { font-size: 11px; line-height: 1.6; color: var(--text-dim); margin: 0 0 16px; text-align: center; }
+.fx-mode-note[hidden] { display: none; }
+.fx-gap-note { font-size: 11px; line-height: 1.6; color: var(--text-dim); margin: 0 0 16px; text-align: center; }
+.fx-gap-note strong { color: var(--gold); }
+.fx-gap-note[hidden] { display: none; }
+
+/* ── tools: salary-tax exemption badge + bonus card (v1.8.1) ── */
+.fx-exempt-badge { display: inline-block; margin-top: 10px; font-size: 12px; font-weight: 700; padding: 8px 14px; border-radius: var(--pill); background: var(--green-muted); border: 1px solid var(--green-border); color: var(--green); }
+.fx-exempt-badge[hidden] { display: none; }
+#st-bonus-card .fx-big { font-size: 26px; }
+
+/* ── tools: exchange-rate history chart (v1.4.0) ── */
+.hx-chart { width: 100%; overflow: hidden; border-radius: var(--r-md); position: relative; }
+/* Base-switch loading overlay, anchored to .hx-chart (already position:relative)
+   so it covers the chart while a new base's history points are fetched via REST.
+   Reuses the theme's gwill-spin ring + gold accent (matches .ad-ring). */
+.hx-loading {
+	position: absolute; inset: 0;
+	display: flex; flex-direction: column; align-items: center; justify-content: center;
+	gap: 10px; background: var(--surface); /* fallback: pre-color-mix engines */
+	background: color-mix(in srgb, var(--surface) 82%, transparent);
+	-webkit-backdrop-filter: blur(2px); /* Safari ≤17 */
+	backdrop-filter: blur(2px); border-radius: var(--r-md);
+	opacity: 0; visibility: hidden; transition: opacity 0.18s ease;
+	z-index: 5; text-align: center; padding: 16px;
+}
+.hx-loading.is-showing { opacity: 1; visibility: visible; }
+.hx-spinner {
+	width: 26px; height: 26px; border-radius: 50%;
+	border: 3px solid var(--border); border-top-color: var(--gold);
+	animation: gwill-spin 0.8s linear infinite;
+}
+.hx-loading-text { font-size: 13px; color: var(--text-mid); font-family: var(--font-mono); }
+@media (prefers-reduced-motion: reduce) {
+	.hx-spinner { animation-duration: 1.8s; }
+}
+.hx-tooltip { position: absolute; pointer-events: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 6px 10px; font-size: 12px; color: var(--text); box-shadow: var(--sh-md); z-index: 5; }
+.hx-legend { display: flex; justify-content: center; gap: 20px; margin: 10px 0 4px; font-size: 11px; color: var(--text-dim); flex-wrap: wrap; }
+.hx-key { display: inline-flex; align-items: center; gap: 6px; }
+.hx-dot { width: 16px; height: 3px; border-radius: 2px; display: inline-block; }
+.hx-dot.official { background: var(--gold-b); }
+.hx-dot.parallel { background: var(--text-dim); }
+
+/* ── tools: amount-based currency pages (v1.3.0) ── */
+/* Token-only; reuses fx-card / fx-input / fx-chip. Light + dark both covered
+   by the existing :root / [data-theme="dark"] token overrides. */
+.fxap-hero { text-align: left; }
+.fxap-figure { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; font-family: var(--font-mono); font-size: clamp(1.9rem, 6vw, 3rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; color: var(--gold); }
+.fxap-figure .fxap-side { overflow-wrap: anywhere; }
+.fxap-figure .fxap-eq { color: var(--text-dim); font-weight: 400; opacity: 0.6; }
+.fxap-figure .fxap-result { color: var(--gold); }
+.fxap-conv-note { margin-top: 10px; font-size: 12px; color: var(--text-dim); }
+
+/* ── 2b2. large-text resilience (OS font-scale, Firefox Android obeys it by design, v1.0.264) ── */
+/* .fs-lg is set by js/bootstrap.js when the rendered body text exceeds 20px
+   (system font-scale ~125%+). Goal: reorganise gracefully, never clip or overflow. */
+.fs-lg .ticker {
+	height: auto !important;       /* stop the clip in the screenshot */
+	min-height: 36px;
+	overflow: visible;
+}
+.fs-lg .ti { height: auto; padding: 6px 20px; }
+.fs-lg .ticker-inner {
+	animation: none;               /* giant text + marquee = stutter; rotate instead */
+	flex-wrap: wrap;
+	white-space: normal;
+}
+/* Hero headline, the live element is <h1 class="hero-h"> (NOT .hero-title!).
+   Scoped under .fs-lg and !important so it beats the .hero-h{font-size} media
+   rules (which out-rank a bare h1 in specificity). */
+.fs-lg h1, .fs-lg .hero-h, .fs-lg .hero-title, .fs-lg .frontpg-h1 {
+	font-size: clamp(26px, 5.2vw + 10px, 38px) !important;
+	overflow-wrap: anywhere;
+	word-break: break-word;
+	line-height: 1.15;
+}
+.fs-lg .hero-sub, .fs-lg .hero p {
+	font-size: clamp(15px, 2.2vw + 6px, 18px) !important;
+	line-height: 1.6;
+}
+.fs-lg .hero-acts, .fs-lg .hero-cats { flex-wrap: wrap; }
+.fs-lg .fpush, .fs-lg .fgooglenews, .fs-lg .btn, .fs-lg .finstall { flex-wrap: wrap; }
+.fs-lg .hero-tag, .fs-lg .hero-cats-lbl { font-size: 13px; }
+input, select, textarea { font-size: 16px; } /* stops iOS/Android focus-zoom drift */
+/* ── 2c. install-app buttons (native + iOS Home Screen guide) ── */
+.finstall {
+	font: inherit;
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 1;
+	letter-spacing: 0.01em;
+	padding: 10px 16px;
+	border-radius: 10px;
+	cursor: pointer;
+	border: 1px solid var(--gold-border);
+	background: transparent;
+	color: var(--gold-b);
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	transition: background var(--t), color var(--t), border-color var(--t), transform var(--t);
+	-webkit-tap-highlight-color: transparent;
+}
+.finstall svg { flex: none; width: 18px; height: 18px; }
+.finstall:hover {
+	border-color: var(--gold-b);
+	background: rgba(245, 158, 11, 0.12);
+	transform: translateY(-1px);
+}
+.finstall:active { transform: translateY(0); }
+.finstall[hidden] { display: none; }
+/* iOS users get the Home-Screen guide button (no native install API). */
+.finstall--ios { border-style: dashed; }
+.finstall-note {
+	display: block;
+	width: 100%;
+	margin-top: 8px;
+	font-size: 11px;
+	line-height: 1.5;
+	font-weight: 500;
+	color: var(--gold-border);
+	background: rgba(245, 158, 11, 0.08);
+	border: 1px solid rgba(245, 158, 11, 0.22);
+	border-radius: 8px;
+	padding: 8px 10px;
+}
+.fct { font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #f0ede6; margin-bottom: 12px; }
+.fl { display: block; font-size: 12px; font-weight: 300; color: var(--dark-dim); margin-bottom: 8px; transition: color var(--t); }
+.fl:hover { color: #c4b89a; }
+.fbot { border-top: 1px solid var(--dark-b); padding-top: 20px; display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: var(--dark-dim); font-weight: 300; gap: 12px; flex-wrap: wrap; }
+.fcredit { white-space: nowrap; }
+.fcredit-link {
+	color: #f0ede6; /* near-white on the dark footer, the credit must read as a link, not blend in */
+	font-weight: 700;
+	text-decoration: underline;
+	text-decoration-color: rgba(245, 158, 11, 0.45);
+	text-underline-offset: 3px;
+	transition: color var(--t), text-decoration-color var(--t);
+}
+.fcredit-link:hover { color: var(--gold-b); text-decoration-color: var(--gold-b); }
+.mfcredit { margin-top: 2px; }
+.mfcredit .fcredit-link { font-weight: 700; }
+@media (max-width: 767px) {
+  .fcredit { white-space: normal; }
+}
+.fbot-right { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.flegal { white-space: nowrap; }
+.flegal a { color: var(--dark-dim); transition: color var(--t); }
+.flegal a:hover { color: var(--gold-b); }
+.fdot { color: var(--dark-dim); margin: 0 6px; opacity: 0.6; }
+.mfooter .flegal a { color: var(--dark-dim); }
+.mfooter .flegal a:hover { color: var(--gold-b); }
+.mfooter .flegal .fdot { margin: 0 4px; }
+@media (max-width: 767px) {
+  .flegal { white-space: normal; }
+  .mfbot .flegal { display: block; margin: 6px 0; }
+}
+.ftoplink { color: var(--dark-dim); font-weight: 700; transition: color var(--t); }
+.ftoplink:hover { color: var(--gold-b); }
+.mfooter { background: var(--dark); padding: 32px 20px 24px; margin-top: 40px; }
+.mfgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+.mfbot { padding-top: 14px; display: flex; flex-direction: column; gap: 6px; font-size: 10px; color: var(--dark-dim); font-weight: 300; }
+
+/* ── 20. AD SLOTS ────────────────────────────────── */
+.ad-slot {
+  background: #eae8e3; border: 1.5px dashed #c8c4bc; border-radius: var(--r-sm);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  position: relative; overflow: hidden; width: 100%; flex-shrink: 0;
+}
+.ad-slot::before {
+  content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0;
+  background: repeating-linear-gradient(-45deg, transparent, transparent 8px, rgba(0,0,0,0.025) 8px, rgba(0,0,0,0.025) 9px);
+  pointer-events: none;
+}
+.ad-txt { font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #9a9080; position: relative; z-index: 1; }
+/* Simple gold ring spinner, replaces the old spinning ₦ coin (user:
+   "replace all ads loading SVG that had that naira sign stuff with this
+   simple loading svg"). Same language as the homepage filter spinner
+   (.gwill-spinner): plain ring, no glyph, no glow, nothing to clip.
+   --border/--gold flip with the theme, no dark overrides needed. */
+.ad-ring {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 3px solid var(--border); border-top-color: var(--gold);
+  animation: gwill-spin 0.8s linear infinite;
+  flex: none; z-index: 1; margin-bottom: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ad-ring { animation: none; }
+}
+.ad-leader { height: 90px; }
+.ad-rect { height: 280px; max-width: 336px; margin: 24px auto; }
+.ad-sq { height: 250px; }
+.ad-feed {
+  height: 180px;
+  /* In a card grid (.g3) the feed slot must span the FULL row so it reads
+     as an ad BETWEEN posts, not a squeezed 1/3-width grid cell. */
+  grid-column: 1 / -1;
+  width: 100%;
+  margin: 8px 0;
+}
+/* Comment-section ads (v1.0.105): injected rect slots sit BETWEEN main
+   comments, full width, generous gap, never squeezed by the list. */
+.gwill-comment-ad { width: 100%; margin: 28px 0; }
+.gwill-comment-ad .ad-rect { margin: 0 auto; }
+.ad-banner { height: 60px; }
+/* Wrapper used on page templates (page-*, search, author, 404) to give the
+   banner slot breathing room between the page header and content. */
+.ad-bg { margin-bottom: 24px; }
+/* Empty ad wrappers must collapse to ZERO, the fixed-height placeholder is
+   gone (v1.12.10), so the wrapping div would otherwise still leave its own
+   margin as a gap. When gwill_finance_ad_slot() renders nothing (no ad code),
+   the wrapper is :empty → remove it entirely. Also collapses empty comment-ad
+   wrappers. ⚠️ Use :has(.ad-slot) so whitespace/newline-only wrappers (HTML
+   indents the PHP call, not technically :empty) are caught too. (v1.12.10) */
+.ad-bg:empty, .ad-bg:not(:has(> .ad-slot)), .gwill-comment-ad:empty { display: none; }
+.ad-menu { height: 100px; }
+.ad-menu:not(.mno-bot .ad-menu) { height: 100px; }
+/* (Nav ad sizing lives with the nav styles at line ~443, margins there.) */
+.mno-bot .ad-menu .ad-txt { font-size: 9px; }
+/* Compact slots (banner 60px / menu 80px): shrink the ring so it fits .
+   no glow to clip anymore, just the ring size. */
+.ad-banner .ad-ring, .mno-bot .ad-menu .ad-ring { width: 22px; height: 22px; border-width: 2px; margin-bottom: 0; }
+/* Compact slots: shrink the spinner's content area (ring + label) so the
+   full circle centers INSIDE the slot, no edge clipping. */
+.ad-banner .ad-slot__spinner, .mno-bot .ad-menu .ad-slot__spinner,
+.ad-sticky .ad-slot__spinner { padding: 6px 0; gap: 2px; }
+.ad-banner .ad-slot__spinner .ad-txt, .mno-bot .ad-menu .ad-slot__spinner .ad-txt,
+.ad-sticky .ad-slot__spinner .ad-txt { line-height: 1; }
+/* Every ad slot in content flow gets breathing room, NEVER skin-to-skin
+   with paragraphs, headings, or adjacent cards (user: "ads are skin to
+   skin with elements around them"). Sticky/feed slots manage their own
+   spacing. */
+.ad-slot { margin: 24px 0; position: relative; }
+.ad-sticky .ad-slot, .ad-slot.ad-feed { margin: 0; }
+.ad-rect { margin: 24px auto; }
+
+/* Spinning ₦ coin renders in EVERY slot (v1.0.97), layered behind the
+   ad content; .ad-filled (set by main.js when a variant instantiates)
+   hides the coin so the real ad shows clean. */
+.ad-slot__spinner {
+  position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  z-index: 1;
+  pointer-events: none;
+}
+.ad-slot__content { position: relative; z-index: 2; min-height: 100%; display: flex; align-items: center; justify-content: center; }
+.ad-slot.ad-filled .ad-slot__spinner { display: none; }
+/* Slots without any configured code keep the coin visible (placeholder). */
+.ad-slot:not(.ad-filled) .ad-slot__spinner { display: flex; }
+
+/* ── 21. PER-DEVICE SLOT SIZES (v1.0.96) ─────────────────────────
+   Breakpoints match the device picker in main.js + Customizer fields:
+   PC ≥1024px | tablet 768-1023px | mini-tab 600-767px | phone ≤599px.
+   Heights mirror the researched ad sizes each device should serve. */
+@media (max-width: 767px) {
+  /* Phone + mini-tab: 320×50 leaders/banners, 300×250 rects/feeds. */
+  .ad-leader, .ad-banner { height: 50px; }
+  .ad-rect { height: 250px; max-width: 300px; }
+  .ad-feed { height: 250px; }
+  .ad-sq { height: 250px; }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Tablet: 728×90 preferred (468×60 has limited advertiser supply per
+     AdSense, sub-optimal performance). Height 90px so a real 728×90
+     code never gets clipped by the slot's overflow:hidden. */
+  .ad-leader { height: 90px; }
+  .ad-banner { height: 90px; }
+  .ad-rect { height: 280px; }
+  .ad-feed { height: 250px; }
+  .ad-sq { height: 250px; }
+}
+@media (min-width: 1024px) {
+  /* PC: full 728×90 leaders/banners, 336×280 rects/feeds, 300×250 sidebar. */
+  .ad-leader { height: 90px; }
+  .ad-banner { height: 90px; }
+  .ad-rect { height: 280px; }
+  .ad-feed { height: 280px; }
+  .ad-sq { height: 250px; }
+}
+[data-theme="dark"] .ad-slot { background: #171512; border-color: #2c2822; }
+[data-theme="dark"] .ad-txt { color: #5a5248; }
+
+/* ── 22. CONSENT BANNER ──────────────────────────────────────────
+   Warm-black glass card, gold ₦ mark. z-400 sits ABOVE the sticky ad bar
+   (z-350) so they never stack 3-deep; JS hides the banner on choice and
+   gates the ad reveal on acceptance. */
+.gconsent {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 400;
+  display: none; justify-content: center; padding: 0 12px 14px;
+  pointer-events: none;
+}
+body.gconsent-open .gconsent { display: flex; }
+.gconsent-card {
+  pointer-events: auto;
+  position: relative;
+  width: 100%; max-width: 460px;
+  background: rgba(24, 20, 15, 0.96);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 16px;
+  padding: 18px 20px 16px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.35), 0 0 28px rgba(245, 158, 11, 0.1);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  animation: ad-sticky-in 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.gconsent-mark {
+  position: absolute; top: -14px; left: 20px;
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--gold), #d97706);
+  color: #1a1408; font-size: 15px; font-weight: 800;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.45);
+}
+.gconsent-title {
+  font-size: 14px; font-weight: 800; color: #f0ede6;
+  letter-spacing: -0.02em; margin: 2px 0 6px;
+}
+.gconsent-copy {
+  font-size: 11px; font-weight: 300; color: rgba(240, 237, 230, 0.65);
+  line-height: 1.6; margin: 0 0 12px;
+}
+.gconsent-link { color: var(--gold-b); text-decoration: underline; }
+.gconsent-link:hover { color: #f0ede6; }
+.gconsent-acts { display: flex; gap: 8px; }
+.gconsent-yes {
+  flex: 1; background: var(--gold-btn); color: #fff;
+  border: none; border-radius: 10px; padding: 10px 14px;
+  font-size: 12px; font-weight: 800; cursor: pointer;
+  transition: background var(--t), transform var(--t);
+}
+.gconsent-yes:hover { background: #92400e; transform: translateY(-1px); }
+.gconsent-no {
+  flex: 1; background: transparent; color: rgba(240, 237, 230, 0.7);
+  border: 1px solid rgba(240, 237, 230, 0.2); border-radius: 10px;
+  padding: 10px 14px; font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: border-color var(--t), color var(--t);
+}
+.gconsent-no:hover { border-color: rgba(245, 158, 11, 0.5); color: #f0ede6; }
+@media (prefers-reduced-motion: reduce) {
+  .gconsent-card { animation: none; }
+}
+@media (max-width: 767px) {
+  .gconsent { padding: 0 8px 8px; }
+  .gconsent-card { padding: 16px 16px 14px; }
+  .gconsent-copy { font-size: 11px; }
+}
+
+/* ── 23. STICKY FOOTER AD BAR ────────────────────────────────────
+   Logic: fixed bar, hidden until JS adds body.ad-sticky-visible (scroll
+   reveal), dismissible on ALL devices via .ad-sticky-x (current page view
+   only, no persistence), same behaviour as the tech theme.
+   DESIGN (v1.0.90, restored the premium glass look after the plain-dashed
+   detour; user directive): glass card, cream in light mode, warm-black in
+   dark, gold border + soft gold glow, backdrop blur, slide-up entrance,
+   spinning ₦ coin, "Advertisement" text. NO top gradient hairline (removed
+   1.0.87: "too much"). The X sits INSIDE the card's top-right corner
+   (top:10px; right:10px; z-50 + white ring) so it's always fully visible ON
+   TOP of the ad, never half-hanging off the edge.
+   Footer padding compensation targets the real footer classes (.footer /
+   .mfooter) so the bar never blocks footer links at the page bottom. */
+.ad-sticky {
+  position: fixed; left: 0; right: 0; bottom: 12px; z-index: 350;
+  display: none; justify-content: center; padding: 0 12px;
+  pointer-events: none; /* empty bar area lets clicks pass through */
+}
+.ad-sticky-card { position: relative; pointer-events: auto; width: 100%; max-width: 728px; }
+body.ad-sticky-visible .ad-sticky { display: flex; }
+/* Glass card, light mode: cream glass + gold border + soft glow. */
+.ad-sticky .ad-slot {
+  position: relative;
+  z-index: 0; /* below .ad-sticky-x (z-50), the slot must NEVER paint over the X */
+  width: 100%; max-width: none; height: 90px;
+  background: rgba(255, 252, 246, 0.96);
+  border: 1px solid rgba(217, 119, 6, 0.4);
+  border-radius: 14px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(0, 0, 0, 0.06), 0 0 24px rgba(245, 158, 11, 0.1);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  animation: ad-sticky-in 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: visible;
+  background-image: none;
+}
+.ad-sticky .ad-slot::before { display: none; }
+/* Keep the X from overlapping ad content: the dismiss corner is reserved. */
+.ad-sticky .ad-slot__content,
+.ad-sticky .ad-slot__spinner { padding-right: 28px; }
+/* Dark mode: warm-black glass. */
+[data-theme="dark"] .ad-sticky .ad-slot {
+  background: rgba(24, 20, 15, 0.94);
+  border-color: rgba(245, 158, 11, 0.35);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 0, 0, 0.35), 0 0 24px rgba(245, 158, 11, 0.12);
+}
+/* Ring + text: slightly compact for the bar, theme-aware. */
+.ad-sticky .ad-ring { width: 24px; height: 24px; border-width: 2px; }
+.ad-sticky .ad-txt { font-size: 9px; color: rgba(90, 80, 66, 0.6); letter-spacing: 0.22em; }
+[data-theme="dark"] .ad-sticky .ad-txt { color: rgba(240, 237, 230, 0.45); }
+/* Dismiss button, GOLD GHOST style (v1.0.100): small gold-tinted circle,
+   semi-transparent, on-brand (matches --gold family), no ring or glow.
+   Sits inside the card's top-right corner; visible on top but never
+   blocks or outshines the ad. z-index 50 guarantees paint order. */
+.ad-sticky-x {
+  position: absolute; top: 6px; right: 6px; z-index: 50;
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  /* Ghost dismiss (v1.0.100): subtle but ON-BRAND, gold-tinted, not
+     neutral grey (user: "the grey doesn't match the theme color scheme").
+     Semi-transparent gold wash + gold glyph, no ring/glow; dark mode uses
+     a lighter gold tint. Present but never blocks or outshines the ad. */
+  background: rgba(217, 119, 6, 0.14);
+  color: rgba(217, 119, 6, 0.75);
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  transition: background var(--t), color var(--t), transform var(--t);
+  pointer-events: auto;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+.ad-sticky-x svg { width: 10px; height: 10px; }
+[data-theme="dark"] .ad-sticky-x {
+  background: rgba(245, 158, 11, 0.16);
+  color: rgba(245, 158, 11, 0.8);
+}
+.ad-sticky-x:hover { transform: rotate(90deg); background: rgba(217, 119, 6, 0.26); color: rgba(217, 119, 6, 0.95); }
+[data-theme="dark"] .ad-sticky-x:hover { background: rgba(245, 158, 11, 0.3); color: rgba(245, 158, 11, 1); }
+.ad-sticky-x:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+@keyframes ad-sticky-in {
+  from { transform: translateY(24px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ad-sticky .ad-slot { animation: none; }
+}
+/* Phone + mini-tab (≤767px): compact 320×100 anchor banner, above the edge. */
+@media (max-width: 767px) {
+  .ad-sticky { bottom: calc(8px + env(safe-area-inset-bottom, 0px)); padding: 0 8px; }
+  .ad-sticky-card { max-width: 360px; }
+  .ad-sticky .ad-slot { max-width: none; height: 100px; border-radius: 16px; }
+  .ad-sticky .ad-ring { width: 20px; height: 20px; border-width: 2px; }
+  body.ad-sticky-visible .mfooter { padding-bottom: 120px; }
+}
+/* Tablet (768-1023px): 728×90 leaderboard (468×60 has limited advertiser
+   supply per AdSense, sub-optimal; the 728 card fits 768px viewports). */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .ad-sticky-card { max-width: 728px; }
+  .ad-sticky .ad-slot { height: 90px; border-radius: 12px; }
+  body.ad-sticky-visible .footer { padding-bottom: 130px; }
+}
+/* PC (≥1024px): 728×90 leaderboard. */
+@media (min-width: 1024px) {
+  body.ad-sticky-visible .footer { padding-bottom: 130px; }
+}
+/* When the bar is hidden (dismissed), restore footer padding. */
+body:not(.ad-sticky-visible) .footer,
+body:not(.ad-sticky-visible) .mfooter { padding-bottom: inherit; }
+/* Near the page bottom (comment form / footer links in view) the bar
+   hides entirely so it NEVER covers content, returns on scroll up. */
+body.ad-sticky-bottom .ad-sticky { display: none !important; }
+body.ad-sticky-bottom .footer,
+body.ad-sticky-bottom .mfooter { padding-bottom: inherit !important; }
+
+/* ── 24. BRAND TEXT SELECTION ────────────────────────────────────
+   Gold selection everywhere, brand color, dark text on gold for contrast
+   in BOTH themes (gold is the brand anchor; #1a1408 text keeps 9:1+). */
+::selection {
+  background: var(--gold);
+  color: #1a1408;
+}
+::-moz-selection {
+  background: var(--gold);
+  color: #1a1408;
+}
+
+/* ── 25. ARTICLE PAGE ────────────────────────────── */
+.prog { height: 3px; background: var(--border-dim); position: sticky; top: var(--header-h); z-index: 90; }
+.prog-f { height: 100%; width: 0; background: linear-gradient(90deg, var(--gold), var(--green)); border-radius: 0 2px 2px 0; transition: width 120ms linear; }
+.art-surface-pad { padding: 36px 44px 40px; }
+.art-cover { min-height: 300px; border-bottom: 1px solid var(--border-dim); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.art-cover img { width: 100%; height: 100%; object-fit: cover; }
+.art-hd { background: transparent; border-bottom: none; padding: 20px 0 48px; position: relative; }
+.bc { font-size: 11px; color: var(--text-dim); font-weight: 300; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 18px; }
+.bc a { color: var(--text-dim); transition: color var(--t); }
+.bc a:hover { color: var(--gold); }
+.bc-s { opacity: 0.5; }
+/* Breadcrumb nav (shared helper gwill_breadcrumbs()), same visual language
+   as .bc but with Schema.org <ol> markup: separators via li+li::before. */
+.gwill-breadcrumbs { margin-bottom: 18px; }
+.gwill-breadcrumbs__list { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 11px; font-weight: 300; color: var(--text-dim); margin: 0; padding: 0; list-style: none; }
+.gwill-breadcrumbs__item { display: inline-flex; align-items: center; gap: 6px; }
+.gwill-breadcrumbs__item + .gwill-breadcrumbs__item::before { content: '›'; opacity: 0.5; }
+.gwill-breadcrumbs__item a { color: var(--text-dim); text-decoration: none; transition: color var(--t); }
+.gwill-breadcrumbs__item a:hover { color: var(--gold); }
+.gwill-breadcrumbs__item--current { opacity: 1; }
+/* On dark heroes (about / apps / newsletter) the dim link colour must flip. */
+.about-hero .gwill-breadcrumbs__list,
+.apps-hero .gwill-breadcrumbs__list,
+.nl-hero .gwill-breadcrumbs__list,
+.legal-hero .gwill-breadcrumbs__list { color: rgba(240, 237, 230, 0.6); }
+.about-hero .gwill-breadcrumbs__item a,
+.apps-hero .gwill-breadcrumbs__item a,
+.nl-hero .gwill-breadcrumbs__item a,
+.legal-hero .gwill-breadcrumbs__item a { color: rgba(240, 237, 230, 0.6); }
+.about-hero .gwill-breadcrumbs__item a:hover,
+.apps-hero .gwill-breadcrumbs__item a:hover,
+.nl-hero .gwill-breadcrumbs__item a:hover,
+.legal-hero .gwill-breadcrumbs__item a:hover { color: var(--gold); }
+.about-hero .gwill-breadcrumbs__item--current,
+.apps-hero .gwill-breadcrumbs__item--current,
+.nl-hero .gwill-breadcrumbs__item--current,
+.legal-hero .gwill-breadcrumbs__item--current { color: rgba(240, 237, 230, 0.85); }
+/* 404 empty state, breadcrumb sits above the centred block. */
+.es .gwill-breadcrumbs__list { justify-content: center; }
+.art-t { font-size: 34px; font-size: clamp(28px, 3.8vw, 40px); font-weight: 800; color: var(--text); letter-spacing: -0.035em; line-height: 1.08; max-width: 720px; margin-bottom: 20px; }
+.art-meta { display: flex; align-items: center; gap: 12px; font-size: 11px; color: var(--text-dim); font-weight: 300; flex-wrap: wrap; }
+.art-author { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; border: 1px solid var(--border); border-radius: 100px; background: var(--surface-2); }
+.art-avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
+.art-author-link { color: var(--text); font-weight: 700; }
+.art-author-link:hover { color: var(--gold); }
+.art-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border); }
+.art-reading-surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--sh-sm); }
+.art-body { font-size: 16px; font-weight: 400; color: var(--text-mid); line-height: 1.8; }
+.art-body h1 { font-size: 24px; font-weight: 800; color: var(--text); letter-spacing: -0.03em; margin: 30px 0 12px; }
+.art-body h2 {
+	font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -0.03em; margin: 28px 0 10px;
+	/* v1.12.6 REVERTED: the gold-dot + hairline-rule accent was added believing it
+	   was the designed heading, but the King's reference shows the blog-post h2 is
+	   PLAIN (pixel-verified: no gold marker on the heading). The real ask was to make
+	   the blog's plain-heading design UNIVERSAL, tools already carry .art-body so they
+	   inherit this exactly. Keeping h2 plain = the correct universal treatment. */
+}
+.art-body h3 { font-size: 16px; font-weight: 700; color: var(--text); margin: 20px 0 8px; }
+.art-body h4, .art-body h5, .art-body h6 { font-size: 14px; font-weight: 700; color: var(--text); margin: 18px 0 8px; letter-spacing: -0.01em; }
+/* ── 26. Article, desktop editorial polish (≥1024px) ────────────
+   NOTE: this MUST stay AFTER the .art-body base rules above, an earlier
+   copy placed it before them and the base rules silently overrode the
+   media query (body stayed 16px on desktop). */
+@media (min-width: 1024px) {
+  .art-surface-pad { padding: 48px 56px 56px; }
+  .art-cover { min-height: 380px; }
+  .art-body { font-size: 17px; line-height: 1.9; }
+  .art-body > p:first-of-type {
+    font-size: 19px; font-weight: 300; color: var(--text);
+    line-height: 1.85; margin-bottom: 26px;
+  }
+  .art-body h2 { font-size: 24px; margin: 44px 0 14px; }
+  .art-body h3 { font-size: 18px; margin: 28px 0 10px; }
+  .art-body h4 { font-size: 15px; margin: 22px 0 8px; }
+  .art-body ul, .art-body ol { margin: 18px 0 22px; }
+  .art-body blockquote, .art-body .wp-block-pullquote { margin: 30px 0; }
+}
+.art-body p { margin-bottom: 14px; }
+.art-body a { color: var(--gold); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+.art-body a:hover { color: var(--green); }
+.art-body ul, .art-body ol { margin: 0 0 16px 20px; }
+.art-body li { margin-bottom: 7px; line-height: 1.7; }
+.art-body li > ul, .art-body li > ol { margin: 7px 0 0 22px; }
+/* Brand list markers, gold diamonds for bullets, JetBrains Mono gold numbers for ordered lists */
+.art-body ul { list-style: none; }
+.art-body ul:not(.wp-block-categories):not(.wp-block-archives):not(.wp-block-latest-comments):not(.wp-block-tag-cloud):not(.wp-block-social-links) > li { position: relative; padding-left: 18px; }
+.art-body ul:not(.wp-block-categories):not(.wp-block-archives):not(.wp-block-latest-comments):not(.wp-block-tag-cloud):not(.wp-block-social-links) > li::before {
+  content: '◆'; position: absolute; left: 0; top: 0.12em;
+  font-size: 9px; color: var(--gold); opacity: 0.75;
+}
+.art-body ul:not(.wp-block-categories):not(.wp-block-archives):not(.wp-block-latest-comments):not(.wp-block-tag-cloud):not(.wp-block-social-links) > li > ul > li::before { content: '◇'; opacity: 0.5; }
+.art-body ul:not(.wp-block-categories):not(.wp-block-archives):not(.wp-block-latest-comments):not(.wp-block-tag-cloud):not(.wp-block-social-links) > li > ul > li > ul > li::before { content: '▪'; font-size: 8px; }
+.art-body ol:not(.wp-block-latest-comments) { list-style: none; counter-reset: gwill-li; }
+.art-body ol:not(.wp-block-latest-comments) > li { position: relative; padding-left: 30px; counter-increment: gwill-li; }
+.art-body ol:not(.wp-block-latest-comments) > li::before {
+  content: counter(gwill-li); position: absolute; left: 0; top: 0.22em;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--gold); background: var(--gold-muted); border-radius: 5px;
+  width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--gold-border);
+}
+.art-body ol:not(.wp-block-latest-comments) > li > ol { counter-reset: gwill-sub; }
+.art-body ol:not(.wp-block-latest-comments) > li > ol > li { counter-increment: gwill-sub; padding-left: 26px; }
+.art-body ol:not(.wp-block-latest-comments) > li > ol > li::before {
+  content: counter(gwill-sub); width: 16px; height: 16px; font-size: 9px; top: 0.3em;
+  background: none; border: none; color: var(--gold-b);
+}
+.art-body blockquote { border-left: 3px solid var(--gold); padding: 4px 0 4px 18px; margin: 18px 0; color: var(--text-mid); font-style: italic; }
+.art-body blockquote cite { display: block; margin-top: 8px; font-size: 12px; font-style: normal; color: var(--text-dim); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.art-body .wp-block-pullquote { border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: var(--r-md); background: var(--surface-2); padding: 22px 24px; margin: 18px 0; }
+.art-body .wp-block-pullquote blockquote { border: none; padding: 0; margin: 0; font-size: 17px; font-weight: 700; color: var(--text); font-style: normal; line-height: 1.55; }
+.art-body .wp-block-pullquote cite { display: block; margin-top: 10px; font-size: 11px; font-style: normal; color: var(--text-dim); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.art-body figure { margin: 0 0 18px; }
+.art-body figcaption { font-size: 12px; color: var(--text-dim); text-align: center; margin-top: 10px; line-height: 1.5; }
+.art-body .wp-block-image img { border-radius: var(--r-md); }
+.art-body .wp-block-image.alignleft { float: left; margin: 4px 20px 14px 0; max-width: 45%; }
+.art-body .wp-block-image.alignright { float: right; margin: 4px 0 14px 20px; max-width: 45%; }
+.art-body .wp-block-image.aligncenter { text-align: center; }
+.art-body .wp-block-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 0 18px; }
+.art-body .wp-block-gallery .wp-block-image { margin: 0; }
+.art-body .wp-block-gallery .wp-block-image img { border-radius: var(--r-sm); width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4 / 3; }
+.art-body .wp-block-gallery .wp-block-image figcaption { margin-top: 6px; }
+.art-body .wp-block-embed iframe { border-radius: var(--r-md); }
+.art-body .wp-block-embed { margin-bottom: 18px; }
+.art-body .wp-block-embed__wrapper { position: relative; }
+.art-body .wp-block-embed.wp-has-aspect-ratio .wp-block-embed__wrapper::before { content: ''; display: block; padding-top: 56.25%; }
+.art-body .wp-block-embed.wp-has-aspect-ratio iframe { position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; width: 100%; height: 100%; }
+.art-body .wp-block-video video, .art-body .wp-block-audio audio { width: 100%; border-radius: var(--r-md); }
+.art-body .wp-block-video { margin-bottom: 18px; }
+.art-body .wp-block-cover { border-radius: var(--r-md); overflow: hidden; margin: 0 0 18px; min-height: 280px; display: flex; align-items: center; justify-content: center; position: relative; }
+.art-body .wp-block-cover .wp-block-cover__inner-container { position: relative; z-index: 1; color: #fff; padding: 24px; text-align: center; }
+.art-body .wp-block-cover .wp-block-cover__inner-container p { color: #fff; }
+.art-body .wp-block-cover img.wp-block-cover__image-background { position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 0; }
+.art-body .wp-block-cover__background { position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; background: rgba(0, 0, 0, 0.6); }
+.art-body .wp-block-columns { display: flex; gap: 20px; margin: 0 0 18px; }
+.art-body .wp-block-column { flex: 1; min-width: 0; }
+.art-body .wp-block-media-text { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; margin: 0 0 18px; }
+.art-body .wp-block-media-text img { border-radius: var(--r-md); width: 100%; }
+.art-body .wp-block-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 18px; }
+.art-body .wp-block-button__link { display: inline-block; background: var(--gold); color: #fff; font-size: 13px; font-weight: 700; padding: 11px 22px; border-radius: var(--r-sm); text-decoration: none; transition: background var(--t); }
+.art-body .wp-block-button__link:hover { background: var(--gold); color: #fff; }
+.art-body .wp-block-button.is-style-outline .wp-block-button__link { background: transparent; color: var(--gold); border: 1.5px solid var(--gold); }
+.art-body .wp-block-button.is-style-outline .wp-block-button__link:hover { background: var(--gold-muted); }
+.art-body .wp-block-file { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px 16px; margin: 0 0 18px; display: flex; align-items: center; gap: 12px; font-size: 13px; }
+.art-body .wp-block-file__button { background: var(--gold); color: #fff; font-size: 11px; font-weight: 700; padding: 7px 14px; border-radius: var(--r-sm); text-decoration: none; margin-left: auto; }
+.art-body .wp-block-file__button:hover { background: var(--gold); color: #fff; }
+.art-body .wp-block-details, .art-body details.wp-block-details { border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-2); padding: 14px 18px; margin: 0 0 18px; }
+.art-body .wp-block-details summary, .art-body details.wp-block-details summary { cursor: pointer; font-weight: 700; font-size: 13px; color: var(--gold); }
+.art-body .wp-block-details p, .art-body details.wp-block-details p { margin: 12px 0 0; }
+.art-body .wp-block-code { background: var(--dark); border-radius: var(--r-md); padding: 16px 18px; margin: 0 0 18px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.art-body .wp-block-code code { background: none; color: #e8e4da; font-size: 13px; line-height: 1.7; }
+.art-body .wp-block-preformatted { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md); padding: 16px 18px; margin: 0 0 18px; font-size: 13px; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: pre; }
+.art-body .wp-block-verse { background: var(--dark); border-radius: var(--r-md); padding: 18px 20px; margin: 0 0 18px; color: #e8e4da; font-size: 13px; line-height: 1.8; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.art-body code { background: var(--surface-2); border: 1px solid var(--border-dim); border-radius: 4px; padding: 1px 6px; font-size: 13px; color: var(--gold); }
+.art-body .wp-block-separator { border: none; border-top: 1px solid var(--border); margin: 26px 0; }
+.art-body .wp-block-footnotes { border-top: 1px solid var(--border); padding-top: 14px; font-size: 12px; color: var(--text-dim); margin-top: 26px; }
+.art-body .footnote-ref a { color: var(--gold); font-size: 12px; text-decoration: none; }
+/* Widget blocks */
+.art-body .wp-block-search { margin: 0 0 18px; }
+.art-body .wp-block-search__input { border: 1px solid var(--border); border-radius: var(--r-sm); padding: 10px 14px; font-size: 13px; background: var(--surface); color: var(--text); width: 100%; max-width: 320px; }
+.art-body .wp-block-search__button { background: var(--gold); color: #fff; border: none; border-radius: var(--r-sm); padding: 10px 18px; font-size: 12px; font-weight: 700; margin-left: 8px; }
+.art-body .wp-block-categories, .art-body .wp-block-archives, .art-body .wp-block-tag-cloud { margin: 0 0 18px; font-size: 13px; }
+.art-body .wp-block-categories a, .art-body .wp-block-archives a, .art-body .wp-block-tag-cloud a { text-decoration: none; }
+.art-body .wp-block-categories li, .art-body .wp-block-archives li { margin-bottom: 6px; }
+.art-body .wp-block-categories li ul, .art-body .wp-block-archives li ul { margin: 6px 0 0 18px; }
+/* Widget blocks styled as surface cards (finance look) */
+.art-body .wp-block-categories, .art-body .wp-block-archives {
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md);
+  padding: 14px 18px; list-style: none; margin: 0 0 18px;
+}
+.art-body .wp-block-categories li, .art-body .wp-block-archives li {
+  border-bottom: 1px solid var(--border-dim); padding: 8px 0; margin: 0;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.art-body .wp-block-categories li:last-child, .art-body .wp-block-archives li:last-child { border-bottom: none; }
+.art-body .wp-block-categories li a, .art-body .wp-block-archives li a { color: var(--text-mid); font-weight: 500; }
+.art-body .wp-block-categories li a:hover, .art-body .wp-block-archives li a:hover { color: var(--gold); }
+.art-body .wp-block-categories .wp-block-categories__list { list-style: none; padding: 0; margin: 0; }
+.art-body .wp-block-categories .wp-block-categories__list .wp-block-categories__list { margin-left: 18px; }
+.art-body .wp-block-tag-cloud a {
+  display: inline-block; background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--pill); padding: 5px 14px; margin: 0 6px 8px 0;
+  font-size: 11px !important; font-weight: 700; color: var(--text-mid); transition: all var(--t);
+}
+.art-body .wp-block-tag-cloud a:hover { background: var(--gold-muted); border-color: var(--gold); color: var(--gold); }
+.art-body .wp-block-latest-comments {
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md);
+  padding: 14px 18px; margin: 0 0 18px; list-style: none; font-size: 13px;
+}
+.art-body .wp-block-latest-comments li { margin-bottom: 10px; color: var(--text-dim); }
+.art-body .wp-block-latest-comments li:last-child { margin-bottom: 0; }
+.art-body .wp-block-latest-comments__comment-author { color: var(--text); font-weight: 700; }
+.art-body .wp-block-latest-comments__comment-date { font-size: 10px; color: var(--text-dim); display: block; margin-top: 2px; }
+[data-theme="dark"] .art-body .wp-block-categories, [data-theme="dark"] .art-body .wp-block-archives,
+[data-theme="dark"] .art-body .wp-block-latest-comments { background: var(--dark-s); border-color: var(--dark-b); }
+[data-theme="dark"] .art-body .wp-block-tag-cloud a { background: var(--dark-s); border-color: var(--dark-b); color: #c9c2b4; }
+[data-theme="dark"] .art-body .wp-block-tag-cloud a:hover { background: #1c1a16; border-color: var(--dark-b); color: var(--gold-b); }
+.art-body .wp-block-social-links { list-style: none; margin: 0 0 18px; padding: 0; display: flex; gap: 8px; }
+.art-body .wp-block-social-links li { margin: 0; }
+.art-body .wp-block-social-links .wp-block-social-link { background: var(--surface-2); border: 1px solid var(--border); border-radius: 50%; padding: 0; }
+.art-body .wp-block-social-links .wp-block-social-link a { display: flex; padding: 6px; text-decoration: none; }
+.art-body .wp-block-social-links svg { width: 18px; height: 18px; fill: var(--text-mid); }
+.art-body .wp-block-latest-comments { margin: 0 0 18px; font-size: 13px; }
+.art-body .wp-block-latest-comments li { margin-bottom: 10px; color: var(--text-dim); }
+/* Callouts (manual class) */
+.callout { background: var(--gold-muted); border-left: 3px solid var(--gold); padding: 14px 18px; border-radius: 0 var(--r-sm) var(--r-sm) 0; margin: 18px 0; font-size: 14px; color: var(--text-mid); }
+.callout strong { color: var(--gold); }
+/* Dark mode content */
+[data-theme="dark"] .art-body .wp-block-pullquote { background: var(--dark-s); border-color: var(--dark-b); }
+[data-theme="dark"] .art-body .wp-block-file, [data-theme="dark"] .art-body .wp-block-preformatted { background: var(--dark-s); border-color: var(--dark-b); }
+[data-theme="dark"] .art-body .wp-block-details { background: var(--dark-s); border-color: var(--dark-b); }
+[data-theme="dark"] .art-body code { background: var(--dark-s); border-color: var(--dark-b); color: var(--gold-b); }
+[data-theme="dark"] .art-body .wp-block-search__input { background: var(--dark-s); border-color: var(--dark-b); color: #f0ede6; }
+[data-theme="dark"] .art-body .wp-block-social-links .wp-block-social-link { background: var(--dark-s); border-color: var(--dark-b); }
+[data-theme="dark"] .art-body .wp-block-social-links svg { fill: #c9c2b4; }
+/* Tablet (768-1023): the gallery also drops to 2 columns, at 768 the
+   article column is only ~438px wide, so 3 columns squeeze each image
+   to ~132px. Phones already go 2-col below (see the 767px block). */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .art-body .wp-block-gallery { grid-template-columns: repeat(2, 1fr); }
+}
+/* Mobile content */
+@media (max-width: 767px) {
+  .art-body .wp-block-gallery { grid-template-columns: repeat(2, 1fr); }
+  .art-body .wp-block-columns { flex-direction: column; }
+  .art-body .wp-block-media-text { grid-template-columns: 1fr; }
+  .art-body .wp-block-image.alignleft, .art-body .wp-block-image.alignright { float: none; max-width: 100%; margin: 0 0 14px; }
+}
+/* ── 27. Lightbox (ported from tech theme, click any article image to zoom) ─── */
+.gl-overlay {
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0; inset: 0; z-index: 99999;
+  background: rgba(0, 0, 0, .92);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .25s ease;
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+}
+.gl-overlay.gl-open { opacity: 1; pointer-events: auto }
+.gl-image-wrap { display: flex; align-items: center; justify-content: center; max-width: 90vw; max-height: 80vh }
+.gl-image { max-width: 100%; max-height: 80vh; object-fit: contain; border-radius: var(--r-md); box-shadow: 0 8px 40px rgba(0,0,0,.5) }
+.gl-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);
+  color: #fff; font-size: 24px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s; z-index: 2;
+  font-family: var(--mono, 'JetBrains Mono', monospace);
+}
+.gl-close:hover { background: rgba(255,255,255,.16) }
+.gl-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 48px; height: 48px; border-radius: 50%;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);
+  color: #fff; font-size: 28px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s; z-index: 2;
+  font-family: var(--mono, 'JetBrains Mono', monospace);
+}
+.gl-nav:hover { background: rgba(255,255,255,.16) }
+.gl-prev { left: 16px }
+.gl-next { right: 16px }
+.gl-caption {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  text-align: center; padding: 20px;
+  color: rgba(255,255,255,.7); font-size: 14px;
+  background: linear-gradient(transparent, rgba(0,0,0,.6));
+}
+.gl-counter {
+  position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+  font-family: var(--mono, 'JetBrains Mono', monospace);
+  font-size: 13px; font-weight: 600;
+  color: rgba(255,255,255,.6);
+  background: rgba(0,0,0,.4);
+  padding: 4px 14px;
+  border-radius: 100px;
+  border: 1px solid rgba(255,255,255,.1);
+  pointer-events: none;
+  z-index: 2;
+}
+.art-body .wp-block-image img { cursor: zoom-in; }
+@media (max-width: 767px) {
+  .gl-nav { width: 36px; height: 36px; font-size: 20px }
+  .gl-prev { left: 8px }
+  .gl-next { right: 8px }
+  .gl-image { max-height: 70vh }
+}
+
+.share-row { display: flex; align-items: center; gap: 8px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border-dim); flex-wrap: wrap; }
+.share-l { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+.share-b { font-size: 10px; font-weight: 700; padding: 6px 14px; border-radius: var(--r-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text-mid); cursor: pointer; transition: all var(--t); }
+.share-b:hover { border-color: var(--gold-border); color: var(--gold); }
+.abio { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md); padding: 20px; display: flex; gap: 16px; align-items: flex-start; }
+.aav {
+  width: 48px; height: 48px; border-radius: 50%; background: var(--gold-muted);
+  border: 2px solid var(--gold-border); display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800; color: var(--gold); flex-shrink: 0; overflow: hidden;
+}
+.aav img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.an-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.abio-t { font-size: 11px; font-weight: 300; color: var(--text-dim); line-height: 1.65; }
+.abio-s { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.abio-si {
+  width: 30px; height: 30px; border-radius: var(--r-sm);
+  background: var(--surface); border: 1px solid var(--border);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--text-mid); transition: all var(--t);
+}
+.abio-si svg { width: 13px; height: 13px; }
+.abio-si:hover { background: var(--gold-muted); border-color: var(--gold-border); color: var(--gold); }
+
+/* ── 28. TOC SIDEBAR ─────────────────────────────── */
+.toc-i { padding: 8px 0; border-bottom: 1px solid var(--border-dim); font-size: 11px; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
+.toc-i:last-child { border-bottom: none; }
+.toc-i.cur { color: var(--gold); font-weight: 700; }
+/* Desktop sidebar TOC, compact square-ish box with its own scroll.
+   User: "make it like a square and scrollable so the button ads widget
+   can also get viewed" → "This isn't what a square is" → "Look at where
+   the mouse cursor is, there is still much space there, reduce it a bit
+   so there is space for the bottom ad". Height 220px (trimmed from the
+   width-derived 274px), still reads as a square at sidebar widths, but
+   leaves room for the 300×250 ad + digest below. Gold scrollbar, same
+   language as the mobile TOC. */
+/* Desktop sidebar TOC, flat square scrollbar, GOLD BY DEFAULT so it is
+   ALWAYS visible until the user scrolls (same inverted logic as the
+   table: no class = visible; main.js adds .toc-idle after 1.5s of no
+   scrolling following the first user scroll, removes it on scroll). */
+.toc-scroll {
+  height: 220px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -8px 0 0;
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-border) transparent;
+}
+.toc-scroll::-webkit-scrollbar { width: 5px; }
+.toc-scroll::-webkit-scrollbar-track { background: transparent; }
+.toc-scroll::-webkit-scrollbar-thumb { background: var(--gold-border); border-radius: 0; }
+.toc-scroll.toc-idle { scrollbar-color: transparent transparent; }
+.toc-scroll.toc-idle::-webkit-scrollbar-thumb { background: transparent; }
+[data-theme="dark"] .toc-scroll { scrollbar-color: rgba(217, 119, 6, 0.45) transparent; }
+[data-theme="dark"] .toc-scroll::-webkit-scrollbar-thumb { background: rgba(217, 119, 6, 0.45); }
+.toc-bar { width: 2px; height: 12px; background: var(--gold); border-radius: 1px; flex-shrink: 0; }
+.toc-g { width: 2px; height: 12px; flex-shrink: 0; }
+.toc-i a { color: inherit; display: flex; align-items: center; gap: 8px; flex: 1; }
+
+/* ── 29. PAGE HEADER ─────────────────────────────── */
+.phd { background: var(--surface); border-bottom: 1px solid var(--border); padding: 40px var(--con-pad) 32px; }
+.phd h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.04em; color: var(--text); margin-bottom: 6px; }
+.phd p { font-size: 13px; font-weight: 300; color: var(--text-dim); max-width: 520px; }
+
+/* ── 30. Author archive profile header (v1.0.217) ─── */
+/* Mirrors the About hero (.about-hero .aav) and single-post author bio (.abio):
+   gold-ringed avatar, name, bio, social row. Whole-site coherence over page-specific styling. */
+.author-head { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+.author-av {
+	width: 88px; height: 88px; border-radius: 50%;
+	background: var(--gold-muted); border: 3px solid var(--gold-border);
+	display: flex; align-items: center; justify-content: center;
+	font-size: 32px; font-weight: 800; color: var(--gold); flex-shrink: 0; overflow: hidden;
+}
+.author-av img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.author-id { min-width: 0; flex: 1 1 240px; }
+.author-id h1 { margin-bottom: 6px; }
+.author-id p { margin-bottom: 0; }
+.author-socials { margin-top: 14px; }
+.author-socials .abio-si { width: 34px; height: 34px; }
+.author-socials .abio-si svg { width: 15px; height: 15px; }
+.pill-strip { background: var(--surface-2); border-bottom: 1px solid var(--border); padding: 12px var(--con-pad); }
+
+/* ── 31. ABOUT HERO ──────────────────────────────── */
+.about-hero { background: var(--dark); padding: 56px var(--con-pad); position: relative; overflow: hidden; }
+.about-hero::before {
+  content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px); background-size: 28px 28px;
+  pointer-events: none;
+}
+.about-hero::after {
+  content: ''; position: absolute; top: -80px; right: -80px; width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(217,119,6,0.08) 0%, transparent 70%); pointer-events: none;
+}
+.about-hero > * { position: relative; z-index: 1; }
+.about-hero .aav { width: 88px; height: 88px; font-size: 32px; border-width: 3px; }
+
+/* ── 32. MOBILE TOC dropdown (wireframe: no sidebar on mobile) ─── */
+.toc-dropdown { position: relative; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; margin-bottom: 20px; box-shadow: var(--sh-sm); }
+.toc-summary { list-style: none; cursor: pointer; padding: 12px 16px; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text); display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; background: none; border: none; }
+.toc-summary::-webkit-details-marker { display: none; }
+.toc-caret { font-size: 10px; color: var(--gold); transition: transform var(--t); }
+.toc-dropdown.toc-open .toc-caret { transform: rotate(180deg); }
+.toc-list { display: flex; flex-direction: column; padding: 0 12px 12px; gap: 2px; max-height: 260px; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: var(--gold-border) transparent; }
+.toc-list::-webkit-scrollbar { width: 4px; }
+.toc-list::-webkit-scrollbar-track { background: transparent; }
+.toc-list::-webkit-scrollbar-thumb { background: var(--gold-border); border-radius: 0; }
+/* Flat square scrollbar, GOLD BY DEFAULT, always visible until the
+   user scrolls (inverted logic like table + desktop TOC: main.js adds
+   .toc-idle after 1.5s of no scrolling following the first user
+   scroll, removes it on scroll). */
+.toc-dropdown.toc-idle .toc-list { scrollbar-color: transparent transparent; }
+.toc-dropdown.toc-idle .toc-list::-webkit-scrollbar-thumb { background: transparent; }
+.toc-list::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+/* Scroll fade: tells the reader more TOC items are below */
+.toc-dropdown::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 28px;
+  background: linear-gradient(to top, var(--surface-2), rgba(250, 249, 246, 0));
+  pointer-events: none; opacity: 1; transition: opacity var(--t);
+}
+.toc-dropdown.toc-scrolled-end::after { opacity: 0; }
+[data-theme="dark"] .toc-dropdown::after { background: linear-gradient(to top, var(--dark-s), rgba(19, 18, 16, 0)); }
+[data-theme="dark"] .toc-list { scrollbar-color: rgba(217, 119, 6, 0.45) transparent; }
+[data-theme="dark"] .toc-list::-webkit-scrollbar-thumb { background: rgba(217, 119, 6, 0.45); }
+[data-theme="dark"] .toc-list::-webkit-scrollbar-thumb:hover { background: var(--gold-b); }
+[data-theme="dark"] .toc-dropdown.toc-idle .toc-list { scrollbar-color: transparent transparent; }
+[data-theme="dark"] .toc-dropdown.toc-idle .toc-list::-webkit-scrollbar-thumb { background: transparent; }
+/* ── 33. FIREFOX ANDROID (Fenix): hide scrollbars entirely (v1.0.165) ───
+   Firefox for Android HONORS scrollbar-width/scrollbar-color while
+   Chrome & Safari mobile ignore them on their overlay scrollbars, so
+   the brand "thin gold" rules painted every Fenix scrollbar (page,
+   table, TOC, mobile nav, search panel) as broken gold slivers AND a
+   persistent, space-reserving bar: "always showing scrollbar that
+   causes layout blowout". v1.0.164 reset these to auto and it was NOT
+   enough, Fenix still rendered a persistent bar. So on touch Firefox
+   we now HIDE the scrollbars (scrollbar-width: none). Touch scrolling
+   is unaffected (the element stays scrollable); it matches Chrome &
+   Safari mobile (no idle scrollbar) and removes the reserved space →
+   no blowout. Desktop Firefox (pointer: fine) keeps the branded gold
+   bars. Scope = Firefox-only via @supports (-moz-appearance) so
+   Chrome/Safari mobile rendering is untouched. */
+@media (pointer: coarse) {
+  @supports (-moz-appearance: none) {
+    * { scrollbar-width: none; scrollbar-color: auto; }
+    .wp-block-table,
+    .toc-scroll,
+    .toc-list { scrollbar-width: none; scrollbar-color: auto; }
+    .wp-block-table.tbl-idle,
+    .toc-scroll.toc-idle,
+    .toc-dropdown.toc-idle .toc-list { scrollbar-color: auto; }
+    [data-theme="dark"] * { scrollbar-color: auto; }
+    [data-theme="dark"] .wp-block-table,
+    [data-theme="dark"] .toc-scroll,
+    [data-theme="dark"] .toc-list,
+    [data-theme="dark"] .wp-block-table.tbl-idle,
+    [data-theme="dark"] .toc-scroll.toc-idle,
+    [data-theme="dark"] .toc-dropdown.toc-idle .toc-list { scrollbar-color: auto; }
+  }
+}
+.toc-list a { padding: 9px 12px; font-size: 13px; font-weight: 400; color: var(--text-mid); border-radius: var(--r-sm); border-left: 2px solid transparent; line-height: 1.4; }
+.toc-list a:hover { color: var(--text); background: var(--surface-2); border-left-color: var(--gold); }
+.toc-list a.toc-sub { padding-left: 28px; font-size: 12px; color: var(--text-dim); }
+.toc-mobile { display: none; }
+@media (max-width: 767px) {
+  .toc-mobile { display: block; }
+  .toc-dropdown.toc-open .toc-list { display: flex; }
+  .toc-dropdown:not(.toc-open) .toc-list { display: none; }
+}
+[data-theme="dark"] .toc-dropdown { background: var(--dark-s); border-color: var(--dark-b); }
+[data-theme="dark"] .toc-list a:hover { background: #1c1a16; color: #f0ede6; }
+[data-theme="dark"] .toc-list a.toc-sub { color: #7a6f5e; }
+
+/* ── 34. CONTACT ─────────────────────────────────── */
+.ci { width: 32px; height: 32px; border-radius: var(--r-sm); background: var(--gold-muted); border: 1px solid var(--gold-border); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.soci { width: 36px; height: 36px; border-radius: var(--r-sm); background: var(--surface-2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--text-mid); }
+.contact-sidebar-item { display: flex; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-dim); font-size: 12px; font-weight: 300; color: var(--text-mid); }
+.contact-sidebar-item:last-child { border-bottom: none; }
+
+/* ── 35. ABOUT CARDS / NETWORK TILES ─────────────── */
+.about-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); padding: 20px;
+}
+.about-card--gold { background: var(--gold-muted); border-color: var(--gold-border); }
+.about-card--gold .about-card-text { color: var(--text-mid); } /* a11y: text-dim was 4.41:1 on gold-tint, v1.0.145 */
+.about-card-emoji { font-size: 22px; margin-bottom: 10px; }
+.about-card-title { font-size: 13px; font-weight: 800; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.about-card-text { font-size: 12px; font-weight: 300; color: var(--text-dim); line-height: 1.65; }
+.about-net {
+  width: 34px; height: 34px; border-radius: 7px; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; flex-shrink: 0;
+}
+.about-net--main { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); }
+.about-net--tech { background: #0d0d0d; border: 1px solid #2a2a2a; color: #00ff91; font-size: 9px; }
+
+/* ── 36. APP CARDS (Finance Apps page) ───────────── */
+.apps-hero { background: var(--dark); padding: 40px var(--con-pad); position: relative; overflow: hidden; border-bottom: 1px solid var(--dark-b); }
+.apps-tabs { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px var(--con-pad); position: sticky; top: var(--header-h); z-index: 50; }
+.what-i-do { background: var(--surface-2); border-bottom: 1px solid var(--border); padding: 40px var(--con-pad); }
+@media (max-width: 767px) {
+  .apps-hero { padding: 28px 20px; }
+  .apps-tabs { padding: 10px 20px; }
+  .what-i-do { padding: 28px 20px; }
+}
+.app-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md);
+  overflow: hidden; transition: border-color var(--t-md), transform var(--t-md), box-shadow var(--t-md);
+}
+/* v1.13.1: app-card inner structure moved from inline styles to classes
+   (design-system consistency - matches .tool-card__*). */
+.app-card__head { padding: 20px 20px 16px; border-bottom: 1px solid var(--border-dim); }
+.app-card__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.app-card__left { display: flex; align-items: center; gap: 12px; }
+.app-card__icon {
+  width: 48px; height: 48px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--tile, #fef3c7), var(--tile-b, #fcd34d));
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; line-height: 1;
+}
+.app-card__title { font-size: 14px; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
+.app-card__title a { color: var(--text); }
+.app-card__title a:hover { color: var(--gold); }
+.app-card__host { font-size: 10px; font-weight: 300; color: var(--text-dim); }
+.app-card__desc { font-size: 12px; font-weight: 300; color: var(--text-dim); line-height: 1.65; margin: 0; }
+.app-card__stats { padding: 14px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; border-bottom: 1px solid var(--border-dim); }
+.app-card__stat { display: flex; flex-direction: column; gap: 2px; }
+.app-card__stat-label { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+.app-card__stat-val { font-size: 13px; font-weight: 800; }
+.app-card__foot { padding: 14px 20px; display: flex; gap: 8px; }
+.app-card__foot .btn { flex: 1; justify-content: center; }
+.app-card:hover { border-color: var(--gold-border); transform: translateY(-3px); box-shadow: var(--sh-gold); }
+.app-card .b-green, .app-card .b-ghost { position: relative; z-index: 1; }
+/* v1.0.163: pill filter hides non-matching cards (hidden attr = display:none
+   by default, but .app-card sets display via the grid, force it here). */
+.app-card[hidden] { display: none; }
+.apps-empty { padding: 48px 20px; text-align: center; color: var(--text-dim); font-size: 13px; }
+.apps-empty[hidden] { display: none; }
+
+/* ── 37. SEARCH FORM (theme searchform.php) ──────── */
+.search-form { display: flex; align-items: center; gap: 8px; flex: 1; }
+.search-label { position: relative; flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; margin: 0; }
+.search-icon { color: var(--text-dim); flex-shrink: 0; }
+.search-field { border: none; outline: none; font-size: 12px; color: var(--text); background: transparent; width: 100%; padding: 0; font-family: var(--font); }
+.search-field:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: var(--r-sm); }
+.search-field::placeholder { color: var(--text-dim); }
+.search-submit { background: var(--gold-btn); color: #fff; border: none; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; padding: 9px 18px; border-radius: var(--r-sm); white-space: nowrap; cursor: pointer; transition: background var(--t); line-height: 1; height: 36px; }
+.search-submit:hover { background: #92400e; }
+/* vibe-comments plugin's "Load Comments" button hardcodes #d97706 bg
+   (3.25:1 with white text), a11y override to the theme's AA gold button. */
+#vibe-load-comments-btn { background: var(--gold-btn) !important; color: #fff !important; }
+#vibe-load-comments-btn:hover { background: var(--gold-btn) !important; }
+/* v1.0.151: NO hover effects in the comments area (user request), the
+   vibe-comments plugin's hovers flip blue (#2563eb) and lift the cards,
+   clashing with the gold theme. Neutralized to their resting state.
+   Keyboard focus (:focus-visible) and press feedback (:active/:disabled)
+   deliberately KEPT, a11y stays intact. */
+.vibe-comment-body:hover { box-shadow: none !important; }
+.vibe-comment-author a:hover { color: inherit !important; }
+.vibe-reaction-summary:hover { background: none !important; border-color: var(--vibe-border, #e5e7eb) !important; }
+.vibe-reaction-option:hover { transform: none !important; background: none !important; }
+.vibe-comment-footer .comment-reply-link:hover,
+.vibe-reply-trigger:hover { background: none !important; color: inherit !important; }
+.vibe-view-replies-btn:hover { color: var(--vibe-text-muted, #64748b) !important; text-decoration: none !important; }
+.vibe-sort-icon-btn:hover { border-color: var(--vibe-border, #e5e7eb) !important; color: var(--vibe-text-muted, #64748b) !important; }
+.vibe-logout:hover { color: inherit !important; }
+.vibe-btn-load-more:hover { background: var(--vibe-surface) !important; color: var(--vibe-text) !important; border-color: var(--vibe-border) !important; }
+/* The pill wrapper used on search/archive pages */
+.search-pill { display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: var(--r-md); padding: 8px 8px 8px 14px; background: var(--surface); transition: border-color var(--t), box-shadow var(--t); }
+.search-pill:focus-within { border-color: var(--gold-border); box-shadow: 0 0 0 3px rgba(217,119,6,0.08); }
+.search-pill .search-form { flex: 1; }
+[data-theme="dark"] .search-pill { background: var(--dark-s); border-color: var(--dark-b); }
+[data-theme="dark"] .search-pill .search-field { color: #f0ede6; }
+[data-theme="dark"] .search-icon { color: #5a5248; }
+
+/* Gutenberg search block in content */
+.art-body .wp-block-search { display: block; margin: 0 0 18px; }
+.art-body .wp-block-search__label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; }
+.art-body .wp-block-search__inside-wrapper { display: flex; gap: 8px; align-items: center; }
+.art-body .wp-block-search__input { flex: 1; min-width: 0; }
+.art-body .wp-block-search__button { height: 38px; padding: 0 18px; flex-shrink: 0; }
+
+/* ── 38. PAGINATION ──────────────────────────────── */
+.pagination { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 36px; }
+.pagination .page-numbers {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 36px; height: 36px;
+  padding: 0 12px; font-size: 11px; font-weight: 700; border-radius: var(--r-sm);
+  border: 1px solid var(--border); background: var(--surface); color: var(--text-mid); transition: all var(--t);
+}
+.pagination .page-numbers:hover { border-color: var(--gold-border); color: var(--gold); }
+.pagination .page-numbers.current { background: var(--gold); border-color: var(--gold); color: #fff; }
+
+/* ── 39. 404 ─────────────────────────────────────── */
+.error-404 { text-align: center; padding: 80px var(--con-pad) 100px; }
+.error-404__code { font-size: 96px; font-size: clamp(64px, 10vw, 120px); font-weight: 800; color: var(--gold); letter-spacing: -0.05em; line-height: 1; text-shadow: 0 0 30px var(--gold-glow); }
+
+/* ── 40. EMPTY STATE (404 + no search results) ───── */
+.es { max-width: 560px; margin: 0 auto; text-align: center; }
+.es-glyph {
+  width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 20px;
+  background: var(--gold-muted); border: 1px solid var(--gold-border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 800; color: var(--gold);
+}
+.es-title { font-size: 22px; font-weight: 800; letter-spacing: -0.03em; color: var(--text); margin: 0 0 8px; }
+.es-copy { font-size: 13px; font-weight: 300; color: var(--text-dim); line-height: 1.7; margin: 0 auto 24px; max-width: 400px; }
+.es .search-pill { max-width: 360px; margin: 0 auto 24px; text-align: left; }
+.es .cp-strip { justify-content: center; justify-content: safe center; margin-bottom: 28px; padding-left: 4px; padding-right: 4px; padding-inline: 4px; scroll-padding-left: 4px; scroll-padding-right: 4px; scroll-padding-inline: 4px; }
+.es .btn { text-decoration: none; }
+[data-theme="dark"] .es-glyph { background: rgba(217, 119, 6, 0.12); border-color: rgba(217, 119, 6, 0.3); }
+[data-theme="dark"] .es-title { color: #f0ede6; }
+
+/* ── 41. SEARCH SEMANTICS (v1.0.191, Google-style, ported from tech) ─── */
+/* "Showing results for X, search instead for Y?" correction line. */
+.search-correct {
+  font-size: 14px; font-weight: 300; color: var(--text-mid);
+  margin: 0 0 22px; line-height: 1.7;
+}
+.search-correct a {
+  color: var(--gold); font-weight: 700; text-decoration: none;
+  border-bottom: 1px dashed var(--gold-border);
+  transition: border-bottom-color var(--t);
+}
+.search-correct a:hover { border-bottom-style: solid; }
+[data-theme="dark"] .search-correct a { color: #fbbf24; }
+
+/* "Did you mean?" card (empty state). */
+.search-suggest {
+  max-width: 520px; margin: 0 auto 28px; text-align: left;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-md); padding: 20px 24px; box-shadow: var(--sh-sm);
+}
+.search-suggest-kicker {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold);
+  margin: 0 0 12px;
+}
+.search-suggest-card {
+  display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 600;
+  color: var(--text); padding: 10px 14px; border: 1px solid var(--gold-border);
+  border-radius: var(--r-sm); background: var(--gold-muted); text-decoration: none;
+  transition: border-color var(--t), background var(--t), box-shadow var(--t);
+}
+.search-suggest-card:hover { border-color: var(--gold); background: var(--gold-muted); box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.08); }
+.search-suggest-arrow { color: var(--gold); font-family: var(--font-mono); font-size: 16px; flex-shrink: 0; }
+.search-suggest-alt { margin-top: 10px; font-size: 12px; color: var(--text-dim); font-family: var(--font-mono); }
+.search-suggest-alt-link { color: var(--gold); text-decoration: underline dotted; text-underline-offset: 3px; }
+.search-suggest-alt-link:hover { text-decoration: underline solid; }
+[data-theme="dark"] .search-suggest { background: var(--dark-s); border-color: var(--dark-b); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35); }
+[data-theme="dark"] .search-suggest-card { background: rgba(217, 119, 6, 0.1); border-color: rgba(217, 119, 6, 0.3); }
+[data-theme="dark"] .search-suggest-alt-link, [data-theme="dark"] .search-suggest-arrow { color: #fbbf24; }
+
+/* "People also searched for" chips. */
+.search-related { margin: 34px 0 8px; padding-top: 24px; border-top: 1px solid var(--border); }
+.search-related-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.search-related-chip {
+  display: inline-block; padding: 8px 14px; border: 1px solid var(--border);
+  border-radius: 999px; color: var(--text-mid); font-size: 13px; text-decoration: none;
+  background: var(--surface); transition: border-color var(--t), color var(--t);
+}
+.search-related-chip:hover { border-color: var(--gold); color: var(--gold); }
+[data-theme="dark"] .search-related-chip { background: var(--dark-s); border-color: var(--dark-b); }
+[data-theme="dark"] .search-related-chip:hover { border-color: rgba(217, 119, 6, 0.5); color: #fbbf24; }
+
+/* Google-style term highlighting in result titles (search page cards). */
+mark.search-term {
+  background: var(--gold-muted); color: var(--gold);
+  border-radius: 2px; padding: 0 2px; font-weight: 700;
+}
+[data-theme="dark"] mark.search-term { background: rgba(245, 158, 11, 0.16); color: #fbbf24; }
+
+/* ── 42. CONTENT PAGES ───────────────────────────── */
+.page-surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 40px 44px; box-shadow: var(--sh-sm); }
+
+/* ── 43. LEGAL PAGES (page-legal.php, v1.0.115 dark-hero redesign) ─── */
+/* Dark hero, same pattern as About + Newsletter pages */
+.legal-hero {
+  background: var(--dark); padding: 56px 0 36px;
+  position: relative; overflow: hidden;
+}
+.legal-hero::after {
+  content: ''; position: absolute; top: -140px; left: -140px; width: 420px; height: 420px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.11), transparent 65%);
+  pointer-events: none;
+}
+.legal-hero-inner { max-width: 860px; margin-left: auto; margin-right: auto; margin-inline: auto; position: relative; z-index: 1; }
+.legal-hero-label {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-b);
+  margin-bottom: 10px;
+}
+.legal-hero-title {
+  font-size: 32px; font-size: clamp(26px, 4vw, 38px); font-weight: 800;
+  letter-spacing: -0.03em; color: #f0ede6; margin: 0 0 16px;
+}
+.legal-updated {
+  display: inline-flex; align-items: center;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--dark-dim);
+  background: var(--dark-s); border: 1px solid var(--dark-b);
+  border-radius: 100px; padding: 6px 14px;
+}
+.legal-section { padding: 40px 0 64px; }
+.legal-layout { display: grid; grid-template-columns: 1fr; gap: 32px; max-width: 860px; margin-left: auto; margin-right: auto; margin-inline: auto; }
+/* Banner ad is the FIRST grid child, must span ALL columns so it sits
+   above the TOC + content columns, not steal the 196px TOC column. */
+.legal-layout > .ad-bg { grid-column: 1 / -1; }
+@media (min-width: 900px) {
+  .legal-layout { grid-template-columns: 196px 1fr; gap: 48px; align-items: start; }
+}
+.legal-toc { position: sticky; top: calc(var(--header-h, 64px) + 24px); }
+.legal-toc-label {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-dim);
+  margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+.legal-toc-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 2px; counter-reset: toc-counter; }
+.legal-toc-list li { counter-increment: toc-counter; }
+.legal-toc-list a {
+  display: flex; align-items: baseline; gap: 8px;
+  font-size: 12px; line-height: 1.5; color: var(--text-dim);
+  text-decoration: none; padding: 6px 8px; border-radius: var(--r-sm);
+  transition: background var(--t), color var(--t);
+}
+.legal-toc-list a::before {
+  content: counter(toc-counter, decimal-leading-zero);
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+  color: var(--gold); opacity: 0.7; flex-shrink: 0;
+}
+.legal-toc-list a:hover { color: var(--text); background: var(--gold-muted); }
+.legal-toc-list a:hover::before { color: var(--gold); opacity: 1; }
+@media (max-width: 899px) {
+  .legal-toc { position: static; border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px 16px; background: var(--surface); }
+  [data-theme="dark"] .legal-toc { background: var(--dark-s); border-color: var(--dark-b); }
+  .legal-toc-list { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+  .legal-toc-list a { font-size: 11px; padding: 5px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 100px; gap: 5px; }
+  [data-theme="dark"] .legal-toc-list a { background: var(--dark); border-color: var(--dark-b); }
+  .legal-toc-list a::before { display: none; }
+.legal-toc-list a:hover { border-color: var(--gold); }
+}
+.legal-body { min-width: 0; }
+.legal-body > p:first-child {
+  font-size: 16px; font-size: clamp(15px, 1.8vw, 17px); color: var(--text-mid); line-height: 1.85;
+  max-width: 64ch; margin-bottom: 28px; padding-bottom: 28px; border-bottom: 1px solid var(--border);
+}
+.legal-body > h2 {
+  font-family: var(--font-mono); font-size: 17px; font-size: clamp(15px, 2vw, 18px); font-weight: 700;
+  letter-spacing: -0.02em; color: var(--text); margin: 0 0 14px;
+  display: flex; align-items: center; gap: 12px;
+  padding-top: 28px; border-top: 1px solid var(--border);
+  scroll-margin-top: calc(var(--header-h, 64px) + 24px);
+}
+.legal-body > h2:first-of-type { border-top: none; padding-top: 0; }
+.legal-body > h2::before {
+  content: ''; display: block; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gold); flex-shrink: 0;
+}
+.legal-body > h3 {
+  font-family: var(--font-mono); font-size: 14px; font-weight: 700; color: var(--text);
+  margin: 24px 0 10px;
+}
+.legal-body p { font-size: 15px; font-size: clamp(14px, 1.6vw, 15.5px); color: var(--text-mid); line-height: 1.85; max-width: 64ch; margin-bottom: 14px; }
+/* Brand list markers, same gold ◆ diamonds + numbered badges as .art-body */
+.legal-body ul { margin: 0 0 16px; padding-left: 4px; list-style: none; }
+.legal-body ol { margin: 0 0 16px; padding-left: 4px; list-style: none; counter-reset: gwill-legal-li; }
+.legal-body li { font-size: 15px; font-size: clamp(14px, 1.6vw, 15.5px); color: var(--text-mid); line-height: 1.85; margin-bottom: 8px; position: relative; padding-left: 18px; }
+.legal-body ul > li::before { content: '◆'; position: absolute; left: 0; top: 0.18em; font-size: 9px; color: var(--gold); opacity: 0.75; }
+.legal-body ul > li > ul > li::before { content: '◇'; opacity: 0.5; }
+.legal-body ul > li > ul > li > ul > li::before { content: '▪'; font-size: 8px; }
+.legal-body ol > li { counter-increment: gwill-legal-li; padding-left: 30px; }
+.legal-body ol > li::before {
+  content: counter(gwill-legal-li); position: absolute; left: 0; top: 0.22em;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--gold); background: var(--gold-muted); border-radius: 5px;
+  width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--gold-border);
+}
+.legal-body li > ul, .legal-body li > ol { margin: 7px 0 0 22px; }
+.legal-body strong { color: var(--text); font-weight: 700; }
+.legal-body a { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
+.legal-body a:hover { color: var(--green); }
+.legal-body > blockquote {
+  margin: 20px 0; padding: 16px 20px;
+  background: var(--gold-muted); border-left: 3px solid var(--gold);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  font-size: 14.5px; color: var(--text); line-height: 1.7;
+}
+[data-theme="dark"] .legal-body > blockquote { background: rgba(245, 158, 11, 0.08); }
+
+/* ── 44. NEWSLETTER PAGE (page-newsletter.php) ───── */
+/* ── 45. NEWSLETTER PAGE (v1.0.114 redesign) ─────── */
+/* Dark hero, same grain + gold-bleed pattern as the About page */
+.nl-hero {
+  background: var(--dark); padding: 64px 0 56px;
+  position: relative; overflow: hidden;
+}
+.nl-hero::after {
+  content: ''; position: absolute; top: -140px; right: -140px; width: 420px; height: 420px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.18), transparent 65%);
+  pointer-events: none;
+}
+/* Thin gold accent bar below nav, subtle brand bridge */
+.nl-hero::before {
+  content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 720px; width: min(720px, calc(100% - 96px)); height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold-b), transparent);
+  pointer-events: none; opacity: 0.5;
+}
+.nl-hero-inner {
+  max-width: 680px; margin-left: auto; margin-right: auto; margin-inline: auto; text-align: center; position: relative;
+  padding-left: 48px; padding-right: 48px;
+}
+/* Brand mark + label stacked together */
+.nl-hero-brand { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px; }
+.nl-hero-mark {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 60px; height: 60px; border-radius: 18px;
+  background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3);
+  color: var(--gold-b); font-size: 28px; font-weight: 800;
+  text-shadow: 0 0 18px rgba(245, 158, 11, 0.45);
+}
+.nl-hero-label {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-b);
+}
+.nl-hero-title {
+  font-size: 40px; font-size: clamp(30px, 5.5vw, 48px); font-weight: 800;
+  letter-spacing: -0.04em; color: #f0ede6; margin: 0 0 18px; line-height: 1.15;
+}
+.nl-hero-sub {
+  font-size: 15px; font-weight: 300; color: #c9c0b0; line-height: 1.75;
+  max-width: 48ch; margin: 0 auto 32px;
+}
+.nl-hero-form { max-width: 450px; margin-left: auto; margin-right: auto; margin-inline: auto; }
+.nl-hero-form .gwill-newsletter__prompt { display: none; }
+.nl-hero-form .gwill-form--newsletter__fields { display: flex; gap: 8px; align-items: stretch; }
+.nl-hero-form .gwill-form__field { flex: 1; min-width: 0; }
+.nl-hero-form .gwill-form input[type="email"] {
+  background: rgba(255,255,255,0.05); border: 1px solid var(--gold-input-border);
+  color: #f0ede6; border-radius: var(--r-sm);
+  padding: 13px 16px; font-size: 16px; width: 100%; height: 48px;
+  transition: border-color var(--t), box-shadow var(--t);
+  font-family: var(--font);
+}
+.nl-hero-form .gwill-form input[type="email"]::placeholder { color: var(--dark-dim); }
+.nl-hero-form .gwill-form input[type="email"]:focus {
+  border-color: var(--gold-b);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18); outline: none;
+}
+/* Autofill fix, dark context */
+.nl-hero-form .gwill-form input[type="email"]:-webkit-autofill,
+.nl-hero-form .gwill-form input[type="email"]:-webkit-autofill:hover,
+.nl-hero-form .gwill-form input[type="email"]:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #100e0c inset !important;
+  -webkit-text-fill-color: #f0ede6 !important;
+  caret-color: #f0ede6 !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+.nl-hero-form .gwill-form__submit {
+  background: var(--gold-btn); color: #fff; border: none; border-radius: var(--r-md);
+  font-size: 13px; font-weight: 700; padding: 0 24px; height: 48px; white-space: nowrap;
+  transition: background var(--t), transform var(--t); cursor: pointer;
+}
+.nl-hero-form .gwill-form__submit:hover { background: #92400e; transform: translateY(-1px); }
+.nl-hero-form .gwill-form__status { margin-top: 12px; font-size: 12px; color: rgba(240, 237, 230, 0.6); }
+.nl-hero-form .gwill-form__status--error { color: #f87171; }
+.nl-hero-form .gwill-form__success-msg {
+  background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(34, 197, 94, 0.25);
+  color: #86efac; border-radius: var(--r-sm); padding: 14px 18px; font-size: 13px;
+  margin-top: 14px;
+}
+/* Perks, clean gold ◆ markers only (no duplicate ✓) */
+.nl-hero-perks {
+  list-style: none; margin: 32px 0 0; padding: 0;
+  display: flex; flex-direction: column; gap: 11px; align-items: center;
+}
+.nl-hero-perks li {
+  font-size: 13px; font-weight: 300; color: #a89f8e;
+  display: flex; align-items: center; gap: 10px;
+}
+.nl-hero-perks li::before {
+  content: '◆'; color: var(--gold); opacity: 0.7;
+  font-size: 7px; flex-shrink: 0;
+}
+/* Editorial / about section, light bg, card-like surface */
+.nl-content { padding: 40px 0 64px; }
+.nl-content-inner { max-width: 680px; margin-left: auto; margin-right: auto; margin-inline: auto; }
+.nl-content-inner > :first-child { margin-top: 0 !important; }
+.nl-content h2 {
+  font-size: 20px; font-weight: 800; letter-spacing: -0.03em;
+  color: var(--text); margin: 0 0 12px;
+}
+.nl-content p {
+  font-size: 14.5px; font-weight: 300; color: var(--text-mid); line-height: 1.8; margin-bottom: 16px;
+}
+.nl-content ul { margin: 0 0 18px; padding-left: 4px; }
+.nl-content li {
+  font-size: 14px; color: var(--text-mid); line-height: 1.8; margin-bottom: 7px;
+  position: relative; padding-left: 18px; list-style: none;
+}
+.nl-content li::before {
+  content: '◆'; position: absolute; left: 0; top: 0.28em;
+  color: var(--gold); font-size: 7px;
+}
+.nl-content a { color: var(--gold); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+.nl-content strong { font-weight: 700; color: var(--text); }
+/* Ad slots inside nl-content, keep spacing */
+.nl-content .ad-bg { margin: 28px 0; }
+@media (max-width: 767px) {
+  .nl-hero { padding: 44px 0 36px; }
+  .nl-hero-inner { padding-left: 20px; padding-right: 20px; }
+  .nl-hero::before { width: calc(100% - 40px); }
+  .nl-hero-form .gwill-form--newsletter__fields { flex-direction: column; }
+  .nl-hero-form .gwill-form__submit { width: 100%; justify-content: center; }
+  .nl-content { padding: 28px 0 48px; }
+}
+.page-surface h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.03em; margin: 28px 0 10px; color: var(--text); }
+.page-surface h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; color: var(--text); }
+.page-surface p { font-size: 14px; font-weight: 300; color: var(--text-mid); line-height: 1.8; margin-bottom: 14px; }
+.page-surface a { color: var(--gold); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+.page-surface ul, .page-surface ol { margin: 0 0 14px 4px; font-size: 14px; color: var(--text-mid); list-style: none; }
+.page-surface ol { counter-reset: gwill-page-li; }
+.page-surface li { margin-bottom: 6px; position: relative; padding-left: 18px; }
+.page-surface ul > li::before { content: '◆'; position: absolute; left: 0; top: 0.2em; font-size: 9px; color: var(--gold); opacity: 0.75; }
+.page-surface ul > li > ul > li::before { content: '◇'; opacity: 0.5; }
+.page-surface ol > li { counter-increment: gwill-page-li; padding-left: 30px; }
+.page-surface ol > li::before {
+  content: counter(gwill-page-li); position: absolute; left: 0; top: 0.24em;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--gold); background: var(--gold-muted); border-radius: 5px;
+  width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--gold-border);
+}
+
+/* ── 46. FORMS (contact) ─────────────────────────── */
+.gwill-form .gwill-form__field { margin-bottom: 18px; }
+.gwill-form .gwill-form__row--2col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 640px) {
+  .gwill-form .gwill-form__row--2col { grid-template-columns: 1fr; gap: 0; }
+}
+.gwill-form input[type="text"], .gwill-form input[type="email"], .gwill-form input[type="tel"], .gwill-form textarea, .gwill-form select {
+  width: 100%; border: 1px solid var(--border); border-radius: var(--r-md); padding: 12px 16px;
+  font-size: 16px; background: var(--surface); color: var(--text); outline: none;
+  transition: border-color var(--t), box-shadow var(--t);
+  height: 46px;
+}
+.gwill-form textarea { height: auto; min-height: 150px; resize: vertical; line-height: 1.6; }
+/* Native select → brand select: hide the arrow, draw a gold chevron. */
+.gwill-form select {
+  appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23d97706' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center;
+}
+.gwill-form select:invalid { color: var(--text-dim); }
+/* Pasted / autofilled fields keep the theme, Chrome's -webkit-autofill
+   paints its own white/light-blue bg that ignores CSS; the inset shadow
+   trick forces our surface + text color for autofill states. */
+.gwill-form input:-webkit-autofill,
+.gwill-form input:-webkit-autofill:hover,
+.gwill-form input:-webkit-autofill:focus,
+.gwill-form textarea:-webkit-autofill,
+.gwill-form textarea:-webkit-autofill:hover,
+.gwill-form textarea:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--surface) inset !important;
+  -webkit-text-fill-color: var(--text) !important;
+  caret-color: var(--text) !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+[data-theme="dark"] .gwill-form input:-webkit-autofill,
+[data-theme="dark"] .gwill-form input:-webkit-autofill:hover,
+[data-theme="dark"] .gwill-form input:-webkit-autofill:focus,
+[data-theme="dark"] .gwill-form textarea:-webkit-autofill,
+[data-theme="dark"] .gwill-form textarea:-webkit-autofill:hover,
+[data-theme="dark"] .gwill-form textarea:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--dark-s) inset !important;
+  -webkit-text-fill-color: #f0ede6 !important;
+  caret-color: #f0ede6 !important;
+}
+.gwill-form input:focus, .gwill-form textarea:focus, .gwill-form select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(217,119,6,0.12); }
+.gwill-form label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-mid); margin-bottom: 8px; }
+.gwill-form .gwill-form__required { color: var(--gold); margin-left: 2px; }
+.gwill-form .gwill-form__field-hint { font-size: 11px; color: var(--text-dim); margin-top: 6px; line-height: 1.5; }
+.gwill-form__submit { background: var(--gold-btn); color: #fff; border: none; font-size: 14px; font-weight: 700; padding: 14px 28px; border-radius: var(--r-md); transition: background var(--t), transform var(--t), box-shadow var(--t); display: inline-flex; align-items: center; justify-content: center; gap: 8px; line-height: 1; appearance: none; -webkit-appearance: none; min-height: 0; box-shadow: var(--sh-gold); }
+.gwill-form__submit:hover { background: #92400e; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(217,119,6,0.25); }
+.gwill-form__submit:active { transform: translateY(0); }
+.gwill-form__submit-loading { display: none; }
+.gwill-form__submit[data-loading] { opacity: 0.7; cursor: wait; }
+.gwill-form__submit[data-loading] .gwill-form__submit-text { display: none; }
+.gwill-form__submit[data-loading] .gwill-form__submit-loading { display: inline; }
+.gwill-form__status { margin-top: 12px; font-size: 12px; font-weight: 700; min-height: 1.4em; }
+.gwill-form__status--error { color: var(--red); }
+/* Client-side required-field error ("Email is required.") - injected by forms.js
+   as <span class="gwill-form__field-error"> after the field. Must be styled for
+   both light + dark contexts (newsletter cards are dark by default). */
+.gwill-form__field-error { display: block; margin-top: 6px; font-size: 12px; font-weight: 700; line-height: 1.4; color: var(--red); }
+.nl-s .gwill-form__field-error,
+.m-nl .gwill-form__field-error,
+.nl-hero-form .gwill-form__field-error,
+.sw .gwill-form__field-error { color: #f87171; }
+.gwill-honey { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }
+
+/* ── 47. COMMENTS (minimal) ──────────────────────── */
+.comments-area { margin-top: 40px; }
+.comments-title, .comment-reply-title { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 16px; }
+.comment-list { list-style: none; }
+.comment { margin-bottom: 20px; }
+.comment-list .children { list-style: none; margin: 16px 0 0 24px; }
+/* Legacy server-rendered comment cards (only used if VibeComments is ever
+   deactivated, the plugin brings its own .vibe-comment-body cards). */
+.vibe-comment-list .comment { padding: 0; background: none; border: none; border-radius: 0; }
+.comment-respond input[type="text"], .comment-respond input[type="email"], .comment-respond input[type="url"], .comment-respond textarea {
+  width: 100%; border: 1px solid var(--border); border-radius: var(--r-sm); padding: 10px 14px;
+  font-size: 16px; background: var(--surface); color: var(--text); margin-bottom: 12px;
+}
+.comment-form .submit { background: var(--gold); color: #fff; border: none; font-size: 12px; font-weight: 700; padding: 10px 20px; border-radius: var(--r-sm); cursor: pointer; }
+
+/* ── 48. LAYOUT UTILITIES ────────────────────────── */
+.con { max-width: 1100px; margin: 0 auto; padding: 0 var(--con-pad); }
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.sb-layout { display: grid; grid-template-columns: 1fr 300px; gap: 32px; }
+.sb-layout > div { min-width: 0; } /* let the article column shrink below table min-content on mobile */
+.cl-layout { display: grid; grid-template-columns: 1fr 320px; gap: 32px; }
+.sg { margin-top: 56px; }
+.mt20 { margin-top: 20px; }
+.mt40 { margin-top: 40px; } .mt48 { margin-top: 48px; }
+.mb12 { margin-bottom: 12px; } .mb20 { margin-bottom: 20px; }
+.mb24 { margin-bottom: 24px; }
+.flex { display: flex; } .aic { align-items: center; } .jsb { justify-content: space-between; }
+.g16 { gap: 16px; }
+.fw3 { font-weight: 300; }
+.fz11 { font-size: 11px; } .fz12 { font-size: 12px; } .fz14 { font-size: 14px; }
+.cm-c { color: var(--text-mid); } .cd { color: var(--text-dim); }
+.lh { line-height: 1.7; }
+
+/* ── 49. RESPONSIVE: tablet 768-1023px ───────────── */
+@media (max-width: 1023px) {
+  :root { --con-pad: 28px; --header-h: 56px; }
+  .g3 { grid-template-columns: 1fr 1fr; }
+  .sb-layout, .cl-layout { grid-template-columns: 1fr 250px; gap: 24px; }
+  .ftop { grid-template-columns: 1fr 1fr; }
+  .hero { padding: 52px var(--con-pad) 52px; }
+  .hero-h { font-size: 42px; }
+  .feat { grid-template-columns: 1fr; }
+  .feat-img { min-height: 200px; border-right: none; border-bottom: 1px solid var(--border); }
+  .stat-strip { display: grid; grid-template-columns: 1fr 1fr; }
+  .si { border-right: 1px solid var(--gold-border); border-bottom: 1px solid var(--gold-border); }
+  .si:nth-child(2n) { border-right: none; }
+  .si:nth-last-child(-n+2) { border-bottom: none; }
+  /* v1.0.133: art-hd lives inside the sb-layout column, .con already
+     provides the side padding; only full-width heroes need it here. */
+  .phd, .about-hero { padding-left: var(--con-pad); padding-right: var(--con-pad); }
+  .art-surface-pad { padding: 24px 28px 28px; }
+  /* Tablet: keep the newsletter box in ROW layout (title left, form right) .
+     it has ~700px of room at 768-1023px; stacking (column) is for phones
+     only (see the 767px block). */
+  .nl-s { flex-direction: row; align-items: center; }
+  .nl-s .nl-copy, .nl-s .gwill-newsletter { width: auto; flex: 1 1 50%; min-width: 0; }
+  .nl-s .gwill-form--newsletter__fields { flex-direction: row; }
+  .nl-s .gwill-form__submit { width: auto; }
+  .footer { padding: 36px var(--con-pad) 20px; }
+  .ticker { height: 30px; }
+  .ticker .ti { padding: 0 16px; height: 30px; }
+}
+
+/* ── 50. RESPONSIVE: mobile ≤767px ───────────────── */
+@media (max-width: 767px) {
+  :root { --con-pad: 20px; }
+  .sh, .footer { display: none; }
+  .mh { display: flex; }
+  .ticker { height: 28px; }
+  .ticker .ti { padding: 0 14px; height: 28px; }
+  .g2, .g3 { grid-template-columns: 1fr; }
+  .sb-layout, .cl-layout { grid-template-columns: 1fr; }
+  .hero { padding: 40px 20px 48px; }
+  .hero .con, .about-hero .con { padding-left: 0; padding-right: 0; }
+  .hero-h { font-size: 30px; }
+  .hero-sub { font-size: 13px; }
+  .hero-acts { flex-direction: column; align-items: stretch; }
+  .hero-acts .bh, .hero-acts .bhg { justify-content: center; display: flex; width: 100%; }
+  .stat-strip { display: grid; grid-template-columns: 1fr 1fr; }
+  .si { border-right: 1px solid var(--gold-border); border-bottom: 1px solid var(--gold-border); }
+  .si:nth-child(2n) { border-right: none; }
+  .feat-img { min-height: 170px; font-size: 32px; }
+  .feat-emoji { font-size: 32px; }
+  .feat-body { padding: 24px 20px; }
+  .feat-t { font-size: 18px; }
+  .art-hd { padding: 24px 0 32px; }
+  .art-t { font-size: 21px; }
+  /* Full-bleed article on phones: strip the card chrome, let media run
+     edge-to-edge, keep body text comfortably padded (readability first). */
+  .art-reading-surface { border-radius: 0; border: none; box-shadow: none; background: transparent; overflow: visible; margin-left: calc(-1 * var(--con-pad)); margin-right: calc(-1 * var(--con-pad)); }
+  .art-cover { min-height: 180px; margin-left: 0; margin-right: 0; width: auto; border-bottom: 1px solid var(--border-dim); border-radius: 0; }
+  .art-surface-pad { padding: 24px var(--con-pad); }
+  /* Full-bleed on phones, but the gutter lives on the BODY itself (not its
+     direct children) so ANY nested block still gets padded. surface-pad keeps
+     its own gutter for siblings (disclosure/TOC/share/author-bio); art-body
+     breaks out to the true page edge and re-pads internally, so its text
+     aligns exactly with those siblings while its media runs edge-to-edge.
+     Old rule re-added the gutter to .art-body > * only, a Gutenberg group
+     wrapping the paragraphs lost it → text ran flush (King: "content now has
+     zero padding"). Body padding beats a shallow child selector. */
+  .art-body { margin-left: calc(-1 * var(--con-pad)); margin-right: calc(-1 * var(--con-pad)); padding: 0 var(--con-pad); }
+  /* Only media blocks break out true edge-to-edge. Because art-reading-surface
+     is now pulled to the true edge (x=0), media escapes ONE gutter and lands at
+     x=0; text stays at var(--con-pad). (v1.12.9, verified box model: cover x=0,
+     media x=0, text x=20px.) */
+  .art-body > figure, .art-body > .wp-block-image, .art-body > .wp-block-gallery,
+  .art-body > .wp-block-embed, .art-body > .wp-block-video, .art-body > .wp-block-audio,
+  .art-body > .wp-block-table, .art-body > .wp-block-cover, .art-body > pre,
+  .art-body > .wp-block-code, .art-body > .wp-block-pullquote, .art-body > .wp-block-quote {
+    margin-left: calc(-1 * var(--con-pad)); margin-right: calc(-1 * var(--con-pad)); width: auto; max-width: none; border-radius: 0;
+  }
+  /* The in-content ad keeps its centered 336px box (don't let the body's
+     full-bleed margins left-align it) */
+  .art-body > .ad-rect { margin-left: auto; margin-right: auto; max-width: 336px; width: 100%; }
+  .art-body > .wp-block-image img, .art-body > .wp-block-gallery img { border-radius: 0; }
+  /* Full-bleed readability: cream page bg replaces the old white card in
+     light mode, so body copy steps up a shade, theme-aware, so dark mode
+     stays readable too (no hardcoded hex that breaks the dark palette) */
+  .art-body { color: var(--text); }
+  .art-body p, .art-body li { color: var(--art-copy, #262626); }
+  .art-body figcaption, .art-body .wp-block-quote cite { color: var(--art-dim, #6b6b6b); }
+  .art-body blockquote, .art-body .wp-block-pullquote { color: var(--text-mid); }
+  /* v1.0.132: art-hd now lives INSIDE the sb-layout column (v1.0.130) .
+     the old sibling-selector rule no longer applies; con handles padding. */
+  .phd { padding: 24px 20px 20px; }
+  .author-head { gap: 16px; }
+  .author-av { width: 64px; height: 64px; font-size: 24px; border-width: 2px; }
+  .about-hero { padding: 32px 20px; }
+  .nl-s { padding: 28px 24px; }
+  /* Phones AND mini-tablets (≤767px): stack the whole box, title on top,
+     form below. At 640px the row layout squeezes the h3 to 263px and wraps
+     it; column is the clean layout below 768px. */
+  .nl-s { flex-direction: column; align-items: stretch; }
+  .nl-s .nl-copy, .nl-s .gwill-newsletter { width: 100%; max-width: none; }
+  .nl-s .gwill-form--newsletter__fields { flex-direction: column; }
+  .nl-s .gwill-form__submit { width: 100%; justify-content: center; height: 46px; padding: 0 20px; }
+  .page-surface { padding: 24px 20px; }
+  .mfooter { display: block; }
+  .footer { display: none; }
+  .error-404 { padding: 60px 20px 80px; }
+  .ad-rect { height: 250px; }
+  .ad-feed { height: 120px; }
+  /* iOS zoom-on-focus (WCAG 1.4.4 + 2.5.8): Safari auto-zooms the page
+     when a form control with font-size < 16px receives focus. Every input,
+     select and textarea on the site was below 16px (12-14px), tapping any
+     field zoomed the whole page in on iPhones. 16px on phones only;
+     desktop keeps the compact 12-14px forms. */
+  .gs-input, .search-field,
+  .gwill-form input[type="text"], .gwill-form input[type="email"], .gwill-form input[type="tel"],
+  .gwill-form textarea, .gwill-form select,
+  .nl-hero-form .gwill-form input[type="email"],
+  .comment-respond input[type="text"], .comment-respond input[type="email"], .comment-respond input[type="url"],
+  .comment-respond textarea,
+  .art-body .wp-block-search__input { font-size: 16px; }
+}
+
+/* Desktop / tablet default above 767 */
+@media (min-width: 768px) {
+  .mh, .mfooter, .mno { display: none; }
+}
+
+/* ── 51. RESPONSIVE AUDIT, TOUCH ERGONOMICS (coarse pointers only) ───
+   Scoped to @media (pointer: coarse) so desktop mouse/keyboard stays
+   pixel-identical. Fixes from the responsive/mobile audit:
+   • WCAG 2.5.8 AA FAIL: .mtog (the dark-mode pill switch) is 34×20, the
+     20px height is under the 24px minimum. The ::before expands its hit
+     area vertically to 44px with ZERO visual change (the gold pill itself
+     stays 34×20; no horizontal expansion, so it never overlaps the
+     neighbouring search/hamburger hit areas).
+   • WCAG 2.5.5 (Apple HIG 44px): mobile header buttons (search, hamburger,
+     nav close), category/apps pills, and pagination numbers grow to 44px;
+     strip ghost scroll buttons to 36px; share buttons get a 44px min
+     (v1.13.12: 36→44, same floor as every other touch control).
+   • .legal-toc-list a (pill form ≤899px) gets the same 44px min-height. */
+@media (pointer: coarse) {
+  .msearch, .hbg, .mno-close { width: 44px; height: 44px; }
+  .cp { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+  .pagination .page-numbers { min-width: 44px; height: 44px; }
+  .cp-scroll-btn { width: 44px; height: 44px; }
+  /* v1.0.203 (King: "Fix all"): ad dismiss visual stays 22px gold ghost
+     (ad-system design), but the TAP TARGET grows to 44px via the same
+     ::before hit-area pattern as .tp-seg, WCAG 2.5.8 AA (24px) + 2.5.5
+     (44px) met with ZERO visual change. (.ad-sticky-x is already
+     position:absolute, the ::before anchors to its box; no position
+     override needed.) */
+  .ad-sticky-x::before { content: ''; position: absolute; top: -11px; right: -11px; bottom: -11px; left: -11px; inset: -11px; border-radius: inherit; }
+  .share-b { min-height: 44px; min-width: 44px; }
+  /* v1.13.14 (reviewer D3): same 44px floor for the remaining sub-44px touch
+     controls - search submit, spotlight close/clear (all pass 24px AA; this
+     raises them to the 2.5.5 best practice like every other control here). */
+  .search-submit { height: 44px; }
+  .gs-close { width: 44px; height: 44px; }
+  .gs-clear { width: 44px; height: 44px; }
+}
+@media (pointer: coarse) and (max-width: 899px) {
+  .legal-toc-list a { min-height: 44px; display: inline-flex; align-items: center; }
+}
+
+/* ── 52. RESPONSIVE AUDIT v1.0.233, remaining findings ──────────
+   Same doctrine as §51 above: hit-area fixes scoped to (pointer: coarse) so
+   desktop mouse/keyboard rendering stays byte-identical.
+   • .db hero category chips: 22px tall on touch → 44px min-height.
+     Desktop chip look unchanged (rule never matches fine pointers).
+   • .mlogo deliberately NOT stretched: v1.0.233 gave it min-height:44px
+     and the box-anchored ::after gradient underline tore ~18px below the
+     wordmark (King: "you fucked up my logo"). REVERTED v1.0.242, the
+     logo link stands ~26px, above WCAG 2.5.8's 24px AA floor, so the
+     44px convention was never required here.
+   • Ticker pair/rate text 10/11px → 12px ≤767px (legibility floor;
+     desktop ticker untouched). .db chip text 9 → 11px ≤767px likewise.
+   • .gconsent-link (32px) left as-is: inline prose link, WCAG 2.5.8
+     inline-target exemption, documented, not a defect.
+   • v1.0.234 closes the NICE batch: .hero-tag/.hero-cats-lbl/.stitle
+     10 → 10.5px and .si-l 9 → 10px (global legibility floors). */
+@media (pointer: coarse) {
+  .db { min-height: 44px; }
+}
+@media (max-width: 767px) {
+  .t-pair { font-size: 12px; }
+  .t-rate { font-size: 12px; }
+  .db { font-size: 11px; }
+}
+
+/* ── 53. ACCESSIBILITY, global focus indicator + reduced-motion guard ───
+   Global :focus-visible ring (WCAG 2.4.7 + 1.4.11), themed per mode:
+   light uses --gold-btn (#b45309 ≈ 5:1 on white), dark uses --gold-b
+   (#f59e0b ≈ 9:1 on the warm-black surfaces), the .ad-sticky-x:focus-visible
+   two-token pattern, extended to every interactive element. */
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--gold-btn);
+  outline-offset: 2px;
+}
+[data-theme="dark"] a:focus-visible,
+[data-theme="dark"] button:focus-visible,
+[data-theme="dark"] [tabindex]:focus-visible {
+  outline-color: var(--gold-b);
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  body { transition: none; }
+  .mno { transition: none; }
+}
+/* ═══════════════════════════════════════════════════════════════════════
+   v1.0.205, "Fix all" (King's decree after the cross-browser audit):
+   1. flex-gap fallback for Safari 14.0 / iOS 14.0-14.4 (gap in flex
+      unsupported there). Scoped to .no-flex-gap which is added to <html>
+      by a JS probe in header.php ONLY on unsupported engines, modern
+      browsers never see the class, zero impact.
+   2. :hover stickiness reset for touch (hover:none), iOS keeps the
+      last-tapped :hover state until the next tap; these rules return
+      interactive elements to their base look on touch devices. Desktop
+      (hover:hover) never matches this block, byte-identical.
+   3. :-moz-autofill, Firefox equivalent of the -webkit-autofill
+      box-shadow trick (same inset-shadow technique works there).
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── 54. FLEX-GAP FALLBACK (Safari 14.0 / iOS 14.0-14.4) ─── */
+.no-flex-gap .snav > * + * { margin-left: 10px; }
+.no-flex-gap .snav-list > * + * { margin-left: 6px; }
+.no-flex-gap .snav-list > li > a > * + * { margin-left: 5px; }
+.no-flex-gap .snav-list .sub-menu a > * + * { margin-left: 10px; }
+.no-flex-gap .gs-form > * + * { margin-left: 10px; }
+.no-flex-gap .gs-row > * + * { margin-left: 12px; }
+.no-flex-gap .gs-main > * + * { margin-top: 3px; }
+.no-flex-gap .gs-meta > * + * { margin-left: 6px; }
+.no-flex-gap .gs-foot > * + * { margin-left: 14px; }
+.no-flex-gap .mhr > * + * { margin-left: 10px; }
+.no-flex-gap .hbg > * + * { margin-top: 5px; }
+.no-flex-gap .mno-items > * + * { margin-top: 2px; }
+.no-flex-gap .mno-list > li > a > * + * { margin-left: 10px; }
+.no-flex-gap .btn > * + * { margin-left: 6px; }
+.no-flex-gap .hero-tag > * + * { margin-left: 8px; }
+.no-flex-gap .hero-acts > * + * { margin-left: 12px; }
+.no-flex-gap .hero-cats > * + * { margin-left: 8px; }
+.no-flex-gap .feat-body > * + * { margin-top: 12px; }
+.no-flex-gap .feat-meta > * + * { margin-left: 12px; }
+.no-flex-gap .cp-strip > * + * { margin-left: 8px; }
+.no-flex-gap .discl > * + * { margin-left: 10px; }
+.no-flex-gap .nl-s > * + * { margin-left: 24px; }
+.no-flex-gap .nl-meta > * + * { margin-left: 8px; }
+.no-flex-gap .nl-s .gwill-newsletter > * + * { margin-top: 14px; }
+.no-flex-gap .nl-s .gwill-form--newsletter__fields > * + * { margin-left: 8px; }
+.no-flex-gap .sw .gwill-form--newsletter__fields > * + * { margin-top: 8px; }
+.no-flex-gap .m-nl .gwill-form--newsletter__fields > * + * { margin-left: 8px; }
+.no-flex-gap .fsoc > * + * { margin-left: 8px; }
+.no-flex-gap .fbot > * + * { margin-left: 12px; }
+.no-flex-gap .fbot-right > * + * { margin-left: 16px; }
+.no-flex-gap .mfbot > * + * { margin-top: 6px; }
+.no-flex-gap .ad-slot > * + * { margin-top: 4px; }
+.no-flex-gap .ad-slot__spinner > * + * { margin-top: 4px; }
+.no-flex-gap .ad-sticky .ad-slot__spinner > * + * { margin-left: 2px; }
+.no-flex-gap .gconsent-acts > * + * { margin-left: 8px; }
+.no-flex-gap .bc > * + * { margin-left: 6px; }
+.no-flex-gap .gwill-breadcrumbs__list > * + * { margin-left: 6px; }
+.no-flex-gap .gwill-breadcrumbs__item > * + * { margin-left: 6px; }
+.no-flex-gap .art-meta > * + * { margin-left: 12px; }
+.no-flex-gap .art-author > * + * { margin-left: 8px; }
+.no-flex-gap .art-body .wp-block-buttons > * + * { margin-left: 10px; }
+.no-flex-gap .art-body .wp-block-file > * + * { margin-left: 12px; }
+.no-flex-gap .art-body .wp-block-social-links > * + * { margin-left: 8px; }
+.no-flex-gap .art-body .wp-block-search__inside-wrapper > * + * { margin-left: 8px; }
+.no-flex-gap .share-row > * + * { margin-left: 8px; }
+.no-flex-gap .abio > * + * { margin-left: 16px; }
+.no-flex-gap .abio-s > * + * { margin-left: 8px; }
+/* v1.0.217: mirror .abio for the author archive header (Safari 14.0 / iOS 14.0-14.4 flex-gap fallback) */
+.no-flex-gap .author-head > * + * { margin-left: 20px; }
+.no-flex-gap .toc-i > * + * { margin-left: 8px; }
+.no-flex-gap .toc-i a > * + * { margin-left: 8px; }
+.no-flex-gap .toc-summary > * + * { margin-left: 8px; }
+.no-flex-gap .toc-list > * + * { margin-top: 2px; }
+.no-flex-gap .contact-sidebar-item > * + * { margin-left: 12px; }
+.no-flex-gap .search-form > * + * { margin-left: 8px; }
+.no-flex-gap .search-label > * + * { margin-left: 8px; }
+.no-flex-gap .search-pill > * + * { margin-left: 8px; }
+.no-flex-gap .pagination > * + * { margin-left: 8px; }
+.no-flex-gap .search-suggest-card > * + * { margin-left: 12px; }
+.no-flex-gap .search-related-list > * + * { margin-left: 10px; }
+.no-flex-gap .legal-toc-list > * + * { margin-top: 2px; }
+.no-flex-gap .legal-toc-list a > * + * { margin-left: 8px; }
+.no-flex-gap .legal-body > h2 > * + * { margin-left: 12px; }
+.no-flex-gap .nl-hero-brand > * + * { margin-top: 10px; }
+.no-flex-gap .nl-hero-form .gwill-form--newsletter__fields > * + * { margin-left: 8px; }
+.no-flex-gap .nl-hero-perks > * + * { margin-top: 11px; }
+.no-flex-gap .nl-hero-perks li > * + * { margin-left: 10px; }
+.no-flex-gap .gwill-form__submit > * + * { margin-left: 8px; }
+@media (max-width: 1023px) and (min-width: 768px) {
+  .no-flex-gap .snav-list > * + * { margin-left: 2px; }
+}
+/* .ti (ticker) intentionally NOT included, the marquee animates
+   translateX on .ticker-inner, children spacing is handled by the
+   animation loop itself (ticker-live.js), not static gap. */
+
+/* ── 55. :hover STICKINESS RESET (touch devices only) ────────────
+   iOS Safari keeps the last-tapped element in :hover until the next tap,
+   leaving a visible residue. These rules pin interactive elements back to
+   their base look on (hover: none) devices. Desktop (hover: hover) never
+   matches, byte-identical. */
+@media (hover: none) {
+  /* :not(.on), the stickiness reset must never clobber the ACTIVE pill:
+     .cp:hover ties .cp.on on specificity and sits later, so a sticky-touch
+     hover stripped the active gold (King: pill color "disappears if you
+     press it twice or press outside"). Non-active pills keep the reset. */
+  .cp:hover:not(.on) { border-color: var(--border); background: var(--surface); color: var(--text-dim); }
+  .ac:hover { border-color: var(--border); transform: none; box-shadow: none; }
+  .b-gold:hover { background: var(--gold-btn); transform: none; }
+  .b-ghost:hover { border-color: var(--border); color: var(--text-mid); }
+  .b-green:hover { background: var(--green-btn); transform: none; }
+  .bh:hover { background: var(--gold-b); transform: none; }
+  .bhg:hover { border-color: var(--dark-b); }
+  /* Ghost/outline buttons reset to transparent bg; filled buttons (.b-gold,
+     .b-green, .bh) keep their solid background + white text, the old broad
+     `.btn:hover { background: transparent }` stripped them too, leaving white
+     text invisible on the page bg (King: "buttons disappear on hover"). */
+  .b-ghost:hover { background: transparent; }
+  .share-b:hover { border-color: var(--border); color: var(--text-mid); }
+  .fsoc .soci:hover { border-color: var(--dark-b); color: var(--dark-dim); transform: none; }
+  /* Same doctrine as .cp above: never let the stickiness reset strip a
+     PERSISTENT state (.current page number / current-menu item / .cur). */
+  .pagination .page-numbers:hover:not(.current) { border-color: var(--border); color: var(--text-mid); }
+  .snav-list > li:not(.current-menu-item):not(.current-menu-ancestor) > a:hover { color: var(--text-dim); background: transparent; }
+  .snav-list .sub-menu a:hover { color: var(--text-dim); background: transparent; padding-left: 14px; }
+  .gs-row:hover { background: transparent; }
+  .gs-clear:hover { color: var(--text-dim); background: transparent; }
+  .gs-close:hover { border-color: var(--border); color: var(--text-mid); }
+  .gs-viewall:hover { background: transparent; }
+  .nl:hover:not(.cur) { color: var(--text-dim); background: transparent; }
+  .ncta:hover { background: var(--gold-btn); color: #fff; }
+  .nsearch:hover { border-color: var(--border); color: var(--text-mid); }
+  .msearch:hover { border-color: var(--border); color: var(--text-mid); }
+  .mno-cta:hover { background: var(--gold); }
+  .toc-i a:hover { color: var(--text-dim); }
+  .legal-toc-list a:hover { color: var(--text-dim); background: transparent; }
+  .gl-close:hover { background: rgba(255,255,255,.08); }
+  .gl-nav:hover { background: rgba(255,255,255,.08); }
+  .ad-sticky-x:hover { background: rgba(217, 119, 6, 0.14); color: rgba(217, 119, 6, 0.75); }
+}
+
+/* ── 56. FIREFOX AUTOFILL (:-moz-autofill) ───────────────────────
+   Firefox supports the same inset box-shadow trick as Chrome/Safari; the
+   selector is :-moz-autofill. Theme background/text/caret stay on-brand. */
+.nl-s .gwill-form input[type="email"]:-moz-autofill,
+.nl-s .gwill-form input[type="email"]:-moz-autofill:hover,
+.nl-s .gwill-form input[type="email"]:-moz-autofill:focus {
+  box-shadow: 0 0 0 1000px var(--dark-s) inset !important;
+  color: #f0ede6 !important;
+  caret-color: #f0ede6 !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+.nl-hero-form .gwill-form input[type="email"]:-moz-autofill,
+.nl-hero-form .gwill-form input[type="email"]:-moz-autofill:hover,
+.nl-hero-form .gwill-form input[type="email"]:-moz-autofill:focus {
+  box-shadow: 0 0 0 1000px #100e0c inset !important;
+  color: #f0ede6 !important;
+  caret-color: #f0ede6 !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+.gwill-form input:-moz-autofill,
+.gwill-form input:-moz-autofill:hover,
+.gwill-form input:-moz-autofill:focus,
+.gwill-form textarea:-moz-autofill,
+.gwill-form textarea:-moz-autofill:hover,
+.gwill-form textarea:-moz-autofill:focus {
+  box-shadow: 0 0 0 1000px var(--surface) inset !important;
+  color: var(--text) !important;
+  caret-color: var(--text) !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+[data-theme="dark"] .gwill-form input:-moz-autofill,
+[data-theme="dark"] .gwill-form input:-moz-autofill:hover,
+[data-theme="dark"] .gwill-form input:-moz-autofill:focus,
+[data-theme="dark"] .gwill-form textarea:-moz-autofill,
+[data-theme="dark"] .gwill-form textarea:-moz-autofill:hover,
+[data-theme="dark"] .gwill-form textarea:-moz-autofill:focus {
+  box-shadow: 0 0 0 1000px var(--dark-s) inset !important;
+  color: #f0ede6 !important;
+  caret-color: #f0ede6 !important;
+}
+
+/* ── 57. PWA INSTALL PROMPT (v1.0.219) ───────────────────────────
+   On-brand custom "Add to Home Screen" card. Replaces Chrome's generic
+   mini-infobar: gold ₦ mark, warm-black glass card (same treatment as the
+   consent banner + sticky ad), gold-border + soft gold glow, slide-up
+   entrance, gold Install button + gold-ghost "Not now". The green RING /
+   GLOW is allowed (an emphasis on one element), but NO green divider line
+  , a line separating two things stays var(--border). Hidden until JS adds
+   body.gpwa-visible (set one frame after append so the transition runs).
+   Yields to the consent banner so the two bottom sheets never stack. */
+.gpwa {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 410; /* above consent (400) */
+  display: none; justify-content: center; padding: 0 12px 14px;
+  pointer-events: none;
+}
+body.gpwa-visible .gpwa { display: flex; }
+.gpwa-card {
+  pointer-events: auto;
+  position: relative;
+  width: 100%; max-width: 460px;
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(24, 20, 15, 0.96);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.35), 0 0 28px rgba(245, 158, 11, 0.1);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  animation: ad-sticky-in 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.gpwa-mark {
+  flex: 0 0 auto;
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--gold), #d97706);
+  color: #1a1408; font-size: 18px; font-weight: 800;
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.4), 0 4px 14px rgba(245, 158, 11, 0.45);
+}
+.gpwa-body { flex: 1 1 auto; min-width: 0; }
+.gpwa-title {
+  font-size: 13px; font-weight: 800; color: #f0ede6;
+  letter-spacing: -0.01em; margin: 0 0 2px;
+}
+.gpwa-copy {
+  font-size: 11px; font-weight: 300; color: rgba(240, 237, 230, 0.62);
+  line-height: 1.5; margin: 0;
+}
+.gpwa-acts { flex: 0 0 auto; display: flex; gap: 8px; }
+.gpwa-install {
+  background: var(--gold-btn); color: #fff;
+  border: none; border-radius: 10px; padding: 9px 14px;
+  font-family: inherit; font-size: 12px; font-weight: 800; cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--t), transform var(--t);
+}
+.gpwa-install:hover { background: #92400e; transform: translateY(-1px); }
+.gpwa-later {
+  background: transparent; color: rgba(240, 237, 230, 0.7);
+  border: 1px solid rgba(240, 237, 230, 0.2); border-radius: 10px;
+  padding: 9px 12px; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+  white-space: nowrap;
+  transition: border-color var(--t), color var(--t);
+}
+.gpwa-later:hover { border-color: rgba(245, 158, 11, 0.5); color: #f0ede6; }
+.gpwa-install:focus-visible,
+.gpwa-later:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .gpwa-card { animation: none; }
+}
+@media (max-width: 767px) {
+  .gpwa { padding: 0 8px 8px; }
+  .gpwa-card { flex-wrap: wrap; gap: 10px 12px; padding: 14px 14px 12px; }
+  .gpwa-body { flex-basis: calc(100% - 48px); }
+  .gpwa-acts { flex-basis: 100%; }
+  .gpwa-install, .gpwa-later { flex: 1; text-align: center; }
+  .gpwa-copy { font-size: 11px; }
+}
+
+/* ── 54. PRINT ─────────────────────────────────────
+   Cross-browser audit (v1.13.15): articles are the print surface. Hide the
+   chrome (sticky header, drawers, ads, share, footer, PWA/install card,
+   push bell, cookie consent, ticker, in-article TOC) and force light ink.
+   color-scheme: light stops dark-mode carryover in Firefox print preview;
+   Chrome/Safari/Firefox all honor the rest. Selectors verified against the
+   rendered DOM + JS-built classes (cp-scroll-btn, gwill-bell-panel, gpwa). */
+@media print {
+  html { color-scheme: light; scroll-behavior: auto; }
+  body { background: #fff; color: #0d0b08; overflow: visible; }
+  .sh, .snav, .nsearch, .msearch, .hbg, .mno, .ticker, .ticker-inner,
+  .ad-bg, .gwill-comment-ad, .share-row, .share-b, .cp-strip, .cp-scroll-btn,
+  .gconsent, .gpwa, .gwill-bell-panel, .gbp-btn, .m-nl-wrap, .article-sidebar,
+  .sw, .prog, .ftop, .fpush, .toc-list, .toc-dropdown, .legal-toc,
+  .search-form, .btt { display: none !important; }
+  body.ad-sticky-visible .ad-sticky { display: none !important; }
+  main, article, .art-body, .con { display: block !important; width: auto !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+  a { color: #0d0b08; text-decoration: underline; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 10px; color: #555; }
+  h1, h2, h3 { break-after: avoid; }
+  img, table, figure { break-inside: avoid; max-width: 100% !important; }
+  .art-body .wp-block-table { overflow: visible; }
+  table { border-collapse: collapse; }
+  th, td { border: 1px solid #999; padding: 6px; }
+}

@@ -1,0 +1,94 @@
+/* Footer — faithful port of gwill-finance-theme 1.13.39 section 19 + 2b/2c
+   (footer.php sections 2–5: desktop grid, follow CTAs, socials, bottom bar,
+   mobile footer). Every declaration is copied verbatim from the theme
+   stylesheet; the only omissions are the sticky-ad-bar compensation rules,
+   which have no counterpart in the static port.
+   Structure mirrors WP: .footer is desktop-only, .mfooter is phone-only, and
+   the two swap at 767/768px exactly like the header (.sh / .mh). */
+
+/* ── 19. FOOTER ──────────────────────────────────── */
+.footer { background: var(--dark); padding: 48px var(--con-pad) 24px; margin-top: 72px; }
+.ftop { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 40px; }
+.fcol--brand { max-width: 320px; }
+.flogo { display: inline-flex; align-items: baseline; font-weight: 800; font-size: 16px; letter-spacing: -0.03em; margin-bottom: 12px; }
+.flogo .n { color: var(--gold-b); text-shadow: 0 0 12px rgba(245,158,11,0.35); margin-right: 0.12em; }
+.flogo .nm { color: #f0ede6; }
+.ftag { font-size: 12px; font-weight: 300; color: var(--dark-dim); line-height: 1.75; margin-bottom: 10px; }
+.fnet { font-size: 10px; color: var(--dark-dim); font-weight: 300; margin-bottom: 14px; }
+.fsoc { display: flex; gap: 8px; }
+.fsoc .soci { width: 34px; height: 34px; border-radius: 8px; background: var(--dark-s); border: 1px solid var(--dark-b); color: var(--dark-dim); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; transition: all var(--t); }
+.fsoc .soci:hover { border-color: var(--gold-border); color: var(--gold-b); transform: translateY(-1px); }
+
+/* ── 2b. follow CTAs (push + Google News) ── */
+.ffollow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 14px 0 4px; }
+.ffollow + .fsoc { margin-top: 18px; }
+.fpush, .fgooglenews { font: inherit; font-size: 13px; font-weight: 700; line-height: 1; letter-spacing: 0.01em; padding: 10px 16px; border-radius: 10px; cursor: pointer; border: 1px solid var(--gold-border); background: var(--dark-s); color: var(--gold-b); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: background var(--t), color var(--t), border-color var(--t), transform var(--t); -webkit-tap-highlight-color: transparent; }
+.fpush svg, .fgooglenews svg { flex: none; width: 18px; height: 18px; }
+.fpush:hover, .fgooglenews:hover { border-color: var(--gold-b); background: var(--gold-b); color: #0d0b08; transform: translateY(-1px); }
+.fpush:active, .fgooglenews:active { transform: translateY(0); }
+.fpush[data-push-state="on"] { background: var(--gold-b); color: #0d0b08; border-color: var(--gold-b); }
+.fpush[disabled], .fpush[data-push-state="unsupported"] { opacity: 0.55; cursor: not-allowed; transform: none; }
+.fpush[data-push-state="unsupported"] { text-decoration: line-through; }
+
+/* ── 2c. install-app buttons (native + iOS Home Screen guide) ── */
+.finstall { font: inherit; font-size: 13px; font-weight: 700; line-height: 1; letter-spacing: 0.01em; padding: 10px 16px; border-radius: 10px; cursor: pointer; border: 1px solid var(--gold-border); background: transparent; color: var(--gold-b); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: background var(--t), color var(--t), border-color var(--t), transform var(--t); -webkit-tap-highlight-color: transparent; }
+.finstall svg { flex: none; width: 18px; height: 18px; }
+.finstall:hover { border-color: var(--gold-b); background: rgba(245, 158, 11, 0.12); transform: translateY(-1px); }
+.finstall:active { transform: translateY(0); }
+.finstall[hidden] { display: none; }
+.finstall--ios { border-style: dashed; }
+.finstall-note { display: block; width: 100%; margin-top: 8px; font-size: 11px; line-height: 1.5; font-weight: 500; color: var(--gold-border); background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.22); border-radius: 8px; padding: 8px 10px; }
+
+/* ── link columns + bottom bar ── */
+.fct { font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #f0ede6; margin-bottom: 12px; }
+.fl { display: block; font-size: 12px; font-weight: 300; color: var(--dark-dim); margin-bottom: 8px; transition: color var(--t); }
+.fl:hover { color: #c4b89a; }
+.fbot { border-top: 1px solid var(--dark-b); padding-top: 20px; display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: var(--dark-dim); font-weight: 300; gap: 12px; flex-wrap: wrap; }
+.fcredit { white-space: nowrap; }
+.fcredit-link { color: #f0ede6; font-weight: 700; text-decoration: underline; text-decoration-color: rgba(245, 158, 11, 0.45); text-underline-offset: 3px; transition: color var(--t), text-decoration-color var(--t); }
+.fcredit-link:hover { color: var(--gold-b); text-decoration-color: var(--gold-b); }
+.mfcredit { margin-top: 2px; }
+.mfcredit .fcredit-link { font-weight: 700; }
+.fbot-right { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.flegal { white-space: nowrap; }
+.flegal a { color: var(--dark-dim); transition: color var(--t); }
+.flegal a:hover { color: var(--gold-b); }
+.fdot { color: var(--dark-dim); margin: 0 6px; opacity: 0.6; }
+.mfooter .flegal a { color: var(--dark-dim); }
+.mfooter .flegal a:hover { color: var(--gold-b); }
+.mfooter .flegal .fdot { margin: 0 4px; }
+.ftoplink { color: var(--dark-dim); font-weight: 700; transition: color var(--t); }
+.ftoplink:hover { color: var(--gold-b); }
+
+/* ── 5. mobile footer ── */
+.mfooter { background: var(--dark); padding: 32px 20px 24px; margin-top: 40px; }
+.mfgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+.mfbot { padding-top: 14px; display: flex; flex-direction: column; gap: 6px; font-size: 10px; color: var(--dark-dim); font-weight: 300; }
+
+/* Empty footer ad wrapper collapses (WP v1.12.10). Scoped to the footer so the
+   page-level dashed .ad-bg placeholders keep their own styling. */
+.ad-bg--footer:empty, .ad-bg--footer:not(:has(> .ad-slot)) { display: none; }
+
+/* ── responsive (WP sections 49/50/51) ── */
+/* ── touch devices: a tap must not stick the hover style (WP section 54) ── */
+@media (hover: none) {
+  .fsoc .soci:hover { border-color: var(--dark-b); color: var(--dark-dim); transform: none; }
+}
+@media (max-width: 1023px) {
+  .footer { padding: 36px var(--con-pad) 20px; }
+  .ftop { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 767px) {
+  .fcredit { white-space: normal; }
+  .flegal { white-space: normal; }
+  .mfbot .flegal { display: block; margin: 6px 0; }
+  .mfooter { display: block; }
+  .footer { display: none; }
+}
+/* Desktop / tablet default above 767 */
+@media (min-width: 768px) {
+  .mfooter { display: none; }
+}
+@media print {
+  .ftop, .fpush, .ad-bg--footer { display: none !important; }
+}

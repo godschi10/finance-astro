@@ -14,6 +14,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 
 const GATES = [
   "check-header-fidelity.mjs", // WP→Astro header port contract (source assertions)
+  "check-footer-fidelity.mjs", // WP→Astro footer port contract (source assertions)
   "vectors-check.mjs", // every TS engine vs the PHP truth oracle
 ];
 

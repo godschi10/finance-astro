@@ -35,6 +35,58 @@ export const CATEGORIES: Category[] = [
   { slug: "dollar-accounts", name: "Dollar Accounts", emoji: "\u{1F4B5}", badge: "bsl", art: "i-dol" },
 ];
 
+// Footer link groups — faithful port of inc/footer-links.php (gwill-finance-theme
+// 1.13.39). The theme renders these in three places: the desktop footer's
+// "Articles" and "Finance Apps" columns, and the mobile footer's "Site" column.
+// hrefs are site-root-relative and get the `${base}` prefix at render time.
+//
+// NOTE on hrefs: WP links "All Articles" to its /all-articles/ permalink. That
+// path does not exist in this port (it 404s — the real route is /articles/), so
+// the port points at its own route rather than copying a dead link.
+export interface FooterLink {
+  label: string;
+  href: string;
+  external?: boolean;
+}
+
+export const FOOTER_GROUPS: Record<"articles" | "apps" | "site", FooterLink[]> = {
+  articles: [
+    { label: "All Articles", href: "/articles/" },
+    { label: "Savings", href: "/category/savings/" },
+    { label: "Investing", href: "/category/investing/" },
+    { label: "Crypto", href: "/category/crypto/" },
+  ],
+  apps: [
+    { label: "Dollar Accounts", href: "/category/dollar-accounts/" },
+    { label: "Finance Apps", href: "/apps/" },
+    { label: "Banking", href: "/category/banking/" },
+    { label: "Remittance", href: "/category/remittance/" },
+  ],
+  site: [
+    { label: "Finance Apps", href: "/apps/" },
+    { label: "Money Calculators", href: "/tools/" },
+    { label: "About", href: "/about/" },
+    { label: "Contact", href: "/contact/" },
+  ],
+};
+
+// The "Network" column genuinely differs between the two footers in WP itself
+// (footer.php 72–80 desktop vs 137–143 mobile), so both variants are kept.
+export const FOOTER_NETWORK: { desktop: FooterLink[]; mobile: FooterLink[] } = {
+  desktop: [
+    { label: "gwillchijioke.com", href: "https://gwillchijioke.com", external: true },
+    { label: "tech.gwillchijioke.com", href: "https://tech.gwillchijioke.com", external: true },
+    { label: "About", href: "/about/" },
+    { label: "Contact", href: "/contact/" },
+    { label: "Newsletter", href: "/newsletter/" },
+  ],
+  mobile: [
+    { label: "gwillchijioke.com", href: "https://gwillchijioke.com", external: true },
+    { label: "tech.gwillchijioke.com", href: "https://tech.gwillchijioke.com", external: true },
+    { label: "Newsletter", href: "/newsletter/" },
+  ],
+};
+
 // NESTED nav tree — faithful port of the WP primary-navigation menu
 // (menu-primary-navigation / .snav-list). Parent rows with a `children`
 // array are rendered as .menu-item-has-children with a chevron caret +
@@ -51,7 +103,7 @@ export const NAV: NavItem[] = [
   { label: "Home", href: "/" },
   {
     label: "All Articles",
-    href: "/all-articles/",
+    href: "/articles/",
     children: [
       { label: "Savings", href: "/category/savings/" },
       {

@@ -1,0 +1,534 @@
+/* Footer CSS extracted verbatim from the live WP stylesheet
+   (gwill-finance-theme 1.13.39, /home/opc/work/finance-astro/docs/port/live-style.css).
+   65 rules. @media conditions are annotated on the line above
+   each rule; everything else is copied exactly as served. */
+
+
+/* ───── top level ───── */
+/* L1021 */
+/* ── 19. FOOTER ──────────────────────────────────── */
+.footer {
+  background: var(--dark);
+  padding: 48px var(--con-pad) 24px;
+  margin-top: 72px;
+}
+
+/* L1024 */
+.ftop {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 40px;
+}
+
+/* L1025 */
+.fcol--brand {
+  max-width: 320px;
+}
+
+/* L1026 */
+.flogo {
+  display: inline-flex;
+  align-items: baseline;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: -0.03em;
+  margin-bottom: 12px;
+}
+
+/* L1027 */
+.flogo .n {
+  color: var(--gold-b);
+  text-shadow: 0 0 12px rgba(245,158,11,0.35);
+  margin-right: 0.12em;
+}
+
+/* L1028 */
+.flogo .nm {
+  color: #f0ede6;
+}
+
+/* L1029 */
+.ftag {
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--dark-dim);
+  line-height: 1.75;
+  margin-bottom: 10px;
+}
+
+/* L1030 */
+.fnet {
+  font-size: 10px;
+  color: var(--dark-dim);
+  font-weight: 300;
+  margin-bottom: 14px;
+}
+
+/* L1031 */
+.fsoc {
+  display: flex;
+  gap: 8px;
+}
+
+/* L1032 */
+.fsoc .soci {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--dark-s);
+  border: 1px solid var(--dark-b);
+  color: var(--dark-dim);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  transition: all var(--t);
+}
+
+/* L1038 */
+.fsoc .soci:hover {
+  border-color: var(--gold-border);
+  color: var(--gold-b);
+  transform: translateY(-1px);
+}
+
+/* L1039 */
+/* ── 2b. follow CTAs (push + Google News) ── */
+.ffollow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 4px;
+}
+
+/* L1047 */
+/* Breathing space between the follow buttons and the social icons below them
+   on desktop/large screens, v1.9.3 (King: "no breathing space with the icons
+   on PC and big screens"). The .ffollow + .fsoc pair only occurs in the
+   desktop brand column; the mobile footer has .fsoc ABOVE .ffollow + a
+   separate block, so this does not touch mobile. */
+.ffollow + .fsoc {
+  margin-top: 18px;
+}
+
+/* L1053 */
+.fpush, .fgooglenews {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid var(--gold-border);
+  background: var(--dark-s);
+  color: var(--gold-b);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background var(--t), color var(--t), border-color var(--t), transform var(--t);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* L1072 */
+.fpush svg, .fgooglenews svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+
+/* L1077 */
+.fpush:hover, .fgooglenews:hover {
+  border-color: var(--gold-b);
+  background: var(--gold-b);
+  color: #0d0b08;
+  transform: translateY(-1px);
+}
+
+/* L1083 */
+.fpush:active, .fgooglenews:active {
+  transform: translateY(0);
+}
+
+/* L1084 */
+.fpush[data-push-state="on"] {
+  background: var(--gold-b);
+  color: #0d0b08;
+  border-color: var(--gold-b);
+}
+
+/* L1089 */
+.fpush[disabled], .fpush[data-push-state="unsupported"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* L1094 */
+.fpush[data-push-state="unsupported"] {
+  text-decoration: line-through;
+}
+
+/* L1569 */
+.fs-lg .fpush, .fs-lg .fgooglenews, .fs-lg .btn, .fs-lg .finstall {
+  flex-wrap: wrap;
+}
+
+/* L1572 */
+/* stops iOS/Android focus-zoom drift */
+/* ── 2c. install-app buttons (native + iOS Home Screen guide) ── */
+.finstall {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid var(--gold-border);
+  background: transparent;
+  color: var(--gold-b);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background var(--t), color var(--t), border-color var(--t), transform var(--t);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* L1592 */
+.finstall svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+
+/* L1593 */
+.finstall:hover {
+  border-color: var(--gold-b);
+  background: rgba(245, 158, 11, 0.12);
+  transform: translateY(-1px);
+}
+
+/* L1598 */
+.finstall:active {
+  transform: translateY(0);
+}
+
+/* L1599 */
+.finstall[hidden] {
+  display: none;
+}
+
+/* L1600 */
+/* iOS users get the Home-Screen guide button (no native install API). */
+.finstall--ios {
+  border-style: dashed;
+}
+
+/* L1602 */
+.finstall-note {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  font-size: 11px;
+  line-height: 1.5;
+  font-weight: 500;
+  color: var(--gold-border);
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.22);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+/* L1615 */
+.fct {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #f0ede6;
+  margin-bottom: 12px;
+}
+
+/* L1616 */
+.fl {
+  display: block;
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--dark-dim);
+  margin-bottom: 8px;
+  transition: color var(--t);
+}
+
+/* L1617 */
+.fl:hover {
+  color: #c4b89a;
+}
+
+/* L1618 */
+.fbot {
+  border-top: 1px solid var(--dark-b);
+  padding-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--dark-dim);
+  font-weight: 300;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* L1619 */
+.fcredit {
+  white-space: nowrap;
+}
+
+/* L1620 */
+.fcredit-link {
+  color: #f0ede6;
+  /* near-white on the dark footer, the credit must read as a link, not blend in */
+	font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: rgba(245, 158, 11, 0.45);
+  text-underline-offset: 3px;
+  transition: color var(--t), text-decoration-color var(--t);
+}
+
+/* L1628 */
+.fcredit-link:hover {
+  color: var(--gold-b);
+  text-decoration-color: var(--gold-b);
+}
+
+/* L1629 */
+.mfcredit {
+  margin-top: 2px;
+}
+
+/* L1630 */
+.mfcredit .fcredit-link {
+  font-weight: 700;
+}
+
+
+/* ───── @media (max-width: 767px) ───── */
+/* L1631 */
+.fcredit {
+  white-space: normal;
+}
+
+
+/* ───── top level ───── */
+/* L1634 */
+.fbot-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* L1635 */
+.flegal {
+  white-space: nowrap;
+}
+
+/* L1636 */
+.flegal a {
+  color: var(--dark-dim);
+  transition: color var(--t);
+}
+
+/* L1637 */
+.flegal a:hover {
+  color: var(--gold-b);
+}
+
+/* L1638 */
+.fdot {
+  color: var(--dark-dim);
+  margin: 0 6px;
+  opacity: 0.6;
+}
+
+/* L1639 */
+.mfooter .flegal a {
+  color: var(--dark-dim);
+}
+
+/* L1640 */
+.mfooter .flegal a:hover {
+  color: var(--gold-b);
+}
+
+/* L1641 */
+.mfooter .flegal .fdot {
+  margin: 0 4px;
+}
+
+
+/* ───── @media (max-width: 767px) ───── */
+/* L1642 */
+.flegal {
+  white-space: normal;
+}
+
+/* L1642 */
+.mfbot .flegal {
+  display: block;
+  margin: 6px 0;
+}
+
+
+/* ───── top level ───── */
+/* L1646 */
+.ftoplink {
+  color: var(--dark-dim);
+  font-weight: 700;
+  transition: color var(--t);
+}
+
+/* L1647 */
+.ftoplink:hover {
+  color: var(--gold-b);
+}
+
+/* L1648 */
+.mfooter {
+  background: var(--dark);
+  padding: 32px 20px 24px;
+  margin-top: 40px;
+}
+
+/* L1649 */
+.mfgrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+/* L1650 */
+.mfbot {
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--dark-dim);
+  font-weight: 300;
+}
+
+/* L1694 */
+/* Wrapper used on page templates (page-*, search, author, 404) to give the
+   banner slot breathing room between the page header and content. */
+.ad-bg {
+  margin-bottom: 24px;
+}
+
+/* L1697 */
+/* Empty ad wrappers must collapse to ZERO, the fixed-height placeholder is
+   gone (v1.12.10), so the wrapping div would otherwise still leave its own
+   margin as a gap. When gwill_finance_ad_slot() renders nothing (no ad code),
+   the wrapper is :empty → remove it entirely. Also collapses empty comment-ad
+   wrappers. ⚠️ Use :has(.ad-slot) so whitespace/newline-only wrappers (HTML
+   indents the PHP call, not technically :empty) are caught too. (v1.12.10) */
+.ad-bg:empty, .ad-bg:not(:has(> .ad-slot)), .gwill-comment-ad:empty {
+  display: none;
+}
+
+/* L1835 */
+/* ── 23. STICKY FOOTER AD BAR ────────────────────────────────────
+   Logic: fixed bar, hidden until JS adds body.ad-sticky-visible (scroll
+   reveal), dismissible on ALL devices via .ad-sticky-x (current page view
+   only, no persistence), same behaviour as the tech theme.
+   DESIGN (v1.0.90, restored the premium glass look after the plain-dashed
+   detour; user directive): glass card, cream in light mode, warm-black in
+   dark, gold border + soft gold glow, backdrop blur, slide-up entrance,
+   spinning ₦ coin, "Advertisement" text. NO top gradient hairline (removed
+   1.0.87: "too much"). The X sits INSIDE the card's top-right corner
+   (top:10px; right:10px; z-50 + white ring) so it's always fully visible ON
+   TOP of the ad, never half-hanging off the edge.
+   Footer padding compensation targets the real footer classes (.footer /
+   .mfooter) so the bar never blocks footer links at the page bottom. */
+.ad-sticky {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  z-index: 350;
+  display: none;
+  justify-content: center;
+  padding: 0 12px;
+  pointer-events: none;
+  /* empty bar area lets clicks pass through */;
+}
+
+/* L1941 */
+/* When the bar is hidden (dismissed), restore footer padding. */
+body:not(.ad-sticky-visible) .footer,
+body:not(.ad-sticky-visible) .mfooter {
+  padding-bottom: inherit;
+}
+
+/* L1947 */
+body.ad-sticky-bottom .footer,
+body.ad-sticky-bottom .mfooter {
+  padding-bottom: inherit !important;
+}
+
+/* L2423 */
+.soci {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-mid);
+}
+
+/* L2652 */
+/* Banner ad is the FIRST grid child, must span ALL columns so it sits
+   above the TOC + content columns, not steal the 196px TOC column. */
+.legal-layout > .ad-bg {
+  grid-column: 1 / -1;
+}
+
+/* L2854 */
+/* Ad slots inside nl-content, keep spacing */
+.nl-content .ad-bg {
+  margin: 28px 0;
+}
+
+/* L3234 */
+.no-flex-gap .fsoc > * + * {
+  margin-left: 8px;
+}
+
+/* L3235 */
+.no-flex-gap .fbot > * + * {
+  margin-left: 12px;
+}
+
+/* L3236 */
+.no-flex-gap .fbot-right > * + * {
+  margin-left: 16px;
+}
+
+/* L3237 */
+.no-flex-gap .mfbot > * + * {
+  margin-top: 6px;
+}
+
