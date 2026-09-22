@@ -58,8 +58,11 @@ to the page.
 ### Cost
 
 - Inline markup + CSS + ~45 lines of vanilla JS. **No new network request, no
-  library, no build change** — the page stays a single HTML document (92.7 KB raw,
-  5 resource requests), so there is no site-speed cost.
+  library, no build change** — the control is parsed with the document it already
+  lived in.
+- Measured transfer delta on the served page: 86,061 → 92,492 bytes raw and
+  **19,288 → 20,413 bytes gzipped (+1.1 KB over the wire)**; resource requests
+  unchanged at 5.
 
 ## [0.1.1] — 2026-09-22
 
