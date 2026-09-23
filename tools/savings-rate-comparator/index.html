@@ -91,14 +91,26 @@
 				if (willOpen) {
 					var cur = g.getAttribute('data-current') || 'system';
 					var sel = menu.querySelector('[data-theme-set="' + cur + '"]') || menu.querySelector('[data-theme-set]');
-					if (sel) sel.focus();
+					// preventScroll, not a plain focus(): the pill lives in a sticky
+					// header and the menu opens near the top of the viewport, so a
+					// plain focus() scrolls the segment clear of the document's
+					// `scroll-padding-top` (--header-h + 20px) — browser-measured as
+					// a 19px upward jump at 390px, on every tap. The theme hit this
+					// exact bug with its search trigger and fixed it the same way
+					// (assets/js/spotlight-search.js: html { scroll-padding-top }
+					// v1.0.199, "plain .focus() scrolls the sticky-header trigger
+					// into its DOCUMENT position, on Android Chrome this drags the
+					// whole page up — browser-verified 257px jump").
+					if (sel) sel.focus({ preventScroll: true });
 				}
 			});
 
 			menu.addEventListener('click', function(ev){
 				setOpen(g, false);
 				groups.forEach(function(g2){ syncLabel(g2, g2.getAttribute('data-current') || 'system'); });
-				if (ev.isTrusted && trigger) trigger.focus();
+				// same reason as above: returning focus to the sticky-header trigger
+				// must not move the page (WCAG 2.4.3 focus return, no scroll)
+				if (ev.isTrusted && trigger) trigger.focus({ preventScroll: true });
 			});
 		});
 
@@ -137,7 +149,7 @@
 					if (isOpen) {
 						ev.preventDefault();
 						setOpen(g, false);
-						if (trigger) trigger.focus();
+						if (trigger) trigger.focus({ preventScroll: true });
 					}
 					return;
 				}
