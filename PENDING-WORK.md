@@ -256,6 +256,13 @@ the title, if you can design it to match."*
       *both* builds read 4209 every time — a flaky render, not a layout shift.
 - [x] Gates 5/5 green (header 31, footer 18, homepage 123, article 22,
       vectors 95); build 53 pages.
+- [x] **Shipped (v0.3.4) 2026-09-23** — `main` **`eab9a55`**; `pages-dist`
+      **`5ff4717`**; Pages `built 5ff4717`. **Verified against the live site:**
+      served `index.html` went 136595 → 136738 bytes with all three rules present
+      verbatim, and the live before/after measurement over the same 15
+      page/width combinations shows **0 differing fields** — the change is
+      layout-neutral on the real site, not only locally. Rationale and evidence:
+      `docs/port/09-base-layer.md`; raw runs in `~/work/regression/`.
 
 ## PENDING
 
