@@ -233,6 +233,50 @@ the title, if you can design it to match."*
 
 ### NEXT — Blog post import (King's stated next step)
 
+**King's correction, verbatim:** *"Rubbish, you only focused on the subtitles,
+why didn't you port the rest of the blogpost template."* He is right: v0.3.3
+designed the subtitle but left the article page as the port's own invention.
+The **whole single-post template** must be ported at footer-grade fidelity
+first; the subtitle rides on top of it.
+
+- [ ] **ARTICLE PAGE PORT (primary order).** The port's article page shares
+      almost no class vocabulary with WP `single.php` (191 article selectors in
+      `style.css`). Missing/divergent in full:
+      - [ ] `.prog > .prog-f` reading-progress bar (port has `.progress`)
+      - [ ] `.art-hd` wrapper (port has none)
+      - [ ] `.bc` breadcrumb w/ full menu path — port has `.crumbs` comma-free
+            but different markup and no sub-menu path
+      - [ ] `h1.art-t` (port invents `.art-h`), `.art-hd` padding 20px 0 48px
+      - [ ] `.art-meta` — avatar `.art-avatar` 20px, `.art-author-link`,
+            `.art-dot` separators, `F Y` date, "N min read", conditional
+            "Updated M Y" (port has `.feat-meta` with no avatar)
+      - [ ] `.art-reading-surface` + `.art-surface-pad` + `.art-cover`
+            (`gwill-hero`, eager, fetchpriority high)
+      - [ ] mobile TOC dropdown `.toc-dropdown.toc-mobile` / `.toc-summary` /
+            `.toc-caret` / `.toc-list` / `.toc-sub` — **entirely missing**
+      - [ ] `.discl.mb24` disclosure (⚠ `.discl-i` + `.discl-t`, exact copy) —
+            port invents `.disc-box`
+      - [ ] `.share-row` / `.share-l` / `.share-b` — WP has **4** buttons
+            (X, LinkedIn, WhatsApp, `data-copy` Copy Link); port has chips and
+            no LinkedIn, different labels
+      - [ ] `.abio.mt20` author box (`.aav` 48px avatar, `.an-name`, `.abio-t`
+            with the exact fallback bio, `.abio-s` social icons) — port invents
+            `.author-bio`/`.author-mark`
+      - [ ] related block — WP `.mt40` + `.shd` + `h2.stitle` "Related
+            Articles" + `.g2` **two** cards; port has "Keep reading" + `.g3` ×3
+      - [ ] `.comments-area.mt48` + hidden `#gwill-comment-ads` rect slots
+      - [ ] mobile `.m-nl-wrap` / `.m-nl` newsletter block — missing
+      - [ ] sidebar: `.article-sidebar` sticky `top:72px` with `.sw` / `.sw-t`
+            / `.toc-scroll` / `.toc-i` (`.cur`) / `.toc-bar` / `.toc-g`, the
+            square ad slot, and the digest card — port invents `.art-side` +
+            `.legal-toc`
+      - [ ] the port's visible **"Comments — read-only in v1" placeholder**
+            (`.comments-hold` + `.phase-tag`) — a staging notice King's law
+            forbids; must go
+      - [ ] article JS: progress, TOC `.cur` tracking, mobile dropdown, copy,
+            comment-ad cloning
+      - [ ] an article slice of `home.css`/new `article.css` with the 191
+            selectors and their media queries
 - [ ] Source of truth for the import: decide WP REST export vs the `.md`
       collection as authoring home (this decides where subtitles are AUTHORED).
 - [ ] If WP must match the port, mirror the subtitle: ACF field on the theme's
