@@ -193,7 +193,54 @@ Read this at session start.
       3000 → 2981), Dark applied, focus returned, no movement. Served bytes carry
       `preventScroll: true` ×6.
 
+## DONE — 2026-09-23 · Article subtitles designed to match the theme (v0.3.3)
+
+**Order (King):** *"Time for blogpost import but I want to add subtitles after
+the title, if you can design it to match."*
+
+- [x] Established first that this is **net-new, not a port**: WP `single.php`
+      renders breadcrumb → badge → `h1.art-t` → `.art-meta`. The only subtitle
+      fields in the truth theme are page heroes (`gwill_about_subtitle`,
+      `gwill_apps_hero_sub`, `gwill_nl_hero_subtitle`) — different surfaces.
+- [x] Derived the design from the theme's own vocabulary instead of inventing
+      one: supporting copy is `font-weight: 300` in a dimmed colour
+      (`.hero-sub` L727, `.feat-ex` L794, `.ac-ex` L769), and the accent idiom
+      for a passage that stands apart is a **3px `--gold` left rule**
+      (`.callout` L2168, `.art-body blockquote` L2070, `.wp-block-pullquote`
+      L2072, `.tbl-best` L1475). Ship: 17px/300/`--text-mid`, line-height 1.6,
+      62ch measure, 3px gold rule, 16px inset, 16px below the title.
+- [x] Content model: optional `subtitle` field + `description` fallback, so a
+      post without an authored subtitle still renders complete.
+- [x] Authored a real subtitle on the dollar-corridor post — proves the field,
+      not just the fallback.
+- [x] New `scripts/check-article-fidelity.mjs` (22 assertions) wired into
+      `check.mjs`: the article surface had **no gate at all**. `npm run check`
+      now 5/5 green.
+- [x] Measured at 390/768/1280 (light + dark) and captured
+      `docs/evidence/art-sub-{390,768,1280}.png` +
+      `art-sub-variants-390.png`; design record `docs/port/08-article-subtitle.md`.
+- [ ] Ship `main` + `pages-dist`; re-measure the live page; confirm the dark
+      theme's rule colour flips to `rgb(245,158,11)`.
+- [ ] **King's verdict on the treatment** (gold rule vs the plain and hairline
+      variants in `art-sub-variants-390.png`); one-line switch if he prefers
+      another.
+
 ## PENDING
+
+### NEXT — Blog post import (King's stated next step)
+
+- [ ] Source of truth for the import: decide WP REST export vs the `.md`
+      collection as authoring home (this decides where subtitles are AUTHORED).
+- [ ] If WP must match the port, mirror the subtitle: ACF field on the theme's
+      post field group + `single.php` render + the same rule set in `style.css`.
+      The design is portable as-is; it is not yet in the theme.
+- [ ] Import script: WP post → `src/content/articles/*.md` with `title`,
+      `description`, `subtitle`, `category`, `author`, `authorSlug`, `pubDate`,
+      `updated`, `readMins`.
+- [ ] Category slug mapping WP → the six canonical brand slugs; unknown falls
+      back to Finance at render time.
+- [ ] Re-run `npm run check` (article gate must stay green) and verify a
+      freshly imported post renders title → subtitle → meta at 390/768/1280.
 
 - [ ] **M-BASE-LAYER** — `base.css` deliberately carries only the theme's base
       rules that normalise text rendering and control typography. Still not

@@ -1,6 +1,7 @@
 ---
 title: "Cheapest Way to Receive Dollars in Nigeria (2026 Compared)"
 description: "Wise, Grey, Geegpay, and domiciliary accounts compared on fees, speed, and exchange margins — with the cheapest pick for three common amounts."
+subtitle: "Most dollar comparisons quote the transfer fee and stop. For the amounts Nigerians actually receive, the exchange margin and the conversion charge usually cost more than the fee itself."
 category: "remittance"
 author: "Gwill Chijioke"
 authorSlug: "gwill-chijioke"

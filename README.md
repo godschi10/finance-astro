@@ -33,9 +33,10 @@ non-zero if any of them fail, so a green build alone never means "shippable".
 | `scripts/check-header-fidelity.mjs` | Every MUST clause of the WP header port spec — brand, theme pill, search spotlight, ticker, nav nesting, the **responsive show/hide contract**, and the theme pill's **focus-return discipline** (a plain `.focus()` in a sticky header drags the page up on tap). |
 | `scripts/check-footer-fidelity.mjs` | The footer port: WP `footer.php` sections 2–5 plus the footer slice of stylesheet section 19 — markup and copy, class-by-class CSS values, the responsive contract (`≤767px` phone / `≥768px` desktop), the icon-escape guard, and the print rules. 64 assertions. |
 | `scripts/check-homepage-fidelity.mjs` | The homepage port: WP `front-page.php` sections 2–8, `template-parts/content.php`, `inc/card-media.php`, the homepage slice of the stylesheet, plus the BASE and FORMS sections in their own files — section order, class vocabulary, byte-exact copy, the pill-strip/filter contract, the static-build divergences, the anchor reset, and the control geometry measurement had to fight for. 123 assertions. |
+| `scripts/check-article-fidelity.mjs` | The article surface (Phase 3): the title stack, the **net-new subtitle** — placement directly after the title, the `subtitle` field with its `description` fallback, and its design contract (weight 300, `--text-mid`, the theme's 3px `--gold` rule, 16px inset, 62ch) — plus the progress bar, disclosure, TOC, share row, author bio, related section and JSON-LD. 22 assertions. |
 | `scripts/vectors-check.mjs` | Every TypeScript calculator engine reproduces the PHP engine's numbers, vector-for-vector, against the PHP truth oracle in `scripts/php-harness/vectors.json`. |
 
-All four are wrapped by `scripts/check.mjs`.
+All five are wrapped by `scripts/check.mjs`.
 
 ## Layout
 

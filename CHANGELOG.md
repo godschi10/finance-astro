@@ -3,6 +3,42 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.3.3] — 2026-09-23
+
+**Article subtitles, designed into the theme's idiom** — King's order ahead of
+the blog import: *"I want to add subtitles after the title, if you can design it
+to match."*
+
+WordPress has no post subtitle (`single.php` goes breadcrumb → badge → `h1.art-t`
+→ `.art-meta`), so this is a net-new element rather than a port. It is built
+**only from values the theme already uses**: supporting copy in the theme is
+`font-weight: 300` in a dimmed colour, and its accent idiom for a passage that
+stands apart is a **3px `--gold` left rule** — the treatment `.callout`,
+`.art-body blockquote`, `.wp-block-pullquote` and `.tbl-best` all share.
+The standfirst therefore takes 17px/300/`--text-mid`, line-height 1.6, a 62ch
+measure, and that same gold rule with a 16px inset. No new tokens, no new
+colours, no invented ornament.
+
+- **Content model:** optional `subtitle` field in `src/content.config.ts`.
+  The article page renders `subtitle` and falls back to `description`, so posts
+  without an authored subtitle still show a complete header; `description` keeps
+  its own jobs (card excerpt, search result, meta description, JSON-LD).
+- **Placement:** `p.art-sub`, directly after `h1.art-h`, before `.feat-meta`.
+- **Demonstrated:** the dollar-corridor article now carries an authored
+  `subtitle` distinct from its excerpt, proving the field — not just the
+  fallback.
+- **Declared divergence:** the port now shows a line under titles that WordPress
+  does not. Recorded in `docs/port/08-article-subtitle.md` so a later fidelity
+  pass cannot "fix" it back out.
+- **New gate:** `scripts/check-article-fidelity.mjs` — the article surface had
+  **no contract gate at all** (header/footer/homepage did, article did not).
+  22 assertions covering the title stack, the subtitle's placement, field and
+  design contract, and the rest of the page. `npm run check` now reports
+  **5/5 gates green**.
+- Measured at 390/768/1280: 17px · weight 300 · line-height 27.2px · `--text-mid`
+  · `border-left: 3px rgb(180,83,9)` · `padding-left: 16px` · `max-width: 632.4px`
+  · 16px below the title · 5 lines at 390 → 3 at 768/1280.
+
 ## [0.3.2] — 2026-09-23
 
 **The theme pill no longer jerks the page when tapped.** Reported from a phone:

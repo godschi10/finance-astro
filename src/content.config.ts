@@ -8,6 +8,11 @@ const articles = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
+    // Optional editorial standfirst rendered under the article title. WordPress
+    // has no post-subtitle field (only hero subtitles elsewhere), so the port
+    // owns this: authored per post, and the article page falls back to
+    // `description` so every post still reads complete.
+    subtitle: z.string().optional(),
     category: z.string(),
     author: z.string(),
     authorSlug: z.string(),

@@ -16,6 +16,7 @@ const GATES = [
   "check-header-fidelity.mjs", // WP→Astro header port contract (source assertions)
   "check-footer-fidelity.mjs", // WP→Astro footer port contract (source assertions)
   "check-homepage-fidelity.mjs", // WP→Astro homepage port contract (source assertions)
+  "check-article-fidelity.mjs", // WP→Astro article page contract incl. the net-new subtitle
   "vectors-check.mjs", // every TS engine vs the PHP truth oracle
 ];
 

@@ -43,7 +43,7 @@ const ytId = d.videoUrl ? (d.videoUrl.match(/(?:v=|youtu\.be\/)([\w-]{6,})/)?.[1
   <p class="crumbs"><a href={base}>Home</a> › <a href={`${base}articles/`}>All Articles</a> › <a href={`${base}category/${cat.slug}/`}>{cat.name}</a> › {d.title}</p>
   <span class={`badge ${cat.badge}`}>{cat.name}</span>
   <h1 class="art-h" id="art-h">{d.title}</h1>
-  <p class="art-lede">{d.description}</p>
+  <p class="art-sub">{d.subtitle ?? d.description}</p>
   <div class="feat-meta" style="margin-top:12px">
     <a href={`${base}author/${d.authorSlug}/`} style="color:var(--gold);font-weight:700">{d.author}</a>
     <span class="feat-dot" aria-hidden="true"></span>
