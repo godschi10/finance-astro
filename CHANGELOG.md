@@ -3,6 +3,37 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.3.2] — 2026-09-23
+
+**The theme pill no longer jerks the page when tapped.** Reported from a phone:
+"clicking on any darkmode toggle option jerks the page up."
+
+The pill's JavaScript returned focus with a plain `.focus()`. The pill lives in
+a sticky header, and the document carries `scroll-padding-top: calc(--header-h +
+20px)` = 76px, so the browser scrolled the page to bring the focused segment
+clear of that padding — **measured as a 19px upward jump on every tap** at
+390px, and it happens on both paths: focusing the current segment when the menu
+opens, and returning focus to the trigger after an option is chosen.
+
+The theme already fought this exact bug and documented it in its own voice
+(`assets/js/spotlight-search.js`, v1.0.199: *"plain .focus() scrolls the
+sticky-header trigger into its DOCUMENT position, on Android Chrome this drags
+the whole page up — browser-verified: 257px jump live"*). The fix is the theme's
+fix: `focus({ preventScroll: true })` on all three focus returns in the pill
+(open, option chosen, Escape). Arrow-key navigation keeps its plain `.focus()`,
+matching the theme.
+
+Verified with real taps against the rebuilt page at 390px: scroll 3000 → **3000**
+on open (was 3000 → 2981), Dark applied with focus returned and no movement,
+and a repeat at 4200 held at 4200. Focus return still works (WCAG 2.4.3) — it
+just no longer moves the page.
+
+### Added
+
+- 2 assertions in `scripts/check-header-fidelity.mjs`: every focus return in the
+  pill must use `preventScroll`, and no bare `sel.focus()` / `trigger.focus()`
+  may reappear.
+
 ## [0.3.1] — 2026-09-23
 
 **Phone-review fixes: the stray underlines are gone and the newsletter form is

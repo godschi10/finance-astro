@@ -75,6 +75,15 @@ const checks = [
   ["mobile breakpoint hides desktop header and shows mobile header", /@media \(max-width: 767px\)\s*\{[\s\S]*?\.sh\s*\{\s*display:\s*none;\s*\}[\s\S]*?\.mh\s*\{\s*display:\s*flex;\s*\}[\s\S]*?\.ticker\s*\{\s*height:\s*28px;\s*\}/.test(css)],
   ["desktop breakpoint hides mobile header and drawer", /@media \(min-width: 768px\)\s*\{\s*\.mh,\s*\.mno\s*\{\s*display:\s*none;\s*\}\s*\}/.test(css)],
   ["theme pill first-paint (v3 localStorage)", layout.includes("gwill-finance-theme-v3")],
+  // The pill lives in a sticky header; a plain focus() scrolls the page to clear
+  // the document's scroll-padding-top, which reads as "the page jerks up" on a
+  // phone. Every focus return in the pill must opt out of scrolling.
+  ["theme pill focus returns use preventScroll (no page jerk on tap)",
+    /if \(sel\) sel\.focus\(\{ preventScroll: true \}\)/.test(layout) &&
+    /if \(ev\.isTrusted && trigger\) trigger\.focus\(\{ preventScroll: true \}\)/.test(layout) &&
+    /if \(trigger\) trigger\.focus\(\{ preventScroll: true \}\)/.test(layout)],
+  ["theme pill has no bare focus() left on a segment or trigger",
+    !/sel\.focus\(\)|trigger\.focus\(\)/.test(layout)],
   ["mobile-nav .open class + inert handling", layout.includes(".mno") && layout.includes("inert") && layout.includes(".open")],
 ];
 

@@ -160,6 +160,27 @@ Read this at session start.
 - [ ] Ship `main` + `pages-dist`, verify the served bytes and re-probe the live
       URL for the underlined-link count and the input geometry.
 
+## DONE — 2026-09-23 · Theme pill no longer jerks the page (v0.3.2)
+
+- [x] Reported from a phone: "clicking on any darkmode toggle option jerks the
+      page up". Cause: the pill's JS returned focus with a plain `.focus()`
+      while living in a **sticky** header under
+      `scroll-padding-top: calc(--header-h + 20px)` = 76px, so the browser
+      scrolled the focused segment clear of that padding — **measured 3000 →
+      2981 (19px) on open, every tap**, plus the same on the option path.
+- [x] Fixed the theme's way: `focus({ preventScroll: true })` on all three
+      focus returns (open, option chosen, Escape). The theme documented this
+      exact failure for its search trigger (v1.0.199, "browser-verified: 257px
+      jump live", `assets/js/spotlight-search.js`).
+- [x] Verified with **real taps** (not synthetic clicks — the code guards on
+      `ev.isTrusted`, so a JS `.click()` never moves focus and would have hidden
+      the bug): scroll 3000 → **3000** on open, Dark applied with focus returned,
+      no movement; repeat at 4200 held at 4200. Focus return still works
+      (WCAG 2.4.3).
+- [x] +2 assertions in `scripts/check-header-fidelity.mjs`; `npm run check`
+      4/4 green; build 53 pages.
+- [ ] Ship `main` + `pages-dist`, verify live.
+
 ## PENDING
 
 - [ ] **M-BASE-LAYER** — `base.css` deliberately carries only the theme's base
