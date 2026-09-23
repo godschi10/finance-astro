@@ -157,8 +157,16 @@ Read this at session start.
       390/768/1280 (no regression from the new layers).
 - [x] Evidence: `docs/evidence/home-newsletter-fixed-390.png`,
       `home-port-{390,768,1280}.png`; record `docs/port/07-base-and-forms.md`.
-- [ ] Ship `main` + `pages-dist`, verify the served bytes and re-probe the live
-      URL for the underlined-link count and the input geometry.
+- [x] **Ship (v0.3.1 + v0.3.2) 2026-09-23** — `main` **`8e5fd3f`**; served staging
+      `pages-dist` **`eea0ced`**; Pages build `built` for `eea0ced`.
+      **Verified on the live URL with real taps at 390px:** scroll 3000 → **3000**
+      on tapping the pill (was 3000 → 2981 before the fix), Dark applied with
+      focus returned and no movement; served bytes carry `preventScroll: true`
+      ×6, `a{text-decoration:none;color:inherit}`, `.gwill-honey{position:absolute;
+      left:-9999px…}`, and the control-geometry block; **2 of 109 links
+      underlined** (the deliberate credit link); newsletter input `300×46` radius
+      `10px` padding `12px 16px` 16px; the "Email" label `1×1`. Evidence:
+      `docs/evidence/home-newsletter-fixed-390.png`.
 
 ## DONE — 2026-09-23 · Theme pill no longer jerks the page (v0.3.2)
 
@@ -179,7 +187,11 @@ Read this at session start.
       (WCAG 2.4.3).
 - [x] +2 assertions in `scripts/check-header-fidelity.mjs`; `npm run check`
       4/4 green; build 53 pages.
-- [ ] Ship `main` + `pages-dist`, verify live.
+- [x] **Ship (v0.3.1 + v0.3.2) 2026-09-23** — `main` **`8e5fd3f`**; served staging
+      `pages-dist` **`eea0ced`**; Pages build `built` for `eea0ced`; live re-probe
+      with real taps at 390px: scroll 3000 → **3000** on tapping the pill (was
+      3000 → 2981), Dark applied, focus returned, no movement. Served bytes carry
+      `preventScroll: true` ×6.
 
 ## PENDING
 
