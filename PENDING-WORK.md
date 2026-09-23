@@ -119,7 +119,19 @@ Read this at session start.
       honest newsletter submit (no navigation, nothing sent).
 - [x] Record `docs/port/06-homepage-verification.md`; release docs v0.3.0
       (CHANGELOG / README / package.json).
-- [ ] **Ship:** `main` + `pages-dist`, then verify the served bytes and the live URL.
+- [x] **SHIPPED 2026-09-23** — `main` **`5cf10cb`**; served staging `pages-dist`
+      **`e121b54`** (82 files, nojekyll present); GitHub Pages build `built` for
+      `e121b54`; live URL `https://godschi10.github.io/finance-astro/` → 200 OK,
+      **131,772 B**, origin locked, 7 `.ac` cards, `.bh`/`.bhg`, `.stat-strip`,
+      `.feat`, `.g3`, `cp-strip-wrap`, empty `.ad-bg`, `.nl-s`, real
+      `type="email"` field, both hide rules inlined in the served document,
+      0 escaped `<svg`, 0 `{ICON`, 0 "No email field", 0 "fills when ads".
+      Local preview re-probed: served bytes byte-identical to the build
+      (`cmp` clean). Shot evidence `docs/evidence/home-port-{390,768,1280}.png`.
+- [x] Dead-CSS sweep of the inherited global block (`scan-dead-css.py`):
+      136 rules, 1 flagged — `.brd`, which is a live theme badge colour that
+      simply none of our 7 articles uses. Kept. `.ledger` is **alive** (used by
+      `/about/`, `/apps/`, `/contact/`).
 
 ## PENDING
 
