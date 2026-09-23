@@ -16,6 +16,8 @@ const INDEX = `${ROOT}/src/pages/index.astro`;
 const CARD = `${ROOT}/src/components/ArticleCard.astro`;
 const SITE = `${ROOT}/src/data/site.ts`;
 const HOME_CSS = `${ROOT}/src/styles/home.css`;
+const FORMS_CSS = `${ROOT}/src/styles/forms.css`;
+const BASE_CSS = `${ROOT}/src/styles/base.css`;
 const LAYOUT = `${ROOT}/src/layouts/Layout.astro`;
 
 const indexRaw = readFileSync(INDEX, "utf8");
@@ -25,6 +27,15 @@ const layout = readFileSync(LAYOUT, "utf8");
 
 const strip = (s) => s.replace(/\s+/g, "").replace(/;}/g, "}");
 const css = strip(readFileSync(HOME_CSS, "utf8"));
+// The theme styles form controls in its FORMS section and resets anchors in its
+// BASE section — neither is part of the homepage-scope extraction, so both live
+// in their own stylesheets. Assert them there; a rule that moved must not
+// silently vanish.
+const formsCss = strip(readFileSync(FORMS_CSS, "utf8"));
+const baseCss = strip(readFileSync(BASE_CSS, "utf8"));
+// declarations only: comments in base.css discuss the whole point (the anchor
+// reset) and would otherwise count as declarations in the checks below
+const baseDecls = strip(readFileSync(BASE_CSS, "utf8").replace(/\/\*[\s\S]*?\*\//g, ""));
 const layoutN = strip(layout);
 
 // markup only: the frontmatter prose legitimately mentions some of the same words
@@ -186,9 +197,48 @@ const checks = [
   ["#gwill-posts-grid carries the loading contract the filter uses", has(css, "#gwill-posts-grid{position:relative;transition:min-height240msease}") && has(css, "#gwill-posts-grid.gwill-loading")],
   [".ad-bg reserves nothing when empty (WP measured 0x0 display:none)", has(css, ".ad-bg{")],
   ["newsletter input uses --gold-input-border (token added by the port)", has(css, "--gold-input-border:rgba(245,158,11,0.4)") && has(css, ".nl-s.gwill-forminput[type=\"email\"]{background:var(--dark-s);border:1pxsolidvar(--gold-input-border);color:#f0ede6}")],
-  ["the hidden submit label is actually hidden (measured bug)", has(css, ".gwill-form__submit-loading{display:none}")],
-  ["the honeypot is off-screen, not visible (measured bug)", has(css, ".gwill-honey{position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden}")],
-  ["loading swap rules kept for a future endpoint", has(css, ".gwill-form__submit[data-loading].gwill-form__submit-text{display:none}")],
+  ["the hidden submit label is actually hidden (measured bug)", has(formsCss, ".gwill-form__submit-loading{display:none}")],
+  ["the honeypot is off-screen, not visible (measured bug)", has(formsCss, ".gwill-honey{position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden}")],
+
+  // ── the two layers the homepage-scope extraction could not see ────────────
+  // Both defects here were reported from a phone: every link underlined, and
+  // the newsletter field rendering as a browser-default box. Each assertion
+  // below pins the rule that fixes it, in the file that owns it.
+  ["Layout imports the base layer (anchor reset)", has(layout, 'import "../styles/base.css"')],
+  ["Layout imports the forms layer", has(layout, 'import "../styles/forms.css"')],
+  ["base layer imports BEFORE the component stylesheets (so components still win)",
+    layout.indexOf('import "../styles/base.css"') < layout.indexOf('import "../styles/header.css"')],
+  ["base anchor reset = WP style.css:186 verbatim", has(baseCss, "a{text-decoration:none;color:inherit}")],
+  ["base layer does NOT reintroduce an underline declaration",
+    !(/a\{[^}]*text-decoration:\s*underline/).test(baseDecls) && !has(baseDecls, "text-decoration:underline")],
+  ["form controls inherit the brand font (WP style.css:189)",
+    has(baseCss, "input,select,textarea{font-family:var(--font)}")],
+  ["screen-reader-text / skip-link hiding rule installed (WP style.css:191-194)",
+    has(baseDecls, ".skip-link,.screen-reader-text{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);clip-path:inset(50%)}")],
+  ["skip-link focus reveal installed (WP style.css:195-198)",
+    has(baseDecls, ".skip-link:focus{position:fixed;top:8px;left:8px;z-index:9999;width:auto;height:auto;clip:auto;clip-path:none;background:var(--gold);color:#fff;padding:8px16px;border-radius:var(--r-sm);font-size:12px;font-weight:700}")],
+  ["the newsletter label carries the class that hides it, not a duplicate visible label",
+    has(indexTpl, 'class="screen-reader-text"')],
+  ["control geometry: WP style.css:2889-2894 verbatim (the browser-default box fix)",
+    has(formsCss, '.gwill-forminput[type="text"],.gwill-forminput[type="email"],.gwill-forminput[type="tel"],.gwill-formtextarea,.gwill-formselect{width:100%;border:1pxsolidvar(--border);border-radius:var(--r-md);padding:12px16px;font-size:16px;background:var(--surface);color:var(--text);outline:none;')],
+  ["control height 46px + textarea min-height 150px (WP style.css:2893-2895)",
+    has(formsCss, "height:46px") && has(formsCss, ".gwill-formtextarea{height:auto;min-height:150px;resize:vertical;line-height:1.6}")],
+  ["label styling: 11px/700/uppercase/--text-mid (WP style.css:2928)",
+    has(formsCss, ".gwill-formlabel{display:block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-mid);margin-bottom:8px}")],
+  ["focus ring + autofill guards kept (WP style.css:2906-2927)",
+    has(formsCss, ".gwill-forminput:focus,.gwill-formtextarea:focus,.gwill-formselect:focus{border-color:var(--gold);box-shadow:0003pxrgba(217,119,6,0.12)}") &&
+    has(formsCss, "-webkit-box-shadow:0001000pxvar(--surface)inset!important")],
+  ["select chevron + select:invalid kept (WP style.css:2897-2902)",
+    has(formsCss, "appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:40px") && has(formsCss, ".gwill-formselect:invalid{color:var(--text-dim)}")],
+  ["submit base geometry (WP style.css:2931)",
+    has(formsCss, ".gwill-form__submit{background:var(--gold-btn);color:#fff;border:none;font-size:14px;font-weight:700;padding:14px28px;border-radius:var(--r-md);")],
+  ["field/status/error chrome present",
+    has(formsCss, ".gwill-form.gwill-form__field{margin-bottom:18px}") &&
+    has(formsCss, ".gwill-form__status{margin-top:12px;font-size:12px;font-weight:700;min-height:1.4em}") &&
+    has(formsCss, ".gwill-form__field-error{display:block;margin-top:6px;font-size:12px;font-weight:700;line-height:1.4;color:var(--red)}")],
+  ["form rules are NOT duplicated back into home.css (one home per rule)",
+    !has(css, ".gwill-honey{") && !has(css, ".gwill-form__submit-loading{display:none}")],
+  ["loading swap rules kept for a future endpoint", has(formsCss, ".gwill-form__submit[data-loading].gwill-form__submit-text{display:none}")],
   ["touch reset for the pills (WP section 54 discipline)", has(css, "@media(hover:none)")],
   ["reduced-motion honoured", has(css, "@media(prefers-reduced-motion:reduce)") && has(css, "animation-duration:2s")],
   ["print rules present", has(css, "@mediaprint")],

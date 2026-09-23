@@ -3,6 +3,59 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.3.1] — 2026-09-23
+
+**Phone-review fixes: the stray underlines are gone and the newsletter form is
+styled.** Three defects reported from a phone screenshot, all three traced to
+theme stylesheet sections the earlier scoped extractions could not see — the
+homepage port was scoped to the sections the homepage renders, and the theme
+styles anchors and form controls elsewhere.
+
+### Fixed
+
+- **Every link was underlined** — 79 of the homepage's 109 links. The theme
+  resets anchors in its RESET/BASE section (`style.css:186`:
+  `a { text-decoration: none; color: inherit; }`) and that layer had never been
+  ported; without it, every link falls back to the browser default. The
+  WordPress original measures 3 underlined links (the footer credit link and the
+  cookie-consent policy link, both styled deliberately). The port now measures
+  **2** — the credit link, twice, exactly as WP styles it. The banner's policy
+  link is the third and arrives with the consent banner (footer part 2).
+- **The newsletter email field was a browser-default box** — measured at 390px:
+  `175×19`, radius 0, `2px` grey border, no padding, 13.33px text, against
+  WordPress's `261×46`, radius `10px`, `1px` border, `12px 16px` padding, 16px
+  text. The homepage rules only override that field's *colours*; its geometry
+  lives in the theme's FORMS section. Now: `300×46`, radius `10px`,
+  `1px rgba(245,158,11,0.4)`, `12px 16px`, 16px — WP's geometry, on our
+  container width.
+- **The newsletter's "Email" label was visible** — WordPress hides it with
+  `.screen-reader-text` (base section, `style.css:191-198`); the placeholder
+  already carries the meaning. Installed verbatim: the label measures `1×1`
+  again.
+- **The hidden "Subscribing…" label, the `[data-loading]` swap and the
+  honeypot rule moved out of `home.css`** into `forms.css`, where the theme
+  keeps them. Those three had been added to `home.css` as an ad-hoc patch — the
+  reason they were ever missing is that they were the only part of that section
+  anyone had noticed.
+
+### Added
+
+- `src/styles/base.css` — the theme's RESET/BASE rules the port was missing
+  (`style.css:172-198`), scoped deliberately: antialiased text, the anchor
+  reset, control font inheritance, and the visually-hidden utility. The theme's
+  element resets that would re-flow pages already verified and reviewed
+  (`* { margin: 0; padding: 0 }`, `img { display: block }`, `max-width: 100%` on
+  img/iframe/table, heading letter-spacing) are **not** included; that debt is
+  tracked as **M-BASE-LAYER** in `PENDING-WORK.md`.
+- `src/styles/forms.css` — the theme's FORMS section verbatim (`style.css:2883-
+  2948`): control geometry, label styling, focus ring, autofill guards, the
+  brand select chevron, submit base + hover + loading states, status and
+  field-error chrome.
+- **17 new gate assertions** in `scripts/check-homepage-fidelity.mjs`
+  (**123 total**), each pinning one of the moved or added rules in the file that
+  now owns it — plus assertions that the anchor reset is present and that no
+  underline declaration creeps back into the base layer.
+
 ## [0.3.0] — 2026-09-22
 
 **The homepage is ported.** `front-page.php` sections 2–8 — the hero, the stats

@@ -1,9 +1,11 @@
 ---
 import { SITE, NAV, TICKER_STATIC, POSTS, catBySlug, type NavItem } from "../data/site";
+import "../styles/base.css"; // WP stylesheet section 2 (RESET/BASE) — the anchor reset
 import "../styles/header.css";
 import Footer from "../components/Footer.astro";
 import "../styles/footer.css";
 import "../styles/home.css"; // WP stylesheet sections the homepage renders
+import "../styles/forms.css"; // WP stylesheet section 46 (FORMS) — control geometry
 // Shared chrome: head, self-hosted fonts, finance tokens (light + dark),
 // skip-link, ticker, desktop nav + mobile drawer, footer. Staging-safe SEO:
 // Pages origin + /finance-astro base everywhere, site-wide noindex on staging.

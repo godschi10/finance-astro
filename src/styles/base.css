@@ -1,0 +1,56 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   BASE — WP theme stylesheet section 2 (RESET / BASE), style.css:170-199
+   ══════════════════════════════════════════════════════════════════════════
+   The homepage/header/footer ports were each scoped to the stylesheet
+   sections those sections render, so the theme's base layer was never
+   installed. One defect came from the gap and is the reason this file
+   exists:
+
+     `a { text-decoration: none; color: inherit; }` (style.css:186)
+
+   Without it every real link falls back to the browser's default underline —
+   Chrome only underlines `a` elements that carry an `href`, which is why this
+   went unnoticed through four measurement passes: a probe anchor with no href
+   computes to `text-decoration: none` while 79 of the homepage's 109 real
+   links rendered underlined. The WordPress original measures 3 underlined
+   links (the footer credit link twice and the cookie-consent policy link);
+   those set `text-decoration: underline` in their own rules, so removing the
+   default is exactly right.
+
+   Scoped deliberately: only the base rules the port is missing and that the
+   theme uses to normalise text rendering and form-control typography. The
+   theme's element resets that would re-flow pages already ported and measured
+   (`*, *::before, *::after { margin: 0; padding: 0 }`, `img { display: block }`,
+   `img, iframe, table { max-width: 100% }`) are NOT reproduced here: those
+   pages were verified pixel-exact without them, and adding them would change
+   layouts that have already passed review. That debt is tracked in
+   PENDING-WORK.md as M-BASE-LAYER.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* style.css:172-173 — antialiased text, as WP renders it */
+body { -webkit-font-smoothing: antialiased; }
+
+/* style.css:186 — the anchor reset. The single most important line here. */
+a { text-decoration: none; color: inherit; }
+
+/* style.css:188-189 — controls inherit the brand font */
+button { font-family: var(--font); cursor: pointer; }
+input, select, textarea { font-family: var(--font); }
+
+/* style.css:191-198 — the visually-hidden utility.
+   The port's own skip link uses a `.skip` class of its own, but the newsletter
+   form's "Email" label carries the theme's class name (WP emits
+   `class="screen-reader-text"` for it), and with this rule absent the label
+   rendered as a visible uppercase "EMAIL" line above the field — WordPress
+   hides it, the placeholder already carries the same meaning. The rule is
+   installed verbatim, both selectors included, so the class behaves exactly as
+   it does in the theme. */
+.skip-link, .screen-reader-text {
+  position: absolute !important; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(1px,1px,1px,1px); clip-path: inset(50%);
+}
+.skip-link:focus {
+  position: fixed; top: 8px; left: 8px; z-index: 9999; width: auto; height: auto;
+  clip: auto; clip-path: none; background: var(--gold); color: #fff;
+  padding: 8px 16px; border-radius: var(--r-sm); font-size: 12px; font-weight: 700;
+}

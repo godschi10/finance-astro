@@ -883,19 +883,10 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 :root { --gold-input-border: rgba(245,158,11,0.4); }
 
 /* --------------------------------------------------------------------------
-   PORT ADDITION: three rules the homepage-scope extraction missed because in
-   the theme they live in the FORMS section, not the newsletter section
-   (style.css 2934-2937). Without the first one the newsletter button renders
-   BOTH labels - measured live as "Subscribe Subscribing…" and a 198px-wide
-   button where WordPress measures 105px. The other two are the swap the theme
-   applies while a submission is in flight; this build has no endpoint, so the
-   port never sets [data-loading], but keeping them means the markup behaves
-   identically if one is ever wired up.
+   The form-control rules that used to live here — the hidden "Subscribing…"
+   label, the [data-loading] swap and the off-screen honeypot — have MOVED to
+   src/styles/forms.css, which installs the theme's whole FORMS section
+   (style.css 2883-2948). Keeping them here while the rest of that section was
+   missing is exactly how the newsletter field ended up rendering as a
+   browser-default box. Anything form-shaped belongs in forms.css.
    -------------------------------------------------------------------------- */
-.gwill-form__submit-loading { display: none; }
-.gwill-form__submit[data-loading] .gwill-form__submit-text { display: none; }
-.gwill-form__submit[data-loading] .gwill-form__submit-loading { display: inline; }
-/* ...and the honeypot hide rule (style.css 2948, same FORMS block). Without it
-   the field renders on the page and "Leave this blank" is visible to readers,
-   which is both a fidelity break and the opposite of a honeypot. */
-.gwill-honey { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }

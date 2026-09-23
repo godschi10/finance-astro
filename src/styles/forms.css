@@ -1,0 +1,86 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   FORMS — WP theme stylesheet section 46 (FORMS), style.css:2883-2948
+   ══════════════════════════════════════════════════════════════════════════
+   Verbatim from the theme, with the section's comments kept.
+
+   WHY THIS FILE EXISTS: the homepage port was scoped to the stylesheet
+   sections the homepage renders, and the theme styles form controls in its
+   FORMS section. The homepage rules only *override* form colours
+   (`.nl-s .gwill-form input[type="email"] { background/border/color }`) and
+   rely on this base for geometry — width, padding, height, radius, font-size.
+   Without it the newsletter email field rendered as a browser-default box:
+   measured 175x19, radius 0, border 2px rgb(118,118,118), padding 0,
+   font-size 13.33px, against the WordPress original's 261x46, radius 10px,
+   border 1px, padding 12px 16px, font-size 16px.
+
+   This is the third defect traced to this one gap: the visible
+   "Subscribing…" loading label and the on-page "Leave this blank" honeypot
+   both came from the same unhoused block. Anything form-shaped belongs here,
+   not in home.css.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.gwill-form .gwill-form__field { margin-bottom: 18px; }
+.gwill-form .gwill-form__row--2col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 640px) {
+  .gwill-form .gwill-form__row--2col { grid-template-columns: 1fr; gap: 0; }
+}
+.gwill-form input[type="text"], .gwill-form input[type="email"], .gwill-form input[type="tel"], .gwill-form textarea, .gwill-form select {
+  width: 100%; border: 1px solid var(--border); border-radius: var(--r-md); padding: 12px 16px;
+  font-size: 16px; background: var(--surface); color: var(--text); outline: none;
+  transition: border-color var(--t), box-shadow var(--t);
+  height: 46px;
+}
+.gwill-form textarea { height: auto; min-height: 150px; resize: vertical; line-height: 1.6; }
+/* Native select → brand select: hide the arrow, draw a gold chevron. */
+.gwill-form select {
+  appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23d97706' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center;
+}
+.gwill-form select:invalid { color: var(--text-dim); }
+/* Pasted / autofilled fields keep the theme, Chrome's -webkit-autofill
+   paints its own white/light-blue bg that ignores CSS; the inset shadow
+   trick forces our surface + text color for autofill states. */
+.gwill-form input:-webkit-autofill,
+.gwill-form input:-webkit-autofill:hover,
+.gwill-form input:-webkit-autofill:focus,
+.gwill-form textarea:-webkit-autofill,
+.gwill-form textarea:-webkit-autofill:hover,
+.gwill-form textarea:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--surface) inset !important;
+  -webkit-text-fill-color: var(--text) !important;
+  caret-color: var(--text) !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+[data-theme="dark"] .gwill-form input:-webkit-autofill,
+[data-theme="dark"] .gwill-form input:-webkit-autofill:hover,
+[data-theme="dark"] .gwill-form input:-webkit-autofill:focus,
+[data-theme="dark"] .gwill-form textarea:-webkit-autofill,
+[data-theme="dark"] .gwill-form textarea:-webkit-autofill:hover,
+[data-theme="dark"] .gwill-form textarea:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--dark-s) inset !important;
+  -webkit-text-fill-color: #f0ede6 !important;
+  caret-color: #f0ede6 !important;
+}
+.gwill-form input:focus, .gwill-form textarea:focus, .gwill-form select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(217,119,6,0.12); }
+.gwill-form label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-mid); margin-bottom: 8px; }
+.gwill-form .gwill-form__required { color: var(--gold); margin-left: 2px; }
+.gwill-form .gwill-form__field-hint { font-size: 11px; color: var(--text-dim); margin-top: 6px; line-height: 1.5; }
+.gwill-form__submit { background: var(--gold-btn); color: #fff; border: none; font-size: 14px; font-weight: 700; padding: 14px 28px; border-radius: var(--r-md); transition: background var(--t), transform var(--t), box-shadow var(--t); display: inline-flex; align-items: center; justify-content: center; gap: 8px; line-height: 1; appearance: none; -webkit-appearance: none; min-height: 0; box-shadow: var(--sh-gold); }
+.gwill-form__submit:hover { background: #92400e; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(217,119,6,0.25); }
+.gwill-form__submit:active { transform: translateY(0); }
+.gwill-form__submit-loading { display: none; }
+.gwill-form__submit[data-loading] { opacity: 0.7; cursor: wait; }
+.gwill-form__submit[data-loading] .gwill-form__submit-text { display: none; }
+.gwill-form__submit[data-loading] .gwill-form__submit-loading { display: inline; }
+.gwill-form__status { margin-top: 12px; font-size: 12px; font-weight: 700; min-height: 1.4em; }
+.gwill-form__status--error { color: var(--red); }
+/* Client-side required-field error ("Email is required.") - injected by forms.js
+   as <span class="gwill-form__field-error"> after the field. Must be styled for
+   both light + dark contexts (newsletter cards are dark by default). */
+.gwill-form__field-error { display: block; margin-top: 6px; font-size: 12px; font-weight: 700; line-height: 1.4; color: var(--red); }
+.nl-s .gwill-form__field-error,
+.m-nl .gwill-form__field-error,
+.nl-hero-form .gwill-form__field-error,
+.sw .gwill-form__field-error { color: #f87171; }
+.gwill-honey { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }

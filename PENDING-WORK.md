@@ -133,7 +133,44 @@ Read this at session start.
       simply none of our 7 articles uses. Kept. `.ledger` is **alive** (used by
       `/about/`, `/apps/`, `/contact/`).
 
+## DONE — 2026-09-23 · Phone-review fixes (v0.3.1)
+
+- [x] Three defects reported from a phone screenshot, all traced to stylesheet
+      sections outside the earlier scoped extractions:
+      (1) **79 of 109 links underlined** — the BASE anchor reset
+      (`style.css:186`) was never ported. Now **2**, exactly WP's deliberate
+      credit link (WP's third is the consent-policy link, which arrives with the
+      consent banner).
+      (2) **Newsletter field a browser-default box** — measured `175×19` radius
+      0 pad 0 13.33px vs WP `261×46` radius 10 `12px 16px` 16px. Now
+      `300×46` radius `10px` `12px 16px` 16px.
+      (3) **Visible "EMAIL" label** — `.screen-reader-text` was undefined in the
+      port. Now `1×1`, as WP.
+- [x] New layers: `src/styles/base.css` (RESET/BASE, scoped to the rules that
+      normalise text + controls) and `src/styles/forms.css` (FORMS section 46
+      verbatim). Imported in `Layout.astro`: base first, forms last.
+- [x] The three form rules that had been ad-hoc additions in `home.css` (hidden
+      "Subscribing…", `[data-loading]` swap, honeypot) moved to `forms.css` —
+      their old home is why the rest of that section went unnoticed.
+- [x] 17 new gate assertions → **123 total**; `npm run check` **4/4 green**;
+      build 53 pages. Geometry re-measured after the change: identical to WP at
+      390/768/1280 (no regression from the new layers).
+- [x] Evidence: `docs/evidence/home-newsletter-fixed-390.png`,
+      `home-port-{390,768,1280}.png`; record `docs/port/07-base-and-forms.md`.
+- [ ] Ship `main` + `pages-dist`, verify the served bytes and re-probe the live
+      URL for the underlined-link count and the input geometry.
+
 ## PENDING
+
+- [ ] **M-BASE-LAYER** — `base.css` deliberately carries only the theme's base
+      rules that normalise text rendering and control typography. Still not
+      ported from the theme's RESET/BASE section, because each would re-flow
+      pages already measured and reviewed: `*, *::before, *::after { box-sizing:
+      border-box; margin: 0; padding: 0 }`, `img { height: auto; display: block }`,
+      `img, picture, video, canvas, svg, iframe, input, textarea, select, table
+      { max-width: 100% }`, `h1, h2, h3, h4 { letter-spacing: -0.02em }`,
+      `html { scroll-behavior: smooth; scroll-padding-top: … }`. Port them
+      page-by-page with measurement, not in one pass.
 
 - [ ] **M-TABLET-PARITY (homepage subset now done — v0.3.0)** — the theme's
       `@media (max-width: 1023px)` homepage rules (`.nl-s` newsletter row,
