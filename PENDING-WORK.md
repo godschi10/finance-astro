@@ -93,13 +93,42 @@ Read this at session start.
       667 @768, phone 770 @390; overflow 0; install CTA visible; no escaped icon text.
       Shots: `docs/evidence/footer-live-{390,768,1280}.png`.
 
+## DONE — 2026-09-22 · Homepage port (v0.3.0)
+
+- [x] Extraction from theme 1.13.39 (proven byte-identical to `/var/www/finance`):
+      `home-port/01-home-markup.md`, `02-home-css.css` (240 rules in source order),
+      `03-home-js.md`, `05-live-oracle.{md,json}` (measured 390/768/1280).
+- [x] `src/styles/home.css` — 191 rules, the theme's media contexts intact
+      (`print`, `@supports not (aspect-ratio)`, touch, reduced-motion, 767/1023/1024+).
+- [x] `src/components/ArticleCard.astro` — WP card anatomy (`.ac`, `.ac-img`,
+      `.ac-emoji` + art class, `.badge`, `h2.ac-t`, `.ac-ex`, `.ac-ft`, `.a-dt`, `.a-rd`).
+- [x] `src/pages/index.astro` — sections 2–8 in WP's vocabulary and order, WP's real
+      newsletter `.gwill-form` markup, an empty `.ad-bg`, no invented elements.
+- [x] `scripts/check-homepage-fidelity.mjs` — **106 assertions**; `npm run check`
+      → **4/4 green** (vectors 95/95); build 53 pages.
+- [x] Five defects found by measuring and fixed — legacy-cascade win (50 rules
+      removed after asserting each selector exists in `home.css`), missing
+      `--con-pad` breakpoints (28/20), visible "Subscribing…" label, **visible
+      honeypot** ("Leave this blank"), wrong badge values + missing chip tints.
+- [x] Measured against the live WP homepage: 1280 `.g3` `324px 324px 324px` gap 16
+      and `.feat` `501px 501px`; 768 CTAs `212×45`/`144×45`, `.g3` `348px 348px`;
+      390 CTA `350×45`, submit `300×46`, strip `has-overflow can-next`; ad slots
+      0×0 `display:none`; overflow 0 at all three.
+- [x] Behaviours probed on the built page: filter (Investing → 1 card +
+      `aria-pressed`, active pill no-op, All → 7), strip wrap + scroll buttons,
+      honest newsletter submit (no navigation, nothing sent).
+- [x] Record `docs/port/06-homepage-verification.md`; release docs v0.3.0
+      (CHANGELOG / README / package.json).
+- [ ] **Ship:** `main` + `pages-dist`, then verify the served bytes and the live URL.
+
 ## PENDING
 
-- [ ] **M-TABLET-PARITY** — WP's `@media (max-width: 1023px)` block also carries
-      non-header/non-footer tablet rules: `.nl-s` newsletter row layout,
-      `.hero` / `.hero-h` 42px, `.feat` single column, `.stat-strip` 2-col,
-      `.si` borders, `.art-surface-pad`. (The `.footer` padding line is done — see
-      the footer section above.) Port the rest, then extend the gate.
+- [ ] **M-TABLET-PARITY (homepage subset now done — v0.3.0)** — the theme's
+      `@media (max-width: 1023px)` homepage rules (`.nl-s` newsletter row,
+      `.hero`/`.hero-h` 42px, `.feat` single column, `.stat-strip` 2-col, `.si`
+      borders, `.g3` 2-up, `.footer` padding) are ported via `home.css` and the
+      footer release. What remains of that block is non-homepage:
+      **`.art-surface-pad`** and the article-page tablet rules.
 - [ ] **Footer part 2 — consent banner, sticky ad bar, push panel.** WP
       `footer.php` section 6 (`gconsent`: show/hide, storage key, accept/decline)
       and section 7 (scroll-revealed dismissible sticky ad bar) plus the bell's

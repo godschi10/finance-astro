@@ -1,137 +1,278 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import ArticleCard from "../components/ArticleCard.astro";
-import { SITE, CATEGORIES, catBySlug } from "../data/site";
+import { SITE, CATEGORIES, catBySlug, FEATURED_SLUG } from "../data/site";
 import { allArticles, fmtMonthYear } from "../data/content";
+
+// Faithful port of front-page.php (gwill-finance-theme 1.13.39), sections 2-8.
+// Section 1 (template bootstrap) has no markup; the stray unmatched </div> at
+// front-page.php:117 is deliberately NOT reproduced — it is a theme bug that the
+// browser's parser drops, and the live DOM has exactly 5 children in <main>.
+//
+// Featured: the theme picks a fixed post (theme mod gwill_featured_post_id,
+// live = post 5). The port names the same article.
+// Grid: WP renders "the newest 9 posts, featured NOT excluded"; the port's
+// archive is smaller, so it renders every article under the same rule.
 const posts = await allArticles();
-const featured = posts[0];
+const featured = posts.find((p) => p.slug === FEATURED_SLUG) ?? posts[0];
+const grid = posts.slice(0, 9);
 const fcat = catBySlug(featured.data.category);
-const rest = posts.slice(1);
-const year = new Date().getFullYear();
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const furl = `${base}articles/${featured.slug}/`;
+// WP prints the featured excerpt through wp_trim_words( get_the_excerpt(), 32 ).
+const trim32 = (s: string) => {
+  const w = s.trim().split(/\s+/);
+  return w.length > 32 ? w.slice(0, 32).join(" ") + "…" : s;
+};
 ---
 <Layout title="Nigerian Money, Explained - GWill Finance" description={SITE.description} crumb="">
-<!-- 2. hero -->
-<section class="hero" aria-labelledby="hero-title">
-<div class="hero-grain" aria-hidden="true"></div>
-<div class="con">
-<p class="hero-tag">₦ Nigerian Finance · Honest Guides</p>
-<h1 class="hero-h" id="hero-title"><span class="g">Nigerian money.</span><br><span class="c">Explained.</span></h1>
+<!-- ══════ 2. hero ══════ -->
+<section class="hero">
+<div class="hero-grain"></div>
+<div class="con" style="max-width:none;padding-top:0;padding-bottom:0">
+<div class="hero-tag">₦ Nigerian Finance · Honest Guides</div>
+<h1 class="hero-h"><span class="g">Nigerian money.</span><br><span class="w">Explained.</span></h1>
 <p class="hero-sub">Savings, investing, dollar accounts, crypto, and every fintech app worth your attention. Tested by Gwill. No jargon. No AI slop.</p>
-<div class="ledger" aria-hidden="true"></div>
 <div class="hero-acts">
-<a class="btn b-gold" href={`${base}articles/`}>Browse All Articles →</a>
-<a class="btn b-ghost" href={`${base}tools/`}>Money Calculators</a>
+<a class="bh" href={`${base}articles/`}>Browse All Articles →</a>
+<a class="bhg" href={`${base}apps/`}>Finance Apps</a>
 </div>
 <div class="hero-cats">
 <span class="hero-cats-lbl">Topics:</span>
-{CATEGORIES.map((c) => (<a class="chip" href={`${base}category/${c.slug}/`} style="text-decoration:none">{c.emoji} {c.name}</a>))}
+{CATEGORIES.map((c) => (<a class={`db ${c.chip}`} href={`${base}category/${c.slug}/`}>{c.name}</a>))}
 </div>
-<!-- 3. stats strip -->
-<div class="stat-strip" aria-label="Site statistics">
-<div class="si"><div class="si-n" data-count={posts.length} data-suffix="">{posts.length}</div><div class="si-l">In-depth guides</div></div>
-<div class="si"><div class="si-n" data-count="12" data-suffix="+">12+</div><div class="si-l">Finance apps reviewed</div></div>
-<div class="si"><div class="si-n" data-count={year}>{year}</div><div class="si-l">All data current</div></div>
+</div>
+</section>
+
+<!-- ══════ 3. stats strip ══════ -->
+<div class="stat-strip">
+<div class="si"><div class="si-n">10+</div><div class="si-l">In-depth guides</div></div>
+<div class="si"><div class="si-n">12+</div><div class="si-l">Finance apps reviewed</div></div>
+<div class="si"><div class="si-n">2+</div><div class="si-l">All data current</div></div>
 <div class="si"><div class="si-n">₦ 0</div><div class="si-l">Free to read</div></div>
 </div>
-<div class="ad-bg">Ad slot — fills when ads are configured.</div>
-</div>
-</section>
 
-<!-- 4. featured article -->
-<section class="con sg" aria-labelledby="feat-h">
-<div class="shd"><h2 class="stitle" id="feat-h">Featured Article</h2><a class="slink" href={`${base}articles/`}>All articles →</a></div>
-<article class="feat">
-<div class="feat-img" role="img" aria-label={`${fcat.name} article artwork`}><span aria-hidden="true">{fcat.emoji}</span><span class={`tile-wm ${fcat.badge}`} aria-hidden="true">{fcat.name}</span></div>
+<!-- ══════ 4. featured article ══════ -->
+<div class="con sg">
+<div class="shd"><h2 class="stitle">Featured Article</h2></div>
+<div class="feat">
+<div class={`feat-img ${fcat.art}`}><span class="feat-emoji">{fcat.emoji}</span></div>
 <div class="feat-body">
-<span class={`badge ${fcat.badge}`}>{fcat.name}</span>
-<p class="feat-t"><a href={`${base}articles/${featured.slug}/`} style="text-decoration:none;color:inherit">{featured.data.title}</a></p>
-<p class="feat-ex">{featured.data.description}</p>
+<a class={`badge ${fcat.badge}`} href={`${base}category/${featured.data.category}/`}>{fcat.name}</a>
+<div class="feat-t"><a href={furl}>{featured.data.title}</a></div>
+<div class="feat-ex">{trim32(featured.data.description)}</div>
 <div class="feat-meta">
-<span>{fmtMonthYear(featured.data.pubDate)}</span><span class="feat-dot" aria-hidden="true"></span>
-<span>{featured.data.readMins} min read</span><span class="feat-dot" aria-hidden="true"></span>
+<span>{fmtMonthYear(featured.data.pubDate)}</span><span class="feat-dot"></span>
+<span>{featured.data.readMins} min read</span><span class="feat-dot"></span>
 <span>{featured.data.author}</span>
+<a class="btn b-gold b-sm" style="margin-left:auto" href={furl}>Read →</a>
 </div>
-<p style="margin-top:16px"><a class="btn b-gold b-sm" href={`${base}articles/${featured.slug}/`}>Read →</a></p>
 </div>
-</article>
-</section>
+</div>
+</div>
 
-<!-- 5–6. latest grid + filter pills -->
-<section class="con sg" id="latest" aria-labelledby="latest-h">
+<!-- ══════ 5. latest articles grid ══════ -->
+<div class="con sg" id="latest">
 <div class="shd">
-<h2 class="stitle" id="latest-h">Latest Articles</h2>
+<h2 class="stitle">Latest Articles</h2>
 <a class="slink" href={`${base}articles/`}>View all →</a>
 </div>
-<div class="cp-strip" data-gwill-filter role="group" aria-label="Filter articles by category">
+<!-- ══════ 6. category filter pills ══════ -->
+<div class="cp-strip" data-gwill-filter style="margin-bottom:20px" role="group" aria-label="Filter articles by category">
 <button type="button" class="cp on" data-gwill-cat="" aria-pressed="true">All</button>
 {CATEGORIES.map((c) => (<button type="button" class="cp" data-gwill-cat={c.slug} aria-pressed="false">{c.name}</button>))}
 </div>
-<div class="g3" id="gwill-posts-grid" style="margin-top:20px">
-{rest.map((p) => (
+<div id="gwill-posts-grid">
+<div class="g3">
+{grid.map((p) => (
 <ArticleCard slug={p.slug} title={p.data.title} excerpt={p.data.description} category={p.data.category} date={fmtMonthYear(p.data.pubDate)} readMins={p.data.readMins} author={p.data.author} />
 ))}
 </div>
-<p class="card-meta" id="filter-empty" hidden>No articles in this category yet — check the full archive.</p>
-<div class="ad-bg">Ad slot — fills when ads are configured.</div>
-</section>
+</div>
+<!-- ══════ 7. ad slots ══════ -->
+<div class="ad-bg" style="margin-top:28px"></div>
+</div>
 
-<!-- 7. newsletter band (honest hold — capture opens at launch) -->
-<section class="con sg" id="newsletter" aria-labelledby="nl-h">
+<!-- ══════ 8. newsletter band ══════ -->
+<div class="con sg" id="newsletter">
 <div class="nl-s">
 <div class="nl-copy">
-<h2 class="nl-h" id="nl-h">Nigerian money news, weekly.</h2>
-<p>Rate changes, app reviews, and the financial moves worth making. Free, no spam, unsubscribe anytime. The list opens at launch.</p>
-<div class="nl-meta"><span>✓ Free</span><span class="dot" aria-hidden="true"></span><span>✓ No spam</span><span class="dot" aria-hidden="true"></span><span>✓ Unsubscribe anytime</span></div>
+<h2 class="nl-h">Nigerian money news, weekly.</h2>
+<p>Rate changes, app reviews, and the financial moves worth making. Free, no spam, unsubscribe anytime. ⚡</p>
+<div class="nl-meta"><span>✓ Free</span><span class="dot"></span><span>✓ No spam</span><span class="dot"></span><span>✓ Unsubscribe anytime</span></div>
 </div>
-<div>
-<p style="color:#c4b89a;font-size:15px">No email field here yet — a form that cannot subscribe you would be a fake control.</p>
-<p style="margin-top:12px"><a class="btn b-gold" href={`${base}newsletter/`}>About the newsletter →</a></p>
+<div class="gwill-newsletter">
+<p class="gwill-newsletter__prompt">
+Get new posts in your inbox.	</p>
+<form class="gwill-form gwill-form--newsletter" method="post" novalidate>
+<div class="gwill-honey" aria-hidden="true">
+<label for="gwill_hp_gwill-newsletter-1">Leave this blank</label>
+<input type="text" name="gwill_hp" id="gwill_hp_gwill-newsletter-1" tabindex="-1" autocomplete="off">
+</div>
+<input type="hidden" name="action" value="gwill_contact_form">
+<input type="hidden" name="gwill_form_id" value="newsletter">
+<div class="gwill-form--newsletter__fields">
+<div class="gwill-form__field">
+<label for="email_gwill-newsletter-1" class="screen-reader-text">
+Email				</label>
+<input type="email" id="email_gwill-newsletter-1" name="gwill_email" placeholder="Your email" required autocomplete="email">
+</div>
+<button type="submit" class="gwill-form__submit">
+<span class="gwill-form__submit-text">Subscribe</span>
+<span class="gwill-form__submit-loading" aria-hidden="true">Subscribing…</span>
+</button>
+</div>
+<div class="gwill-form__status" role="alert" aria-live="polite"></div>
+</form>
 </div>
 </div>
-</section>
+</div>
 
 <script is:inline>
 (function(){
+"use strict";
 try{
-var strip=document.querySelector("[data-gwill-filter]");
-if(strip){
-var btns=Array.prototype.slice.call(strip.querySelectorAll("[data-gwill-cat]"));
-var cards=Array.prototype.slice.call(document.querySelectorAll("#gwill-posts-grid .card"));
-var empty=document.getElementById("filter-empty");
-btns.forEach(function(b){b.addEventListener("click",function(){
-btns.forEach(function(x){x.classList.toggle("on",x===b);x.setAttribute("aria-pressed",x===b?"true":"false")});
-var cat=b.getAttribute("data-gwill-cat")||"";
-var shown=0;
-cards.forEach(function(c){
-var on=!cat||c.getAttribute("data-cat")===cat;
-c.hidden=!on;
-if(on)shown++;
+// ── 1. pill-strip chrome — port of main.js §13/14/15, behaviour 1:1 ───────
+var supportsScrollOptions=(function(){
+try{
+var p=document.createElement("div");
+p.style.cssText="width:50px;overflow:auto;position:absolute;top:-9999px";
+p.innerHTML="<div style='width:100px;height:1px'></div>";
+document.body.appendChild(p);
+if(typeof p.scrollBy!=="function"){document.body.removeChild(p);return false;}
+p.scrollBy({left:7});
+var ok=p.scrollLeft>0;
+document.body.removeChild(p);
+return ok;
+}catch(e){return false;}
+})();
+var scrollStrip=function(el,delta,smooth){
+if(supportsScrollOptions){el.scrollBy({left:delta,behavior:smooth?"smooth":"auto"});}
+else{el.scrollLeft+=delta;}
+};
+window.gwillRevealStripActive=function(strip){
+var wrap=strip.parentElement;
+if(!wrap||!wrap.classList.contains("has-overflow"))return;
+var on=strip.querySelector(".cp.on");
+if(!on)return;
+var or=on.getBoundingClientRect(),wr=wrap.getBoundingClientRect(),delta=0;
+if(or.right>wr.right-40){delta=or.right-(wr.right-40);}
+else if(or.left<wr.left+40){delta=or.left-(wr.left+40);}
+if(delta)scrollStrip(strip,delta,false);
+};
+Array.prototype.forEach.call(document.querySelectorAll(".cp-strip"),function(strip){
+if(strip.getAttribute("data-gwill-scroll"))return;
+strip.setAttribute("data-gwill-scroll","1");
+var wrap=document.createElement("div");
+wrap.className="cp-strip-wrap";
+if(strip.style.flex)wrap.style.flex=strip.style.flex;
+strip.parentNode.insertBefore(wrap,strip);
+wrap.appendChild(strip);
+var prev=document.createElement("button");
+prev.type="button";
+prev.className="cp-scroll-btn cp-scroll-prev";
+prev.setAttribute("aria-label","Scroll categories left");
+prev.innerHTML="‹";
+var next=document.createElement("button");
+next.type="button";
+next.className="cp-scroll-btn cp-scroll-next";
+next.setAttribute("aria-label","Scroll categories right");
+next.innerHTML="›";
+wrap.appendChild(prev);
+wrap.appendChild(next);
+var update=function(){
+var overflow=strip.scrollWidth>strip.clientWidth+2;
+wrap.classList.toggle("has-overflow",overflow);
+if(!overflow){wrap.classList.remove("can-prev","can-next");prev.disabled=true;next.disabled=true;return;}
+wrap.classList.toggle("can-prev",strip.scrollLeft>2);
+wrap.classList.toggle("can-next",strip.scrollLeft<strip.scrollWidth-strip.clientWidth-2);
+prev.disabled=!wrap.classList.contains("can-prev");
+next.disabled=!wrap.classList.contains("can-next");
+};
+prev.addEventListener("click",function(){scrollStrip(strip,-Math.round(strip.clientWidth*0.7),true);});
+next.addEventListener("click",function(){scrollStrip(strip,Math.round(strip.clientWidth*0.7),true);});
+strip.addEventListener("scroll",update,{passive:true});
+window.addEventListener("resize",function(){update();window.gwillRevealStripActive(strip);});
+window.addEventListener("load",function(){update();window.gwillRevealStripActive(strip);});
+setTimeout(function(){update();window.gwillRevealStripActive(strip);},300);
+update();
+window.gwillRevealStripActive(strip);
+// ── 2. arrow-key navigation — main.js §15 ────────────────────────────────
+strip.addEventListener("keydown",function(e){
+if(e.key!=="ArrowLeft"&&e.key!=="ArrowRight")return;
+var pills=Array.prototype.filter.call(strip.querySelectorAll(".cp"),function(p){return !p.disabled;});
+if(!pills.length)return;
+var i=pills.indexOf(document.activeElement);
+if(i===-1)return;
+e.preventDefault();
+var nx=pills[(e.key==="ArrowRight"?i+1:i-1+pills.length)%pills.length];
+if(nx)nx.focus();
 });
-if(empty)empty.hidden=shown!==0;
-})});
+});
+
+// ── 3. category filter ────────────────────────────────────────────────────
+// WP swaps the grid through admin-ajax (action=gwill_filter_posts). A static
+// build has no endpoint, so the identical visible result is produced locally:
+// same active-pill state, same empty state and copy, no network call, no
+// spinner. Same rules as category-filter.js — clicking the active pill does
+// nothing, and the result replaces the grid body.
+var fstrip=document.querySelector("[data-gwill-filter]");
+if(fstrip){
+var fgrid=document.getElementById("gwill-posts-grid");
+var original=fgrid?fgrid.innerHTML:"";
+var EMPTY='<p class="gwill-filter-empty">No articles here yet, check back soon.</p>';
+var fpills=Array.prototype.slice.call(fstrip.querySelectorAll("[data-gwill-cat]"));
+fpills.forEach(function(b){
+b.addEventListener("click",function(){
+if(b.classList.contains("on"))return;
+fpills.forEach(function(x){
+x.classList.toggle("on",x===b);
+x.setAttribute("aria-pressed",x===b?"true":"false");
+});
+var cat=b.getAttribute("data-gwill-cat")||"";
+if(!fgrid)return;
+if(!cat){fgrid.innerHTML=original;}
+else{
+var hits=Array.prototype.filter.call(fgrid.querySelectorAll(".ac"),function(c){
+return c.getAttribute("data-cat")===cat;
+});
+if(!hits.length){fgrid.innerHTML=EMPTY;}
+else{
+if(!fgrid.querySelector(".ac"))fgrid.innerHTML=original;
+Array.prototype.forEach.call(fgrid.querySelectorAll(".ac"),function(c){
+c.style.display=(c.getAttribute("data-cat")===cat)?"":"none";
+});
 }
-var nums=Array.prototype.slice.call(document.querySelectorAll("[data-count]"));
-if(nums.length && !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) && "IntersectionObserver" in window){
-var fmt=function(n){return n.toLocaleString("en-US")};
-var run=function(el){
-var target=parseInt(el.getAttribute("data-count"),10);
-if(isNaN(target))return;
-var suf=el.getAttribute("data-suffix")||"";
-var t0=null,D=800;
-var step=function(ts){
-if(!t0)t0=ts;
-var p=Math.min(1,(ts-t0)/D);
-var v=Math.round(target*(1-Math.pow(1-p,3)));
-el.textContent=fmt(v)+suf;
-if(p<1)window.requestAnimationFrame(step);
-};
-window.requestAnimationFrame(step);
-};
-var io=new IntersectionObserver(function(es){
-es.forEach(function(e){if(e.isIntersecting){run(e.target);io.unobserve(e.target)}});
-},{threshold:.4});
-nums.forEach(function(n){io.observe(n)});
+}
+window.gwillRevealStripActive(fstrip);
+});
+});
+}
+
+// ── 4. card image fade-in — category-filter.js adds .gwill-img-in ─────────
+Array.prototype.forEach.call(document.querySelectorAll("#gwill-posts-grid img"),function(img){
+var done=function(){img.classList.add("gwill-img-in");};
+if(img.complete)done();else{img.addEventListener("load",done);img.addEventListener("error",done);}
+});
+
+// ── 5. newsletter — honest submit ─────────────────────────────────────────
+// The WP form POSTs to admin-ajax (action=gwill_contact_form) and redirects to
+// /newsletter-thanks/. This build has no subscriber backend and no list yet, so
+// the form stays pixel-identical but says what actually happened instead of
+// faking a subscription. Nothing is sent anywhere.
+var nform=document.querySelector(".gwill-form--newsletter");
+if(nform){
+nform.addEventListener("submit",function(e){
+e.preventDefault();
+var status=nform.querySelector(".gwill-form__status");
+var input=nform.querySelector('input[type="email"]');
+if(!status)return;
+if(input&&!input.checkValidity()){
+status.textContent="Enter a valid email address.";
+return;
+}
+status.textContent="This form isn't connected yet — the list opens at launch, so nothing was sent.";
+});
 }
 }catch(e){}
 })();

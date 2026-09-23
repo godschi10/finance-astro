@@ -5,24 +5,36 @@ interface Props {
   title: string;
   excerpt: string;
   category: string;
+  /** Already formatted the way WP's date_i18n('M Y') prints it: "Sep 2026". */
   date: string;
   readMins: number;
-  author: string;
+  author?: string;
 }
-const { slug, title, excerpt, category, date, readMins, author } = Astro.props;
+// Faithful port of template-parts/content.php (gwill-finance-theme 1.13.39) and
+// the no-thumbnail branch of inc/card-media.php: every article in this port uses
+// the category art gradient + emoji, which is the theme's own fallback markup
+// (`<div class="ac-img {art}"><span class="ac-emoji">{emoji}</span></div>`).
+// The theme's other branch emits an <a class="ac-img"> around a thumbnail — it
+// is not reachable here because no port article has a featured image.
+//
+// Class vocabulary, the badge/art/emoji map and the copy are the theme's:
+//   article.ac > .ac-img > .ac-emoji | .ac-body > a.badge + h2.ac-t > a
+//                                                + .ac-ex > p + .ac-ft
+//   .ac-ft = span.a-dt "{M Y} · {n} min" + a.a-rd "Read →"
+const { slug, title, excerpt, category, date, readMins } = Astro.props;
 const c = catBySlug(category);
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 const url = `${base}articles/${slug}/`;
 ---
-<article class="card" data-cat={category}>
-  <div class="card-art" role="img" aria-label={`${c.name} article artwork`}>
-    <span aria-hidden="true">{c.emoji}</span>
-    <span class={`tile-wm ${c.badge}`} aria-hidden="true">{c.name}</span>
-  </div>
-  <div class="card-body">
-    <span class={`badge ${c.badge}`}>{c.name}</span>
-    <p class="card-t"><a href={url} style="text-decoration:none;color:inherit">{title}</a></p>
-    <p class="card-ex">{excerpt}</p>
-    <p class="card-meta">{date} · {readMins} min read · {author}</p>
+<article id={`post-${slug}`} class={`ac category-${category}`} data-cat={category}>
+  <div class={`ac-img ${c.art}`}><span class="ac-emoji">{c.emoji}</span></div>
+  <div class="ac-body">
+    <a class={`badge ${c.badge}`} href={`${base}category/${category}/`}>{c.name}</a>
+    <h2 class="ac-t"><a href={url}>{title}</a></h2>
+    <div class="ac-ex"><p>{excerpt}</p></div>
+    <div class="ac-ft">
+      <span class="a-dt">{date} · {readMins} min</span>
+      <a class="a-rd" href={url}>Read →</a>
+    </div>
   </div>
 </article>

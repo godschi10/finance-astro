@@ -3,6 +3,76 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.3.0] — 2026-09-22
+
+**The homepage is ported.** `front-page.php` sections 2–8 — the hero, the stats
+strip, the featured article, the latest grid, the category pills (with their
+filter), the ad slots and the newsletter band — now render from Astro with the
+theme's own class vocabulary, copy and CSS. The old homepage's invented markup
+(`.ledger`, `.card`, `.chip`, fake ad notices, a count-up animation and a
+placeholder newsletter) is gone.
+
+### Added
+
+- `src/pages/index.astro` — the homepage in WP's vocabulary: `.hero` /
+  `.hero-grain` / `.hero-tag` / `.hero-h .g`+`.w` / `.hero-acts` with the real
+  `.bh` and `.bhg` CTAs, `.stat-strip` with four `.si`, `.feat` with
+  `.feat-meta`, `.g3` of `.ac` cards, `.cp-strip` pills, an empty `.ad-bg`, and
+  `.nl-s` with WP's actual `.gwill-form` newsletter markup.
+- `src/components/ArticleCard.astro` — the card anatomy from
+  `template-parts/content.php` + `inc/card-media.php`: `.ac`, `.ac-img`, the
+  no-thumbnail branch (`.ac-emoji` + the category art class), `.badge` in the
+  theme's per-category colour, `h2.ac-t`, `.ac-ex > p`, `.ac-ft` with `.a-dt`
+  (`M Y · n min`) and `.a-rd`.
+- `src/styles/home.css` — the homepage slice of the theme stylesheet in source
+  order: 191 rules, every media context (`print`, `@supports not
+  (aspect-ratio)`, touch, `prefers-reduced-motion`, 767/1023/1024+), and the
+  custom properties they depend on.
+- `scripts/check-homepage-fidelity.mjs` — **106 assertions** covering section
+  order, class vocabulary, byte-exact copy, the pill/filter contract and the
+  stylesheet values, wired into `npm run check` (now 4/4 green).
+
+### Fixed — every one of these was found by measuring, not by reading
+
+- **The legacy stylesheet out-voted the theme.** `Layout.astro`'s
+  `<style is:global>` is emitted *after* the imported CSS, so the homepage's old
+  rules beat the ported theme for the same selectors: `.con` was
+  `calc(100% - 32px)`, `.g3` had `gap: 24px`, `.feat` was `1fr 1.4fr` and
+  `.cp.on` was dark. 50 legacy rules removed; the theme's values now win —
+  the 1280 grid measures `324px 324px 324px` gap 16px and the featured
+  `501px 501px`, exactly WP's.
+- **`--con-pad` had no responsive values.** WP shrinks it 48 → 28 → 20px;
+  the port only carried 48, making every container 16–64px too narrow. Added.
+- **Three category badge values were wrong in the port's own data.**
+  `investing` → `bgn`, `remittance` → `bsl`, `dollar-accounts` → `bg`; the chip
+  tints (`.db-g/.db-gr/.db-p/.db-s`) were missing entirely.
+- **The newsletter button rendered both labels** — "Subscribe Subscribing…" in a
+  198px button where WP measures 105px. The hide rule lives in the theme's FORMS
+  section, outside the homepage scope the extraction covered.
+- **The honeypot was visible.** `"Leave this blank"` printed in the form because
+  `.gwill-honey`'s off-screen rule (`style.css:2948`) was in that same missed
+  block. Now `left: -9999px`, `opacity: 0`, `height: 0`.
+- Both missed rules were added to `home.css` as a documented port addition and
+  are pinned by assertions.
+
+### Divergences (deliberate, reasoned)
+
+- **No AJAX.** WP swaps the grid through `admin-ajax.php`
+  (`action=gwill_filter_posts`); a static build has no endpoint, so the filter
+  produces the identical visible result locally — same active pill, same
+  `aria-pressed`, same empty-state copy, no network call, no spinner. WP's own
+  two bugs in that path (`cache['']` always refetching, and the empty category
+  dropping the `.g3` wrapper) are not reproduced.
+- **The newsletter form does not fake a subscription.** It stays pixel-identical
+  to WP's, validates the address the same way, and on submit says the list is
+  not open yet instead of redirecting to `/newsletter-thanks/`.
+- **Ad slots render empty, as they do live.** `gwill_ads_enabled` is true but
+  every ad code is empty, so WP emits wrappers and zero `.ad-slot` nodes and
+  reserves 0px. The port matches that exactly, with no placeholder text.
+- **Cards carry this repo's own articles** (7 with a category chip, vs WP's 9).
+  The grid, the featured pick (`FEATURED_SLUG`, the theme-mod article) and every
+  class come from WP; the content is the port's.
+
 ## [0.2.0] — 2026-09-22
 
 **The footer is ported.** `footer.php` sections 2–5 — the desktop grid, the follow

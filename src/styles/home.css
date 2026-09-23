@@ -1,0 +1,901 @@
+/* ==========================================================================
+   HOME CSS EXTRACT, every home-page rule from the theme stylesheet
+   Source of truth : /home/opc/projects/gwill-finance-theme/style.css
+   Theme           : GWill Finance v1.13.39 (bespoke WordPress theme)
+   Scope           : PRIMARY = every rule whose selector mentions a class or
+                     id emitted by front-page.php, by the card partial it
+                     renders (template-parts/content.php) or by the .con/.sg
+                     layout wrappers.  ADDENDUM = clearly labelled groups for
+                     markup the homepage renders through PHP/JS whose class
+                     names are outside that token list.
+   Order           : stylesheet section order, source order inside sections.
+   Context         : every rule keeps its enclosing @media/@supports block,
+                     verbatim, tagged with the line where it was declared.
+   Format          : one rule per line, exact declarations, no omissions.
+   ==========================================================================
+   ADDENDUM LEGEND (groups marked [A1]-[A4] are outside the primary token
+   list but style markup the homepage actually renders):
+     [A1] AD SLOT COMPONENT — gwill_finance_ad_slot('leaderboard') runs at front-page.php lines 116 and 192, and the 'feed' slot is injected inside the .g3 latest-articles grid (inc/category-filter.php + template-parts/grid-loop.php). This is the subtree those render.
+     [A2] PILLS SCROLLER CHROME — main.js gwillStripReady() wraps every .cp-strip (the homepage pills) in .cp-strip-wrap and injects .cp-scroll-btn / .cp-scroll-prev / .cp-scroll-next + has-overflow.
+     [A3] GLOBAL FOCUS RING — style.css section 53: a:focus-visible /
+          button:focus-visible / [tabindex]:focus-visible. Element-based, so
+          no homepage class token matches it, but it paints every homepage
+          link and button.
+     [A4] CUSTOM PROPERTY DEFINITION SITES - the :root and [data-theme="dark"]
+          blocks that hold the values behind every var(--token) used above.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 672-676  ·  SECTION 9. BADGES
+   PRIMARY SCOPE (1 rule in this group)
+   -------------------------------------------------------------------------- */
+.badge { display: inline-flex; align-items: center; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border-radius: var(--pill); border: 1px solid; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 687-698  ·  SECTION 10. BUTTONS
+   PRIMARY SCOPE (12 rules in this group)
+   -------------------------------------------------------------------------- */
+.btn { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 12px; border-radius: var(--r-sm); border: none; cursor: pointer; transition: all var(--t); }
+.b-gold { background: var(--gold-btn); color: #fff; padding: 10px 20px; }
+.b-gold:hover { background: #92400e; transform: translateY(-1px); }
+.b-ghost { background: transparent; color: var(--text-mid); border: 1px solid var(--border); padding: 9px 20px; }
+.b-ghost:hover { border-color: var(--text-dim); color: var(--text); }
+.b-green { background: var(--green-btn); color: #fff; padding: 10px 20px; }
+.b-green:hover { background: #166534; transform: translateY(-1px); }
+.b-sm { font-size: 11px; padding: 7px 14px; }
+.bh { background: var(--gold-b); color: var(--dark); border: none; font-size: 13px; font-weight: 800; padding: 12px 24px; border-radius: var(--r-sm); transition: all var(--t); }
+.bh:hover { background: #e09009; transform: translateY(-1px); }
+.bhg { background: transparent; color: #f0ede6; border: 1px solid var(--dark-b); font-size: 13px; font-weight: 700; padding: 11px 24px; border-radius: var(--r-sm); transition: all var(--t); }
+.bhg:hover { border-color: var(--dark-dim); }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 701-735  ·  SECTION 11. HERO (home)
+   PRIMARY SCOPE (17 rules in this group)
+   -------------------------------------------------------------------------- */
+.hero { background: var(--dark); padding: 72px var(--con-pad) 68px; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; background-image: radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px); background-size: 28px 28px; pointer-events: none; }
+.hero::after { content: ''; position: absolute; top: -100px; right: -100px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(217,119,6,0.1) 0%, transparent 65%); pointer-events: none; }
+.hero-grain { position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); }
+.hero-tag { display: inline-flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-b); background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); padding: 5px 14px; border-radius: var(--pill); margin-bottom: 22px; position: relative; z-index: 1; }
+.hero-h { font-size: 48px; font-size: clamp(38px, 5.5vw, 62px); font-weight: 800; letter-spacing: -0.045em; line-height: 1.0; margin-bottom: 16px; max-width: 640px; position: relative; z-index: 1; }
+.hero-h .g { color: var(--gold-b); }
+.hero-h .w { color: #f0ede6; }
+.hero-sub { font-size: 15px; font-weight: 300; color: var(--dark-dim); line-height: 1.75; max-width: 460px; margin-bottom: 28px; position: relative; z-index: 1; }
+.hero-acts { display: flex; align-items: center; gap: 12px; position: relative; z-index: 1; }
+.hero-cats { display: flex; align-items: center; gap: 8px; margin-top: 36px; flex-wrap: wrap; position: relative; z-index: 1; }
+.hero-cats-lbl { font-size: 10px; font-weight: 300; color: var(--dark-dim); font-style: italic; }
+.db { display: inline-flex; align-items: center; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border-radius: var(--pill); border: 1px solid; }
+.db-g { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.2); color: var(--gold-b); }
+.db-gr { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.18); color: #22c55e; }
+.db-p { background: rgba(124,58,237,0.1); border-color: rgba(124,58,237,0.2); color: #a78bfa; }
+.db-s { background: rgba(148,163,184,0.08); border-color: rgba(148,163,184,0.18); color: #94a3b8; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 738-742  ·  SECTION 12. STATS STRIP
+   PRIMARY SCOPE (5 rules in this group)
+   -------------------------------------------------------------------------- */
+.stat-strip { background: var(--gold-muted); border-top: 1px solid var(--gold-border); border-bottom: 1px solid var(--gold-border); display: flex; }
+.si { flex: 1; padding: 20px 32px; border-right: 1px solid var(--gold-border); text-align: center; }
+.si:last-child { border-right: none; }
+.si-n { font-size: 24px; font-weight: 800; color: var(--gold); letter-spacing: -0.04em; }
+.si-l { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-mid); margin-top: 3px; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 745-755  ·  SECTION 13. ARTICLE CARD
+   PRIMARY SCOPE (4 rules in this group)
+   -------------------------------------------------------------------------- */
+.ac { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; transition: border-color var(--t-md), transform var(--t-md), box-shadow var(--t-md); position: relative; }
+.ac:hover { border-color: var(--gold-border); transform: translateY(-3px); box-shadow: var(--sh-gold); }
+.ac-img { width: 100%; min-height: 150px; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--border-dim); font-size: 28px; position: relative; overflow: hidden; }
+.ac-img::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.45), transparent); pointer-events: none; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css line 762  ·  SECTION 13. ARTICLE CARD
+   PRIMARY SCOPE (1 rule in this group)
+   CONTEXT: @supports not (aspect-ratio: 16/9)   (declared at style.css line 761)
+   -------------------------------------------------------------------------- */
+@supports not (aspect-ratio: 16/9) {
+  .ac-img::before { content: ''; display: block; padding-top: 56.25%; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 764-775  ·  SECTION 13. ARTICLE CARD
+   PRIMARY SCOPE (11 rules in this group)
+   -------------------------------------------------------------------------- */
+.ac-img img { width: 100%; height: 100%; object-fit: cover; }
+.ac-emoji { position: relative; z-index: 1; font-size: 28px; }
+.ac-body { padding: 16px 20px 20px; position: relative; }
+.ac-body .badge { margin-bottom: 10px; }
+.ac-t { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.35; letter-spacing: -0.02em; margin-bottom: 8px; }
+.ac-ex { font-size: 11px; font-weight: 300; color: var(--text-dim); line-height: 1.65; margin-bottom: 12px; }
+.ac-ft { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border-dim); }
+.a-dt { font-size: 10px; color: var(--text-dim); font-weight: 300; }
+.a-rd { font-size: 10px; color: var(--gold); font-weight: 700; }
+.ac h3 a::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; z-index: 1; }
+.ac .badge { position: relative; z-index: 2; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 786-798  ·  SECTION 14. FEATURED
+   PRIMARY SCOPE (13 rules in this group)
+   -------------------------------------------------------------------------- */
+.feat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; }
+.feat-img { display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--border); font-size: 40px; min-height: 260px; position: relative; overflow: hidden; }
+.feat-img::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.4), transparent); pointer-events: none; }
+.feat-img img { width: 100%; height: 100%; object-fit: cover; }
+.feat-emoji { position: relative; z-index: 1; font-size: 56px; }
+.feat-body { padding: 32px 36px; display: flex; flex-direction: column; gap: 12px; position: relative; }
+.feat-body .badge { align-self: flex-start; }
+.feat-t { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.03em; line-height: 1.2; }
+.feat-ex { font-size: 13px; font-weight: 300; color: var(--text-dim); line-height: 1.75; flex: 1; }
+.feat-meta { display: flex; align-items: center; gap: 12px; padding-top: 14px; border-top: 1px solid var(--border-dim); font-size: 10px; color: var(--text-dim); font-weight: 300; flex-wrap: wrap; }
+.feat-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border); }
+.feat-body .feat-t a::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; z-index: 1; }
+.feat-body .badge, .feat-body .btn { position: relative; z-index: 2; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 801-810  ·  SECTION 15. SECTION HEADER / PILLS
+   PRIMARY SCOPE (6 rules in this group)
+   -------------------------------------------------------------------------- */
+.shd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.stitle { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); }
+.slink { font-size: 11px; font-weight: 700; color: var(--gold); }
+.cp-strip { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 2px; }
+.cp-strip::-webkit-scrollbar { display: none; }
+.cp { font-size: 11px; font-weight: 700; padding: 7px 16px; border-radius: var(--pill); border: 1px solid var(--border); background: var(--surface); color: var(--text-dim); cursor: pointer; white-space: nowrap; transition: all var(--t); flex-shrink: 0; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 816-866  ·  SECTION 15. SECTION HEADER / PILLS
+   ADDENDUM [A2]
+   -------------------------------------------------------------------------- */
+.cp-strip-wrap { position: relative; min-width: 0; }
+.cp-strip-wrap.has-overflow.can-prev::before, .cp-strip-wrap.has-overflow.can-next::after { content: ''; position: absolute; top: 0; bottom: 0; width: 32px; pointer-events: none; z-index: 4; }
+.cp-strip-wrap.has-overflow.can-prev::before { left: 0; background: linear-gradient(90deg, var(--strip-bg, var(--bg)), transparent); }
+.cp-strip-wrap.has-overflow.can-next::after { right: 0; background: linear-gradient(270deg, var(--strip-bg, var(--bg)), transparent); }
+[data-theme="dark"] .cp-strip-wrap.has-overflow.can-prev::before { background: linear-gradient(90deg, var(--strip-bg, var(--dark)), transparent); }
+[data-theme="dark"] .cp-strip-wrap.has-overflow.can-next::after { background: linear-gradient(270deg, var(--strip-bg, var(--dark)), transparent); }
+.cp-scroll-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); color: var(--gold); font-size: 15px; font-weight: 700; line-height: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 5; box-shadow: var(--sh-sm); opacity: 0; pointer-events: none; transition: opacity var(--t), border-color var(--t), color var(--t), background var(--t); }
+.cp-strip-wrap.has-overflow.can-next .cp-scroll-next, .cp-strip-wrap.has-overflow.can-prev .cp-scroll-prev { opacity: 1; pointer-events: auto; }
+.cp-scroll-prev { left: 0; }
+.cp-scroll-next { right: 0; }
+.cp-scroll-btn:hover { border-color: var(--gold-border); color: var(--gold); background: var(--gold-muted); }
+.cp-scroll-btn:disabled { opacity: 0; pointer-events: none; }
+[data-theme="dark"] .cp-scroll-btn { background: var(--dark-s); border-color: var(--dark-b); color: var(--gold-b); }
+[data-theme="dark"] .cp-scroll-btn:hover { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.35); }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 867-886  ·  SECTION 15. SECTION HEADER / PILLS
+   PRIMARY SCOPE (7 rules in this group)
+   -------------------------------------------------------------------------- */
+.cp:hover { border-color: var(--gold-border); color: var(--gold); }
+.cp.on { background: var(--gold-btn); border-color: var(--gold-btn); color: #fff; }
+#gwill-posts-grid { position: relative; transition: min-height 240ms ease; }
+#gwill-posts-grid.gwill-loading { pointer-events: none; }
+#gwill-posts-grid.gwill-loading > :not(.gwill-spinner) { opacity: 0.35; }
+#gwill-posts-grid > * { transition: opacity var(--t-md); }
+#gwill-posts-grid .gwill-spinner { position: absolute; top: 56px; left: 0; right: 0; margin: 0 auto; width: 30px; height: 30px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--gold); animation: gwill-spin 0.8s linear infinite; z-index: 2; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css line 889  ·  SECTION 15. SECTION HEADER / PILLS
+   PRIMARY SCOPE (1 rule in this group)
+   CONTEXT: @media (prefers-reduced-motion: reduce)   (declared at style.css line 888)
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  #gwill-posts-grid .gwill-spinner { animation-duration: 2s; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 891-892  ·  SECTION 15. SECTION HEADER / PILLS
+   PRIMARY SCOPE (2 rules in this group)
+   -------------------------------------------------------------------------- */
+#gwill-posts-grid img { opacity: 0; transition: opacity var(--t-md); }
+#gwill-posts-grid img.gwill-img-in { opacity: 1; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 939-1000  ·  SECTION 18. NEWSLETTER
+   PRIMARY SCOPE (23 rules in this group)
+   -------------------------------------------------------------------------- */
+.nl-s { background: var(--dark); border-radius: var(--r-xl); padding: 36px 44px; display: flex; align-items: center; justify-content: space-between; gap: 24px; position: relative; overflow: hidden; border: 1px solid var(--dark-b); }
+[data-theme="dark"] .nl-s { background: #1e1b16; border-color: rgba(245, 158, 11, 0.25); box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5); }
+.nl-s::before { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; pointer-events: none; background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 28px 28px; }
+.nl-s::after { content: ''; position: absolute; top: -120px; right: -120px; width: 380px; height: 380px; background: radial-gradient(circle, rgba(217,119,6,0.14) 0%, transparent 65%); pointer-events: none; }
+.nl-s > * { position: relative; z-index: 1; }
+.nl-s .nl-h { font-size: 20px; font-weight: 800; color: #f0ede6; letter-spacing: -0.03em; margin-bottom: 6px; }
+.nl-s p { font-size: 12px; font-weight: 300; color: var(--dark-dim); line-height: 1.7; max-width: 420px; }
+.nl-meta { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 9px; font-weight: 300; color: var(--dark-dim); letter-spacing: 0.08em; text-transform: uppercase; }
+.nl-meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--dark-b); }
+.nl-s .gwill-newsletter { display: flex; flex-direction: column; gap: 14px; flex: 1; max-width: 420px; }
+.nl-s .gwill-newsletter__prompt { display: none; }
+.nl-s .gwill-form--newsletter__fields { display: flex; gap: 8px; }
+.nl-s .gwill-form--newsletter__fields .gwill-form__field { flex: 1; min-width: 0; }
+.nl-s .gwill-form input[type="email"] { background: var(--dark-s); border: 1px solid var(--gold-input-border); color: #f0ede6; }
+.nl-s .gwill-form input[type="email"]:-webkit-autofill, .nl-s .gwill-form input[type="email"]:-webkit-autofill:hover, .nl-s .gwill-form input[type="email"]:-webkit-autofill:focus { -webkit-box-shadow: 0 0 0 1000px var(--dark-s) inset !important; -webkit-text-fill-color: #f0ede6 !important; caret-color: #f0ede6 !important; transition: background-color 9999s ease-in-out 0s; }
+.nl-s .gwill-form input[type="email"]::placeholder { color: var(--dark-dim); }
+.nl-s .gwill-form__submit { background: var(--gold-btn); color: #fff; border: none; font-size: 12px; font-weight: 700; padding: 0 20px; border-radius: var(--r-md); white-space: nowrap; transition: background var(--t); height: 46px; }
+.nl-s .gwill-form__submit:hover { background: #92400e; }
+.nl-s .gwill-form__status { font-size: 11px; color: #c4b89a; }
+.nl-s .gwill-form__status.error { color: #f87171; }
+.nl-s .gwill-form input[type="email"]:focus, .m-nl .gwill-form input[type="email"]:focus, [data-theme="dark"] .sw .gwill-form input[type="email"]:focus { border-color: var(--gold-b); box-shadow: 0 0 0 3px rgba(245,158,11,0.18); outline: none; }
+.m-nl .gwill-form__submit, .nl-s .gwill-form__submit, .nl-hero-form .gwill-form__submit, .sw .gwill-form__submit { height: 48px; }
+.m-nl .gwill-form--newsletter__fields, .nl-s .gwill-form--newsletter__fields, .nl-hero-form .gwill-form--newsletter__fields { align-items: stretch; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 1375-1380  ·  SECTION 2b1a. currency converter (v1.1.0)
+   PRIMARY SCOPE (2 rules in this group)
+   -------------------------------------------------------------------------- */
+.tool-card__foot .btn { flex: 1; justify-content: center; }
+.tool-card .btn { width: 100%; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css line 1457  ·  SECTION 2b1a. currency converter (v1.1.0)
+   PRIMARY SCOPE (1 rule in this group)
+   CONTEXT: @media (max-width: 767px)   (declared at style.css line 1456)
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .con > .st-table-wrap { margin-left: calc(-1 * var(--con-pad)); margin-right: calc(-1 * var(--con-pad)); border-radius: 0; border-left: none; border-right: none; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 1559-1571  ·  SECTION 2b2. large-text resilience (OS font-scale, Firefox Android obeys it by design, v1.0.264)
+   PRIMARY SCOPE (5 rules in this group)
+   -------------------------------------------------------------------------- */
+.fs-lg h1, .fs-lg .hero-h, .fs-lg .hero-title, .fs-lg .frontpg-h1 { font-size: clamp(26px, 5.2vw + 10px, 38px) !important; overflow-wrap: anywhere; word-break: break-word; line-height: 1.15; }
+.fs-lg .hero-sub, .fs-lg .hero p { font-size: clamp(15px, 2.2vw + 6px, 18px) !important; line-height: 1.6; }
+.fs-lg .hero-acts, .fs-lg .hero-cats { flex-wrap: wrap; }
+.fs-lg .fpush, .fs-lg .fgooglenews, .fs-lg .btn, .fs-lg .finstall { flex-wrap: wrap; }
+.fs-lg .hero-tag, .fs-lg .hero-cats-lbl { font-size: 13px; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 1654-1675  ·  SECTION 20. AD SLOTS
+   ADDENDUM [A1]
+   -------------------------------------------------------------------------- */
+.ad-slot { background: #eae8e3; border: 1.5px dashed #c8c4bc; border-radius: var(--r-sm); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; position: relative; overflow: hidden; width: 100%; flex-shrink: 0; }
+.ad-slot::before { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; background: repeating-linear-gradient(-45deg, transparent, transparent 8px, rgba(0,0,0,0.025) 8px, rgba(0,0,0,0.025) 9px); pointer-events: none; }
+.ad-txt { font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #9a9080; position: relative; z-index: 1; }
+.ad-ring { width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--gold); animation: gwill-spin 0.8s linear infinite; flex: none; z-index: 1; margin-bottom: 2px; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css line 1677  ·  SECTION 20. AD SLOTS
+   ADDENDUM [A1]
+   CONTEXT: @media (prefers-reduced-motion: reduce)   (declared at style.css line 1676)
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .ad-ring { animation: none; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 1679-1694  ·  SECTION 20. AD SLOTS
+   ADDENDUM [A1]
+   -------------------------------------------------------------------------- */
+.ad-leader { height: 90px; }
+.ad-rect { height: 280px; max-width: 336px; margin: 24px auto; }
+.ad-sq { height: 250px; }
+.ad-feed { height: 180px; /* In a card grid (.g3) the feed slot must span the FULL row so it reads as an ad BETWEEN posts, not a squeezed 1/3-width grid cell. */ grid-column: 1 / -1; width: 100%; margin: 8px 0; }
+.gwill-comment-ad .ad-rect { margin: 0 auto; }
+.ad-banner { height: 60px; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 1697-1704  ·  SECTION 20. AD SLOTS
+   PRIMARY SCOPE (2 rules in this group)
+   -------------------------------------------------------------------------- */
+.ad-bg { margin-bottom: 24px; }
+.ad-bg:empty, .ad-bg:not(:has(> .ad-slot)), .gwill-comment-ad:empty { display: none; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 1722-1738  ·  SECTION 20. AD SLOTS
+   ADDENDUM [A1]
+   -------------------------------------------------------------------------- */
+.ad-slot { margin: 24px 0; position: relative; }
+.ad-rect { margin: 24px auto; }
+.ad-slot__spinner { position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; z-index: 1; pointer-events: none; }
+.ad-slot__content { position: relative; z-index: 2; min-height: 100%; display: flex; align-items: center; justify-content: center; }
+.ad-slot.ad-filled .ad-slot__spinner { display: none; }
+.ad-slot:not(.ad-filled) .ad-slot__spinner { display: flex; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 1746-1749  ·  SECTION 21. PER-DEVICE SLOT SIZES (v1.0.96)
+   ADDENDUM [A1]
+   CONTEXT: @media (max-width: 767px)   (declared at style.css line 1744)
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .ad-leader, .ad-banner { height: 50px; }
+  .ad-rect { height: 250px; max-width: 300px; }
+  .ad-feed { height: 250px; }
+  .ad-sq { height: 250px; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 1755-1759  ·  SECTION 21. PER-DEVICE SLOT SIZES (v1.0.96)
+   ADDENDUM [A1]
+   CONTEXT: @media (min-width: 768px) and (max-width: 1023px)   (declared at style.css line 1751)
+   -------------------------------------------------------------------------- */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .ad-leader { height: 90px; }
+  .ad-banner { height: 90px; }
+  .ad-rect { height: 280px; }
+  .ad-feed { height: 250px; }
+  .ad-sq { height: 250px; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 1763-1767  ·  SECTION 21. PER-DEVICE SLOT SIZES (v1.0.96)
+   ADDENDUM [A1]
+   CONTEXT: @media (min-width: 1024px)   (declared at style.css line 1761)
+   -------------------------------------------------------------------------- */
+@media (min-width: 1024px) {
+  .ad-leader { height: 90px; }
+  .ad-banner { height: 90px; }
+  .ad-rect { height: 280px; }
+  .ad-feed { height: 280px; }
+  .ad-sq { height: 250px; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 1769-1770  ·  SECTION 21. PER-DEVICE SLOT SIZES (v1.0.96)
+   ADDENDUM [A1]
+   -------------------------------------------------------------------------- */
+[data-theme="dark"] .ad-slot { background: #171512; border-color: #2c2822; }
+[data-theme="dark"] .ad-txt { color: #5a5248; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 2479-2481  ·  SECTION 36. APP CARDS (Finance Apps page)
+   PRIMARY SCOPE (2 rules in this group)
+   -------------------------------------------------------------------------- */
+.app-card__foot .btn { flex: 1; justify-content: center; }
+.app-card .b-green, .app-card .b-ghost { position: relative; z-index: 1; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 2556-2557  ·  SECTION 40. EMPTY STATE (404 + no search results)
+   PRIMARY SCOPE (2 rules in this group)
+   -------------------------------------------------------------------------- */
+.es .cp-strip { justify-content: center; justify-content: safe center; margin-bottom: 28px; padding-left: 4px; padding-right: 4px; padding-inline: 4px; scroll-padding-left: 4px; scroll-padding-right: 4px; scroll-padding-inline: 4px; }
+.es .btn { text-decoration: none; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css line 2655  ·  SECTION 43. LEGAL PAGES (page-legal.php, v1.0.115 dark-hero redesign)
+   PRIMARY SCOPE (1 rule in this group)
+   -------------------------------------------------------------------------- */
+.legal-layout > .ad-bg { grid-column: 1 / -1; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css line 2856  ·  SECTION 45. NEWSLETTER PAGE (v1.0.114 redesign)
+   PRIMARY SCOPE (1 rule in this group)
+   -------------------------------------------------------------------------- */
+.nl-content .ad-bg { margin: 28px 0; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 2944-2947  ·  SECTION 46. FORMS (contact)
+   PRIMARY SCOPE (1 rule in this group)
+   -------------------------------------------------------------------------- */
+.nl-s .gwill-form__field-error, .m-nl .gwill-form__field-error, .nl-hero-form .gwill-form__field-error, .sw .gwill-form__field-error { color: #f87171; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 2966-2972  ·  SECTION 48. LAYOUT UTILITIES
+   PRIMARY SCOPE (3 rules in this group)
+   -------------------------------------------------------------------------- */
+.con { max-width: 1100px; margin: 0 auto; padding: 0 var(--con-pad); }
+.g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.sg { margin-top: 56px; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css line 2986  ·  SECTION 49. RESPONSIVE: tablet 768-1023px
+   ADDENDUM [A4]
+   CONTEXT: @media (max-width: 1023px)   (declared at style.css line 2985)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1023px) {
+  :root { --con-pad: 28px; --header-h: 56px; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 2987-3008  ·  SECTION 49. RESPONSIVE: tablet 768-1023px
+   PRIMARY SCOPE (13 rules in this group)
+   CONTEXT: @media (max-width: 1023px)   (declared at style.css line 2985)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1023px) {
+  .g3 { grid-template-columns: 1fr 1fr; }
+  .hero { padding: 52px var(--con-pad) 52px; }
+  .hero-h { font-size: 42px; }
+  .feat { grid-template-columns: 1fr; }
+  .feat-img { min-height: 200px; border-right: none; border-bottom: 1px solid var(--border); }
+  .stat-strip { display: grid; grid-template-columns: 1fr 1fr; }
+  .si { border-right: 1px solid var(--gold-border); border-bottom: 1px solid var(--gold-border); }
+  .si:nth-child(2n) { border-right: none; }
+  .si:nth-last-child(-n+2) { border-bottom: none; }
+  .nl-s { flex-direction: row; align-items: center; }
+  .nl-s .nl-copy, .nl-s .gwill-newsletter { width: auto; flex: 1 1 50%; min-width: 0; }
+  .nl-s .gwill-form--newsletter__fields { flex-direction: row; }
+  .nl-s .gwill-form__submit { width: auto; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css line 3016  ·  SECTION 50. RESPONSIVE: mobile ≤767px
+   ADDENDUM [A4]
+   CONTEXT: @media (max-width: 767px)   (declared at style.css line 3015)
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  :root { --con-pad: 20px; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 3021-3035  ·  SECTION 50. RESPONSIVE: mobile ≤767px
+   PRIMARY SCOPE (14 rules in this group)
+   CONTEXT: @media (max-width: 767px)   (declared at style.css line 3015)
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .g2, .g3 { grid-template-columns: 1fr; }
+  .hero { padding: 40px 20px 48px; }
+  .hero .con, .about-hero .con { padding-left: 0; padding-right: 0; }
+  .hero-h { font-size: 30px; }
+  .hero-sub { font-size: 13px; }
+  .hero-acts { flex-direction: column; align-items: stretch; }
+  .hero-acts .bh, .hero-acts .bhg { justify-content: center; display: flex; width: 100%; }
+  .stat-strip { display: grid; grid-template-columns: 1fr 1fr; }
+  .si { border-right: 1px solid var(--gold-border); border-bottom: 1px solid var(--gold-border); }
+  .si:nth-child(2n) { border-right: none; }
+  .feat-img { min-height: 170px; font-size: 32px; }
+  .feat-emoji { font-size: 32px; }
+  .feat-body { padding: 24px 20px; }
+  .feat-t { font-size: 18px; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css line 3064  ·  SECTION 50. RESPONSIVE: mobile ≤767px
+   ADDENDUM [A1]
+   CONTEXT: @media (max-width: 767px)   (declared at style.css line 3015)
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .art-body > .ad-rect { margin-left: auto; margin-right: auto; max-width: 336px; width: 100%; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 3079-3086  ·  SECTION 50. RESPONSIVE: mobile ≤767px
+   PRIMARY SCOPE (5 rules in this group)
+   CONTEXT: @media (max-width: 767px)   (declared at style.css line 3015)
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .nl-s { padding: 28px 24px; }
+  .nl-s { flex-direction: column; align-items: stretch; }
+  .nl-s .nl-copy, .nl-s .gwill-newsletter { width: 100%; max-width: none; }
+  .nl-s .gwill-form--newsletter__fields { flex-direction: column; }
+  .nl-s .gwill-form__submit { width: 100%; justify-content: center; height: 46px; padding: 0 20px; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 3091-3092  ·  SECTION 50. RESPONSIVE: mobile ≤767px
+   ADDENDUM [A1]
+   CONTEXT: @media (max-width: 767px)   (declared at style.css line 3015)
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .ad-rect { height: 250px; }
+  .ad-feed { height: 120px; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css line 3127  ·  SECTION 51. RESPONSIVE AUDIT, TOUCH ERGONOMICS (coarse pointers only)
+   PRIMARY SCOPE (1 rule in this group)
+   CONTEXT: @media (pointer: coarse)   (declared at style.css line 3125)
+   -------------------------------------------------------------------------- */
+@media (pointer: coarse) {
+  .cp { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css line 3129  ·  SECTION 51. RESPONSIVE AUDIT, TOUCH ERGONOMICS (coarse pointers only)
+   ADDENDUM [A2]
+   CONTEXT: @media (pointer: coarse)   (declared at style.css line 3125)
+   -------------------------------------------------------------------------- */
+@media (pointer: coarse) {
+  .cp-scroll-btn { width: 44px; height: 44px; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css line 3166  ·  SECTION 52. RESPONSIVE AUDIT v1.0.233, remaining findings
+   PRIMARY SCOPE (1 rule in this group)
+   CONTEXT: @media (pointer: coarse)   (declared at style.css line 3165)
+   -------------------------------------------------------------------------- */
+@media (pointer: coarse) {
+  .db { min-height: 44px; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css line 3171  ·  SECTION 52. RESPONSIVE AUDIT v1.0.233, remaining findings
+   PRIMARY SCOPE (1 rule in this group)
+   CONTEXT: @media (max-width: 767px)   (declared at style.css line 3168)
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .db { font-size: 11px; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 3179-3187  ·  SECTION 53. ACCESSIBILITY, global focus indicator + reduced-motion guard
+   ADDENDUM [A3]
+   -------------------------------------------------------------------------- */
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--gold-btn); outline-offset: 2px; }
+[data-theme="dark"] a:focus-visible, [data-theme="dark"] button:focus-visible, [data-theme="dark"] [tabindex]:focus-visible { outline-color: var(--gold-b); }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 3221-3232  ·  SECTION 54. FLEX-GAP FALLBACK (Safari 14.0 / iOS 14.0-14.4)
+   PRIMARY SCOPE (11 rules in this group)
+   -------------------------------------------------------------------------- */
+.no-flex-gap .btn > * + * { margin-left: 6px; }
+.no-flex-gap .hero-tag > * + * { margin-left: 8px; }
+.no-flex-gap .hero-acts > * + * { margin-left: 12px; }
+.no-flex-gap .hero-cats > * + * { margin-left: 8px; }
+.no-flex-gap .feat-body > * + * { margin-top: 12px; }
+.no-flex-gap .feat-meta > * + * { margin-left: 12px; }
+.no-flex-gap .cp-strip > * + * { margin-left: 8px; }
+.no-flex-gap .nl-s > * + * { margin-left: 24px; }
+.no-flex-gap .nl-meta > * + * { margin-left: 8px; }
+.no-flex-gap .nl-s .gwill-newsletter > * + * { margin-top: 14px; }
+.no-flex-gap .nl-s .gwill-form--newsletter__fields > * + * { margin-left: 8px; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 3239-3240  ·  SECTION 54. FLEX-GAP FALLBACK (Safari 14.0 / iOS 14.0-14.4)
+   ADDENDUM [A1]
+   -------------------------------------------------------------------------- */
+.no-flex-gap .ad-slot > * + * { margin-top: 4px; }
+.no-flex-gap .ad-slot__spinner > * + * { margin-top: 4px; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 3293-3304  ·  SECTION 55. :hover STICKINESS RESET (touch devices only)
+   PRIMARY SCOPE (8 rules in this group)
+   CONTEXT: @media (hover: none)   (declared at style.css line 3288)
+   -------------------------------------------------------------------------- */
+@media (hover: none) {
+  .cp:hover:not(.on) { border-color: var(--border); background: var(--surface); color: var(--text-dim); }
+  .ac:hover { border-color: var(--border); transform: none; box-shadow: none; }
+  .b-gold:hover { background: var(--gold-btn); transform: none; }
+  .b-ghost:hover { border-color: var(--border); color: var(--text-mid); }
+  .b-green:hover { background: var(--green-btn); transform: none; }
+  .bh:hover { background: var(--gold-b); transform: none; }
+  .bhg:hover { border-color: var(--dark-b); }
+  .b-ghost:hover { background: transparent; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 3331-3338  ·  SECTION 56. FIREFOX AUTOFILL (:-moz-autofill)
+   PRIMARY SCOPE (1 rule in this group)
+   -------------------------------------------------------------------------- */
+.nl-s .gwill-form input[type="email"]:-moz-autofill, .nl-s .gwill-form input[type="email"]:-moz-autofill:hover, .nl-s .gwill-form input[type="email"]:-moz-autofill:focus { box-shadow: 0 0 0 1000px var(--dark-s) inset !important; color: #f0ede6 !important; caret-color: #f0ede6 !important; transition: background-color 9999s ease-in-out 0s; }
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css lines 3456-3462  ·  SECTION 54. PRINT
+   PRIMARY SCOPE (2 rules in this group)
+   CONTEXT: @media print   (declared at style.css line 3453)
+   -------------------------------------------------------------------------- */
+@media print {
+  .sh, .snav, .nsearch, .msearch, .hbg, .mno, .ticker, .ticker-inner, .ad-bg, .gwill-comment-ad, .share-row, .share-b, .cp-strip, .cp-scroll-btn, .gconsent, .gpwa, .gwill-bell-panel, .gbp-btn, .m-nl-wrap, .article-sidebar, .sw, .prog, .ftop, .fpush, .toc-list, .toc-dropdown, .legal-toc, .search-form, .btt { display: none !important; }
+  main, article, .art-body, .con { display: block !important; width: auto !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+}
+
+/* --------------------------------------------------------------------------
+   SOURCE: style.css · @keyframes referenced by the rules above
+   (names collected from the animation/animation-name declarations extracted)
+   -------------------------------------------------------------------------- */
+/* style.css lines 887-887 */
+@keyframes gwill-spin { to { transform: rotate(360deg); } }
+
+/* ==========================================================================
+   CUSTOM PROPERTIES REFERENCED BY THE RULES ABOVE
+   Format: --token · used at <style.css lines> · declared by: <selector> @ line
+   Note: --strip-bg is NOT declared on the homepage (only .pill-strip /
+   .apps-tabs declare it), so the .cp-strip-wrap fades on the homepage fall
+   back to var(--strip-bg, var(--bg)) / var(--strip-bg, var(--dark)).
+   ========================================================================== */
+/* --bg  ·  used at line(s) 831, 835  ·  declared by: :root @ line 97; [data-theme="dark"] @ line 140 */
+/* --border  ·  used at line(s) 690, 745, 786, 787, 796, 806, 849, 880, 1670, 2993, 3293, 3294, 3296  ·  declared by: :root @ line 97; [data-theme="dark"] @ line 140 */
+/* --border-dim  ·  used at line(s) 751, 770, 795  ·  declared by: :root @ line 97; [data-theme="dark"] @ line 140 */
+/* --con-pad  ·  used at line(s) 701, 1457, 2966, 2990  ·  declared by: :root @ line 97; :root @ line 2986; :root @ line 3016 */
+/* --dark  ·  used at line(s) 695, 701, 839, 842, 939  ·  declared by: :root @ line 97 */
+/* --dark-b  ·  used at line(s) 697, 865, 939, 953, 3299  ·  declared by: :root @ line 97 */
+/* --dark-dim  ·  used at line(s) 698, 727, 730, 951, 952, 968  ·  declared by: :root @ line 97 */
+/* --dark-s  ·  used at line(s) 865, 959, 960, 3331  ·  declared by: :root @ line 97 */
+/* --gold  ·  used at line(s) 741, 772, 803, 849, 863, 867, 880, 1670  ·  declared by: :root @ line 97; [data-theme="dark"] @ line 140 */
+/* --gold-b  ·  used at line(s) 695, 715, 725, 732, 865, 987, 3183, 3298  ·  declared by: :root @ line 97 */
+/* --gold-border  ·  used at line(s) 738, 739, 750, 863, 867, 2995, 3030  ·  declared by: :root @ line 97; [data-theme="dark"] @ line 140 */
+/* --gold-btn  ·  used at line(s) 688, 868, 969, 3179, 3295  ·  declared by: :root @ line 97; [data-theme="dark"] @ line 140 */
+/* --gold-input-border  ·  used at line(s) 959  ·  declared by: :root @ line 97 */
+/* --gold-muted  ·  used at line(s) 738, 863  ·  declared by: :root @ line 97; [data-theme="dark"] @ line 140 */
+/* --green-btn  ·  used at line(s) 692, 3297  ·  declared by: :root @ line 97; [data-theme="dark"] @ line 140 */
+/* --pill  ·  used at line(s) 672, 715, 731, 806  ·  declared by: :root @ line 97 */
+/* --r-lg  ·  used at line(s) 786  ·  declared by: :root @ line 97 */
+/* --r-md  ·  used at line(s) 745, 969  ·  declared by: :root @ line 97 */
+/* --r-sm  ·  used at line(s) 687, 695, 697, 1654  ·  declared by: :root @ line 97 */
+/* --r-xl  ·  used at line(s) 939  ·  declared by: :root @ line 97 */
+/* --sh-gold  ·  used at line(s) 750  ·  declared by: :root @ line 97; [data-theme="dark"] @ line 140 */
+/* --sh-sm  ·  used at line(s) 849  ·  declared by: :root @ line 97; [data-theme="dark"] @ line 140 */
+/* --strip-bg  ·  used at line(s) 831, 835, 839, 842  ·  declared by: .pill-strip @ line 847; .apps-tabs @ line 848 */
+/* --surface  ·  used at line(s) 745, 786, 806, 849, 3293  ·  declared by: :root @ line 97; [data-theme="dark"] @ line 140 */
+/* --t  ·  used at line(s) 687, 695, 697, 806, 849, 969  ·  declared by: :root @ line 97 */
+/* --t-md  ·  used at line(s) 745, 879, 891  ·  declared by: :root @ line 97 */
+/* --text  ·  used at line(s) 691, 768, 793  ·  declared by: :root @ line 97; [data-theme="dark"] @ line 140 */
+/* --text-dim  ·  used at line(s) 691, 769, 771, 794, 795, 802, 806, 3293  ·  declared by: :root @ line 97; [data-theme="dark"] @ line 140 */
+/* --text-mid  ·  used at line(s) 690, 742, 3296  ·  declared by: :root @ line 97; [data-theme="dark"] @ line 140 */
+/* referenced-but-undefined count: 0 */
+
+/* ==========================================================================
+   SELECTOR INVENTORY
+   Complete list of every selector extracted, in source order.
+   Every line is a CSS comment so this file stays 100% valid CSS.
+   Format: L<style.css line>  <selector>, wrapped in comment delimiters
+   ========================================================================== */
+/* total extracted selectors: 240 (unique line+selector pairs) */
+/* L97    :root */
+/* L140   [data-theme="dark"] */
+/* L672   .badge */
+/* L687   .btn */
+/* L688   .b-gold */
+/* L689   .b-gold:hover */
+/* L690   .b-ghost */
+/* L691   .b-ghost:hover */
+/* L692   .b-green */
+/* L693   .b-green:hover */
+/* L694   .b-sm */
+/* L695   .bh */
+/* L696   .bh:hover */
+/* L697   .bhg */
+/* L698   .bhg:hover */
+/* L701   .hero */
+/* L702   .hero::before */
+/* L707   .hero::after */
+/* L711   .hero-grain */
+/* L715   .hero-tag */
+/* L721   .hero-h */
+/* L725   .hero-h .g */
+/* L726   .hero-h .w */
+/* L727   .hero-sub */
+/* L728   .hero-acts */
+/* L729   .hero-cats */
+/* L730   .hero-cats-lbl */
+/* L731   .db */
+/* L732   .db-g */
+/* L733   .db-gr */
+/* L734   .db-p */
+/* L735   .db-s */
+/* L738   .stat-strip */
+/* L739   .si */
+/* L740   .si:last-child */
+/* L741   .si-n */
+/* L742   .si-l */
+/* L745   .ac */
+/* L750   .ac:hover */
+/* L751   .ac-img */
+/* L755   .ac-img::after */
+/* L762   .ac-img::before */
+/* L764   .ac-img img */
+/* L765   .ac-emoji */
+/* L766   .ac-body */
+/* L767   .ac-body .badge */
+/* L768   .ac-t */
+/* L769   .ac-ex */
+/* L770   .ac-ft */
+/* L771   .a-dt */
+/* L772   .a-rd */
+/* L774   .ac h3 a::after */
+/* L775   .ac .badge */
+/* L786   .feat */
+/* L787   .feat-img */
+/* L788   .feat-img::after */
+/* L789   .feat-img img */
+/* L790   .feat-emoji */
+/* L791   .feat-body */
+/* L792   .feat-body .badge */
+/* L793   .feat-t */
+/* L794   .feat-ex */
+/* L795   .feat-meta */
+/* L796   .feat-dot */
+/* L797   .feat-body .feat-t a::after */
+/* L798   .feat-body .badge, .feat-body .btn */
+/* L801   .shd */
+/* L802   .stitle */
+/* L803   .slink */
+/* L804   .cp-strip */
+/* L805   .cp-strip::-webkit-scrollbar */
+/* L806   .cp */
+/* L816   .cp-strip-wrap */
+/* L826   .cp-strip-wrap.has-overflow.can-prev::before, .cp-strip-wrap.has-overflow.can-next::after */
+/* L831   .cp-strip-wrap.has-overflow.can-prev::before */
+/* L835   .cp-strip-wrap.has-overflow.can-next::after */
+/* L839   [data-theme="dark"] .cp-strip-wrap.has-overflow.can-prev::before */
+/* L842   [data-theme="dark"] .cp-strip-wrap.has-overflow.can-next::after */
+/* L849   .cp-scroll-btn */
+/* L859   .cp-strip-wrap.has-overflow.can-next .cp-scroll-next, .cp-strip-wrap.has-overflow.can-prev .cp-scroll-prev */
+/* L861   .cp-scroll-prev */
+/* L862   .cp-scroll-next */
+/* L863   .cp-scroll-btn:hover */
+/* L864   .cp-scroll-btn:disabled */
+/* L865   [data-theme="dark"] .cp-scroll-btn */
+/* L866   [data-theme="dark"] .cp-scroll-btn:hover */
+/* L867   .cp:hover */
+/* L868   .cp.on */
+/* L876   #gwill-posts-grid */
+/* L877   #gwill-posts-grid.gwill-loading */
+/* L878   #gwill-posts-grid.gwill-loading > :not(.gwill-spinner) */
+/* L879   #gwill-posts-grid > * */
+/* L880   #gwill-posts-grid .gwill-spinner */
+/* L887   @keyframes gwill-spin */
+/* L889   #gwill-posts-grid .gwill-spinner */
+/* L891   #gwill-posts-grid img */
+/* L892   #gwill-posts-grid img.gwill-img-in */
+/* L939   .nl-s */
+/* L940   [data-theme="dark"] .nl-s */
+/* L941   .nl-s::before */
+/* L945   .nl-s::after */
+/* L949   .nl-s > * */
+/* L950   .nl-s .nl-h */
+/* L951   .nl-s p */
+/* L952   .nl-meta */
+/* L953   .nl-meta .dot */
+/* L955   .nl-s .gwill-newsletter */
+/* L956   .nl-s .gwill-newsletter__prompt */
+/* L957   .nl-s .gwill-form--newsletter__fields */
+/* L958   .nl-s .gwill-form--newsletter__fields .gwill-form__field */
+/* L959   .nl-s .gwill-form input[type="email"] */
+/* L960   .nl-s .gwill-form input[type="email"]:-webkit-autofill, .nl-s .gwill-form input[type="email"]:-webkit-autofill:hover, .nl-s .gwill-form input[type="email"]:-webkit-autofill:focus */
+/* L968   .nl-s .gwill-form input[type="email"]::placeholder */
+/* L969   .nl-s .gwill-form__submit */
+/* L970   .nl-s .gwill-form__submit:hover */
+/* L971   .nl-s .gwill-form__status */
+/* L972   .nl-s .gwill-form__status.error */
+/* L987   .nl-s .gwill-form input[type="email"]:focus, .m-nl .gwill-form input[type="email"]:focus, [data-theme="dark"] .sw .gwill-form input[type="email"]:focus */
+/* L994   .m-nl .gwill-form__submit, .nl-s .gwill-form__submit, .nl-hero-form .gwill-form__submit, .sw .gwill-form__submit */
+/* L998   .m-nl .gwill-form--newsletter__fields, .nl-s .gwill-form--newsletter__fields, .nl-hero-form .gwill-form--newsletter__fields */
+/* L1375  .tool-card__foot .btn */
+/* L1380  .tool-card .btn */
+/* L1457  .con > .st-table-wrap */
+/* L1559  .fs-lg h1, .fs-lg .hero-h, .fs-lg .hero-title, .fs-lg .frontpg-h1 */
+/* L1565  .fs-lg .hero-sub, .fs-lg .hero p */
+/* L1569  .fs-lg .hero-acts, .fs-lg .hero-cats */
+/* L1570  .fs-lg .fpush, .fs-lg .fgooglenews, .fs-lg .btn, .fs-lg .finstall */
+/* L1571  .fs-lg .hero-tag, .fs-lg .hero-cats-lbl */
+/* L1654  .ad-slot */
+/* L1659  .ad-slot::before */
+/* L1664  .ad-txt */
+/* L1670  .ad-ring */
+/* L1677  .ad-ring */
+/* L1679  .ad-leader */
+/* L1680  .ad-rect */
+/* L1681  .ad-sq */
+/* L1682  .ad-feed */
+/* L1693  .gwill-comment-ad .ad-rect */
+/* L1694  .ad-banner */
+/* L1697  .ad-bg */
+/* L1704  .ad-bg:empty, .ad-bg:not(:has(> .ad-slot)), .gwill-comment-ad:empty */
+/* L1722  .ad-slot */
+/* L1724  .ad-rect */
+/* L1729  .ad-slot__spinner */
+/* L1735  .ad-slot__content */
+/* L1736  .ad-slot.ad-filled .ad-slot__spinner */
+/* L1738  .ad-slot:not(.ad-filled) .ad-slot__spinner */
+/* L1746  .ad-leader, .ad-banner */
+/* L1747  .ad-rect */
+/* L1748  .ad-feed */
+/* L1749  .ad-sq */
+/* L1755  .ad-leader */
+/* L1756  .ad-banner */
+/* L1757  .ad-rect */
+/* L1758  .ad-feed */
+/* L1759  .ad-sq */
+/* L1763  .ad-leader */
+/* L1764  .ad-banner */
+/* L1765  .ad-rect */
+/* L1766  .ad-feed */
+/* L1767  .ad-sq */
+/* L1769  [data-theme="dark"] .ad-slot */
+/* L1770  [data-theme="dark"] .ad-txt */
+/* L2479  .app-card__foot .btn */
+/* L2481  .app-card .b-green, .app-card .b-ghost */
+/* L2556  .es .cp-strip */
+/* L2557  .es .btn */
+/* L2655  .legal-layout > .ad-bg */
+/* L2856  .nl-content .ad-bg */
+/* L2944  .nl-s .gwill-form__field-error, .m-nl .gwill-form__field-error, .nl-hero-form .gwill-form__field-error, .sw .gwill-form__field-error */
+/* L2966  .con */
+/* L2968  .g3 */
+/* L2972  .sg */
+/* L2986  :root */
+/* L2987  .g3 */
+/* L2990  .hero */
+/* L2991  .hero-h */
+/* L2992  .feat */
+/* L2993  .feat-img */
+/* L2994  .stat-strip */
+/* L2995  .si */
+/* L2996  .si:nth-child(2n) */
+/* L2997  .si:nth-last-child(-n+2) */
+/* L3005  .nl-s */
+/* L3006  .nl-s .nl-copy, .nl-s .gwill-newsletter */
+/* L3007  .nl-s .gwill-form--newsletter__fields */
+/* L3008  .nl-s .gwill-form__submit */
+/* L3016  :root */
+/* L3021  .g2, .g3 */
+/* L3023  .hero */
+/* L3024  .hero .con, .about-hero .con */
+/* L3025  .hero-h */
+/* L3026  .hero-sub */
+/* L3027  .hero-acts */
+/* L3028  .hero-acts .bh, .hero-acts .bhg */
+/* L3029  .stat-strip */
+/* L3030  .si */
+/* L3031  .si:nth-child(2n) */
+/* L3032  .feat-img */
+/* L3033  .feat-emoji */
+/* L3034  .feat-body */
+/* L3035  .feat-t */
+/* L3064  .art-body > .ad-rect */
+/* L3079  .nl-s */
+/* L3083  .nl-s */
+/* L3084  .nl-s .nl-copy, .nl-s .gwill-newsletter */
+/* L3085  .nl-s .gwill-form--newsletter__fields */
+/* L3086  .nl-s .gwill-form__submit */
+/* L3091  .ad-rect */
+/* L3092  .ad-feed */
+/* L3127  .cp */
+/* L3129  .cp-scroll-btn */
+/* L3166  .db */
+/* L3171  .db */
+/* L3179  a:focus-visible, button:focus-visible, [tabindex]:focus-visible */
+/* L3183  [data-theme="dark"] a:focus-visible, [data-theme="dark"] button:focus-visible, [data-theme="dark"] [tabindex]:focus-visible */
+/* L3221  .no-flex-gap .btn > * + * */
+/* L3222  .no-flex-gap .hero-tag > * + * */
+/* L3223  .no-flex-gap .hero-acts > * + * */
+/* L3224  .no-flex-gap .hero-cats > * + * */
+/* L3225  .no-flex-gap .feat-body > * + * */
+/* L3226  .no-flex-gap .feat-meta > * + * */
+/* L3227  .no-flex-gap .cp-strip > * + * */
+/* L3229  .no-flex-gap .nl-s > * + * */
+/* L3230  .no-flex-gap .nl-meta > * + * */
+/* L3231  .no-flex-gap .nl-s .gwill-newsletter > * + * */
+/* L3232  .no-flex-gap .nl-s .gwill-form--newsletter__fields > * + * */
+/* L3239  .no-flex-gap .ad-slot > * + * */
+/* L3240  .no-flex-gap .ad-slot__spinner > * + * */
+/* L3293  .cp:hover:not(.on) */
+/* L3294  .ac:hover */
+/* L3295  .b-gold:hover */
+/* L3296  .b-ghost:hover */
+/* L3297  .b-green:hover */
+/* L3298  .bh:hover */
+/* L3299  .bhg:hover */
+/* L3304  .b-ghost:hover */
+/* L3331  .nl-s .gwill-form input[type="email"]:-moz-autofill, .nl-s .gwill-form input[type="email"]:-moz-autofill:hover, .nl-s .gwill-form input[type="email"]:-moz-autofill:focus */
+/* L3456  .sh, .snav, .nsearch, .msearch, .hbg, .mno, .ticker, .ticker-inner, .ad-bg, .gwill-comment-ad, .share-row, .share-b, .cp-strip, .cp-scroll-btn, .gconsent, .gpwa, .gwill-bell-panel, .gbp-btn, .m-nl-wrap, .article-sidebar, .sw, .prog, .ftop, .fpush, .toc-list, .toc-dropdown, .legal-toc, .search-form, .btt */
+/* L3462  main, article, .art-body, .con */
+
+/* --------------------------------------------------------------------------
+   PORT ADDITIONS - not part of the homepage-scope extraction.
+
+   Token audit (see docs/port/06-homepage-verification.md): 25 of the 30 custom
+   properties the homepage rules reference were already declared by this port
+   with theme-identical values, and the 2 "mismatches" were decimal formatting
+   (.14 vs 0.14). Two were absent:
+
+     --gold-input-border  the newsletter email input's dark border (added below)
+     --strip-bg           declared only on .pill-strip / .apps-tabs in the theme,
+                          i.e. correctly absent on the homepage - the rules fall
+                          back to var(--strip-bg, var(--bg)) exactly as WordPress
+                          does.
+
+   NOTE: this port already carries the theme's [data-theme="dark"] token block
+   (Layout.astro). Nothing from it is duplicated here.
+   -------------------------------------------------------------------------- */
+:root { --gold-input-border: rgba(245,158,11,0.4); }
+
+/* --------------------------------------------------------------------------
+   PORT ADDITION: three rules the homepage-scope extraction missed because in
+   the theme they live in the FORMS section, not the newsletter section
+   (style.css 2934-2937). Without the first one the newsletter button renders
+   BOTH labels - measured live as "Subscribe Subscribing…" and a 198px-wide
+   button where WordPress measures 105px. The other two are the swap the theme
+   applies while a submission is in flight; this build has no endpoint, so the
+   port never sets [data-loading], but keeping them means the markup behaves
+   identically if one is ever wired up.
+   -------------------------------------------------------------------------- */
+.gwill-form__submit-loading { display: none; }
+.gwill-form__submit[data-loading] .gwill-form__submit-text { display: none; }
+.gwill-form__submit[data-loading] .gwill-form__submit-loading { display: inline; }
+/* ...and the honeypot hide rule (style.css 2948, same FORMS block). Without it
+   the field renders on the page and "Leave this blank" is visible to readers,
+   which is both a fidelity break and the opposite of a honeypot. */
+.gwill-honey { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }

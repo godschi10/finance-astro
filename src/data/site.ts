@@ -21,18 +21,27 @@ export interface Category {
   slug: string;
   name: string;
   emoji: string;
+  /** Theme badge class — inc/finance-helpers.php::gwill_finance_cat_style(). */
   badge: string;
+  /** Theme art tile class (card / featured image fallback) — same source. */
   art: string;
+  /** Hero chip + pill tint — gwill_finance_brand_chip_class() (default db-g). */
+  chip: string;
 }
 
 // Canonical brand order (finance-helpers.php::gwill_finance_brand_category_slugs).
+// badge + art + emoji are the theme's map verbatim (gwill_finance_cat_style):
+//   savings bgn/i-sav/🐷 · investing bgn/i-inv/📈 · crypto bpu/i-cry/₿
+//   banking bsl/i-ban/🏦 · remittance bsl/i-rem/✈️ · dollar-accounts bg/i-dol/💵
+// chip is gwill_finance_brand_chip_class(): savings db-g · investing db-gr ·
+//   crypto db-p · banking db-s · remittance db-g · dollar-accounts db-gr.
 export const CATEGORIES: Category[] = [
-  { slug: "savings", name: "Savings", emoji: "\u{1F437}", badge: "bgn", art: "i-sav" },
-  { slug: "investing", name: "Investing", emoji: "\u{1F4C8}", badge: "bg", art: "i-inv" },
-  { slug: "crypto", name: "Crypto", emoji: "\u20BF", badge: "bpu", art: "i-cry" },
-  { slug: "banking", name: "Banking", emoji: "\u{1F3E6}", badge: "bsl", art: "i-ban" },
-  { slug: "remittance", name: "Remittance", emoji: "\u2708\uFE0F", badge: "brd", art: "i-rem" },
-  { slug: "dollar-accounts", name: "Dollar Accounts", emoji: "\u{1F4B5}", badge: "bsl", art: "i-dol" },
+  { slug: "savings", name: "Savings", emoji: "\u{1F437}", badge: "bgn", art: "i-sav", chip: "db-g" },
+  { slug: "investing", name: "Investing", emoji: "\u{1F4C8}", badge: "bgn", art: "i-inv", chip: "db-gr" },
+  { slug: "crypto", name: "Crypto", emoji: "\u20BF", badge: "bpu", art: "i-cry", chip: "db-p" },
+  { slug: "banking", name: "Banking", emoji: "\u{1F3E6}", badge: "bsl", art: "i-ban", chip: "db-s" },
+  { slug: "remittance", name: "Remittance", emoji: "\u2708\uFE0F", badge: "bsl", art: "i-rem", chip: "db-g" },
+  { slug: "dollar-accounts", name: "Dollar Accounts", emoji: "\u{1F4B5}", badge: "bg", art: "i-dol", chip: "db-gr" },
 ];
 
 // Footer link groups — faithful port of inc/footer-links.php (gwill-finance-theme
@@ -213,6 +222,11 @@ export const POSTS: Post[] = [
   },
 ];
 
+// The homepage's Featured Article — the port's equivalent of the theme's
+// `gwill_featured_post_id` theme mod (live: post 5, the Dollar Accounts review).
+// index.astro falls back to the newest article if this slug ever disappears.
+export const FEATURED_SLUG = "grey-vs-geegpay-dollar-account";
+
 export const catBySlug = (slug: string): Category =>
   CATEGORIES.find((c) => c.slug === slug) ?? {
     slug,
@@ -220,6 +234,7 @@ export const catBySlug = (slug: string): Category =>
     emoji: "\u{1F4B0}",
     badge: "bsl",
     art: "i-dol",
+    chip: "db-g",
   };
 
 // Static ticker snapshot — real fetched values from header-truth.html.
