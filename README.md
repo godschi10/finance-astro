@@ -48,7 +48,7 @@ src/components/ArticleCard.astro  # WP card anatomy (inc/card-media.php + templa
 src/pages/index.astro         # homepage (WP front-page.php sections 2–8)
 src/styles/header.css         # header/ticker/search/theme-pill styles + responsive blocks
 src/styles/home.css           # homepage slice of the theme stylesheet, source order kept
-src/styles/base.css           # WP stylesheet section 2 (RESET/BASE): anchor reset, control fonts, hidden utility
+src/styles/base.css           # WP stylesheet section 2 (RESET/BASE): full base layer — `*` reset, anchor reset, replaced-element max-width, img block, heading tracking, control fonts, hidden utility
 src/styles/forms.css          # WP stylesheet section 46 (FORMS): control geometry, labels, submit/status chrome
 src/styles/footer.css         # footer grid, CTAs, socials, bottom bar + responsive/touch blocks
 src/lib/                      # calculator engines (TS ports of inc/*.php)

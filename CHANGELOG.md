@@ -3,6 +3,52 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.3.4] — 2026-09-23
+
+**Base layer completed, and proven layout-neutral** — the last unported rules from
+the theme's `RESET / BASE` section (`style.css:170-199`). The header, footer and
+homepage ports each measured their own surface in isolation and deliberately left
+this layer out; parity on the single-post page (in progress) requires the theme's
+base underneath it, so it lands first.
+
+Installed verbatim in `src/styles/base.css`, from `style.css:184, 185, 189`:
+
+- `img, picture, video, canvas, svg, iframe, input, textarea, select, table { max-width: 100% }`
+  — the port capped only `img`, so an oversized embed, video or data table could
+  overflow a phone column. The theme never lets that happen.
+- `img { height: auto; display: block }` — removes the inline baseline gap the
+  theme does not have under figures and card images.
+- `h1, h2, h3, h4 { letter-spacing: -0.02em }` — the theme's global heading
+  tracking; any heading carrying its own tracking still wins on specificity.
+
+Already installed by the v0.3.1 pass: `*, *::before, *::after { box-sizing:
+border-box; margin: 0; padding: 0 }`, `a { text-decoration: none; color: inherit }`,
+`button` / `input, select, textarea { font-family: var(--font) }`,
+`.skip-link` / `.screen-reader-text`, and `html { scroll-behavior: smooth;
+scroll-padding-top: … }`. **M-BASE-LAYER is closed.**
+
+**Evidence that it moved nothing** — the same commit was built twice (CSS at `HEAD`,
+then CSS with the three rules), the two trees served on separate local origins, and
+measured over 15 page/width combinations (home, `/articles/`, a real article, about,
+affiliate disclosure × 390/768/1280):
+
+- the served byte diff is exactly **+143 bytes** — the three rules and nothing else
+- the layout diff is **0 fields across all 15 combinations**: document height,
+  horizontal overflow, section offsets, heading tracking and underlined-link count
+  all identical
+- `/ @768` reads 4209px on the new build, matching the live v0.3.3 baseline, which
+  is what shows the agreement is real rather than a coincidence of two stale runs
+- the port renders **no `<img>` elements** on those five pages today, so
+  `display: block` is a no-op until the article port brings embedded media in
+
+One outlier is recorded rather than smoothed over: the first old-build pass read
+`/ @768` at 4159px against 4209px for the new build. Four repeat runs of that
+combination on *both* builds read 4209 every time — a flaky render in the first
+pass, not a layout shift.
+
+Gates: 5/5 green (header 31, footer 18, homepage 123, article 22, vectors 95);
+build 53 pages.
+
 ## [0.3.3] — 2026-09-23
 
 **Article subtitles, designed into the theme's idiom** — King's order ahead of

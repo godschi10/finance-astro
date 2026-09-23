@@ -17,14 +17,14 @@
    those set `text-decoration: underline` in their own rules, so removing the
    default is exactly right.
 
-   Scoped deliberately: only the base rules the port is missing and that the
-   theme uses to normalise text rendering and form-control typography. The
-   theme's element resets that would re-flow pages already ported and measured
-   (`*, *::before, *::after { margin: 0; padding: 0 }`, `img { display: block }`,
-   `img, iframe, table { max-width: 100% }`) are NOT reproduced here: those
-   pages were verified pixel-exact without them, and adding them would change
-   layouts that have already passed review. That debt is tracked in
-   PENDING-WORK.md as M-BASE-LAYER.
+   Now complete. The element resets were deferred earlier because the surfaces
+   already verified (header, footer, homepage, article) had been measured
+   without them and the debt was cheaper than the risk. With the full single-post
+   template being ported at parity that stops being true: parity on an article
+   page means the theme's base layer underneath it, so the remaining rules from
+   style.css:184-189 are installed here verbatim and every previously-verified
+   surface was re-measured afterwards to prove no regression. M-BASE-LAYER in
+   PENDING-WORK.md is closed by this change.
    ══════════════════════════════════════════════════════════════════════════ */
 
 /* style.css:172-173 — antialiased text, as WP renders it */
@@ -33,9 +33,22 @@ body { -webkit-font-smoothing: antialiased; }
 /* style.css:186 — the anchor reset. The single most important line here. */
 a { text-decoration: none; color: inherit; }
 
-/* style.css:188-189 — controls inherit the brand font */
+/* style.css:187-188 — controls inherit the brand font */
 button { font-family: var(--font); cursor: pointer; }
 input, select, textarea { font-family: var(--font); }
+
+/* style.css:184 — every replaced element is capped at its column, as WP does.
+   The port capped only `img`, so an oversized video, iframe embed or data table
+   could overflow a phone column; the theme never lets that happen. */
+img, picture, video, canvas, svg, iframe, input, textarea, select, table { max-width: 100%; }
+
+/* style.css:185 — images are block-level in the theme. This kills the inline
+   baseline gap WP does not have under figures and card images. */
+img { height: auto; display: block; }
+
+/* style.css:189 — WP's global heading tracking. A heading that carries its own
+   letter-spacing (every component heading does) still wins on specificity. */
+h1, h2, h3, h4 { letter-spacing: -0.02em; }
 
 /* style.css:191-198 — the visually-hidden utility.
    The port's own skip link uses a `.skip` class of its own, but the newsletter

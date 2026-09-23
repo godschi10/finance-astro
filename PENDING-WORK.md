@@ -229,6 +229,34 @@ the title, if you can design it to match."*
       variants in `art-sub-variants-390.png`); one-line switch if he prefers
       another.
 
+## DONE — 2026-09-23 · Base layer completed, proven layout-neutral (v0.3.4)
+
+- [x] **M-BASE-LAYER closed** — the last unported rules of the theme's
+      `RESET / BASE` section (`style.css:170-199`) installed verbatim in
+      `src/styles/base.css`: the extended `max-width: 100%` selector set
+      (`img, picture, video, canvas, svg, iframe, input, textarea, select,
+      table` — the port capped only `img`), `img { height: auto; display: block }`,
+      and `h1, h2, h3, h4 { letter-spacing: -0.02em }`. The rest of the section
+      (`*` reset, `a` reset, control fonts, `.skip-link`/`.screen-reader-text`,
+      `html { scroll-behavior; scroll-padding-top }`) was already installed by the
+      v0.3.1 pass.
+- [x] Why now, not later: parity on the single-post page (next) means the theme's
+      base layer underneath it; the earlier decision to defer was taken when no
+      page needed it.
+- [x] **Layout-neutrality proven by A/B, not asserted** — same commit built twice
+      (CSS at `HEAD` vs CSS with the rules), served on two local origins, measured
+      over 15 page/width combos (home, `/articles/`, a real article, about,
+      affiliate disclosure × 390/768/1280). Served diff = exactly **+143 bytes**,
+      the three rules and nothing else; layout diff = **0 fields across all 15
+      combos** (document height, horizontal overflow, section offsets, heading
+      tracking, underlined-link count). `/ @768` also matches the live v0.3.3
+      baseline at 4209px. Harness: `~/work/regression/measure.py`.
+- [x] One outlier recorded honestly: the first old-build pass read `/ @768`
+      4159px against the new build's 4209px. Four repeat runs of that combo on
+      *both* builds read 4209 every time — a flaky render, not a layout shift.
+- [x] Gates 5/5 green (header 31, footer 18, homepage 123, article 22,
+      vectors 95); build 53 pages.
+
 ## PENDING
 
 ### NEXT — Blog post import (King's stated next step)
@@ -290,15 +318,15 @@ first; the subtitle rides on top of it.
 - [ ] Re-run `npm run check` (article gate must stay green) and verify a
       freshly imported post renders title → subtitle → meta at 390/768/1280.
 
-- [ ] **M-BASE-LAYER** — `base.css` deliberately carries only the theme's base
-      rules that normalise text rendering and control typography. Still not
-      ported from the theme's RESET/BASE section, because each would re-flow
-      pages already measured and reviewed: `*, *::before, *::after { box-sizing:
-      border-box; margin: 0; padding: 0 }`, `img { height: auto; display: block }`,
-      `img, picture, video, canvas, svg, iframe, input, textarea, select, table
-      { max-width: 100% }`, `h1, h2, h3, h4 { letter-spacing: -0.02em }`,
-      `html { scroll-behavior: smooth; scroll-padding-top: … }`. Port them
-      page-by-page with measurement, not in one pass.
+- [x] **M-BASE-LAYER** — CLOSED in v0.3.4. All nine rules of the theme's
+      `RESET / BASE` section (`style.css:170-199`) are now installed in
+      `base.css` — the `*` reset, `html` scroll behaviour, `body`, the replaced-
+      element `max-width` set, `img { height: auto; display: block }`,
+      `a { text-decoration: none }`, control font inheritance, the heading
+      letter-spacing, and the visually-hidden utility. Installed in one pass
+      rather than "page-by-page with measurement" because the risk that argument
+      was protecting against was measured away: A/B over 15 page/width combos
+      gave 0 layout differences. See the v0.3.4 DONE section.
 
 - [ ] **M-TABLET-PARITY (homepage subset now done — v0.3.0)** — the theme's
       `@media (max-width: 1023px)` homepage rules (`.nl-s` newsletter row,
