@@ -219,8 +219,12 @@ the title, if you can design it to match."*
 - [x] Measured at 390/768/1280 (light + dark) and captured
       `docs/evidence/art-sub-{390,768,1280}.png` +
       `art-sub-variants-390.png`; design record `docs/port/08-article-subtitle.md`.
-- [ ] Ship `main` + `pages-dist`; re-measure the live page; confirm the dark
-      theme's rule colour flips to `rgb(245,158,11)`.
+- [x] **Ship (v0.3.3) 2026-09-23** — `main` **`b11217a`**; `pages-dist` **`cb8e08a`**;
+      Pages `built cb8e08a`. **Verified live at 390px:** DOM order
+      `art-h → art-sub → feat-meta`; authored subtitle served verbatim;
+      17px · weight 300 · rule `3px rgb(180,83,9)` · inset 16px · 16px below the
+      title; dark theme flips the rule to `rgb(245,158,11)` on
+      `rgb(196,184,154)` text. Evidence `docs/evidence/art-sub-live-390.png`.
 - [ ] **King's verdict on the treatment** (gold rule vs the plain and hairline
       variants in `art-sub-variants-390.png`); one-line switch if he prefers
       another.
