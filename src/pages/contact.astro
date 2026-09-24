@@ -1,6 +1,9 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { SITE } from "../data/site";
+// The port's own .art-body prose typography moved out of the layout so the
+// ported article page can use the theme's instead. This page still wants it.
+import "../styles/prose.css";
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
 <Layout title="Contact - GWill Finance" description="Contact GWill Finance: corrections, app tips, partnerships. No inbox black hole." crumb="Contact">

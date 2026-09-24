@@ -3,6 +3,81 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.4.0] — 2026-09-23
+
+**The article page is now a port of `single.php`, not a page in the theme's
+general idiom.** King's correction — *"you only focused on the subtitles, why
+didn't you port the rest of the blogpost template"* — was right: the previous
+article page shared almost no class vocabulary with WordPress, so nothing on it
+could be checked against the original.
+
+The class names are now WordPress's, which means the theme's own stylesheet
+applies to the markup unchanged:
+
+- **Markup** — `.art-hd` header (`.bc` breadcrumb → `.badge` → `h1.art-t` →
+  subtitle → `.art-meta`), `.prog > .prog-f` progress, `.con` container,
+  `.sb-layout` two-column grid, `.art-reading-surface` → `.art-surface-pad`,
+  the mobile `.toc-dropdown.toc-mobile` with its `.toc-summary`/`.toc-caret`/
+  `.toc-list`/`.toc-sub`, `.discl.mb24`, `.art-body`, `.share-row` with all four
+  controls, `.abio.mt20`, the `.mt40`/`.shd`/`h2.stitle`/`.g2` related block,
+  `.m-nl-wrap`, and `aside.article-sidebar[position:sticky;top:72px]` with its
+  three `.sw` cards.
+- **Copy** byte-exact, punctuation included: the affiliate sentence with its
+  period inside `<strong>`, `In this article` (lower-case) in the mobile summary
+  against `In This Article` in the sidebar, `Weekly digest.` in both newsletter
+  blocks, the ⚠ at U+26A0, `Read →`, `{N} min read`.
+- **Removed**: the invented `.art-h`, `.disc-box`, `.author-bio`, `.art-main`,
+  `.art-side`, `.legal-toc` article sidebar, `.art-hero`, the `.progress`
+  bar, and the *"Comments — read-only in v1"* staging notice — the kind of
+  visible placeholder the porting rules forbid.
+- **New components**: `NewsletterForm.astro` (the theme's partial, with the id
+  passed in the way `wp_unique_id()` varies it) and `AuthorSocials.astro`, a
+  **generated** file whose seven inline SVG icons are lifted verbatim from
+  `inc/author.php` rather than hand-copied.
+- **New files**: `src/styles/article.css` (the article slice of the theme's
+  stylesheet, verbatim, with `style.css` line provenance) and
+  `src/scripts/article.js` (progress, TOC scroll-spy, mobile dropdown, copy
+  button, comment-ad cloning — ported from the theme's `main.js`).
+- **Heading ids are server-rendered now.** WordPress injects them on
+  `the_content` at priority 9; `rehype-slug` does the same at build time, so the
+  TOC anchors exist in the served HTML and the old client-side id-patching hack
+  is gone.
+- **No `.art-cover`** — WordPress emits it only with a featured image, so with
+  no featured image the correct behaviour is to omit it. **No ad slots** and
+  **no `.comments-area`**: WordPress emits nothing for the former when no ad
+  code is configured, and the latter needs a comment backend this build does not
+  have (a posting form that cannot post would be a fake control).
+
+**Three real divergences found by measuring against the live article, all
+fixed:**
+
+1. The copy button was 30px tall against WordPress's 27px, because an invented
+   `button { font: inherit }` forced `line-height: 1.6` onto every button.
+   WordPress leaves the browser default (`normal`) in place. Fixed globally and
+   verified: every homepage button now matches WordPress exactly
+   (`.btn b-gold b-sm` 32px/17.6, `.gwill-form__submit` 46→48, `.fpush` 40/13),
+   at the cost of 3–4px of homepage document height — movement toward
+   WordPress, which is why it stands.
+2. The port's own `.art-body` prose (`max-width: 72ch`, `margin-top: 12px`, and
+   a gold `h2::before` bar WordPress does not draw) leaked into the article page
+   from `Layout.astro`. Moved verbatim to `src/styles/prose.css`, imported by
+   about and contact only; both pages measure identical afterwards.
+3. Two tokens the theme's `.brd` badge needs (`--red-muted`, `--red-border`)
+   were never installed; the port had only `--red` and its own literal-rgba
+   copy. The theme's values are installed and the duplicate rule removed.
+
+**Evidence** — `docs/port/10-article-template.md`, specs in
+`~/work/article-port/`, measurement runs in `~/work/regression/`. Behaviour and
+geometry compared against the live WordPress article at 390/768/1280: identical
+font sizes, line heights, letter spacing, colours, avatar sizes, disclosure
+chrome, share-button chrome, sidebar padding/radius and grid columns. The
+dropdown's default state, click state and stored value match. The only
+differences are content-driven and listed in the doc (longer title, no
+`Updated` fragment on this post, longer bio).
+
+Gate: `check-article-fidelity.mjs` grew from 22 assertions describing the stub
+to **79 describing WordPress's contract**; all 5 gates green.
+
 ## [0.3.4] — 2026-09-23
 
 **Base layer completed, and proven layout-neutral** — the last unported rules from

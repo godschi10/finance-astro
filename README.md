@@ -33,7 +33,7 @@ non-zero if any of them fail, so a green build alone never means "shippable".
 | `scripts/check-header-fidelity.mjs` | Every MUST clause of the WP header port spec — brand, theme pill, search spotlight, ticker, nav nesting, the **responsive show/hide contract**, and the theme pill's **focus-return discipline** (a plain `.focus()` in a sticky header drags the page up on tap). |
 | `scripts/check-footer-fidelity.mjs` | The footer port: WP `footer.php` sections 2–5 plus the footer slice of stylesheet section 19 — markup and copy, class-by-class CSS values, the responsive contract (`≤767px` phone / `≥768px` desktop), the icon-escape guard, and the print rules. 64 assertions. |
 | `scripts/check-homepage-fidelity.mjs` | The homepage port: WP `front-page.php` sections 2–8, `template-parts/content.php`, `inc/card-media.php`, the homepage slice of the stylesheet, plus the BASE and FORMS sections in their own files — section order, class vocabulary, byte-exact copy, the pill-strip/filter contract, the static-build divergences, the anchor reset, and the control geometry measurement had to fight for. 123 assertions. |
-| `scripts/check-article-fidelity.mjs` | The article surface (Phase 3): the title stack, the **net-new subtitle** — placement directly after the title, the `subtitle` field with its `description` fallback, and its design contract (weight 300, `--text-mid`, the theme's 3px `--gold` rule, 16px inset, 62ch) — plus the progress bar, disclosure, TOC, share row, author bio, related section and JSON-LD. 22 assertions. |
+| `scripts/check-article-fidelity.mjs` | The ported single-post page (`single.php`): the title stack in WordPress's order (`.art-hd` → `.bc` breadcrumb → `.badge` → `h1.art-t` → the **net-new subtitle** → `.art-meta` in its `F Y` / `N min read` / conditional-updated shape), the page scaffolding (`.prog`, `.con`, `.sb-layout`, `.art-reading-surface`), the mobile TOC dropdown, the byte-exact disclosure and share row with all four controls, the `.abio` author box and its generated social icons, the `.mt40`/`.g2` related block, both newsletter blocks, the sidebar's three `.sw` cards, plus the rules that keep it honest — the theme's stylesheet is installed verbatim, the forbidden staging notice stays out, heading ids are server-rendered, and the port's own prose no longer leaks into the article page. 79 assertions. |
 | `scripts/vectors-check.mjs` | Every TypeScript calculator engine reproduces the PHP engine's numbers, vector-for-vector, against the PHP truth oracle in `scripts/php-harness/vectors.json`. |
 
 All five are wrapped by `scripts/check.mjs`.
@@ -45,7 +45,13 @@ src/layouts/Layout.astro      # chrome: <head>, tokens, header, footer, inline s
 src/components/Header.astro   # desktop + mobile headers (WP header.php)
 src/components/Footer.astro   # desktop + phone footers (WP footer.php sections 2–5)
 src/components/ArticleCard.astro  # WP card anatomy (inc/card-media.php + template-parts/content.php)
+src/components/NewsletterForm.astro  # WP template-parts/forms/contact-newsletter.php, id passed in like wp_unique_id()
+src/components/AuthorSocials.astro   # GENERATED from inc/author.php — the article author box's icon row
 src/pages/index.astro         # homepage (WP front-page.php sections 2–8)
+src/pages/articles/[slug].astro  # article page (WP single.php), on WP's class vocabulary
+src/scripts/article.js        # article behaviours ported from the theme's main.js
+src/styles/article.css        # the article slice of the theme stylesheet, verbatim
+src/styles/prose.css          # the port's own .art-body prose, for about/contact only
 src/styles/header.css         # header/ticker/search/theme-pill styles + responsive blocks
 src/styles/home.css           # homepage slice of the theme stylesheet, source order kept
 src/styles/base.css           # WP stylesheet section 2 (RESET/BASE): full base layer — `*` reset, anchor reset, replaced-element max-width, img block, heading tracking, control fonts, hidden utility

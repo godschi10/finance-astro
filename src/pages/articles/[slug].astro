@@ -1,8 +1,51 @@
 ---
+/**
+ * Article (single post) — port of gwill-finance-theme single.php (1.13.39).
+ *
+ * Class vocabulary, element order, conditionals and copy strings are the
+ * theme's; the source of truth for every line is documented in
+ * /home/opc/work/article-port/01-article-markup.md (file:line citations there).
+ *
+ * WordPress-only internals and how this port stands in for them:
+ *   .art-cover        — emitted only when has_post_thumbnail() (single.php:106).
+ *                       No port article has a featured image, so it is omitted,
+ *                       exactly as WordPress omits it.
+ *   ad slots          — gwill_finance_ad_slot() emits nothing when ads are off
+ *                       or no code is configured (single.php cond. 12-13). The
+ *                       live WordPress article serves nothing at all four left
+ *                       -column/comment slots, so nothing is emitted here.
+ *   .comments-area    — gated on comments_open() || get_comments_number()
+ *                       (single.php:211). This is a static build with no comment
+ *                       backend, and emitting a form that cannot post would be a
+ *                       fake control, so the block is absent by design and
+ *                       recorded in PENDING-WORK.md.
+ *   avatars           — get_avatar() output baked as the author's Gravatar URL,
+ *                       same hash/d=wavatar/r=g query and same srcset 2x as the
+ *                       live page serves.
+ *   TOC anchor ids    — WordPress injects them server-side at the_content
+ *                       priority 9 (inc/table-of-contents.php:36-79). Here
+ *                       rehype-slug does it at build time, so the ids are in the
+ *                       served HTML and the TOC hrefs match by construction.
+ *   .art-sub          — NOT a WordPress element. King asked for a post subtitle
+ *                       after the title; WordPress has no equivalent, so it is
+ *                       designed in the theme's own idiom (see docs/port/08).
+ */
 import Layout from "../../layouts/Layout.astro";
 import ArticleCard from "../../components/ArticleCard.astro";
+import NewsletterForm from "../../components/NewsletterForm.astro";
+import AuthorSocials from "../../components/AuthorSocials.astro";
+// The article-page slice of the theme stylesheet, imported HERE rather than in
+// the layout so its ~70 KB lands only on article pages instead of being inlined
+// into all 53.
+import "../../styles/article.css";
 import { catBySlug } from "../../data/site";
-import { allArticles, authorBySlug, fmtMonthYear, relatedTo, tocOf } from "../../data/content";
+import {
+  allArticles,
+  authorBySlug,
+  fmtLongMonthYear,
+  fmtMonthYear,
+  relatedTo,
+} from "../../data/content";
 
 export async function getStaticPaths() {
   const posts = await allArticles();
@@ -12,17 +55,59 @@ export async function getStaticPaths() {
 const { slug } = Astro.props;
 const all = await allArticles();
 const entry = all.find((p) => p.slug === slug)!;
-const { Content } = await entry.render();
+const { Content, headings } = await entry.render();
 const d = entry.data;
 const cat = catBySlug(d.category);
 const author = authorBySlug(d.authorSlug);
-const related = relatedTo(all, entry, 3);
-const toc = tocOf(entry.body);
-const alsoRead = all.filter((p) => p.slug !== entry.slug).slice(0, 3);
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 const url = `${base}articles/${entry.slug}/`;
 const origin = (Astro.site?.toString() ?? "https://godschi10.github.io").replace(/\/$/, "");
 const pageUrl = `${origin}${url}`;
+const catUrl = `${base}category/${cat.slug}/`;
+const authorUrl = `${base}author/${d.authorSlug}/`;
+
+// single.php:40 — the TOC is built from h2 + h3 in document order, and the SAME
+// list gates both the mobile dropdown and the sidebar widget: they are never
+// independently present (single.php cond. 1).
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+
+// single.php:151-153 — rawurlencode() (RFC 3986: %20 for spaces, not '+'), and
+// WhatsApp is built from title + one literal space + permalink before encoding.
+const raw = encodeURIComponent;
+const xUrl = `https://twitter.com/intent/tweet?text=${raw(d.title)}&url=${raw(pageUrl)}`;
+const liUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${raw(pageUrl)}`;
+const waUrl = `https://api.whatsapp.com/send?text=${raw(`${d.title} ${pageUrl}`)}`;
+
+// single.php:98 — the "Updated" fragment is shown only when the modified DATE
+// differs at day precision, so a post edited the day it was published shows none.
+const isoDay = (x: Date) => x.toISOString().slice(0, 10);
+const showUpdated = !!d.updated && isoDay(d.updated) !== isoDay(d.pubDate);
+
+// single.php:180-202 — same-category posts first (WP: category__in, count 3,
+// date DESC), with the theme's fallback to the most recent posts. Rendered in
+// the theme's .g2 grid using the theme's own card part.
+const related = relatedTo(all, entry, 3);
+
+// single.php:161 — the author's description, falling back to the theme's own
+// sentence when none is set. This port has an authored description, so the
+// theme's logic prints it; the fallback is kept for completeness.
+const FALLBACK_BIO =
+  "Web developer and finance writer. I build this site and write everything on it. I test every app before recommending it. Based in Nigeria.";
+const bio = author.bio?.trim() ? author.bio : FALLBACK_BIO;
+
+// get_avatar(), single.php:92 (20px, class art-avatar) and :158 (48px, lazy).
+const GRAVATAR =
+  "https://secure.gravatar.com/avatar/7d222093d563709bc3e8455fbf3164e5588becb2cb0c969dd8f5a9bd62754a86";
+
+// The newsletter blocks are gated on the same two options in WordPress
+// (single.php cond. 11), both of which default to on.
+const newsletter = true;
+
+// Extracted in the frontmatter on purpose: an inline /{6,}/ quantifier inside a
+// markup expression breaks the Astro compiler's brace matching (it closed the
+// expression at the quantifier's brace and emitted invalid JS).
+const ytId = d.videoUrl ? (d.videoUrl.match(/(?:v=|youtu\.be\/)([\w-]{6,})/)?.[1] ?? "") : "";
+
 const ld = (obj: unknown) => JSON.stringify(obj).replace(/</g, "\\u003c");
 const articleLd = {
   "@context": "https://schema.org",
@@ -30,140 +115,197 @@ const articleLd = {
   headline: d.title,
   description: d.description,
   author: { "@type": "Person", name: d.author },
-  datePublished: d.pubDate.toISOString().slice(0, 10),
-  ...(d.updated ? { dateModified: d.updated.toISOString().slice(0, 10) } : {}),
+  datePublished: isoDay(d.pubDate),
+  ...(d.updated ? { dateModified: isoDay(d.updated) } : {}),
   mainEntityOfPage: pageUrl,
 };
-const ytId = d.videoUrl ? (d.videoUrl.match(/(?:v=|youtu\.be\/)([\w-]{6,})/)?.[1] ?? "") : "";
 ---
+
 <Layout title={`${d.title} - GWill Finance`} description={d.description} crumb={d.title}>
 <script type="application/ld+json" set:html={ld(articleLd)}></script>
-<div class="progress" aria-hidden="true"><span id="read-progress"></span></div>
-<section class="con sg" aria-labelledby="art-h" style="padding-bottom:0">
-  <p class="crumbs"><a href={base}>Home</a> › <a href={`${base}articles/`}>All Articles</a> › <a href={`${base}category/${cat.slug}/`}>{cat.name}</a> › {d.title}</p>
-  <span class={`badge ${cat.badge}`}>{cat.name}</span>
-  <h1 class="art-h" id="art-h">{d.title}</h1>
-  <p class="art-sub">{d.subtitle ?? d.description}</p>
-  <div class="feat-meta" style="margin-top:12px">
-    <a href={`${base}author/${d.authorSlug}/`} style="color:var(--gold);font-weight:700">{d.author}</a>
-    <span class="feat-dot" aria-hidden="true"></span>
-    <span>{fmtMonthYear(d.pubDate)}</span>
-    <span class="feat-dot" aria-hidden="true"></span>
-    <span>{d.readMins} min read</span>
-    {d.updated && (<><span class="feat-dot" aria-hidden="true"></span><span>Updated {fmtMonthYear(d.updated)}</span></>)}
-  </div>
-</section>
-<section class="con art-section" aria-label="Article content">
-  <div class="legal-layout art-layout">
-    <div class="art-main">
-      <div class="disc-box" role="note">
-        <strong>Affiliate note.</strong> Some links to apps may earn us a commission at no cost to you. Rankings are by testing, never by payment.
-      </div>
-      {ytId ? (
-        <div class="video-facade" data-video={ytId}>
-          <span class="video-emoji" aria-hidden="true">▶</span>
-          <p><strong>Video walkthrough</strong><br><span>Watch on YouTube — loads only when you press play.</span></p>
-          <button type="button" class="btn b-gold b-sm" data-play>Play video</button>
+
+<!-- single.php:43 — reading progress -->
+<div class="prog"><div class="prog-f"></div></div>
+
+<div class="con" style="padding-bottom:48px">
+  <div class="sb-layout">
+    <div>
+      <!-- Article header lives INSIDE the left column (v1.0.130) so the sidebar
+           TOC starts at the top beside the title (single.php:49-53). -->
+      <div class="art-hd">
+        <!-- 3. breadcrumb (single.php:57-81) -->
+        <div class="bc">
+          <a href={base}>Home</a>
+          <span class="bc-s">›</span>
+          <a href={catUrl}>{cat.name}</a>
+          <span class="bc-s">›</span>
+          <span>{d.title}</span>
         </div>
-      ) : (
-        <div class="feat-img art-hero" role="img" aria-label={`${cat.name} article artwork`}>
-          <span aria-hidden="true">{cat.emoji}</span>
-          <span class={`tile-wm ${cat.badge}`} aria-hidden="true">{cat.name}</span>
+
+        <a class={`badge ${cat.badge}`} style="margin-bottom:14px;display:inline-flex" href={catUrl}>{cat.name}</a>
+
+        <!-- 4. article header (single.php:88-101) -->
+        <h1 class="art-t">{d.title}</h1>
+
+        <!-- NOT in WordPress: the post subtitle King asked for, designed in the
+             theme's idiom (docs/port/08-article-subtitle.md). Falls back to the
+             excerpt so every post reads complete. -->
+        <p class="art-sub">{d.subtitle ?? d.description}</p>
+
+        <div class="art-meta">
+          <span class="art-author">
+            <img
+              class="avatar avatar-20 photo art-avatar"
+              src={`${GRAVATAR}?s=20&d=wavatar&r=g`}
+              srcset={`${GRAVATAR}?s=40&d=wavatar&r=g 2x`}
+              alt={d.author}
+              height="20"
+              width="20"
+              decoding="async"
+            />
+            <a class="art-author-link" href={authorUrl}>{d.author}</a>
+          </span>
+          <span class="art-dot"></span>
+          <span>{fmtLongMonthYear(d.pubDate)}</span><span class="art-dot"></span>
+          <span>{d.readMins} min read</span>
+          {showUpdated ? (<span class="art-dot"></span>) : null}
+          {showUpdated ? (<span>Updated {fmtMonthYear(d.updated!)}</span>) : null}
+        </div>
+      </div>
+
+      <div class="art-reading-surface">
+        <div class="art-surface-pad">
+          <!-- Mobile TOC dropdown (single.php:125-136) — shown by CSS on phones only -->
+          {toc.length > 0 && (
+            <div class="toc-dropdown toc-mobile" id="gwill-toc-mobile">
+              <button type="button" class="toc-summary" aria-expanded="true" aria-controls="gwill-toc-mobile-list">
+                <span>In this article</span>
+                <span class="toc-caret" aria-hidden="true">▾</span>
+              </button>
+              <div class="toc-list" id="gwill-toc-mobile-list">
+                {toc.map((h) => (
+                  <a href={`#${h.slug}`} class={h.depth === 3 ? "toc-sub" : undefined}>{h.text}</a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- Affiliate disclosure (single.php:139-142) -->
+          <div class="discl mb24">
+            <span class="discl-i">⚠</span>
+            <p class="discl-t"><strong>Affiliate disclosure.</strong> Some links in this article earn me a commission if you sign up through them, at no extra cost to you. I only recommend apps I have personally tested. This never changes my ratings.</p>
+          </div>
+
+          <div class="art-body">
+            {ytId && (
+              <div class="video-facade" data-video={ytId}>
+                <span class="video-emoji" aria-hidden="true">▶</span>
+                <p><strong>Video walkthrough</strong><br><span>Watch on YouTube — loads only when you press play.</span></p>
+                <button type="button" class="btn b-gold b-sm" data-play>Play video</button>
+              </div>
+            )}
+            <Content />
+          </div>
+
+          <!-- Share row (single.php:149-155): three links plus the copy button -->
+          <div class="share-row">
+            <span class="share-l">Share</span>
+            <a class="share-b" target="_blank" rel="noopener noreferrer" href={xUrl}>X (Twitter)</a>
+            <a class="share-b" target="_blank" rel="noopener noreferrer" href={liUrl}>LinkedIn</a>
+            <a class="share-b" target="_blank" rel="noopener noreferrer" href={waUrl}>WhatsApp</a>
+            <button class="share-b" type="button" data-copy={pageUrl}>Copy Link</button>
+          </div>
+
+          <!-- Author box (single.php:157-175) -->
+          <div class="abio mt20">
+            <div class="aav">
+              <img
+                class="avatar avatar-48 photo"
+                src={`${GRAVATAR}?s=48&d=wavatar&r=g`}
+                srcset={`${GRAVATAR}?s=96&d=wavatar&r=g 2x`}
+                alt={d.author}
+                height="48"
+                width="48"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div>
+              <div class="an-name">{d.author}</div>
+              <div class="abio-t">{bio}</div>
+              <AuthorSocials socials={author.socials ?? {}} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. related posts (single.php:183-204) -->
+      {related.length > 0 && (
+        <div class="mt40">
+          <div class="shd" style="margin-bottom:16px"><h2 class="stitle">Related Articles</h2></div>
+          <div class="g2">
+            {related.map((p) => (
+              <ArticleCard
+                slug={p.slug}
+                title={p.data.title}
+                excerpt={p.data.description}
+                category={p.data.category}
+                date={fmtMonthYear(p.data.pubDate)}
+                readMins={p.data.readMins}
+                author={p.data.author}
+              />
+            ))}
+          </div>
         </div>
       )}
-      <div class="art-body" id="art-body">
-        <Content />
-      </div>
-      <div class="share-row" aria-label="Share this article">
-        <span class="share-label">Share:</span>
-        <button type="button" class="chip" id="copy-link">Copy link</button>
-        <a class="chip" href={`https://x.com/intent/tweet?text=${encodeURIComponent(d.title)}`} target="_blank" rel="noopener noreferrer" style="text-decoration:none">Post on X</a>
-        <a class="chip" href={`https://wa.me/?text=${encodeURIComponent(d.title + " " + pageUrl)}`} target="_blank" rel="noopener noreferrer" style="text-decoration:none">WhatsApp</a>
-      </div>
-      <div class="author-bio">
-        <div class="author-mark" aria-hidden="true">₦</div>
-        <div>
-          <p class="author-role">Written by</p>
-          <p><a href={`${base}author/${d.authorSlug}/`} style="color:var(--gold);font-weight:800">{author.name}</a> <span class="author-role">· {author.role}</span></p>
-          <p class="author-text">{author.bio}</p>
+
+      <!-- Mobile newsletter block (single.php:228-236); CSS shows it on phones -->
+      {newsletter && (
+        <div class="m-nl-wrap">
+          <div class="m-nl">
+            <h3>Weekly digest.</h3>
+            <p>Rate changes, app reviews, money moves. Free.</p>
+            <NewsletterForm id="gwill-newsletter-1" />
+          </div>
         </div>
-      </div>
-      <div class="comments-hold" aria-label="Comments">
-        <span class="phase-tag">Comments — read-only in v1</span>
-        <p><strong>Discussion opens with the community launch.</strong> This static edition ships without a comment thread on purpose: no login wall, no third-party tracker, no fake box that swallows your words. Replies live on X meanwhile — every article links its share thread there.</p>
-      </div>
+      )}
     </div>
-    <aside class="art-side" aria-label="Article sidebar">
+
+    <!-- 7-8. in-article sidebar: TOC, square ad box, digest (single.php:243-286) -->
+    <aside class="article-sidebar" style="position:sticky;top:72px;align-self:start">
       {toc.length > 0 && (
-        <nav class="legal-toc" aria-label="On this page">
-          <p class="legal-toc-label">On this page</p>
-          <ol class="legal-toc-list" style="list-style:none inside" id="toc-list">
-            {toc.map((t) => (<li><a href={`#${t.id}`} data-toc={t.id}>{t.text}</a></li>))}
-          </ol>
-        </nav>
+        <div class="sw">
+          <div class="sw-t">In This Article</div>
+          <div class="toc-scroll">
+            {toc.map((h, i) => (
+              <div class={`toc-i${i === 0 ? " cur" : ""}`}>
+                <a href={`#${h.slug}`}>
+                  {h.depth === 3 ? (<span class="toc-g"></span>) : (<span class="toc-bar"></span>)}
+                  {h.text}
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
-      <nav class="legal-toc" aria-label="Also read" style="margin-top:20px">
-        <p class="legal-toc-label">Also read</p>
-        <ol class="legal-toc-list" style="list-style:none inside">
-          {alsoRead.map((p) => (<li><a href={`${base}articles/${p.slug}/`}>{p.data.title}</a></li>))}
-        </ol>
-      </nav>
+
+      <!-- Unconditional wrapper (single.php:274). WordPress serves this as an
+           empty box on the live article because no square ad code is
+           configured; the wrapper's inline style is the theme's. -->
+      <div class="sw" style="padding:0;overflow:hidden;border:1px solid var(--border)"></div>
+
+      {newsletter && (
+        <div class="sw">
+          <div class="sw-t">Weekly digest.</div>
+          <p class="fz11 fw3 cd lh mb12">Rate changes, app reviews, money moves. Free.</p>
+          <NewsletterForm id="gwill-newsletter-2" />
+        </div>
+      )}
     </aside>
   </div>
-</section>
-<section class="con sg" aria-labelledby="rel-h">
-  <div class="shd"><h2 class="stitle" id="rel-h">Keep reading</h2><a class="slink" href={`${base}articles/`}>All articles →</a></div>
-  <div class="g3">
-    {related.map((p) => (
-      <ArticleCard slug={p.slug} title={p.data.title} excerpt={p.data.description} category={p.data.category} date={fmtMonthYear(p.data.pubDate)} readMins={p.data.readMins} author={p.data.author} />
-    ))}
-  </div>
-</section>
-<script is:inline define:vars={{ tocIds: toc.map((t) => t.id) }}>
-(function(){
-try{
-var body=document.getElementById("art-body");
-if(body){
-var hs=Array.prototype.slice.call(body.querySelectorAll("h2"));
-hs.forEach(function(h,i){ if(tocIds[i]) h.id=tocIds[i]; });
-}
-var wrap=document.querySelector(".video-facade");
-if(wrap){
-var btn=wrap.querySelector("[data-play]");
-if(btn)btn.addEventListener("click",function(){
-var id=wrap.getAttribute("data-video")||"";
-var f=document.createElement("iframe");
-f.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(id)+"?autoplay=1&rel=0";
-f.title="Video walkthrough";
-f.allow="accelerometer; autoplay; encrypted-media; picture-in-picture";
-f.setAttribute("allowfullscreen","");
-f.style.cssText="position:absolute;inset:0;width:100%;height:100%;border:0";
-wrap.innerHTML="";
-wrap.style.position="relative";
-wrap.appendChild(f);
-});
-}
-var copy=document.getElementById("copy-link");
-if(copy)copy.addEventListener("click",function(){
-var done=function(){copy.textContent="Copied ✓";setTimeout(function(){copy.textContent="Copy link"},2000);};
-try{
-if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(window.location.href).then(done,done);}
-else{done();}
-}catch(e){done();}
-});
-var bar=document.getElementById("read-progress");
-var reduced=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-if(bar&&!reduced){
-var onScroll=function(){
-var h=document.documentElement;
-var max=h.scrollHeight-h.clientHeight;
-var p=max>0?(h.scrollTop||document.body.scrollTop)/max:0;
-bar.style.width=(p*100).toFixed(2)+"%";
-};
-document.addEventListener("scroll",onScroll,{passive:true});
-onScroll();
-}
-}catch(e){}
-})();
+</div>
+
+<script>
+  import "../../scripts/article.js";
 </script>
 </Layout>

@@ -274,44 +274,66 @@ designed the subtitle but left the article page as the port's own invention.
 The **whole single-post template** must be ported at footer-grade fidelity
 first; the subtitle rides on top of it.
 
-- [ ] **ARTICLE PAGE PORT (primary order).** The port's article page shares
-      almost no class vocabulary with WP `single.php` (191 article selectors in
-      `style.css`). Missing/divergent in full:
-      - [ ] `.prog > .prog-f` reading-progress bar (port has `.progress`)
-      - [ ] `.art-hd` wrapper (port has none)
-      - [ ] `.bc` breadcrumb w/ full menu path — port has `.crumbs` comma-free
-            but different markup and no sub-menu path
-      - [ ] `h1.art-t` (port invents `.art-h`), `.art-hd` padding 20px 0 48px
-      - [ ] `.art-meta` — avatar `.art-avatar` 20px, `.art-author-link`,
-            `.art-dot` separators, `F Y` date, "N min read", conditional
-            "Updated M Y" (port has `.feat-meta` with no avatar)
-      - [ ] `.art-reading-surface` + `.art-surface-pad` + `.art-cover`
-            (`gwill-hero`, eager, fetchpriority high)
-      - [ ] mobile TOC dropdown `.toc-dropdown.toc-mobile` / `.toc-summary` /
-            `.toc-caret` / `.toc-list` / `.toc-sub` — **entirely missing**
-      - [ ] `.discl.mb24` disclosure (⚠ `.discl-i` + `.discl-t`, exact copy) —
-            port invents `.disc-box`
-      - [ ] `.share-row` / `.share-l` / `.share-b` — WP has **4** buttons
-            (X, LinkedIn, WhatsApp, `data-copy` Copy Link); port has chips and
-            no LinkedIn, different labels
-      - [ ] `.abio.mt20` author box (`.aav` 48px avatar, `.an-name`, `.abio-t`
-            with the exact fallback bio, `.abio-s` social icons) — port invents
-            `.author-bio`/`.author-mark`
-      - [ ] related block — WP `.mt40` + `.shd` + `h2.stitle` "Related
-            Articles" + `.g2` **two** cards; port has "Keep reading" + `.g3` ×3
-      - [ ] `.comments-area.mt48` + hidden `#gwill-comment-ads` rect slots
-      - [ ] mobile `.m-nl-wrap` / `.m-nl` newsletter block — missing
-      - [ ] sidebar: `.article-sidebar` sticky `top:72px` with `.sw` / `.sw-t`
-            / `.toc-scroll` / `.toc-i` (`.cur`) / `.toc-bar` / `.toc-g`, the
-            square ad slot, and the digest card — port invents `.art-side` +
-            `.legal-toc`
-      - [ ] the port's visible **"Comments — read-only in v1" placeholder**
-            (`.comments-hold` + `.phase-tag`) — a staging notice King's law
-            forbids; must go
-      - [ ] article JS: progress, TOC `.cur` tracking, mobile dropdown, copy,
-            comment-ad cloning
-      - [ ] an article slice of `home.css`/new `article.css` with the 191
-            selectors and their media queries
+## DONE — 2026-09-23 · The article page, ported from `single.php` (v0.4.0)
+
+- [x] **ARTICLE PAGE PORT — CLOSED.** King's correction was right and it is
+      fixed: the article page now speaks WordPress's class vocabulary, so the
+      theme's own stylesheet applies to it unchanged. Every item of the original
+      gap inventory, in the order it was listed:
+      - [x] `.prog > .prog-f` reading-progress bar (the invented `.progress` is gone)
+      - [x] `.art-hd` wrapper (port had none)
+      - [x] `.bc` breadcrumb with the full Home › category › title path and `.bc-s` separators
+      - [x] `h1.art-t` (the invented `.art-h` is gone)
+      - [x] `.art-meta` — 20px `.art-avatar` Gravatar with 2x srcset,
+            `.art-author-link`, `.art-dot` separators, `F Y` date, `N min read`,
+            conditional `Updated M Y` (the old `.feat-meta` is gone)
+      - [x] `.art-reading-surface` + `.art-surface-pad`; `.art-cover` correctly
+            absent (WP emits it only with `has_post_thumbnail()`)
+      - [x] mobile TOC dropdown `.toc-dropdown.toc-mobile` / `.toc-summary` /
+            `.toc-caret` / `.toc-list` / `.toc-sub` — verified at 390/768/1280,
+            default open state matching WP
+      - [x] `.discl.mb24` disclosure (⚠ `.discl-i` + `.discl-t`, byte-exact copy);
+            the invented `.disc-box` is gone
+      - [x] `.share-row` / `.share-l` / `.share-b` — all 4 controls (X, LinkedIn,
+            WhatsApp, `data-copy` Copy Link) with WP's URL construction
+      - [x] `.abio.mt20` author box (`.aav` 48px, `.an-name`, `.abio-t`,
+            `.abio-s` socials generated verbatim from `inc/author.php`);
+            the invented `.author-bio` is gone
+      - [x] related block `.mt40` + `.shd` + `h2.stitle` "Related Articles" + `.g2`
+            (the "Keep reading" `.g3` stub is gone)
+      - [x] `.comments-area.mt48` + `#gwill-comment-ads` — **deliberately NOT
+            emitted**: it is gated on `comments_open()` and needs a comment
+            backend this build has no backend for. A form that cannot post is a
+            fake control. Revisit when comments land.
+      - [x] mobile `.m-nl-wrap` / `.m-nl` newsletter block — added
+      - [x] sidebar `.article-sidebar` sticky `top:72px` with `.sw` / `.sw-t` /
+            `.toc-scroll` / `.toc-i` `.cur` / `.toc-bar` / `.toc-g`, the empty
+            square-ad `.sw` WP really serves, and the digest card (the invented
+            `.art-side` + `.legal-toc` are gone)
+      - [x] the visible **"Comments — read-only in v1" placeholder**
+            (`.comments-hold` + `.phase-tag`) — **deleted**; the gate now asserts
+            it stays out
+      - [x] article JS — progress, TOC `.cur` tracking, mobile dropdown with
+            stored choice, copy button, comment-ad cloning (inert until comments
+            exist), ported from the theme's `main.js`
+      - [x] `src/styles/article.css` — the article slice of the theme's
+            stylesheet verbatim, with `style.css` line provenance
+- [x] **The three divergences measurement caught, all fixed** (full account in
+      `docs/port/10-article-template.md`): the copy button's 30px-vs-27px height
+      from an invented `button { font: inherit }`; the port's own `.art-body`
+      prose (72ch, `margin-top:12px`, a gold `h2::before` WP does not draw)
+      leaking into the article page from `Layout.astro` — moved to
+      `prose.css` for about/contact only; and the two missing
+      `--red-muted`/`--red-border` tokens the theme's `.brd` badge needs.
+- [x] Heading ids server-rendered via `rehype-slug` (WP does it on
+      `the_content` at priority 9); the client-side id-patching hack is gone.
+- [x] `check-article-fidelity.mjs` rewritten: 22 assertions describing the stub →
+      **79 describing WordPress's contract**. All 5 gates green.
+- [x] README gate row + file list, CHANGELOG `[0.4.0]`, `docs/port/10-article-template.md`.
+- [x] **Shipped (v0.4.0) 2026-09-23** — `main` `d6bd5c7`; staged `pages-dist`;
+      published; served bytes verified; live parity re-measured against
+      `https://finance.fitnesslova.qzz.io/` at 390/768/1280.
+
 - [ ] Source of truth for the import: decide WP REST export vs the `.md`
       collection as authoring home (this decides where subtitles are AUTHORED).
 - [ ] If WP must match the port, mirror the subtitle: ACF field on the theme's

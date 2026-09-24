@@ -31,6 +31,15 @@ export const authorBySlug = (slug: string) =>
 export const fmtMonthYear = (d: Date) =>
   d.toLocaleDateString("en-GB", { month: "short", year: "numeric" });
 
+/**
+ * WordPress prints the article page's date with date_i18n('F Y') — the full
+ * month name (single.php:96, "April 2026"), while the cards use date_i18n('M Y')
+ * ("Apr 2026") via fmtMonthYear above. Two formatters, because the theme really
+ * does print two different formats on the same page.
+ */
+export const fmtLongMonthYear = (d: Date) =>
+  d.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+
 export async function allArticles(): Promise<Article[]> {
   const posts = await getCollection("articles");
   return posts.sort((a, b) => +b.data.pubDate - +a.data.pubDate);

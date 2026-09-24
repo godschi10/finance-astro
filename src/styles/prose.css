@@ -1,0 +1,28 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   PROSE — the port's own .art-body typography, for the pages that are not
+   ported article pages (about, contact).
+
+   WHY THIS FILE EXISTS
+   These rules used to sit in Layout.astro, which meant they applied to every
+   page — including the ported article page, where they contradicted the theme:
+   they added `max-width: 72ch` and `margin-top: 12px` to `.art-body p`, and a
+   48x3px gold `::before` bar above every `.art-body h2` that WordPress does not
+   draw. The article page must get the theme's typography and nothing else, so
+   the port's own version moves here and is imported only by the pages that were
+   using it.
+
+   The declarations are a verbatim move from Layout.astro — nothing about about
+   or contact should change because of this file's existence.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.art-body{margin-top:20px;color:var(--art-copy);font-size:1rem;line-height:1.8;min-width:0;overflow-wrap:anywhere}
+.art-body h2{font-size:1.125rem;font-weight:800;letter-spacing:-.02em;margin:28px 0 8px;overflow-wrap:anywhere}
+.art-body h2::before{content:"";display:block;width:48px;height:3px;background:var(--gold);margin-bottom:12px}
+.art-body p{margin-top:12px;max-width:72ch}
+.art-body ul,.art-body ol{margin-top:12px;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-width:72ch}
+.art-body a{color:var(--gold)}
+.art-body table{display:block;width:100%;overflow-x:auto;border:1px solid var(--border);border-radius:var(--r-md);margin-top:16px;font-size:.75rem;border-collapse:collapse}
+.art-body th,.art-body td{padding:12px 14px;border-bottom:1px solid var(--border-dim);text-align:left;white-space:normal;min-width:120px}
+.art-body thead th{background:var(--surface-2);font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);white-space:nowrap}
+.art-body tbody tr:hover{background:var(--gold-muted)}
+.art-body tbody tr:last-child th,.art-body tbody tr:last-child td{border-bottom:none}

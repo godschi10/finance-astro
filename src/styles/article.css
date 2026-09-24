@@ -1,0 +1,1076 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   ARTICLE — single-post (single.php) surface, GWill Finance theme
+   ══════════════════════════════════════════════════════════════════════════
+   WHAT THIS IS
+   The article-page slice of the WordPress theme's stylesheet, as a standalone
+   Astro stylesheet for the ported single-post page. The port's rebuilt template
+   emits the SAME class names as WordPress, so every selector below matches the
+   markup unchanged.
+
+   SOURCE
+   /home/opc/projects/gwill-finance-theme/style.css (3,470 lines, theme 1.13.39),
+   via the extracted spec /home/opc/work/article-port/02-article-css.md.
+   Clusters and their style.css provenance, in the order they appear below:
+
+     §25 ARTICLE PAGE             style.css:1963-2021   .prog/.prog-f, .art-*, .bc*, .gwill-breadcrumbs*
+     §9  BADGES                   style.css:671-684     .badge, .bg/.bgn/.bpu/.bsl/.brd
+     §16 DISCLOSURE               style.css:926-930     .discl/.discl-i/.discl-t
+     §17 SIDEBAR WIDGET           style.css:932-936     .sw, .sw-t
+     §18 NEWSLETTER               style.css:938-1021    .m-nl*, .sw digest form, .article-sidebar
+     §13 ARTICLE CARD             style.css:744-783     .ac* (related-post cards), .a-dt, .a-rd, .i-*
+     §15 SECTION HEADER           style.css:800-803     .shd, .stitle, .slink
+     §20/21 AD SLOTS              style.css:1653-1770   .ad-*, @keyframes gwill-spin
+     §25/26 .art-body typography  style.css:2010-2177, 2525-2529
+        (+ .wp-block-table at style.css:895-924 and :1465-1467)
+     §27/28/32/33 TOC + LIGHTBOX  style.css:2192-2420   .toc-*, .gl-*
+     §46 FORMS (contact)          style.css:2883-2948   .gwill-form*
+     §47 COMMENTS                 style.css:2950-2963   .comments-area, .comment-*
+     §48 LAYOUT UTILITIES         style.css:2965-2982   .con, .g2, .g3, .sb-layout, .mt* /.mb*
+     §49 RESPONSIVE tablet        style.css:2984-3012   @media (max-width:1023px)
+     §50 RESPONSIVE mobile        style.css:3014-3105   @media (max-width:767px)
+     §51-56 a11y / touch / print  style.css:3108-3470   pointer:coarse, hover:none, .no-flex-gap, print
+   Plus the dark-theme overrides that touch article selectors (style.css:2156-2159,
+   2171-2177, 2303-2304, 2358-2376, 2418-2420, 1744-1770).
+
+   VERBATIM RULE
+   Every rule below is copied character-for-character out of the spec, which in
+   turn copied it character-for-character out of style.css: same selectors, same
+   declarations, same values, same units, same !important, same source order.
+   Nothing was tidied, merged, reordered, rounded or "improved". The stray
+   !important at .art-body .wp-block-tag-cloud a (style.css:2145), the doubled
+   font-size on .art-t (34px then clamp(), style.css:2002), the dead-but-present
+   .sw .gwill-form__submit { height: 38px } (style.css:983, overridden by the
+   48px at :997), the stale "padding-top: 40px" comment vs the live 20px on
+   .article-sidebar (style.css:1020) and the duplicate .art-body declarations in
+   the mobile block (:3051 / :3069) are all reproduced deliberately.
+   Every banner comment carries the spec's own style.css line numbers, so any
+   rule traces back to the theme. No value in this file is locally reinterpreted.
+
+   WHAT IS DELIBERATELY NOT HERE (already installed elsewhere in the port;
+   re-declaring them here would only duplicate identical values):
+     · §1 DESIGN TOKENS (:root, style.css:96-137) and the dark token block
+       (style.css:140-168) — the port declares its own token set in
+       src/layouts/Layout.astro, including the two breakpoint re-declarations of
+       --con-pad / --header-h (style.css:2986 and :3016).
+     · §2 RESET / BASE (style.css:170-198) — installed verbatim in
+       src/styles/base.css.
+   Page chrome that the spec transcribes inside shared blocks (.sh/.mh/.ticker,
+   .hero* /.feat* /.stat-strip/.si, .phd, .author-head, .about-hero, .page-surface,
+   .mfooter, .footer, .error-404, .nl-s*, .gs-*, .cp*, .legal-*) is kept where
+   the spec groups it with article rules (the mobile block, the print block)
+   rather than split out, so each block reads exactly as it does in the theme's
+   own source order.
+
+   KNOWN OVERLAP WITH THE PORT'S OTHER STYLESHEETS (informational — identical
+   values, so the cascade result is unchanged; dedupe at review if desired):
+   src/styles/home.css already carries .badge, .ac*, .con, .g2/.g3, .m-nl,
+   .ad-* (+ its print hides) and the .no-flex-gap ad rules; src/styles/forms.css
+   carries .gwill-form*; src/styles/header.css carries .gs-*.
+
+   The class contract this file styles is the one single.php + content.php emit:
+   .prog/.prog-f, .con, .sb-layout, .art-hd, .bc/.bc-s, .badge, .art-t,
+   .art-meta, .art-author/.art-avatar/.art-author-link, .art-dot,
+   .art-reading-surface, .art-cover, .art-surface-pad, .toc-* (sidebar + mobile
+   dropdown), .discl*, .art-body (+ every Gutenberg child), .share-row/.share-l/
+   .share-b, .abio/.aav/.an-name/.abio-t/.abio-s/.abio-si, .mt* /.mb*, .shd/
+   .stitle, .g2, .comments-area, .m-nl-wrap/.m-nl, .article-sidebar, .sw/.sw-t,
+   .ac* /.a-dt/.a-rd (related posts) and the .ad-* slots the article renders.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ══ 3.1 Progress bar — style.css:1964-1965 ══ */
+.prog { height: 3px; background: var(--border-dim); position: sticky; top: var(--header-h); z-index: 90; }
+.prog-f { height: 100%; width: 0; background: linear-gradient(90deg, var(--gold), var(--green)); border-radius: 0 2px 2px 0; transition: width 120ms linear; }
+
+/* ══ 3.2 Layout shell — style.css:2966-2970 ══ */
+.con { max-width: 1100px; margin: 0 auto; padding: 0 var(--con-pad); }
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.sb-layout { display: grid; grid-template-columns: 1fr 300px; gap: 32px; }
+.sb-layout > div { min-width: 0; } /* let the article column shrink below table min-content on mobile */
+/*
+ * The single page's .con also carries an inline style="padding-bottom:48px" (single.php:45);
+ * .article-sidebar carries inline style="position:sticky;top:72px;align-self:start" (single.php:249)
+ * and the ad .sw carries inline style="padding:0;overflow:hidden;border:1px solid var(--border)"
+ * (single.php:274). These are not in style.css.
+ */
+
+/* ══ 3.3 Article header — style.css:1966-1973 and :2002-2009 ══ */
+.art-surface-pad { padding: 36px 44px 40px; }
+.art-cover { min-height: 300px; border-bottom: 1px solid var(--border-dim); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.art-cover img { width: 100%; height: 100%; object-fit: cover; }
+.art-hd { background: transparent; border-bottom: none; padding: 20px 0 48px; position: relative; }
+.bc { font-size: 11px; color: var(--text-dim); font-weight: 300; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 18px; }
+.bc a { color: var(--text-dim); transition: color var(--t); }
+.bc a:hover { color: var(--gold); }
+.bc-s { opacity: 0.5; }
+.art-t { font-size: 34px; font-size: clamp(28px, 3.8vw, 40px); font-weight: 800; color: var(--text); letter-spacing: -0.035em; line-height: 1.08; max-width: 720px; margin-bottom: 20px; }
+.art-meta { display: flex; align-items: center; gap: 12px; font-size: 11px; color: var(--text-dim); font-weight: 300; flex-wrap: wrap; }
+.art-author { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; border: 1px solid var(--border); border-radius: 100px; background: var(--surface-2); }
+.art-avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
+.art-author-link { color: var(--text); font-weight: 700; }
+.art-author-link:hover { color: var(--gold); }
+.art-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border); }
+.art-reading-surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--sh-sm); }
+/*
+ * Oddity (kept): .art-t declares font-size twice — 34px then clamp(28px, 3.8vw, 40px).
+ * The clamp wins (later declaration, same specificity). Do not "tidy" the 34px away if you want
+ * byte-identical output.
+ */
+
+/* ══ 3.4 Breadcrumb helper (not used by single.php, but shares .bc visual language) — style.css:1976-1982 ══ */
+/*
+ * single.php renders .bc inline on purpose (single.php:56). The helper variant exists for other templates:
+ */
+.gwill-breadcrumbs { margin-bottom: 18px; }
+.gwill-breadcrumbs__list { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 11px; font-weight: 300; color: var(--text-dim); margin: 0; padding: 0; list-style: none; }
+.gwill-breadcrumbs__item { display: inline-flex; align-items: center; gap: 6px; }
+.gwill-breadcrumbs__item + .gwill-breadcrumbs__item::before { content: '›'; opacity: 0.5; }
+.gwill-breadcrumbs__item a { color: var(--text-dim); text-decoration: none; transition: color var(--t); }
+.gwill-breadcrumbs__item a:hover { color: var(--gold); }
+.gwill-breadcrumbs__item--current { opacity: 1; }
+
+/* ══ 3.5 Badge (category pill in .art-hd, and inside .ac cards) — style.css:672-684 ══ */
+/*
+ * .badge is emitted with one modifier from gwill_finance_post_style() (.bg / .bgn / .bpu / .bsl / .brd),
+ * plus inline style="margin-bottom:14px;display:inline-flex" on the single page (single.php:84).
+ */
+.badge {
+  display: inline-flex; align-items: center; font-size: 9px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px;
+  border-radius: var(--pill); border: 1px solid;
+}
+.bg { background: var(--gold-muted); border-color: var(--gold-border); color: var(--gold); }
+.bgn { background: var(--green-muted); border-color: var(--green-border); color: var(--green); }
+.bpu { background: #f5f0ff; border-color: #d0b4fe; color: var(--purple); }
+.bsl { background: #f1f5f9; border-color: #cbd5e1; color: #475569; }
+.brd { background: var(--red-muted); border-color: var(--red-border); color: var(--red); }
+[data-theme="dark"] .bpu { background: rgba(124,58,237,0.12); border-color: rgba(124,58,237,0.25); color: #a78bfa; }
+[data-theme="dark"] .bsl { background: rgba(148,163,184,0.08); border-color: rgba(148,163,184,0.2); color: #94a3b8; }
+[data-theme="dark"] .brd { background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.2); color: #f87171; }
+
+/* ══ 3.6 Disclosure — style.css:927-930 ══ */
+.discl { background: var(--gold-muted); border: 1px solid var(--gold-border); border-radius: var(--r-sm); padding: 12px 16px; display: flex; gap: 10px; align-items: flex-start; }
+.discl-i { color: var(--gold); font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.discl-t { font-size: 11px; font-weight: 300; color: var(--text-mid); line-height: 1.65; }
+.discl-t strong { color: var(--gold); font-weight: 700; }
+
+/* ══ 3.7 Share row — style.css:2250-2253 ══ */
+.share-row { display: flex; align-items: center; gap: 8px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border-dim); flex-wrap: wrap; }
+.share-l { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+.share-b { font-size: 10px; font-weight: 700; padding: 6px 14px; border-radius: var(--r-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text-mid); cursor: pointer; transition: all var(--t); }
+.share-b:hover { border-color: var(--gold-border); color: var(--gold); }
+
+/* ══ 3.8 Author bio — style.css:2254-2271 ══ */
+.abio { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md); padding: 20px; display: flex; gap: 16px; align-items: flex-start; }
+.aav {
+  width: 48px; height: 48px; border-radius: 50%; background: var(--gold-muted);
+  border: 2px solid var(--gold-border); display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800; color: var(--gold); flex-shrink: 0; overflow: hidden;
+}
+.aav img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.an-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.abio-t { font-size: 11px; font-weight: 300; color: var(--text-dim); line-height: 1.65; }
+.abio-s { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.abio-si {
+  width: 30px; height: 30px; border-radius: var(--r-sm);
+  background: var(--surface); border: 1px solid var(--border);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--text-mid); transition: all var(--t);
+}
+.abio-si svg { width: 13px; height: 13px; }
+.abio-si:hover { background: var(--gold-muted); border-color: var(--gold-border); color: var(--gold); }
+
+/* ══ 3.9 Sidebar widget — style.css:933-936 ══ */
+.sw { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); padding: 20px; margin-bottom: 14px; }
+.sw-t { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border-dim); }
+.sw .gwill-newsletter__prompt { display: none; }
+.sw .gwill-form__status { font-size: 11px; }
+
+/* ══ 3.10 .article-sidebar (TOC/ad/digest column) — style.css:1020-1021 ══ */
+.article-sidebar { padding-top: 20px; }
+.article-sidebar .sw { padding: 16px; margin-bottom: 10px; }
+/*
+ * Oddity (kept): the comment block at style.css:1010-1019 says *"padding-top: 40px ALIGNS the TOC card
+ * with the breadcrumb line"*, but the live declaration is padding-top: 20px. The value is 20px — the
+ * comment is stale. Parity must follow the value, not the comment.
+ */
+
+/* ══ 3.11 TOC sidebar — style.css:2274-2307 ══ */
+.toc-i { padding: 8px 0; border-bottom: 1px solid var(--border-dim); font-size: 11px; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
+.toc-i:last-child { border-bottom: none; }
+.toc-i.cur { color: var(--gold); font-weight: 700; }
+.toc-scroll {
+  height: 220px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -8px 0 0;
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-border) transparent;
+}
+.toc-scroll::-webkit-scrollbar { width: 5px; }
+.toc-scroll::-webkit-scrollbar-track { background: transparent; }
+.toc-scroll::-webkit-scrollbar-thumb { background: var(--gold-border); border-radius: 0; }
+.toc-scroll.toc-idle { scrollbar-color: transparent transparent; }
+.toc-scroll.toc-idle::-webkit-scrollbar-thumb { background: transparent; }
+[data-theme="dark"] .toc-scroll { scrollbar-color: rgba(217, 119, 6, 0.45) transparent; }
+[data-theme="dark"] .toc-scroll::-webkit-scrollbar-thumb { background: rgba(217, 119, 6, 0.45); }
+.toc-bar { width: 2px; height: 12px; background: var(--gold); border-radius: 1px; flex-shrink: 0; }
+.toc-g { width: 2px; height: 12px; flex-shrink: 0; }
+.toc-i a { color: inherit; display: flex; align-items: center; gap: 8px; flex: 1; }
+/*
+ * Magic number (kept): height: 220px on .toc-scroll. The comment (style.css:2277-2288) records it
+ * was *"trimmed from the width-derived 274px"* so the 300×250 ad + digest fit below. Also note
+ * .toc-scroll is declared twice as a bare selector-adjacent rule set — the grep hits at
+ * style.css:1011, :2370, :2395, :2398 are comments, not live rules.
+ */
+
+/* ══ 3.12 Mobile TOC dropdown — style.css:2348-2363 + :2409-2412 ══ */
+.toc-dropdown { position: relative; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; margin-bottom: 20px; box-shadow: var(--sh-sm); }
+.toc-summary { list-style: none; cursor: pointer; padding: 12px 16px; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text); display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; background: none; border: none; }
+.toc-summary::-webkit-details-marker { display: none; }
+.toc-caret { font-size: 10px; color: var(--gold); transition: transform var(--t); }
+.toc-dropdown.toc-open .toc-caret { transform: rotate(180deg); }
+.toc-list { display: flex; flex-direction: column; padding: 0 12px 12px; gap: 2px; max-height: 260px; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: var(--gold-border) transparent; }
+.toc-list::-webkit-scrollbar { width: 4px; }
+.toc-list::-webkit-scrollbar-track { background: transparent; }
+.toc-list::-webkit-scrollbar-thumb { background: var(--gold-border); border-radius: 0; }
+.toc-dropdown.toc-idle .toc-list { scrollbar-color: transparent transparent; }
+.toc-dropdown.toc-idle .toc-list::-webkit-scrollbar-thumb { background: transparent; }
+.toc-list::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+.toc-dropdown::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 28px;
+  background: linear-gradient(to top, var(--surface-2), rgba(250, 249, 246, 0));
+  pointer-events: none; opacity: 1; transition: opacity var(--t);
+}
+.toc-dropdown.toc-scrolled-end::after { opacity: 0; }
+[data-theme="dark"] .toc-dropdown::after { background: linear-gradient(to top, var(--dark-s), rgba(19, 18, 16, 0)); }
+[data-theme="dark"] .toc-list { scrollbar-color: rgba(217, 119, 6, 0.45) transparent; }
+[data-theme="dark"] .toc-list::-webkit-scrollbar-thumb { background: rgba(217, 119, 6, 0.45); }
+[data-theme="dark"] .toc-list::-webkit-scrollbar-thumb:hover { background: var(--gold-b); }
+[data-theme="dark"] .toc-dropdown.toc-idle .toc-list { scrollbar-color: transparent transparent; }
+[data-theme="dark"] .toc-dropdown.toc-idle .toc-list::-webkit-scrollbar-thumb { background: transparent; }
+.toc-list a { padding: 9px 12px; font-size: 13px; font-weight: 400; color: var(--text-mid); border-radius: var(--r-sm); border-left: 2px solid transparent; line-height: 1.4; }
+.toc-list a:hover { color: var(--text); background: var(--surface-2); border-left-color: var(--gold); }
+.toc-list a.toc-sub { padding-left: 28px; font-size: 12px; color: var(--text-dim); }
+.toc-mobile { display: none; }
+/*
+ * The mobile TOC visibility switch lives in @media (max-width: 767px) at style.css:2413-2417
+ * (see §4.4 below). Desktop: .toc-mobile { display: none; } hides the whole dropdown because the
+ * sidebar TOC takes over.
+ */
+
+/* ══ 3.13 .art-body — base article typography ══ */
+/*
+ * style.css:2010-2021 (base, immediately before the ≥1024 block):
+ */
+.art-body { font-size: 16px; font-weight: 400; color: var(--text-mid); line-height: 1.8; }
+.art-body h1 { font-size: 24px; font-weight: 800; color: var(--text); letter-spacing: -0.03em; margin: 30px 0 12px; }
+.art-body h2 {
+	font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -0.03em; margin: 28px 0 10px;
+	/* v1.12.6 REVERTED: the gold-dot + hairline-rule accent was added believing it
+	   was the designed heading, but the King's reference shows the blog-post h2 is
+	   PLAIN (pixel-verified: no gold marker on the heading). The real ask was to make
+	   the blog's plain-heading design UNIVERSAL, tools already carry .art-body so they
+	   inherit this exactly. Keeping h2 plain = the correct universal treatment. */
+}
+.art-body h3 { font-size: 16px; font-weight: 700; color: var(--text); margin: 20px 0 8px; }
+.art-body h4, .art-body h5, .art-body h6 { font-size: 14px; font-weight: 700; color: var(--text); margin: 18px 0 8px; letter-spacing: -0.01em; }
+/*
+ * style.css:2040-2076 (body copy, links, lists, blockquote, pullquote, figures):
+ */
+.art-body p { margin-bottom: 14px; }
+.art-body a { color: var(--gold); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+.art-body a:hover { color: var(--green); }
+.art-body ul, .art-body ol { margin: 0 0 16px 20px; }
+.art-body li { margin-bottom: 7px; line-height: 1.7; }
+.art-body li > ul, .art-body li > ol { margin: 7px 0 0 22px; }
+/* Brand list markers, gold diamonds for bullets, JetBrains Mono gold numbers for ordered lists */
+.art-body ul { list-style: none; }
+.art-body ul:not(.wp-block-categories):not(.wp-block-archives):not(.wp-block-latest-comments):not(.wp-block-tag-cloud):not(.wp-block-social-links) > li { position: relative; padding-left: 18px; }
+.art-body ul:not(.wp-block-categories):not(.wp-block-archives):not(.wp-block-latest-comments):not(.wp-block-tag-cloud):not(.wp-block-social-links) > li::before {
+  content: '◆'; position: absolute; left: 0; top: 0.12em;
+  font-size: 9px; color: var(--gold); opacity: 0.75;
+}
+.art-body ul:not(.wp-block-categories):not(.wp-block-archives):not(.wp-block-latest-comments):not(.wp-block-tag-cloud):not(.wp-block-social-links) > li > ul > li::before { content: '◇'; opacity: 0.5; }
+.art-body ul:not(.wp-block-categories):not(.wp-block-archives):not(.wp-block-latest-comments):not(.wp-block-tag-cloud):not(.wp-block-social-links) > li > ul > li > ul > li::before { content: '▪'; font-size: 8px; }
+.art-body ol:not(.wp-block-latest-comments) { list-style: none; counter-reset: gwill-li; }
+.art-body ol:not(.wp-block-latest-comments) > li { position: relative; padding-left: 30px; counter-increment: gwill-li; }
+.art-body ol:not(.wp-block-latest-comments) > li::before {
+  content: counter(gwill-li); position: absolute; left: 0; top: 0.22em;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  color: var(--gold); background: var(--gold-muted); border-radius: 5px;
+  width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--gold-border);
+}
+.art-body ol:not(.wp-block-latest-comments) > li > ol { counter-reset: gwill-sub; }
+.art-body ol:not(.wp-block-latest-comments) > li > ol > li { counter-increment: gwill-sub; padding-left: 26px; }
+.art-body ol:not(.wp-block-latest-comments) > li > ol > li::before {
+  content: counter(gwill-sub); width: 16px; height: 16px; font-size: 9px; top: 0.3em;
+  background: none; border: none; color: var(--gold-b);
+}
+.art-body blockquote { border-left: 3px solid var(--gold); padding: 4px 0 4px 18px; margin: 18px 0; color: var(--text-mid); font-style: italic; }
+.art-body blockquote cite { display: block; margin-top: 8px; font-size: 12px; font-style: normal; color: var(--text-dim); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.art-body .wp-block-pullquote { border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: var(--r-md); background: var(--surface-2); padding: 22px 24px; margin: 18px 0; }
+.art-body .wp-block-pullquote blockquote { border: none; padding: 0; margin: 0; font-size: 17px; font-weight: 700; color: var(--text); font-style: normal; line-height: 1.55; }
+.art-body .wp-block-pullquote cite { display: block; margin-top: 10px; font-size: 11px; font-style: normal; color: var(--text-dim); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.art-body figure { margin: 0 0 18px; }
+.art-body figcaption { font-size: 12px; color: var(--text-dim); text-align: center; margin-top: 10px; line-height: 1.5; }
+/*
+ * style.css:2077-2091 (images, galleries, embeds, video/audio):
+ */
+.art-body .wp-block-image img { border-radius: var(--r-md); }
+.art-body .wp-block-image.alignleft { float: left; margin: 4px 20px 14px 0; max-width: 45%; }
+.art-body .wp-block-image.alignright { float: right; margin: 4px 0 14px 20px; max-width: 45%; }
+.art-body .wp-block-image.aligncenter { text-align: center; }
+.art-body .wp-block-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 0 18px; }
+.art-body .wp-block-gallery .wp-block-image { margin: 0; }
+.art-body .wp-block-gallery .wp-block-image img { border-radius: var(--r-sm); width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4 / 3; }
+.art-body .wp-block-gallery .wp-block-image figcaption { margin-top: 6px; }
+.art-body .wp-block-embed iframe { border-radius: var(--r-md); }
+.art-body .wp-block-embed { margin-bottom: 18px; }
+.art-body .wp-block-embed__wrapper { position: relative; }
+.art-body .wp-block-embed.wp-has-aspect-ratio .wp-block-embed__wrapper::before { content: ''; display: block; padding-top: 56.25%; }
+.art-body .wp-block-embed.wp-has-aspect-ratio iframe { position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; width: 100%; height: 100%; }
+.art-body .wp-block-video video, .art-body .wp-block-audio audio { width: 100%; border-radius: var(--r-md); }
+.art-body .wp-block-video { margin-bottom: 18px; }
+/*
+ * style.css:2092-2119 (cover, columns, media-text, buttons, file, details, code, pre, verse, inline code, separator, footnotes):
+ */
+.art-body .wp-block-cover { border-radius: var(--r-md); overflow: hidden; margin: 0 0 18px; min-height: 280px; display: flex; align-items: center; justify-content: center; position: relative; }
+.art-body .wp-block-cover .wp-block-cover__inner-container { position: relative; z-index: 1; color: #fff; padding: 24px; text-align: center; }
+.art-body .wp-block-cover .wp-block-cover__inner-container p { color: #fff; }
+.art-body .wp-block-cover img.wp-block-cover__image-background { position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 0; }
+.art-body .wp-block-cover__background { position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; background: rgba(0, 0, 0, 0.6); }
+.art-body .wp-block-columns { display: flex; gap: 20px; margin: 0 0 18px; }
+.art-body .wp-block-column { flex: 1; min-width: 0; }
+.art-body .wp-block-media-text { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; margin: 0 0 18px; }
+.art-body .wp-block-media-text img { border-radius: var(--r-md); width: 100%; }
+.art-body .wp-block-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 18px; }
+.art-body .wp-block-button__link { display: inline-block; background: var(--gold); color: #fff; font-size: 13px; font-weight: 700; padding: 11px 22px; border-radius: var(--r-sm); text-decoration: none; transition: background var(--t); }
+.art-body .wp-block-button__link:hover { background: var(--gold); color: #fff; }
+.art-body .wp-block-button.is-style-outline .wp-block-button__link { background: transparent; color: var(--gold); border: 1.5px solid var(--gold); }
+.art-body .wp-block-button.is-style-outline .wp-block-button__link:hover { background: var(--gold-muted); }
+.art-body .wp-block-file { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px 16px; margin: 0 0 18px; display: flex; align-items: center; gap: 12px; font-size: 13px; }
+.art-body .wp-block-file__button { background: var(--gold); color: #fff; font-size: 11px; font-weight: 700; padding: 7px 14px; border-radius: var(--r-sm); text-decoration: none; margin-left: auto; }
+.art-body .wp-block-file__button:hover { background: var(--gold); color: #fff; }
+.art-body .wp-block-details, .art-body details.wp-block-details { border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-2); padding: 14px 18px; margin: 0 0 18px; }
+.art-body .wp-block-details summary, .art-body details.wp-block-details summary { cursor: pointer; font-weight: 700; font-size: 13px; color: var(--gold); }
+.art-body .wp-block-details p, .art-body details.wp-block-details p { margin: 12px 0 0; }
+.art-body .wp-block-code { background: var(--dark); border-radius: var(--r-md); padding: 16px 18px; margin: 0 0 18px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.art-body .wp-block-code code { background: none; color: #e8e4da; font-size: 13px; line-height: 1.7; }
+.art-body .wp-block-preformatted { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md); padding: 16px 18px; margin: 0 0 18px; font-size: 13px; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: pre; }
+.art-body .wp-block-verse { background: var(--dark); border-radius: var(--r-md); padding: 18px 20px; margin: 0 0 18px; color: #e8e4da; font-size: 13px; line-height: 1.8; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.art-body code { background: var(--surface-2); border: 1px solid var(--border-dim); border-radius: 4px; padding: 1px 6px; font-size: 13px; color: var(--gold); }
+.art-body .wp-block-separator { border: none; border-top: 1px solid var(--border); margin: 26px 0; }
+.art-body .wp-block-footnotes { border-top: 1px solid var(--border); padding-top: 14px; font-size: 12px; color: var(--text-dim); margin-top: 26px; }
+.art-body .footnote-ref a { color: var(--gold); font-size: 12px; text-decoration: none; }
+/*
+ * style.css:2120-2166 (widget blocks + social links). Note the duplication: .art-body .wp-block-latest-comments
+ * is declared at :2148-2151 and again at :2165-2166; both are live and identical in effect.
+ */
+/* Widget blocks */
+.art-body .wp-block-search { margin: 0 0 18px; }
+.art-body .wp-block-search__input { border: 1px solid var(--border); border-radius: var(--r-sm); padding: 10px 14px; font-size: 13px; background: var(--surface); color: var(--text); width: 100%; max-width: 320px; }
+.art-body .wp-block-search__button { background: var(--gold); color: #fff; border: none; border-radius: var(--r-sm); padding: 10px 18px; font-size: 12px; font-weight: 700; margin-left: 8px; }
+.art-body .wp-block-categories, .art-body .wp-block-archives, .art-body .wp-block-tag-cloud { margin: 0 0 18px; font-size: 13px; }
+.art-body .wp-block-categories a, .art-body .wp-block-archives a, .art-body .wp-block-tag-cloud a { text-decoration: none; }
+.art-body .wp-block-categories li, .art-body .wp-block-archives li { margin-bottom: 6px; }
+.art-body .wp-block-categories li ul, .art-body .wp-block-archives li ul { margin: 6px 0 0 18px; }
+/* Widget blocks styled as surface cards (finance look) */
+.art-body .wp-block-categories, .art-body .wp-block-archives {
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md);
+  padding: 14px 18px; list-style: none; margin: 0 0 18px;
+}
+.art-body .wp-block-categories li, .art-body .wp-block-archives li {
+  border-bottom: 1px solid var(--border-dim); padding: 8px 0; margin: 0;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.art-body .wp-block-categories li:last-child, .art-body .wp-block-archives li:last-child { border-bottom: none; }
+.art-body .wp-block-categories li a, .art-body .wp-block-archives li a { color: var(--text-mid); font-weight: 500; }
+.art-body .wp-block-categories li a:hover, .art-body .wp-block-archives li a:hover { color: var(--gold); }
+.art-body .wp-block-categories .wp-block-categories__list { list-style: none; padding: 0; margin: 0; }
+.art-body .wp-block-categories .wp-block-categories__list .wp-block-categories__list { margin-left: 18px; }
+.art-body .wp-block-tag-cloud a {
+  display: inline-block; background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--pill); padding: 5px 14px; margin: 0 6px 8px 0;
+  font-size: 11px !important; font-weight: 700; color: var(--text-mid); transition: all var(--t);
+}
+.art-body .wp-block-tag-cloud a:hover { background: var(--gold-muted); border-color: var(--gold); color: var(--gold); }
+.art-body .wp-block-latest-comments {
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md);
+  padding: 14px 18px; margin: 0 0 18px; list-style: none; font-size: 13px;
+}
+.art-body .wp-block-latest-comments li { margin-bottom: 10px; color: var(--text-dim); }
+.art-body .wp-block-latest-comments li:last-child { margin-bottom: 0; }
+.art-body .wp-block-latest-comments__comment-author { color: var(--text); font-weight: 700; }
+.art-body .wp-block-latest-comments__comment-date { font-size: 10px; color: var(--text-dim); display: block; margin-top: 2px; }
+[data-theme="dark"] .art-body .wp-block-categories, [data-theme="dark"] .art-body .wp-block-archives,
+[data-theme="dark"] .art-body .wp-block-latest-comments { background: var(--dark-s); border-color: var(--dark-b); }
+[data-theme="dark"] .art-body .wp-block-tag-cloud a { background: var(--dark-s); border-color: var(--dark-b); color: #c9c2b4; }
+[data-theme="dark"] .art-body .wp-block-tag-cloud a:hover { background: #1c1a16; border-color: var(--dark-b); color: var(--gold-b); }
+.art-body .wp-block-social-links { list-style: none; margin: 0 0 18px; padding: 0; display: flex; gap: 8px; }
+.art-body .wp-block-social-links li { margin: 0; }
+.art-body .wp-block-social-links .wp-block-social-link { background: var(--surface-2); border: 1px solid var(--border); border-radius: 50%; padding: 0; }
+.art-body .wp-block-social-links .wp-block-social-link a { display: flex; padding: 6px; text-decoration: none; }
+.art-body .wp-block-social-links svg { width: 18px; height: 18px; fill: var(--text-mid); }
+.art-body .wp-block-latest-comments { margin: 0 0 18px; font-size: 13px; }
+.art-body .wp-block-latest-comments li { margin-bottom: 10px; color: var(--text-dim); }
+/*
+ * Stray !important (kept): .art-body .wp-block-tag-cloud a { font-size: 11px !important; … }
+ * (style.css:2145) — the only !important in the whole .art-body rule set. Do not drop it.
+ */
+/*
+ * style.css:2167-2169 (manual callout class, used inside article copy):
+ */
+/* Callouts (manual class) */
+.callout { background: var(--gold-muted); border-left: 3px solid var(--gold); padding: 14px 18px; border-radius: 0 var(--r-sm) var(--r-sm) 0; margin: 18px 0; font-size: 14px; color: var(--text-mid); }
+.callout strong { color: var(--gold); }
+/*
+ * style.css:2171-2177 (dark-mode content overrides):
+ */
+/* Dark mode content */
+[data-theme="dark"] .art-body .wp-block-pullquote { background: var(--dark-s); border-color: var(--dark-b); }
+[data-theme="dark"] .art-body .wp-block-file, [data-theme="dark"] .art-body .wp-block-preformatted { background: var(--dark-s); border-color: var(--dark-b); }
+[data-theme="dark"] .art-body .wp-block-details { background: var(--dark-s); border-color: var(--dark-b); }
+[data-theme="dark"] .art-body code { background: var(--dark-s); border-color: var(--dark-b); color: var(--gold-b); }
+[data-theme="dark"] .art-body .wp-block-search__input { background: var(--dark-s); border-color: var(--dark-b); color: #f0ede6; }
+[data-theme="dark"] .art-body .wp-block-social-links .wp-block-social-link { background: var(--dark-s); border-color: var(--dark-b); }
+[data-theme="dark"] .art-body .wp-block-social-links svg { fill: #c9c2b4; }
+/*
+ * style.css:2525-2529 (Gutenberg search block refinements, applied after the generic ones):
+ */
+/* Gutenberg search block in content */
+.art-body .wp-block-search { display: block; margin: 0 0 18px; }
+.art-body .wp-block-search__label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; }
+.art-body .wp-block-search__inside-wrapper { display: flex; gap: 8px; align-items: center; }
+.art-body .wp-block-search__input { flex: 1; min-width: 0; }
+.art-body .wp-block-search__button { height: 38px; padding: 0 18px; flex-shrink: 0; }
+
+/* ══ 3.14 .wp-block-table (article tables; global class, not .art-body-scoped at base) — style.css:896-924 ══ */
+.wp-block-table { border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; }
+.wp-block-table table { border-collapse: collapse; width: 100%; font-size: 12px; }
+.wp-block-table figure, .wp-block-table { max-width: 100%; }
+.wp-block-table table { min-width: 0; }
+.wp-block-table { scrollbar-width: thin; scrollbar-color: var(--gold-border) transparent; }
+.wp-block-table::-webkit-scrollbar { width: 6px; height: 6px; }
+.wp-block-table::-webkit-scrollbar-track { background: transparent; }
+.wp-block-table::-webkit-scrollbar-thumb { background: var(--gold-border); border-radius: 0; }
+.wp-block-table.tbl-idle { scrollbar-color: transparent transparent; }
+.wp-block-table.tbl-idle::-webkit-scrollbar-thumb { background: transparent; }
+[data-theme="dark"] .wp-block-table { scrollbar-color: rgba(217, 119, 6, 0.45) transparent; }
+[data-theme="dark"] .wp-block-table::-webkit-scrollbar-thumb { background: rgba(217, 119, 6, 0.45); }
+.wp-block-table thead { background: var(--surface-2); }
+.wp-block-table th { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+.wp-block-table td { padding: 12px 14px; border-bottom: 1px solid var(--border-dim); color: var(--text-mid); }
+.wp-block-table tr:last-child td { border-bottom: none; }
+.wp-block-table tbody tr:hover { background: var(--gold-muted); }
+/*
+ * style.css:1465-1467 (comparison-table chips; also global to .wp-block-table):
+ */
+.wp-block-table td .tbl-yes, .st-table td .tbl-yes { color: var(--green); font-weight: 800; }
+.wp-block-table td .tbl-no,  .st-table td .tbl-no  { color: var(--red); font-weight: 800; }
+.wp-block-table td .tbl-star, .st-table td .tbl-star { color: var(--gold-b); letter-spacing: 0.06em; }
+
+/* ══ 3.15 Related-post card (.ac*) — rendered by template-parts/content.php inside .g2 — style.css:745-775 ══ */
+.ac {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md);
+  overflow: hidden; transition: border-color var(--t-md), transform var(--t-md), box-shadow var(--t-md);
+  position: relative;
+}
+.ac:hover { border-color: var(--gold-border); transform: translateY(-3px); box-shadow: var(--sh-gold); }
+.ac-img {
+  width: 100%; min-height: 150px; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center;
+  border-bottom: 1px solid var(--border-dim); font-size: 28px; position: relative; overflow: hidden;
+}
+.ac-img::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.45), transparent); pointer-events: none; }
+.ac-img img { width: 100%; height: 100%; object-fit: cover; }
+.ac-emoji { position: relative; z-index: 1; font-size: 28px; }
+.ac-body { padding: 16px 20px 20px; position: relative; }
+.ac-body .badge { margin-bottom: 10px; }
+.ac-t { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.35; letter-spacing: -0.02em; margin-bottom: 8px; }
+.ac-ex { font-size: 11px; font-weight: 300; color: var(--text-dim); line-height: 1.65; margin-bottom: 12px; }
+.ac-ft { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border-dim); }
+.a-dt { font-size: 10px; color: var(--text-dim); font-weight: 300; }
+.a-rd { font-size: 10px; color: var(--gold); font-weight: 700; }
+/* Fully clickable card */
+.ac h3 a::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; z-index: 1; }
+.ac .badge { position: relative; z-index: 2; }
+/*
+ * @supports fallback for the card art box — style.css:761-763:
+ */
+@supports not (aspect-ratio: 16/9) {
+  .ac-img::before { content: ''; display: block; padding-top: 56.25%; }
+}
+/*
+ * Category art gradients used by gwill_finance_card_media() — style.css:778-783:
+ */
+/* Category art gradients */
+.i-sav { background: linear-gradient(135deg, #fef3c7, #fcd34d); }
+.i-inv { background: linear-gradient(135deg, #dcfce7, #86efac); }
+.i-cry { background: linear-gradient(135deg, #f5f0ff, #ddd6fe); }
+.i-ban { background: linear-gradient(135deg, #eff6ff, #bfdbfe); }
+.i-rem { background: linear-gradient(135deg, #fff7ed, #fed7aa); }
+.i-dol { background: linear-gradient(135deg, #fef9ee, #fde68a); }
+
+/* ══ 3.16 Section header above related posts — style.css:801-803 ══ */
+.shd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.stitle { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); }
+.slink { font-size: 11px; font-weight: 700; color: var(--gold); }
+/*
+ * single.php:195 also applies inline style="margin-bottom:16px" to .shd (overrides the 20px).
+ */
+
+/* ══ 3.17 Comments area — style.css:2951-2963 ══ */
+.comments-area { margin-top: 40px; }
+.comments-title, .comment-reply-title { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 16px; }
+.comment-list { list-style: none; }
+.comment { margin-bottom: 20px; }
+.comment-list .children { list-style: none; margin: 16px 0 0 24px; }
+/* Legacy server-rendered comment cards (only used if VibeComments is ever
+   deactivated, the plugin brings its own .vibe-comment-body cards). */
+.vibe-comment-list .comment { padding: 0; background: none; border: none; border-radius: 0; }
+.comment-respond input[type="text"], .comment-respond input[type="email"], .comment-respond input[type="url"], .comment-respond textarea {
+  width: 100%; border: 1px solid var(--border); border-radius: var(--r-sm); padding: 10px 14px;
+  font-size: 16px; background: var(--surface); color: var(--text); margin-bottom: 12px;
+}
+.comment-form .submit { background: var(--gold); color: #fff; border: none; font-size: 12px; font-weight: 700; padding: 10px 20px; border-radius: var(--r-sm); cursor: pointer; }
+/*
+ * single.php:212 adds .mt48 on top of .comments-area's own margin-top: 40px.
+ */
+
+/* ══ 3.18 Newsletter — .m-nl-wrap / .m-nl (mobile-only block) + .sw digest form ══ */
+/*
+ * style.css:973-979 and :1002:
+ */
+.m-nl { background: var(--dark); border-radius: var(--r-lg); padding: 24px 20px; }
+[data-theme="dark"] .m-nl { background: #1e1b16; border: 1px solid rgba(245, 158, 11, 0.25); box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5); }
+.m-nl h3 { font-size: 18px; font-weight: 800; color: #f0ede6; letter-spacing: -0.03em; margin-bottom: 4px; }
+.m-nl p { font-size: 12px; font-weight: 300; color: var(--dark-dim); line-height: 1.65; margin-bottom: 14px; }
+.m-nl .gwill-newsletter__prompt { display: none; }
+.m-nl .gwill-form input[type="email"] { background: var(--dark-s); border: 1px solid var(--gold-input-border); color: #f0ede6; }
+.m-nl .gwill-form input[type="email"]::placeholder { color: var(--dark-dim); }
+/* Mobile-only newsletter block on singles (wireframe m-nl) */
+.m-nl-wrap { display: none; }
+/*
+ * style.css:980-1000 (digest form in the sidebar .sw, plus cross-component submit-height rules):
+ */
+/* Sidebar Weekly Digest form, stack input + full-width button */
+.sw .gwill-form--newsletter__fields { display: flex; flex-direction: column; gap: 8px; }
+[data-theme="dark"] .sw .gwill-form input[type="email"] { border-color: var(--gold-input-border); }
+.sw .gwill-form__submit { width: 100%; justify-content: center; height: 38px; padding: 0 20px; }
+.nl-s .gwill-form input[type="email"]:focus,
+.m-nl .gwill-form input[type="email"]:focus,
+[data-theme="dark"] .sw .gwill-form input[type="email"]:focus { border-color: var(--gold-b); box-shadow: 0 0 0 3px rgba(245,158,11,0.18); outline: none; }
+.m-nl .gwill-form__submit,
+.nl-s .gwill-form__submit,
+.nl-hero-form .gwill-form__submit,
+.sw .gwill-form__submit { height: 48px; }
+.m-nl .gwill-form--newsletter__fields,
+.nl-s .gwill-form--newsletter__fields,
+.nl-hero-form .gwill-form--newsletter__fields { align-items: stretch; }
+/*
+ * Oddity (kept, real cascade trap): .sw .gwill-form__submit is set to height: 38px at
+ * style.css:983 and then to height: 48px at style.css:997 (same specificity, later wins).
+ * The live computed height is 48px. The 38px declaration is dead but present — a naive
+ * selector-by-selector port that copies :983 without :997 will ship a 38px button.
+ * Also: the .nl-hero-* selectors in those shared rule lists are for the newsletter page, not single.php.
+ */
+
+/* ══ 3.19 Newsletter form fields (shared, from template-parts/forms/contact-newsletter.php) — style.css:2884-2948 ══ */
+.gwill-form .gwill-form__field { margin-bottom: 18px; }
+.gwill-form input[type="text"], .gwill-form input[type="email"], .gwill-form input[type="tel"], .gwill-form textarea, .gwill-form select {
+  width: 100%; border: 1px solid var(--border); border-radius: var(--r-md); padding: 12px 16px;
+  font-size: 16px; background: var(--surface); color: var(--text); outline: none;
+  transition: border-color var(--t), box-shadow var(--t);
+  height: 46px;
+}
+.gwill-form input:focus, .gwill-form textarea:focus, .gwill-form select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(217,119,6,0.12); }
+.gwill-form label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-mid); margin-bottom: 8px; }
+.gwill-form .gwill-form__required { color: var(--gold); margin-left: 2px; }
+.gwill-form .gwill-form__field-hint { font-size: 11px; color: var(--text-dim); margin-top: 6px; line-height: 1.5; }
+.gwill-form__submit { background: var(--gold-btn); color: #fff; border: none; font-size: 14px; font-weight: 700; padding: 14px 28px; border-radius: var(--r-md); transition: background var(--t), transform var(--t), box-shadow var(--t); display: inline-flex; align-items: center; justify-content: center; gap: 8px; line-height: 1; appearance: none; -webkit-appearance: none; min-height: 0; box-shadow: var(--sh-gold); }
+.gwill-form__submit:hover { background: #92400e; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(217,119,6,0.25); }
+.gwill-form__submit:active { transform: translateY(0); }
+.gwill-form__submit-loading { display: none; }
+.gwill-form__submit[data-loading] { opacity: 0.7; cursor: wait; }
+.gwill-form__submit[data-loading] .gwill-form__submit-text { display: none; }
+.gwill-form__submit[data-loading] .gwill-form__submit-loading { display: inline; }
+.gwill-form__status { margin-top: 12px; font-size: 12px; font-weight: 700; min-height: 1.4em; }
+.gwill-form__status--error { color: var(--red); }
+.gwill-form__field-error { display: block; margin-top: 6px; font-size: 12px; font-weight: 700; line-height: 1.4; color: var(--red); }
+.nl-s .gwill-form__field-error,
+.m-nl .gwill-form__field-error,
+.nl-hero-form .gwill-form__field-error,
+.sw .gwill-form__field-error { color: #f87171; }
+.gwill-honey { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }
+
+/* ══ 3.20 Ad slots (the article renders leaderboard + rect + sq) — style.css:1654-1694, :1704, :1722-1724 ══ */
+.ad-slot {
+  background: #eae8e3; border: 1.5px dashed #c8c4bc; border-radius: var(--r-sm);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  position: relative; overflow: hidden; width: 100%; flex-shrink: 0;
+}
+.ad-slot::before {
+  content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0;
+  background: repeating-linear-gradient(-45deg, transparent, transparent 8px, rgba(0,0,0,0.025) 8px, rgba(0,0,0,0.025) 9px);
+  pointer-events: none;
+}
+.ad-txt { font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #9a9080; position: relative; z-index: 1; }
+.ad-ring {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 3px solid var(--border); border-top-color: var(--gold);
+  animation: gwill-spin 0.8s linear infinite;
+  flex: none; z-index: 1; margin-bottom: 2px;
+}
+.ad-leader { height: 90px; }
+.ad-rect { height: 280px; max-width: 336px; margin: 24px auto; }
+.ad-sq { height: 250px; }
+.ad-banner { height: 60px; }
+.ad-bg { margin-bottom: 24px; }
+.ad-bg:empty, .ad-bg:not(:has(> .ad-slot)), .gwill-comment-ad:empty { display: none; }
+.gwill-comment-ad { width: 100%; margin: 28px 0; }
+.gwill-comment-ad .ad-rect { margin: 0 auto; }
+.ad-slot { margin: 24px 0; position: relative; }
+.ad-sticky .ad-slot, .ad-slot.ad-feed { margin: 0; }
+.ad-rect { margin: 24px auto; }
+/*
+ * @keyframes used by .ad-ring — style.css:887:
+ */
+@keyframes gwill-spin { to { transform: rotate(360deg); } }
+
+/* ══ 4.1 @media (min-width: 1024px) — desktop editorial polish, style.css:2026-2039 ══ */
+@media (min-width: 1024px) {
+  .art-surface-pad { padding: 48px 56px 56px; }
+  .art-cover { min-height: 380px; }
+  .art-body { font-size: 17px; line-height: 1.9; }
+  .art-body > p:first-of-type {
+    font-size: 19px; font-weight: 300; color: var(--text);
+    line-height: 1.85; margin-bottom: 26px;
+  }
+  .art-body h2 { font-size: 24px; margin: 44px 0 14px; }
+  .art-body h3 { font-size: 18px; margin: 28px 0 10px; }
+  .art-body h4 { font-size: 15px; margin: 22px 0 8px; }
+  .art-body ul, .art-body ol { margin: 18px 0 22px; }
+  .art-body blockquote, .art-body .wp-block-pullquote { margin: 30px 0; }
+}
+/*
+ * Ordering trap (kept, documented in-file at style.css:2022-2025): this block sits before the
+ * remaining .art-body base rules (:2040-2076). The in-file comment warns that an earlier revision
+ * placed it after the base rules and "the base rules silently overrode the media query (body stayed 16px
+ * on desktop)". The reason it works here: the rules inside this block that the later base rules would
+ * beat are only those the base rules do not also set (font-size/line-height on .art-body are
+ * set at :2010 *before* this block; p:first-of-type, h2 size, list/blockquote margins are *not*
+ * set later in a conflicting way except .art-body ul, .art-body ol { margin: 0 0 16px 20px; } at
+ * :2043 which is shorthand and therefore does reset margins on desktop… see the note below).
+ *
+ * ⚠️ Observed cascade anomaly — port carefully. style.css:2043
+ * .art-body ul, .art-body ol { margin: 0 0 16px 20px; } (unqualified, outside any media query)
+ * comes *after* this block and re-declares the full margin shorthand, so on ≥1024px the intended
+ * margin: 18px 0 22px from :2037 is overridden for the top/right/bottom/left values it sets.
+ * A class-for-class Astro port must reproduce the same source order to land on the same computed value.
+ */
+
+/* ══ 4.2 @media (max-width: 1023px) — tablet, style.css:2985-3012 (article-relevant lines shown; the block also styles .g3, .ftop, .hero*, .feat*, .stat-strip, .si, .phd, :root, .ticker) ══ */
+@media (max-width: 1023px) {
+  :root { --con-pad: 28px; --header-h: 56px; }
+  .g3 { grid-template-columns: 1fr 1fr; }
+  .sb-layout, .cl-layout { grid-template-columns: 1fr 250px; gap: 24px; }
+  .art-surface-pad { padding: 24px 28px 28px; }
+  .nl-s { flex-direction: row; align-items: center; }
+  .nl-s .nl-copy, .nl-s .gwill-newsletter { width: auto; flex: 1 1 50%; min-width: 0; }
+  .nl-s .gwill-form--newsletter__fields { flex-direction: row; }
+  .nl-s .gwill-form__submit { width: auto; }
+}
+/*
+ * (The above is the complete article-relevant subset; the other rules in that block are .ftop, .hero,
+ * .hero-h, .feat, .feat-img, .stat-strip, .si ×3, .phd, .about-hero, .footer, .ticker ×2.)
+ */
+/*
+ * --con-pad: 28px and --header-h: 56px are the ones that matter here: they change .con padding,
+ * .art-surface-pad's mobile variables, .prog's sticky top, and html's scroll-padding-top.
+ */
+
+/* ══ 4.3 @media (min-width: 768px) and (max-width: 1023px) — tablet gallery, style.css:2181-2183 ══ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .art-body .wp-block-gallery { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ══ 4.4 @media (max-width: 767px) — every article-touching mobile block ══ */
+/*
+ * There are five (max-width: 767px) blocks that touch in-scope selectors, plus two more that touch
+ * shared .art-body-adjacent classes. All are transcribed below in source order.
+ */
+/*
+ * (a) Mobile TOC visibility switch — style.css:2413-2417
+ */
+@media (max-width: 767px) {
+  .toc-mobile { display: block; }
+  .toc-dropdown.toc-open .toc-list { display: flex; }
+  .toc-dropdown:not(.toc-open) .toc-list { display: none; }
+}
+/*
+ * (b) Mobile-only newsletter switch + sidebar hide — style.css:1003-1009
+ */
+@media (max-width: 767px) {
+  .m-nl-wrap { display: block; margin-top: 24px; }
+  .article-sidebar { display: none; }
+  .m-nl .gwill-form--newsletter__fields { display: flex; gap: 8px; }
+  .m-nl .gwill-form--newsletter__fields .gwill-form__field { flex: 1; min-width: 0; }
+  .m-nl .gwill-form__submit { background: var(--gold-btn); color: #fff; border: none; font-size: 12px; font-weight: 700; padding: 0 20px; border-radius: var(--r-md); white-space: nowrap; height: 46px; }
+}
+/*
+ * (c) Gutenberg content mobile — style.css:2185-2190
+ */
+/* Mobile content */
+@media (max-width: 767px) {
+  .art-body .wp-block-gallery { grid-template-columns: repeat(2, 1fr); }
+  .art-body .wp-block-columns { flex-direction: column; }
+  .art-body .wp-block-media-text { grid-template-columns: 1fr; }
+  .art-body .wp-block-image.alignleft, .art-body .wp-block-image.alignright { float: none; max-width: 100%; margin: 0 0 14px; }
+}
+/*
+ * (d) Article table breakout — style.css:901-904
+ */
+/* Mobile: table scrolls inside its own box, never blows the page wide */
+@media (max-width: 767px) {
+  .art-body .wp-block-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .art-body .wp-block-table table { width: max-content; min-width: 100%; }
+}
+/*
+ * (e) Lightbox mobile — style.css:2243-2248
+ */
+@media (max-width: 767px) {
+  .gl-nav { width: 36px; height: 36px; font-size: 20px }
+  .gl-prev { left: 8px }
+  .gl-next { right: 8px }
+  .gl-image { max-height: 70vh }
+}
+/*
+ * (f) THE mobile override block (§50) — style.css:3015-3105. Verbatim, complete (only the
+ * article-relevant selectors are commented; everything is included because .con, .g2, .sb-layout,
+ * :root and the .art-* rules all live here):
+ */
+/* ── 50. RESPONSIVE: mobile ≤767px ───────────────── */
+@media (max-width: 767px) {
+  :root { --con-pad: 20px; }
+  .sh, .footer { display: none; }
+  .mh { display: flex; }
+  .ticker { height: 28px; }
+  .ticker .ti { padding: 0 14px; height: 28px; }
+  .g2, .g3 { grid-template-columns: 1fr; }
+  .sb-layout, .cl-layout { grid-template-columns: 1fr; }
+  .hero { padding: 40px 20px 48px; }
+  .hero .con, .about-hero .con { padding-left: 0; padding-right: 0; }
+  .hero-h { font-size: 30px; }
+  .hero-sub { font-size: 13px; }
+  .hero-acts { flex-direction: column; align-items: stretch; }
+  .hero-acts .bh, .hero-acts .bhg { justify-content: center; display: flex; width: 100%; }
+  .stat-strip { display: grid; grid-template-columns: 1fr 1fr; }
+  .si { border-right: 1px solid var(--gold-border); border-bottom: 1px solid var(--gold-border); }
+  .si:nth-child(2n) { border-right: none; }
+  .feat-img { min-height: 170px; font-size: 32px; }
+  .feat-emoji { font-size: 32px; }
+  .feat-body { padding: 24px 20px; }
+  .feat-t { font-size: 18px; }
+  .art-hd { padding: 24px 0 32px; }
+  .art-t { font-size: 21px; }
+  /* Full-bleed article on phones: strip the card chrome, let media run
+     edge-to-edge, keep body text comfortably padded (readability first). */
+  .art-reading-surface { border-radius: 0; border: none; box-shadow: none; background: transparent; overflow: visible; margin-left: calc(-1 * var(--con-pad)); margin-right: calc(-1 * var(--con-pad)); }
+  .art-cover { min-height: 180px; margin-left: 0; margin-right: 0; width: auto; border-bottom: 1px solid var(--border-dim); border-radius: 0; }
+  .art-surface-pad { padding: 24px var(--con-pad); }
+  /* Full-bleed on phones, but the gutter lives on the BODY itself (not its
+     direct children) so ANY nested block still gets padded. surface-pad keeps
+     its own gutter for siblings (disclosure/TOC/share/author-bio); art-body
+     breaks out to the true page edge and re-pads internally, so its text
+     aligns exactly with those siblings while its media runs edge-to-edge.
+     Old rule re-added the gutter to .art-body > * only, a Gutenberg group
+     wrapping the paragraphs lost it → text ran flush (King: "content now has
+     zero padding"). Body padding beats a shallow child selector. */
+  .art-body { margin-left: calc(-1 * var(--con-pad)); margin-right: calc(-1 * var(--con-pad)); padding: 0 var(--con-pad); }
+  /* Only media blocks break out true edge-to-edge. Because art-reading-surface
+     is now pulled to the true edge (x=0), media escapes ONE gutter and lands at
+     x=0; text stays at var(--con-pad). (v1.12.9, verified box model: cover x=0,
+     media x=0, text x=20px.) */
+  .art-body > figure, .art-body > .wp-block-image, .art-body > .wp-block-gallery,
+  .art-body > .wp-block-embed, .art-body > .wp-block-video, .art-body > .wp-block-audio,
+  .art-body > .wp-block-table, .art-body > .wp-block-cover, .art-body > pre,
+  .art-body > .wp-block-code, .art-body > .wp-block-pullquote, .art-body > .wp-block-quote {
+    margin-left: calc(-1 * var(--con-pad)); margin-right: calc(-1 * var(--con-pad)); width: auto; max-width: none; border-radius: 0;
+  }
+  /* The in-content ad keeps its centered 336px box (don't let the body's
+     full-bleed margins left-align it) */
+  .art-body > .ad-rect { margin-left: auto; margin-right: auto; max-width: 336px; width: 100%; }
+  .art-body > .wp-block-image img, .art-body > .wp-block-gallery img { border-radius: 0; }
+  /* Full-bleed readability: cream page bg replaces the old white card in
+     light mode, so body copy steps up a shade, theme-aware, so dark mode
+     stays readable too (no hardcoded hex that breaks the dark palette) */
+  .art-body { color: var(--text); }
+  .art-body p, .art-body li { color: var(--art-copy, #262626); }
+  .art-body figcaption, .art-body .wp-block-quote cite { color: var(--art-dim, #6b6b6b); }
+  .art-body blockquote, .art-body .wp-block-pullquote { color: var(--text-mid); }
+  /* v1.0.132: art-hd now lives INSIDE the sb-layout column (v1.0.130) .
+     the old sibling-selector rule no longer applies; con handles padding. */
+  .phd { padding: 24px 20px 20px; }
+  .author-head { gap: 16px; }
+  .author-av { width: 64px; height: 64px; font-size: 24px; border-width: 2px; }
+  .about-hero { padding: 32px 20px; }
+  .nl-s { padding: 28px 24px; }
+  /* Phones AND mini-tablets (≤767px): stack the whole box, title on top,
+     form below. At 640px the row layout squeezes the h3 to 263px and wraps
+     it; column is the clean layout below 768px. */
+  .nl-s { flex-direction: column; align-items: stretch; }
+  .nl-s .nl-copy, .nl-s .gwill-newsletter { width: 100%; max-width: none; }
+  .nl-s .gwill-form--newsletter__fields { flex-direction: column; }
+  .nl-s .gwill-form__submit { width: 100%; justify-content: center; height: 46px; padding: 0 20px; }
+  .page-surface { padding: 24px 20px; }
+  .mfooter { display: block; }
+  .footer { display: none; }
+  .error-404 { padding: 60px 20px 80px; }
+  .ad-rect { height: 250px; }
+  .ad-feed { height: 120px; }
+  /* iOS zoom-on-focus (WCAG 1.4.4 + 2.5.8): Safari auto-zooms the page
+     when a form control with font-size < 16px receives focus. Every input,
+     select and textarea on the site was below 16px (12-14px), tapping any
+     field zoomed the whole page in on iPhones. 16px on phones only;
+     desktop keeps the compact 12-14px forms. */
+  .gs-input, .search-field,
+  .gwill-form input[type="text"], .gwill-form input[type="email"], .gwill-form input[type="tel"],
+  .gwill-form textarea, .gwill-form select,
+  .nl-hero-form .gwill-form input[type="email"],
+  .comment-respond input[type="text"], .comment-respond input[type="email"], .comment-respond input[type="url"],
+  .comment-respond textarea,
+  .art-body .wp-block-search__input { font-size: 16px; }
+}
+/*
+ * (g) Misc mobile text floors — style.css:3168-3172 (ticker/hero chips, .db used on the article hero-adjacent chips; not on single.php directly but in the shared chip family):
+ */
+@media (max-width: 767px) {
+  .t-pair { font-size: 12px; }
+  .t-rate { font-size: 12px; }
+  .db { font-size: 11px; }
+}
+/*
+ * (h) Ad slot sizes, phone — style.css:1744-1750
+ */
+@media (max-width: 767px) {
+  /* Phone + mini-tab: 320×50 leaders/banners, 300×250 rects/feeds. */
+  .ad-leader, .ad-banner { height: 50px; }
+  .ad-rect { height: 250px; max-width: 300px; }
+  .ad-feed { height: 250px; }
+  .ad-sq { height: 250px; }
+}
+
+/* ══ 4.5 @media (min-width: 768px) — hides mobile chrome, style.css:3108-3110 ══ */
+/* Desktop / tablet default above 767 */
+@media (min-width: 768px) {
+  .mh, .mfooter, .mno { display: none; }
+}
+/*
+ * This is what makes .m-nl-wrap { display: none } (base) take effect on desktop and .article-sidebar
+ * sticky on desktop — the sidebar is hidden only by the ≤767 rule at style.css:1005, not by any
+ * min-width: 768px rule.
+ */
+
+/* ══ 4.6 Ad slot sizes, tablet — style.css:1751-1760 ══ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Tablet: 728×90 preferred (468×60 has limited advertiser supply per
+     AdSense, sub-optimal performance). Height 90px so a real 728×90
+     code never gets clipped by the slot's overflow:hidden. */
+  .ad-leader { height: 90px; }
+  .ad-banner { height: 90px; }
+  .ad-rect { height: 280px; }
+  .ad-feed { height: 250px; }
+  .ad-sq { height: 250px; }
+}
+
+/* ══ 4.7 Ad slot sizes, desktop — style.css:1761-1768 ══ */
+@media (min-width: 1024px) {
+  /* PC: full 728×90 leaders/banners, 336×280 rects/feeds, 300×250 sidebar. */
+  .ad-leader { height: 90px; }
+  .ad-banner { height: 90px; }
+  .ad-rect { height: 280px; }
+  .ad-feed { height: 280px; }
+  .ad-sq { height: 250px; }
+}
+
+/* ══ 4.8 @media (pointer: coarse) — touch ergonomics, style.css:3125-3144 ══ */
+@media (pointer: coarse) {
+  .msearch, .hbg, .mno-close { width: 44px; height: 44px; }
+  .cp { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+  .pagination .page-numbers { min-width: 44px; height: 44px; }
+  .cp-scroll-btn { width: 44px; height: 44px; }
+  /* v1.0.203 (King: "Fix all"): ad dismiss visual stays 22px gold ghost
+     (ad-system design), but the TAP TARGET grows to 44px via the same
+     ::before hit-area pattern as .tp-seg, WCAG 2.5.8 AA (24px) + 2.5.5
+     (44px) met with ZERO visual change. (.ad-sticky-x is already
+     position:absolute, the ::before anchors to its box; no position
+     override needed.) */
+  .ad-sticky-x::before { content: ''; position: absolute; top: -11px; right: -11px; bottom: -11px; left: -11px; inset: -11px; border-radius: inherit; }
+  .share-b { min-height: 44px; min-width: 44px; }
+  /* v1.13.14 (reviewer D3): same 44px floor for the remaining sub-44px touch
+     controls - search submit, spotlight close/clear (all pass 24px AA; this
+     raises them to the 2.5.5 best practice like every other control here). */
+  .search-submit { height: 44px; }
+  .gs-close { width: 44px; height: 44px; }
+  .gs-clear { width: 44px; height: 44px; }
+}
+/*
+ * .share-b { min-height: 44px; min-width: 44px; } is the only in-scope selector changed here.
+ */
+
+/* ══ 4.9 @media (pointer: coarse) — Firefox-Android scrollbar kill, style.css:2391-2408 ══ */
+@media (pointer: coarse) {
+  @supports (-moz-appearance: none) {
+    * { scrollbar-width: none; scrollbar-color: auto; }
+    .wp-block-table,
+    .toc-scroll,
+    .toc-list { scrollbar-width: none; scrollbar-color: auto; }
+    .wp-block-table.tbl-idle,
+    .toc-scroll.toc-idle,
+    .toc-dropdown.toc-idle .toc-list { scrollbar-color: auto; }
+    [data-theme="dark"] * { scrollbar-color: auto; }
+    [data-theme="dark"] .wp-block-table,
+    [data-theme="dark"] .toc-scroll,
+    [data-theme="dark"] .toc-list,
+    [data-theme="dark"] .wp-block-table.tbl-idle,
+    [data-theme="dark"] .toc-scroll.toc-idle,
+    [data-theme="dark"] .toc-dropdown.toc-idle .toc-list { scrollbar-color: auto; }
+  }
+}
+
+/* ══ 4.10 @media (hover: none) — touch hover-stickiness reset, style.css:3288-3326 (in-scope lines only; the block also resets .cp, .ac, .b-*, .bh*, .fsoc .soci, .pagination, .snav-list, .gs-*, .nl, .ncta, .nsearch, .msearch, .mno-cta, .legal-toc-list, .gl-*, .ad-sticky-x) ══ */
+@media (hover: none) {
+  .share-b:hover { border-color: var(--border); color: var(--text-mid); }
+  .toc-i a:hover { color: var(--text-dim); }
+  .ac:hover { border-color: var(--border); transform: none; box-shadow: none; }
+}
+/*
+ * Also in the same block, the .ac cards rendered by related posts get:
+ */
+
+/* ══ 4.11 .no-flex-gap fallback rules for the article page — style.css:3207-3275 (base, no media query) + :3276-3278 ══ */
+/*
+ * The .no-flex-gap class is added to <html> by a JS probe only on Safari 14.0 / iOS 14.0-14.4.
+ * In-scope article lines:
+ */
+.no-flex-gap .discl > * + * { margin-left: 10px; }
+.no-flex-gap .sw .gwill-form--newsletter__fields > * + * { margin-top: 8px; }
+.no-flex-gap .m-nl .gwill-form--newsletter__fields > * + * { margin-left: 8px; }
+.no-flex-gap .ad-slot > * + * { margin-top: 4px; }
+.no-flex-gap .ad-slot__spinner > * + * { margin-top: 4px; }
+.no-flex-gap .bc > * + * { margin-left: 6px; }
+.no-flex-gap .gwill-breadcrumbs__list > * + * { margin-left: 6px; }
+.no-flex-gap .gwill-breadcrumbs__item > * + * { margin-left: 6px; }
+.no-flex-gap .art-meta > * + * { margin-left: 12px; }
+.no-flex-gap .art-author > * + * { margin-left: 8px; }
+.no-flex-gap .art-body .wp-block-buttons > * + * { margin-left: 10px; }
+.no-flex-gap .art-body .wp-block-file > * + * { margin-left: 12px; }
+.no-flex-gap .art-body .wp-block-social-links > * + * { margin-left: 8px; }
+.no-flex-gap .art-body .wp-block-search__inside-wrapper > * + * { margin-left: 8px; }
+.no-flex-gap .share-row > * + * { margin-left: 8px; }
+.no-flex-gap .abio > * + * { margin-left: 16px; }
+.no-flex-gap .abio-s > * + * { margin-left: 8px; }
+.no-flex-gap .toc-i > * + * { margin-left: 8px; }
+.no-flex-gap .toc-i a > * + * { margin-left: 8px; }
+.no-flex-gap .toc-summary > * + * { margin-left: 8px; }
+.no-flex-gap .toc-list > * + * { margin-top: 2px; }
+.no-flex-gap .gwill-form__submit > * + * { margin-left: 8px; }
+.no-flex-gap .author-head > * + * { margin-left: 20px; }
+
+/* ══ 4.12 @media print — article print surface, style.css:3453-3470 (complete) ══ */
+@media print {
+  html { color-scheme: light; scroll-behavior: auto; }
+  body { background: #fff; color: #0d0b08; overflow: visible; }
+  .sh, .snav, .nsearch, .msearch, .hbg, .mno, .ticker, .ticker-inner,
+  .ad-bg, .gwill-comment-ad, .share-row, .share-b, .cp-strip, .cp-scroll-btn,
+  .gconsent, .gpwa, .gwill-bell-panel, .gbp-btn, .m-nl-wrap, .article-sidebar,
+  .sw, .prog, .ftop, .fpush, .toc-list, .toc-dropdown, .legal-toc,
+  .search-form, .btt { display: none !important; }
+  body.ad-sticky-visible .ad-sticky { display: none !important; }
+  main, article, .art-body, .con { display: block !important; width: auto !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+  a { color: #0d0b08; text-decoration: underline; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 10px; color: #555; }
+  h1, h2, h3 { break-after: avoid; }
+  img, table, figure { break-inside: avoid; max-width: 100% !important; }
+  .art-body .wp-block-table { overflow: visible; }
+  table { border-collapse: collapse; }
+  th, td { border: 1px solid #999; padding: 6px; }
+}
+/*
+ * Stray !importants (kept): the print block is dense with them — 3 in the hide-list, 2 on
+ * body.ad-sticky-visible, 4 on the main, article, .art-body, .con reset, 1 on img, table, figure.
+ * All verbatim above.
+ */
+
+/* ══ 4.13 Other media queries that exist but do not touch any in-scope selector ══ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  body { transition: none; }
+  .mno { transition: none; }
+}
+
+/* ══ 5. DARK-THEME OVERRIDES touching article selectors ══ */
+[data-theme="dark"] .toc-dropdown { background: var(--dark-s); border-color: var(--dark-b); }
+[data-theme="dark"] .toc-list a:hover { background: #1c1a16; color: #f0ede6; }
+[data-theme="dark"] .toc-list a.toc-sub { color: #7a6f5e; }
+[data-theme="dark"] .ad-slot { background: #171512; border-color: #2c2822; }
+[data-theme="dark"] .ad-txt { color: #5a5248; }
+[data-theme="dark"] .m-nl { background: #1e1b16; border: 1px solid rgba(245, 158, 11, 0.25); box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5); }
+/* NOTE (duplication kept, not merged): this [data-theme="dark"] .m-nl rule is the
+   spec's own second copy of the identical rule already emitted at style.css:974 in
+   "3.18 Newsletter" above (spec section 5 re-prints it verbatim). Both are kept in
+   source order rather than merged, and the two lines are byte-identical. */
+
+/* ══════════════════════════════════════════════════════════════════════════
+   TOKENS MISSING FROM THE PORT — resolve before shipping
+   ══════════════════════════════════════════════════════════════════════════
+   Every var(--token) the rules above reference was checked against the tokens
+   that actually exist in this port: src/layouts/Layout.astro (:root +
+   [data-theme="dark"]), src/styles/header.css:11 (--font-mono) and
+   src/styles/home.css:883 (--gold-input-border). Two tokens are referenced by
+   the rules above but declared NOWHERE in the port. Their var() names are kept
+   exactly as the theme writes them — no substitution, no invented value — so
+   each affected declaration is invalid at computed-value time and drops out
+   (neither rule has a fallback value) until the token exists. The theme's own
+   values are recorded here for the reviewer.
+
+   -- 1. --red-muted ---------------------------------------------------------
+      used by    : .brd  (style.css:676 — cluster "3.5 Badge" above)
+      theme light: --red-muted: #fff1f2;                (style.css:124)
+      theme dark : --red-muted: rgba(248,113,113,0.1);  (style.css:163)
+      port has   : --red only (#b91c1c light / #f87171 dark).
+      effect now : .brd gets no background; the .bg/.bgn/.bpu/.bsl siblings do.
+
+   -- 2. --red-border --------------------------------------------------------
+      used by    : .brd  (style.css:676 — cluster "3.5 Badge" above)
+      theme light: --red-border: #fecdd3;               (style.css:125)
+      theme dark : --red-border: rgba(248,113,113,0.3); (style.css:164)
+      port has   : nothing equivalent.
+      effect now : .brd keeps .badge's "border: 1px solid" but with no colour,
+                   so the border computes to currentColor instead of red-border.
+
+   NOT affected: the dark variant [data-theme="dark"] .brd (style.css:684) uses
+   literal rgba() values, not these tokens.
+
+   Suggested fix — the theme's own values, commented out. The port's token owner
+   should install them in src/layouts/Layout.astro, not here:
+
+   :root {
+     --red-muted: #fff1f2;
+     --red-border: #fecdd3;
+   }
+   [data-theme="dark"] {
+     --red-muted: rgba(248,113,113,0.1);
+     --red-border: rgba(248,113,113,0.3);
+   }
+
+   Every OTHER token the rules above use DOES exist in the port and is used
+   as-is: --art-copy, --art-dim, --bg, --border, --border-dim, --con-pad, --dark,
+   --dark-b, --dark-dim, --dark-s, --font-mono, --gold, --gold-b, --gold-border,
+   --gold-btn, --gold-glow, --gold-input-border, --gold-muted, --green,
+   --green-border, --green-muted, --header-h, --pill, --purple, --r-lg, --r-md,
+   --r-sm, --sh-gold, --sh-sm, --surface, --surface-2, --t, --t-md, --text,
+   --text-dim, --text-mid.
+   ══════════════════════════════════════════════════════════════════════════ */

@@ -1,0 +1,42 @@
+---
+/**
+ * Newsletter form — port of gwill-finance-theme
+ * template-parts/forms/contact-newsletter.php.
+ *
+ * The partial is included twice on a single post (mobile block + sidebar card),
+ * and WordPress keys the field ids with wp_unique_id( 'gwill-newsletter-' ) so
+ * the two instances stay unique on the page. The id is a prop here for the same
+ * reason: the article page passes "gwill-newsletter-1" and "gwill-newsletter-2".
+ *
+ * Copy strings are the partial's, byte-exact: "Get new posts in your inbox.",
+ * the honeypot label "Leave this blank", the visually-hidden "Email" label,
+ * the "Your email" placeholder, "Subscribe" and "Subscribing…" (U+2026).
+ */
+interface Props {
+  id: string;
+}
+const { id } = Astro.props;
+---
+
+<div class="gwill-newsletter">
+  <p class="gwill-newsletter__prompt">Get new posts in your inbox.</p>
+  <form class="gwill-form gwill-form--newsletter" method="post" novalidate>
+    <div class="gwill-honey" aria-hidden="true">
+      <label for={`gwill_hp_${id}`}>Leave this blank</label>
+      <input type="text" name="gwill_hp" id={`gwill_hp_${id}`} tabindex="-1" autocomplete="off" />
+    </div>
+    <input type="hidden" name="action" value="gwill_contact_form" />
+    <input type="hidden" name="gwill_form_id" value="newsletter" />
+    <div class="gwill-form--newsletter__fields">
+      <div class="gwill-form__field">
+        <label for={`email_${id}`} class="screen-reader-text">Email</label>
+        <input type="email" id={`email_${id}`} name="gwill_email" placeholder="Your email" required autocomplete="email" />
+      </div>
+      <button type="submit" class="gwill-form__submit">
+        <span class="gwill-form__submit-text">Subscribe</span>
+        <span class="gwill-form__submit-loading" aria-hidden="true">Subscribing…</span>
+      </button>
+    </div>
+    <div class="gwill-form__status" role="alert" aria-live="polite"></div>
+  </form>
+</div>

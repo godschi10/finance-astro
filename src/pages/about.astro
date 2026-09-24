@@ -1,5 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
+// The port's own .art-body prose typography moved out of the layout so the
+// ported article page can use the theme's instead. This page still wants it.
+import "../styles/prose.css";
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 const doing = [
   { emoji: "📚", title: "In-depth guides", text: "Savings, investing, crypto, banking, remittance, dollar accounts — each one tested, each one priced in naira." },
