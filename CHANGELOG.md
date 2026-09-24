@@ -75,8 +75,17 @@ dropdown's default state, click state and stored value match. The only
 differences are content-driven and listed in the doc (longer title, no
 `Updated` fragment on this post, longer bio).
 
+4. The related block showed **3 cards where WordPress showed 2**.
+   `relatedTo()` appended other-category posts after the same-category matches,
+   so every article always filled three slots. `gwill_get_related_posts()`
+   queries the **primary category only**, capped at 3, and `single.php` falls
+   back to the **2 most recent** posts only when that returns nothing. Fixed and
+   verified across all seven articles: each now renders
+   `min(same-category, 3)`, or 2 when its category has no siblings — which is
+   why the live WordPress article shows 2.
+
 Gate: `check-article-fidelity.mjs` grew from 22 assertions describing the stub
-to **79 describing WordPress's contract**; all 5 gates green.
+to **80 describing WordPress's contract**; all 5 gates green.
 
 ## [0.3.4] — 2026-09-23
 

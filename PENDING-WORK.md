@@ -328,12 +328,32 @@ first; the subtitle rides on top of it.
 - [x] Heading ids server-rendered via `rehype-slug` (WP does it on
       `the_content` at priority 9); the client-side id-patching hack is gone.
 - [x] `check-article-fidelity.mjs` rewritten: 22 assertions describing the stub →
-      **79 describing WordPress's contract**. All 5 gates green.
+      **80 describing WordPress's contract**. All 5 gates green.
+- [x] **A fourth divergence, found by the live re-measure:** the related block
+      showed 3 cards where WordPress showed 2 — `relatedTo()` was appending
+      other categories. Aligned to `gwill_get_related_posts()`
+      (primary category only, cap 3) plus `single.php`'s 2-most-recent
+      fallback; verified across all seven articles.
 - [x] README gate row + file list, CHANGELOG `[0.4.0]`, `docs/port/10-article-template.md`.
-- [x] **Shipped (v0.4.0) 2026-09-23** — `main` `d6bd5c7`; staged `pages-dist`;
-      published; served bytes verified; live parity re-measured against
-      `https://finance.fitnesslova.qzz.io/` at 390/768/1280.
+- [x] **Shipped (v0.4.0) 2026-09-23** — `main` `584f421`; staged `pages-dist`
+      `c19456b`; Pages `built c19456b`; served article bytes 173,331 with
+      `.art-hd`/`h1.art-t`/`.art-sub`/`.art-meta`/TOC dropdown/`.discl mb24`/
+      `.share-row`/`data-copy`/`.abio.mt20`/`.article-sidebar` present, 2 related
+      cards, and none of the forbidden stubs. Live parity vs
+      `https://finance.fitnesslova.qzz.io/` at 390/768/1280: **198 identical
+      fields**, every remaining difference content-driven (longer title, no
+      `Updated` fragment on this post, longer bio, this post's heading count).
 
+- [ ] **Visible staging notices on non-article pages (found while scanning the
+      served bytes of this release).** `contact.astro:33` ships
+      *"Form lands with the server leg"*, `newsletter.astro:10` ships
+      *"Launching soon — no list yet"*, `newsletter-thanks.astro:8` ships
+      *"You are early"* — the class of placeholder King's law forbids on a live
+      page. Not touched in v0.4.0 because it is a different surface and the fix
+      is a decision, not a sweep: either a real backend lands, or the notice
+      goes and the control becomes a no-op that must NOT look like a working
+      form. (`404.astro`'s "404" and `search.astro`'s "No matches" are legit
+      states, not notices.)
 - [ ] Source of truth for the import: decide WP REST export vs the `.md`
       collection as authoring home (this decides where subtitles are AUTHORED).
 - [ ] If WP must match the port, mirror the subtitle: ACF field on the theme's
