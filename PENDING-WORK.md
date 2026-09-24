@@ -6,17 +6,16 @@ Read this at session start.
 
 ## IN FLIGHT — 2026-09-24 · King: "Subtitles and posts meta are too close" + comments plan
 
-- [ ] **Subtitle ↔ post-meta spacing** — King's screenshot (img_30a2b4d4b69e):
-      deck bottom line sits flush on the author pill; title→deck also tight.
-      Measure port 390 vs the theme's own header rhythm; fix with
-      theme-scale values; gate assertion; ship both branches; live verify.
-- [ ] **COMMENTS — plan first, then port** — King: "port comments, make
-      serious plans for comments let's give it a custom comment, but for
-      our custom Cloudflare comments style. Let's plan first." Deliver a
-      serious plan for approval BEFORE any code: theme comments UI ported
-      + custom Cloudflare backend (Workers + D1), API + antispam +
-      moderation + styling in the theme's language. NO implementation
-      until the King approves.
+- [x] **COMMENTS PLAN WRITTEN** — `docs/port/15-comments-plan.md` (12.4KB):
+      evidence-cited (14 wp_ajax actions, wire shape, 40KB+24KB CSS, 151KB
+      JS, template contracts, gold tokens), Worker+D1+KV+Turnstile backend,
+      UI ported from HIS vibe-comments (gold skin verbatim), 3 phases,
+      6 gates, 5 King decisions. **AWAITING APPROVAL — no code until then.**
+- [x] **Subtitle ↔ post-meta spacing** — SHIPPED v0.4.4: `.art-sub` had
+      `margin-top:16px` and NO `margin-bottom` (deck sat 0px on the author
+      pill — exactly the King's screenshot). Now symmetric 24px/24px
+      (theme's `.mb24` callout rhythm). Measured live: title→deck 24,
+      deck→meta 24. main `86227ef`, pages-dist `adb3a4f` (built, verified).
 
 ## SHIPPED — 2026-09-24 · King's verdict on v0.4.2 (v0.4.3) — SHIPPED, LIVE-VERIFIED
 
