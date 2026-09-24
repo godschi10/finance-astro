@@ -4,7 +4,38 @@ Ledger law: every order gets a line here immediately. `CODED-UNCOMMITTED ≠ DON
 a fix is done only when the served bytes and the rendered page prove it.
 Read this at session start.
 
-## IN FLIGHT — 2026-09-24 · King's verdict on v0.4.1 (v0.4.2)
+## IN FLIGHT — 2026-09-24 · King's verdict on v0.4.2 (v0.4.3) — SHIPPED, LIVE-VERIFIED
+
+King: "Why do I have to press the × twice to close" + "You still didn't fix
+the spacing issue, these elements are too close to each other, look."
+
+- [x] **× twice** — FIXED. The lightbox was DOUBLE-BOUND: v0.4.2's verbatim
+      `src/scripts/lightbox.js` import AND a 211-line folded copy (§11) that
+      had lived inside `article.js` since v0.3. Two document-level listeners
+      → two stacked `.gl-overlay` per click → × closed only the top one.
+      Folded copy removed with a tombstone comment; the theme's own
+      architecture (lightbox = its own enqueue; main.js has NO lightbox
+      section) is now the port's. Gate asserts single bind.
+- [x] **Spacing** — FIXED. Theme §48 LAYOUT UTILITIES (style.css:2966-2982)
+      extraction stopped after .con/.g2/.g3/.sb-layout; `.sg .mt20 .mt40
+      .mt48 .mb12 .mb20 .mb24 .flex .aic .jsb .g16 .fw3 .fz11/12/14 .cm-c
+      .cd .lh .cl-layout` were missing from the served CSS on ALL 54 pages —
+      disclosure flush on the body (0px vs live 24px), author box −20px,
+      related −40px. Installed GLOBALLY in base.css (14 non-article
+      templates use them; the theme ships them in the one global sheet).
+- [x] Gap chain re-measured port vs live (390 dark): toc→discl 20/20,
+      discl→body 24/24, body→share 28/28, share→abio 20/20, abio→related
+      64/64 — 0 divergent pairs. Gate 120/120, 5/5 green.
+- [x] Shipped main `85bcf8f` + pages-dist `d7f9d48` (Pages: built).
+- [x] SERVED-BYTES VERIFIED on the live URL: `.mb24{margin-bottom:24px}` in
+      the inline CSS; served JS = ONE gl-overlay build site, zero
+      lbInit/lbBuild; live click → 1 overlay; one × press → closed + scroll
+      unlocked; live discl→body gap = 24px.
+- [ ] King's phone review of v0.4.3 (awaiting verdict).
+
+---
+
+## SHIPPED — 2026-09-24 · King's verdict on v0.4.1 (v0.4.2)
 
 King: "Still highly unfinished, so many issues, lightbox doesn't even work. Some
 elements aren't spaced enough." + "And no featured images on posts."
