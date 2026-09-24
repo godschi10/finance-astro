@@ -2,7 +2,7 @@
 title: "Dollar-Cost Averaging Into NGX Stocks on a ₦50k Salary"
 description: "A step-by-step plan for buying Nigerian stocks every month without timing the market — broker choice, fees to watch, and a worked example."
 category: "investing"
-author: "Gwill Chijioke"
+author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-09-02
 readMins: 11

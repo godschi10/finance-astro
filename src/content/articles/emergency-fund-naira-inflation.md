@@ -2,7 +2,7 @@
 title: "How Much Emergency Fund Do You Need With Naira Inflation?"
 description: "Why the classic 6-month rule breaks under double-digit inflation, and a simple formula to size your safety net in today's naira."
 category: "savings"
-author: "Gwill Chijioke"
+author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-07-18
 readMins: 6

@@ -2,7 +2,7 @@
 title: "How to Buy Crypto P2P in Nigeria Without Getting Scammed"
 description: "Escrow rules, red flags, and the exact verification steps to run before you release a single naira on any P2P marketplace."
 category: "crypto"
-author: "Gwill Chijioke"
+author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-08-24
 readMins: 8

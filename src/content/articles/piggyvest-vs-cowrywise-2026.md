@@ -2,7 +2,7 @@
 title: "PiggyVest vs Cowrywise in 2026: Which Saves You More?"
 description: "Interest rates, withdrawal rules, fees, and app experience compared side by side — plus the exact account to open first if you are starting from zero."
 category: "savings"
-author: "Gwill Chijioke"
+author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-09-10
 readMins: 9

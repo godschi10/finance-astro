@@ -2,7 +2,7 @@
 title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers"
 description: "Card fees, failed-transfer reversals, and customer support tested — what digital banks actually save you in a year, in naira."
 category: "banking"
-author: "Gwill Chijioke"
+author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-08-15
 readMins: 7

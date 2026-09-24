@@ -47,6 +47,24 @@ const c = flat(css);
 
 const idx = (needle) => t.indexOf(needle);
 
+// ── v0.4.1 block-surface reads (Gutenberg showcase verdict) ──────────────
+const wrapSrc = read("scripts/rehype-wp-table.mjs");
+const embedCss = read("src/styles/embeds.css");
+const showcase = flat(exists("src/content/articles/gutenberg-elements-showcase.md")
+  ? read("src/content/articles/gutenberg-elements-showcase.md")
+  : "");
+// WP's cascade ships these four winners: the ≥1024 media block sits BEFORE the
+// base ul/ol + blockquote rules, so on the live site the BASE margins win
+// (measured at 1280: lists 0 0 16px 20px, blockquote 18px). Source order is
+// therefore part of the contract, not an implementation detail.
+const mediaOrder = (() => {
+  const mediaAt = css.indexOf("@media (min-width: 1024px)");
+  const mediaUl = css.indexOf(".art-body ul, .art-body ol { margin: 18px 0 22px; }");
+  const baseUl = css.indexOf(".art-body ul, .art-body ol { margin: 0 0 16px 20px; }");
+  const baseBq = css.indexOf(".art-body blockquote {");
+  return mediaAt !== -1 && mediaAt < mediaUl && mediaUl < baseUl && baseUl < baseBq;
+})();
+
 const checks = [
   // ── the title stack, in WordPress's order ──────────────────────────────
   ["header wrapper is .art-hd (single.php:54)", /<div class="art-hd">/.test(tpl)],
@@ -192,7 +210,7 @@ const checks = [
 
   // ── heading anchors are server-rendered (WP: the_content priority 9) ───
   ["rehype-slug is wired so heading ids exist in the served HTML",
-    /rehypeSlug/.test(cfg) && /markdown: \{ rehypePlugins: \[rehypeSlug\] \}/.test(flat(cfg))],
+    /rehypeSlug/.test(cfg) && flat(cfg).includes("markdown: { rehypePlugins: [rehypeSlug, rehypeWpTable]")],
   ["the TOC is built from h2 + h3 in document order",
     /headings\.filter\(\(h\) => h\.depth === 2 \|\| h\.depth === 3\)/.test(tpl)],
   ["the old client-side id-patching script is gone",
@@ -211,7 +229,35 @@ const checks = [
   // ── structured data still ships ────────────────────────────────────────
   ["Article JSON-LD is emitted", /"@type": "Article"/.test(tpl)],
   ["JSON-LD escaping is applied", /replace\(\/<\/g, "\\\\u003c"\)/.test(tpl)],
+
+  // ── the Gutenberg block surface (v0.4.1) ───────────────────────────────
+  // King's verdict on v0.4.0: "Table is not styled properly, so many elements
+  // were not ported and styled properly." Root causes, each now a contract:
+  ["markdown tables get Gutenberg's figure wrapper (style.css:896 styles .wp-block-table)",
+    /tagName: "figure"/.test(wrapSrc) && /wp-block-table/.test(wrapSrc) &&
+    /rehypeWpTable/.test(cfg) && /\[rehypeSlug, rehypeWpTable\]/.test(flat(cfg))],
+  ["the embed facade stylesheet ships with the article (enqueue.php:471, assets/css/embeds.css)",
+    /import "..\/..\/styles\/embeds.css"/.test(tpl) &&
+    /\.art-body .wp-block-embed__wrapper .gwill-embed {/.test(embedCss) &&
+    /position: absolute/.test(embedCss) &&
+    /\.gwill-embed--spotify/.test(embedCss) && /height: 152px/.test(embedCss)],
+  ["the ≥1024 media block sits BEFORE the base ul/ol + blockquote rules (WP cascade: base wins)",
+    mediaOrder],
+  ["the Gutenberg showcase post is ported as content (40+ blocks, byte-captured)",
+    showcase.includes("wp-block-verse") && showcase.includes("wp-block-table") &&
+    showcase.includes("gwill-embed")],
+  ["showcase content survived markdown (no escaped HTML)", !showcase.includes("&lt;figure")],
 ];
+
+// every block class the theme styles must be present in the showcase content
+for (const cls of ["wp-block-quote", "wp-block-pullquote", "wp-block-table",
+  "wp-block-code", "wp-block-preformatted", "wp-block-image", "wp-block-gallery",
+  "wp-block-embed", "gwill-embed", "wp-block-cover", "wp-block-columns",
+  "wp-block-media-text", "wp-block-buttons", "wp-block-details", "wp-block-search",
+  "wp-block-categories", "wp-block-archives", "wp-block-social-links",
+  "wp-block-latest-comments", "wp-block-separator", "wp-block-verse"]) {
+  checks.push([`showcase carries ${cls}`, showcase.includes(cls)]);
+}
 
 let pass = 0;
 let fail = 0;

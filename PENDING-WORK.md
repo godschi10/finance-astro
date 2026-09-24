@@ -274,6 +274,33 @@ designed the subtitle but left the article page as the port's own invention.
 The **whole single-post template** must be ported at footer-grade fidelity
 first; the subtitle rides on top of it.
 
+## DONE — 2026-09-24 · Gutenberg showcase + King's v0.4.0 verdict (v0.4.1)
+
+- [x] **King's verdict accepted: four real defects, all found and fixed.**
+      (1) Tables unstyled — markdown emits bare `<table>`, the theme styles only
+      `.wp-block-table`; new rehype plugin wraps tables in Gutenberg's
+      `<figure class="wp-block-table">`. (2) `assets/css/embeds.css` was never
+      ported (outside `style.css`; enqueue.php:471) — facades +42px,
+      Spotify collapsed to 42/152px; imported verbatim. (3) ≥1024 media block
+      sat after the base rules — four list/blockquote margins WordPress never
+      serves (WP: base wins); block moved to the theme's source order, order is
+      now a gate assertion. (4) Showcase TOC empty — Astro `headings` can't see
+      raw-HTML headings; raw-body fallback mirroring the theme's DOMXPath pass.
+- [x] **Showcase post ported as ordered:** byte-captured `.art-body` (42 blocks),
+      16 image assets localised under `wp-content/uploads/`, rewritten to the
+      base path. Block diff vs live: **42/42 blocks, 0 differing fields** at
+      390/768/1280; deep probe equal in light AND dark.
+- [x] **Byline = `get_the_author()` display name "G-will Chijioke"** (measured
+      on live) across content files, AUTHORS, seed posts; verified in built
+      bytes (meta pill + `.an-name`).
+- [x] **Meta orphan-dot in King's screenshot reproduced at 320px on BOTH
+      sites** (h=64, same wrap, dot orphans on WP's own kuda) — theme behaviour,
+      kept as parity; joint theme-level fix offered separately.
+- [x] Gate 79 → **106 assertions**; all 5 gates green; CHANGELOG `[0.4.1]`,
+      `docs/port/11-gutenberg-showcase.md`, README gate row.
+- [x] **Shipped (v0.4.1)** — `main`/`pages-dist`/Pages build + served-bytes
+      verify: table wrapper, embeds rules, `G-will` byline, showcase page 200.
+
 ## DONE — 2026-09-23 · The article page, ported from `single.php` (v0.4.0)
 
 - [x] **ARTICLE PAGE PORT — CLOSED.** King's correction was right and it is

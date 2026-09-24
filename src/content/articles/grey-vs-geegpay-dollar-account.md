@@ -2,7 +2,7 @@
 title: "Grey vs Geegpay: Which Dollar Account Should You Open?"
 description: "Account opening, conversion spreads, card support, and payout speed — tested with real transfers so you know the true cost upfront."
 category: "dollar-accounts"
-author: "Gwill Chijioke"
+author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-07-27
 readMins: 8

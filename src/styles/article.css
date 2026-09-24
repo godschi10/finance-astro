@@ -276,6 +276,30 @@
 }
 .art-body h3 { font-size: 16px; font-weight: 700; color: var(--text); margin: 20px 0 8px; }
 .art-body h4, .art-body h5, .art-body h6 { font-size: 14px; font-weight: 700; color: var(--text); margin: 18px 0 8px; letter-spacing: -0.01em; }
+
+/* ══ @media (min-width: 1024px) — desktop editorial polish, style.css:2026-2039 ══
+   SOURCE ORDER IS THE CONTRACT. In the theme this block sits BEFORE the .art-body base
+   rules below (style.css:2040-2076): font-size/h2/h3/h4/p:first-of-type therefore WIN
+   (declared later only as bases that don't conflict), while `.art-body ul, ol` and
+   `blockquote/pullquote` margins are RE-DECLARED by the later base shorthand and the
+   BASE WINS on the live site (measured: WP serves list margin 0 0 16px 20px and
+   blockquote 18px at 1280, NOT the media values). Placing this block after the bases
+   — as an earlier revision did — flipped those four winners and shipped margins
+   WordPress never serves. Do not move this block past the base rules. */
+@media (min-width: 1024px) {
+  .art-surface-pad { padding: 48px 56px 56px; }
+  .art-cover { min-height: 380px; }
+  .art-body { font-size: 17px; line-height: 1.9; }
+  .art-body > p:first-of-type {
+    font-size: 19px; font-weight: 300; color: var(--text);
+    line-height: 1.85; margin-bottom: 26px;
+  }
+  .art-body h2 { font-size: 24px; margin: 44px 0 14px; }
+  .art-body h3 { font-size: 18px; margin: 28px 0 10px; }
+  .art-body h4 { font-size: 15px; margin: 22px 0 8px; }
+  .art-body ul, .art-body ol { margin: 18px 0 22px; }
+  .art-body blockquote, .art-body .wp-block-pullquote { margin: 30px 0; }
+}
 /*
  * style.css:2040-2076 (body copy, links, lists, blockquote, pullquote, figures):
  */
@@ -638,38 +662,6 @@
  * @keyframes used by .ad-ring — style.css:887:
  */
 @keyframes gwill-spin { to { transform: rotate(360deg); } }
-
-/* ══ 4.1 @media (min-width: 1024px) — desktop editorial polish, style.css:2026-2039 ══ */
-@media (min-width: 1024px) {
-  .art-surface-pad { padding: 48px 56px 56px; }
-  .art-cover { min-height: 380px; }
-  .art-body { font-size: 17px; line-height: 1.9; }
-  .art-body > p:first-of-type {
-    font-size: 19px; font-weight: 300; color: var(--text);
-    line-height: 1.85; margin-bottom: 26px;
-  }
-  .art-body h2 { font-size: 24px; margin: 44px 0 14px; }
-  .art-body h3 { font-size: 18px; margin: 28px 0 10px; }
-  .art-body h4 { font-size: 15px; margin: 22px 0 8px; }
-  .art-body ul, .art-body ol { margin: 18px 0 22px; }
-  .art-body blockquote, .art-body .wp-block-pullquote { margin: 30px 0; }
-}
-/*
- * Ordering trap (kept, documented in-file at style.css:2022-2025): this block sits before the
- * remaining .art-body base rules (:2040-2076). The in-file comment warns that an earlier revision
- * placed it after the base rules and "the base rules silently overrode the media query (body stayed 16px
- * on desktop)". The reason it works here: the rules inside this block that the later base rules would
- * beat are only those the base rules do not also set (font-size/line-height on .art-body are
- * set at :2010 *before* this block; p:first-of-type, h2 size, list/blockquote margins are *not*
- * set later in a conflicting way except .art-body ul, .art-body ol { margin: 0 0 16px 20px; } at
- * :2043 which is shorthand and therefore does reset margins on desktop… see the note below).
- *
- * ⚠️ Observed cascade anomaly — port carefully. style.css:2043
- * .art-body ul, .art-body ol { margin: 0 0 16px 20px; } (unqualified, outside any media query)
- * comes *after* this block and re-declares the full margin shorthand, so on ≥1024px the intended
- * margin: 18px 0 22px from :2037 is overridden for the top/right/bottom/left values it sets.
- * A class-for-class Astro port must reproduce the same source order to land on the same computed value.
- */
 
 /* ══ 4.2 @media (max-width: 1023px) — tablet, style.css:2985-3012 (article-relevant lines shown; the block also styles .g3, .ftop, .hero*, .feat*, .stat-strip, .si, .phd, :root, .ticker) ══ */
 @media (max-width: 1023px) {

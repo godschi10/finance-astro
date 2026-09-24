@@ -1,5 +1,6 @@
 import { defineConfig } from "astro/config";
 import rehypeSlug from "rehype-slug";
+import rehypeWpTable from "./scripts/rehype-wp-table.mjs";
 
 export default defineConfig({
   output: "static",
@@ -11,5 +12,5 @@ export default defineConfig({
   // (inc/table-of-contents.php), and the article page's TOC anchors depend on
   // them. rehype-slug does the same job at build time, so the ids are in the
   // served HTML instead of being patched in by client JS.
-  markdown: { rehypePlugins: [rehypeSlug] },
+  markdown: { rehypePlugins: [rehypeSlug, rehypeWpTable] },
 });

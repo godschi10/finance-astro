@@ -8,7 +8,7 @@ export type Article = CollectionEntry<"articles">;
 export const AUTHORS = [
   {
     slug: "gwill-chijioke",
-    name: "Gwill Chijioke",
+    name: "G-will Chijioke",
     role: "Founder & tester-in-chief",
     bio: "Gwill tests Nigerian savings apps, dollar accounts, and money tools with real transfers — then writes up exactly what each one costs. No sponsored rankings, no jargon.",
     socials: {

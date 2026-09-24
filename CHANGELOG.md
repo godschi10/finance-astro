@@ -3,6 +3,59 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.4.1] — 2026-09-24
+
+**King's verdict on v0.4.0: *"Terrible spacing in so many places. Table is not
+styled properly, so many elements were not ported and styled properly."* He was
+right; measuring against his four screenshots found four real defects, and his
+standing order — port the WordPress `gutenberg-elements-showcase` post so every
+block style is exercised — is what exposed them.
+
+1. **Tables rendered completely unstyled.** Markdown emits a bare `<table>`;
+   Gutenberg (and this theme's `style.css:896-924`) always wraps tables in
+   `<figure class="wp-block-table">`, which owns the border, radius, `thead`
+   tint, cell padding and the thin gold scrollbar. Measured before the fix:
+   `thPad 0px, tdPad 0px, border-collapse: separate`. New rehype plugin
+   `scripts/rehype-wp-table.mjs` inserts exactly WordPress' wrapper
+   (`[rehypeSlug, rehypeWpTable]`). After: table geometry identical to the
+   live WordPress showcase at 390/768/1280, light *and* dark.
+2. **`assets/css/embeds.css` was never ported** — a stylesheet outside
+   `style.css` that `enqueue.php:471` loads on every singular page. Without it
+   the click-to-play facade sat in normal flow: YouTube/Vimeo facades measured
+   42px too tall at every width, Spotify collapsed to 42px instead of its
+   152px box. The JS was already ported; only the CSS was missing. Now imported
+   by `[slug].astro`; facades measure identical to WordPress.
+3. **Desktop cascade order wrong at ≥1024px.** The theme places its
+   `min-width: 1024px` block *before* the base `.art-body` rules, so on the
+   live site the base shorthand WINS for lists and blockquotes
+   (measured at 1280: `ul/ol margin 0 0 16px 20px`, `blockquote 18px`). The
+   port had the media block after the bases, shipping `18px 0 22px` /
+   `30px 0` — four margins WordPress never serves. The block now sits in the
+   theme's source position, and source order itself is a gate assertion.
+4. **The showcase page had no TOC on the port.** Astro's markdown `headings`
+   cannot see headings inside raw HTML blocks; WordPress builds the TOC from
+   the RENDERED content (`inc/table-of-contents.php` DOMXPath `//h2 | //h3`).
+   `[slug].astro` now falls back to the theme's own pass over the raw body —
+   11 rows render, matching WordPress' row heights.
+
+Plus: the showcase post itself is ported as content — all 40 top-level blocks
+byte-captured from the live page (headings, lists, quote, pullquote, table,
+code, preformatted, verse, image, gallery, three embed facades, cover, columns,
+media+text, buttons, details, search, categories, archives, social links,
+latest comments), with its 16 image assets downloaded locally under
+`wp-content/uploads/` so no page hotlinks the WordPress origin. Block-for-block
+geometry diff vs the live post: **42/42 blocks, zero differing fields at
+390/768/1280**. And the byline now mirrors `get_the_author()`'s display name —
+**"G-will Chijioke"**, as the live site renders it, not the site title's
+"Gwill Chijioke" (measured in both sites' meta pills and author boxes).
+
+Gate: `check-article-fidelity.mjs` 79 → **106 assertions** (table wrapper,
+embeds stylesheet, media source order, showcase block inventory). All 5 gates
+green. King's meta-row screenshot (wrapped read-time + orphan separator dot at
+a very narrow viewport) was measured on WordPress too: at 320px both sites wrap
+h=64 with the dot orphaned — theme behaviour, faithfully ported; a joint
+theme-level fix is offered separately rather than diverging the port alone.
+
 ## [0.4.0] — 2026-09-23
 
 **The article page is now a port of `single.php`, not a page in the theme's

@@ -38,6 +38,7 @@ import AuthorSocials from "../../components/AuthorSocials.astro";
 // the layout so its ~70 KB lands only on article pages instead of being inlined
 // into all 53.
 import "../../styles/article.css";
+import "../../styles/embeds.css";
 import { catBySlug } from "../../data/site";
 import {
   allArticles,
@@ -69,7 +70,28 @@ const authorUrl = `${base}author/${d.authorSlug}/`;
 // single.php:40 — the TOC is built from h2 + h3 in document order, and the SAME
 // list gates both the mobile dropdown and the sidebar widget: they are never
 // independently present (single.php cond. 1).
-const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+//
+// inc/table-of-contents.php:99 builds that list from the RENDERED content with
+// DOMXPath '//h2 | //h3' — every heading counts, however it was authored. Astro's
+// markdown `headings` only sees markdown-parsed headings, so a post whose body is
+// a byte-captured WordPress document (raw HTML blocks — the Gutenberg showcase)
+// yields an EMPTY TOC while WordPress renders a full one. Fall back to the
+// theme's own pass over the raw body when the markdown list is empty.
+const rawHtmlToc = (body: string) => {
+  const out: { depth: number; slug: string; text: string }[] = [];
+  const re = /<h([23])[^>]*\bid="([^"]+)"[^>]*>([\s\S]*?)<\/h\1>/gi;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(body)) !== null) {
+    out.push({
+      depth: Number(m[1]),
+      slug: m[2],
+      text: m[3].replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim(),
+    });
+  }
+  return out;
+};
+const mdToc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const toc = mdToc.length ? mdToc : rawHtmlToc(entry.body ?? "");
 
 // single.php:151-153 — rawurlencode() (RFC 3986: %20 for spaces, not '+'), and
 // WhatsApp is built from title + one literal space + permalink before encoding.

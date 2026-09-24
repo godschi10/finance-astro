@@ -158,7 +158,7 @@ export const POSTS: Post[] = [
     category: "savings",
     date: "Sep 2026",
     readMins: 9,
-    author: "Gwill Chijioke",
+    author: "G-will Chijioke",
   },
   {
     slug: "ngn-dollar-cost-averaging-guide",
@@ -168,7 +168,7 @@ export const POSTS: Post[] = [
     category: "investing",
     date: "Sep 2026",
     readMins: 11,
-    author: "Gwill Chijioke",
+    author: "G-will Chijioke",
   },
   {
     slug: "p2p-crypto-nigeria-safely",
@@ -178,7 +178,7 @@ export const POSTS: Post[] = [
     category: "crypto",
     date: "Aug 2026",
     readMins: 8,
-    author: "Gwill Chijioke",
+    author: "G-will Chijioke",
   },
   {
     slug: "kuda-vs-traditional-banks-charges",
@@ -188,7 +188,7 @@ export const POSTS: Post[] = [
     category: "banking",
     date: "Aug 2026",
     readMins: 7,
-    author: "Gwill Chijioke",
+    author: "G-will Chijioke",
   },
   {
     slug: "cheapest-way-receive-dollars-nigeria",
@@ -198,7 +198,7 @@ export const POSTS: Post[] = [
     category: "remittance",
     date: "Aug 2026",
     readMins: 10,
-    author: "Gwill Chijioke",
+    author: "G-will Chijioke",
   },
   {
     slug: "grey-vs-geegpay-dollar-account",
@@ -208,7 +208,7 @@ export const POSTS: Post[] = [
     category: "dollar-accounts",
     date: "Jul 2026",
     readMins: 8,
-    author: "Gwill Chijioke",
+    author: "G-will Chijioke",
   },
   {
     slug: "emergency-fund-naira-inflation",
@@ -218,7 +218,7 @@ export const POSTS: Post[] = [
     category: "savings",
     date: "Jul 2026",
     readMins: 6,
-    author: "Gwill Chijioke",
+    author: "G-will Chijioke",
   },
 ];
 
