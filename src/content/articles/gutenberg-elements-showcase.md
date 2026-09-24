@@ -7,6 +7,9 @@ author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-03-14
 readMins: 6
+image: "/finance-astro/wp-content/uploads/2026/07/showcase.png"
+imageAlt: "Gutenberg Elements Showcase — Every Block Styled"
+imageSrcset: "/finance-astro/wp-content/uploads/2026/07/showcase.png 1200w, /finance-astro/wp-content/uploads/2026/07/showcase-300x169.png 300w, /finance-astro/wp-content/uploads/2026/07/showcase-1024x576.png 1024w, /finance-astro/wp-content/uploads/2026/07/showcase-768x432.png 768w"
 ---
 
 <p class="wp-block-paragraph">Welcome to the <strong>Gutenberg element showcase</strong> — every block on this page is styled by the finance theme’s own CSS (zero WordPress block-library bloat). Scroll through: headings, text, lists, quotes, tables, code, images, galleries, local video, local audio, YouTube, Vimeo, Spotify, cover, columns, media+text, buttons, file downloads, details, footnotes and more.</p>

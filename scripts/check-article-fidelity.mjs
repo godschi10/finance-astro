@@ -12,6 +12,7 @@
 // Every assertion is source-level and deterministic: read the templates and
 // stylesheets, assert the contract. No browser, no network.
 import { readFileSync } from "node:fs";
+import { readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -38,6 +39,13 @@ const content = read("src/data/content.ts");
 const cfg = read("astro.config.mjs");
 const about = read("src/pages/about.astro");
 const contact = read("src/pages/contact.astro");
+const lb = read("src/scripts/lightbox.js");
+const card = read("src/components/ArticleCard.astro");
+// every article's full frontmatter, for the cover-presence contract
+const files = (dir) =>
+  readdirSync(join(root, dir))
+    .filter((f) => f.endsWith(".md"))
+    .map((f) => read(join(dir, f)));
 
 // Collapse whitespace so assertions survive reformatting.
 const flat = (s) => s.replace(/\s+/g, " ");
@@ -106,8 +114,9 @@ const checks = [
   ["two-column layout is .sb-layout (single.php:46)", /<div class="sb-layout">/.test(tpl)],
   ["reading surface is .art-reading-surface > .art-surface-pad (single.php:104,122)",
     /class="art-reading-surface"/.test(tpl) && /class="art-surface-pad"/.test(tpl)],
-  ["no .art-cover markup: WordPress emits it only with a featured image (single.php cond. 7)",
-    !/class="art-cover"/.test(t)],
+  ["the cover is .art-cover inside .art-reading-surface, before .art-surface-pad (single.php:104-122)",
+    /class="art-reading-surface"/.test(tpl) && /class="art-surface-pad"/.test(tpl) &&
+    idx("art-reading-surface") < idx('class="art-cover"') && idx('class="art-cover"') < idx("art-surface-pad")],
 
   // ── mobile TOC dropdown (single.php:125-136) ───────────────────────────
   ["mobile dropdown is .toc-dropdown.toc-mobile#gwill-toc-mobile",
@@ -229,6 +238,43 @@ const checks = [
   // ── structured data still ships ────────────────────────────────────────
   ["Article JSON-LD is emitted", /"@type": "Article"/.test(tpl)],
   ["JSON-LD escaping is applied", /replace\(\/<\/g, "\\\\u003c"\)/.test(tpl)],
+
+  // ── the King's v0.4.1 verdict: lightbox, covers, cards (v0.4.2) ─────────
+  // King: "lightbox doesn't even work." — the theme ships assets/js/lightbox.js
+  // (266 lines, enqueued on every singular page, enqueue.php:170-192); the port
+  // shipped neither the JS nor the .gl-* base CSS. Both branches now a contract:
+  ["the lightbox module is ported and wired beside article.js",
+    exists("src/scripts/lightbox.js") &&
+    /import "\.\.\/\.\.\/scripts\/lightbox\.js";/.test(tpl) &&
+    /import "\.\.\/\.\.\/scripts\/article\.js";/.test(tpl)],
+  ["the GwillLightbox i18n object is printed before the module (wp_localize_script)",
+    /var GwillLightbox = \{"i18n":\{"lightbox":"Image lightbox","enlarge":"Enlarge image","close":"Close","prev":"Previous image","next":"Next image"\}\};/.test(tpl)],
+  ["the ported lightbox is the theme's own logic (init sets tabindex+role, keydown opens)",
+    /setAttribute\('tabindex', '0'\)/.test(lb) && /setAttribute\('role', 'button'\)/.test(lb) &&
+    /gl-open/.test(lb) && /closeBtn\.focus\(\)/.test(lb)],
+  ["the lightbox CSS base slice is installed (style.css:2192-2237)",
+    /\.gl-overlay \{/.test(c) && /z-index: 99999/.test(c) &&
+    /\.gl-close \{/.test(c) && /\.gl-counter \{/.test(c) &&
+    /\.art-body \.wp-block-image img \{ cursor: zoom-in; \}/.test(c)],
+  ["the lightbox mobile overrides match the theme (style.css:2243-2248)",
+    /@media \(max-width: 767px\) \{\s*\.gl-nav \{ width: 36px/.test(c)],
+  // King: "no featured images on posts." — single.php:106 emits .art-cover when
+  // has_post_thumbnail(); live posts ALL carry a cover (category art). The port
+  // omitted the element wholesale.
+  ["every article carries a featured image in frontmatter",
+    files("src/content/articles").every((f) => /^image: /m.test(f))],
+  ["the cover markup is WP's gwill-hero thumbnail (single.php:106-120)",
+    /class="attachment-gwill-hero size-gwill-hero wp-post-image"/.test(tpl) &&
+    /loading="eager"/.test(tpl) && /fetchpriority="high"/.test(tpl) &&
+    /sizes="\(max-width: 1200px\) 100vw, 1200px"/.test(tpl)],
+  ["the schema declares the cover fields",
+    /image: z\.string\(\)\.optional\(\)/.test(schema) && /imageSrcset: z\.string\(\)\.optional\(\)/.test(schema)],
+  ["the card thumbnail branch is ported (inc/card-media.php has_post_thumbnail)",
+    /class="attachment-medium size-medium wp-post-image"/.test(card) &&
+    /tabindex="-1" aria-hidden="true"/.test(card) &&
+    /sizes="\(min-width: 768px\) 350px, 100vw"/.test(card)],
+  ["the card srcset is WP's 300w + 768w pair (gwill_finance_card_img_srcset)",
+    /\(300w\|768w\)\$/.test(card)],
 
   // ── the Gutenberg block surface (v0.4.1) ───────────────────────────────
   // King's verdict on v0.4.0: "Table is not styled properly, so many elements

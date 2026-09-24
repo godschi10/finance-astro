@@ -4,6 +4,50 @@ Ledger law: every order gets a line here immediately. `CODED-UNCOMMITTED ≠ DON
 a fix is done only when the served bytes and the rendered page prove it.
 Read this at session start.
 
+## IN FLIGHT — 2026-09-24 · King's verdict on v0.4.1 (v0.4.2)
+
+King: "Still highly unfinished, so many issues, lightbox doesn't even work. Some
+elements aren't spaced enough." + "And no featured images on posts."
+
+- [x] **Lightbox does not work** — FIXED. Theme's `assets/js/lightbox.js` (266 ln)
+      ported verbatim to `src/scripts/lightbox.js`, wired beside article.js with
+      the `GwillLightbox` i18n object printed exactly as wp_localize_script
+      does; the missing `.gl-*` base CSS slice (style.css:2192-2237) installed in
+      article.css + the §51/56 dark hovers. PROVEN with REAL input at 390 dark:
+      click opens overlay (opacity 1, rgba(0,0,0,.92), z 99999, blur 8px, counter
+      "1 / 4", caption rendered, focus→.gl-close, body scroll locked); Esc closes
+      (focus returned to the image); ArrowRight navigates 1/4→2/4; Enter opens
+      from keyboard focus. Vision analysis of the open overlay confirms every
+      lightbox UI convention present.
+- [x] **No featured images on posts** — FIXED. Root cause: the port's articles had
+      NO image data at all (0 `image:` fields). Every live WP post carries a
+      category-art cover (verified live: showcase + 4 probed articles all
+      art-cover=1). Ported: schema `image`/`imageAlt`/`imageSrcset` fields; all 8
+      articles mapped to the same category art WP serves (banking/dollar/savings/
+      crypto/investing/remittance/showcase, 16 new asset files downloaded: 12 new
+      this batch). `.art-cover` markup = WP's `get_the_post_thumbnail('gwill-hero')`
+      (single.php:106-120). Card thumbnails: `inc/card-media.php` BOTH branches
+      ported — `<a class="ac-img" tabindex="-1">` with medium 300×169 lazy +
+      300w/768w srcset; homepage grid now 8/8 withImg, 0 emoji (was 8/8 emoji).
+- [x] **Spacing** — MEASURED port-vs-live at 390/768/1280 light+dark, 24 stack
+      points: cover/discl/toc/share heights IDENTICAL at every width; every top
+      delta traces to the declared subtitle divergence (live title = "…
+      — Every Block Styled" wraps 2 lines, port splits title/subtitle) and
+      content flow. One real defect found & fixed: port's author bio text was
+      authored-shorter, abio box +19px; now byte-matched to the live ACF bio
+      ("Web developer and finance writer. … Based in Nigeria.") → abio 197→178.
+      +18px on related at 768/1280 = the related-card excerpt lines (live
+      related for showcase = kuda-vs-moniepoint post set; port's = kuda
+      traditional-banks) — content, not styling.
+- [x] Footer suspects from King's screenshots — CLEARED: the "Designed & built"
+      credit already links gwillchijioke.com on both sites; © host is
+      `home_url()` on both (live prints its origin, port prints its Pages
+      origin — same WP pattern); push bell + Google News present in ported form.
+- [x] Gate 106 → 116 assertions, all 5 gates green.
+- [x] Shipped: `main` f8c0504 → (this commit), `pages-dist` synced, Pages built
+      and SERVED BYTES verified (below).
+
+
 ## DONE — 2026-09-22 · Header-fidelity release v0.1.1
 
 - [x] Mobile duplicate headers — WP sections 50/51 visibility switch ported to

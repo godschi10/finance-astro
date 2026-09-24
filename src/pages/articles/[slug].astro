@@ -8,7 +8,10 @@
  *
  * WordPress-only internals and how this port stands in for them:
  *   .art-cover        — emitted only when has_post_thumbnail() (single.php:106).
- *                       No port article has a featured image, so it is omitted,
+ *                       Every port article now carries a featured image, so the
+ *                       cover renders: WP's get_the_post_thumbnail('gwill-hero')
+ *                       markup — 1200×675, eager + fetchpriority=high, srcset
+ *                       1200/1024/768/300 against local uploads.
  *                       exactly as WordPress omits it.
  *   ad slots          — gwill_finance_ad_slot() emits nothing when ads are off
  *                       or no code is configured (single.php cond. 12-13). The
@@ -196,6 +199,25 @@ const articleLd = {
       </div>
 
       <div class="art-reading-surface">
+        {/* single.php:106-120 — the cover renders only when has_post_thumbnail();
+            get_the_post_thumbnail(null, 'gwill-hero') markup: 1200×675, eager,
+            fetchpriority=high, full srcset, alt from gwill_featured_image_alt(). */}
+        {d.image && (
+          <div class="art-cover">
+            <img
+              width="1200"
+              height="675"
+              src={d.image}
+              class="attachment-gwill-hero size-gwill-hero wp-post-image"
+              alt={d.imageAlt ?? ""}
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              srcset={d.imageSrcset}
+              sizes="(max-width: 1200px) 100vw, 1200px"
+            />
+          </div>
+        )}
         <div class="art-surface-pad">
           <!-- Mobile TOC dropdown (single.php:125-136) — shown by CSS on phones only -->
           {toc.length > 0 && (
@@ -275,6 +297,9 @@ const articleLd = {
                 date={fmtMonthYear(p.data.pubDate)}
                 readMins={p.data.readMins}
                 author={p.data.author}
+                image={p.data.image}
+                imageAlt={p.data.imageAlt}
+                imageSrcset={p.data.imageSrcset}
               />
             ))}
           </div>
@@ -327,7 +352,13 @@ const articleLd = {
   </div>
 </div>
 
+<script is:inline>
+/* <![CDATA[ */
+var GwillLightbox = {"i18n":{"lightbox":"Image lightbox","enlarge":"Enlarge image","close":"Close","prev":"Previous image","next":"Next image"}};
+/* ]]> */
+</script>
 <script>
   import "../../scripts/article.js";
+  import "../../scripts/lightbox.js";
 </script>
 </Layout>

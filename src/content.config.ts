@@ -19,6 +19,10 @@ const articles = defineCollection({
     pubDate: z.coerce.date(),
     updated: z.coerce.date().optional(),
     readMins: z.number(),
+    // Featured image (WP has_post_thumbnail(), single.php:106 + inc/card-media.php).
+    image: z.string().optional(),
+    imageAlt: z.string().optional(),
+    imageSrcset: z.string().optional(),
     videoUrl: z.string().url().optional(),
   }),
 });

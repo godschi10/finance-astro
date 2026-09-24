@@ -85,7 +85,7 @@ const trim32 = (s: string) => {
 <div id="gwill-posts-grid">
 <div class="g3">
 {grid.map((p) => (
-<ArticleCard slug={p.slug} title={p.data.title} excerpt={p.data.description} category={p.data.category} date={fmtMonthYear(p.data.pubDate)} readMins={p.data.readMins} author={p.data.author} />
+<ArticleCard slug={p.slug} title={p.data.title} excerpt={p.data.description} category={p.data.category} date={fmtMonthYear(p.data.pubDate)} readMins={p.data.readMins} author={p.data.author} image={p.data.image} imageAlt={p.data.imageAlt} imageSrcset={p.data.imageSrcset} />
 ))}
 </div>
 </div>

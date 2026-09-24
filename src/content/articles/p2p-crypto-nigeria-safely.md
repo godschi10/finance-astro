@@ -6,6 +6,9 @@ author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-08-24
 readMins: 8
+image: "/finance-astro/wp-content/uploads/2026/03/crypto.png"
+imageAlt: "Crypto in Nigeria: Best Apps and What’s Legal in 2026"
+imageSrcset: "/finance-astro/wp-content/uploads/2026/03/crypto.png 1200w, /finance-astro/wp-content/uploads/2026/03/crypto-300x169.png 300w, /finance-astro/wp-content/uploads/2026/03/crypto-1024x576.png 1024w, /finance-astro/wp-content/uploads/2026/03/crypto-768x432.png 768w"
 videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 ---
 

@@ -7,6 +7,10 @@ author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-08-06
 readMins: 10
+image: "/finance-astro/wp-content/uploads/2026/03/remittance.png"
+imageAlt: "How to Send Money Abroad from Nigeria Cheaply"
+imageSrcset: "/finance-astro/wp-content/uploads/2026/03/remittance.png 1200w, /finance-astro/wp-content/uploads/2026/03/remittance-300x169.png 300w, /finance-astro/wp-content/uploads/2026/03/remittance-1024x576.png 1024w, /finance-astro/wp-content/uploads/2026/03/remittance-768x432.png 768w"
+
 ---
 
 Every dollar you receive passes through three tolls: the transfer fee, the exchange-rate margin, and the withdrawal or conversion charge. Most comparisons quote only the first. Here are all three, for the corridors Nigerians actually use.

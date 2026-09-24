@@ -9,25 +9,50 @@ interface Props {
   date: string;
   readMins: number;
   author?: string;
+  /** Featured image (has_post_thumbnail()) — the thumbnail branch of card-media.php. */
+  image?: string;
+  imageAlt?: string;
+  imageSrcset?: string;
 }
 // Faithful port of template-parts/content.php (gwill-finance-theme 1.13.39) and
-// the no-thumbnail branch of inc/card-media.php: every article in this port uses
-// the category art gradient + emoji, which is the theme's own fallback markup
-// (`<div class="ac-img {art}"><span class="ac-emoji">{emoji}</span></div>`).
-// The theme's other branch emits an <a class="ac-img"> around a thumbnail — it
-// is not reachable here because no port article has a featured image.
+// inc/card-media.php gwill_finance_card_media(): BOTH branches of the theme's
+// card media. With a featured image (has_post_thumbnail()) the theme emits
+// `<a class="ac-img" href … tabindex="-1" aria-hidden="true"><img … class=
+// "attachment-medium size-medium wp-post-image" loading="lazy" … srcset 300w +
+// 768w … sizes="(min-width: 768px) 350px, 100vw"></a>` — ported here. Without
+// one it emits the category art gradient + emoji fallback (the old port state).
 //
 // Class vocabulary, the badge/art/emoji map and the copy are the theme's:
 //   article.ac > .ac-img > .ac-emoji | .ac-body > a.badge + h2.ac-t > a
 //                                                + .ac-ex > p + .ac-ft
 //   .ac-ft = span.a-dt "{M Y} · {n} min" + a.a-rd "Read →"
-const { slug, title, excerpt, category, date, readMins } = Astro.props;
+const { slug, title, excerpt, category, date, readMins, image, imageAlt, imageSrcset } = Astro.props;
 const c = catBySlug(category);
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 const url = `${base}articles/${slug}/`;
+// card-media.php: 300w default + 768w candidate (gwill_finance_card_img_srcset)
+const cardSrcset = imageSrcset
+  ? imageSrcset.split(", ").filter((s) => / (300w|768w)$/.test(s.trim())).join(", ")
+  : "";
 ---
 <article id={`post-${slug}`} class={`ac category-${category}`} data-cat={category}>
-  <div class={`ac-img ${c.art}`}><span class="ac-emoji">{c.emoji}</span></div>
+  {image ? (
+    <a class="ac-img" href={url} tabindex="-1" aria-hidden="true">
+      <img
+        width="300"
+        height="169"
+        src={image.replace(/\.png$/, "-300x169.png")}
+        class="attachment-medium size-medium wp-post-image"
+        alt={imageAlt ?? ""}
+        loading="lazy"
+        decoding="async"
+        srcset={cardSrcset}
+        sizes="(min-width: 768px) 350px, 100vw"
+      />
+    </a>
+  ) : (
+    <div class={`ac-img ${c.art}`}><span class="ac-emoji">{c.emoji}</span></div>
+  )}
   <div class="ac-body">
     <a class={`badge ${c.badge}`} href={`${base}category/${category}/`}>{c.name}</a>
     <h2 class="ac-t"><a href={url}>{title}</a></h2>

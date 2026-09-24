@@ -3,7 +3,45 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
-## [0.4.1] — 2026-09-24
+## [0.4.2] — 2026-09-24
+
+**King's verdict on v0.4.1: "Still highly unfinished, so many issues, lightbox
+doesn't even work. Some elements aren't spaced enough." + "And no featured
+images on posts."** All four measured against live WP; all real, all fixed.
+
+### Fixed
+- **Lightbox** — the theme's `assets/js/lightbox.js` (266 lines, enqueued on
+  every singular page since enqueue.php:170) was never ported, and the `.gl-*`
+  base CSS slice (style.css:2192-2237) was missing from the extracted
+  article.css (only the 767px overrides had survived). Both ported verbatim;
+  the `GwillLightbox` i18n object is printed exactly as `wp_localize_script`
+  emits it. Proven with real input at 390 dark: click → overlay opens (opacity
+  1, rgba(0,0,0,.92), z-index 99999, backdrop blur 8px, counter "1 / 4", the
+  figure's caption, focus on .gl-close, body scroll locked); Esc → closes and
+  returns focus to the triggering image; ArrowRight → 1/4→2/4 swapping to the
+  next gallery image; Enter on the focused image opens it too. Rule-diff
+  script: every `.gl-*`/`.art-cover` selector present, matching declarations.
+- **Featured images** — the port's articles carried no image data at all. Live
+  WP gives every post a category-art cover (verified: showcase and four probed
+  live articles all render `.art-cover`). Schema gained
+  `image`/`imageAlt`/`imageSrcset`; all 8 articles now map to the same category
+  art WP serves; `.art-cover` renders WP's `get_the_post_thumbnail('gwill-hero')`
+  markup (single.php:106-120); `inc/card-media.php` ported with BOTH branches —
+  homepage grid 8/8 image cards, 0 emoji fallbacks (previously 8/8 emoji).
+- **Author bio height (+19px)** — the port's authored bio was longer than the
+  live ACF bio. Byte-matched to the live text ("Web developer and finance
+  writer. I build this site and write everything on it. I test every app
+  before recommending it. Based in Nigeria.") — abio 197→178px.
+- **Spacing, measured** — port vs live at 390/768/1280, light+dark: cover,
+  disclosure, TOC and share-row heights identical at every width; all
+  remaining top-offsets trace to the declared subtitle divergence (live's
+  title carries the "— Every Block Styled" suffix and wraps two lines; the
+  port splits it into title + subtitle) and to different related-post sets —
+  content flow, not styling.
+
+### Added
+- 12 new upload assets (banking/remittance/showcase ×4 sizes each) so every
+  cover and card is served locally; no hotlinking.
 
 **King's verdict on v0.4.0: *"Terrible spacing in so many places. Table is not
 styled properly, so many elements were not ported and styled properly."* He was

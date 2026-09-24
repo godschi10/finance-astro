@@ -6,6 +6,9 @@ author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-09-02
 readMins: 11
+image: "/finance-astro/wp-content/uploads/2026/04/investing.png"
+imageAlt: "Kuda vs Moniepoint: Which Is Better for Daily Use?"
+imageSrcset: "/finance-astro/wp-content/uploads/2026/04/investing.png 1200w, /finance-astro/wp-content/uploads/2026/04/investing-300x169.png 300w, /finance-astro/wp-content/uploads/2026/04/investing-1024x576.png 1024w, /finance-astro/wp-content/uploads/2026/04/investing-768x432.png 768w"
 ---
 
 You do not need a six-figure salary to own Nigerian stocks. ₦50,000 a month, invested mechanically through the NGX, beats waiting years to "have enough to start." The method is dollar-cost averaging: same amount, same schedule, whatever the market is doing.

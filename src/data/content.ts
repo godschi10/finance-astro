@@ -10,7 +10,7 @@ export const AUTHORS = [
     slug: "gwill-chijioke",
     name: "G-will Chijioke",
     role: "Founder & tester-in-chief",
-    bio: "Gwill tests Nigerian savings apps, dollar accounts, and money tools with real transfers — then writes up exactly what each one costs. No sponsored rankings, no jargon.",
+    bio: "Web developer and finance writer. I build this site and write everything on it. I test every app before recommending it. Based in Nigeria.",
     socials: {
       x: "https://x.com/gwillchijioke",
       linkedin: "https://linkedin.com/in/gwillchijioke",
