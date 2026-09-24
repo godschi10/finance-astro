@@ -58,8 +58,13 @@ export function relatedTo(all: Article[], current: Article, n = 3): Article[] {
   const sameCat = others.filter(
     (p) => p.data.category === current.data.category
   );
-  const rest = others.filter((p) => p.data.category !== current.data.category);
-  return [...sameCat, ...rest].slice(0, n);
+  // gwill_get_related_posts() queries the PRIMARY category only, capped at
+  // $count (3) — it never mixes other categories in. WordPress's fallback in
+  // single.php then takes the 2 most recent posts when no same-category post
+  // exists, so the section never dies. `all` arrives sorted by date desc, which
+  // is the query's own `orderby => date / order => DESC`.
+  if (sameCat.length) return sameCat.slice(0, n);
+  return others.slice(0, 2);
 }
 
 // Headings for the sticky TOC — extracted from the raw markdown body.

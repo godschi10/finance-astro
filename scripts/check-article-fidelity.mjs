@@ -134,7 +134,10 @@ const checks = [
     /class="mt40"> <div class="shd" style="margin-bottom:16px"><h2 class="stitle">Related Articles<\/h2><\/div>/.test(t)],
   ["related cards render in the theme's .g2 grid via the theme's card part",
     /<div class="g2"> \{related\.map\(\(p\) => \( <ArticleCard/.test(t)],
-  ["related picks same-category first, like gwill_get_related_posts()", /relatedTo\(all, entry, 3\)/.test(tpl)],
+  ["related picks the primary category only, capped at 3, like gwill_get_related_posts()",
+    /relatedTo\(all, entry, 3\)/.test(tpl) && /if \(sameCat\.length\) return sameCat\.slice\(0, n\)/.test(content)],
+  ["and falls back to the 2 most recent when the category has no siblings (single.php)",
+    /return others\.slice\(0, 2\)/.test(content)],
   ["the \"Keep reading\" stub heading is gone", !/Keep reading/.test(t)],
 
   // ── newsletter blocks (single.php:228-236, 279-284) ────────────────────
