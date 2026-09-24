@@ -40,6 +40,7 @@ const cfg = read("astro.config.mjs");
 const about = read("src/pages/about.astro");
 const contact = read("src/pages/contact.astro");
 const lb = read("src/scripts/lightbox.js");
+const baseCss = read("src/styles/base.css");
 const card = read("src/components/ArticleCard.astro");
 // every article's full frontmatter, for the cover-presence contract
 const files = (dir) =>
@@ -207,7 +208,8 @@ const checks = [
     /\.share-row \{ display: flex; align-items: center; gap: 8px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var\(--border-dim\); flex-wrap: wrap; \}/.test(c) &&
     /\.toc-bar \{ width: 2px; height: 12px; background: var\(--gold\); border-radius: 1px; flex-shrink: 0; \}/.test(c) && /\.discl-i/.test(c)],
   ["the two-column grid is the theme's 1fr + 300px (style.css:2969)",
-    /\.sb-layout \{ display: grid; grid-template-columns: 1fr 300px; gap: 32px; \}/.test(c)],
+    /\.sb-layout \{ display: grid; grid-template-columns: 1fr 300px; gap: 32px; \}/.test(c) ||
+    (/\.sb-layout \{ display: grid; grid-template-columns: 1fr 300px; gap: 32px; \}/.test(baseCss) && /\.sb-layout > div \{ min-width: 0; \}/.test(baseCss))],
   ["the mobile TOC visibility rules are the theme's (style.css:2415-2416)",
     /\.toc-dropdown\.toc-open \.toc-list \{ display: flex; \}/.test(c) && /\.toc-dropdown:not\(\.toc-open\) \.toc-list \{ display: none; \}/.test(c)],
   ["no uninstalled tokens are left for article.css to trip over (the .brd badge)",
@@ -293,6 +295,24 @@ const checks = [
     showcase.includes("wp-block-verse") && showcase.includes("wp-block-table") &&
     showcase.includes("gwill-embed")],
   ["showcase content survived markdown (no escaped HTML)", !showcase.includes("&lt;figure")],
+  // ── the King's v0.4.2 verdict: "Why do I have to press the × twice?" and
+  // "You still didn't fix the spacing issue, these elements are too close."
+  // Root causes, each now a contract:
+  ["the lightbox binds exactly ONCE (folded §11 copy removed from article.js)",
+    !/lbInit\(|lbBuild\(|lbOpen\(|lbOverlay/.test(js) &&
+    /import "..\/..\/scripts\/lightbox.js";/.test(tpl) &&
+    /assets\/js\/lightbox\.js/.test(js)],
+  ["article.js carries no second overlay-builder (one script, one overlay)",
+    !/createElement\('div'\)[\s\S]{0,200}gl-overlay/.test(js)],
+  ["the §48 layout utilities are installed GLOBALLY (base.css, every page)",
+    /\.mb24 \{ margin-bottom: 24px; \}/.test(baseCss) &&
+    /\.mt20 \{ margin-top: 20px; \}/.test(baseCss) &&
+    /\.sg \{ margin-top: 56px; \}/.test(baseCss) &&
+    /\.con \{ max-width: 1100px/.test(baseCss)],
+  ["the disclosure/body gap utility contract (.discl.mb24 → 24px below)",
+    /\.mb12 \{ margin-bottom: 12px; \} \.mb20 \{ margin-bottom: 20px; \}/.test(baseCss) &&
+    /\.mb24 \{ margin-bottom: 24px; \}/.test(baseCss) &&
+    /\.mt40 \{ margin-top: 40px; \} \.mt48 \{ margin-top: 48px; \}/.test(baseCss)],
 ];
 
 // every block class the theme styles must be present in the showcase content

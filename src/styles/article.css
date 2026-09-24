@@ -81,12 +81,13 @@
 .prog { height: 3px; background: var(--border-dim); position: sticky; top: var(--header-h); z-index: 90; }
 .prog-f { height: 100%; width: 0; background: linear-gradient(90deg, var(--gold), var(--green)); border-radius: 0 2px 2px 0; transition: width 120ms linear; }
 
-/* ══ 3.2 Layout shell — style.css:2966-2970 ══ */
-.con { max-width: 1100px; margin: 0 auto; padding: 0 var(--con-pad); }
-.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-.sb-layout { display: grid; grid-template-columns: 1fr 300px; gap: 32px; }
-.sb-layout > div { min-width: 0; } /* let the article column shrink below table min-content on mobile */
+/* ══ 3.2 Layout shell — style.css:2966-2982 ══
+   .con/.g2/.g3/.sb-layout/.cl-layout and ALL §48 utilities (.sg, .mt*,
+   .mb*, .flex/.aic/.jsb, .g16, .fw3, .fz*, .cm-c/.cd, .lh) are installed
+   GLOBALLY in base.css (the theme ships them in the one global stylesheet;
+   every page needs them, not just articles). This block previously
+   duplicated them; it now points at base.css. */
+
 /*
  * The single page's .con also carries an inline style="padding-bottom:48px" (single.php:45);
  * .article-sidebar carries inline style="position:sticky;top:72px;align-self:start" (single.php:249)

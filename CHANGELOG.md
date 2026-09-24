@@ -3,7 +3,40 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
-## [0.4.2] — 2026-09-24
+## [0.4.3] — 2026-09-24
+
+**King's verdict on v0.4.2: "Why do I have to press the × twice to close?" +
+"You still didn't fix the spacing issue, these elements are too close to each
+other."** Both real; both root-caused with measurements; both fixed.
+
+### Fixed
+- **Double lightbox (× twice)** — the port bound the lightbox TWICE: the
+  v0.4.2 verbatim `src/scripts/lightbox.js` import AND a full folded copy
+  (§11, 211 lines) inside `article.js`. Two document-level click listeners →
+  two stacked `.gl-overlay` per click → × closed only the top one. The folded
+  copy is removed with a tombstone comment; the theme's architecture (lightbox
+  as its own enqueue, `main.js` with no lightbox section) is now the port's.
+  Proven: one click → `overlays: 1, open: 1`; one × press → `gl-open` gone,
+  body scroll unlocked.
+- **Spacing utilities were never extracted** — the theme's §48 LAYOUT
+  UTILITIES (style.css:2966-2982) landed only partially (`.con/.g2/.g3/
+  .sb-layout`); `.sg .mt20 .mt40 .mt48 .mb12 .mb20 .mb24 .flex .aic .jsb
+  .g16 .fw3 .fz11/12/14 .cm-c .cd .lh .cl-layout` were missing from the
+  served bundle on ALL 54 pages. Result: the disclosure sat flush on the
+  body (0px vs live's 24px), the author box lost its 20px top gap, related
+  lost its 40px. Installed GLOBALLY in base.css (the theme ships them in the
+  one global stylesheet; 14 non-article page templates use them too).
+  Measured after the fix, port vs live at 390 dark: toc→discl 20/20,
+  discl→body 24/24, body→share 28/28, share→abio 20/20, abio→related 64/64 —
+  **0 divergent pairs**.
+
+### Note
+- The v0.4.2 spacing matrix measured box HEIGHTS (all matched); margins
+  between boxes were the untested dimension — the gap chain probe is the new
+  acceptance instrument, and the gate now asserts the utilities' presence in
+  the global sheet.
+
+
 
 **King's verdict on v0.4.1: "Still highly unfinished, so many issues, lightbox
 doesn't even work. Some elements aren't spaced enough." + "And no featured

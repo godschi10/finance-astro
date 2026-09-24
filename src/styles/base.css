@@ -67,3 +67,29 @@ h1, h2, h3, h4 { letter-spacing: -0.02em; }
   clip: auto; clip-path: none; background: var(--gold); color: #fff;
   padding: 8px 16px; border-radius: var(--r-sm); font-size: 12px; font-weight: 700;
 }
+
+/* ══ LAYOUT UTILITIES — style.css:2966-2982 (§48) ═══════════════════════
+   The theme's utilities live in the one global stylesheet, so the port must
+   ship them on EVERY page, not just the article template — the homepage,
+   category, author, tools and legal pages all use them (.discl.mb24,
+   .abio.mt20, section.sg). article.css §3.2 extracted only .con/.g2/.g3/
+   .sb-layout; the rest of §48 was never extracted, which is why the
+   disclosure box sat flush on the body text (0px vs live's 24px) and the
+   author box lost its 20px top gap — the King's "too close" verdict. */
+.con { max-width: 1100px; margin: 0 auto; padding: 0 var(--con-pad); }
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.sb-layout { display: grid; grid-template-columns: 1fr 300px; gap: 32px; }
+.sb-layout > div { min-width: 0; } /* let the article column shrink below table min-content on mobile */
+.cl-layout { display: grid; grid-template-columns: 1fr 320px; gap: 32px; }
+.sg { margin-top: 56px; }
+.mt20 { margin-top: 20px; }
+.mt40 { margin-top: 40px; } .mt48 { margin-top: 48px; }
+.mb12 { margin-bottom: 12px; } .mb20 { margin-bottom: 20px; }
+.mb24 { margin-bottom: 24px; }
+.flex { display: flex; } .aic { align-items: center; } .jsb { justify-content: space-between; }
+.g16 { gap: 16px; }
+.fw3 { font-weight: 300; }
+.fz11 { font-size: 11px; } .fz12 { font-size: 12px; } .fz14 { font-size: 14px; }
+.cm-c { color: var(--text-mid); } .cd { color: var(--text-dim); }
+.lh { line-height: 1.7; }
