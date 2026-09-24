@@ -3,7 +3,19 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
-## [0.4.3] — 2026-09-24
+## [0.4.4] — 2026-09-24
+
+### Fixed
+- **"Subtitles and posts meta are too close"** (King, screenshot
+  img_30a2b4d4b69e) — the post deck (`.art-sub`, the net-new subtitle
+  element from docs/port/08) had `margin-top: 16px` and **no
+  `margin-bottom`**: its last line sat 0px on the author pill. Given the
+  theme's own callout rhythm — the disclosure is `class="discl mb24"` —
+  the deck now carries `margin-top: 24px; margin-bottom: 24px`, symmetric,
+  matching `.mb24`/`.mt24` scale. Measured at 390 dark after the rebuild:
+  title→deck **24px**, deck→meta **24px** (was 20 / 0).
+
+
 
 **King's verdict on v0.4.2: "Why do I have to press the × twice to close?" +
 "You still didn't fix the spacing issue, these elements are too close to each

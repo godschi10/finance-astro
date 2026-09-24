@@ -4,7 +4,21 @@ Ledger law: every order gets a line here immediately. `CODED-UNCOMMITTED ≠ DON
 a fix is done only when the served bytes and the rendered page prove it.
 Read this at session start.
 
-## IN FLIGHT — 2026-09-24 · King's verdict on v0.4.2 (v0.4.3) — SHIPPED, LIVE-VERIFIED
+## IN FLIGHT — 2026-09-24 · King: "Subtitles and posts meta are too close" + comments plan
+
+- [ ] **Subtitle ↔ post-meta spacing** — King's screenshot (img_30a2b4d4b69e):
+      deck bottom line sits flush on the author pill; title→deck also tight.
+      Measure port 390 vs the theme's own header rhythm; fix with
+      theme-scale values; gate assertion; ship both branches; live verify.
+- [ ] **COMMENTS — plan first, then port** — King: "port comments, make
+      serious plans for comments let's give it a custom comment, but for
+      our custom Cloudflare comments style. Let's plan first." Deliver a
+      serious plan for approval BEFORE any code: theme comments UI ported
+      + custom Cloudflare backend (Workers + D1), API + antispam +
+      moderation + styling in the theme's language. NO implementation
+      until the King approves.
+
+## SHIPPED — 2026-09-24 · King's verdict on v0.4.2 (v0.4.3) — SHIPPED, LIVE-VERIFIED
 
 King: "Why do I have to press the × twice to close" + "You still didn't fix
 the spacing issue, these elements are too close to each other, look."
