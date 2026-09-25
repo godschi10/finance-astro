@@ -18,13 +18,21 @@ Read this at session start.
       finance-astro, JS render core ported with fetch transport (payload shapes
       verbatim from js-section-map.md), wire after the related section, gates,
       build, ship both branches.
-- [ ] **BLOCKED ON KING — one dashboard edit.** The token in ~/.hermes/.env is
-      valid+active with Workers access, but its permission groups exclude both
-      D1 and KV (reads return 10000 "Authentication error"). Add
-      **Account → D1 → Edit** and **Account → Workers KV Storage → Edit** to that
-      token and the whole deploy runs unattended. Also wanted: Turnstile site
-      key + secret (free, two clicks); optional Resend API key for moderation
-      email (otherwise moderation is the /admin page + ADMIN_TOKEN).
+- [x] **comments-api DEPLOYED TO CLOUDFLARE — LIVE + VERIFIED 53/53 GREEN**
+      (2026-09-25). **https://comments-api.gwill.workers.dev** — D1
+      `f3f58a69…47fe` (region WEUR) + KV `9c03bd56…a414`, schema applied
+      remotely, secrets ADMIN_TOKEN / SALT / EMAIL_HMAC_KEY set. Access came
+      from the OAuth device grant the King approved; the env token's missing
+      D1+KV permission groups were the real blocker — never the account.
+      Evidence: the same battery run against the LIVE url, exit 0 — submit→
+      pending→approve→live, nesting, counts, reactions, plugin field names,
+      429, honeypot 400, 403/410, admin 401/200, CORS allow/reject, 404.
+      Edge-only finding: Cloudflare answers a bare `Python-urllib` UA with 403
+      BEFORE the Worker runs (invisible on local dev) — harness now sends a UA.
+- [ ] **BLOCKED ON KING — Turnstile keys** (site key + secret, free, two
+      clicks). Until they exist the Worker skips Turnstile exactly as WP does
+      when unconfigured; honeypot + 1/min limiter + ported scorer still apply.
+      Optional: Resend API key for moderation email (else /admin + ADMIN_TOKEN).
 
 ## IN FLIGHT — 2026-09-25 · comments P1 BUILDING + v0.4.5 TOC fix SHIPPED
 
