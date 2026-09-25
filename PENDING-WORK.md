@@ -14,10 +14,16 @@ Read this at session start.
       HMAC tamper 403 / expiry 410, admin auth 401/200 + signed-link queue,
       CORS allow/reject, 404, 15-key wire shape, spam scorer 100/likely-spam,
       gravatar MD5 = 55502f40dc8b7c769880b10874abc9d0 (canonical test vector).
-- [ ] **comments P1 integration** — CSS ×2 + VibeComments.astro into
-      finance-astro, JS render core ported with fetch transport (payload shapes
-      verbatim from js-section-map.md), wire after the related section, gates,
-      build, ship both branches.
+- [x] **comments P1 integration — DONE, shipping in v0.4.6** (2026-09-25).
+      `src/components/VibeComments.astro` + `src/scripts/vibe-comments.js`
+      (the plugin's own 3,087-line client, 233 changed lines = transport seam
+      only) + both stylesheets byte-identical in WP's cascade order, wired into
+      `[slug].astro` between the related posts and the mobile newsletter —
+      WP's own position. Client module ported by a delegation child (30 calls);
+      parent verified the bytes, then fixed the one dead-control risk it
+      flagged (the inert sort button) and the two wire divergences against live
+      WP (SHA-256 gravatar + `human_time_diff` dates). Gate 147/147; Worker
+      60/60 live; browser probe green at 390px. Docs: `docs/port/17`.
 - [x] **comments-api DEPLOYED TO CLOUDFLARE — LIVE + VERIFIED 53/53 GREEN**
       (2026-09-25). **https://comments-api.gwill.workers.dev** — D1
       `f3f58a69…47fe` (region WEUR) + KV `9c03bd56…a414`, schema applied

@@ -1,0 +1,338 @@
+---
+/**
+ * VibeComments.astro — DRAFT port of the King's own comment UI for the
+ * finance-astro static port.
+ *
+ * Source of truth: /var/www/finance/wp-content/plugins/vibe-comments/templates/comments.php
+ * (v3.20.28, 257 lines) as rendered live (guest path) — captured in /tmp/live-art.html.
+ * Spec: docs/port/15-comments-plan.md §5 (UI port specifics) + §6 (honest holds).
+ *
+ * Law 0 discipline:
+ *   - Every id and class from the source template is byte-faithful.
+ *   - WP-only conditionals stripped per plan §5:
+ *       comments_open()  → always true  (comments are a shipped feature)
+ *       is_user_logged_in() → always false → ONLY the "Comment as Guest"
+ *       auth-bar path renders. The WP-login <a> and the Google button are
+ *       REMOVED (declared divergence: no WP auth behind a static site).
+ *   - #gwill-comment-ads hidden slots ship as-is (dead until the ad system
+ *     lands — honest hold, not deleted) exactly as the live page renders them.
+ *   - <noscript> honest notice kept, count-aware as in the PHP template.
+ *
+ * Integration (done — kept here as the record):
+ *   - The comments module loads as exactly ONE script (single-bind law), placed
+ *     AFTER the inline `var vibeComments = {...}` serialization of VIBE_CONFIG:
+ *     that is the order WP itself enqueued them.
+ *   - §6 hold gating: the P2/P3 opt-in blocks are ABSENT (removed, not dead),
+ *     and the `.vibe-or` separator went with the login buttons it separated.
+ */
+
+interface Props {
+  /** Live approved-comment count for this post (vibe_comment_count parity). */
+  count: number;
+  /** The Astro page slug — the Worker/D1 post key (replaces WP postId). */
+  postSlug: string;
+  /** Base URL of the comments Worker (replaces WP admin-ajax). */
+  apiBase: string;
+}
+
+const { count, postSlug, apiBase } = Astro.props;
+
+/**
+ * Placeholder port of the live `var vibeComments = {...}` object
+ * (field-for-field reference: config-and-i18n.md in this directory).
+ * ⚠ wire to Worker URL at integration — `ajaxUrl` replaces WP admin-ajax;
+ *   at integration this object is serialized inline BEFORE the comments
+ *   module exactly the way WP served it (`//# sourceURL=vibe-comments-js-extra`).
+ */
+const VIBE_CONFIG = {
+  apiBase,                                   // the live Worker (replaces WP admin-ajax)
+  postSlug,                                  // replaces WP postId ('44' live)
+  iconMode: 'auto',                          // verbatim: emoji-first, SVG fallback
+  isLoggedIn: false,                         // always false — guests only on a static site
+  isAdmin: false,
+  replyPush: null,                           // plan §5: disabled on static (P3)
+  mentions: { enabled: false, authors: [] }, // P2: seed from content authors
+  qa: false,                                 // P3: Q&A mode
+  googleEnabled: false,                      // removed — declared divergence below
+  maxCommentLength: 2000,                    // verbatim
+  oneCommentText: '1 Comment',               // verbatim
+  manyCommentsTemplate: '%s Comments',      // verbatim
+  debug: false,                             // absent/falsy in the live object
+  i18n: {
+    loading: 'Loading…',
+    loadingDots: 'Loading...',
+    loadMore: 'Load More Comments',
+    readMore: 'Read more',
+    showLess: 'Show less',
+    saving: 'Saving...',
+    save: 'Save',
+    edited: '(edited)',
+    discard: 'Discard',
+    hideGuestForm: 'Hide Guest Form',
+    commentAsGuest: 'Comment as Guest',
+    hideReplies: 'Hide replies',
+    viewReplies: 'View replies',
+    connecting: 'Connecting…',
+    searchComments: 'Search comments…',
+    typeAtLeast2: 'Type at least 2 characters…',
+    pinned: 'Pinned',
+    accepted: '✓ Accepted',
+    couldNotLoad: 'Could not load comments.',
+    tryAgain: 'Try again',
+    noCommentsYet: 'No comments yet',
+    beFirst: 'Be the first to share your thoughts ✨',
+    noCommentsFound: 'No comments found',
+    tryDifferent: 'Try a different search term 🔎',
+    found: '%s found',
+    showingFirst50: ' (showing first 50)',
+    commentingAs: 'Commenting as',
+    notYou: 'Not you?',
+    editFailed: 'Your comment didn\'t post. Check your connection and try again.',
+    thanksNoName: 'Thanks! Your comment is pending review.',
+    liveNoName: 'Your comment is live!',
+    serverError: 'Couldn\'t reach the server for that. Try again in a moment.',
+    searchAria: 'Search comments',
+    pushBlocked: 'Notifications are blocked for this site in your browser settings.',
+    reactFailed: 'Failed to react.',
+    editFailedShort: 'Edit failed.',
+    draftRestored: 'Draft restored - ',
+    errWriteComment: 'Please write a comment.',
+    errNameEmail: 'Please enter your name and email to comment.',
+    errValidEmail: 'Please enter a valid email address.',
+    serverFatal: 'A server fatal error occurred. Check error logs or contact support.',
+    invalidResponse: 'Server returned an invalid response. Check browser console for details.',
+    postFailed: 'Failed to post comment.',
+    googleNotConfig: 'Google authentication is not configured.',
+    googleLoginFailed: 'Failed to initiate Google login.',
+    reply: 'Reply',
+    viewReplyCount: 'View %s reply',
+    viewReplyCounts: 'View %s replies',
+    pin: 'Pin',
+    unpin: 'Unpin',
+    unaccept: 'Unaccept',
+    accept: '✓ Accept',
+    author: 'Author',
+    pinnedBadge: 'Pinned',
+    notifyTitle: 'Reply alerts for this thread (emails and browser notifications) - click to switch',
+    bellOn: 'On',
+    bellOff: 'Off',
+    noPushSupport: 'This browser does not support notifications.',
+    pushWillNotify: 'You will get a push notification on this device when someone replies to your comment.',
+    pushEnableFail: 'Could not enable notifications on this device.',
+    thanksPending: 'Thanks %s! Your comment is pending review.',
+    thanksLive: 'Thanks %s! Your comment is now live.',
+    reactLike: 'Like',
+    reactLove: 'Love',
+    reactFire: 'Fire',
+    reactHaha: 'Haha',
+    editComment: 'Edit your comment',
+    edit: 'Edit',
+    cancel: 'Cancel',
+    editWindow: '5-minute window',
+    editEmpty: 'Write something first.',
+    sortNewest: 'Newest first',
+    sortOldest: 'Oldest first',
+    sortTop: 'Top - most reacted',
+    bannerNew: '↑ %s new - load',
+    bannerComment: 'comment',
+    bannerComments: 'comments',
+  },
+};
+
+// ── Heading: the template's 3-way branch (comments.php:42-52), count-driven ──
+// 0 → '' so the `.vibe-comments-title:empty { display:none }` rule hides it;
+// JS overwrites with the live Worker count after Load is clicked.
+const vibeHeading =
+  count === 0 ? '' : count === 1 ? '1 Comment' : `${count.toLocaleString()} Comments`;
+
+// ── <noscript> honest notice (comments.php:79-98), count-aware ──
+const noscriptNotice =
+  count > 0
+    ? `This page has ${count.toLocaleString()} comment${count === 1 ? '' : 's'}. Enable JavaScript to view and join the discussion.`
+    : 'Enable JavaScript to view and join the discussion.';
+---
+
+<!-- Placement parity with the live page: single.php renders the section
+     inside `.comments-area.mt48`, after related + leaderboard slots. -->
+<div class="comments-area mt48">
+
+    <section id="vibe-comments" class="vibe-comments-section">
+
+        <!--
+            Heading text comes from the build-time count (parity: wp_options
+            count baked by PHP). Empty when count = 0 so CSS :empty hides it
+            automatically. JS overwrites the text with the accurate live total
+            after Load is clicked.
+        -->
+        <h2 class="vibe-comments-title" id="vibe-comments-title" set:html={vibeHeading} />
+
+        <!-- Static trigger - no count, cached forever, zero staleness risk -->
+        <div id="vibe-comments-trigger">
+            <button type="button" id="vibe-load-comments-btn" class="vibe-btn vibe-btn-load-comments">
+                Load Comments
+            </button>
+        </div>
+
+        <!--
+            A1 fix (kept verbatim): honest explanation for JS-disabled visitors,
+            plus the build-time count so at least that much is visible either way.
+        -->
+        <noscript>
+            <p class="vibe-noscript-notice" set:html={noscriptNotice}></p>
+        </noscript>
+
+        <!--
+            Everything below is hidden until the button is clicked.
+            This keeps the page completely static: no fetch, no rendering cost
+            until the user explicitly requests the comment section.
+        -->
+        <div id="vibe-comments-container" style="display:none;">
+
+            <!-- Sort icon + search - revealed by JS once comments are loaded -->
+            <div class="vibe-comments-toolbar" id="vibe-comments-toolbar" style="display:none;">
+                <button type="button" id="vibe-sort-toggle" class="vibe-sort-icon-btn"
+                        title="Newest first"
+                        aria-label="Newest first"
+                        data-mode="newest">
+                    <svg viewBox="0 0 16 16" width="13" height="13" fill="none"
+                         stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <line x1="2" y1="4"  x2="14" y2="4"/>
+                        <line x1="4" y1="8"  x2="12" y2="8"/>
+                        <line x1="6" y1="12" x2="10" y2="12"/>
+                    </svg>
+                    <span class="vibe-sort-label">&#8595;</span>
+                </button>
+            </div>
+
+            <ul class="vibe-comment-list" id="vibe-comment-list"></ul>
+
+            <div class="vibe-load-more-wrap" id="vibe-load-more-wrap" style="display:none;">
+                <button type="button" class="vibe-btn vibe-btn-load-more" id="vibe-load-more">
+                    Load More Comments
+                </button>
+            </div>
+
+            <!-- comments_open() is always true on the port: comments are a
+                 shipped feature, the "Comments are closed." branch is dead
+                 and therefore not ported. -->
+            <div class="vibe-comment-form-wrapper" id="vibe-form-wrapper">
+
+                <!-- declared divergence: no WP auth behind a static site.
+                     The source template's guest branch renders a WordPress
+                     login link and, when configured, a Google sign-in button.
+                     Both are REMOVED here — no WP login and no Google OAuth.
+                     P3 replaces them with magic-link email login; until then
+                     guests only. The .vibe-auth-bar wrapper and the guest
+                     toggle render exactly as live. -->
+                <div class="vibe-auth-bar">
+                    <!-- The source renders WP-login <a> and (when configured)
+                         the Google button on either side of a `.vibe-or`
+                         separator. All three are REMOVED here: there is no WP
+                         auth and no Google OAuth behind a static site, and a
+                         separator with nothing left to separate is dead
+                         markup. Guests only, until P3 adds magic-link login. -->
+                    <button type="button" class="vibe-btn vibe-btn-guest" id="vibe-guest-toggle">
+                        Comment as Guest
+                    </button>
+                </div>
+
+                <form id="vibe-comment-form" class="vibe-comment-form" method="post" action="#">
+                    <!-- Field name kept byte-faithful for JS parity
+                         (initForm reads formData.get('comment_post_ID'));
+                         the VALUE is the Astro slug now — the Worker keys by
+                         post_slug, not the WP numeric ID. -->
+                    <input type="hidden" name="comment_post_ID" value={postSlug} />
+                    <input type="hidden" name="comment_parent" id="vibe-comment-parent" value="0" />
+
+                    <!-- is_user_logged_in() === false on the port: the guest
+                         fields block renders exactly as the live guest path. -->
+                    <div class="vibe-guest-fields" id="vibe-guest-fields" style="display:none;">
+                        <div class="vibe-field">
+                            <label for="vibe-author">
+                                Name
+                                <span aria-hidden="true" style="color:#ef4444"> *</span>
+                            </label>
+                            <input type="text" id="vibe-author" name="author"
+                                   required autocomplete="name"
+                                   placeholder="Your name" />
+                        </div>
+                        <div class="vibe-field">
+                            <label for="vibe-email">
+                                Email
+                                <span aria-hidden="true" style="color:#ef4444"> *</span>
+                            </label>
+                            <input type="email" id="vibe-email" name="email"
+                                   required autocomplete="email"
+                                   placeholder="your@email.com" />
+                        </div>
+                    </div>
+
+                    <div class="vibe-field">
+                        <label for="vibe-comment-content">
+                            Your comment
+                        </label>
+                        <textarea id="vibe-comment-content" name="comment" rows="4" required
+                                  aria-describedby="vibe-char-counter"
+                                  placeholder="What do you think?"></textarea>
+                        <div class="vibe-char-counter" id="vibe-char-counter" aria-live="polite">
+                            <span id="vibe-char-count">0</span> / <span id="vibe-char-max">2000</span>
+                        </div>
+                    </div>
+
+                    <!-- Honeypot - off-screen, bots fill it, humans never see it -->
+                    <input type="text" name="vibe_hp" value="" class="vibe-hp-field"
+                           aria-hidden="true" tabindex="-1" autocomplete="off" />
+
+                    <!-- plan §6 hold: the source gates the push opt-in behind
+                         Vibe_Comments_Reply_Push::is_available() and the email
+                         opt-in behind the MailChannels rail. The port has
+                         NEITHER rail in v1 (plan §5: replyPush null, P3), so
+                         both blocks are ABSENT rather than rendered dead —
+                         the plugin's own gating law. They return with the P3
+                         rails. -->
+
+                    <div class="vibe-form-actions">
+                        <button type="submit" class="vibe-btn vibe-btn-primary" id="vibe-submit-btn">
+                            Post Comment
+                        </button>
+                        <button type="button" class="vibe-btn vibe-btn-cancel"
+                                id="vibe-cancel-reply" style="display:none;">
+                            Cancel Reply
+                        </button>
+                    </div>
+                </form>
+
+            </div><!-- .vibe-comment-form-wrapper -->
+
+        </div><!-- #vibe-comments-container -->
+
+    </section><!-- #vibe-comments -->
+
+    <!-- Comment-section ad slots (v1.0.106): rendered hidden,
+         main.js clones them into the comment list after EVERY
+         5th MAIN comment (5th, 10th, 15th…), never inside
+         reply threads. Same device-aware template system as
+         every other slot; sources cycle when both exist.
+         plan §6 hold: markup ships as-is, clone behaviour waits
+         for the ad-slot system port (open-hold dependency). -->
+    <div id="gwill-comment-ads" style="display:none" aria-hidden="true">
+        <div class="gwill-comment-ad" data-gwill-comment-ad="1"></div>
+        <div class="gwill-comment-ad" data-gwill-comment-ad="2"></div>
+    </div>
+
+</div><!-- .comments-area.mt48 -->
+
+<!--
+    The comments module — single-bind law: exactly ONE script, exactly one init
+    path. WP's own enqueue order is reproduced here: the localized config object
+    is printed inline first, the client module second. (`//# sourceURL` parity is
+    cosmetic and dropped.)
+
+    The module is the plugin's own client script with ONLY its transport seam
+    patched — see src/scripts/vibe-comments.js for the change list. Everything
+    else, the render core included, is verbatim.
+-->
+<script is:inline set:html={`var vibeComments = ${JSON.stringify(VIBE_CONFIG)};`}></script>
+<script>
+  import "../scripts/vibe-comments.js";
+</script>

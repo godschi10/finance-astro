@@ -1,0 +1,551 @@
+/* Vibe Comments, GWill Finance theme override (light + dark).
+ *
+ * The plugin's public/css/vibe-comments.css loads AFTER this file, so any
+ * property the plugin sets with equal specificity beats us. Everything we
+ * fight therefore carries !important (the sole exception to the theme's
+ * no-!important brand rule, same policy as gwill-tech-theme).
+ *
+ * Plugin version pinned: 3.20.28, bump the $expected in inc/enqueue.php
+ * when verifying a new version.
+ */
+
+/*
+Table of Contents
+1. Light tokens (default)
+2. Dark tokens (warm blacks, brand identity v1.0)
+3. Typography, JetBrains Mono everywhere (brand)
+4. Focus ring, gold instead of plugin blue
+5. Buttons, primary gold fill, white text
+6. Author badge, gold pill (was lame blue)
+7. Reply button, white text, gold border, gold fill on hover
+8. Reaction picker, gold active state
+9. Pinned badge, brand gold instead of raw amber
+10. Awaiting moderation, warm hint instead of amber
+11. Nested replies, thread guide + compact mobile hierarchy
+12. Mobile: nested comments must not eat the viewport
+13. Dark-state message/pin/counter overrides (plugin hardcodes light pastels)
+*/
+
+/* ── 1. Light tokens (default) ───────────────────── */
+:root {
+  --vibe-primary: #d97706 !important;        /* gold */
+  --vibe-primary-hover: #b45309 !important;  /* gold dark */
+  --vibe-bg: #ffffff !important;
+  --vibe-bg-alt: #faf9f6 !important;
+  --vibe-surface: #f7f6f2 !important;
+  --vibe-border: #e4e2dc !important;
+  --vibe-text: #0d0d0d !important;
+  --vibe-text-muted: #757575 !important;
+  --vibe-muted: #757575 !important;          /* muted text (edited-badge/edit-note/edit-cancel) */
+  --vibe-bg-soft: #f7f6f2 !important;        /* soft bg (reply-context chip, code) */
+  --vibe-radius: 10px !important;
+  --vibe-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.05) !important;
+}
+
+/* ── 2. Dark tokens (warm blacks, brand identity v1.0) ─── */
+[data-theme="dark"] {
+  --vibe-primary: #f59e0b !important;
+  --vibe-primary-hover: #e09009 !important;
+  --vibe-bg: #131210 !important;
+  --vibe-bg-alt: #171512 !important;
+  --vibe-surface: #0d0b08 !important;
+  --vibe-border: #5e5748 !important;   /* v3.20.28b pass2: was #4a443a, still too subtle on #131210 (King: borders disappear). #5e5748 = ~4.2:1 lift */   /* v3.20.28b: was #211f1a - invisible on the #131210 bg (King: borders disappear on dark mode) */
+  --vibe-text: #f0ede6 !important;
+  --vibe-text-muted: #8f8575 !important;
+  --vibe-muted: #8f8575 !important;          /* muted text (edited-badge/edit-note/edit-cancel) */
+  --vibe-bg-soft: #1b1916 !important;        /* soft bg (reply-context chip, code) */
+  --vibe-shadow: 0 1px 3px rgba(0,0,0,0.4) !important;
+}
+
+/* ── 3. Typography, JetBrains Mono everywhere (brand) ─── */
+.vibe-comments-section {
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+/* ── 4. Focus ring, gold instead of plugin blue ─── */
+.vibe-comments-section :focus-visible,
+.vibe-comments-section input:focus,
+.vibe-comments-section textarea:focus {
+  outline: none !important;
+  border-color: var(--vibe-primary) !important;
+  box-shadow: 0 0 0 3px rgba(217,119,6,0.12) !important;
+}
+[data-theme="dark"] .vibe-comments-section :focus-visible,
+[data-theme="dark"] .vibe-comments-section input:focus,
+[data-theme="dark"] .vibe-comments-section textarea:focus {
+  box-shadow: 0 0 0 3px rgba(245,158,11,0.15) !important;
+}
+
+/* ── Pasted / autofilled fields must keep the theme (Chrome paints
+   -webkit-autofill with its own white/light-blue bg that ignores CSS).
+   The inset-box-shadow trick overrides it for :autofill states. ─────── */
+.vibe-comments-section input:-webkit-autofill,
+.vibe-comments-section input:-webkit-autofill:hover,
+.vibe-comments-section input:-webkit-autofill:focus,
+.vibe-comments-section textarea:-webkit-autofill,
+.vibe-comments-section textarea:-webkit-autofill:hover,
+.vibe-comments-section textarea:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--vibe-bg) inset !important;
+  -webkit-text-fill-color: var(--vibe-text) !important;
+  caret-color: var(--vibe-text) !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+[data-theme="dark"] .vibe-comments-section input:-webkit-autofill,
+[data-theme="dark"] .vibe-comments-section input:-webkit-autofill:hover,
+[data-theme="dark"] .vibe-comments-section input:-webkit-autofill:focus,
+[data-theme="dark"] .vibe-comments-section textarea:-webkit-autofill,
+[data-theme="dark"] .vibe-comments-section textarea:-webkit-autofill:hover,
+[data-theme="dark"] .vibe-comments-section textarea:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--vibe-bg) inset !important;
+  -webkit-text-fill-color: var(--vibe-text) !important;
+  caret-color: var(--vibe-text) !important;
+}
+
+/* ── 5. Buttons, primary gold fill, white text ──── */
+.vibe-btn-primary {
+  background: var(--vibe-primary) !important;
+  color: #fff !important;
+  border-color: var(--vibe-primary) !important;
+}
+.vibe-btn-primary:hover {
+  background: var(--vibe-primary-hover) !important;
+  color: #fff !important;
+}
+.vibe-btn-wp, .vibe-btn-google, .vibe-btn-guest {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  padding: 10px 18px !important;
+  border-radius: var(--vibe-radius) !important;
+  color: var(--vibe-text) !important;
+  border: 1px solid var(--vibe-border) !important;
+  background: var(--vibe-bg) !important;
+}
+.vibe-btn-wp:hover, .vibe-btn-google:hover, .vibe-btn-guest:hover {
+  border-color: var(--vibe-primary) !important;
+  color: var(--vibe-primary) !important;
+}
+.vibe-or {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 10px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.14em !important;
+  color: var(--vibe-text-muted) !important;
+}
+
+/* ── 6. Author badge, gold pill (was lame blue) ─── */
+.vibe-author-badge {
+  background: rgba(217,119,6,0.1) !important;
+  border: 1px solid rgba(217,119,6,0.25) !important;
+  color: var(--vibe-primary) !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  padding: 3px 10px !important;
+  border-radius: 100px !important;
+  margin-left: 6px !important;
+}
+[data-theme="dark"] .vibe-author-badge {
+  background: rgba(245,158,11,0.12) !important;
+  border-color: rgba(245,158,11,0.25) !important;
+  color: var(--vibe-primary) !important;
+}
+
+/* ── 7. Reply button, white text, gold border, gold fill on hover ─── */
+.vibe-comment-footer .comment-reply-link,
+.vibe-reply-trigger {
+  color: var(--vibe-primary) !important;
+  border-color: var(--vibe-primary) !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+.vibe-comment-footer .comment-reply-link:hover,
+.vibe-reply-trigger:hover {
+  background: var(--vibe-primary) !important;
+  color: #fff !important;
+}
+
+/* ── 8. Reaction picker, gold active state ──────── */
+.vibe-reaction-option {
+  border: 1px solid var(--vibe-border) !important;
+  background: var(--vibe-bg) !important;
+  border-radius: 100px !important;
+}
+.vibe-reaction-option.vibe-active-reaction {
+  background: rgba(217,119,6,0.12) !important;
+  border-color: var(--vibe-primary) !important;
+}
+[data-theme="dark"] .vibe-reaction-option.vibe-active-reaction {
+  background: rgba(245,158,11,0.12) !important;
+}
+
+/* ── 9. Pinned badge, brand gold instead of raw amber ─── */
+.vibe-pinned-badge {
+  background: rgba(217, 119, 6, 0.12) !important;
+  color: var(--vibe-primary) !important;
+  border: 1px solid rgba(217, 119, 6, 0.35) !important;
+  border-radius: 100px !important;
+  padding: 2px 10px !important;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.04em !important;
+  font-weight: 700 !important;
+}
+/* Pinned comment container, gold left rail + soft gold wash (NOT the
+   plugin's raw amber #fbbf24), with padding that keeps the rail from
+   crushing text on narrow screens. */
+.vibe-comment-pinned > article {
+  border-left: 3px solid var(--vibe-primary, #d97706) !important;
+  padding-left: 0.9rem !important;
+  background: rgba(217, 119, 6, 0.05) !important;
+  border-radius: 0 var(--vibe-radius, 10px) var(--vibe-radius, 10px) 0 !important;
+}
+[data-theme="dark"] .vibe-comment-pinned > article {
+  background: rgba(245, 158, 11, 0.07) !important;
+}
+/* Gold pin glyph on the badge */
+.vibe-pinned-badge .vibe-pin-icon,
+.vibe-pinned-badge svg {
+  color: var(--vibe-primary) !important;
+}
+
+/* ── 10. Awaiting moderation, warm hint instead of amber ─── */
+.vibe-comment-status--pending,
+.vibe-comment-awaiting {
+  background: rgba(217,119,6,0.08) !important;
+  color: var(--vibe-primary) !important;
+}
+
+/* ── 11. Nested replies, thread guide + compact mobile hierarchy ─── */
+.vibe-comment-list ul.children {
+  list-style: none !important;
+  padding-left: 2.5rem !important;
+  margin-top: var(--vibe-gap, 16px) !important;
+  border-left: 2px solid var(--vibe-border) !important;
+}
+.vibe-comment-list ul.children ul.children {
+  border-left-style: dashed !important;
+}
+/* Slim the guide on dark mode */
+[data-theme="dark"] .vibe-comment-list ul.children {
+  border-left-color: #2c2a25 !important;
+}
+
+/* ── 12. Mobile: nested comments must not eat the viewport ─── */
+@media (max-width: 767px) {
+  .vibe-comment-list ul.children {
+    padding-left: 22px !important;
+    border-left-width: 2px !important;
+    margin-top: 12px !important;
+  }
+  /* 2nd level+ tighter still */
+  .vibe-comment-list ul.children ul.children {
+    padding-left: 16px !important;
+  }
+  /* Replies get smaller avatars so content keeps breathing room */
+  .vibe-comment-list ul.children .vibe-comment-avatar img {
+    width: 32px !important;
+    height: 32px !important;
+    max-width: 32px !important;
+  }
+  /* Compact nested reply cards (no card chrome in threads, the guide line carries hierarchy) */
+  .vibe-comment-list ul.children .vibe-comment-body {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 8px 0 8px 2px !important;
+  }
+  .vibe-comment-list ul.children .vibe-comment-header {
+    gap: 8px !important;
+  }
+  .vibe-comment-list ul.children .vibe-comment-content {
+    font-size: 12.5px !important;
+  }
+  /* The inline reply form inside threads: break out of the indent chain so
+     the form spans the full comment column on phones (not squeezed into the
+     thread's indented width). 22px = ul.children padding, +16px for 2nd level. */
+  .vibe-comment-list ul.children .vibe-reply-container {
+    margin-left: -24px !important;
+    width: auto !important;
+  }
+  .vibe-comment-list ul.children ul.children .vibe-reply-container {
+    margin-left: -40px !important;
+  }
+  .vibe-comment-list ul.children .vibe-reply-container .vibe-comment-form,
+  .vibe-comment-list ul.children .vibe-reply-container form {
+    padding: 10px !important;
+  }
+}
+
+/* ── 13. Dark-state message/pin/counter overrides (plugin hardcodes light pastels) ───
+   Ported from gwill-tech-theme's proven darkmode-vibe-comments coverage
+   (its 2026-08-22 audit findings #2/#3), adapted to the finance gold brand.
+   The plugin hardcodes LIGHT-ONLY colors for these states, on dark they
+   render as light pastel blobs. Scoped + !important so they beat the
+   plugin's later-loaded equal-specificity rules (same fight policy as
+   every rule in this file). */
+
+/* Pin button hover, plugin ships a light amber chip (#fef3c7/#fde68a/#b45309). */
+.vibe-comments-section .vibe-pin-btn:hover {
+  background: rgba(245, 158, 11, .12) !important;
+  border-color: rgba(245, 158, 11, .4) !important;
+  color: #f59e0b !important;
+}
+
+/* Error / success notices, plugin ships light red/green boxes
+   (#fee2e2/#991b1b and #dcfce7/#166534), unreadable on warm black. */
+.vibe-comments-section .vibe-message-error {
+  background: rgba(248, 113, 113, .12) !important;
+  border: 1px solid rgba(248, 113, 113, .3) !important;
+  color: #f87171 !important;
+  border-radius: 6px !important;
+}
+.vibe-comments-section .vibe-message-success {
+  background: rgba(245, 158, 11, .1) !important;
+  border: 1px solid rgba(245, 158, 11, .28) !important;
+  color: #f59e0b !important;
+  border-radius: 6px !important;
+}
+
+/* Character counter warning/over, warn gold, over red. */
+.vibe-comments-section .vibe-char-counter.vibe-char-warn { color: #fbbf24 !important }
+.vibe-comments-section .vibe-char-counter.vibe-char-over  { color: #f87171 !important }
+
+/* "N new comments" banner, warm gold tint instead of plugin blue. */
+.vibe-comments-section .vibe-new-banner {
+  background: rgba(245, 158, 11, .08) !important;
+  border: 1px solid rgba(245, 158, 11, .25) !important;
+  color: #f59e0b !important;
+}
+
+/* ── 14. Destructive-action red, brand red, not plugin #ef4444 ────────
+   The plugin ships .vibe-logout:hover and .vibe-btn-cancel:hover in
+   #ef4444 (a cold Tailwind red-500). The finance brand red is #b91c1c
+   (a11y test, 5.6:1 on the muted bg, see style.css --red). Reset both to
+   brand + a warm tinted hover so a destructive click reads on-brand. */
+.vibe-comments-section .vibe-logout:hover {
+  color: var(--red, #b91c1c) !important;
+  background: rgba(185, 28, 28, 0.06) !important;
+  border-color: rgba(185, 28, 28, 0.25) !important;
+}
+.vibe-comments-section .vibe-btn-cancel:hover {
+  background: rgba(185, 28, 28, 0.08) !important;
+  border-color: rgba(185, 28, 28, 0.3) !important;
+  color: var(--red, #b91c1c) !important;
+}
+[data-theme="dark"] .vibe-comments-section .vibe-logout:hover {
+  color: #f87171 !important;
+  background: rgba(248, 113, 113, 0.1) !important;
+  border-color: rgba(248, 113, 113, 0.28) !important;
+}
+[data-theme="dark"] .vibe-comments-section .vibe-btn-cancel:hover {
+  background: rgba(248, 113, 113, 0.1) !important;
+  border-color: rgba(248, 113, 113, 0.3) !important;
+  color: #f87171 !important;
+}
+
+/* ── 15. Blue hover escaping the gold override (new-banner, recall-clear) ────
+   .vibe-new-banner base and .vibe-recall-clear base are var(--vibe-primary)
+   → gold. But their :hover states are BARE #1d4ed8 (Tailwind blue-700):
+   base gold, hover blue is a jarring shift. Pin the hovers to the brand
+   gold-dark so hover stays on-brand. */
+.vibe-comments-section .vibe-new-banner:hover {
+  background: var(--vibe-primary-hover, #b45309) !important;
+}
+.vibe-comments-section .vibe-recall-clear:hover {
+  color: var(--vibe-primary-hover, #b45309) !important;
+}
+
+/* ── 16. Notification / unsubscribe toggle (notify bell) ─────────────
+   The plugin ships the ON state in a Tailwind green-700 family
+   (#86efac border / #15803d text / #f0fdf4 bg) and hover in #15803d -
+   cold green, off-brand. The finance brand's "active/on" accent is gold
+   (--vibe-primary #d97706), so the bell's ON state and its hover pin to
+   gold. Empty/unsubscribed state uses the theme muted tokens already.
+   Scoped + !important (same fight policy as every rule in this file). */
+.vibe-comments-section .vibe-notify-btn[data-on="1"] {
+  border-color: var(--vibe-primary, #d97706) !important;
+  color: var(--vibe-primary, #d97706) !important;
+  background: rgba(217, 119, 6, 0.1) !important;
+}
+.vibe-comments-section .vibe-notify-btn:hover:not(:disabled) {
+  border-color: var(--vibe-primary, #d97706) !important;
+  color: var(--vibe-primary, #d97706) !important;
+}
+.vibe-comments-section .vibe-notify-btn:focus-visible {
+  outline: none !important;
+  border-color: var(--vibe-primary, #d97706) !important;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.12) !important;
+}
+[data-theme="dark"] .vibe-comments-section .vibe-notify-btn[data-on="1"] {
+  border-color: var(--vibe-primary, #f59e0b) !important;
+  color: var(--vibe-primary, #f59e0b) !important;
+  background: rgba(245, 158, 11, 0.1) !important;
+}
+[data-theme="dark"] .vibe-comments-section .vibe-notify-btn:hover:not(:disabled) {
+  border-color: var(--vibe-primary, #f59e0b) !important;
+  color: var(--vibe-primary, #f59e0b) !important;
+}
+[data-theme="dark"] .vibe-comments-section .vibe-notify-btn:focus-visible {
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15) !important;
+}
+
+/* ── 17. Q&A mode (accept-answer + accepted/pinned) → finance green family ──
+   The plugin ships the accepted-answer badge in a raw Tailwind green-600
+   bg (#dcfce7) that doesn't match the finance theme's own green token
+   family (--green #15803d / --green-muted #f0fdf4 / --green-border #86efac
+   - the finance brand's confirm/success green, see style.css --green-*).
+   Map the badge bg, the accept-button states, and the accepted-comment
+   left rail onto the finance green tokens so "accepted answer" reads as the
+   finance brand's confirming green, not a cold default. The pinned badge
+   already uses finance gold (section 9). Scoped + !important. */
+.vibe-comments-section .vibe-accepted-badge {
+  color: var(--green, #15803d) !important;
+  background: var(--green-muted, #f0fdf4) !important;
+  border: 1px solid var(--green-border, #86efac) !important;
+}
+.vibe-comments-section .vibe-accept-btn:hover:not(:disabled),
+.vibe-comments-section .vibe-accept-btn[data-accepted="1"] {
+  background: var(--green-muted, #f0fdf4) !important;
+  border-color: var(--green-border, #86efac) !important;
+  color: var(--green, #15803d) !important;
+}
+.vibe-comments-section .vibe-accept-btn:focus-visible {
+  outline: none !important;
+  border-color: var(--green, #15803d) !important;
+  box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.12) !important;
+}
+#vibe-comment-list li.comment[data-accepted="1"] > article {
+  border-left: 3px solid var(--green, #15803d) !important;
+}
+
+/* ── 18. Remaining bare-hex states → finance brand ───────────────
+   Two plugin states bypass the var(--vibe-*) token system and hardcode
+   a raw Tailwind hex that renders off-brand on light mode. Map each to
+   the finance brand (gold for the awaiting-moderation hint, matching
+   section 10; brand red for the edit-error validation border). */
+.vibe-comments-section .vibe-awaiting {
+  background: rgba(217, 119, 6, 0.08) !important;
+  color: var(--vibe-primary, #d97706) !important;
+  border-left: 2px solid var(--vibe-primary, #d97706) !important;
+}
+.vibe-comments-section .vibe-edit-textarea.vibe-edit-error {
+  border-color: var(--red, #b91c1c) !important;
+  box-shadow: 0 0 0 2px rgba(185, 28, 28, 0.08) !important;
+}
+[data-theme="dark"] .vibe-comments-section .vibe-awaiting {
+  background: rgba(245, 158, 11, 0.1) !important;
+  color: var(--vibe-primary, #f59e0b) !important;
+  border-left-color: var(--vibe-primary, #f59e0b) !important;
+}
+[data-theme="dark"] .vibe-comments-section .vibe-edit-textarea.vibe-edit-error {
+  border-color: #f87171 !important;
+  box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.12) !important;
+}
+
+
+/* ══ v1.13.38 (review deleg_21439e80 F5): icon-era parity with tech skin ══
+   Own-reaction tint, pill container brand-lock, and touch-gated option hover —
+   all in the finance gold, same !important fight policy as every rule here. */
+.vibe-comments-section .vibe-reaction-summary,
+.vibe-comments-section .vibe-reply-trigger,
+.vibe-comments-section .vibe-like-btn {
+  background: transparent !important;
+  border-color: var(--vibe-border, #3f3a31) !important;
+  color: var(--vibe-primary, #d97706) !important;
+}
+.vibe-comments-section .vibe-notify-btn {
+  background: transparent !important;
+  border-color: var(--vibe-border, #3f3a31) !important;
+  color: var(--vibe-primary, #d97706) !important;
+}
+/* v3.20.28 ALIGNMENT (King law: plugin = NEUTRAL, theme = overrides): the
+   amber mine-wash + green-lit pill here are THEME overrides, but the King
+   rebuked selected-marker rings on tech - the same design law applies here.
+   Removing the wash/pad so the self-colored disc reads clean; the picker
+   pop-up's active wash stays the only selected highlight. */
+.vibe-comments-section .vibe-rx-bubble.vibe-rx-mine {
+  background: none !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+}
+.vibe-comments-section .vibe-reaction-summary.vibe-has-reaction {
+  border-color: var(--vibe-border, #3f3a31) !important;
+}
+@media (hover: hover) {
+  .vibe-comments-section .vibe-reaction-option:hover {
+    transform: translateY(-4px) scale(1.35) !important;
+    background: rgba(217, 119, 6, 0.12) !important;
+  }
+}
+@media (hover: none) {
+  .vibe-comments-section .vibe-reaction-option:hover {
+    transform: none !important;
+    background: rgba(217, 119, 6, 0.12) !important;
+  }
+}
+
+/* ── 17. v3.20.24 ALIGNMENT - edit button matches the reply/react family ──
+   Plugin v3.20.24 squared the Edit button (999px pill -> 4px) per the King's
+   straight/clean law, and neutralized its color to var(--vibe-primary).
+   Finance finish: gold border/text like Reply+React, gold fill on hover,
+   so React / Reply / Edit / bell all share ONE affordance language. */
+.vibe-comments-section .vibe-edit-btn {
+  color: var(--vibe-primary) !important;
+  border-color: var(--vibe-primary) !important;
+  border-radius: 999px !important; /* v3.20.28: plugin squared Edit to 4px, but finance's affordance family is PILL (React/Reply/bell 999px) - skin restores the pill so all four match */
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+.vibe-comments-section .vibe-edit-btn:hover {
+  background: var(--vibe-primary) !important;
+  color: #fff !important;
+}
+
+/* ══ v1.13.39 - FACEBOOK-LITE REACTION DISCS (ported from tech theme
+   v1.22.27 per the SCOPE LAW of that release: "when finance later pulls
+   vibe 3.20.20+, the disc block must be ported to its skin same-day").
+   Finance now runs plugin 3.20.28 - the .vibe-rx-t-<type> classes ship,
+   so the summary bubbles become real discs: brand-harmonized colors
+   (like=blue, heart=red, fire=orange, laugh=yellow - reaction IDENTITY,
+   not theme branding, per 3.20.28's CHANGELOG ruling), white SVG glyphs,
+   2px surface ring separator, -8px cascade, top-count disc on top.
+   Cascade armor: doubled .vibe-comments-section prefixes, specificity
+   wins over the plugin's neutral defaults (v1.21.62/v1.22.14 lesson),
+   never source order. Mine-state stays disc-clean (no ring - picker
+   pop-up is the only selected highlight, King law 9/8). ══ */
+.vibe-comments-section .vibe-rx-bubble {
+  background: var(--vibe-bg-alt);
+  border: 2px solid var(--vibe-surface);
+  overflow: hidden;               /* glyphs clip at the disc edge - no bleed */
+}
+.vibe-comments-section .vibe-rx-stack .vibe-rx-bubble { margin-left: -8px; }
+.vibe-comments-section .vibe-rx-stack .vibe-rx-bubble:first-child { margin-left: 0; }
+/* FB cascade: top-count disc (first child, count-desc sort) on top. (0,3,0)
+   beats the plugin's (0,2,0) by SPECIFICITY, not source order. */
+.vibe-comments-section .vibe-rx-stack .vibe-rx-bubble:nth-child(1) { z-index: 3 }
+.vibe-comments-section .vibe-rx-stack .vibe-rx-bubble:nth-child(2) { z-index: 2 }
+.vibe-comments-section .vibe-rx-stack .vibe-rx-bubble:nth-child(3) { z-index: 1 }
+/* Type colors (the disc faces) - identical hues to tech by decree: reaction
+   identity is cross-brand (3.20.28 note). */
+.vibe-comments-section .vibe-rx-bubble.vibe-rx-t-like  { background: #2f7de1; }
+.vibe-comments-section .vibe-rx-bubble.vibe-rx-t-heart { background: #e5484d; }
+.vibe-comments-section .vibe-rx-bubble.vibe-rx-t-fire  { background: #f2711c; }
+.vibe-comments-section .vibe-rx-bubble.vibe-rx-t-laugh { background: #f6c445; }
+/* White 12px centered glyphs on the discs - (0,5,1) so this beats any
+   inherited stroke. The rxSvg default (18px, vertical-align:-4px) is too
+   big for a 22px disc. */
+.vibe-comments-section .vibe-reaction-summary .vibe-rx-bubble svg {
+  width: 12px !important;
+  height: 12px !important;
+  display: block;
+}
+.vibe-comments-section .vibe-reaction-summary .vibe-rx-stack .vibe-rx-bubble svg { stroke: #fff; color: #fff; }
+/* Neutral count - the plugin's .vibe-has-reaction .vibe-rx-total primary-color
+   tint is a selected-marker of the same family the King retired on tech. */
+.vibe-comments-section .vibe-reaction-summary.vibe-has-reaction .vibe-rx-total {
+  color: var(--vibe-text-muted);
+}

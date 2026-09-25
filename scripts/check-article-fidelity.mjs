@@ -42,6 +42,14 @@ const contact = read("src/pages/contact.astro");
 const lb = read("src/scripts/lightbox.js");
 const baseCss = read("src/styles/base.css");
 const card = read("src/components/ArticleCard.astro");
+// Comments surface. Guarded so a missing module FAILS its assertions instead of
+// crashing the whole gate before it can report anything.
+const vibe = exists("src/components/VibeComments.astro")
+  ? read("src/components/VibeComments.astro")
+  : "";
+const vibeJs = exists("src/scripts/vibe-comments.js")
+  ? read("src/scripts/vibe-comments.js")
+  : "";
 // every article's full frontmatter, for the cover-presence contract
 const files = (dir) =>
   readdirSync(join(root, dir))
@@ -346,6 +354,77 @@ for (const cls of ["wp-block-quote", "wp-block-pullquote", "wp-block-table",
     dist.includes("9. Buttons " + amp + " details") &&
     dist.includes("8. Columns " + amp + " media+text") &&
     dist.includes("10. Widget " + amp + " utility blocks")]);
+}
+
+// ── Comments surface (the vibe-comments port) ───────────────────────────────
+// The page carries the King's own comment UI, wired to the Cloudflare Worker
+// that replaced admin-ajax. What this block protects: the surface is present,
+// in WordPress's own position, wired to the live API, riding the plugin's own
+// stylesheets in the theme's cascade order — and that every P2/P3 hold stayed
+// ABSENT (absence, never a dead control), plus the single-bind law.
+{
+  const v = flat(vibe);
+  const vjs = flat(vibeJs);
+  const dist = flat(read("dist/articles/gutenberg-elements-showcase/index.html"));
+
+  checks.push(["comments component exists",
+    exists("src/components/VibeComments.astro")]);
+  checks.push(["comments component imported by the article template",
+    t.includes('import VibeComments from "../../components/VibeComments.astro"')]);
+  checks.push(["comments render after the related block, before the mobile newsletter",
+    t.indexOf("<VibeComments") > t.indexOf('class="mt40"') &&
+    t.indexOf("<VibeComments") < t.indexOf("m-nl-wrap")]);
+  checks.push(["comments ride the wrapper single.php uses (.comments-area.mt48)",
+    v.includes('class="comments-area mt48"')]);
+  checks.push(["plugin sheet imported BEFORE the theme override (WP cascade order)",
+    t.indexOf("vibe-comments.base.css") > -1 &&
+    t.indexOf("vibe-comments.base.css") < t.indexOf("vibe-comments.gold.css")]);
+  checks.push(["both stylesheets are the byte-faithful copies (40,720 / 24,412 B)",
+    Buffer.byteLength(read("src/styles/vibe-comments.base.css"), "utf8") === 40720 &&
+    Buffer.byteLength(read("src/styles/vibe-comments.gold.css"), "utf8") === 24412]);
+  checks.push(["the live Worker base is wired, not a placeholder",
+    t.includes('COMMENTS_API = "https://comments-api.gwill.workers.dev"') &&
+    t.includes("apiBase={COMMENTS_API}")]);
+  checks.push(["heading count baked at build time with a non-fatal 0 fallback",
+    t.includes("signal: AbortSignal.timeout(4000)") && t.includes("commentCount = 0")]);
+  checks.push(["form keys the post by slug, field name kept byte-faithful",
+    v.includes('name="comment_post_ID" value={postSlug}') &&
+    v.includes('name="comment_parent"')]);
+  checks.push(["honeypot kept (the server-side antispam trio needs it)",
+    v.includes('name="vibe_hp"')]);
+  checks.push(["guest rail toggle present",
+    v.includes('id="vibe-guest-toggle"')]);
+  checks.push(["reaction labels come from the plugin i18n dict, not new copy",
+    v.includes("reactLike: 'Like'") && v.includes("reactFire: 'Fire'")]);
+  // P2/P3 holds — absence, never a rendered-dead control
+  checks.push(["push opt-in NOT rendered (P3 hold is absence)",
+    !v.includes("vibe-reply-push-optin")]);
+  checks.push(["email opt-in NOT rendered (P3 hold is absence)",
+    !v.includes("vibe-reply-email-optin")]);
+  checks.push(["no WP-login and no Google button (declared divergence)",
+    !v.includes('<button id="vibe-google-login"') &&
+    !v.includes('<a class="vibe-btn vibe-btn-wp"')]);
+  checks.push(["auth-bar separator removed with the buttons it separated",
+    !v.includes('class="vibe-or"')]);
+  // single-bind law + the transport seam
+  checks.push(["exactly ONE comments module import (single-bind law)",
+    (v.match(/import "\.\.\/scripts\/vibe-comments\.js"/g) || []).length === 1]);
+  checks.push(["the module is the plugin's own client script, not a rewrite",
+    vjs.includes("getGuestId") && vjs.includes("escapeHtml") &&
+    vjs.includes("renderMarkdown")]);
+  checks.push(["transport talks to the Worker — no admin-ajax, no action=, no nonce",
+    vjs.includes("/comments?post=") && vjs.includes("/count?post=") &&
+    !vjs.includes("admin-ajax") && !vjs.includes("action=vibe_") && !vjs.includes("nonce=")]);
+  // served bytes
+  checks.push(["served page carries the comments surface",
+    dist.includes('id="vibe-comments"') && dist.includes('id="vibe-comment-list"') &&
+    dist.includes('id="vibe-load-comments-btn"')]);
+  checks.push(["served page inlines the plugin stylesheet",
+    dist.includes(".vibe-comment-body")]);
+  checks.push(["served page serializes the config object for the module",
+    dist.includes("var vibeComments =") && dist.includes('"apiBase"')]);
+  checks.push(["served page keeps the honeypot and the char counter",
+    dist.includes('name="vibe_hp"') && dist.includes('id="vibe-char-counter"')]);
 }
 
 let pass = 0;

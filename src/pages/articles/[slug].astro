@@ -37,11 +37,18 @@ import Layout from "../../layouts/Layout.astro";
 import ArticleCard from "../../components/ArticleCard.astro";
 import NewsletterForm from "../../components/NewsletterForm.astro";
 import AuthorSocials from "../../components/AuthorSocials.astro";
+import VibeComments from "../../components/VibeComments.astro";
 // The article-page slice of the theme stylesheet, imported HERE rather than in
 // the layout so its ~70 KB lands only on article pages instead of being inlined
 // into all 53.
 import "../../styles/article.css";
 import "../../styles/embeds.css";
+// Comments: the plugin's sheet FIRST, the theme's override SECOND — the order
+// inc/enqueue.php:491-505 guarantees (the override declares 'vibe-comments' as
+// a dependency so WP prints it last). Imported here rather than in the layout
+// because WP enqueues both only on singulars (is_singular() && !is_front_page()).
+import "../../styles/vibe-comments.base.css";
+import "../../styles/vibe-comments.gold.css";
 import { catBySlug } from "../../data/site";
 import {
   allArticles,
@@ -69,6 +76,26 @@ const origin = (Astro.site?.toString() ?? "https://godschi10.github.io").replace
 const pageUrl = `${origin}${url}`;
 const catUrl = `${base}category/${cat.slug}/`;
 const authorUrl = `${base}author/${d.authorSlug}/`;
+
+// ── Comments (single.php:212-226) ───────────────────────────────────────────
+// The Worker that replaced WordPress admin-ajax for the comments surface.
+const COMMENTS_API = "https://comments-api.gwill.workers.dev";
+
+// The heading count, baked at build time — parity with WP, which bakes the
+// stored comment count in before rendering (comments.php:42-52). Non-fatal by
+// design: an unreachable or slow Worker degrades to 0, which renders the
+// heading empty exactly as WP does for a post with no comments, and the client
+// patches it to the live total the moment Load Comments is clicked.
+let commentCount = 0;
+try {
+  const cr = await fetch(`${COMMENTS_API}/count?post=${encodeURIComponent(entry.slug)}`, {
+    signal: AbortSignal.timeout(4000),
+  });
+  const cj = await cr.json();
+  commentCount = Number(cj?.data?.count ?? cj?.count ?? 0) || 0;
+} catch {
+  commentCount = 0;
+}
 
 // single.php:40 — the TOC is built from h2 + h3 in document order, and the SAME
 // list gates both the mobile dropdown and the sidebar widget: they are never
@@ -319,6 +346,11 @@ const articleLd = {
           </div>
         </div>
       )}
+
+      <!-- 6. comments (single.php:212-226): .comments-area.mt48 wrapping
+           comments_template() and the #gwill-comment-ads slots — the position
+           WP renders it, between the related posts and the mobile newsletter. -->
+      <VibeComments count={commentCount} postSlug={entry.slug} apiBase={COMMENTS_API} />
 
       <!-- Mobile newsletter block (single.php:228-236); CSS shows it on phones -->
       {newsletter && (

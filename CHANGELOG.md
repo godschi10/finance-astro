@@ -3,6 +3,63 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.4.6] — 2026-09-25
+
+### Added
+- **The comments surface — the King's own vibe-comments UI, live against a
+  Cloudflare Worker** (plan `docs/port/15`, integration `docs/port/17`). The
+  comment area now renders in WordPress's own position — inside
+  `.comments-area.mt48`, after the related posts and before the mobile
+  newsletter (`single.php:212-226`) — and talks to
+  `https://comments-api.gwill.workers.dev` instead of WP admin-ajax.
+  - `src/components/VibeComments.astro` — byte-faithful port of the plugin's
+    `templates/comments.php` guest path: every id and class matches the source,
+    and the click-to-load shell is preserved (zero requests until the reader
+    asks for comments).
+  - `src/scripts/vibe-comments.js` — the plugin's OWN 3,087-line client script
+    with only its transport seam patched: **233 changed lines**. The render
+    core, markdown-lite pipeline, i18n dict, draft autosave, char counter,
+    relative-time sweep and guest-identity rail are verbatim. No admin-ajax,
+    no nonce; the slug replaces the numeric post id; only the v1 inits boot.
+  - `src/styles/vibe-comments.base.css` + `.gold.css` — the two shipped
+    sheets, byte-identical (40,720 B / 24,412 B), in the theme's cascade order:
+    plugin sheet first, our override second (`inc/enqueue.php:491-505`).
+  - Build-time comment count (parity: WP bakes the stored count), non-fatal
+    with a 0 fallback — the heading hides itself at zero through the plugin's
+    own `:empty` rule.
+
+### Held — absence, never a dead control
+- The reply-push opt-in, the email opt-in and the `.vibe-or` separator are
+  **removed**, not inert: the port has neither rail in v1 (plan §6).
+- The sort toolbar stays **hidden**: WP ships that markup hidden and reveals it
+  only from the P2 sort code, so v1 must not reveal it either (it would put an
+  inert sort button on screen).
+- No WP-login and no Google button — declared divergence, no WP auth behind a
+  static site.
+
+### Fixed (Worker side, found by comparing against live WP's own payload)
+- **Gravatar URLs were MD5 with `s=64`.** Live WP runs WordPress 7.1, whose
+  core hashes the address with `hash('sha256', strtolower(trim($email)))` and
+  is called as `get_avatar_url($email, ['size' => 48])`. The Worker now stores
+  and emits the SHA-256 digest with `?s=48&d=wavatar&r=g` — byte-identical to
+  what the plugin emits. The hand-written MD5 helper is deleted (40 lines of
+  dead crypto).
+- **`date` was an ISO timestamp.** The plugin's payload carries WP's
+  `human_time_diff()` string ("2 weeks ago"); the Worker now ports
+  `human_time_diff()` and `gmdate('Y-m-d H:i:s')`, and the wire object carries
+  the same 20 keys as live.
+
+### Verified
+- Article gate: **147/147** (was 124) — 24 new assertions for presence, WP's
+  render position, cascade order, byte-faithful stylesheets, the live Worker
+  base, the holds staying absent, single-bind, and the served bytes.
+- Worker: **60/60 against the deployed URL**, now asserting the wire parity
+  above alongside the existing approve-first, reactions, antispam, HMAC and
+  CORS checks.
+- Real Chrome at 390px: collapsed shell → Load Comments → live fetch → submit
+  → "pending review" → approved → the card renders (author, gravatar, 7
+  reaction controls, reply affordance, relative time) with **0 JS errors**.
+
 ## [0.4.5] — 2026-09-25
 
 ### Fixed
