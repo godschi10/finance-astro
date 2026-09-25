@@ -4,7 +4,13 @@ Ledger law: every order gets a line here immediately. `CODED-UNCOMMITTED ≠ DON
 a fix is done only when the served bytes and the rendered page prove it.
 Read this at session start.
 
-## IN FLIGHT — 2026-09-24 · comments P1 BUILDING (King approved the plan: "Build with your recommendations")
+## IN FLIGHT — 2026-09-25 · comments P1 BUILDING + v0.4.5 TOC fix SHIPPED
+
+- [x] **"Why is TOC showing &?"** — SHIPPED v0.4.5 (main `0cb2e23`,
+      pages-dist `9c71566`, Pages `built`, live bytes verified): raw-HTML TOC
+      extractor double-escaped entities; now decodes before Astro escapes
+      once. All four ampersand headings byte-identical to live WP. Gate
+      124/124 (+4 assertions, runtime-built needles).
 
 - [x] **COMMENTS PLAN APPROVED** — 2026-09-25 King: "Build with your
       recommendations" → workers.dev address, approve-first moderation,
