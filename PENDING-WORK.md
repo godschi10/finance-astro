@@ -4,6 +4,22 @@ Ledger law: every order gets a line here immediately. `CODED-UNCOMMITTED ≠ DON
 a fix is done only when the served bytes and the rendered page prove it.
 Read this at session start.
 
+- [x] **comments-api Worker backend — BUILT + VERIFIED 49/49** (2026-09-25).
+      `/home/opc/work/comments-api/` — wrangler.toml, schema.sql, src/index.js
+      (26KB, zero deps), README.md, smoke.py. Delegation child died on output-
+      token exhaustion with only 2 files; parent finished it directly.
+      Evidence: local wrangler dev + real HTTP — submit→pending→approve→live,
+      nesting, counts, reaction add/toggle/switch, 429 rate limit, honeypot 400,
+      HMAC tamper 403 / expiry 410, admin auth 401/200, CORS allow/reject, 404,
+      15-key wire shape, spam scorer 100/likely-spam, gravatar MD5 =
+      55502f40dc8b7c769880b10874abc9d0 (canonical test vector).
+- [ ] **comments P1 integration** — CSS ×2 + VibeComments.astro into
+      finance-astro, JS render core ported with fetch transport (payload shapes
+      verbatim from js-section-map.md), wire after the related section, gates,
+      build, ship both branches.
+- [ ] **BLOCKED ON KING: Cloudflare account access** for deploy (wrangler login
+      or API token) + Turnstile keys (site + secret) + optional Resend key.
+
 ## IN FLIGHT — 2026-09-25 · comments P1 BUILDING + v0.4.5 TOC fix SHIPPED
 
 - [x] **"Why is TOC showing &?"** — SHIPPED v0.4.5 (main `0cb2e23`,
