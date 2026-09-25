@@ -4,7 +4,11 @@ Ledger law: every order gets a line here immediately. `CODED-UNCOMMITTED ≠ DON
 a fix is done only when the served bytes and the rendered page prove it.
 Read this at session start.
 
-## IN FLIGHT — 2026-09-24 · subtitle fixed + COMMENTS PLAN AWAITING KING
+## IN FLIGHT — 2026-09-24 · comments P1 BUILDING (King approved the plan: "Build with your recommendations")
+
+- [x] **COMMENTS PLAN APPROVED** — 2026-09-25 King: "Build with your
+      recommendations" → workers.dev address, approve-first moderation,
+      Turnstile ON, reactions in v1, P1 floor as cut.
 
 - [x] **COMMENTS PLAN WRITTEN** — `docs/port/15-comments-plan.md` (12.4KB):
       evidence-cited (14 wp_ajax actions, wire shape, 40KB+24KB CSS, 151KB

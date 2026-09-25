@@ -3,6 +3,19 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.4.5] — 2026-09-25
+
+### Fixed
+- **"Why is TOC showing &amp;"** (King, screenshot img_febf26ee0d1b) — the
+  raw-HTML TOC extractor kept entity-encoded heading text, and Astro escaped
+  it a second time, so the phone TOC printed `&amp;amp;` (visible as `&amp;`).
+  Live WP's DOM textContent is entity-decoded and escaped once on output;
+  the port now decodes (`< > " &#39; &#x27; &#x3D; &amp;`) before
+  Astro escapes once. Dist bytes for all four ampersand headings now equal
+  live WP byte-for-byte. Gate: 4 new assertions (decode helper present,
+  ampersand unescape single-pass, no `&amp;amp;` in served dist, all four
+  headings single-escaped) — 124/124.
+
 ## [0.4.4] — 2026-09-24
 
 ### Fixed

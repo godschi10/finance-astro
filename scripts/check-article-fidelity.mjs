@@ -325,6 +325,29 @@ for (const cls of ["wp-block-quote", "wp-block-pullquote", "wp-block-table",
   checks.push([`showcase carries ${cls}`, showcase.includes(cls)]);
 }
 
+// ── King's 2026-09-25 verdict: "Why is TOC showing &amp;" (double-escape) ──
+// The raw-HTML TOC extractor must DECODE entities before Astro escapes once
+// (live WP: DOM textContent is decoded, escaped once on output). All needles
+// are built at runtime from String.fromCharCode(38) so this gate survives the
+// chat layer's entity normalisation (the v0.4.3 figure-assertion lesson).
+{
+  const A = String.fromCharCode(38);       // the ampersand
+  const amp = A + "amp;";                  // its entity spelling
+  const dbl = amp + "amp;";                // the double-escape artifact
+  const dist = read("dist/articles/gutenberg-elements-showcase/index.html");
+  checks.push(["TOC extractor has the decode() helper",
+    t.includes("const decode = (s: string) =>")]);
+  checks.push(["decode() unescapes the ampersand entity (single pass)",
+    t.includes(".replace(/" + amp + "/g, \"" + A + "\")")]);
+  checks.push(["served TOC single-escapes — no " + dbl + " anywhere",
+    dist.includes('<a href="#5-images-gallery">5. Images ' + amp + " gallery</a>") &&
+    !dist.includes("5. Images " + dbl + " gallery")]);
+  checks.push(["served TOC carries all four ampersand headings",
+    dist.includes("9. Buttons " + amp + " details") &&
+    dist.includes("8. Columns " + amp + " media+text") &&
+    dist.includes("10. Widget " + amp + " utility blocks")]);
+}
+
 let pass = 0;
 let fail = 0;
 for (const [name, ok] of checks) {
