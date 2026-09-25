@@ -24,6 +24,11 @@ Read this at session start.
       flagged (the inert sort button) and the two wire divergences against live
       WP (SHA-256 gravatar + `human_time_diff` dates). Gate 147/147; Worker
       60/60 live; browser probe green at 390px. Docs: `docs/port/17`.
+      **SHIPPED v0.4.6**: main **`9a94857`**, served staging `pages-dist`
+      **`a0acc83`** (Pages reported `built` for `a0acc83`). Served proof:
+      article page byte-identical to dist (240,808 B), the comments surface on
+      every article and absent on home/about (WP's singular-only enqueue), the
+      CDN bundle 200 with the transport seam intact, 404 body byte-identical.
 - [x] **comments-api DEPLOYED TO CLOUDFLARE — LIVE + VERIFIED 53/53 GREEN**
       (2026-09-25). **https://comments-api.gwill.workers.dev** — D1
       `f3f58a69…47fe` (region WEUR) + KV `9c03bd56…a414`, schema applied
