@@ -2086,6 +2086,10 @@
 
             initComments(function onLoaded() {
                 if (triggerWrap) triggerWrap.style.display = 'none';
+                // PORT SEAM (lazy skeleton): the stub revealed the skeleton on
+                // click; now that comments are in, retire it for good.
+                var skel = document.getElementById('vibe-comments-skeleton');
+                if (skel) skel.hidden = true;
                 container.style.display = 'block';
                 // B1 fix: only start polling after comments are actually loaded.
                 // Previously initLivePolling() ran on DOMContentLoaded, firing an
