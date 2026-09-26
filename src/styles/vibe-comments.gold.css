@@ -466,11 +466,18 @@ Table of Contents
    rebuked selected-marker rings on tech - the same design law applies here.
    Removing the wash/pad so the self-colored disc reads clean; the picker
    pop-up's active wash stays the only selected highlight. */
-.vibe-comments-section .vibe-rx-bubble.vibe-rx-mine {
-  background: none !important;
-  border-radius: 50% !important;
-  padding: 0 !important;
-}
+/* v3.20.28 ALIGNMENT (King law: plugin = NEUTRAL, theme = overrides).
+   King's order 2026-09-26 ("new reactions look shrunken until refresh"):
+   the old .vibe-rx-mine rule below KILLED the disc background with
+   `background:none !important` — specificity-tied with the .vibe-rx-t-<type>
+   disc rules but carrying !important, it ALWAYS won, so the reader's OWN
+   fresh reaction rendered as a transparent 22px hole with only the glyph's
+   inner face-dot visible (pixel-proven: like disc fragments 52px vs the
+   siblings' 102px). Deleted, not neutralized: per the 9/8 King law the
+   mine-state carries NO marker at all — the summary disc renders identical
+   whether or not it is yours; the picker pop-up stays the only highlight.
+   The .vibe-rx-mine class still ships in the DOM (the plugin emits it) and
+   is now visually inert here, as on tech. */
 .vibe-comments-section .vibe-reaction-summary.vibe-has-reaction {
   border-color: var(--vibe-border, #3f3a31) !important;
 }
