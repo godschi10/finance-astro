@@ -22,10 +22,10 @@
 /* ── 2b. follow CTAs (push + Google News) ── */
 .ffollow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 14px 0 4px; }
 .ffollow + .fsoc { margin-top: 18px; }
-.fpush, .fgooglenews { font: inherit; font-size: 13px; font-weight: 700; line-height: 1; letter-spacing: 0.01em; padding: 10px 16px; border-radius: 10px; cursor: pointer; border: 1px solid var(--gold-border); background: var(--dark-s); color: var(--gold-b); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: background var(--t), color var(--t), border-color var(--t), transform var(--t); -webkit-tap-highlight-color: transparent; }
-.fpush svg, .fgooglenews svg { flex: none; width: 18px; height: 18px; }
-.fpush:hover, .fgooglenews:hover { border-color: var(--gold-b); background: var(--gold-b); color: #0d0b08; transform: translateY(-1px); }
-.fpush:active, .fgooglenews:active { transform: translateY(0); }
+.fpush { font: inherit; font-size: 13px; font-weight: 700; line-height: 1; letter-spacing: 0.01em; padding: 10px 16px; border-radius: 10px; cursor: pointer; border: 1px solid var(--gold-border); background: var(--dark-s); color: var(--gold-b); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: background var(--t), color var(--t), border-color var(--t), transform var(--t); -webkit-tap-highlight-color: transparent; }
+.fpush svg { flex: none; width: 18px; height: 18px; }
+.fpush:hover { border-color: var(--gold-b); background: var(--gold-b); color: #0d0b08; transform: translateY(-1px); }
+.fpush:active { transform: translateY(0); }
 .fpush[data-push-state="on"] { background: var(--gold-b); color: #0d0b08; border-color: var(--gold-b); }
 .fpush[disabled], .fpush[data-push-state="unsupported"] { opacity: 0.55; cursor: not-allowed; transform: none; }
 .fpush[data-push-state="unsupported"] { text-decoration: line-through; }
