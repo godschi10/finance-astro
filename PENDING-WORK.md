@@ -62,6 +62,18 @@ Read this at session start.
       references) applied: count-bearing trigger, comment-shaped skeletons,
       email-why hint; 153KB module lazy-loads on click; count fetch gated on
       scroll proximity. Gates 5/5, 147/147.
+- [x] **"New reactions look shrunken until refresh"** — FIXED 2026-09-26, live
+      (main `fef8483`, pages-dist `9d0e133`, Worker `2d321ca5`). The ported
+      finance gold skin carried `.vibe-rx-mine{background:none!important}`,
+      which killed the reader's OWN disc background the instant they reacted
+      (pixel-proven from the King's screenshot: 52px fragments vs siblings'
+      102px). Rule deleted per the 9/8 King law (summary disc identical
+      whether yours or not; picker = only highlight). Worker parity fix in the
+      same ship: load/replies embed `user_reaction` via ONE batched mineKinds
+      query, so the picker marks the reader's own reaction after refresh.
+      End-to-end proof on the public URL: disc rgb(47,125,225) 22×22 right
+      after react AND after reload; picker marks `like` after reload; probe
+      toggled its reaction back off (production data untouched).
 - [x] **"Dashboard doesn't have to look like shit"** — DESK v2 REBUILT + LIVE on
       staging 2026-09-26 (main `2a7384f`, pages-dist `8754721`, Worker `d3921a6d`).
       ROOT CAUSE was real, not taste: v1's Astro-SCOPED CSS could never reach
