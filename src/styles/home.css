@@ -244,7 +244,7 @@
 .fs-lg h1, .fs-lg .hero-h, .fs-lg .hero-title, .fs-lg .frontpg-h1 { font-size: clamp(26px, 5.2vw + 10px, 38px) !important; overflow-wrap: anywhere; word-break: break-word; line-height: 1.15; }
 .fs-lg .hero-sub, .fs-lg .hero p { font-size: clamp(15px, 2.2vw + 6px, 18px) !important; line-height: 1.6; }
 .fs-lg .hero-acts, .fs-lg .hero-cats { flex-wrap: wrap; }
-.fs-lg .fpush, .fs-lg .fgooglenews, .fs-lg .btn, .fs-lg .finstall { flex-wrap: wrap; }
+.fs-lg .fpush, .fs-lg .btn, .fs-lg .finstall { flex-wrap: wrap; }
 .fs-lg .hero-tag, .fs-lg .hero-cats-lbl { font-size: 13px; }
 
 /* --------------------------------------------------------------------------
@@ -748,7 +748,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 /* L1559  .fs-lg h1, .fs-lg .hero-h, .fs-lg .hero-title, .fs-lg .frontpg-h1 */
 /* L1565  .fs-lg .hero-sub, .fs-lg .hero p */
 /* L1569  .fs-lg .hero-acts, .fs-lg .hero-cats */
-/* L1570  .fs-lg .fpush, .fs-lg .fgooglenews, .fs-lg .btn, .fs-lg .finstall */
+/* L1570  .fs-lg .fpush, .fs-lg .btn, .fs-lg .finstall (gnews excised 2026-09-26) */
 /* L1571  .fs-lg .hero-tag, .fs-lg .hero-cats-lbl */
 /* L1654  .ad-slot */
 /* L1659  .ad-slot::before */
