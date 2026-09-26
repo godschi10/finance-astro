@@ -178,7 +178,7 @@ const POST_NAMES = {
     .mod-foot { margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--border-dim); display: flex; justify-content: flex-start; }
   </style>
 
-  <div class="mod-wrap con">
+  <div class="mod-wrap">
     <header class="mod-head">
       <h1>Comments desk</h1>
       <span class="mod-stamp" id="mod-stamp">{DESK_VERSION}</span>
@@ -236,7 +236,7 @@ const POST_NAMES = {
     </section>
   </div>
 
-  <script define:vars={{ COMMENTS_API, POST_NAMES, DESK_VERSION, base: import.meta.env.BASE_URL }}>
+  <script define:vars={{ COMMENTS_API, POST_NAMES, DESK_VERSION, base: import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + "/" }}>
     (function () {
       "use strict";
       var JAR = "gwill-mod-token";

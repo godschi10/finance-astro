@@ -222,7 +222,7 @@
   .gl-nav:hover { background: rgba(255,255,255,.08); }
 }
 
-.share-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border-dim); flex-wrap: wrap; }
+.share-row { display: flex; align-items: center; gap: 8px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border-dim); flex-wrap: wrap; }
 .share-l { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
 .share-b { font-size: 10px; font-weight: 700; padding: 6px 14px; border-radius: var(--r-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text-mid); cursor: pointer; transition: all var(--t); display: inline-flex; align-items: center; gap: 6px; }
 .share-b svg { flex: none; width: 14px; height: 14px; color: inherit; }
@@ -324,13 +324,7 @@
 .toc-mobile { display: none; }
 /*
  * The mobile TOC visibility switch lives in @media (max-width: 767px) at style.css:2413-2417
- * (see §4.4 below). Desktop: .toc-mobile {
-  /* King's order (2026-09-26, phone): the row wraps at 390px — center the
-   wrapped pills and pull the label out of the flex line so both lines read
-   centered, not left-ragged. Label stays in the a11y tree. */
-  .share-row { justify-content: center; row-gap: 8px; }
-  .share-l { position: absolute; opacity: 0; pointer-events: none; }
- display: none; } hides the whole dropdown because the
+ * (see §4.4 below). Desktop: .toc-mobile { display: none; } hides the whole dropdown because the
  * sidebar TOC takes over.
  */
 
