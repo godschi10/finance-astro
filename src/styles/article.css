@@ -324,7 +324,13 @@
 .toc-mobile { display: none; }
 /*
  * The mobile TOC visibility switch lives in @media (max-width: 767px) at style.css:2413-2417
- * (see §4.4 below). Desktop: .toc-mobile { display: none; } hides the whole dropdown because the
+ * (see §4.4 below). Desktop: .toc-mobile {
+  /* King's order (2026-09-26, phone): the row wraps at 390px — center the
+   wrapped pills and pull the label out of the flex line so both lines read
+   centered, not left-ragged. Label stays in the a11y tree. */
+  .share-row { justify-content: center; row-gap: 8px; }
+  .share-l { position: absolute; opacity: 0; pointer-events: none; }
+ display: none; } hides the whole dropdown because the
  * sidebar TOC takes over.
  */
 
@@ -985,11 +991,6 @@
      override needed.) */
   .ad-sticky-x::before { content: ''; position: absolute; top: -11px; right: -11px; bottom: -11px; left: -11px; inset: -11px; border-radius: inherit; }
   .share-b { min-height: 44px; min-width: 44px; }
-  /* King's order (2026-09-26, phone): the row wraps at 390px — center the
-     wrapped pills and pull the label out of the flex line so both lines
-     read centered, not left-ragged. Label stays in the a11y tree. */
-  .share-row { justify-content: center; row-gap: 8px; }
-  .share-l { position: absolute; opacity: 0; pointer-events: none; }
   /* v1.13.14 (reviewer D3): same 44px floor for the remaining sub-44px touch
      controls - search submit, spotlight close/clear (all pass 24px AA; this
      raises them to the 2.5.5 best practice like every other control here). */
