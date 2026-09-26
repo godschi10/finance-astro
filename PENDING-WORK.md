@@ -47,23 +47,33 @@ Read this at session start.
 
 ## IN FLIGHT — 2026-09-26 · King's four orders on the comments surface
 
-- [ ] **REAL COMMENTS VISIBLE** — the staging port shows an empty list while
-      live WP carries 77 approved comments across 11 posts (SQLite snapshot
-      verified). Import them into the production D1 (hashed emails, real
-      nesting, real reactions) and bake the counts at build.
-- [ ] **MODERATION DESK** — `/admin` today is a raw token-gated queue page,
-      not a desk. Build the real one on the site (AndroidScroll-proven
-      pattern): Bearer unlock (ADMIN_TOKEN), Overview / Queue / All-comments
-      tabs, approve/spam/trash/restore/delete-forever, reply-as-author
-      auto-approves, rows labelled by POST NAME with links, version stamp on
-      the lock form, phone-restore session law.
-- [ ] **GUEST FORM EXPOSED BY DEFAULT** — King: "login as guest is the only
-      option so the form should be exposed by default". Remove the
-      Comment-as-Guest reveal ceremony; the name/email fields render open.
-- [ ] **UX/UI AUDIT + BETTER + FASTER** — full audit of the served surface
-      (390/1280, light+dark), references before invention, gold-language
-      improvements, and real speed wins (lazy module off the critical path,
-      measured bytes/TTFB before-after).
+- [x] **REAL COMMENTS VISIBLE** — SHIPPED 2026-09-26. 41 genuine reader
+      comments + 127 reactions imported to production D1 (WP id + 1000; the
+      King's own test/agent threads excluded; his live pending comment
+      preserved as id 17). Verified live across all 8 articles.
+- [x] **MODERATION DESK** — SHIPPED 2026-09-26. Worker `/api/moderation/*`
+      (list/stats/action/reply, Bearer; status lifecycle; delete-forever only
+      from trash; reply-as-author auto-approves) + `/mod/` page (unlock gate,
+      Overview/Queue/All tabs, status-derived action matrix, post-name links,
+      phone-restore law, version stamp).
+- [x] **GUEST FORM EXPOSED BY DEFAULT** — SHIPPED 2026-09-26. Toggle ceremony
+      removed; name/email render open; reply-move/cancel never collapse them.
+- [x] **UX/UI AUDIT + BETTER + FASTER** — SHIPPED 2026-09-26. UX digest (5
+      references) applied: count-bearing trigger, comment-shaped skeletons,
+      email-why hint; 153KB module lazy-loads on click; count fetch gated on
+      scroll proximity. Gates 5/5, 147/147.
+- [x] **"New reactions look shrunken until refresh"** — FIXED 2026-09-26, live
+      (main `fef8483`, pages-dist `9d0e133`, Worker `2d321ca5`). The ported
+      finance gold skin carried `.vibe-rx-mine{background:none!important}`,
+      which killed the reader's OWN disc background the instant they reacted
+      (pixel-proven from the King's screenshot: 52px fragments vs siblings'
+      102px). Rule deleted per the 9/8 King law (summary disc identical
+      whether yours or not; picker = only highlight). Worker parity fix in the
+      same ship: load/replies embed `user_reaction` via ONE batched mineKinds
+      query, so the picker marks the reader's own reaction after refresh.
+      End-to-end proof on the public URL: disc rgb(47,125,225) 22×22 right
+      after react AND after reload; picker marks `like` after reload; probe
+      toggled its reaction back off (production data untouched).
 
 ## SHIPPED — 2026-09-25 · comments P1 BUILDING + v0.4.5 TOC fix SHIPPED
 
