@@ -263,7 +263,11 @@
     // hidden for the whole search session.
     let searchFilterActive = false;
 
-    document.addEventListener('DOMContentLoaded', function() {
+    // PORT SEAM (lazy-load, King 2026-09-26): this module can be injected
+    // AFTER DOMContentLoaded by the component's stub (Load Comments is
+    // lazy), so the boot body is a named function dispatched on either
+    // path. See the readyState dispatch at the bottom of the file.
+    function boot() {
         // Display OAuth redirect-back errors (L4 fix - oauth_error() redirects
         // here with ?vibe_auth_error=message instead of calling wp_die()).
         var urlParams = new URLSearchParams(window.location.search);
@@ -305,7 +309,44 @@
         restoreGuestIdentity();
         initGuestAutoSave();
         initCharCounter();
-    });
+
+        // King's order 2026-09-26 (reduce DB hits): the comment count fetch
+        // no longer fires on every page view. The build bakes the count into
+        // the heading; the live patch now waits until the comments section is
+        // near the viewport (200px rootMargin) - readers who never scroll
+        // down cost the database nothing. No-IO browsers fall back to the
+        // eager fetch (old behaviour) rather than a stale count.
+        var countSection = document.getElementById('vibe-comments');
+        if (countSection && 'IntersectionObserver' in window) {
+            var countIO = new IntersectionObserver(function(entries) {
+                if (entries[0] && entries[0].isIntersecting) {
+                    countIO.disconnect();
+                    fetchCommentCount();
+                }
+            }, { rootMargin: '200px 0px' });
+            countIO.observe(countSection);
+        } else {
+            fetchCommentCount();
+        }
+
+        // PORT SEAM (lazy-load): if the stub injected this module BECAUSE the
+        // reader already clicked Load Comments, replay that intent now that
+        // the trigger listener is bound - one press, one load.
+        if (window.__vibeLoadRequested) {
+            window.__vibeLoadRequested = false;
+            var loadBtn = document.getElementById('vibe-load-comments-btn');
+            if (loadBtn && !loadBtn.disabled) loadBtn.click();
+        }
+    }
+
+    // Dispatch: DOM already interactive/complete (lazy injection after
+    // DOMContentLoaded) runs boot() immediately; otherwise wait for the
+    // event exactly as the plugin did.
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
+    }
 
     /* ══════════════════════════════════════════════════════════════════════
      * REPLY PUSH OPT-IN (v3.7.0) - "Notify me about replies"
@@ -1588,8 +1629,9 @@
         cancelBtn.style.display = 'inline-flex';
 
         if (!config.isLoggedIn && guestFields) {
+            // Guest form is exposed by default (King's order 2026-09-26) —
+            // moving the form to a reply must never collapse it.
             guestFields.style.display = 'grid';
-            if (guestToggle) guestToggle.textContent = str('hideGuestForm', 'Hide Guest Form');
         }
 
         let replyContainer = targetComment.querySelector('.vibe-reply-container');
@@ -1625,8 +1667,8 @@
         cancelBtn.style.display = 'none';
 
         if (guestFields && !config.isLoggedIn) {
-            guestFields.style.display = 'none';
-            if (guestToggle) guestToggle.textContent = str('commentAsGuest', 'Comment as Guest');
+            // Exposed by default — cancelling a reply keeps the form open.
+            guestFields.style.display = 'grid';
         }
 
         if (originalFormParent) {
@@ -2456,18 +2498,14 @@
      * Guest form toggle
      */
     function initGuestToggle() {
-        const toggle = document.getElementById('vibe-guest-toggle');
+        // King's order 2026-09-26: guest is the ONLY auth path, so the guest
+        // fields render EXPOSED (the component no longer ships the
+        // #vibe-guest-toggle button or a display:none wrapper). This function
+        // is retained for the seam map but has nothing to toggle; it must
+        // never HIDE the fields on any path.
         const fields = document.getElementById('vibe-guest-fields');
-        if (!toggle || !fields) return;
-
-        toggle.setAttribute('aria-controls', 'vibe-guest-fields');
-        toggle.setAttribute('aria-expanded', 'false');
-        toggle.addEventListener('click', function() {
-            const isHidden = fields.style.display === 'none' || !fields.style.display;
-            fields.style.display = isHidden ? 'grid' : 'none';
-            this.textContent = isHidden ? str('hideGuestForm', 'Hide Guest Form') : str('commentAsGuest', 'Comment as Guest');
-            this.setAttribute('aria-expanded', String(isHidden));
-        });
+        if (!fields) return;
+        if (fields.style.display === 'none') fields.style.display = 'grid';
     }
 
     /**

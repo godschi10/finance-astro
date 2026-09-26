@@ -45,7 +45,27 @@ Read this at session start.
       when unconfigured; honeypot + 1/min limiter + ported scorer still apply.
       Optional: Resend API key for moderation email (else /admin + ADMIN_TOKEN).
 
-## IN FLIGHT — 2026-09-25 · comments P1 BUILDING + v0.4.5 TOC fix SHIPPED
+## IN FLIGHT — 2026-09-26 · King's four orders on the comments surface
+
+- [ ] **REAL COMMENTS VISIBLE** — the staging port shows an empty list while
+      live WP carries 77 approved comments across 11 posts (SQLite snapshot
+      verified). Import them into the production D1 (hashed emails, real
+      nesting, real reactions) and bake the counts at build.
+- [ ] **MODERATION DESK** — `/admin` today is a raw token-gated queue page,
+      not a desk. Build the real one on the site (AndroidScroll-proven
+      pattern): Bearer unlock (ADMIN_TOKEN), Overview / Queue / All-comments
+      tabs, approve/spam/trash/restore/delete-forever, reply-as-author
+      auto-approves, rows labelled by POST NAME with links, version stamp on
+      the lock form, phone-restore session law.
+- [ ] **GUEST FORM EXPOSED BY DEFAULT** — King: "login as guest is the only
+      option so the form should be exposed by default". Remove the
+      Comment-as-Guest reveal ceremony; the name/email fields render open.
+- [ ] **UX/UI AUDIT + BETTER + FASTER** — full audit of the served surface
+      (390/1280, light+dark), references before invention, gold-language
+      improvements, and real speed wins (lazy module off the critical path,
+      measured bytes/TTFB before-after).
+
+## SHIPPED — 2026-09-25 · comments P1 BUILDING + v0.4.5 TOC fix SHIPPED
 
 - [x] **"Why is TOC showing &?"** — SHIPPED v0.4.5 (main `0cb2e23`,
       pages-dist `9c71566`, Pages `built`, live bytes verified): raw-HTML TOC

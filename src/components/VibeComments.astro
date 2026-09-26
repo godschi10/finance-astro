@@ -166,11 +166,26 @@ const noscriptNotice =
         -->
         <h2 class="vibe-comments-title" id="vibe-comments-title" set:html={vibeHeading} />
 
-        <!-- Static trigger - no count, cached forever, zero staleness risk -->
+        <!-- Static trigger - no count, cached forever, zero staleness risk.
+             UX digest #4 (NN/g progressive disclosure): the trigger's label
+             must carry strong scent — what's behind it and how much. The
+             build-time count rides the label ("Load 6 Comments"); the module
+             corrects nothing here because the count patch targets the
+             heading, and a one-off drift on a cached page is cosmetic. -->
         <div id="vibe-comments-trigger">
             <button type="button" id="vibe-load-comments-btn" class="vibe-btn vibe-btn-load-comments">
-                Load Comments
+                {count > 0 ? `Load ${count.toLocaleString()} Comment${count === 1 ? "" : "s"}` : "Load Comments"}
             </button>
+            <!-- UX digest #5 (NN/g skeletons): on click the button is swapped
+                 for comment-shaped placeholders that mirror the real card
+                 hierarchy (avatar + text lines + action row), not a spinner.
+                 Revealed by the inline stub, removed from flow when the
+                 module's onLoaded hides the whole trigger wrap. -->
+            <div id="vibe-comments-skeleton" class="vibe-skeleton" hidden aria-hidden="true">
+              <div class="sk-card"><span class="sk-ava"></span><span class="sk-lines"><span class="sk-line w60"></span><span class="sk-line w90"></span><span class="sk-line w75"></span></span></div>
+              <div class="sk-card"><span class="sk-ava"></span><span class="sk-lines"><span class="sk-line w50"></span><span class="sk-line w80"></span></span></div>
+              <div class="sk-card"><span class="sk-ava"></span><span class="sk-lines"><span class="sk-line w70"></span><span class="sk-line w40"></span></span></div>
+            </div>
         </div>
 
         <!--
@@ -224,16 +239,14 @@ const noscriptNotice =
                      P3 replaces them with magic-link email login; until then
                      guests only. The .vibe-auth-bar wrapper and the guest
                      toggle render exactly as live. -->
+                <!-- King's order 2026-09-26: guest is the ONLY auth path on this
+                     site, so the form is EXPOSED BY DEFAULT — no reveal
+                     ceremony. The WP-login <a>, the Google button and the
+                     .vibe-or separator stay removed (no WP auth, no Google
+                     OAuth behind a static site; a separator with nothing to
+                     separate is dead markup). Guests only, until P3. -->
                 <div class="vibe-auth-bar">
-                    <!-- The source renders WP-login <a> and (when configured)
-                         the Google button on either side of a `.vibe-or`
-                         separator. All three are REMOVED here: there is no WP
-                         auth and no Google OAuth behind a static site, and a
-                         separator with nothing left to separate is dead
-                         markup. Guests only, until P3 adds magic-link login. -->
-                    <button type="button" class="vibe-btn vibe-btn-guest" id="vibe-guest-toggle">
-                        Comment as Guest
-                    </button>
+                    <p class="vibe-auth-note">Comment as a guest — your email is never shown.</p>
                 </div>
 
                 <form id="vibe-comment-form" class="vibe-comment-form" method="post" action="#">
@@ -246,7 +259,7 @@ const noscriptNotice =
 
                     <!-- is_user_logged_in() === false on the port: the guest
                          fields block renders exactly as the live guest path. -->
-                    <div class="vibe-guest-fields" id="vibe-guest-fields" style="display:none;">
+                    <div class="vibe-guest-fields" id="vibe-guest-fields">
                         <div class="vibe-field">
                             <label for="vibe-author">
                                 Name
@@ -264,6 +277,10 @@ const noscriptNotice =
                             <input type="email" id="vibe-email" name="email"
                                    required autocomplete="email"
                                    placeholder="your@email.com" />
+                            <!-- UX digest #7: explain WHY the field exists —
+                                 an explained field reads as less intrusive
+                                 than a mystery requirement. -->
+                            <p class="vibe-email-hint">Never shown publicly — moderation and your Gravatar only.</p>
                         </div>
                     </div>
 
@@ -334,5 +351,30 @@ const noscriptNotice =
 -->
 <script is:inline set:html={`var vibeComments = ${JSON.stringify(VIBE_CONFIG)};`}></script>
 <script>
-  import "../scripts/vibe-comments.js";
+  // King's order 2026-09-26 (faster): the client module is LAZY — fetched and
+  // executed only when a reader clicks Load Comments. Astro hoists this
+  // script into a small bundle and exposes its URL via import.meta.url; the
+  // stub then injects the REAL 34KB module on demand. This also removes the
+  // fetchCommentCount() per-view DB hit: the count is baked at build time and
+  // the live patch runs inside the module AFTER engagement.
+  import vibeUrl from "../scripts/vibe-comments.js?url";
+  window.__vibeModuleUrl = vibeUrl;
+  (function () {
+    var btn = document.getElementById("vibe-load-comments-btn");
+    function load() {
+      if (window.__vibeLoaded) return;
+      window.__vibeLoaded = true;
+      window.__vibeLoadRequested = true; // the module honours this on boot
+      // UX digest #5: swap the button for the structural skeleton the
+      // component ships next to it — perceived work begins instantly.
+      if (btn) btn.style.display = "none";
+      var sk = document.getElementById("vibe-comments-skeleton");
+      if (sk) sk.hidden = false;
+      var s = document.createElement("script");
+      s.type = "module";
+      s.src = window.__vibeModuleUrl;
+      document.head.appendChild(s);
+    }
+    if (btn) btn.addEventListener("click", load, { once: true, capture: true });
+  })();
 </script>

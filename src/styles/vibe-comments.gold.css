@@ -549,3 +549,60 @@ Table of Contents
 .vibe-comments-section .vibe-reaction-summary.vibe-has-reaction .vibe-rx-total {
   color: var(--vibe-text-muted);
 }
+
+/* ── King's order 2026-09-26: exposed guest form ────────────────────────────
+   Guest is the only auth path, so the form renders open by default. The
+   auth bar becomes a single quiet note (the WP-login/Google buttons and
+   .vibe-or separator are absent), and the name/email grid sits inside the
+   form card exactly where WP puts it — gold language, brand tokens only. */
+.vibe-comments-section .vibe-auth-bar {
+    margin-bottom: 1rem;
+    padding: 0.625rem 0.875rem;
+}
+.vibe-comments-section .vibe-auth-note {
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: var(--vibe-text-muted, #64748b);
+}
+
+/* ── UX audit upgrades (2026-09-26) ─────────────────────────────────────────
+   Skeleton (NN/g): comment-shaped placeholders mirroring the real card
+   hierarchy, subtle pulse honoring prefers-reduced-motion, brand tokens. */
+.vibe-comments-section .vibe-skeleton { margin-top: 1rem; }
+.vibe-comments-section .sk-card {
+    display: flex; gap: 0.75rem; align-items: flex-start;
+    padding: 0.875rem 0; border-bottom: 1px solid var(--vibe-border, #e2e8f0);
+}
+.vibe-comments-section .sk-ava {
+    flex: 0 0 auto; width: 36px; height: 36px; border-radius: 50%;
+    background: var(--vibe-surface-2, #eef0f3);
+    animation: vibe-sk-pulse 1.4s ease-in-out infinite;
+}
+.vibe-comments-section .sk-lines { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.vibe-comments-section .sk-line {
+    height: 10px; border-radius: 5px;
+    background: var(--vibe-surface-2, #eef0f3);
+    animation: vibe-sk-pulse 1.4s ease-in-out infinite;
+}
+.vibe-comments-section .sk-line.w40 { width: 40%; }
+.vibe-comments-section .sk-line.w50 { width: 50%; }
+.vibe-comments-section .sk-line.w60 { width: 60%; }
+.vibe-comments-section .sk-line.w70 { width: 70%; }
+.vibe-comments-section .sk-line.w75 { width: 75%; }
+.vibe-comments-section .sk-line.w80 { width: 80%; }
+.vibe-comments-section .sk-line.w90 { width: 90%; }
+@keyframes vibe-sk-pulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.45; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .vibe-comments-section .sk-ava,
+    .vibe-comments-section .sk-line { animation: none; }
+}
+
+/* Email-why hint: the field is for moderation + gravatar, never shown. */
+.vibe-comments-section .vibe-email-hint {
+    margin: 6px 0 0; font-size: 0.75rem; line-height: 1.4;
+    color: var(--vibe-text-muted, #64748b);
+}

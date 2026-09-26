@@ -379,9 +379,10 @@ for (const cls of ["wp-block-quote", "wp-block-pullquote", "wp-block-table",
   checks.push(["plugin sheet imported BEFORE the theme override (WP cascade order)",
     t.indexOf("vibe-comments.base.css") > -1 &&
     t.indexOf("vibe-comments.base.css") < t.indexOf("vibe-comments.gold.css")]);
-  checks.push(["both stylesheets are the byte-faithful copies (40,720 / 24,412 B)",
+  checks.push(["both stylesheets are the plugin/theme copies, gold carries the desk-era brand skin",
     Buffer.byteLength(read("src/styles/vibe-comments.base.css"), "utf8") === 40720 &&
-    Buffer.byteLength(read("src/styles/vibe-comments.gold.css"), "utf8") === 24412]);
+    Buffer.byteLength(read("src/styles/vibe-comments.gold.css"), "utf8") > 24412 &&
+    read("src/styles/vibe-comments.gold.css").includes("vibe-auth-note")]);
   checks.push(["the live Worker base is wired, not a placeholder",
     t.includes('COMMENTS_API = "https://comments-api.gwill.workers.dev"') &&
     t.includes("apiBase={COMMENTS_API}")]);
@@ -392,8 +393,10 @@ for (const cls of ["wp-block-quote", "wp-block-pullquote", "wp-block-table",
     v.includes('name="comment_parent"')]);
   checks.push(["honeypot kept (the server-side antispam trio needs it)",
     v.includes('name="vibe_hp"')]);
-  checks.push(["guest rail toggle present",
-    v.includes('id="vibe-guest-toggle"')]);
+  checks.push(["guest form EXPOSED by default, toggle ceremony removed (King 2026-09-26)",
+    v.includes('id="vibe-guest-fields"') &&
+    !v.includes('id="vibe-guest-fields" style="display:none;"') &&
+    !v.includes('id="vibe-guest-toggle"')]);
   checks.push(["reaction labels come from the plugin i18n dict, not new copy",
     v.includes("reactLike: 'Like'") && v.includes("reactFire: 'Fire'")]);
   // P2/P3 holds — absence, never a rendered-dead control
@@ -406,9 +409,14 @@ for (const cls of ["wp-block-quote", "wp-block-pullquote", "wp-block-table",
     !v.includes('<a class="vibe-btn vibe-btn-wp"')]);
   checks.push(["auth-bar separator removed with the buttons it separated",
     !v.includes('class="vibe-or"')]);
-  // single-bind law + the transport seam
-  checks.push(["exactly ONE comments module import (single-bind law)",
-    (v.match(/import "\.\.\/scripts\/vibe-comments\.js"/g) || []).length === 1]);
+  // single-bind law + the transport seam — the module is LAZY (King's order
+  // 2026-09-26): the stub loads it by ?url on Load-Comments click, so the
+  // single-bind contract is now "one lazy ?url import + one inline stub",
+  // and no eager import of the big module anywhere on the page.
+  checks.push(["exactly ONE lazy module reference + inline stub (single-bind law, lazy era)",
+    (v.match(/from "\.\.\/scripts\/vibe-comments\.js\?url"/g) || []).length === 1 &&
+    v.includes('__vibeLoadRequested') &&
+    !v.includes('import "../scripts/vibe-comments.js"')]);
   checks.push(["the module is the plugin's own client script, not a rewrite",
     vjs.includes("getGuestId") && vjs.includes("escapeHtml") &&
     vjs.includes("renderMarkdown")]);
