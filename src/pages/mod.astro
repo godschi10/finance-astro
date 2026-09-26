@@ -48,7 +48,7 @@ const POST_NAMES = {
 <Layout title="Comments desk — GWill Finance" description="Moderation desk." noCanonical={true}>
   <style is:global>
     /* ═══ DESK — one global sheet (runtime-built rows must dress) ═══ */
-    .mod-wrap { max-width: 860px; margin: 0 auto; padding: 28px var(--con-pad) 64px; }
+    .mod-wrap { max-width: 860px; margin: 0 auto; padding: 44px var(--con-pad) 64px; }
     .mod-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
     .mod-head h1 { font-size: 1.25rem; letter-spacing: -0.02em; margin: 0; }
     .mod-stamp { color: var(--text-dim); font-size: 11px; }
@@ -449,7 +449,10 @@ const POST_NAMES = {
           if (!res.success) throw new Error(res.data && res.data.error || "failed");
           note.hidden = false;
           note.style.color = "";
-          note.textContent = "Posted as " + res.data.comment.author + " — approved and live.";
+          var autoMsg = res.data.parent_auto_approved
+            ? " — parent comment auto-approved (your reply publishes the thread)."
+            : "";
+          note.textContent = "Posted as " + res.data.comment.author + " — approved and live." + autoMsg;
           ta.value = "";
           t.disabled = false;
           loadStats();

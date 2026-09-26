@@ -152,8 +152,8 @@ const checks = [
     /linkedin\.com\/sharing\/share-offsite\/\?url=\$\{raw\(pageUrl\)\}/.test(t)],
   ["WhatsApp link is title + one space + permalink, encoded once",
     /api\.whatsapp\.com\/send\?text=\$\{raw\(`\$\{d\.title\} \$\{pageUrl\}`\)\}/.test(t)],
-  ["the copy control is a [data-copy] button labelled \"Copy Link\" (single.php:154)",
-    /<button class="share-b" type="button" data-copy=\{pageUrl\}>Copy Link<\/button>/.test(t)],
+  ["the copy control is a [data-copy] button labelled \"Copy Link\" (single.php:154 + King icon order)",
+    /<button class="share-b" type="button" data-copy=\{pageUrl\} aria-label="Copy link"><Fragment set:html=\{SHARE_ICON\.link\} \/>Copy Link<\/button>/.test(t)],
 
   // ── author box (single.php:157-175) ────────────────────────────────────
   ["author box is .abio.mt20 with a .aav avatar", /class="abio mt20"/.test(t) && /<div class="aav">/.test(t)],
@@ -213,7 +213,8 @@ const checks = [
     exists("src/styles/prose.css") && /styles\/prose\.css/.test(about) && /styles\/prose\.css/.test(contact)],
   ["the article stylesheet carries the theme's rules verbatim (spot checks)",
     /\.prog-f \{ height: 100%; width: 0;/.test(c) &&
-    /\.share-row \{ display: flex; align-items: center; gap: 8px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var\(--border-dim\); flex-wrap: wrap; \}/.test(c) &&
+    /\.share-row \{ display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var\(--border-dim\); flex-wrap: wrap; \}/.test(c) &&
+    /\.share-b svg \{ flex: none; width: 14px; height: 14px; color: inherit; \}/.test(c) &&
     /\.toc-bar \{ width: 2px; height: 12px; background: var\(--gold\); border-radius: 1px; flex-shrink: 0; \}/.test(c) && /\.discl-i/.test(c)],
   ["the two-column grid is the theme's 1fr + 300px (style.css:2969)",
     /\.sb-layout \{ display: grid; grid-template-columns: 1fr 300px; gap: 32px; \}/.test(c) ||

@@ -4,6 +4,24 @@ Ledger law: every order gets a line here immediately. `CODED-UNCOMMITTED ≠ DON
 a fix is done only when the served bytes and the rendered page prove it.
 Read this at session start.
 
+## INBOUND — the King's 7 orders, 2026-09-26 ("lots of issues… get to work")
+
+- [ ] **1. Share row** (imgs 73677d09/eff47d55): share buttons (X, LinkedIn,
+      WhatsApp, Copy Link) not aligned/centered; also add SVG icons.
+- [ ] **2. Footer Google widget** (img 766b6b88): remove "Add to Google News"
+      — King: "it's useless".
+- [ ] **3. Author-reply auto-approve** (img 13965d17, queue tab): when the
+      author replies to a pending comment, that comment auto-approves.
+- [ ] **4. Updated-on meta** (img 0357b09a): articles show no "Updated on" /
+      "Last updated" meta — port WP's behaviour.
+- [ ] **5. Comments design** (imgs 84bde4d3/d15c61be/6629ff98): remove the
+      ugly hover; nested comments must organize well on tiny screens —
+      "the WP site solved this" (diff against original plugin CSS).
+- [ ] **6. Lightbox misses** (img e9a4bbe1): some images don't open in the
+      lightbox — find which selector/path excludes them.
+- [ ] **7. Header spacing** (imgs 520b20c2/5cd2e0d3): no space between page
+      header and first two text elements — give space.
+
 - [x] **comments-api Worker backend — BUILT + VERIFIED 54/54 GREEN** (2026-09-25).
       `/home/opc/work/comments-api/` — wrangler.toml, schema.sql, src/index.js
       (583 lines, zero deps), README.md, smoke.py. Delegation child died on

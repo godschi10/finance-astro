@@ -6,6 +6,7 @@ category: "banking"
 author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-03-14
+updated: 2026-08-19
 readMins: 6
 image: "/finance-astro/wp-content/uploads/2026/07/showcase.png"
 imageAlt: "Gutenberg Elements Showcase — Every Block Styled"

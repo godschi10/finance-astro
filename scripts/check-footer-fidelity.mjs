@@ -49,7 +49,9 @@ const checks = [
   ["follow CTA row .ffollow x2", count(footer, 'class="ffollow"') === 2],
   ["push bell button x2", count(footer, "data-push-bell") === 2 && has(footer, "Notify me of new posts")],
   ["bell uses WP-faithful copy but NOT the duplicate WP id", !has(footer, 'id="gwill-bell"')],
-  ["Google News link x2", count(footer, 'class="fgooglenews"') === 2 && count(footer, "Add to Google News") === 2 && has(footer, "https://publishercenter.google.com/")],
+  // King's order 2026-09-26: "Remove that add to Google widget, it's useless" —
+  // the fgooglenews anchors and gnews icon are GONE from both footers.
+  ["Google News widget REMOVED (King 2026-09-26)", !footer.includes("fgooglenews") && !footer.includes("Add to Google News") && !footer.includes("publishercenter.google.com")],
   ["install buttons x2 each (desktop+mobile)", count(footer, "data-install-app") === 2 && count(footer, "data-install-ios") === 2],
   ["install buttons start hidden (WP contract)", count(footer, "hidden") >= 4],
   ["install labels + states from WP", has(footer, 'data-label-alt="Install not available"') && has(footer, 'data-label-done="App installed"')],
@@ -101,7 +103,7 @@ const checks = [
   ["desktop/tablet: .mfooter hidden at ≥768px", css.includes("@media (min-width: 768px) { .mfooter { display: none; } }")],
   ["touch: hover style must not stick after a tap (WP section 54)", css.includes("@media (hover: none) { .fsoc .soci:hover { border-color: var(--dark-b); color: var(--dark-dim); transform: none; } }")],
   ["bell explains itself when there is no push backend", has(footerRaw, "Push notifications need a push service")],
-  ["every icon is rendered as markup, never escaped text", !/>\{ICON\./.test(footerRaw) && (footerRaw.match(/set:html=\{ICON/g) || []).length >= 10],
+  ["every icon is rendered as markup, never escaped text", !/>\{ICON\./.test(footerRaw) && (footerRaw.match(/set:html=\{ICON/g) || []).length >= 8],
   ["print: drop the grid + CTA row", css.includes("@media print { .ftop, .fpush, .ad-bg--footer { display: none !important; } }")],
 ];
 

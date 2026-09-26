@@ -222,9 +222,10 @@
   .gl-nav:hover { background: rgba(255,255,255,.08); }
 }
 
-.share-row { display: flex; align-items: center; gap: 8px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border-dim); flex-wrap: wrap; }
+.share-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border-dim); flex-wrap: wrap; }
 .share-l { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
-.share-b { font-size: 10px; font-weight: 700; padding: 6px 14px; border-radius: var(--r-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text-mid); cursor: pointer; transition: all var(--t); }
+.share-b { font-size: 10px; font-weight: 700; padding: 6px 14px; border-radius: var(--r-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text-mid); cursor: pointer; transition: all var(--t); display: inline-flex; align-items: center; gap: 6px; }
+.share-b svg { flex: none; width: 14px; height: 14px; color: inherit; }
 .share-b:hover { border-color: var(--gold-border); color: var(--gold); }
 
 /* ══ 3.8 Author bio — style.css:2254-2271 ══ */
@@ -621,6 +622,22 @@
 /* Legacy server-rendered comment cards (only used if VibeComments is ever
    deactivated, the plugin brings its own .vibe-comment-body cards). */
 .vibe-comment-list .comment { padding: 0; background: none; border: none; border-radius: 0; }
+/* v1.0.151: NO hover effects in the comments area (user request), the
+   vibe-comments plugin's base.css hovers flip blue (#2563eb) and lift the
+   cards, clashing with the gold theme. Neutralized to their resting state.
+   Keyboard focus (:focus-visible) and press feedback (:active/:disabled)
+   deliberately KEPT, a11y stays intact. (King's order 2026-09-26: the WP
+   site solved this — style.css:2497-2515 — and the port must match.) */
+.vibe-comment-body:hover { box-shadow: none !important; }
+.vibe-comment-author a:hover { color: inherit !important; }
+.vibe-reaction-summary:hover { background: none !important; border-color: var(--vibe-border, #e5e7eb) !important; }
+.vibe-reaction-option:hover { transform: none !important; background: none !important; }
+.vibe-comment-footer .comment-reply-link:hover,
+.vibe-reply-trigger:hover { background: none !important; color: inherit !important; }
+.vibe-view-replies-btn:hover { color: var(--vibe-text-muted, #64748b) !important; text-decoration: none !important; }
+.vibe-sort-icon-btn:hover { border-color: var(--vibe-border, #e5e7eb) !important; color: var(--vibe-text-muted, #64748b) !important; }
+.vibe-logout:hover { color: inherit !important; }
+.vibe-btn-load-more:hover { background: var(--vibe-surface) !important; color: var(--vibe-text) !important; border-color: var(--vibe-border) !important; }
 .comment-respond input[type="text"], .comment-respond input[type="email"], .comment-respond input[type="url"], .comment-respond textarea {
   width: 100%; border: 1px solid var(--border); border-radius: var(--r-sm); padding: 10px 14px;
   font-size: 16px; background: var(--surface); color: var(--text); margin-bottom: 12px;
