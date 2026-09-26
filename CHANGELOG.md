@@ -3,6 +3,42 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.4.9] — 2026-09-26
+
+### The King's verdict round — three failures repaired
+
+- **Share row restored to WordPress truth** (his verdict: "Why the fuck did
+  you center them like this and remove the share label. Inline it and
+  return share label"). v0.4.8's `justify-content:center` and label-hiding
+  were MY inventions, not the theme's — deleted. The row is again the
+  theme's exact rule (style.css:2250): label inline+visible, buttons
+  left-aligned, natural wrap. The 4 inline SVG glyphs and aria-labels
+  (his actual orders) remain. Article gate re-pinned to the verbatim rule.
+- **Desk links 404 — FIXED** (his report: "Clicking any link in moderation
+  desk loads 404"). Root cause: Astro renders `import.meta.env.BASE_URL` as
+  `/finance-astro` (no trailing slash) while `postUrl()` concatenated
+  `base + "articles/…"` producing `/finance-astroarticles/…`. The define:vars
+  now appends the slash. Live-verified: all queue and ranked-row hrefs now
+  resolve (`/finance-astro/articles/<slug>/`).
+- **Desk header spacing — the real fix** (his verdict: "look at the image
+  you sent to me" — the jam was visible in my own screenshot). Root cause:
+  `.mod-wrap con` — the shared `.con` class declares `padding: 0
+  var(--con-pad)`, which overrode the 44px top padding in the cascade, so
+  the "Comments desk" title rendered flush against the sticky header
+  (rendered gap 0px). v0.4.8's 44px never applied. `con` dropped from the
+  wrap; the desk keeps its own gutter. Live-proven at 390px: title 44px
+  under the header.
+- Cross-checked the article verse block (his #7 screenshots show the
+  "$ naira watch" region): gaps are byte-identical to live WP
+  (18/18/28/20px, verse box 350×130 both sides) — no article-side defect.
+
+### Evidence
+- Gates 5/5 (article 147/147 with the verbatim share rule, footer 64/64).
+- Render probes @390px live: desk gap 0px→44px; desk hrefs all correct;
+  share label inline+visible, justify normal, 4 SVGs.
+- main `868a06b` → pages-dist `a494930` (Pages built, served bytes
+  re-probed after CDN propagation).
+
 ## [0.4.8] — 2026-09-26
 
 ### The King's seven orders, executed
