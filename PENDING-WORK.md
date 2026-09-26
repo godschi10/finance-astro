@@ -62,18 +62,23 @@ Read this at session start.
       references) applied: count-bearing trigger, comment-shaped skeletons,
       email-why hint; 153KB module lazy-loads on click; count fetch gated on
       scroll proximity. Gates 5/5, 147/147.
-- [x] **"New reactions look shrunken until refresh"** — FIXED 2026-09-26, live
-      (main `fef8483`, pages-dist `9d0e133`, Worker `2d321ca5`). The ported
-      finance gold skin carried `.vibe-rx-mine{background:none!important}`,
-      which killed the reader's OWN disc background the instant they reacted
-      (pixel-proven from the King's screenshot: 52px fragments vs siblings'
-      102px). Rule deleted per the 9/8 King law (summary disc identical
-      whether yours or not; picker = only highlight). Worker parity fix in the
-      same ship: load/replies embed `user_reaction` via ONE batched mineKinds
-      query, so the picker marks the reader's own reaction after refresh.
-      End-to-end proof on the public URL: disc rgb(47,125,225) 22×22 right
-      after react AND after reload; picker marks `like` after reload; probe
-      toggled its reaction back off (production data untouched).
+- [x] **"Dashboard doesn't have to look like shit"** — DESK v2 REBUILT + LIVE on
+      staging 2026-09-26 (main `2a7384f`, pages-dist `8754721`, Worker `d3921a6d`).
+      ROOT CAUSE was real, not taste: v1's Astro-SCOPED CSS could never reach
+      runtime-built tiles/rows/cards (createElement can't carry the cid
+      attribute) — the whole data half rendered with ZERO styling ("1PendingReview",
+      mono wall, "Compared)6"). v2: ONE GLOBAL sheet (runtime rows always dress);
+      number-over-label stat tiles (2-up phone, 4-up desktop, Reactions spans
+      full phone row); pending>0 pulses gold; ranked Most Commented rows with
+      count chips; avatar-led comment cards (gravatar + initials fallback);
+      status chips; brand reaction glyphs + count (no word labels — no-double
+      glyph law); 44px pill control family; dark mode first-class. Worker desk
+      payload now carries `avatar`. E2E on public URL: unlock PASS, 5 tiles
+      styled PASS, 8 ranked rows PASS, queue card (avatar+chip+6 actions) PASS,
+      25 rows + 62 glyph rows PASS. Vision: 9.5/10 light AND dark, zero bugs.
+      Design language: docs/port/18-desk-design-language.md.
+      **STATUS: screenshots delivered to the King — AWAITING HIS VERDICT before
+      the full batch (CHANGELOG/version/skill). Not yet version-bumped.**
 
 ## SHIPPED — 2026-09-25 · comments P1 BUILDING + v0.4.5 TOC fix SHIPPED
 
