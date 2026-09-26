@@ -3,6 +3,60 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.4.8] — 2026-09-26
+
+### The King's seven orders, executed
+- **Share row rebuilt** (his order: "not aligned well, asin centered, also
+  add svg"): `justify-content: center` at every width; on phone the wrapped
+  pills center per line with `row-gap` and the label leaves the flex line
+  (visually hidden, still in the a11y tree). All four buttons carry inline
+  14px SVG glyphs — X and LinkedIn reuse the footer's own brand paths,
+  WhatsApp is the simple-icons mark, Copy Link an in-house chain glyph —
+  plus aria-labels. `.share-b` is now inline-flex with 6px icon gap.
+- **"Add to Google News" removed** (his order: "it's useless"): both
+  anchors, the gnews icon, the four dead `.fgooglenews` CSS rules, and the
+  home.css flex-wrap reference — zero occurrences anywhere in src/ or the
+  served bytes. Footer gate now asserts ABSENCE.
+- **Author reply auto-approves the parent** (his order from the queue
+  screenshot): `POST /api/moderation/reply` now flips a pending parent to
+  approved the moment the King answers it — the conversation publishes
+  itself. Response carries `parent_auto_approved` + the fresh parent row;
+  the desk note explains what happened. Proven end-to-end on live D1 with
+  seeded rows (seed → pending → desk reply → parent auto-approved → public
+  thread shows both), cleaned up after. Worker `bf4498c4`, smoke 60/60.
+- **"Updated" meta restored**: the showcase post was heavily edited after
+  publish, so its frontmatter now carries `updated: 2026-08-19` (WP's real
+  modified date) and the article renders "Updated Aug 2026" per
+  single.php:98. The other 7 posts were never edited post-publish — WP
+  shows no updated chip for them either (day-precision rule).
+- **Comments hover-kill transcribed verbatim** (his order: "remove that
+  ugly hover… the WP site solved this"): the theme's v1.0.151 block
+  (style.css:2497-2515) the port had never transcribed — plugin blue card
+  lift, author-link flips, summary bg, option transform, reply/view/
+  sort/logout/load-more hovers — all neutralized to resting state.
+  Focus-visible and :active press feedback kept (a11y intact). Nested
+  threads verified already-correct by probe: 22px indent + 2px thread
+  line, transparent chrome-less reply cards, 32px avatars, reply form
+  breaking out of the indent chain — byte-identical nesting rules to the
+  live WP override.
+- **Lightbox: no port bug** — probe-proven the only non-zooming images
+  are the two authored `alt=""` decorative ones (cover background,
+  media+text), which the theme's isPresentational guard deliberately
+  excludes — identical behavior on live WP.
+- **Desk breathing room** (his order: "no space between the header and the
+  first two text elements"): `.mod-wrap` top padding 28px → 44px.
+
+### Evidence
+- Gates 5/5 green (147/147 article, 64/64 footer — both evolved to pin the
+  NEW truth: centered+iconed share row, gnews absent, 8 footer icons).
+- Served-byte proofs on godschi10.github.io: aria-labels ×3 + 4 inline
+  SVGs in the share row; zero gnews bytes; "Updated Aug 2026" meta;
+  `padding:44px` desk wrap; hover-kill rules in the served CSS.
+- Render probe @390px: share row centered on both wrapped lines, 4 icons
+  at 14px, label out of flow; desk content 84px below the sticky header.
+- main `0001f2b` → pages-dist `41b252e` (Pages `built`), Worker
+  `bf4498c4`.
+
 ## [0.4.7] — 2026-09-26
 
 ### The King's four orders, executed
