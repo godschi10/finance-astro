@@ -95,6 +95,7 @@ const POST_NAMES = {
     .mod-tile:active { transform: scale(.98); }
     .mod-tile .n { font-size: 1.7rem; font-weight: 700; letter-spacing: -0.02em; color: var(--gold); line-height: 1.1; font-variant-numeric: tabular-nums; }
     .mod-tile.plain .n { color: var(--text); }
+    @media (max-width: 699px) { .mod-tile.plain { grid-column: 1 / -1; } }
     .mod-tile .l { font-size: 10.5px; font-weight: 600; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.07em; }
     .mod-tile .go { font-size: 11px; color: var(--gold); margin-top: 6px; opacity: .85; }
     .mod-tile.plain .go { color: var(--text-dim); }
