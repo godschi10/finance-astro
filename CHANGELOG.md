@@ -3,7 +3,40 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
-## [0.4.6] — 2026-09-25
+## [0.4.7] — 2026-09-26
+
+### The King's four orders, executed
+- **Real comments live**: 41 genuine reader comments + 127 reactions imported
+  from the WP SQLite snapshot into production D1 (WP id + 1000; the King's
+  own test/agent threads excluded, his live pending comment preserved as
+  id 17). Verified on the wire: real names, real reaction tallies, relative
+  dates, SHA-256 gravatars across all 8 articles.
+- **Moderation desk**: Worker gains the desk API — `list` / `stats` /
+  `action` (approve/spam/trash/restore; delete-forever only from trash) /
+  `reply` (reply-as-author auto-approves), all Bearer-gated; `status`
+  lifecycle column + index. New `/mod/` page: one unlock gate, Overview /
+  Queue / All Comments tabs, action buttons derived from row status, post-name
+  links, two-tap delete confirm, phone-restore session law, version stamp.
+- **Guest form exposed by default**: the Comment-as-Guest ceremony is gone;
+  name + email render open with a quiet "never shown publicly" note. The
+  reply-move and cancel paths never collapse the form.
+- **Faster**: the 153KB client module is lazy — zero requests until Load
+  Comments is clicked (one press, replayed via `__vibeLoadRequested`);
+  the per-view count fetch now waits for scroll proximity (IO); the count is
+  baked at build. UX-audit upgrades: count-bearing trigger label
+  ("Load 6 Comments"), comment-shaped skeleton on click (reduced-motion
+  honored), email-why hint.
+
+### Evidence
+- Gates 5/5 green, article gate 147/147 (contract updated: exposed form,
+  lazy single-bind, desk-era gold skin).
+- Real-Chrome CDP proof on the public URL: 0 module scripts before click →
+  1 press → 6 real comments (Chiamaka O., Tunde Bakare…), skeleton retired,
+  heading "6 Comments", 42 reaction elements, guest form `display:grid`,
+  desk lock + wrong-token rejection + version stamp.
+- Served bytes byte-identical to dist; Worker endpoints live (stats: 41
+  approved / 1 pending / 127 reactions; delete-guard 400; reply-as-author
+  auto-approved then probe rows cleaned).
 
 ### Added
 - **The comments surface — the King's own vibe-comments UI, live against a
