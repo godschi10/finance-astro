@@ -4,23 +4,37 @@ Ledger law: every order gets a line here immediately. `CODED-UNCOMMITTED ≠ DON
 a fix is done only when the served bytes and the rendered page prove it.
 Read this at session start.
 
-## INBOUND — the King's 7 orders, 2026-09-26 ("lots of issues… get to work")
+## INBOUND — the King's 7 orders, 2026-09-26 ("lots of issues… get to work") — ALL 7 SHIPPED as v0.4.8
 
-- [ ] **1. Share row** (imgs 73677d09/eff47d55): share buttons (X, LinkedIn,
-      WhatsApp, Copy Link) not aligned/centered; also add SVG icons.
-- [ ] **2. Footer Google widget** (img 766b6b88): remove "Add to Google News"
-      — King: "it's useless".
-- [ ] **3. Author-reply auto-approve** (img 13965d17, queue tab): when the
-      author replies to a pending comment, that comment auto-approves.
-- [ ] **4. Updated-on meta** (img 0357b09a): articles show no "Updated on" /
-      "Last updated" meta — port WP's behaviour.
-- [ ] **5. Comments design** (imgs 84bde4d3/d15c61be/6629ff98): remove the
-      ugly hover; nested comments must organize well on tiny screens —
-      "the WP site solved this" (diff against original plugin CSS).
-- [ ] **6. Lightbox misses** (img e9a4bbe1): some images don't open in the
-      lightbox — find which selector/path excludes them.
-- [ ] **7. Header spacing** (imgs 520b20c2/5cd2e0d3): no space between page
-      header and first two text elements — give space.
+- [x] **1. Share row** — centered (`justify-content:center`); phone wraps
+      into centered lines with label out of flow; 4 inline SVG glyphs
+      (X/LI = footer's brand paths, WhatsApp simple-icons, link chain);
+      aria-labels. Gates pin the new markup. Served-proven: 3 share
+      aria-labels + 4 `<svg>` in buttons.
+- [x] **2. Footer Google widget REMOVED** — both anchors, gnews icon, 4
+      dead CSS rules, home.css selector: ZERO occurrences in src/ AND
+      served bytes. Gate asserts ABSENCE (footer 64/64).
+- [x] **3. Author-reply auto-approve** — Worker `POST /api/moderation/reply`
+      flips pending parent → approved; `parent_auto_approved` flag; desk
+      note explains. E2E-proven on live D1 (seed→pending→reply→auto-approved
+      →public, cleanup after). Worker `bf4498c4`, smoke 60/60.
+- [x] **4. Updated meta** — showcase frontmatter `updated: 2026-08-19`
+      (WP's real modified date) → renders "Updated Aug 2026". Other 7
+      posts never edited post-publish → no chip, matching WP.
+- [x] **5. Comments design** — hover-kill block transcribed VERBATIM
+      (style.css:2497-2515, v1.0.151) into article.css: blue card-lift and
+      all plugin hovers neutralized; focus/active kept. Nesting verified
+      already-correct by probe (22px indent, thread line, transparent
+      reply cards, 32px avatars — byte-identical to live WP override).
+- [x] **6. Lightbox** — NO port bug: the only non-zooming images are the
+      two `alt=""` decorative ones (cover bg + media+text), excluded by the
+      theme's own a11y guard — identical on live WP.
+- [x] **7. Header spacing** — desk `.mod-wrap` 28px→44px top padding;
+      rendered gap 84px under sticky header (probe-proven).
+
+      v0.4.8 shipped: main `12f88ba`, pages-dist `41b252e` (Pages built),
+      Worker `bf4498c4`. Gates 5/5 (article 147/147, footer 64/64 — both
+      EVOLVED to pin the new truth).
 
 - [x] **comments-api Worker backend — BUILT + VERIFIED 54/54 GREEN** (2026-09-25).
       `/home/opc/work/comments-api/` — wrangler.toml, schema.sql, src/index.js
