@@ -999,7 +999,7 @@
             hoistPinnedComments();
         });
 
-        list.parentNode.insertBefore(bannerWrap, list);
+        list.parentNode.insertBefore(banner, list);
     }
 
     /**
@@ -1383,7 +1383,8 @@
                         var backSummary = backArticle && backArticle.querySelector('.vibe-reaction-summary');
                         if (backSummary) backSummary.focus();
                     } else {
-                        var msg = (result.data && result.data.message) || str('reactFailed', 'Failed to react.');
+                        var d = result.data || {};
+                        var msg = d.message || d.error || str('reactFailed', 'Failed to react.');
                         showError(msg);
                         var a = option.closest('article.vibe-comment-body');
                         var p = a && a.querySelector('.vibe-reaction-picker');
@@ -1934,7 +1935,19 @@
                             : str('liveNoName', 'Your comment is live!'));
                     }
                 } else {
-                    var msg = (result.data && result.data.message) || result.message || str('postFailed', 'Failed to post comment.');
+                    var d = result.data || {};
+                    var msg = d.message || result.message || '';
+                    // MINOR-1 fix (2026-09-27 audit): the Worker signals errors as
+                    // data.error ("rate limited", "too long", "valid email required"…)
+                    // with an optional retry hint. Without this read every failure
+                    // collapsed to the generic "Failed to post comment.".
+                    if (!msg && d.error) {
+                        msg = d.error === 'rate limited'
+                            ? (d.retry ? 'Posting too fast — try again in ' + Math.ceil(d.retry) + 's.'
+                                       : 'Posting too fast — wait a moment and try again.')
+                            : d.error;
+                    }
+                    if (!msg) msg = str('postFailed', 'Failed to post comment.');
                     showError(msg);
                 }
             })
@@ -2529,14 +2542,22 @@
 
         var counter = countEl.closest ? countEl.closest('.vibe-char-counter') : null;
 
-        textarea.addEventListener('input', function() {
-            var len = this.value.length;
+        function refreshCounter() {
+            var len = textarea.value.length;
             countEl.textContent = len.toLocaleString();
             if (counter) {
                 counter.classList.toggle('vibe-char-warn', len >= maxChars * 0.9 && len < maxChars);
                 counter.classList.toggle('vibe-char-over', len >= maxChars);
             }
-        });
+        }
+
+        textarea.addEventListener('input', refreshCounter);
+        // MINOR-2 fix (2026-09-27 audit): form.reset() empties the textarea but
+        // fires no `input` event, so after a successful post the counter kept the
+        // pre-submit count. The form's own reset event is the one signal that
+        // covers it (draft-restore also dispatches `input` already).
+        var form = textarea.closest('form');
+        if (form) form.addEventListener('reset', function() { setTimeout(refreshCounter, 0); });
     }
 
     /**
