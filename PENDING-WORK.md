@@ -4,6 +4,41 @@ Ledger law: every order gets a line here immediately. `CODED-UNCOMMITTED ≠ DON
 a fix is done only when the served bytes and the rendered page prove it.
 Read this at session start.
 
+## COMMENTS AUDIT ROUND — King's order 2026-09-27 ("Verify the logic, ux and ui has no bugs or errors")
+
+- [x] **Copy-link SVG** — his report: "Why is the copy link svg lookin like shit".
+      Root cause: stroke-based chain on a mismatched 14x14 viewBox whose second
+      path runs to y=14.36 (clipped) — style-inconsistent with the three solid
+      brand glyphs. Replaced with Bootstrap Icons' square solid link (16x16,
+      fill=currentColor), both paths. Live-proven: all four glyphs now solid.
+      main `8987706` → pages-dist `e5cd639`.
+- [x] **Live E2E of the form + comments** — 16 checks on the PUBLIC site:
+      required-field validation (empty email/bad format blocked), draft
+      save→restore→badge visible, submit → "pending review" banner, draft
+      cleared, moderation queue landing, author-reply auto-approve (parent
+      flips approved + leaves queue + nests publicly), cleanup, comment list
+      render. All pass. 2 initial "fails" were probe-timing artifacts
+      (banner self-removes at exactly 5000ms; badge needed post-boot read) —
+      re-proven PASS on a clean browser.
+- [x] **Independent audit (delegated)** — one MAJOR, five MINOR findings:
+      1. **MAJOR-1 live-poll crash** — `bannerWrap` typo (undeclared var, strict
+         mode) threw ReferenceError on every 30s poll that found a new comment;
+         banner never rendered, "↑ N new" feature was DEAD on the live site.
+         Live-proven broken, then live-proven fixed: banner renders at 24s,
+         click loads the comment, zero console errors.
+      2. MINOR-2 stale char counter after post (form.reset fires no input) —
+         fixed with a reset-event sync. Live-proven: counter 57 → 0 after reset.
+      3. MINOR-1 Worker errors collapsed to generic "Failed to post comment." —
+         client now reads data.error; rate-limit shows retry seconds.
+      4. Worker mod-link approve set approved=1 but left status='pending'
+         (ghost row in the desk queue) — fixed + deployed (Worker
+         `852bc158`, smoke 60/60 ALL GREEN).
+      5. MINOR-3/-5/-6 (resetFormPosition null-checks, unused poll params,
+         code-span linkify) — cosmetic/drift-trap only; not user-visible today.
+         Left documented, not touched (minimal-diff law).
+      Shipped: main `b827810` → pages-dist `3d9b573` (Pages built, served
+      bytes re-probed). All probe rows purged from live D1.
+
 ## INBOUND — the King's 7 orders, 2026-09-26 ("lots of issues… get to work") — ALL 7 SHIPPED as v0.4.8
 
 - [x] **1. Share row** — VERDICT ROUND: v0.4.8's centering + label-hiding
