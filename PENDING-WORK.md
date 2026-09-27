@@ -4,6 +4,20 @@ Ledger law: every order gets a line here immediately. `CODED-UNCOMMITTED ≠ DON
 a fix is done only when the served bytes and the rendered page prove it.
 Read this at session start.
 
+## NEXT ROUND — King's 3 orders, 2026-09-27 ("Now next things to do" + copy-link follow-up)
+
+- [ ] **1. Single images use the lightbox** — extend the theme lightbox beyond
+      galleries to single article-body images (alt="" decorative stay excluded
+      per the accepted v0.4.8 verdict).
+- [ ] **2. Search overlay upgrade** — Google-type matching features (fuzzy,
+      operators, highlight, scoring), zero speed cost; port search results
+      page + no-results page + 404 page and integrate properly.
+- [ ] **3. Copy-link SVG disappears after press** — root cause: port's
+      copyDone does `btn.textContent = msg`, which wipes the ordered SVG
+      glyph (WP's own button ships no SVG so its handler never had this bug);
+      restore writes plain text, glyph never returns. Fix: swap only the
+      label TEXT NODE, never the button's whole content.
+
 ## COMMENTS AUDIT ROUND — full findings (deleg_fdf2487a final report)
 
 - [x] MAJOR-1 Turnstile trap — verifier now fails-open ONLY on unset/empty

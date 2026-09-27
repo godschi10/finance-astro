@@ -293,9 +293,22 @@
 	// serves every copy button, appended to <body> once, cleared then re-set
 	// 50ms later so copying the same link twice re-announces.
 	let copyStatus = null;
+	// 2026-09-27 (King's order 3): the port adds an inline SVG glyph to every
+	// share control — WP's own button ships none, which is why the theme's
+	// `btn.textContent = msg` never hit this. Setting textContent on the
+	// BUTTON destroys the SVG child node, so "✓ Copied" showed bare and the
+	// restore wrote plain text: the glyph never came back. Swap only the
+	// label's TEXT NODE and the SVG survives the whole cycle.
+	const setShareLabel = (btn, msg) => {
+		for (let i = btn.childNodes.length - 1; i >= 0; i--) {
+			const n = btn.childNodes[i];
+			if (n.nodeType === 3 && n.textContent.trim()) { n.textContent = msg; return; }
+		}
+		btn.textContent = msg; // no glyph markup (WP parity path) — safe
+	};
 	const copyDone = (btn, ok) => {
 		const msg = ok ? (I18N.copied || '✓ Copied') : (I18N.copyFailed || 'Copy failed');
-		btn.textContent = msg;
+		setShareLabel(btn, msg);
 		// Disabled while the feedback shows, so double-clicks cannot stack.
 		// Note: the theme ships NO `.share-b:disabled` styling, so the button
 		// looks identical to an enabled one for those 2 seconds (spec §4a).
@@ -309,7 +322,7 @@
 		copyStatus.textContent = '';
 		setTimeout(() => { copyStatus.textContent = msg; }, 50);
 		setTimeout(() => {
-			btn.textContent = I18N.copyLink || 'Copy Link';
+			setShareLabel(btn, I18N.copyLink || 'Copy Link');
 			btn.disabled = false;
 		}, 2000);
 	};
