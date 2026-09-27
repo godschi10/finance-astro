@@ -3,6 +3,34 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.4.10] — 2026-09-27
+
+### Comments audit round — the King's order: "Verify the logic, ux and ui
+### has no bugs or errors"
+
+- **Copy-link SVG replaced** (his report: "looking like shit" — correct).
+  The old icon was a stroke-based chain drawn on a mismatched 14x14
+  viewBox whose second path extended to y=14.36 — clipped at the bottom
+  and outline-styled next to three solid brand glyphs. Now Bootstrap
+  Icons' square solid link (16x16, fill=currentColor, both paths).
+- **Live poll crash fixed (MAJOR)** — `vibe-comments.js` typo:
+  `insertBefore(bannerWrap, list)` referenced an undeclared variable inside
+  a strict-mode IIFE. Every 30s poll that found a new comment threw
+  ReferenceError, so the "↑ N new — click to load" banner NEVER rendered
+  on the live site. Live-proven broken → fixed → banner renders and
+  click-loads.
+- **Char counter no longer stale after posting** — form.reset() fires no
+  input event; counter now syncs on the form's reset event.
+- **Real API errors now surfaced** — the Worker reports failures as
+  data.error; the client only read data.message, collapsing everything
+  to "Failed to post comment." Rate limits now say the retry seconds.
+- **Worker: mod-link approve left ghost pending rows** — the email
+  approve-link set approved=1 without status='approved', leaving the row
+  visibly public but stuck in the desk's pending queue. Fixed; Worker
+  redeployed, smoke 60/60.
+- **16-check live E2E on the public site**: validation, drafts, submit,
+  moderation queue, author-reply auto-approve, banner, cleanup — all pass.
+
 ## [0.4.9] — 2026-09-26
 
 ### The King's verdict round — three failures repaired
