@@ -4,6 +4,33 @@ Ledger law: every order gets a line here immediately. `CODED-UNCOMMITTED ≠ DON
 a fix is done only when the served bytes and the rendered page prove it.
 Read this at session start.
 
+## COMMENTS AUDIT ROUND — full findings (deleg_fdf2487a final report)
+
+- [x] MAJOR-1 Turnstile trap — verifier now fails-open ONLY on unset/empty
+      secret, explicitly; the invisible-brick path documented in-code.
+- [x] MAJOR-2 ghost pending comments — Worker reports real approval state;
+      client refuses to render awaiting_moderation comments (WP guest parity).
+      Live-proven.
+- [x] MAJOR-3 bannerWrap crash — fixed in v0.4.10 (live-proven banner).
+- [x] MAJOR-4 poll order — poll asks order=desc; threads stay ASC (live WP
+      parity verified against served DOM). Live-proven both directions.
+- [x] MAJOR-5 email-approve ghost queue — status='approved' written (v0.4.10,
+      Worker 852bc158).
+- [x] MAJOR-6 depth cap — MAX_THREAD_DEPTH=5 on both write paths, flatten at
+      floor. Live-proven: 8-chain -> depths [0,1,2,3,4,1,2,3].
+- [ ] MINOR-4 lazy-load onerror (skeleton spins forever if module 404s) —
+      LOW: module is a hashed same-origin asset served with the page; a 404
+      means the deploy is broken anyway. Deferred.
+- [ ] MINOR-5 poll params Worker ignores (since/comment_ids) — drift-trap,
+      harmless. Deferred.
+- [ ] MINOR-6 linkify inside <code> — cosmetic. Deferred.
+- [ ] MINOR-7 CORS lacks future custom domain — add the King's domain when
+      the site moves. Deferred until the domain decision.
+- [ ] MINOR-8/9 rate-limit atomicity + unrate-limited reactions — KV
+      advisory limits acceptable for a blog; reactions are display-only.
+      Deferred with eyes open.
+- [ ] MINOR-10 email subject length — moderation email only. Deferred.
+
 ## COMMENTS AUDIT ROUND — King's order 2026-09-27 ("Verify the logic, ux and ui has no bugs or errors")
 
 - [x] **Copy-link SVG** — his report: "Why is the copy link svg lookin like shit".

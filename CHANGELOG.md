@@ -3,6 +3,38 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.4.11] — 2026-09-27
+
+### Full audit round — the three remaining MAJOR findings, fixed and live-proven
+
+- **Ghost pending comments (MAJOR-2)** — the Worker hardcoded `approved:"1"` in
+  its wire format, so a just-submitted PENDING comment arrived claiming to be
+  live; the client appended it to the thread with a working Reply button. On
+  refresh it vanished, and replying to the ghost 400'd ("parent not found") —
+  because the Worker only nests replies under APPROVED parents. Fixed both
+  sides: the Worker reports the row's real state (`approved:"0"` while
+  pending), and the client no longer renders a comment that is
+  `awaiting_moderation` — it shows the acknowledgement only, exactly like WP's
+  guest path. Live-proven: submit now returns `approved: 0`.
+- **New-comment detection structurally dead on busy posts (MAJOR-4)** — the
+  30s live poll fetched page 1 in oldest-first order; once a post passes 20
+  top-level comments, a brand-new comment is on the LAST page, so the "↑ N
+  new" banner could never fire. Thread batches stay oldest-first (verified
+  against the live WP site's served order — exact parity), but the poll now
+  requests `order=desc` so the newest comment is always inside page 1.
+  Live-proven: desc returns newest-first, asc unchanged.
+- **Turnstile trap (MAJOR-1)** — the Worker enforced a Turnstile token that
+  no client widget could ever produce. Had the secret ever been set, ALL
+  commenting would have bricked with a silent 400. The verifier now treats an
+  empty/unset secret identically (fail-open is explicit and documented;
+  honeypot + rate limits remain the guard).
+- **Unbounded reply depth (MAJOR-6)** — a script could nest replies 200-deep,
+  collapsing the mobile content column. Both write paths (guest submit + desk
+  reply) now cap chains at depth 5 and flatten deeper replies at the floor.
+  Live-proven: an 8-long chain reports depths [0,1,2,3,4,1,2,3].
+- Worker `567caf80`, smoke 60/60 ALL GREEN; site gates 5/5. main `b06d970`
+  → pages-dist `ddb4be1` (Pages built, served bytes re-probed).
+
 ## [0.4.10] — 2026-09-27
 
 ### Comments audit round — the King's order: "Verify the logic, ux and ui
