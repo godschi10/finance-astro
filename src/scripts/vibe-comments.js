@@ -911,7 +911,7 @@
         var bars = document.querySelectorAll('.vibe-reactions[data-comment-id]');
         // PORT SEAM: reuses the v1 load endpoint (there is no separate poll route).
         var url  = apiUrl('/comments?post=' + encodeURIComponent(config.postSlug))
-                 + '&since=' + lastCheckTime + '&per_page=20&_=' + Date.now();
+                 + '&since=' + lastCheckTime + '&per_page=20&order=desc&_=' + Date.now();
         if (!config.isLoggedIn) { url += '&vibe_guest_id=' + encodeURIComponent(getGuestId()); }
         bars.forEach(function(bar) {
             var id = parseInt(bar.dataset.commentId, 10);
@@ -1894,7 +1894,14 @@
             })
             .then(function(result) {
                 if (result.success && result.data) {
-                    if (result.data.comment) {
+                    // 2026-09-27 audit (MAJOR-2): a comment awaiting moderation is
+                    // NOT rendered into the thread. The old code appended it as a
+                    // live node (ghost) — it vanished on refresh and its Reply
+                    // button 400'd ("parent not found") because the Worker only
+                    // nests replies under APPROVED parents. WP's guest path shows
+                    // the acknowledgement only; the comment appears once approved.
+                    var isPending = !!result.data.awaiting_moderation;
+                    if (result.data.comment && !isPending) {
                         var newLi = appendComment(result.data.comment, data.parent);
                         knownCommentIds.add(result.data.comment.id);
                         // Keep heading count in sync.
