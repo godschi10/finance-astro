@@ -6,9 +6,17 @@ Read this at session start.
 
 ## NEXT ROUND — King's 3 orders, 2026-09-27 ("Now next things to do" + copy-link follow-up)
 
-- [ ] **1. Single images use the lightbox** — extend the theme lightbox beyond
-      galleries to single article-body images (alt="" decorative stay excluded
-      per the accepted v0.4.8 verdict).
+- [x] **1. Single images use the lightbox** — VERIFIED, NOT A PORT BUG: the
+      theme's own assets/js/lightbox.js (1.13.39, re-fetched from the live
+      origin) IS the single-image lightbox — it applies to every .art-body
+      image, groups gallery runs, and excludes decorative alt="" images (the
+      accepted v0.4.8 verdict). The port carries it verbatim. Live-proven on
+      the built page (real click, 390 viewport): standalone §5 figure opens
+      the overlay (open=true, opacity 1, z 99999), counter "1 / 4"
+      (context = whole art-body, WP's own gatherImages contract), lightbox
+      set = [Dollar, Savings, Investing, Crypto] (same 4 as the theme side),
+      close works, tabindex 0 + role=button + "Enlarge image: <alt>" (WCAG).
+      No code change needed — singles already use the lightbox on BOTH sites.
 - [ ] **2. Search overlay upgrade** — Google-type matching features (fuzzy,
       operators, highlight, scoring), zero speed cost; port search results
       page + no-results page + 404 page and integrate properly.
