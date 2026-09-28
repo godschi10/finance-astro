@@ -17,9 +17,18 @@ Read this at session start.
       set = [Dollar, Savings, Investing, Crypto] (same 4 as the theme side),
       close works, tabindex 0 + role=button + "Enlarge image: <alt>" (WCAG).
       No code change needed — singles already use the lightbox on BOTH sites.
-- [ ] **2. Search overlay upgrade** — Google-type matching features (fuzzy,
-      operators, highlight, scoring), zero speed cost; port search results
-      page + no-results page + 404 page and integrate properly.
+- [x] **2. Search overlay upgrade** — SHIPPED v0.5.0: theme's relevance
+      engine in scripts/search-core.js (ONE engine, overlay + /search/
+      share it): title-weighted scoring, fuzzy w/ first-letter anchor,
+      diacritic folding, recency tie-break, no-match recent fallback.
+      Zero speed cost (embedded JSON index, 5.6 KB module, 0 network per
+      keystroke). /search/ rebuilt in served vocabulary (.phd header +
+      .search-pill + .g3 cards w/ theme badge/art map); no-results .es
+      block (₦ glyph + es-title + cat links + Back to Home); 404 ported
+      (.error-404__code + es-title + search-pill + 6 cat links).
+      search404.css slice verbatim (31 rules, docs/port/19); WP's ?s=
+      dialect accepted. Live-proven: typo/two-token/diacritic/gibberish/
+      keyboard/copy-preserve; served sha-identical.
 - [ ] **3. Copy-link SVG disappears after press** — root cause: port's
       copyDone does `btn.textContent = msg`, which wipes the ordered SVG
       glyph (WP's own button ships no SVG so its handler never had this bug);

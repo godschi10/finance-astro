@@ -3,6 +3,65 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.5.0] — 2026-09-27
+
+### King's next round — search upgrade + pages, single-image lightbox, copy-link follow-up
+
+- **Search engine upgraded (order 2)** — the port's bare AND-containment
+  replaced with the theme's own relevance engine
+  (`scripts/search-core.js`, ONE engine shared by the spotlight overlay and
+  the /search/ results page): title-weighted Google-ish scoring (exact
+  title +150 / prefix +110 / substring +70, per-token title-word
+  exact/prefix/fuzzy, ALL-tokens bonuses), typo tolerance with the
+  first-letter anchor ("andriod"→"android" passes; "battery"↔"matter"
+  can't), diacritic folding ("naıra", "NAÏRA RATES" find results),
+  newest-first tie-break, and the no-match recent-posts fallback instead
+  of a dead end. Zero speed cost: the corpus is an embedded JSON index,
+  zero network per keystroke; the module is 5.6 KB minified. The old
+  inline engine (7.4 KB) is gone from Layout.
+- **Live-proven (overlay)**: typo "andriod" → 3 relevant posts; "savigs"
+  → savings matches; two-token "savings vs" → PiggyVest #1 with both
+  tokens <mark>ed; "zzqxjvvv" → "No matches…, try these recent posts:" +
+  3 newest; caps/diacritic "NAÏRA RATES" → 4 results; ↑↓ keyboard nav
+  sets aria-activedescendant; outer X closes keeping the text;
+  perf.getEntriesByType resource footprint unchanged (1 _astro script).
+- **/search/ results page (order 2)** — rebuilt in the theme's SERVED
+  vocabulary (was an invented .hold-title/.phase-tag rebuild): .phd
+  result header (surface bg + bottom border + h1 28px/800), breadcrumbs
+  "Home › Search: {q}", "{n} results for <strong>{q}</strong>" count
+  line, .search-pill site search (form + icon + 12px field + gold
+  submit), category pill filter (Everything + 6 + Calculators), card
+  grid in the theme's anatomy (.ac > .ac-img art gradient + emoji +
+  .ac-body > badge + h2.ac-t + .ac-ex + .ac-ft) with the badge/art/emoji
+  map baked into the index (theme's gwill_finance_cat_style map).
+- **No-results page (order 2)** — the theme's .es block ported: ₦ glyph
+  circle + h2.es-title "No results found" + p.es-copy + .cp-strip
+  category links + "← Back to Home" gold button.
+- **404 page (order 2)** — .error-404 ported: breadcrumbs "Home › 404
+  Not Found" + .error-404__code (96px→clamp 64-120px, 800 weight, gold,
+  glow text-shadow) + h1.es-title "Page Not Found" + p.es-copy + its own
+  .search-pill + 6 category links + "← Back to Home". The page's search
+  submits WP's ?s= dialect; /search/ accepts both ?s= and ?q=.
+- **search404.css slice** — 31 rules ported verbatim with media context
+  (incl. dark-mode variants + pointer:coarse + print), rule map in
+  `docs/port/19-search404-rules.md`. article.css import moved into the
+  layout so the category art gradients reach the search cards (the
+  gradient was transparent before — found by measuring).
+- **Single images lightbox (order 1)** — VERIFIED, not a port bug: the
+  theme's own lightbox.js IS the single-image lightbox (every .art-body
+  image, gallery grouping, decorative alt="" excluded — the accepted
+  v0.4.8 verdict). Live click-through proof: standalone figure opens the
+  overlay (opacity 1, z 99999, counter "1 / 4"), close + keyboard open
+  work, tabindex 0 + role=button + "Enlarge image: <alt>" (WCAG). No
+  code change — singles already lightbox on BOTH sites.
+- **Copy-link SVG (order 3)** — copyDone's `btn.textContent = msg`
+  destroyed the ordered inline SVG glyph (WP's own button ships no SVG,
+  so its handler never hit this); the restore wrote plain text and the
+  glyph never returned. Fixed by swapping only the label's TEXT NODE.
+  Live-proven: served article module carries the label-node swap.
+- Gates 5/5 (95/95 vectors); shipped main `44731b2` → pages-dist
+  `0c18711` (Pages `built`, served bytes sha-identical to the build).
+
 ## [0.4.11] — 2026-09-27
 
 ### Full audit round — the three remaining MAJOR findings, fixed and live-proven
