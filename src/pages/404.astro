@@ -1,13 +1,45 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { CATEGORIES } from "../data/site";
+
+// Faithful port of the theme's 404 page (WP served capture 2026-09-27,
+// finance-truth/wp-404.html):
+//   section.error-404.es: breadcrumbs (Home › 404 Not Found) +
+//     .error-404__code "404" (aria-hidden) + h1.es-title "Page Not Found" +
+//     p.es-copy + .search-pill site search + .cp-strip category links +
+//     a.btn.b-gold "← Back to Home"
+//   .con: .ad-bg (empty ad slot)
+// The page's own search form submits ?s= (WP dialect) → /search/ which
+// accepts both ?s= and ?q=.
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const catList = CATEGORIES.filter((c) => c.slug !== "uncategorized");
 ---
-<Layout title="404 — Page not found - GWill Finance" description="This page does not exist on GWill Finance." noCanonical={true}>
-<section class="con sg" aria-labelledby="nf-h">
-<div class="hold">
-<span class="phase-tag">404</span>
-<h1 class="hold-title" id="nf-h">This page doesn't exist.</h1>
-<p style="margin-top:8px">The link you followed is broken, or the page moved. Try the article archive, the calculators, or search — all live.</p>
-<p style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px"><a class="btn b-gold" href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/`}>Back to the homepage →</a><a class="btn b-ghost" href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/articles/`}>All articles</a></p>
-</div>
+<Layout title="Page not found - GWill Finance" description="This page does not exist on GWill Finance." noCanonical={true}>
+<section class="error-404 es" aria-labelledby="nf-h">
+  <nav class="bc" aria-label="Breadcrumb">
+    <span class="bc-i"><a href={base}>Home</a></span>
+    <span class="bc-s">›</span>
+    <span class="bc-i" aria-current="page">404 Not Found</span>
+  </nav>
+  <div class="error-404__code" aria-hidden="true">404</div>
+  <h1 class="es-title" id="nf-h">Page Not Found</h1>
+  <p class="es-copy">The page you're looking for doesn't exist. Try searching, or browse the topics below.</p>
+  <div class="search-pill">
+    <form role="search" aria-label="Site search" method="get" class="search-form" action={`${base}search/`}>
+      <label class="search-label">
+        <span class="screen-reader-text">Search for:</span>
+        <svg class="search-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        <input type="search" class="search-field" value="" name="s" placeholder="Search articles…">
+      </label>
+      <button type="submit" class="search-submit" aria-label="Submit search"><span>Search</span></button>
+    </form>
+  </div>
+  <div class="cp-strip">
+    {catList.map((c) => (<a class="cp" href={`${base}category/${c.slug}/`}>{c.name}</a>))}
+  </div>
+  <a class="btn b-gold" href={base}>← Back to Home</a>
+</section>
+<section class="con" style="margin-top:32px;padding-bottom:48px">
+  <div class="ad-bg"></div>
 </section>
 </Layout>
