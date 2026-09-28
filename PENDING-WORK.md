@@ -6,21 +6,35 @@ Read this at session start.
 
 ## NEXT ROUND — King's 4 bug reports, 2026-09-28 (screenshots: /search/ + 404 + spotlight)
 
-- [ ] **B1. "Search form looks ugly and large. Why the excessive space"** —
-      the /search/ + /404/ search pill renders oversized with extra vertical
-      space vs the theme's .search-pill. Root-cause against the live WP
-      capture before touching CSS.
-- [ ] **B2. "Search drop-down doesn't seem to be upgraded too"** — the
-      spotlight overlay dropdown on the built site doesn't show the upgraded
-      engine's results. Verify the wrapper's index wiring + render path live.
-- [ ] **B3. "Hitting enter in the Search drop-down redirects to the homepage"** —
-      theme contract (spotlight-search.js:541): Enter navigates to the
-      highlighted result; with no highlight WP submits ?s= which WP routes to
-      the search template. The static port's /?s= just shows the homepage.
-- [ ] **B4. "/search/?q=naira directed me to an empty search page"** —
-      "Showing all 0 entries" + no-results block on a ?q=naira load. Static
-      Pages build bakes value="" (no server); initial() never reads ?q= into
-      the input (only migrates ?s=).
+- [x] **B1. "Search form looks ugly and large. Why the excessive space"** —
+      SHIPPED v0.5.1: REAL BUG — the port's own pre-fidelity layout CSS carried
+      `.search-form{...;margin-top:20px;flex-wrap:wrap}` which leaked into the
+      theme's .search-pill (74px vs live WP 54px; found by measuring — the
+      pill's own arithmetic said 54, the box measured 74). WP carries NO form
+      margin (scoped to .gwill-form). Fixed: margin + wrap removed.
+      Re-measured @390: pill 350×54, field 16px (iOS zoom rule, WP-identical),
+      submit 36 — PIXEL-IDENTICAL to live WP. docOverflowX false.
+- [x] **B2. "Search drop-down doesn't seem to be upgraded too"** — SHIPPED
+      v0.5.1: REAL BUG — the spotlight's embedded corpus was the OLD 7-item
+      POSTS-only array (no calculators, no badge/art map) while /search/
+      searched 31. Layout's index builder never upgraded with the engine.
+      Fixed: ONE corpus shared by both — 24 items (8 articles + 16
+      calculators). Live-proven: "loan calculator" → 8 rows first Loan
+      Repayment (Calculator); "savigs" → 3; "naira" → 6.
+- [x] **B3. "Hitting enter in the Search drop-down redirects to the homepage"** —
+      SHIPPED v0.5.1: REAL BUG + contract gap — the theme navigates only with
+      a highlighted row; with no highlight WP SUBMITS ?s= → its search
+      template, but the static /?s= is the homepage. Fixed: Enter with no
+      highlight routes to {base}search/?q={term}. Live-proven: type "savigs"
+      + Enter → lands /search/?q=savigs, 3 results.
+- [x] **B4. "/search/?q=naira directed me to an empty search page"** — SHIPPED
+      v0.5.1: REAL BUG — the static build bakes value="" (no server) and
+      initial() only MIGRATED ?s= (a ?q= load never seeded the input), so
+      run() ran empty → "Showing all 0 entries" + no-results block. Fixed:
+      initial() seeds from ?q=/?s=/raw fragment, then run(). Live-proven:
+      ?q=naira → "2 results", 2 cards; ?s=emergency fund → migrates to ?q=
+      + 2 results; ?q=zzqxjvvv → .es block w/ ₦ glyph; 404's pill submits
+      natively → /search/?q=naira, 2 results.
 
 ## NEXT ROUND — King's 3 orders, 2026-09-27 ("Now next things to do" + copy-link follow-up)
 

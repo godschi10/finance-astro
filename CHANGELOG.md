@@ -3,6 +3,58 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.5.1] — 2026-09-28
+
+### King's verdict on v0.5.0 — 4 live-reported search defects, all fixed
+
+All four reported from phone screenshots + live navigation ("You failed me,
+why is your design always having bugs"). Root causes established by
+measuring, not looking:
+
+- **1. Search form ugly and large, excessive space** — REAL BUG: the port's
+  own pre-fidelity layout CSS (Layout.astro) carried
+  `.search-form{...;margin-top:20px;flex-wrap:wrap}`, which leaked into the
+  theme's .search-pill on /search/ + /404/ — rendered 74px tall vs live
+  WP's 54px (found by measuring both; the pill's own arithmetic said 54,
+  the box measured 74 — the 20px was the form margin, nothing else).
+  WP carries NO form margin (its margin is scoped to .gwill-form, the
+  newsletter). Fixed: `.search-form{display:flex;align-items:center;gap:8px}`.
+  Re-measured @390 after the fix: pill 350×54, field 16px (iOS zoom-on-focus
+  rule — WP bumps the field to 16px on phones too), submit 36px — PIXEL-
+  IDENTICAL to live WP at 390. docOverflowX false (the pill no longer
+  overflows the 390px viewport).
+- **2. Search drop-down not upgraded** — REAL BUG: the spotlight's embedded
+  corpus was the OLD 7-item POSTS-only array (keys
+  cat,date,excerpt,mins,title,url — zero calculators, no badge/art map),
+  while the /search/ page searched 31 items. The layout's index builder was
+  never upgraded when the engine landed. Fixed: ONE corpus shared by both
+  surfaces — 8 articles (title/excerpt/category-name/date/read-mins +
+  badge/art/emoji/category) + 16 calculators = 24 items. Live-proven on the
+  public site: "loan calculator" → 8 rows, first = Loan Repayment
+  (Calculator pill); "savigs" → 3 savings matches; "naira" → 6 rows incl.
+  Currency Converter + Crypto Profit.
+- **3. Enter in the drop-down redirects to the homepage** — REAL BUG + WP
+  contract gap: the theme's handler navigates ONLY with a highlighted row
+  (spotlight-search.js:541); with no highlight WP SUBMITS ?s=, which WP
+  routes to its search template — but the static build's /?s= is the
+  homepage. Fixed: Enter with no highlighted row now routes to
+  {base}search/?q={term} (the highlighted-row path unchanged). Live-proven
+  on the public site: type "savigs", press Enter with no row selected →
+  lands on /search/?q=savigs, count "3 results for savigs".
+- **4. /search/?q=naira directed to an empty search page** — REAL BUG:
+  the static Pages build bakes value="" into the input (no server to
+  interpolate ?q=), and the initial() block only MIGRATED ?s= (a ?q= load
+  never seeded the input) — so the page ran() on an empty query and showed
+  "Showing all 0 entries" + the no-results block. Fixed: initial() now
+  seeds the input from ?q= / ?s= (or a raw querystring fragment) on load,
+  then run() fires. Live-proven on the public site: /search/?q=naira →
+  input "naira", "2 results for naira", 2 cards; /search/?s=emergency fund
+  → migrates to ?q= and finds 2 results; /search/?q=zzqxjvvv → "0 results"
+  + the .es no-results block with the ₦ glyph. The 404 page's own search
+  pill submits natively (requestSubmit) → /search/?q=naira, 2 results.
+- Gates 5/5 green (95/95 vectors); shipped main `ec346fa` → pages-dist
+  `be95893` (Pages `built`, served /search/ sha-identical to the build).
+
 ## [0.5.0] — 2026-09-27
 
 ### King's next round — search upgrade + pages, single-image lightbox, copy-link follow-up
