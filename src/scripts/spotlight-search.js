@@ -179,9 +179,19 @@ import { norm, toks, smartMatch, highlight, escHtml } from './search-core.js';
     if ('Escape' === e.key) { e.preventDefault(); close(); }
     if ('ArrowDown' === e.key) { e.preventDefault(); sel = Math.min(sel + 1, data.length - 1); highlightActive(); }
     if ('ArrowUp' === e.key) { e.preventDefault(); sel = Math.max(sel - 1, 0); highlightActive(); }
-    if ('Enter' === e.key && sel >= 0 && data[sel] && data[sel].url) {
+    if ('Enter' === e.key) {
       e.preventDefault();
-      window.location = data[sel].url;
+      if (sel >= 0 && data[sel] && data[sel].url) {
+        window.location = data[sel].url;
+        return;
+      }
+      // WP contract (spotlight-search.js:537-545): with no highlighted row,
+      // Enter submits — WP routes ?s= to its search template. The static
+      // build's /?s= is the homepage, so route it to the /search/ page.
+      var v2 = input.value.trim();
+      if (v2.length) {
+        window.location = INDEX_BASE + 'search/?q=' + encodeURIComponent(v2);
+      }
     }
   });
 

@@ -121,15 +121,20 @@ import { norm, toks, smartMatch, highlight, escHtml } from './search-core.js';
     } catch (e) {}
   }
 
-  // Accept the theme's ?s= dialect as well as ?q= on load.
+  // Accept ?q= (the page's dialect), ?s= (WP's) and a raw querystring
+  // fragment on load. NOTE: the static Pages build bakes value="" into the
+  // input (no server) — so the ?q= load MUST seed the input here, then run().
   (function initial() {
     try {
       var u = new URL(window.location.href);
-      var sq = u.searchParams.get('s');
       var qq = u.searchParams.get('q');
-      if (sq !== null && sq !== '' && qq === null) {
-        input.value = sq.slice(0, 80);
-        try { u.searchParams.delete('s'); u.searchParams.set('q', sq.slice(0, 80)); window.history.replaceState(null, '', u.toString()); } catch (e2) {}
+      var sq = u.searchParams.get('s');
+      var raw = (!qq && !sq && u.search.length > 1) ? u.search.slice(1) : '';
+      var seed = qq || sq || raw;
+      if (seed) {
+        seed = seed.slice(0, 80);
+        input.value = seed;
+        try { u.searchParams.delete('s'); u.searchParams.set('q', seed); window.history.replaceState(null, '', u.toString()); } catch (e2) {}
       }
     } catch (e) {}
   })();

@@ -4,6 +4,24 @@ Ledger law: every order gets a line here immediately. `CODED-UNCOMMITTED ≠ DON
 a fix is done only when the served bytes and the rendered page prove it.
 Read this at session start.
 
+## NEXT ROUND — King's 4 bug reports, 2026-09-28 (screenshots: /search/ + 404 + spotlight)
+
+- [ ] **B1. "Search form looks ugly and large. Why the excessive space"** —
+      the /search/ + /404/ search pill renders oversized with extra vertical
+      space vs the theme's .search-pill. Root-cause against the live WP
+      capture before touching CSS.
+- [ ] **B2. "Search drop-down doesn't seem to be upgraded too"** — the
+      spotlight overlay dropdown on the built site doesn't show the upgraded
+      engine's results. Verify the wrapper's index wiring + render path live.
+- [ ] **B3. "Hitting enter in the Search drop-down redirects to the homepage"** —
+      theme contract (spotlight-search.js:541): Enter navigates to the
+      highlighted result; with no highlight WP submits ?s= which WP routes to
+      the search template. The static port's /?s= just shows the homepage.
+- [ ] **B4. "/search/?q=naira directed me to an empty search page"** —
+      "Showing all 0 entries" + no-results block on a ?q=naira load. Static
+      Pages build bakes value="" (no server); initial() never reads ?q= into
+      the input (only migrates ?s=).
+
 ## NEXT ROUND — King's 3 orders, 2026-09-27 ("Now next things to do" + copy-link follow-up)
 
 - [x] **1. Single images use the lightbox** — VERIFIED, NOT A PORT BUG: the

@@ -1,5 +1,6 @@
 ---
-import { SITE, NAV, TICKER_STATIC, POSTS, catBySlug, type NavItem } from "../data/site";
+import { SITE, NAV, TICKER_STATIC, catBySlug, type NavItem } from "../data/site";
+import { TOOLS, allArticles as allPosts, fmtMonthYear } from "../data/content";
 import "../styles/base.css"; // WP stylesheet section 2 (RESET/BASE) — the anchor reset
 import "../styles/header.css";
 import Footer from "../components/Footer.astro";
@@ -70,17 +71,43 @@ const mobileNavHtml = `<ul class="mno-list">${NAV.map(mobileNavItem).join("")}</
 
 const newsletterHref = `${base}#newsletter`;
 
-// Spotlight search index: title + excerpt from the POSTS array, the same
-// source the Astro pages render from. Kept tiny so the inline script can
-// search fully client-side (no REST index on a static site).
-const searchIndex = POSTS.map((p) => ({
-  title: p.title,
-  excerpt: p.excerpt,
-  url: `${base}articles/${p.slug}/`,
-  date: p.date,
-  mins: p.readMins,
-  cat: catBySlug(p.category).name,
-}));
+// Spotlight search index: ONE corpus shared with the /search/ results page —
+// every article (title/excerpt/category-name/date/read-mins, badge/art/emoji
+// for the engine's map) AND every calculator. The old 7-item POSTS-only array
+// left the calculators unsearchable in the spotlight (the /search/ page
+// searched 31 items; the drop-down only 7 — found by probing the built page).
+const posts = await allPosts(); // async getCollection — Layout renders after the await
+const searchIndex = [
+  ...posts.map((p) => {
+    const c = catBySlug(p.data.category);
+    return {
+      title: p.data.title,
+      excerpt: p.data.description,
+      url: `${base}articles/${p.slug}/`,
+      date: fmtMonthYear(p.data.pubDate),
+      mins: p.data.readMins,
+      cat: c?.name ?? "Finance",
+      category: p.data.category,
+      badge: c?.badge ?? "bsl",
+      art: c?.art ?? "",
+      emoji: c?.emoji ?? "",
+      kind: "article",
+    };
+  }),
+  ...TOOLS.map((t) => ({
+    title: t.name,
+    excerpt: t.desc,
+    url: `${base}tools/${t.slug}/`,
+    date: "",
+    mins: 1,
+    cat: "Calculator",
+    category: "tools",
+    badge: "bsl",
+    art: "",
+    emoji: "",
+    kind: "tool",
+  })),
+];
 const searchIndexJson = JSON.stringify(searchIndex).replace(/</g, "\\u003c");
 const searchBase = `${base}search/`;
 ---
@@ -451,8 +478,11 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--gold-b);outline-off
 .video-facade{position:relative;display:grid;place-items:center;gap:12px;text-align:center;background:var(--dark);color:#f0ede6;border-radius:var(--r-lg);margin-top:20px;padding:48px 20px;min-height:220px;overflow:hidden}
 .video-facade p{font-size:14px;color:#c4b89a}
 .video-emoji{font-size:40px;color:var(--gold-b);line-height:1}
-/* Search + forms */
-.search-form{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+/* Search + forms — WP carries NO form margin; the old port's margin-top:20px
+   leaked into the theme's .search-pill (rendered 74px vs WP's 54px, found by
+   measuring). WP's flex-wrap:wrap is also wrong for the pill (the label +
+   button row never wraps inside a 420px pill; it only squeezed the field). */
+.search-form{display:flex;align-items:center;gap:8px}
 .search-form .form-input{flex:1 1 220px;min-width:0}
 .form-input{width:100%;min-height:48px;padding:12px 14px;border-radius:var(--r-md);border:1px solid var(--border);background:var(--surface-2);color:var(--text);font:inherit;font-size:1rem}
 .form-input:focus{outline:2px solid var(--gold);outline-offset:1px}
