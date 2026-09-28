@@ -54,6 +54,10 @@ src/styles/article.css        # the article slice of the theme stylesheet, verba
 src/styles/prose.css          # the port's own .art-body prose, for about/contact only
 src/styles/header.css         # header/ticker/search/theme-pill styles + responsive blocks
 src/styles/home.css           # homepage slice of the theme stylesheet, source order kept
+src/styles/search404.css      # WP slice — /search/ + /404/ vocabulary (.phd, .search-pill, .error-404, .es-*), 31 rules verbatim
+src/scripts/search-core.js    # the smart search engine (ONE copy shared by the overlay + /search/): scoring, fuzzy, diacritics, highlight
+src/scripts/spotlight-search.js  # the header spotlight panel over the embedded JSON index (theme spotlight-search.js port)
+src/scripts/search-results.js # the /search/ results page controller (same engine, theme card anatomy)
 src/styles/base.css           # WP stylesheet section 2 (RESET/BASE): full base layer — `*` reset, anchor reset, replaced-element max-width, img block, heading tracking, control fonts, hidden utility
 src/styles/forms.css          # WP stylesheet section 46 (FORMS): control geometry, labels, submit/status chrome
 src/styles/footer.css         # footer grid, CTAs, socials, bottom bar + responsive/touch blocks
