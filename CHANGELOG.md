@@ -3,6 +3,32 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.5.2] — 2026-09-28
+
+### King's 2 orders — the author badge/star + the real gravatar
+
+- **Author label/star on his comments** — the Worker hardcoded
+  `is_author: false` on every row, so the gold AUTHOR pill
+  (vibe-comments.gold.css §6 — the plugin's own badge, gold skin) never
+  rendered on the author's replies. Derived truth, no new column:
+  `is_author = avatar_hash ∈ AUTHOR_HASHES` (SHA-256 of each deploy-time
+  author address), computed once per request and passed down the tree
+  (children included). Live-proven: desk reply is_author TRUE, public tree
+  carries it, guest comments stay FALSE. Smoke extended to 66 (15b block:
+  desk-reply identity + public-tree flag), live 65/65 ALL GREEN.
+- **The real gravatar** — "my gravatar is on godschi10@gmail.com": the
+  author surfaces hashed hi@gwillchijioke.com, which serves the wavatar
+  placeholder cartoon; the Gmail address serves the REAL photo (verified by
+  vision: grayscale portrait on teal). Worker KING_EMAILS = [gmail, hi@]
+  (gravatar from the Gmail), production D1 migrated: 9 author rows moved
+  7d22209… → cd2c5f95… (verified: 9/9 on the new hash), and the article
+  page's GRAVATAR constant + the moderation-desk reply path all key off the
+  Gmail hash. Local + served article pages verified: .art-avatar +
+  .abio 48px both serve cd2c5f95 (real photo, 48×48 natural on scroll).
+- Worker deployed `83628b89`; smoke rows purged from production D1 (14
+  rows, verify: only the King's own seeded QA row id 1056 remains).
+- Gates 5/5 green (95/95 vectors).
+
 ## [0.5.1] — 2026-09-28
 
 ### King's verdict on v0.5.0 — 4 live-reported search defects, all fixed

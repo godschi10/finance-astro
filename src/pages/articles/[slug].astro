@@ -173,8 +173,11 @@ const FALLBACK_BIO =
 const bio = author.bio?.trim() ? author.bio : FALLBACK_BIO;
 
 // get_avatar(), single.php:92 (20px, class art-avatar) and :158 (48px, lazy).
+// 2026-09-28 King: "my gravatar is on godschi10@gmail.com" — the real photo
+// lives on the Gmail address (verified: grayscale portrait on teal); the old
+// hi@gwillchijioke.com hash served the wavatar placeholder cartoon.
 const GRAVATAR =
-  "https://secure.gravatar.com/avatar/7d222093d563709bc3e8455fbf3164e5588becb2cb0c969dd8f5a9bd62754a86";
+  "https://secure.gravatar.com/avatar/cd2c5f952ac6bbcba85fbf973b030b6d5af4f62f46e3c4a37abbcb7dfc28b6a9";
 
 // The newsletter blocks are gated on the same two options in WordPress
 // (single.php cond. 11), both of which default to on.

@@ -4,6 +4,28 @@ Ledger law: every order gets a line here immediately. `CODED-UNCOMMITTED ≠ DON
 a fix is done only when the served bytes and the rendered page prove it.
 Read this at session start.
 
+## NEXT ROUND — King's 2 orders, 2026-09-28 v2 (screenshots: comments + /search/ focus)
+
+- [x] **C1. "My comments needs to be showing an author label or star like social
+      media. And my gravatar is on godschi10@gmail.com"** — SHIPPED v0.5.2:
+      the Worker hardcoded is_author:false on every row → the gold AUTHOR pill
+      never rendered on the author's replies. Derived truth (no new column):
+      is_author = avatar_hash ∈ AUTHOR_HASHES (SHA-256 of deploy-time author
+      addresses), computed once per request, passed down the tree.
+      Live-proven: desk reply TRUE, public tree TRUE, guests FALSE. Smoke 66
+      (15b block), live 65/65 ALL GREEN. Worker `83628b89`.
+      GRAVATAR: author surfaces hashed hi@ (wavatar cartoon); godschi10@
+      serves the REAL photo (vision-verified: grayscale portrait on teal).
+      KING_EMAILS = [gmail, hi@]; production D1 migrated 9 author rows
+      7d22209… → cd2c5f95… (verified 9/9); article page GRAVATAR + desk reply
+      key off the Gmail hash; .art-avatar + .abio serve cd2c5f95 (48×48).
+      Smoke rows purged (14; only the King's seeded QA row 1056 remains).
+- [ ] **C2. "What is that ugly thick orange border inside the form, should it
+      look like that"** — the /search/ field shows a thick amber border on
+      tap. Suspect: the theme's .search-field:focus-visible 2px gold outline
+      (+offset 2px) stacked with the pill's focus-within ring. Measure port
+      vs live WP @390 dark on a REAL tap before touching anything.
+
 ## NEXT ROUND — King's 4 bug reports, 2026-09-28 (screenshots: /search/ + 404 + spotlight)
 
 - [x] **B1. "Search form looks ugly and large. Why the excessive space"** —
