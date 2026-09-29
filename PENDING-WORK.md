@@ -20,6 +20,11 @@ Read this at session start.
       7d22209… → cd2c5f95… (verified 9/9); article page GRAVATAR + desk reply
       key off the Gmail hash; .art-avatar + .abio serve cd2c5f95 (48×48).
       Smoke rows purged (14; only the King's seeded QA row 1056 remains).
+      LIVE VERDICT on the public site: the gold AUTHOR pill renders on the
+      King's own comments — same row as the name, 14px after it, 22px pill,
+      hairline gold border rgba(217,119,6,.25) + gold text (like social
+      media); guest comments carry NO badge. His screenshot (18:07) predates
+      this deploy — badge shipped after.
 - [ ] **C2. "What is that ugly thick orange border inside the form, should it
       look like that"** — the /search/ field shows a thick amber border on
       tap. Suspect: the theme's .search-field:focus-visible 2px gold outline
