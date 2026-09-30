@@ -90,8 +90,12 @@ const checks = [
   ["stats strip is a sibling of .hero, not nested in it",
     indexTpl.indexOf('class="stat-strip"') > indexTpl.indexOf("</section>")],
   ["four stat cells", count(indexTpl, 'class="si"') === 4],
-  ["stat numbers are WP's live values, static", has(indexTpl, '<div class="si-n">10+</div>') && has(indexTpl, '<div class="si-n">12+</div>') && has(indexTpl, '<div class="si-n">2+</div>') && has(indexTpl, '<div class="si-n">₦ 0</div>')],
-  ["stat labels", has(indexTpl, "In-depth guides") && has(indexTpl, "Finance apps reviewed") && has(indexTpl, "All data current") && has(indexTpl, "Free to read")],
+  // 2026-09-30 King order: "All data current seems useless, should be
+  // replaced with the number of money calculators" — the strip prints REAL
+  // build-computed counts (articles, apps, calculators) instead of the
+  // invented "10+/12+/2+ All data current" trio.
+  ["stat numbers are computed, not frozen literals", /\{posts\.length\}/.test(indexTpl) && /\{APPS\.length\}/.test(indexTpl) && /\{importedTools\.length\}/.test(indexTpl) && has(indexTpl, '<div class="si-n">₦ 0</div>') && !has(indexTpl, "All data current") && !/si-n">1[02]\+/.test(indexTpl)],
+  ["stat labels", has(indexTpl, "In-depth guides") && has(indexTpl, "Finance apps reviewed") && has(indexTpl, "Money calculators") && has(indexTpl, "Free to read")],
   ["no counter animation (WP has none)", !has(indexTpl, "data-count") && !has(indexJs, "requestAnimationFrame")],
 
   // ── 4. featured ───────────────────────────────────────────────────────────

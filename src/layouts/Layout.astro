@@ -1,5 +1,6 @@
 ---
 import { SITE, NAV, TICKER_STATIC, catBySlug, type NavItem } from "../data/site";
+import { FX_SNAPSHOT_TS } from "../data/fx-snapshot";
 import { TOOLS, allArticles as allPosts, fmtMonthYear } from "../data/content";
 import "../styles/base.css"; // WP stylesheet section 2 (RESET/BASE) — the anchor reset
 import "../styles/header.css";
@@ -512,7 +513,7 @@ main{display:block;min-width:0}
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <div id="top"></div>
-<nav class="ticker" aria-label="Market ticker"><div class="ticker-drag"><div class="ticker-inner">
+<nav class="ticker" data-ts={FX_SNAPSHOT_TS} aria-label="Market ticker"><div class="ticker-drag"><div class="ticker-inner">
 {TICKER_STATIC.map((t) => (<div class="ti" data-src={t.src} data-pair={t.label}><span class="t-pair">{t.label}</span><span class="t-rate">{t.value}</span></div>))}
 {TICKER_STATIC.map((t) => (<div class="ti" aria-hidden="true" data-src={t.src} data-pair={t.label}><span class="t-pair">{t.label}</span><span class="t-rate">{t.value}</span></div>))}
 </div></div></nav>
@@ -740,6 +741,7 @@ if (window.matchMedia && window.matchMedia('(hover: none)').matches) {
 </script>
 <script>
   import "../scripts/spotlight-search.js";
+  import "../scripts/ticker-live.js";
 </script>
 <script src="../scripts/gwill-forms.js"></script>
 </body>

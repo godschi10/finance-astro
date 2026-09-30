@@ -18,7 +18,12 @@ const newsletterMobile = 'Subscribe to Newsletter →';
 const placeholder = "Search savings, investing, cards";
 const tpSegs = ["dark", "system", "light"];
 const tickerVals = ["USD/NGN", "GBP/NGN", "EUR/NGN", "BTC/USD", "ETH/USD", "XAU/USD"];
-const tickerRates = ["₦1,336", "₦1,786", "₦1,533", "$80,469", "$2,583", "$4,379"];
+// 2026-09-30: ticker values are REWRITTEN every build by
+// scripts/fetch-snapshot.mjs from the live feeds — freezing literals here
+// would fail correct builds. Assert the anatomy instead: every pair carries
+// a properly formatted (₦/$ + thousands) value, and the generated file
+// declares itself as build-time data.
+const pairRx = (p) => new RegExp(`label: "${p}", value: "[$₦][0-9,]+", src: "(fx|btc|eth|gold)"`);
 
 const forbidden = [
   "gwillfinance",
@@ -63,7 +68,8 @@ const checks = [
   ["ticker has .t-pair/.t-rate", layout.includes("class=\"t-pair\"") && layout.includes("class=\"t-rate\"")],
   ["ticker NAV nested children (site.ts)", site.includes("children:")],
   ["ticker all 6 pairs in TICKER_STATIC", tickerVals.every((p) => site.includes(p))],
-  ["ticker all 6 rates in TICKER_STATIC", tickerRates.every((r) => site.includes(r))],
+  ["ticker all 6 rates well-formed (generated per build)", ["USD/NGN","GBP/NGN","EUR/NGN","BTC/USD","ETH/USD","XAU/USD"].every((p) => pairRx(p).test(site))],
+  ["ticker marked generated + layout carries data-ts stamp", /REWRITTEN at build time by scripts\/fetch-snapshot\.mjs/.test(site) && /data-ts=\{FX_SNAPSHOT_TS\}/.test(layout)],
   ["newsletter CTA links to ${base}#newsletter", layout.includes("newsletterHref") && layout.includes("${base}#newsletter")],
   ["nested nav: All Articles > Investing > Fixed Income", site.includes("All Articles") && site.includes("Investing") && site.includes("Fixed Income") && site.includes("category/investing/fixed-income/")],
   ["mobile accordion sub-menu class", /\bsub-menu\b/.test(layout)],

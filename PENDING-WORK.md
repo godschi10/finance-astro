@@ -31,6 +31,16 @@ Read this at session start.
       (+offset 2px) stacked with the pill's focus-within ring. Measure port
       vs live WP @390 dark on a REAL tap before touching anything.
 
+## NEXT ROUND — King's orders, 2026-09-30 v9
+
+- [x] **T1. Top currency strip stale vs calculators** — build-time fetch
+      pipeline (fetch-snapshot.mjs regenerates FX+crypto+gold into
+      fx-snapshot.ts/TICKER_STATIC each build); ticker-live.js ported;
+      converter/history/amount figures computed; home stats strip now real
+      counts (King: "replace All data current with calculators count").
+- [ ] **T1-followup (optional)**: weekly cron rebuild already covered by
+      normal ship cadence; flag if King wants scheduled auto-rebuilds.
+
 ## NEXT ROUND — King's orders, 2026-09-30 v8
 
 - [x] **G3. Import About/Affiliate/Privacy/Disclaimer/Newsletter/Contact +

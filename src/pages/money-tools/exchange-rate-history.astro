@@ -9,7 +9,7 @@ const anchor = FX_SNAPSHOT.rates.NGN;
 const seed = fxHistorySummary([{ date: "2026-09-01", ngn: anchor }], anchor);
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
-<ToolShell title="Dollar to Naira Trend, 30/90-Day History - GWill Finance" description="USD to NGN trend over 30 or 90 days. The chart builds from live feed points your device collects — no invented history." slug="exchange-rate-history" tool="$ USD to Naira Rate History" crumb="Rate History Chart" lede="The dollar-naira rate steps, it does not drift. Watch the window below — every point is a real fetched rate, timestamped." verified="Snapshot anchor ₦1,482 · Sep 2026 — live points added on each visit" faqs={[
+<ToolShell title="Dollar to Naira Trend, 30/90-Day History - GWill Finance" description="USD to NGN trend over 30 or 90 days. The chart builds from live feed points your device collects — no invented history." slug="exchange-rate-history" tool="$ USD to Naira Rate History" crumb="Rate History Chart" lede="The dollar-naira rate steps, it does not drift. Watch the window below — every point is a real fetched rate, timestamped." verified={`Snapshot anchor ₦${anchor.toLocaleString("en-US", { maximumFractionDigits: 0 })} · ${FX_SNAPSHOT.as_of} — live points added on each visit`} faqs={[
   { q: "Where does the history come from?", a: "Your browser fetches the current rate on each visit and keeps dated points on this device. No backfilled or invented points — the chart starts empty and earns its shape." },
   { q: "Why only 30 or 90 days?", a: "Those are the windows that matter for sending, pricing, and holding decisions. Older points age out automatically." },
 ]}
@@ -28,7 +28,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-sub" id="xh-sub">Snapshot anchor — fetch live to start the trend</p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div id="xh-chart" role="img" aria-label="Dollar to naira trend chart"></div>
-<p class="receipt-foot" id="xh-foot">Snapshot · Sep 2026</p>
+<p class="receipt-foot" id="xh-foot">Snapshot · {FX_SNAPSHOT.as_of}</p>
 </div>
 </div>
 </ToolShell>

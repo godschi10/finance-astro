@@ -2,7 +2,9 @@
 import Layout from "../layouts/Layout.astro";
 import ArticleCard from "../components/ArticleCard.astro";
 import { SITE, CATEGORIES, catBySlug, FEATURED_SLUG } from "../data/site";
-import { allArticles, fmtMonthYear } from "../data/content";
+import { allArticles, fmtMonthYear, APPS } from "../data/content";
+import { readdirSync } from "node:fs";
+import { resolve } from "node:path";
 
 // Faithful port of front-page.php (gwill-finance-theme 1.13.39), sections 2-8.
 // Section 1 (template bootstrap) has no markup; the stray unmatched </div> at
@@ -18,6 +20,13 @@ const featured = posts.find((p) => p.slug === FEATURED_SLUG) ?? posts[0];
 const grid = posts.slice(0, 9);
 const fcat = catBySlug(featured.data.category);
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+// 2026-09-30 King order: the stats strip must print REAL current counts, not
+// invented ones ("2+ All data current" was fabricated). Counts are computed
+// from the actual site content at BUILD time — articles from the content
+// collection, apps from APPS data, calculators from the money-tools pages
+// that exist on disk — so they can never drift out of date again.
+const importedTools = readdirSync(resolve("src/pages/money-tools")).filter(
+  (f) => f.endsWith(".astro") && f !== "index.astro" && f !== "[amount].astro");
 const furl = `${base}articles/${featured.slug}/`;
 // WP prints the featured excerpt through wp_trim_words( get_the_excerpt(), 32 ).
 const trim32 = (s: string) => {
@@ -46,9 +55,9 @@ const trim32 = (s: string) => {
 
 <!-- ══════ 3. stats strip ══════ -->
 <div class="stat-strip">
-<div class="si"><div class="si-n">10+</div><div class="si-l">In-depth guides</div></div>
-<div class="si"><div class="si-n">12+</div><div class="si-l">Finance apps reviewed</div></div>
-<div class="si"><div class="si-n">2+</div><div class="si-l">All data current</div></div>
+<div class="si"><div class="si-n">{posts.length}</div><div class="si-l">In-depth guides</div></div>
+<div class="si"><div class="si-n">{APPS.length}</div><div class="si-l">Finance apps reviewed</div></div>
+<div class="si"><div class="si-n">{importedTools.length}</div><div class="si-l">Money calculators</div></div>
 <div class="si"><div class="si-n">₦ 0</div><div class="si-l">Free to read</div></div>
 </div>
 

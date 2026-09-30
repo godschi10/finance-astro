@@ -3,6 +3,44 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.6.7] — 2026-09-30
+
+### Build-time data freshness — ticker, converter, amount pages, stats strip
+
+- **[FIX] Home stats strip** (King: "All data current seems useless"): the
+  invented trio (10+ / 12+ / "2+ All data current") is replaced with REAL
+  build-computed counts — articles from the content collection, apps from
+  APPS, money calculators from the shipped money-tools pages (15 / 3 / 16 /
+  ₦ 0 today; they update themselves every build).
+- **[NEW] scripts/fetch-snapshot.mjs** runs as step 1 of `npm run build`:
+  fetches open.er-api.com (the converter's own feed) + Coinbase BTC/ETH +
+  gold-api XAU and REWRITES fx-snapshot.ts + TICKER_STATIC at build time.
+  The top currency strip and the calculators now share ONE source of truth —
+  the stale "₦1,336 vs ₦1,482 vs live ₦1,327" three-way disagreement is
+  structurally impossible now. Fetch failure keeps the previous stamped
+  snapshot (honest, never blanked).
+- **[NEW] ticker-live.js ported VERBATIM** from the theme (assets/js/
+  ticker-live.js): live price refresh (60s localStorage cache + data-ts skip)
+  and the hover/drag marquee pause, which the port never had. .ticker now
+  carries data-ts={FX_SNAPSHOT_TS}.
+- **[FIX] currency converter**: hero badge + verified line + baked prose
+  figures ($100→₦132,724.16, $1,000→$0.75, £50→₦, spot) all COMPUTED from
+  the build snapshot (was four hardcoded stale numbers, incl. a fake
+  "updated 30 Sep 2026, 00:02" badge); receipt foot falls back to the real
+  as_of, not "Sep 2026".
+- **[FIX] amount pages unit line now prints 4dp both directions** exactly
+  like page-amount-converter.php (1 USD = ₦1,327.2416 · 1 NGN = $0.0008 —
+  the tiny ₦→$ rate no longer truncates to "$0.00"), server + live-refresh.
+- **[FIX] exchange-rate-history** snapshot anchor derives from the build
+  feed (was "₦1,482 · Sep 2026"); footer stamps derive likewise.
+- Savings-rate "verified September 2026" STAYS — it is a human-maintained
+  marketing table, the stamp is honest and not build-fetchable.
+- Gates: header gate pins ticker ANATOMY + generation marker (not frozen
+  values); homepage gate pins the computed stats contract. All 5 gates PASS;
+  accuracy audit 26/26; browser-proven local: ticker refreshes from cold
+  cache, converter receipt goes "Live · Wed, 30 Sep 2026", $1,000 page reads
+  ₦1,327,242 · unit line matches live bytes.
+
 ## [0.6.6] — 2026-09-30
 
 ### Content pages imported + canonical posts imported — forms are REAL now

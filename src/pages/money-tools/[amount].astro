@@ -5,6 +5,13 @@ import {
   amountSiblings, amountOpposite, amountSeo, amountConfig, amountFmt,
 } from "../../lib/amount";
 import { FX_SNAPSHOT, FX_SNAPSHOT_LABEL } from "../../data/fx-snapshot";
+import { fxNumber, fxCurrencies } from "../../lib/fx";
+// The live template (page-amount-converter.php:118-125) prints the unit line
+// with gwill_fx_number($rate, 4) — 4dp on both directions, so a ₦→$ of
+// 0.0008 never truncates to "$0.00". Mirror that exactly (King accuracy order).
+const fxSym = (c: string) => fxCurrencies()[c]?.symbol ?? "$";
+const unitLineOf = (u: number, r: number, from: string, to: string) =>
+  `1 ${from} = ${fxSym(to)}${fxNumber(u, 4)} · 1 ${to} = ${fxSym(from)}${fxNumber(r, 4)}`;
 export function getStaticPaths() {
   return amountSlugs().map((slug) => ({ params: { amount: slug } }));
 }
@@ -21,7 +28,7 @@ const faqs = d.cfg.content.faqs.map((f) => ({ q: f.q, a: amountRenderText(f.a, t
 const sibs = amountSiblings(slug).map((s) => ({ slug: s, h1: amountSeo(s, amountConfig(s)!).h1 }));
 const opps = amountOpposite(slug).map((s) => ({ slug: s, h1: amountSeo(s, amountConfig(s)!).h1 }));
 const equation = `${amountFmt(d.amount, d.from)} = ${amountFmt(d.converted, d.to)}`;
-const unitLine = `1 ${d.from} = ${amountFmt(d.unit_rate, d.to)} · 1 ${d.to} = ${amountFmt(d.rev_rate, d.from)}`;
+const unitLine = unitLineOf(d.unit_rate, d.rev_rate, d.from, d.to);
 ---
 <ToolShell title={`${d.seo.title} - GWill Finance`} description={d.seo.meta_desc} slug={slug} tool={d.seo.h1} lede={lede} verified={`Mid-market ${FX_SNAPSHOT.as_of} (${FX_SNAPSHOT_LABEL}) · receipt refreshes live`} badge={`Live rate · updated ${FX_SNAPSHOT.as_of}`} faqs={faqs} rawFaq>
 <div class="fx-card">
@@ -44,7 +51,7 @@ const unitLine = `1 ${d.from} = ${amountFmt(d.unit_rate, d.to)} · 1 ${d.to} = $
 <div data-amount-slug={slug} hidden></div>
 <script>
 import { amountPageData, amountFmt } from "../../lib/amount";
-import { fxFetchLive } from "../../lib/fx";
+import { fxFetchLive, fxNumber, fxCurrencies } from "../../lib/fx";
 const holder = document.querySelector("[data-amount-slug]");
 const slug = holder && (holder as HTMLElement).dataset.amountSlug || "";
 (async () => {
@@ -61,7 +68,8 @@ const slug = holder && (holder as HTMLElement).dataset.amountSlug || "";
     const unit = document.getElementById("am-unit");
     const foot = document.getElementById("am-foot");
     if (fig) fig.textContent = amountFmt(d.converted, d.to);
-    if (unit) unit.textContent = `1 ${d.from} = ${amountFmt(d.unit_rate, d.to)} · 1 ${d.to} = ${amountFmt(d.rev_rate, d.from)} · live · mid-market, before provider fees`;
+    const sym = (c: string) => fxCurrencies()[c]?.symbol ?? "$";
+    if (unit) unit.textContent = `1 ${d.from} = ${sym(d.to)}${fxNumber(d.unit_rate, 4)} · 1 ${d.to} = ${sym(d.from)}${fxNumber(d.rev_rate, 4)} · live · mid-market, before provider fees`;
     if (foot) foot.textContent = "Live · " + (live.as_of || "just now");
   } catch { /* snapshot stands, honestly labeled */ }
 })();
