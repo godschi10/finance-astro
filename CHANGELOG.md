@@ -3,6 +3,30 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.6.5] — 2026-09-30
+
+### Calculator accuracy certification + two real bugs fixed
+
+- **New gate: `scripts/tool-accuracy-audit.mjs`** — drives all 26 money-tool
+  pages in a real browser (CDP): feeds each calculator its input ids, asserts
+  zero JS exceptions/console errors, every wired result element exists, the
+  figure recomputes with the right currency token, and no
+  NaN/undefined/Infinity ever reaches visible text. Result: 26 PASS / 0 FAIL,
+  alongside 95/95 vectors-check against the PHP oracle.
+- **[FIX] Amount pages: live-FX refresh never ran.** The inline script used
+  `<script define:vars>` + ESM `import`, which Astro emits verbatim
+  (`SyntaxError: Cannot use import statement outside a module` on all 10
+  amount pages). Rewired as a bundlable module script reading the slug from a
+  `data-amount-slug` holder. The "refreshes live" promise is now true.
+- **[FIX] 50/30/20 calculator froze after the first keystroke.** The render
+  wrote `#bg-else` into `#bg-sub`, then overwrote `#bg-sub`'s whole
+  textContent — destroying the span; every later update threw
+  `TypeError: null.textContent`. The clobbering line is deleted (the span
+  update alone renders the leftover); full recalc works on every keystroke.
+- **[FIX] Amount pages had no `#am-foot` node** for the live timestamp to
+  land in — snapshot-stamped footer line added, honestly swapped for "Live ·"
+  when the feed answers.
+
 ## [0.6.4] — 2026-09-30
 
 ### Money Calculators imported (/tools/ → /money-tools/)

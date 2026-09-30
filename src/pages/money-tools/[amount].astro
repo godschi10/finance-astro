@@ -28,6 +28,7 @@ const unitLine = `1 ${d.from} = ${amountFmt(d.unit_rate, d.to)} · 1 ${d.to} = $
 <div class="fxap-hero">
 <p class="fxap-figure" id="am-fig"><span class="fxap-side">{amountFmt(d.amount, d.from)}</span><span class="fxap-eq">=</span><span class="fxap-side fxap-result" id="am-fig-r">{amountFmt(d.converted, d.to)}</span></p>
 <p class="fx-result-note" id="am-unit">{unitLine} · {FX_SNAPSHOT.as_of} · mid-market, before provider fees</p>
+<p class="fx-result-note" id="am-foot" style="opacity:.72">Snapshot · {FX_SNAPSHOT.as_of} · swaps to live timestamp when the feed answers</p>
 </div>
 </div>
 <div class="hr"></div>
@@ -40,12 +41,15 @@ const unitLine = `1 ${d.from} = ${amountFmt(d.unit_rate, d.to)} · 1 ${d.to} = $
 <h2 class="tool-h2">The other direction</h2>
 <p style="margin-top:8px">{opps.map((s, i) => (<span><a class="slink" href={pageUrl(s.slug)}>{s.h1}</a>{i < opps.length - 1 ? " · " : ""}</span>))}</p>
 </ToolShell>
-<script define:vars={{ slug }}>
+<div data-amount-slug={slug} hidden></div>
+<script>
 import { amountPageData, amountFmt } from "../../lib/amount";
 import { fxFetchLive } from "../../lib/fx";
-import { FX_SNAPSHOT } from "../../data/fx-snapshot";
+const holder = document.querySelector("[data-amount-slug]");
+const slug = holder && (holder as HTMLElement).dataset.amountSlug || "";
 (async () => {
   try {
+    if (!slug) return;
     const ctl = new AbortController();
     const t = setTimeout(() => ctl.abort(), 8000);
     const live = await fxFetchLive(ctl.signal);

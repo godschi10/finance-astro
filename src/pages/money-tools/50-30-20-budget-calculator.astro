@@ -55,7 +55,6 @@ function render() {
     Math.max(0, Number(g("bg-spn").value) || 0),
     Math.max(0, Number(g("bg-spw").value) || 0),
     Math.max(0, Number(g("bg-sps").value) || 0));
-  t("bg-sub").textContent = `Needs · wants · savings — leftover ${nn(plan.else)}`;
   (document.getElementById("bg-rn") as HTMLElement).textContent = nn(c.needs_remaining);
   (document.getElementById("bg-rw") as HTMLElement).textContent = nn(c.wants_remaining);
   (document.getElementById("bg-rs") as HTMLElement).textContent = nn(c.savings_remaining);

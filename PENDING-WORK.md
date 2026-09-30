@@ -31,6 +31,16 @@ Read this at session start.
       (+offset 2px) stacked with the pill's focus-within ring. Measure port
       vs live WP @390 dark on a REAL tap before touching anything.
 
+## NEXT ROUND — King's orders, 2026-09-30 v7
+
+- [x] **G2. "Make sure all calculators are accurate and without errors"** —
+      certified: tool-accuracy-audit 26/26 in real browser + vectors 95/95;
+      two genuine bugs found+fixed (amount live-refresh SyntaxError; 50/30/20
+      null-clobber freeze).
+- [ ] **G3. Import remaining pages: About, Affiliate, Privacy, Disclaimer,
+      Newsletter, Contact + anything left** — live captures in
+      finance-truth/pages/ (7×200); port next.
+
 ## NEXT ROUND — King's orders, 2026-09-30 v6
 
 - [x] **G1. "Import the money calculator (finance.fitnesslova.qzz.io/tools/),
