@@ -1,7 +1,7 @@
 /* GWill Finance static service worker (v1: installability + offline shell).
    No push in v1 — the subscription endpoint needs a server leg (see R2). */
 const CACHE = "gwill-fin-v1";
-const SHELL = ["./", "./articles/", "./tools/", "./manifest.webmanifest"];
+const SHELL = ["./", "./articles/", "./money-tools/", "./manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
