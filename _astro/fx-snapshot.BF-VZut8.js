@@ -1,1 +1,0 @@
-const s={rates:{USD:1,NGN:1482,GBP:.79,EUR:.92,CAD:1.36,AED:3.6725,SAR:3.75,GHS:16.2,XOF:565,XAF:565,CNY:6.74,JPY:159.9,INR:95.5,KES:129.5,EGP:54,ZAR:18.2},as_of:"Sep 2026 snapshot"},S="indicative snapshot — refresh for live";export{s as F,S as a};
