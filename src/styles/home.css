@@ -351,11 +351,54 @@
 [data-theme="dark"] .ad-txt { color: #5a5248; }
 
 /* --------------------------------------------------------------------------
-   SOURCE: style.css lines 2479-2481  ·  SECTION 36. APP CARDS (Finance Apps page)
-   PRIMARY SCOPE (2 rules in this group)
+   SOURCE: style.css lines 2444-2487  ·  SECTION 36. APP CARDS (Finance Apps page)
+   Complete block ported 2026-09-30 when /apps/ was imported from the live
+   page (King order: "Import finance.fitnesslova.qzz.io/apps/ page") — hero,
+   sticky tabs, card anatomy, empty state, plus the dark-hero breadcrumb
+   overrides from the §25 cluster (style.css:1985-1998).
    -------------------------------------------------------------------------- */
+.apps-hero { background: var(--dark); padding: 40px var(--con-pad); position: relative; overflow: hidden; border-bottom: 1px solid var(--dark-b); }
+.apps-tabs { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px var(--con-pad); position: sticky; top: var(--header-h); z-index: 50; }
+.apps-hero .gwill-breadcrumbs__list { color: rgba(240, 237, 230, 0.6); }
+.apps-hero .gwill-breadcrumbs__item a { color: rgba(240, 237, 230, 0.6); }
+.apps-hero .gwill-breadcrumbs__item a:hover { color: var(--gold); }
+.apps-hero .gwill-breadcrumbs__item--current { color: rgba(240, 237, 230, 0.85); }
+.app-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md);
+  overflow: hidden; transition: border-color var(--t-md), transform var(--t-md), box-shadow var(--t-md);
+}
+.app-card__head { padding: 20px 20px 16px; border-bottom: 1px solid var(--border-dim); }
+.app-card__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.app-card__left { display: flex; align-items: center; gap: 12px; }
+.app-card__icon {
+  width: 48px; height: 48px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--tile, #fef3c7), var(--tile-b, #fcd34d));
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; line-height: 1;
+}
+.app-card__title { font-size: 14px; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
+.app-card__title a { color: var(--text); }
+.app-card__title a:hover { color: var(--gold); }
+.app-card__host { font-size: 10px; font-weight: 300; color: var(--text-dim); }
+.app-card__desc { font-size: 12px; font-weight: 300; color: var(--text-dim); line-height: 1.65; margin: 0; }
+.app-card__stats { padding: 14px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; border-bottom: 1px solid var(--border-dim); }
+.app-card__stat { display: flex; flex-direction: column; gap: 2px; }
+.app-card__stat-label { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+.app-card__stat-val { font-size: 13px; font-weight: 800; }
+.app-card__foot { padding: 14px 20px; display: flex; gap: 8px; }
 .app-card__foot .btn { flex: 1; justify-content: center; }
+.app-card:hover { border-color: var(--gold-border); transform: translateY(-3px); box-shadow: var(--sh-gold); }
 .app-card .b-green, .app-card .b-ghost { position: relative; z-index: 1; }
+/* v1.0.163: pill filter hides non-matching cards (hidden attr = display:none
+   by default, but .app-card sets display via the grid, force it here). */
+.app-card[hidden] { display: none; }
+.apps-empty { padding: 48px 20px; text-align: center; color: var(--text-dim); font-size: 13px; }
+.apps-empty[hidden] { display: none; }
+@media (max-width: 767px) {
+  .apps-hero { padding: 28px 20px; }
+  .apps-tabs { padding: 10px 20px; }
+}
 
 /* --------------------------------------------------------------------------
    SOURCE: style.css lines 2556-2557  ·  SECTION 40. EMPTY STATE (404 + no search results)

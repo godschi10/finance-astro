@@ -116,35 +116,56 @@ export const TOOLS = [
 
 // Default apps directory entries (truth-theme ACF fallback: PiggyVest,
 // Grey, Risevest — honest copy, no sponsored order).
+// page-apps.php v1.0.163 ACF slots — the 3 live cards scraped from
+// finance.fitnesslova.qzz.io/apps/ on 2026-09-30 (slot 1-3 verbatim:
+// name, cat, url, badge, art tile colours, emoji, desc, stats triplets
+// [label, value, colourHint], review permalink slug). stats colour hints
+// map gold/green → theme tokens exactly like the template's stat-colour block
+// (a11y fix v1.0.145: raw CSS keywords failed WCAG on white).
 export const APPS = [
   {
     name: "PiggyVest",
-    category: "Savings",
-    emoji: "🐷",
+    cat: "Savings",
+    url: "https://piggyvest.com",
     badge: "bgn",
-    desc: "Automated savings with 17% flexible interest and up to 28% on fixed Safelocks. Best for building the habit.",
-    stats: [["Flexible", "17% p.a."], ["Safelock", "up to 28%"]],
-    url: "https://www.piggyvest.com/",
-    reviewSlug: "piggyvest-vs-cowrywise-2026",
+    art: "#fef3c7,#fcd34d",
+    emoji: "🐷",
+    desc: "Nigeria's most popular savings app. Lock money in flexible savings, fixed deposits, or investment portfolios. Earn up to 13% p.a. on naira savings.",
+    stats: [
+      ["Min. Deposit", "₦100", ""],
+      ["Interest p.a.", "Up to 13%", "green"],
+      ["Rating", "★ 4.6 / 5", "gold"],
+    ] as [string, string, string][],
+    review: "piggyvest-vs-cowrywise-2026",
   },
   {
     name: "Grey",
-    category: "Dollar Accounts",
+    cat: "Dollar Accounts",
+    url: "https://grey.co",
+    badge: "bg",
+    art: "#fef9ee,#fde68a",
     emoji: "💵",
-    badge: "bsl",
-    desc: "US, UK and EU receiving accounts with fast conversion to naira. Best for receiving wires cleanly.",
-    stats: [["Spread", "~1–1.5%"], ["Maintenance", "₦0"]],
-    url: "https://grey.co/",
-    reviewSlug: "grey-vs-geegpay-dollar-account",
+    desc: "Open a US dollar account in minutes. International payments, virtual cards, and competitive rate withdrawals to Nigerian banks.",
+    stats: [
+      ["Account Type", "USD · GBP · EUR", ""],
+      ["Free Withdrawals", "3 / month", "green"],
+      ["Rating", "★ 4.5 / 5", "gold"],
+    ] as [string, string, string][],
+    review: "grey-vs-geegpay-dollar-account",
   },
   {
     name: "Risevest",
-    category: "Investing",
+    cat: "Investing",
+    url: "https://rise.capital",
+    badge: "bgn",
+    art: "#dcfce7,#86efac",
     emoji: "📈",
-    badge: "bg",
-    desc: "Dollar-denominated US stocks and real-estate plans from naira. Best for hedging against devaluation.",
-    stats: [["Assets", "US stocks"], ["Start", "from $10"]],
-    url: "https://risevest.com/",
-    reviewSlug: "ngn-dollar-cost-averaging-guide",
+    desc: "Invest in US stocks, real estate, fixed-income directly from Nigeria. Low minimums, earnings returns, simple mobile interface.",
+    stats: [
+      ["Min. free", "$10", ""],
+      ["Returns (avg)", "10–15% p.a.", "green"],
+      ["Rating", "★ 4.4 / 5", "gold"],
+    ] as [string, string, string][],
+    review: "",
   },
 ];

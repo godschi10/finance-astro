@@ -31,6 +31,20 @@ Read this at session start.
       (+offset 2px) stacked with the pill's focus-within ring. Measure port
       vs live WP @390 dark on a REAL tap before touching anything.
 
+## NEXT ROUND — King's orders, 2026-09-30 v5
+
+- [x] **F1. "The x to clear the text in the search form doesn't look tied to
+      our site design"** — native WebKit search-cancel glyph suppressed;
+      branded .search-clear (the .gs-clear contract: 28px circle, text-dim,
+      gold hover, hidden at 0 chars) on /search/ + /404/. Proven by click test.
+- [x] **F2. "Import .../apps/ page"** — page-apps.php ported faithfully
+      (hero/tabs/cards/stats/foot JS/empty/ad slots, §36 CSS complete, live
+      ACF data x3). Filter behaviour proven live.
+- [x] **F3. "Make sure the og image is done properly and looks and has the
+      brand logo and design"** — og-default.png was a 404 phantom. Now:
+      featured hero per article (og:type=article + times/author), branded
+      gwill-social-share.png (1200×675 wordmark card) everywhere else.
+
 ## NEXT ROUND — King's 3 reports, 2026-09-30 v4 (screenshots: search form ring)
 
 - [x] **E1. "You didn't port author archive"** — right: the old page was an

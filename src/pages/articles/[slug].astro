@@ -155,10 +155,6 @@ const xUrl = `https://twitter.com/intent/tweet?text=${raw(d.title)}&url=${raw(pa
 const liUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${raw(pageUrl)}`;
 const waUrl = `https://api.whatsapp.com/send?text=${raw(`${d.title} ${pageUrl}`)}`;
 
-// single.php:98 — the "Updated" fragment is shown only when the modified DATE
-// differs at day precision, so a post edited the day it was published shows none.
-const isoDay = (x: Date) => x.toISOString().slice(0, 10);
-const showUpdated = !!d.updated && isoDay(d.updated) !== isoDay(d.pubDate);
 
 // single.php:180-202 — same-category posts first (WP: category__in, count 3,
 // date DESC), with the theme's fallback to the most recent posts. Rendered in
@@ -189,6 +185,17 @@ const newsletter = true;
 const ytId = d.videoUrl ? (d.videoUrl.match(/(?:v=|youtu\.be\/)([\w-]{6,})/)?.[1] ?? "") : "";
 
 const ld = (obj: unknown) => JSON.stringify(obj).replace(/</g, "\\u003c");
+// inc/social-meta.php gwill_social_meta_image(): is_singular + has_post_thumbnail
+// → the featured image at 'gwill-hero' (every article's hero is 1200×675, verified
+// against the files); King 2026-09-30: "make sure the og image is done properly
+// and looks and has the brand logo and design" — the brand share card (the wordmark
+// on the finance palette) is the fallback for every OTHER page via Layout.BRAND_SHARE.
+// 'c' date format = ISO+00:00 exactly like get_the_date('c') on live.
+const ogImg = d.image ? { url: d.image, width: 1200, height: 675, alt: d.imageAlt ?? d.title } : null;
+const isoC = (x: Date) => x.toISOString().slice(0, 19) + "+00:00"; // get_the_date('c'): no millis
+const isoDay = (x: Date) => x.toISOString().slice(0, 10);
+const showUpdated = !!d.updated && isoDay(d.updated) !== isoDay(d.pubDate);
+
 const articleLd = {
   "@context": "https://schema.org",
   "@type": "Article",
@@ -200,8 +207,7 @@ const articleLd = {
   mainEntityOfPage: pageUrl,
 };
 ---
-
-<Layout title={`${d.title} - GWill Finance`} description={d.description} crumb={d.title}>
+<Layout title={`${d.title} - GWill Finance`} description={d.description} crumb={d.title} ogImage={ogImg} isArticle={true} publishedTime={isoC(d.pubDate)} modifiedTime={d.updated ? isoC(d.updated) : undefined} articleAuthor={d.author}>
 <script type="application/ld+json" set:html={ld(articleLd)}></script>
 
 <!-- single.php:43 — reading progress -->

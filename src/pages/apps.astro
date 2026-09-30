@@ -1,63 +1,110 @@
 ---
+// Port of page-apps.php (gwill-finance-theme 1.13.39, v1.0.163 ACF slots) —
+// imported from the live https://finance.fitnesslova.qzz.io/apps/ capture
+// 2026-09-30 (King order: "Import .../apps/ page"). The old page was an
+// invented legal-hero anatomy with a pipe-parser dataset; this mirrors the
+// template's real structure, verified against the live HTML:
+//   5. .apps-hero (dark trust hero): dot-grid + gold-glow decorative layers,
+//      gwill_breadcrumbs() = Home › Finance Apps (page breadcrumb branch),
+//      inline gold "No paid placements · Independent rankings" badge pill,
+//      h1 + sub (inline styles exactly as the template prints them)
+//   6. .apps-tabs sticky strip: "All Apps" + one pill per unique category
+//      (canonical brand order Savings→Investing→Dollar Accounts…, emoji
+//      prefix from $gwill_cat_emoji, data-filter = letters-only slug)
+//   .con margin-top:32/padding-bottom:48: .ad-bg banner slot + .shd count
+//      line ("All Apps, 3 listed" · "Sorted by: Our Rating") + .g3 of
+//      .app-card (head/top/left/icon gradient tile/title link/host/badge/
+//      desc + stats grid with gold|green token colours + foot btns
+//      Open Account → / Full Review)
+//   9. .apps-empty + hidden #apps-load-more + rect ad slot
+// App data: the 3 live ACF slots verbatim (content.ts APPS). Full Review
+// links resolve to the port's own article slugs (the live slugs differ).
 import Layout from "../layouts/Layout.astro";
 import { APPS } from "../data/content";
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
-const cats = ["All", ...Array.from(new Set(APPS.map((a) => a.category)))];
+
+// ── 4. Category tabs, derived from the cards actually present (v1.0.163) ──
+const CAT_EMOJI: Record<string, string> = {
+  Savings: "💰", Investing: "📈", "Dollar Accounts": "💵",
+  Banking: "🏦", Crypto: "₿", Remittance: "✈️",
+};
+const CAT_ORDER = ["Savings", "Investing", "Dollar Accounts", "Banking", "Crypto", "Remittance"];
+const present = new Set(APPS.map((a) => a.cat));
+const cats = [...CAT_ORDER.filter((c) => present.has(c)), ...[...present].filter((c) => !CAT_ORDER.includes(c))];
+const tabs = [{ label: "All Apps", filter: "all" }, ...cats.map((c) => ({ label: `${CAT_EMOJI[c] ?? ""} ${c}`.trim(), filter: c.replace(/[^a-z]/gi, "") }))];
+
+// page-apps.php stat-colour block (a11y fix v1.0.145): hints gold/green map
+// to theme tokens, anything else passes through, default --text.
+const statColor = (hint: string) => (hint === "gold" ? "var(--gold)" : hint === "green" ? "var(--green)" : hint ? hint : "var(--text)");
+const hostOf = (url: string) => new URL(url).hostname;
 ---
-<Layout title="Finance Apps - GWill Finance" description="Nigerian finance apps, tested with real money: savings, dollar accounts, investing. No sponsored order." crumb="Finance Apps">
-<section class="legal-hero" aria-labelledby="apps-h">
-  <div class="con legal-hero-inner">
-    <p class="crumbs"><a href={base}>Home</a> › Apps</p>
-    <p class="legal-hero-label">App directory</p>
-    <h1 class="legal-hero-title" id="apps-h">Apps worth <span class="g">your naira.</span></h1>
-    <div class="ledger" aria-hidden="true"></div>
-    <p class="hero-sub">Every listing below held real money in testing. Order is by usefulness, never by payment — sponsored placement does not exist here.</p>
+<Layout title="Finance Apps - GWill Finance" description="Nigerian finance apps, ranked from real testing, savings, investing, dollar accounts and more. No paid placements, no hype." crumb="Finance Apps">
+<div class="apps-hero">
+  <div style="position:absolute;top:0;right:0;bottom:0;left:0;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:28px 28px;pointer-events:none"></div>
+  <div style="position:absolute;top:-80px;right:-80px;width:360px;height:360px;background:radial-gradient(circle,rgba(217,119,6,0.08) 0%,transparent 65%);pointer-events:none"></div>
+  <div style="position:relative;z-index:1;max-width:600px">
+    <nav class="gwill-breadcrumbs" aria-label="Breadcrumb">
+      <ol class="gwill-breadcrumbs__list">
+        <li class="gwill-breadcrumbs__item"><a href={base}><span>Home</span></a></li>
+        <li class="gwill-breadcrumbs__item gwill-breadcrumbs__item--current"><span aria-current="page">Finance Apps</span></li>
+      </ol>
+    </nav>
+    <div style="display:inline-flex;align-items:center;gap:8px;font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold-b);background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);padding:4px 12px;border-radius:var(--pill);margin-bottom:16px">No paid placements · Independent rankings</div>
+    <h1 style="font-size:36px;font-weight:800;letter-spacing:-0.04em;color:#f0ede6;line-height:1.1;margin-bottom:10px">Nigerian Finance Apps, Ranked</h1>
+    <p style="font-size:14px;font-weight:300;color:var(--dark-dim);line-height:1.75">Every app on this page has been personally tested. Rankings are based on real usage, fees, reliability, and user experience, not which company pays most.</p>
   </div>
-</section>
-<section class="con sg" aria-label="App listings">
-  <div class="cp-strip" data-apps-filter role="group" aria-label="Filter apps by category">
-    {cats.map((c, i) => (
-      <button type="button" class={`cp${i === 0 ? " on" : ""}`} data-acat={c === "All" ? "" : c} aria-pressed={i === 0 ? "true" : "false"}>{c}</button>
+</div>
+<div class="apps-tabs">
+  <div class="cp-strip">
+    {tabs.map((t, i) => (
+      <button class={`cp${i === 0 ? " on" : ""}`} type="button" data-filter={t.filter} aria-pressed={i === 0 ? "true" : "false"}>{t.label}</button>
     ))}
   </div>
-  <div class="g3" id="apps-grid" style="margin-top:20px">
-    {APPS.map((a) => (
-      <article class="card" data-acat={a.category}>
-        <div class="card-art" role="img" aria-label={`${a.name} artwork`}><span aria-hidden="true">{a.emoji}</span><span class={`tile-wm ${a.badge}`} aria-hidden="true">{a.category}</span></div>
-        <div class="card-body">
-          <span class={`badge ${a.badge}`}>{a.category}</span>
-          <p class="card-t">{a.name}</p>
-          <p class="card-ex" style="-webkit-line-clamp:4">{a.desc}</p>
-          <div class="app-stats">
-            {a.stats.map(([k, v]) => (<span><strong>{v}</strong> {k}</span>))}
+</div>
+<div class="con" style="margin-top:32px;padding-bottom:48px">
+  <div class="ad-bg"></div>
+  <div class="shd" style="margin-bottom:16px"><span class="stitle" aria-live="polite"><span id="apps-count-label">All Apps</span>, <span id="apps-count">{APPS.length}</span> listed</span><span class="fz11 fw3 cd">Sorted by: Our Rating</span></div>
+  <div class="g3" id="apps-grid">
+    {APPS.map((a) => {
+      const [tileA, tileB] = a.art.split(",");
+      return (
+      <div class="app-card" data-cat={a.cat.replace(/[^a-z]/gi, "")}>
+        <div class="app-card__head">
+          <div class="app-card__top">
+            <div class="app-card__left">
+              <div class="app-card__icon" style={`--tile:${tileA};--tile-b:${tileB}`}>{a.emoji}</div>
+              <div>
+                <div class="app-card__title"><a href={a.url} target="_blank" rel="noopener noreferrer nofollow sponsored">{a.name}</a></div>
+                <div class="app-card__host">{hostOf(a.url)}</div>
+              </div>
+            </div>
+            <span class={`badge ${a.badge}`}>{a.cat}</span>
           </div>
-          <p class="card-meta app-links">
-            <a class="slink" href={`${base}articles/${a.reviewSlug}/`}>Read the review →</a>
-            <a class="slink" href={a.url} target="_blank" rel="noopener noreferrer sponsored">Visit ↗</a>
-          </p>
+          <p class="app-card__desc">{a.desc}</p>
         </div>
-      </article>
-    ))}
+        {a.stats.length > 0 && (
+        <div class="app-card__stats">
+          {a.stats.map(([label, val, hint]) => (
+            <div class="app-card__stat">
+              <div class="app-card__stat-label">{label}</div>
+              <div class="app-card__stat-val" style={`color:${statColor(hint)}`}>{val}</div>
+            </div>
+          ))}
+        </div>
+        )}
+        <div class="app-card__foot">
+          <a class="btn b-green b-sm" href={a.url} target="_blank" rel="noopener noreferrer nofollow sponsored">Open Account →</a>
+          {a.review && <a class="btn b-ghost b-sm" href={`${base}articles/${a.review}/`}>Full Review</a>}
+        </div>
+      </div>
+      );
+    })}
   </div>
-  <p class="card-meta" id="apps-empty" hidden>No apps in this category yet.</p>
-  <div class="ad-bg">Ad slot — fills when ads are configured.</div>
-</section>
-<script is:inline>
-(function(){
-try{
-var strip=document.querySelector("[data-apps-filter]");
-if(!strip)return;
-var btns=Array.prototype.slice.call(strip.querySelectorAll("[data-acat]"));
-var cards=Array.prototype.slice.call(document.querySelectorAll("#apps-grid .card"));
-var empty=document.getElementById("apps-empty");
-btns.forEach(function(b){b.addEventListener("click",function(){
-btns.forEach(function(x){x.classList.toggle("on",x===b);x.setAttribute("aria-pressed",x===b?"true":"false")});
-var cat=b.getAttribute("data-acat")||"";
-var shown=0;
-cards.forEach(function(c){var on=!cat||c.getAttribute("data-acat")===cat;c.hidden=!on;if(on)shown++;});
-if(empty)empty.hidden=shown!==0;
-});});
-}catch(e){}
-})();
+  <div class="apps-empty" id="apps-empty" hidden>No apps in this category yet.</div>
+  <div style="text-align:center;margin-top:28px"><button class="btn b-ghost" type="button" id="apps-load-more" style="display:none">Load More Apps</button></div>
+  <div class="ad-bg" style="margin-top:28px"></div>
+</div>
+<script>
+  import "../scripts/apps-filter.js";
 </script>
 </Layout>

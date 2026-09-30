@@ -67,10 +67,40 @@
   color: var(--text);
   background: transparent;
   width: 100%;
-  padding: 0;
+  padding: 0 32px 0 0;
   font-family: var(--font);
 }
 .search-field::placeholder { color: var(--text-dim); }
+
+/* Brand-tied clear control (King 2026-09-30: "the x to clear the text doesn't
+   look tied to our site design"). WebKit renders type=search's cancel button as
+   a bare grey glyph inside the pill — a UA control, untied to anything here.
+   Suppressed and replaced with the theme's OWN clear anatomy (the .gs-clear of
+   the spotlight panel): 28px circle, transparent, --text-dim, gold on hover,
+   14px stroke ✕, truly hidden at zero text. */
+.search-field::-webkit-search-cancel-button,
+.search-field::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
+.search-clear {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--t), background var(--t);
+  z-index: 2;
+}
+.search-clear:hover { color: var(--gold); background: var(--gold-muted); }
+.search-clear:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.search-clear[hidden] { display: none !important; }
 /* Port fix (King 2026-09-30, 3rd report of the "thick orange border inside
    the form"): the theme's .search-field:focus-visible ring renders INSIDE the
    pill as a second bright-orange outline on every mobile tap (Chrome for

@@ -3,6 +3,46 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.6.3] — 2026-09-30
+
+### Search clear-X branded, /apps/ imported, OG images done properly
+
+- **The X that clears the search text is now tied to the design** (King
+  screenshot, /search/ on mobile): the pill was letting WebKit draw its own
+  `type=search` cancel glyph — a bare UA ✕ with zero brand. Suppressed in CSS
+  and replaced with the theme's OWN clear anatomy (the spotlight panel's
+  `.gs-clear` contract): 28px transparent circle, `--text-dim` stroke ✕, gold
+  fill on hover, 2px gold focus ring, truly `hidden` at zero text. Same SVG,
+  same class logic, ported onto the search pill + the 404 page; click empties
+  the field, re-runs live results, keeps focus. Browser-proven: shows with
+  text, 28px circle, vanishes on click, cards re-render.
+- **/apps/ imported from the live page** (finance.fitnesslova.qzz.io/apps/):
+  the old port page was an invented legal-hero anatomy — replaced with a
+  faithful `page-apps.php` (v1.0.163) port: dark `.apps-hero` with dot-grid +
+  gold-glow layers, Home › Finance Apps breadcrumbs, the inline gold "No paid
+  placements · Independent rankings" pill, exact h1/sub inline styles; sticky
+  `.apps-tabs` with derived category pills (emoji prefix, letters-only
+  `data-filter` slugs); `.shd` count line "All Apps, 3 listed" · "Sorted by:
+  Our Rating"; 3 live ACF slot cards (PiggyVest/Grey/Risevest — verbatim
+  desc/stats/tile gradients/badges from the capture), `.app-card` anatomy
+  (§36 CSS block completed in home.css from style.css:2444-2487 incl. the
+  dark-hero breadcrumb overrides), `apps-filter.js` ported verbatim, empty
+  state + hidden Load-More + rect ad slot. Live-slug Full-Review links remap
+  to the port's own articles. Filter proven live: Savings → 1 card / count 1
+  / label swaps; All → 3.
+- **OG images done properly** (King: "make sure the og image is done properly
+  and looks and has the brand logo and design"): the port pointed every page
+  at `images/og-default.png` — a FILE THAT NEVER EXISTED (404; every share
+  card rendered imageless). Now mirrors `inc/social-meta.php` exactly:
+  single posts use their featured hero (all 8 verified 1200×675) with
+  width/height/alt + `og:type=article` + `article:published_time` /
+  `article:modified_time` (only when the post carries an updated date) /
+  `article:author`, dates formatted like get_the_date('c'); every other page
+  falls back to the theme's branded share card — the wordmark on the finance
+  palette, `assets/brand/gwill-social-share.png` (1200×675) copied into the
+  port's `public/images/` and served from there — so Twitter/FB/WhatsApp
+  previews are rich brand cards everywhere, never bare text, never broken.
+
 ## [0.6.2] — 2026-09-30
 
 ### King's 3 reports: author archive, fully-clickable cards, the orange focus ring

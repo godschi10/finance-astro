@@ -148,5 +148,22 @@ import { norm, toks, smartMatch, highlight, escHtml } from './search-core.js';
 
   if (form) form.addEventListener('submit', function (e) { e.preventDefault(); run(); });
   input.addEventListener('input', run);
+
+  // Branded clear control (the native type=search cancel glyph is suppressed
+  // in CSS — a UA drawing is untied to the design). Same contract as the
+  // spotlight's .gs-clear: visible only while the field holds text, click
+  // empties it, re-runs live results, keeps focus for the next query.
+  var clearBtn = document.getElementById('search-clear');
+  function syncClear() { if (clearBtn) clearBtn.hidden = input.value.length === 0; }
+  if (clearBtn) {
+    clearBtn.addEventListener('click', function () {
+      input.value = '';
+      syncClear();
+      input.focus();
+      run();
+    });
+    input.addEventListener('input', syncClear);
+    syncClear();
+  }
   run();
 })();
