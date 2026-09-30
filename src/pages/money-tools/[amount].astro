@@ -13,7 +13,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 const fx = { rates: FX_SNAPSHOT.rates, as_of: FX_SNAPSHOT.as_of, cached: false, ok: true };
 const d = amountPageData(slug, fx);
 if (!d) throw new Error(`unknown amount slug: ${slug}`);
-const pageUrl = (s: string) => `${base}tools/${s}/`;
+const pageUrl = (s: string) => `${base}money-tools/${s}/`;
 const tokens = amountTokens(slug, d, pageUrl);
 const lede = amountRenderText(d.cfg.content.lede, tokens);
 const sections = d.cfg.content.sections.map((s) => ({ h2: s.h2, body: s.body.map((p) => amountRenderText(p, tokens)) }));
@@ -23,14 +23,12 @@ const opps = amountOpposite(slug).map((s) => ({ slug: s, h1: amountSeo(s, amount
 const equation = `${amountFmt(d.amount, d.from)} = ${amountFmt(d.converted, d.to)}`;
 const unitLine = `1 ${d.from} = ${amountFmt(d.unit_rate, d.to)} · 1 ${d.to} = ${amountFmt(d.rev_rate, d.from)}`;
 ---
-<ToolShell title={`${d.seo.title} - GWill Finance`} description={d.seo.meta_desc} slug={slug} tool={d.seo.h1} lede={lede} verified={`Mid-market ${FX_SNAPSHOT.as_of} (${FX_SNAPSHOT_LABEL}) · receipt refreshes live`} faqs={faqs} rawFaq>
-<div class="receipt" aria-live="polite">
-<p class="receipt-lbl">{d.seo.h1} · mid-market</p>
-<p class="receipt-fig" id="am-fig">{equation}</p>
-<p class="receipt-sub" id="am-unit">{unitLine}</p>
-<div class="receipt-div" aria-hidden="true"></div>
-<p class="receipt-note">Computed from the shared converter engine — the same math as the main converter, never a hardcoded figure.</p>
-<p class="receipt-foot" id="am-foot">Snapshot · Sep 2026</p>
+<ToolShell title={`${d.seo.title} - GWill Finance`} description={d.seo.meta_desc} slug={slug} tool={d.seo.h1} lede={lede} verified={`Mid-market ${FX_SNAPSHOT.as_of} (${FX_SNAPSHOT_LABEL}) · receipt refreshes live`} badge={`Live rate · updated ${FX_SNAPSHOT.as_of}`} faqs={faqs} rawFaq>
+<div class="fx-card">
+<div class="fxap-hero">
+<p class="fxap-figure" id="am-fig"><span class="fxap-side">{amountFmt(d.amount, d.from)}</span><span class="fxap-eq">=</span><span class="fxap-side fxap-result" id="am-fig-r">{amountFmt(d.converted, d.to)}</span></p>
+<p class="fx-result-note" id="am-unit">{unitLine} · {FX_SNAPSHOT.as_of} · mid-market, before provider fees</p>
+</div>
 </div>
 <div class="hr"></div>
 {sections.map((s) => (
@@ -55,11 +53,11 @@ import { FX_SNAPSHOT } from "../../data/fx-snapshot";
     if (!live.rates) return;
     const d = amountPageData(slug, { rates: live.rates, as_of: live.as_of || "just now", cached: false, ok: true });
     if (!d || d.unit_rate <= 0) return;
-    const fig = document.getElementById("am-fig");
+    const fig = document.getElementById("am-fig-r");
     const unit = document.getElementById("am-unit");
     const foot = document.getElementById("am-foot");
-    if (fig) fig.textContent = `${amountFmt(d.amount, d.from)} = ${amountFmt(d.converted, d.to)}`;
-    if (unit) unit.textContent = `1 ${d.from} = ${amountFmt(d.unit_rate, d.to)} · 1 ${d.to} = ${amountFmt(d.rev_rate, d.from)}`;
+    if (fig) fig.textContent = amountFmt(d.converted, d.to);
+    if (unit) unit.textContent = `1 ${d.from} = ${amountFmt(d.unit_rate, d.to)} · 1 ${d.to} = ${amountFmt(d.rev_rate, d.from)} · live · mid-market, before provider fees`;
     if (foot) foot.textContent = "Live · " + (live.as_of || "just now");
   } catch { /* snapshot stands, honestly labeled */ }
 })();

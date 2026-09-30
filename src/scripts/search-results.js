@@ -49,7 +49,7 @@ import { norm, toks, smartMatch, highlight, escHtml } from './search-core.js';
   } catch (e) {}
 
   function href(it) {
-    return it.kind === 'tool' ? homeHref + 'tools/' + it.slug + '/' : homeHref + 'articles/' + it.slug + '/';
+    return it.kind === 'tool' ? homeHref + 'money-tools/' + it.slug + '/' : homeHref + 'articles/' + it.slug + '/';
   }
 
   var CAT_DEFAULT = { badge: 'bsl', art: '', emoji: '' };
@@ -69,7 +69,7 @@ import { norm, toks, smartMatch, highlight, escHtml } from './search-core.js';
     return '<article class="ac">'
       + '<div class="ac-img ' + cm.art + '"><span class="ac-emoji">' + cm.emoji + '</span></div>'
       + '<div class="ac-body">'
-      + '<a class="badge ' + badgeCls + '" href="' + (it.kind === 'tool' ? homeHref + 'tools/' : homeHref + 'category/' + it.category + '/') + '">' + escHtml(cm.categoryName) + '</a>'
+      + '<a class="badge ' + badgeCls + '" href="' + (it.kind === 'tool' ? homeHref + 'money-tools/' : homeHref + 'category/' + it.category + '/') + '">' + escHtml(cm.categoryName) + '</a>'
       + '<h2 class="ac-t"><a href="' + href(it) + '">' + title + '</a></h2>'
       + (excerpt ? '<div class="ac-ex"><p>' + excerpt + '</p></div>' : '')
       + '<div class="ac-ft"><span class="a-dt">' + meta + '</span><a class="a-rd" href="' + href(it) + '">Read →</a></div>'

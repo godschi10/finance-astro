@@ -1,0 +1,93 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+import { fxConvert, fxCurrencies, fxParallelNgnUsd, fxParallelSpread, fxNumber } from "../../lib/fx";
+import { FX_SNAPSHOT, FX_SNAPSHOT_LABEL } from "../../data/fx-snapshot";
+const cur = fxCurrencies();
+const codes = Object.keys(cur);
+const seed = { amount: 100, from: "USD", to: "NGN" };
+const converted = fxConvert(seed.amount, seed.from, seed.to, FX_SNAPSHOT.rates);
+const unit = fxConvert(1, seed.from, seed.to, FX_SNAPSHOT.rates);
+const parallel = fxParallelNgnUsd(FX_SNAPSHOT.rates.NGN, fxParallelSpread());
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+---
+<ToolShell title="Currency Converter, Live NGN Rates - GWill Finance" description="Convert USD, GBP, EUR and 13 more currencies to naira at the live mid-market rate, plus an honest parallel-market estimate." slug="currency-converter" tool="Dollar to Naira & Every Currency" crumb="Currency Converter" lede="Sixteen currencies, one honest mid-market number. The figure below is pre-rendered from a build-time snapshot and refreshes live in your browser when the feed answers." verified="Rates: indicative snapshot, Sep 2026 — refresh for live" faqs={[
+  { q: "Is this the rate my bank will give me?", a: "No. This is the mid-market rate before fees or margins. Banks and apps add their own spread — compare the final naira that lands, not headline rates." },
+  { q: "What is the parallel-market estimate?", a: "What dollars trade for between individuals outside official channels, roughly 4.5% above official. It is an estimate, always labeled as one." },
+  { q: "Why does the page show a snapshot?", a: "Static pages cannot call the rate feed at build time and stay fresh. Your browser retries the live feed on every visit; when it fails you see the snapshot, honestly labeled." },
+]}
+
+  badge="Live rates · updated 30 Sep 2026, 00:02",
+  copy={[["p", "132,724.16 Nigerian Naira, the rate above is the mid-market rate fetched live and updated automatically. One hundred dollars is the benchmark conversion in Nigeria: the amount people quote when they want to know what the naira is really worth, the test size for a new remittance app, and the size of a first freelance invoice. Use the converter to check any amount in both directions."],["p", "$0.75 at today's rate. The Naira - Dollar rate moves every day, so the amount you get depends on the day you convert and the channel you use. That is the trap this page exists to show: a naira saving toward a dollar-priced goal can quietly shrink as the rate steps, which is why dollar-denominated accounts are worth understanding."],["p", "87,785.05 Nigerian Naira. Sending money from the UK? See how to receive money from abroad cheaply in our remittance guide. The pound trades at a distinctly higher naira value than the dollar, so £50 is worth noticeably more than $50, worth knowing when you compare what a UK or a US-based client will pay you."],["p", "₦1,327.24 for one US dollar at today's rate. This is the anchor figure everything else derives from. Check the live rate grid above for the pound, euro, dirham, riyal, cedi and more."],["h2", "Which currencies does the converter support?"],["p", "This converter is built for the currencies Nigerian readers actually convert, not a token list of a dozen obscure ones. You can convert naira to and from:"],["p", "Every pair is computed from the same live rate engine, so you never hit a stale or unsupported conversion. Naira to dollar in one direction, dollar to naira in the other, pound to naira, cedi to naira, all handled."],["h2", "Why the rate you get is never the rate on this page"],["p", "The figure here is the mid-market rate, the honest midpoint between what buyers and sellers of a currency use worldwide, before any fee. No bank, app or platform hands you the mid-market rate for free. Every channel adds a margin, and at small amounts that margin is a real slice of the total."],["p", "The single most useful habit in Nigerian currency conversion is to ignore headline rates entirely and compare the final naira figure that lands in your account after every fee. Run the same amount through two or three channels and write down what actually arrives, the difference is often thousands of naira."],["h2", "Official rate versus parallel market: the gap, explained"],["p", "Nigeria runs a managed FX market, which means the rate banks and official windows offer can trail what dollars genuinely trade for between individuals. On peer-to-peer platforms, where ordinary buyers and sellers set their own prices, a dollar routinely converts to more naira than the official figure suggests. That spread is not a trick, it is the market pricing the difficulty of actually getting dollars through official channels."],["p", "This converter models both sides. Toggle to the parallel market view to see the street price, and the \"gap\" line shows you exactly what you give up by using official channels at the black-market premium. That awareness is what lets you negotiate a fair price instead of assuming the headline rate is the best you can do."],["h2", "How to get the best rate, every time"],["h2", "Is the rate automatically updated?"],["p", "Yes. The rate is pulled from a live market FX API and cached for thirty minutes, refreshed automatically, nothing is updated by hand, so it never goes stale. The timestamp beside the figure tells you how fresh the underlying rate is. If the market feed is ever paused, the page says so rather than pretending a stale figure is live."],["p", "Use the converter above for any amount, in either direction. New to managing foreign money? Start with our best dollar account apps guide, or see how to receive money from abroad the cheapest way."]]},
+  ctas={[{ label: "Best Dollar Accounts →", href: `${base}articles/grey-vs-geegpay-dollar-account/`, ghost: false },{ label: "Receive Money Abroad", href: `${base}articles/cheapest-way-receive-dollars-nigeria/`, ghost: true }]},
+  ctaTitle="Get the best dollar rate",
+  ctaNote="Converting cash is the worst way to get dollars, you lose to the parallel market rate. These apps give you a real USD account at the true rate:",
+  related={[{ href: `${base}articles/grey-vs-geegpay-dollar-account/`, title: "Grey vs Geegpay: Which Dollar Account Should You Open?", excerpt: "Account opening, conversion spreads, card support, and payout speed — tested with real transfers." }, { href: `${base}articles/cheapest-way-receive-dollars-nigeria/`, title: "Cheapest Way to Receive Dollars in Nigeria (2026 Compared)", excerpt: "Wise, Grey, Geegpay, and domiciliary accounts compared on fees, speed, and exchange margins." }, { href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers", excerpt: "Card fees, failed-transfer reversals, and support tested — what digital banks actually save you." }, { href: `${base}articles/ngn-dollar-cost-averaging-guide/`, title: "Dollar-Cost Averaging Into NGX Stocks on a \u20a650k Salary", excerpt: "A step-by-step plan for buying Nigerian stocks every month without timing the market." }]},>
+<div class="fx-card">
+<div class="tgrid c3">
+<div class="field"><label for="cc-amt">Amount</label><input id="cc-amt" type="number" min="0" step="any" value="100" inputmode="decimal"></div>
+<div class="field"><label for="cc-from">From</label><select id="cc-from">{codes.map((c) => (<option value={c} selected={c === seed.from}>{c} — {cur[c].name}</option>))}</select></div>
+<div class="field"><label for="cc-to">To</label><select id="cc-to">{codes.map((c) => (<option value={c} selected={c === seed.to}>{c} — {cur[c].name}</option>))}</select></div>
+</div>
+<div style="margin-top:12px"><button class="swapbtn" id="cc-swap" type="button" aria-label="Swap currencies">⇄</button> <span class="hint" id="cc-fresh" style="font-size:12px;color:var(--text-dim)">{FX_SNAPSHOT.as_of} ({FX_SNAPSHOT_LABEL})</span></div>
+<div class="receipt" aria-live="polite">
+<p class="receipt-lbl">You get</p>
+<p class="receipt-fig" id="cc-fig">{fxNumber(converted, 2)}</p>
+<p class="receipt-sub" id="cc-unit">1 {seed.from} = {fxNumber(unit, 2)} {seed.to}</p>
+<div class="receipt-div" aria-hidden="true"></div>
+<p class="receipt-note" id="cc-par">Parallel estimate ≈ ₦{fxNumber(seed.amount * parallel, 0)} (estimated, not a quote)</p>
+<p class="receipt-foot" id="cc-foot">Snapshot · Sep 2026</p>
+</div>
+</div>
+</ToolShell>
+<script>
+import { fxConvert, fxParallelNgnUsd, fxParallelSpread, fxNumber, fxFetchLive } from "../../lib/fx";
+import { FX_SNAPSHOT, FX_SNAPSHOT_LABEL } from "../../data/fx-snapshot";
+let rates = FX_SNAPSHOT.rates;
+const amt = document.getElementById("cc-amt") as HTMLInputElement;
+const from = document.getElementById("cc-from") as HTMLSelectElement;
+const to = document.getElementById("cc-to") as HTMLSelectElement;
+const fig = document.getElementById("cc-fig") as HTMLElement;
+const unitEl = document.getElementById("cc-unit") as HTMLElement;
+const par = document.getElementById("cc-par") as HTMLElement;
+const fresh = document.getElementById("cc-fresh") as HTMLElement;
+const foot = document.getElementById("cc-foot") as HTMLElement;
+function money(v: number, code: string): string {
+  const sym: Record<string, string> = { NGN: "₦", USD: "$", GBP: "£", EUR: "€" };
+  const dec = code === "NGN" ? 0 : v < 100 ? 2 : 0;
+  return (sym[code] ?? "") + fxNumber(v, dec);
+}
+function render() {
+  const a = Math.max(0, Number(amt.value) || 0);
+  const f = from.value, t = to.value;
+  const c = fxConvert(a, f, t, rates);
+  const u = fxConvert(1, f, t, rates);
+  fig.textContent = (t === "NGN" ? "₦" : "") + fxNumber(c, t === "NGN" ? 0 : 2);
+  unitEl.textContent = `1 ${f} = ${money(u, t)}`;
+  if (t === "NGN" && rates["NGN"] > 0) {
+    const p = fxParallelNgnUsd(fxConvert(1, f, "USD", rates) * rates["NGN"], fxParallelSpread());
+    par.textContent = `Parallel estimate ≈ ₦${fxNumber(a * p, 0)} (estimated, not a quote)`;
+    par.hidden = false;
+  } else par.hidden = true;
+}
+amt.addEventListener("input", render);
+from.addEventListener("change", render);
+to.addEventListener("change", render);
+document.getElementById("cc-swap")?.addEventListener("click", () => {
+  const v = from.value; from.value = to.value; to.value = v; render();
+});
+render();
+(async () => {
+  try {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), 8000);
+    const live = await fxFetchLive(ctl.signal);
+    clearTimeout(t);
+    if (live.rates && live.rates["NGN"] > 0) {
+      rates = live.rates;
+      fresh.textContent = "live · " + (live.as_of || "just now");
+      foot.textContent = "Live · " + (live.as_of || "just now");
+      render();
+    }
+  } catch { fresh.textContent = FX_SNAPSHOT.as_of + " (" + FX_SNAPSHOT_LABEL + ")"; }
+})();
+</script>

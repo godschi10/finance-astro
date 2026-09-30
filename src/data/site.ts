@@ -118,7 +118,7 @@ export const FOOTER_GROUPS: Record<"articles" | "apps" | "site", FooterLink[]> =
   ],
   site: [
     { label: "Finance Apps", href: "/apps/" },
-    { label: "Money Calculators", href: "/tools/" },
+    { label: "Money Calculators", href: "/money-tools/" },
     { label: "About", href: "/about/" },
     { label: "Contact", href: "/contact/" },
   ],
@@ -178,7 +178,7 @@ export const NAV: NavItem[] = [
       { label: "Remittance", href: "/category/remittance/" },
     ],
   },
-  { label: "Money Calculators", href: "/tools/" },
+  { label: "Money Calculators", href: "/money-tools/" },
   { label: "About", href: "/about/" },
 ];
 

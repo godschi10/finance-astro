@@ -8,6 +8,7 @@ import "../styles/footer.css";
 import "../styles/home.css"; // WP stylesheet sections the homepage renders
 import "../styles/search404.css"; // WP slice — /search/ + /404/ vocabulary (.phd, .search-pill, .error-404, .es-*)
 import "../styles/article.css"; // category art gradients (.i-sav etc.) + card rules the search cards reuse
+import "../styles/tools.css"; // verbatim theme calculator vocabulary (style.css 1244-1500, hx/fxap blocks) for /money-tools/ pages
 import "../styles/forms.css"; // WP stylesheet section 46 (FORMS) — control geometry
 // Shared chrome: head, self-hosted fonts, finance tokens (light + dark),
 // skip-link, ticker, desktop nav + mobile drawer, footer. Staging-safe SEO:
@@ -116,7 +117,7 @@ const searchIndex = [
   ...TOOLS.map((t) => ({
     title: t.name,
     excerpt: t.desc,
-    url: `${base}tools/${t.slug}/`,
+    url: `${base}money-tools/${t.slug}/`,
     date: "",
     mins: 1,
     cat: "Calculator",

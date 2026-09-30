@@ -1,23 +1,50 @@
 ---
+// Shared calculator shell — faithful port of the live calculator page
+// skeleton (finance.fitnesslova.qzz.io/tools/*, page-*.php templates).
+// Anatomy copied from the live HTML on 2026-09-30 (King order: "import the
+// money calculator /tools/ page … and the calculators themselves"):
+//   1. .apps-hero dark trust hero (same layers as /apps/ + live tool pages):
+//      dot-grid + gold-glow, 3-level breadcrumb (Home › Money Calculators ›
+//      Tool), per-tool gold badge pill, h1 + lede, verbatim inline styles.
+//   2. .con (margin-top:32; padding-bottom:48): slot (inputs → .fx-card,
+//      receipt → .fx-result/.receipt, tables → .st-table-wrap), optional
+//      .fx-disclaimer, .fx-copy art-body (Why + FAQ), FAQPage/WebApplication
+//      JSON-LD (mirrors the live ld+json graph), .fx-aff CTA row, Related
+//      guides (.g3 of .app-card, live anatomy: inline-styled title+excerpt).
+// The theme class vocabulary (fx-card/fx-field/st-table/sr-chart/fx-rate…)
+// is ported verbatim in styles/tools.css; pages slot real markup in.
 import Layout from "../layouts/Layout.astro";
-// Shared tool shell: hero (title + lede + verified stamp), receipt styles,
-// input/table/FAQ system. Pages slot in their inputs + receipt + tables and
-// add one per-page <script> importing the TS engine for interactivity.
 interface Faq { q: string; a: string; }
+interface Related { href: string; title: string; excerpt: string; }
+interface Cta { label: string; href: string; ghost?: boolean; }
 interface Props {
   title: string;
   description: string;
   slug: string;
-  tool: string;
-  lede: string;
+  tool: string;      // live hero H1 verbatim (some tools reword it, e.g. the
+                     // converter's "Dollar to Naira & Every Currency")
+  crumb?: string;    // breadcrumb current label (live: short tool name)
   verified: string;
+  badge?: string;            // gold pill (live: "Live rates · updated …", "NTA 2025 · …")
   faqs?: Faq[];
   rawFaq?: boolean;
+  copy?: [string, string][]; // [tag "h2"|"h3"|"p", text] — live .fx-copy art-body
+  ctas?: Cta[];              // .fx-aff button row
+  ctaNote?: string;          // paragraph above the .fx-aff buttons
+  ctaTitle?: string;         // .shd stitle above .fx-aff (live: "Get the best dollar rate")
+  related?: Related[];       // "Related guides" .g3 of .app-card
+  relatedTitle?: string;     // live: "Related guides"
+  disclaimer?: string;       // .fx-disclaimer (live: rate-source honesty note)
 }
-const { title, description, slug, tool, lede, verified, faqs = [], rawFaq = false } = Astro.props;
+const {
+  title, description, slug, tool, lede, verified, badge = "Free · No sign-up · Always updated",
+  crumb = tool,
+  faqs = [], rawFaq = false, copy = [], ctas = [], ctaNote = "", ctaTitle = "Get the best rate",
+  related = [], relatedTitle = "Related guides", disclaimer = "",
+} = Astro.props;
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 const ld = (obj: unknown) => JSON.stringify(obj).replace(/</g, "\\u003c");
-const pageUrl = `${(Astro.site?.toString() ?? "https://godschi10.github.io").replace(/\/$/, "")}${base}tools/${slug}/`;
+const pageUrl = `${(Astro.site?.toString() ?? "https://godschi10.github.io").replace(/\/$/, "")}${base}money-tools/${slug}/`;
 const graph: unknown[] = [{
   "@type": "WebApplication", "@id": pageUrl + "#webapp", name: tool, url: pageUrl,
   applicationCategory: "FinanceApplication", operatingSystem: "Any",
@@ -30,31 +57,72 @@ if (faqs.length) graph.push({
 ---
 <Layout title={title} description={description} crumb={tool}>
 <script type="application/ld+json" set:html={ld({ "@context": "https://schema.org", "@graph": graph })}></script>
-<section class="con tool-hero" aria-labelledby="tool-h">
-<p class="crumbs"><a href={`${base}`}>Home</a> › <a href={`${base}tools/`}>Money Calculators</a> › {tool}</p>
-<h1 class="tool-h" id="tool-h">{tool}</h1>
-<p class="vstamp"><span aria-hidden="true">◆</span> {verified}</p>
-<p class="tool-lede">{lede}</p>
-</section>
-<section class="con tool-body">
-<slot />
-{faqs.length > 0 && (
-<div class="tool-faq" aria-label="Frequently asked questions">
-<h2 class="tool-h2">Questions, answered</h2>
-{faqs.map((f) => (<details class="faq"><summary>{f.q}</summary>{rawFaq ? <p set:html={f.a}></p> : <p>{f.a}</p>}</details>))}
+<div class="apps-hero">
+  <div style="position:absolute;top:0;right:0;bottom:0;left:0;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:28px 28px;pointer-events:none"></div>
+  <div style="position:absolute;top:-80px;right:-80px;width:360px;height:360px;background:radial-gradient(circle,rgba(217,119,6,0.08) 0%,transparent 65%);pointer-events:none"></div>
+  <div style="position:relative;z-index:1;max-width:640px">
+    <nav class="gwill-breadcrumbs" aria-label="Breadcrumb">
+      <ol class="gwill-breadcrumbs__list">
+        <li class="gwill-breadcrumbs__item"><a href={base}><span>Home</span></a></li>
+        <li class="gwill-breadcrumbs__item"><a href={`${base}money-tools/`}><span>Money Calculators</span></a></li>
+        <li class="gwill-breadcrumbs__item gwill-breadcrumbs__item--current"><span aria-current="page">{crumb}</span></li>
+      </ol>
+    </nav>
+    <div style="display:inline-flex;align-items:center;gap:8px;font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold-b);background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);padding:4px 12px;border-radius:var(--pill);margin-bottom:16px">{badge}</div>
+    <h1 style="font-size:34px;font-weight:800;letter-spacing:-0.04em;color:#f0ede6;line-height:1.1;margin-bottom:10px">{tool}</h1>
+    <p style="font-size:14px;font-weight:300;color:var(--dark-dim);line-height:1.75">{lede}</p>
+  </div>
 </div>
-)}
-<p style="margin-top:20px"><a class="slink" href={`${base}tools/`}>← All money calculators</a></p>
-</section>
+<div class="con" style="margin-top:32px;padding-bottom:48px">
+  <div class="ad-bg"></div>
+  <slot />
+  {verified && <p class="fxap-conv-note" style="margin-top:14px"><span style="color:var(--gold-b)" aria-hidden="true">◆</span> {verified}</p>}
+  {disclaimer && <p class="fx-disclaimer">{disclaimer}</p>}
+  {copy.length > 0 && (
+    <div class="fx-copy art-body" style="margin-top:28px">
+      {copy.map(([tag, text]) => tag === "h2" ? <h2>{text}</h2> : tag === "h3" ? <h3>{text}</h3> : <p>{text}</p>)}
+    </div>
+  )}
+  {faqs.length > 0 && (
+    <div class="fx-copy art-body tool-faq" aria-label="Frequently asked questions" style="margin-top:8px">
+      <h2>Questions, answered</h2>
+      {faqs.map((f) => (<details class="faq"><summary>{f.q}</summary>{rawFaq ? <p set:html={f.a}></p> : <p>{f.a}</p>}</details>))}
+    </div>
+  )}
+  {(ctas.length > 0 || ctaNote) && (
+    <>
+      <div class="shd" style="margin:28px 0 16px"><span class="stitle">{ctaTitle}</span></div>
+      <div class="fx-aff">
+        {ctaNote && <p style="font-size:13px;line-height:1.7;color:var(--text-dim);margin:0 0 12px">{ctaNote}</p>}
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          {ctas.map((c) => (<a class={`btn ${c.ghost ? "b-ghost" : "b-green"}`} style="flex:1;justify-content:center" href={c.href}>{c.label}</a>))}
+        </div>
+      </div>
+    </>
+  )}
+  {related.length > 0 && (
+    <>
+      <div class="shd" style="margin:28px 0 16px"><span class="stitle">{relatedTitle}</span></div>
+      <div class="g3">
+        {related.map((r) => (
+          <div class="app-card">
+            <div style="padding:18px 20px">
+              <div style="font-size:14px;font-weight:800;color:var(--text);letter-spacing:-0.02em;margin-bottom:6px"><a href={r.href}>{r.title}</a></div>
+              <div style="font-size:11px;font-weight:300;color:var(--text-dim)">{r.excerpt}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  )}
+  <div class="ad-bg" style="margin-top:28px"></div>
+  <p style="margin-top:22px"><a class="slink" href={`${base}money-tools/`}>← All money calculators</a></p>
+</div>
 <style is:global>
-.tool-hero{padding:40px 0 28px}
-.tool-h{font-size:clamp(1.5rem,4vw,2.25rem);line-height:1.15;letter-spacing:-.02em;font-weight:800}
-.vstamp{font-size:11px;color:var(--text-dim);margin-top:8px}
-.vstamp span{color:var(--gold-b)}
-.tool-lede{margin-top:10px;max-width:62ch;color:var(--text-mid)}
-.tool-body{padding-bottom:48px}
-.tool-h2{font-size:1.125rem;font-weight:800;letter-spacing:-.02em;margin:28px 0 12px}
-@media(min-width:768px){.tool-hero{padding:48px 0 32px}.tool-h2{font-size:1.25rem}}
+/* Port-local extension vocabulary (documented, never invents theme names):
+   input grid + dark receipt rows + chart bars used by the calculator pages.
+   The theme's own fx-card/fx-field/fx-input/fx-result/fx-big/st-table/sr-*
+   rules come verbatim from styles/tools.css and are preferred inside .fx-card. */
 .tgrid{display:grid;gap:14px;margin-top:18px}
 @media(min-width:560px){.tgrid.c2{grid-template-columns:1fr 1fr}.tgrid.c3{grid-template-columns:1fr 1fr 1fr}}
 .field label{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px}

@@ -1,0 +1,116 @@
+---
+// Port of page-tools.php (gwill-finance-theme, "Finance Tools" template) —
+// the Money Calculators hub, imported from the live
+// https://finance.fitnesslova.qzz.io/tools/ capture 2026-09-30 (King order:
+// "import the money calculator … maybe change the URL path to /money-tools/").
+// Port URL: /money-tools/ (live path stays /tools/). Anatomy mirrored exactly:
+//   2. .apps-hero: dot-grid + gold-glow layers, breadcrumb (Home › Money
+//      Calculators), gold badge pill "Free · No sign-up · Always updated",
+//      h1 "Money Calculators", lede — inline styles verbatim from the template.
+//   3. .con > .ad-bg + .shd ("All tools" · "More added regularly") + .g3 of
+//      16 .tool-card (per gwill_tools_card(): gradient icon tile
+//      --tile/--tile-b, title, "Free · no sign-up" badge, desc, foot
+//      "Open tool →" btn b-green b-sm)
+//   + "Popular conversions" .shd + .fx-chips (the 8 amount landing pages)
+//   + rect .ad-bg + 5. .fx-copy art-body hub intro ("Why use these
+//     calculators?", 2 paras).
+// Card copy (title/emoji/gradient/desc) is the live template's verbatim.
+import Layout from "../../layouts/Layout.astro";
+import { amountSlugs } from "../../lib/amount";
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+
+// page-tools.php gwill_tools_card() arguments, template order, verbatim.
+const tools = [
+  { slug: "currency-converter", title: "Currency Converter", emoji: "💱", grad: "#fef3c7,#fcd34d", desc: "Convert Naira to Dollar, Pound and Euro at today’s live rate, any amount, instantly." },
+  { slug: "salary-tax-calculator", title: "Nigeria Tax Calculator", emoji: "🧾", grad: "#dcfce7,#86efac", desc: "Work out your take-home pay under the Nigeria Tax Act 2025, the new 0% band, rent relief and an old-vs-new comparison." },
+  { slug: "savings-goal-calculator", title: "Savings Goal Calculator", emoji: "🎯", grad: "#ede9fe,#c4b5fd", desc: "See exactly how much to save each month to hit your target, with compound interest built in." },
+  { slug: "exchange-rate-history", title: "Rate History Chart", emoji: "📈", grad: "#fce7f3,#fbcfe8", desc: "See the dollar to naira trend over 30 and 90 days, the real recorded rates, updated daily." },
+  { slug: "compound-interest-calculator", title: "Compound Interest Calculator", emoji: "📊", grad: "#e0f2fe,#bae6fd", desc: "See how your savings grow with compound interest, project your balance year by year." },
+  { slug: "inflation-savings-calculator", title: "Inflation Savings Calculator", emoji: "🔥", grad: "#fee2e2,#fecaca", desc: "See what inflation really does to your savings goal, and how much more you must save each month." },
+  { slug: "gross-to-net-calculator", title: "Gross to Net Calculator", emoji: "💰", grad: "#ccfbf1,#99f6e4", desc: "Start from the take-home pay you want and find the gross salary you need, under NTA 2025." },
+  { slug: "50-30-20-budget-calculator", title: "50/30/20 Budget Calculator", emoji: "🧮", grad: "#fef9c3,#fde047", desc: "Split your take-home pay into needs, wants and savings with the 50/30/20 rule, exact naira for each." },
+  { slug: "budget-allocator", title: "Budget Allocator (50/30/20 in Naira)", emoji: "🧮", grad: "#fef9c3,#fde047", desc: "Split your pay 50/30/20 and see the needs half broken into real naira buckets, rent, food, transport, data and bills." },
+  { slug: "naira-value-calculator", title: "Naira Value Calculator (Inflation / Depreciation)", emoji: "💸", grad: "#fef9c3,#fde047", desc: "What is ₦1M today really worth in 5 years? See how inflation erodes the naira, and what future money is worth today." },
+  { slug: "crypto-profit-calculator", title: "Crypto Profit Calculator (Naira, P2P-aware)", emoji: "🪙", grad: "#fef9c3,#fde047", desc: "Work out the real naira profit on a crypto trade, with the P2P buy/sell spread shown as its own cost." },
+  { slug: "dividend-calculator", title: "Dividend / ROI Estimator (Nigerian Stocks, NGX)", emoji: "📈", grad: "#fef9c3,#fde047", desc: "Project the total return of a Nigerian dividend stock, with the DRIP reinvestment effect shown year by year, in naira." },
+  { slug: "emergency-fund-calculator", title: "Emergency Fund Calculator (Naira, Inflation-adjusted)", emoji: "🛟", grad: "#fef9c3,#fde047", desc: "How many months of runway does your savings cover? Get the naira target, time to reach it, and the inflation-adjusted amount." },
+  { slug: "loan-repayment-calculator", title: "Loan Repayment Calculator", emoji: "💰", grad: "#fee2e2,#fca5a5", desc: "See the true cost of a Nigerian loan, enter the rate as the lender quotes it and get the real APR." },
+  { slug: "money-transfer-comparator", title: "Money-Transfer Comparator", emoji: "🔁", grad: "#cffafe,#67e8f9", desc: "Compare Wise, Remitly, Western Union, WorldRemit & LemFi on fee + real rate, who actually gets you the most." },
+  { slug: "savings-rate-comparator", title: "Savings Rate Comparator", emoji: "🏦", grad: "#ecfccb,#bef264", desc: "Who pays the most on your savings right now, PiggyVest, Cowrywise, Kuda, Renmoney, FairMoney + FD rates." },
+];
+
+// page-tools.php $amount_slugs — the live hub prints exactly these 8 chips
+// (resolved against the port's own amount registry so links never 404).
+const AMOUNT_CHIPS: [string, string][] = [
+  ["100-dollars-to-naira", "100 Dollars to Naira"],
+  ["1-million-naira-to-dollars", "1 Million Naira to Dollars"],
+  ["50-dollars-to-naira", "50 Dollars to Naira"],
+  ["500-dollars-to-naira", "500 Dollars to Naira"],
+  ["1000-dollars-to-naira", "1000 Dollars to Naira"],
+  ["5000-dollars-to-naira", "5000 Dollars to Naira"],
+  ["10000-naira-to-dollars", "10000 Naira to Dollars"],
+  ["100000-naira-to-dollars", "100000 Naira to Dollars"],
+];
+const have = new Set(amountSlugs());
+const chips = AMOUNT_CHIPS.filter(([s]) => have.has(s));
+const ld = (obj: unknown) => JSON.stringify(obj).replace(/</g, "\\u003c");
+const breadcrumb = { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${import.meta.env.BASE_URL}` }, { "@type": "ListItem", position: 2, name: "Money Calculators" }] };
+---
+<Layout title="Money Calculators - GWill Finance" description="Free Nigerian money calculators, currency conversion at live rates, tax, savings goals, loans, budgets and more. No sign-up, works on any phone." crumb="Money Calculators">
+<script type="application/ld+json" set:html={ld(breadcrumb)}></script>
+<div class="apps-hero">
+  <div style="position:absolute;top:0;right:0;bottom:0;left:0;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:28px 28px;pointer-events:none"></div>
+  <div style="position:absolute;top:-80px;right:-80px;width:360px;height:360px;background:radial-gradient(circle,rgba(217,119,6,0.08) 0%,transparent 65%);pointer-events:none"></div>
+  <div style="position:relative;z-index:1;max-width:640px">
+    <nav class="gwill-breadcrumbs" aria-label="Breadcrumb">
+      <ol class="gwill-breadcrumbs__list">
+        <li class="gwill-breadcrumbs__item"><a href={base}><span>Home</span></a></li>
+        <li class="gwill-breadcrumbs__item gwill-breadcrumbs__item--current"><span aria-current="page">Money Calculators</span></li>
+      </ol>
+    </nav>
+    <div style="display:inline-flex;align-items:center;gap:8px;font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold-b);background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);padding:4px 12px;border-radius:var(--pill);margin-bottom:16px">Free · No sign-up · Always updated</div>
+    <h1 style="font-size:34px;font-weight:800;letter-spacing:-0.04em;color:#f0ede6;line-height:1.1;margin-bottom:10px">Money Calculators</h1>
+    <p style="font-size:14px;font-weight:300;color:var(--dark-dim);line-height:1.75">Free tools to work out your money, live exchange rates, taxes, savings goals and more. Every one is built for Nigerians, updated automatically, and needs nothing from you.</p>
+  </div>
+</div>
+<div class="con" style="margin-top:32px;padding-bottom:48px">
+  <div class="ad-bg"></div>
+  <div class="shd" style="margin:20px 0 16px"><span class="stitle">All tools</span><span class="fz11 fw3 cd">More added regularly</span></div>
+  <div class="g3">
+    {tools.map((t) => {
+      const [tileA, tileB] = t.grad.split(",");
+      return (
+      <div class="tool-card">
+        <div class="tool-card__head">
+          <div class="tool-card__top">
+            <div class="tool-card__icon" style={`--tile:${tileA};--tile-b:${tileB}`}>{t.emoji}</div>
+            <div>
+              <div class="tool-card__title">{t.title}</div>
+              <div class="tool-card__badge">Free · no sign-up</div>
+            </div>
+          </div>
+          <p class="tool-card__desc">{t.desc}</p>
+        </div>
+        <div class="tool-card__foot">
+          <a class="btn b-green b-sm" href={`${base}money-tools/${t.slug}/`}>Open tool →</a>
+        </div>
+      </div>
+      );
+    })}
+  </div>
+  {chips.length > 0 && (
+    <>
+      <div class="shd" style="margin:28px 0 16px"><span class="stitle">Popular conversions</span><span class="fz11 fw3 cd">Live-rate shortcuts</span></div>
+      <div class="fx-chips" style="margin-top:0">
+        {chips.map(([s, label]) => (<a class="fx-chip" href={`${base}money-tools/${s}/`}>{label}</a>))}
+      </div>
+    </>
+  )}
+  <div class="ad-bg" style="margin-top:28px"></div>
+  <div class="fx-copy art-body" style="margin-top:28px">
+    <h2>Why use these calculators?</h2>
+    <p>Money decisions are hard when you’re guessing the numbers. These tools give you the real figure, the live exchange rate, your true take-home pay, the monthly amount you actually need to save, so you can plan with confidence instead of hope.</p>
+    <p>Every tool is free, works on any phone, and is updated automatically so it never goes stale. New calculators are added as we build them.</p>
+  </div>
+</div>
+</Layout>

@@ -3,6 +3,38 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.6.4] — 2026-09-30
+
+### Money Calculators imported (/tools/ → /money-tools/)
+
+- **The calculator hub + all 16 calculators imported from the live site**
+  (King order: "import the money calculator. finance.fitnesslova.qzz.io/tools/
+  … also import the calculators and tools themselves, maybe change the URL
+  path"): page-tools.php ported faithfully — dark apps-hero with the "Free ·
+  No sign-up · Always updated" gold pill, 16 .tool-card in the template's own
+  order with verbatim titles/emoji/gradient tiles/descriptions ("Open tool →"),
+  the 8 "Popular conversions" .fx-chip landing links, banner + rect ad slots
+  and the "Why use these calculators?" hub copy. URL moved to **/money-tools/**
+  per the King's suggestion; /tools/ is gone (404), sitemap, nav, search index,
+  SW shell cache and every internal link followed (27 sitemap locs).
+- **Every calculator page rebuilt on the live anatomy** (16 templates + the 10
+  amount landing pages): ToolShell now renders the same dark hero as WP
+  (3-level breadcrumb Home › Money Calculators › Tool, per-tool gold badge
+  pill, the live hero H1 verbatim — e.g. "Dollar to Naira & Every Currency"),
+  inputs+receipt wrapped in the theme .fx-card, dark receipt panel,
+  st-table/st-table-wrap tables with the mobile full-bleed breakout,
+  fx-disclaimer honesty line, the live .fx-copy art-body long-form section
+  (14–24 paragraphs of the site's own copy per tool), FAQPage JSON-LD kept,
+  .fx-aff affiliate CTA blocks + "Related guides" .g3 cards on the converter
+  and the six tools that carry them (links remapped to articles that exist in
+  this port — no 404 bait).
+- **Theme calculator CSS imported verbatim**: new src/styles/tools.css carries
+  style.css 1244–1500 (.fx-card .fx-field .fx-input .fx-swap .fx-result .fx-big
+  .fx-chips .fx-rate .fx-copy .fx-aff .tool-card .st-table .st-compare .sr-chart
+  .fx-rate-mode .hx-* .fxap-* + winner-row/tbl-best matrix), loaded globally via
+  Layout so hub and calculators speak the same vocabulary as WordPress. Engines
+  and math untouched (vectors gate PASS); only markup/classes moved.
+
 ## [0.6.3] — 2026-09-30
 
 ### Search clear-X branded, /apps/ imported, OG images done properly

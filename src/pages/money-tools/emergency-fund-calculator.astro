@@ -1,0 +1,63 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+import { emergencyFund, EMERGENCY_SEED } from "../../lib/emergency";
+import { formatGrouped } from "../../lib/format";
+const n = (v: number) => formatGrouped(v, 0);
+const seed = emergencyFund(EMERGENCY_SEED.essentials, EMERGENCY_SEED.saved, EMERGENCY_SEED.monthly, EMERGENCY_SEED.cover, EMERGENCY_SEED.inflation);
+const pct = Math.min(100, Math.round(seed.progress_pct));
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+---
+<ToolShell title="Emergency Fund Calculator, Runway Months - GWill Finance" description="How many months could you survive job loss? Runway now, inflation-adjusted target, and the monthly saving that closes the gap." slug="emergency-fund-calculator" tool="Emergency Fund Calculator" crumb="Emergency Fund Calculator (Naira, Inflation-adjusted)" lede="A fund measured in months, not naira. See your runway today, the target that survives inflation, and exactly what closes the gap." verified="Inflation-adjusted target · 6-month default cover" faqs={[
+  { q: "How many months should I cover?", a: "Six is the default for salaried earners; freelancers and single-income households should aim higher. Start with three and build." },
+  { q: "Why is the real target bigger?", a: "Prices rise while you save. The real target prices your essentials at the inflation you set, so the fund still covers six months when you finish it." },
+  { q: "Where should the fund sit?", a: "Liquid and boring: a high-yield savings pocket, not stocks or locked plans. Compare current rates on the savings-rate comparator." },
+]}
+
+  badge="The safety net · priced honestly",
+  copy={[["p", "Most advice tells you to build 3-6 months of expenses, but the first useful number is the one you already have: how many months of essentials your current savings cover. That is your runway. If you save ₦450,000 and your essentials are ₦150,000, you have 3 months of cover today, a real, concrete position, not a vague sense of \"somewhere behind\". Knowing it is the starting point."],["p", "The target is your monthly essentials times the months you want covered. If your essentials are ₦150,000 and you want six months, that is ₦900,000. The exact figure depends on your own spending, not a generic table, which is why this calculator asks for your essentials rather than assuming. Three months is the minimum; six is the comfortable default; more if your income is irregular."],["p", "Your essentials do not stay the same. If you are saving toward a target you will reach in about a year, that year of inflation has raised the monthly figure you are aiming at. In Nigeria inflation has run high, so the gap is real, the naira target you set today is worth less by the time you hit it. This calculator projects the inflation-adjusted target so you are not surprised a year later by how much more you need."],["p", "Divide the target by what you add to the fund each month. But do not use the raw figure as your finish line, the inflation-adjusted target is the one to measure against, and as you progress the runway number tells you whether you are genuinely safer. Building an emergency fund is a marathon, not a sprint; the progress bar makes each month visible."],["p", "The 3-6 month rule is a starting point, not a law. The right size for your fund depends on how stable your income is. If you are a salaried worker with one employer, three months may be enough. If you freelance, run a business, or are the sole earner in a large household, your risk is higher and six months or more is safer, because a job loss or a slow month hits harder and can last longer than a standard notice period. The calculator lets you set the cover you want so the target reflects your actual situation, not a generic table."],["p", "The biggest one is using the fund for non-emergencies, a holiday, a new phone, a wedding. The second is investing it somewhere risky for a slightly higher return and then needing it the day the market is down. The third is setting the target once and never raising it as your cost of living grows. Revisit it every few months, bump the essentials figure if your rent or food bill has gone up, and the progress bar will tell you honestly whether you are keeping pace."],["p", "An emergency fund must be safe and immediately accessible, not tied up in something that drops in value or takes weeks to reach. A high-yield savings account or a fixed-deposit ladder is the usual Nigerian home for it. Compare the best rates with our savings rate comparator, and see how the balance grows with our compound interest calculator."],["p", "An emergency fund is one part of a complete money plan. To know how much to set aside each month toward a specific goal, use our savings goal calculator. To understand how high inflation erodes your target, our inflation-adjusted savings calculator and naira value calculator show the real, inflation-adjusted figure. And to divide your take-home into needs, wants and savings, our 50/30/20 budget calculator tells you how much you can safely put toward the fund each month."],["h2", "Emergency fund questions"],["h3", "How much emergency fund should I have in naira?"],["p", "Three to six months of essential expenses. Multiply your monthly essentials by the cover you want, on ₦150,000 a month, six months is about ₦900,000."],["h3", "What counts as an essential expense?"],["p", "Everything you cannot cut in a crisis: rent or mortgage, food, transport, utilities, insurance, and the minimum payments on debt. Leave out dining out, subscriptions and shopping."],["h3", "Why adjust the target for inflation?"],["p", "Because your essentials rise with inflation, the naira target you set today is worth less by the time you reach it. Adjusting shows the honest number to aim for."],["h3", "Where should I keep my emergency fund?"],["p", "Safe and instantly accessible, a high-yield savings account or a fixed-deposit ladder. Keep it separate from your spending account and only touch it for genuine emergencies."]]},
+  related={[{ href: `${base}articles/piggyvest-vs-cowrywise-2026/`, title: "PiggyVest vs Cowrywise in 2026: Which Saves You More?", excerpt: "Interest rates, withdrawal rules, fees, and app experience compared side by side." }, { href: `${base}articles/grey-vs-geegpay-dollar-account/`, title: "Grey vs Geegpay: Which Dollar Account Should You Open?", excerpt: "Account opening, conversion spreads, card support, and payout speed — tested with real transfers." }, { href: `${base}articles/ngn-dollar-cost-averaging-guide/`, title: "Dollar-Cost Averaging Into NGX Stocks on a \u20a650k Salary", excerpt: "A step-by-step plan for buying Nigerian stocks every month without timing the market." }, { href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers", excerpt: "Card fees, failed-transfer reversals, and support tested — what digital banks actually save you." }]},
+  disclaimer="This calculator is for informational guidance only and is not financial advice. The 3-6 month rule is a guideline, and the inflation-adjusted projection is an estimate based on the rate you enter. Adjust to your circumstances and confirm significant decisions with a licensed adviser.",>
+<div class="fx-card">
+<div class="tgrid c3">
+<div class="field"><label for="em-ess">Monthly essentials ₦</label><input id="em-ess" type="number" min="0" step="any" value={EMERGENCY_SEED.essentials} inputmode="decimal"></div>
+<div class="field"><label for="em-saved">Saved so far ₦</label><input id="em-saved" type="number" min="0" step="any" value={EMERGENCY_SEED.saved} inputmode="decimal"></div>
+<div class="field"><label for="em-mo">Monthly saving ₦</label><input id="em-mo" type="number" min="0" step="any" value={EMERGENCY_SEED.monthly} inputmode="decimal"></div>
+<div class="field"><label for="em-cover">Cover (months)</label><input id="em-cover" type="number" min="1" step="any" value={EMERGENCY_SEED.cover} inputmode="decimal"></div>
+<div class="field"><label for="em-infl">Inflation %/yr</label><input id="em-infl" type="number" min="0" step="any" value="20" inputmode="decimal"></div>
+</div>
+<div class="receipt" aria-live="polite">
+<p class="receipt-lbl">Your runway today</p>
+<p class="receipt-fig" id="em-fig">{seed.runway_now.toFixed(1)} months</p>
+<p class="receipt-sub" id="em-sub">Target ₦{n(seed.target)} · gap ₦{n(seed.gap)} · real (inflated) target ₦{n(seed.real_target)}</p>
+<div class="prog" aria-hidden="true"><i id="em-bar" style={`width:${pct}%`}></i></div>
+<div class="receipt-div" aria-hidden="true"></div>
+<div class="receipt-row"><span>Months to finish</span><b id="em-mtr">{seed.months_to_reach > 0 ? seed.months_to_reach.toFixed(1) : "— (save something monthly)"}</b></div>
+<div class="receipt-row"><span>Progress</span><b id="em-pct">{pct}%</b></div>
+<p class="receipt-foot">6-month default · inflation-adjusted</p>
+</div>
+</div>
+</ToolShell>
+<script>
+import { emergencyFund } from "../../lib/emergency";
+import { formatGrouped } from "../../lib/format";
+const nn = (v: number) => "₦" + formatGrouped(v, 0);
+const g = (id: string) => document.getElementById(id) as HTMLInputElement;
+const t = (id: string) => document.getElementById(id) as HTMLElement;
+function render() {
+  const r = emergencyFund(
+    Math.max(0, Number(g("em-ess").value) || 0),
+    Math.max(0, Number(g("em-saved").value) || 0),
+    Math.max(0, Number(g("em-mo").value) || 0),
+    Math.max(1, Number(g("em-cover").value) || 6),
+    Math.max(0, Number(g("em-infl").value) || 0) / 100,
+  );
+  t("em-fig").textContent = r.runway_now.toFixed(1) + " months";
+  t("em-sub").textContent = `Target ${nn(r.target)} · gap ${nn(r.gap)} · real (inflated) target ${nn(r.real_target)}`;
+  t("em-mtr").textContent = r.months_to_reach > 0 ? r.months_to_reach.toFixed(1) : "— (save something monthly)";
+  const p = Math.min(100, Math.round(r.progress_pct));
+  t("em-pct").textContent = p + "%";
+  (document.getElementById("em-bar") as HTMLElement).style.width = p + "%";
+}
+["em-ess", "em-saved", "em-mo", "em-cover", "em-infl"].forEach((id) => g(id).addEventListener("input", render));
+render();
+</script>

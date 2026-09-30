@@ -31,6 +31,14 @@ Read this at session start.
       (+offset 2px) stacked with the pill's focus-within ring. Measure port
       vs live WP @390 dark on a REAL tap before touching anything.
 
+## NEXT ROUND — King's orders, 2026-09-30 v6
+
+- [x] **G1. "Import the money calculator (finance.fitnesslova.qzz.io/tools/),
+      the calculators and tools themselves, maybe /money-tools/"** — hub + 16
+      calculators + 10 amount pages ported on the live anatomy; URL is now
+      /money-tools/; /tools/ removed. theme calculator CSS imported verbatim
+      (tools.css). All gates + vectors PASS; browser-proven at 390px.
+
 ## NEXT ROUND — King's orders, 2026-09-30 v5
 
 - [x] **F1. "The x to clear the text in the search form doesn't look tied to

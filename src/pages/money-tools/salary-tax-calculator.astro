@@ -6,12 +6,19 @@ const n = (v: number, d = 0) => formatGrouped(v, d);
 const seed = payeCalculate(300000, 0.08, 0, 0, true);
 const cmp = payeCompare(300000, 0.08, 0, 0);
 const bands = payeBandBreakdown(seed.taxable, payeBands2026());
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
-<ToolShell title="Salary Tax Calculator, NTA 2026 vs Old Bands - GWill Finance" description="Nigerian PAYE under the NTA 2026 bands vs the old Finance Act bands: rent relief, minimum-wage exemption, old-vs-new comparison." slug="salary-tax-calculator" tool="Salary-Tax Calculator" lede="2026 bands (0% under ₦800k, then 15–25%) against the old 7–24% — with 20% rent relief and the ₦70k minimum-wage exemption." verified="NTA 2026 bands · rent relief capped ₦500k · exemption ≤ ₦70,000/mo" faqs={[
+<ToolShell title="Salary Tax Calculator, NTA 2026 vs Old Bands - GWill Finance" description="Nigerian PAYE under the NTA 2026 bands vs the old Finance Act bands: rent relief, minimum-wage exemption, old-vs-new comparison." slug="salary-tax-calculator" tool="Nigeria Tax Calculator 2026" crumb="Nigeria Tax Calculator" lede="2026 bands (0% under ₦800k, then 15–25%) against the old 7–24% — with 20% rent relief and the ₦70k minimum-wage exemption." verified="NTA 2026 bands · rent relief capped ₦500k · exemption ≤ ₦70,000/mo" faqs={[
   { q: "Who pays zero PAYE?", a: "Anyone earning at or below the ₦70,000 monthly minimum wage is exempt under the new bands, though pension still applies." },
   { q: "How does rent relief work?", a: "20% of annual rent reduces taxable income, capped at ₦500,000 a year. Keep rent receipts." },
   { q: "Old vs new — who wins?", a: "Almost everyone up to executive pay wins under 2026 bands. Enter your salary and the comparison card shows your exact saving." },
-]}>
+]}
+
+  badge="NTA 2025 · In force since 1 Jan 2026",
+  copy={[["p", "₦243,820 a month, that is the new take-home under the Nigeria Tax Act 2025 for a ₦300,000 gross salary at the minimum 8% pension. Use the calculator with your own numbers and rent to get your exact figure."],["p", "₦394,700 a month at the minimum pension. Add your annual rent above to see how rent relief reduces your taxable income further."],["p", "₦771,900 a month at the minimum pension. The old-vs-new comparison card above shows your exact savings under the new law."],["p", "Your annual gross is reduced by pension, NHF and rent relief (20% of annual rent, capped at ₦500,000). What remains is your taxable income, which is taxed on graduated bands, 0% on the first ₦800,000, then 15% up to ₦3,000,000, 18% up to ₦12,000,000, 21% up to ₦25,000,000, 23% up to ₦50,000,000 and 25% above that."],["p", "The Nigeria Tax Act 2025 replaces the old Consolidated Relief Allowance (₦200,000 + 20% of gross) with a rent relief of 20% of your annual rent, capped at ₦500,000. If you pay ₦2,400,000 a year in rent, you get ₦480,000 off your taxable income. Enter your annual rent above to see the effect."],["p", "The Nigeria Tax Act 2025 (NTA 2025), in force since 1 January 2026, is the biggest change to personal income tax in Nigeria in decades. It was designed to leave the lowest earners completely untaxed, widen the tax-free threshold for everyone, and simplify how allowances work, and for most workers it results in more take-home pay."],["h3", "The new 0% band, most people now start at zero"],["p", "Under the old law, tax started from the first naira of taxable income at 7%. NTA 2025 sets a 0% band on the first ₦800,000 of annual taxable income, so a big slice of every salary is now completely tax-free before any higher bands apply. Employees earning the national minimum wage (₦70,000 a month or less) are fully exempt and pay no PAYE at all."],["h3", "Rent relief replaces the old allowance"],["p", "The old Consolidated Relief Allowance, the flat ₦200,000 plus 20% of gross income that everyone claimed, is gone. In its place is a rent relief worth 20% of your annual rent, capped at ₦500,000. That is a real shift: someone who pays no rent (living rent-free or in staff quarters) no longer gets an automatic allowance, while tenants get a deduction that scales with what they actually pay. This is one of the biggest reasons your take-home under the new law can differ from the old figures."],["h3", "Wider bands, higher top rate"],["p", "The tax bands are now far wider, 15% on income up to ₦3,000,000, 18% up to ₦12,000,000, 21% up to ₦25,000,000, 23% up to ₦50,000,000 and 25% above that, so your effective rate stays lower for longer. Only the very highest earners reach the new 25% top rate (up from 24% before)."],["p", "Type your salary and rent into the calculator above and flip between the old and new columns to see exactly what the law change means for your personal take-home, every figure is computed live from the official bands."],["h2", "Nigerian tax calculator questions"],["h3", "What changed in the Nigeria Tax Act 2025?"],["p", "The first ₦800,000 of annual income is now tax-free (0% band). The old Consolidated Relief Allowance (CRA) is replaced by a rent relief of 20% of annual rent, capped at ₦500,000. Employees earning ₦70,000 a month or less pay zero PAYE. The top rate is now 25% instead of 24%."],["h3", "How do I claim rent relief?"],["p", "Enter your annual rent in the calculator. The relief is automatically applied, 20% of your annual rent, up to ₦500,000. Your employer would normally adjust your PAYE for this in the official filing."],["h3", "Is this the official FIRS figure?"],["p", "No. This is a clear estimate using the current NTA 2025 bands for planning. Your employer and tax consultant use your exact scheme, reliefs and deductions for the official filing."],["h3", "What pension rate should I use?"],["p", "The minimum employee contribution is 8% of your basic salary. Many people contribute more, pick the rate on your payslip."],["h3", "What is the NHF limit?"],["p", "The National Housing Fund is 2.5% of your basic salary, capped at ₦15,000 a month. If your employer deducts it, add that amount here."]]},
+  related={[{ href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers", excerpt: "Card fees, failed-transfer reversals, and support tested — what digital banks actually save you." }]},
+  disclaimer="This calculator is for informational guidance only and is not tax, financial or investment advice. Tax rules and personal circumstances vary, confirm your figures with a licensed tax professional.",>
+<div class="fx-card">
 <div class="tgrid c3">
 <div class="field"><label for="st-gross">Monthly gross ₦</label><input id="st-gross" type="number" min="0" step="any" value="300000" inputmode="decimal"></div>
 <div class="field"><label for="st-pension">Pension %</label><input id="st-pension" type="number" min="0" max="100" step="any" value="8" inputmode="decimal"></div>
@@ -32,9 +39,10 @@ const bands = payeBandBreakdown(seed.taxable, payeBands2026());
 </div>
 <p class="receipt-foot">NTA 2026 bands · rent relief cap ₦500k</p>
 </div>
+</div>
 <div class="hr"></div>
 <h2 class="tool-h2">Old vs new bands</h2>
-<div class="st-wrap"><table class="st" id="st-cmp">
+<div class="st-table-wrap"><table class="st-table" id="st-cmp">
 <thead><tr><th>Regime</th><th class="n">Tax /yr</th><th class="n">Take-home /mo</th></tr></thead>
 <tbody>
 <tr class="win"><td>New (2026)<span class="btag">Best</span></td><td class="n" id="st-new-tax">₦{n(cmp.new.tax_annual)}</td><td class="n" id="st-new-net">₦{n(cmp.new.net_monthly)}</td></tr>
@@ -44,7 +52,7 @@ const bands = payeBandBreakdown(seed.taxable, payeBands2026());
 <p class="bar-note" id="st-save">You keep ₦{n(cmp.save_monthly)}/mo more under the new bands.</p>
 <div class="hr"></div>
 <h2 class="tool-h2">2026 band breakdown</h2>
-<div class="st-wrap"><table class="st" id="st-bands">
+<div class="st-table-wrap"><table class="st-table" id="st-bands">
 <thead><tr><th>Band</th><th class="n">Rate</th><th class="n">Slice ₦</th><th class="n">Tax ₦</th></tr></thead>
 <tbody>
 {bands.map((b) => (
