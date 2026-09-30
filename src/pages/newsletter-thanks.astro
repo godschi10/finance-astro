@@ -1,14 +1,31 @@
 ---
+// Port of the live /newsletter-thanks/ page (WordPress "Default" template +
+// page content), captured 2026-09-30. Anatomy mirrored: .phd (breadcrumb +
+// h1 "You're subscribed") → .con (banner ad, .page-surface carrying the
+// page's post_content VERBATIM — "You're on the list. 🎉" + two paragraphs
+// whose /all-articles/ and /apps/ links resolve to THIS port's articles/ and
+// apps/ pages, no dead hrefs → leaderboard ad). Reached only by a real
+// successful newsletter submit (the form's data-success-url), like the live.
 import Layout from "../layouts/Layout.astro";
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
-<Layout title="Newsletter Thanks - GWill Finance" description="Newsletter confirmation page. The list opens at launch." crumb="Subscribed" noCanonical={true}>
-<section class="con sg" aria-labelledby="thanks-h">
-  <div class="hold">
-    <span class="phase-tag">You are early</span>
-    <h1 class="hold-title" id="thanks-h">No subscription yet — and that is honest.</h1>
-    <p style="margin-top:8px">You reached the confirmation page before the list opens. Nothing was collected, nothing was sent. When delivery goes live, this is the page that will confirm your subscription.</p>
-    <p style="margin-top:12px"><a class="slink" href={`${base}newsletter/`}>← Back to the newsletter page</a></p>
+<Layout title="You're subscribed - GWill Finance" description="Newsletter confirmation — check your inbox to confirm your email." crumb="You're subscribed" noCanonical={true}>
+<div class="phd">
+  <nav class="gwill-breadcrumbs" aria-label="Breadcrumb">
+    <ol class="gwill-breadcrumbs__list">
+      <li class="gwill-breadcrumbs__item"><a href={base}><span>Home</span></a></li>
+      <li class="gwill-breadcrumbs__item gwill-breadcrumbs__item--current"><span aria-current="page">You're subscribed</span></li>
+    </ol>
+  </nav>
+  <h1>You're subscribed</h1>
+</div>
+<div class="con" style="margin-top:32px;padding-bottom:48px">
+  <div class="ad-bg"></div>
+  <div class="page-surface">
+    <h2>You're on the list. 🎉</h2>
+    <p>Check your inbox to confirm your email. The first digest lands next week — rate changes, app reviews, and money moves, tested and explained.</p>
+    <p>While you wait, browse the <a href={`${base}articles/`}>latest articles</a> or check the <a href={`${base}apps/`}>finance apps I recommend</a>.</p>
   </div>
-</section>
+  <div class="ad-bg" style="margin-top:28px"></div>
+</div>
 </Layout>

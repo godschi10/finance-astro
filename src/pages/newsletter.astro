@@ -1,26 +1,59 @@
 ---
+// Port of page-newsletter.php (Template Name: Newsletter) imported from the
+// live https://finance.fitnesslova.qzz.io/newsletter/ capture 2026-09-30.
+// Anatomy mirrored exactly: .nl-hero (hero-grain, breadcrumb, .nl-hero-brand
+// ₦ mark + "The Gwill Newsletter" label, h1 "Newsletter", sub, the
+// newsletter form partial inside .nl-hero-form [CSS hides its prompt there],
+// .nl-hero-perks: the template's three benefit strings) →
+// .nl-content > .con.nl-content-inner (banner ad, the page's post_content
+// VERBATIM — "Nigerian money news, weekly." + "What you will get" 4 bullets,
+// rect ad).
+// The old "launching soon, no form yet" placeholder is gone: the form is now
+// real — submissions land in the comments-api Worker's newsletter list and
+// redirect to /newsletter-thanks/ exactly like the live site.
 import Layout from "../layouts/Layout.astro";
+import NewsletterForm from "../components/NewsletterForm.astro";
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
-<Layout title="Newsletter - GWill Finance" description="Nigerian money news, weekly. The list opens at launch — see what you will get." crumb="Newsletter">
-<section class="con sg" aria-labelledby="nlpage-h">
-  <p class="crumbs"><a href={base}>Home</a> › Newsletter</p>
-  <div class="nl-s" style="margin-top:8px">
-    <div class="nl-copy">
-      <span class="phase-tag">Launching soon — no list yet</span>
-      <h1 class="nl-h" id="nlpage-h">Nigerian money news, weekly.</h1>
-      <p>Rate changes, app reviews, and the financial moves worth making. Free, no spam, unsubscribe anytime.</p>
-      <div class="nl-meta"><span>✓ Free</span><span class="dot" aria-hidden="true"></span><span>✓ No spam</span><span class="dot" aria-hidden="true"></span><span>✓ Unsubscribe anytime</span></div>
+<Layout title="Newsletter - GWill Finance" description="Nigerian money news, weekly. Rate changes, app reviews, money moves — one free email a week, no spam ever." crumb="Newsletter">
+<section class="nl-hero">
+  <div class="hero-grain" aria-hidden="true"></div>
+  <div class="nl-hero-inner">
+    <nav class="gwill-breadcrumbs" aria-label="Breadcrumb">
+      <ol class="gwill-breadcrumbs__list">
+        <li class="gwill-breadcrumbs__item"><a href={base}><span>Home</span></a></li>
+        <li class="gwill-breadcrumbs__item gwill-breadcrumbs__item--current"><span aria-current="page">Newsletter</span></li>
+      </ol>
+    </nav>
+    <div class="nl-hero-brand">
+      <div class="nl-hero-mark" aria-hidden="true">₦</div>
+      <p class="nl-hero-label">The Gwill Newsletter</p>
     </div>
-    <div aria-label="Newsletter signup (not yet open)">
-      <p style="color:#c4b89a;font-size:15px">Delivery is being wired to a proper email service — there is deliberately no email field here yet, because a form that cannot subscribe you would be a fake control.</p>
-      <form class="nl-form" aria-hidden="true" onsubmit="return false">
-        <label class="sr-only" for="nl-email">Email address</label>
-        <input class="form-input" id="nl-email" type="email" placeholder="you@example.com" disabled aria-disabled="true" tabindex="-1">
-        <button class="btn b-gold b-sm" type="button" disabled aria-disabled="true" tabindex="-1">Notify me — soon</button>
-      </form>
-      <p style="margin-top:12px"><a class="slink" href={`${base}articles/`}>Read the guides meanwhile →</a></p>
+    <h1 class="nl-hero-title">Newsletter</h1>
+    <p class="nl-hero-sub">Rate changes, app reviews, money moves, one email a week. Free, no spam, unsubscribe anytime.</p>
+    <div class="nl-hero-form">
+      <NewsletterForm id="gwill-newsletter-1" />
     </div>
+    <ul class="nl-hero-perks">
+      <li>Free, always</li>
+      <li>No spam, one click to leave</li>
+      <li>Real testing, every app reviewed with actual money</li>
+    </ul>
+  </div>
+</section>
+<section class="nl-content">
+  <div class="con nl-content-inner">
+    <div class="ad-bg" style="margin-bottom:32px"></div>
+    <h2>Nigerian money news, weekly.</h2>
+    <p>One email a week. Rate changes, app reviews, and money moves — tested by me, explained in plain language, no spam ever.</p>
+    <h2>What you will get</h2>
+    <ul>
+      <li><strong>The Friday Rate Drop</strong> — official and parallel naira rates for USD, GBP, EUR, and crypto. Updated every Friday before close of business.</li>
+      <li><strong>New app reviews</strong> — when I test a new savings, investment, or payment app, you hear about it first. Every review is backed by real money and real usage.</li>
+      <li><strong>Money moves that matter</strong> — Dollar account comparisons, legit remote-work payment platforms, investment options that work in Nigeria, and honest guidance on what is worth your time.</li>
+      <li><strong>Noise-free</strong> — No daily spam. No AI-written filler. One email a week, and only when there is something worth saying. Unsubscribe anytime with one click.</li>
+    </ul>
+    <div class="ad-bg" style="margin-top:32px"></div>
   </div>
 </section>
 </Layout>

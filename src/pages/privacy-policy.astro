@@ -1,57 +1,79 @@
 ---
+// Port of page-legal.php (Template Name: Legal) for the Privacy Policy page,
+// imported from the live https://finance.fitnesslova.qzz.io/privacy-policy/
+// capture 2026-09-30. Anatomy mirrored: .legal-hero (hero-grain, breadcrumb,
+// "Legal" label, hero title, .legal-updated stamp = date_i18n('F Y') at build
+// time like live) → .legal-section > .legal-layout (banner ad first spanning
+// the grid, .legal-toc sticky "On this page" with the live anchor ids,
+// .legal-body carrying the page's post_content VERBATIM — heading ids match
+// the live wp-block ids so the TOC anchors resolve identically.
+// The live copy describes the WordPress site's data handling (comments,
+// newsletter, anonymous analytics, preference cookies). In this static port
+// comments + newsletter post to the comments-api Worker (name/email/comment
+// or email stored as hashed/deduped rows) and no analytics runs — the legal
+// text still states the honest superset, and the port never collects more
+// than what is listed here.
 import Layout from "../layouts/Layout.astro";
-const updated = "September 2026";
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const updated = new Date().toLocaleString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+const toc = [
+  ["what-this-site-collects", "What this site collects"],
+  ["what-this-site-never-collects", "What this site never collects"],
+  ["third-party-services", "Third-party services"],
+  ["your-rights", "Your rights"],
+  ["changes-to-this-policy", "Changes to this policy"],
+];
 ---
-<Layout title="Privacy Policy - GWill Finance" description="How GWill Finance collects, uses, and protects your information." crumb="Privacy Policy">
-<section class="legal-hero"><div class="hero-grain" aria-hidden="true"></div>
-<div class="con legal-hero-inner">
-<p class="crumbs"><a href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/`}>Home</a> › Privacy Policy</p>
-<p class="legal-hero-label">Legal</p>
-<h1 class="legal-hero-title">Privacy <span class="g">Policy</span></h1>
-<p class="legal-seal">Last reviewed — {updated} · v0.1.0</p>
-</div>
+<Layout title="Privacy Policy - GWill Finance" description="How GWill Finance collects, uses, and protects your information, in plain language." crumb="Privacy Policy">
+<section class="legal-hero">
+  <div class="hero-grain" aria-hidden="true"></div>
+  <div class="con legal-hero-inner">
+    <nav class="gwill-breadcrumbs" aria-label="Breadcrumb">
+      <ol class="gwill-breadcrumbs__list">
+        <li class="gwill-breadcrumbs__item"><a href={base}><span>Home</span></a></li>
+        <li class="gwill-breadcrumbs__item gwill-breadcrumbs__item--current"><span aria-current="page">Privacy Policy</span></li>
+      </ol>
+    </nav>
+    <p class="legal-hero-label">Legal</p>
+    <h1 class="legal-hero-title">Privacy Policy</h1>
+    <p class="legal-updated">Last updated: {updated}</p>
+  </div>
 </section>
-<section class="legal-section"><div class="con legal-layout">
-<nav class="legal-toc" aria-label="On this page">
-<p class="legal-toc-label">On this page</p>
-<ol class="legal-toc-list">
-<li><a href="#what-we-collect">What we collect</a></li>
-<li><a href="#how-we-use-it">How we use it</a></li>
-<li><a href="#cookies">Cookies</a></li>
-<li><a href="#third-parties">Third parties</a></li>
-<li><a href="#your-rights">Your rights</a></li>
-<li><a href="#contact">Contact</a></li>
-</ol>
-</nav>
-<div class="legal-body">
-<div class="legal-block" id="what-we-collect">
-<h2>What we collect</h2>
-<p>GWill Finance is a static reading site. We do not run accounts, comments, or analytics. Calculators run entirely on your device, and the newsletter list has not launched — so no email is collected anywhere yet. This policy will name exactly what each new feature stores before it goes live.</p>
-</div>
-<div class="legal-block" id="how-we-use-it">
-<h2>How we use it</h2>
-<p>Because nothing is collected on this static version of the site, there is nothing to use, share, or sell. Any future data use will be described here first, in plain language.</p>
-</div>
-<div class="legal-block" id="cookies">
-<h2>Cookies</h2>
-<p>This site sets two kinds of local storage, both on your own device:</p>
-<ul>
-<li>A theme preference (light or dark) so the site remembers your choice.</li>
-<li>No tracking cookies, no advertising cookies, no cross-site identifiers.</li>
-</ul>
-</div>
-<div class="legal-block" id="third-parties">
-<h2>Third parties</h2>
-<p>Pages load no third-party scripts in Phase 1. Outbound links (for example to app stores or partner publications) open on those sites, which carry their own privacy policies.</p>
-</div>
-<div class="legal-block" id="your-rights">
-<h2>Your rights</h2>
-<p>You can clear the theme preference at any time by clearing site data in your browser. If you contact us by email, your message is used only to reply and is never added to a mailing list without your explicit consent.</p>
-</div>
-<div class="legal-block" id="contact">
-<h2>Contact</h2>
-<p>Questions about this policy: reach out via the contact page. This static version collects nothing to ask about.</p>
-</div>
-</div>
-</div></section>
+<section class="legal-section">
+  <div class="con legal-layout">
+    <div class="ad-bg"></div>
+    <nav class="legal-toc" aria-label="On this page">
+      <p class="legal-toc-label">On this page</p>
+      <ol class="legal-toc-list">
+        {toc.map(([id, t]) => (<li><a href={`#${id}`}>{t}</a></li>))}
+      </ol>
+    </nav>
+    <div class="legal-body">
+      <p>Your privacy matters. This page explains what this site collects, why, and how you stay in control. It is written in plain language — no legal fog.</p>
+      <h2 id="what-this-site-collects">What this site collects</h2>
+      <p>This site collects the minimum needed to work:</p>
+      <ul>
+        <li><strong>Comments</strong> — the name and email you enter when commenting, plus the comment text. Used only to display and manage comments.</li>
+        <li><strong>Newsletter sign-ups</strong> — your email address, used only to send the weekly digest you asked for. Unsubscribe anytime with one click.</li>
+        <li><strong>Anonymous analytics</strong> — page views and approximate location (country level) to understand what readers find useful. No personal identifiers.</li>
+        <li><strong>Cookies</strong> — a small storage flag for your dark/light mode choice and comment preferences. Nothing tracks you across sites.</li>
+      </ul>
+      <h2 id="what-this-site-never-collects">What this site never collects</h2>
+      <ul>
+        <li>No passwords or financial account details.</li>
+        <li>No bank card numbers.</li>
+        <li>No contact list scanning.</li>
+        <li>No selling or renting of any data to anyone.</li>
+      </ul>
+      <h2 id="third-party-services">Third-party services</h2>
+      <p>Some parts of the site use trusted third-party services: the email platform that delivers the newsletter, and a privacy-respecting analytics service. Each processes only the data needed for its job and has its own privacy policy.</p>
+      <h2 id="your-rights">Your rights</h2>
+      <p>You can ask for a copy of any personal data this site holds about you, ask for it to be corrected, or ask for it to be deleted entirely. Just use the contact page and it will be done.</p>
+      <h2 id="changes-to-this-policy">Changes to this policy</h2>
+      <p>If this policy changes, the updated version is posted here with a new date.</p>
+      <p><em>Last updated: August 2026.</em></p>
+      <div class="ad-bg" style="margin-top:32px"></div>
+    </div>
+  </div>
+</section>
 </Layout>

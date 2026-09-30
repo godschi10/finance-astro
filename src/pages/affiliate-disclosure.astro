@@ -1,43 +1,64 @@
 ---
+// Port of page-legal.php (Template Name: Legal) for the Affiliate Disclosure
+// page, imported from the live https://finance.fitnesslova.qzz.io/affiliate-disclosure/
+// capture 2026-09-30. Anatomy mirrored: .legal-hero (hero-grain, breadcrumb,
+// "Legal" label, hero title, .legal-updated stamp = date_i18n('F Y') at build
+// time like live) → .legal-section > .legal-layout (banner ad first spanning
+// the grid, .legal-toc sticky "On this page" with the live anchor ids,
+// .legal-body carrying the page's post_content VERBATIM — heading ids match
+// the live wp-block ids so the TOC anchors resolve identically.
 import Layout from "../layouts/Layout.astro";
-const updated = "September 2026";
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const updated = new Date().toLocaleString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+const toc = [
+  ["how-affiliate-links-work", "How affiliate links work"],
+  ["what-i-promise", "What I promise"],
+  ["why-affiliate-links-exist", "Why affiliate links exist"],
+  ["questions", "Questions"],
+];
 ---
-<Layout title="Affiliate Disclosure - GWill Finance" description="How GWill Finance handles affiliate links and stays independent." crumb="Affiliate Disclosure">
-<section class="legal-hero"><div class="hero-grain" aria-hidden="true"></div>
-<div class="con legal-hero-inner">
-<p class="crumbs"><a href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/`}>Home</a> › Affiliate Disclosure</p>
-<p class="legal-hero-label">Legal</p>
-<h1 class="legal-hero-title">Affiliate <span class="g">Disclosure</span></h1>
-<p class="legal-seal">Last reviewed — {updated} · v0.1.0</p>
-</div>
+<Layout title="Affiliate Disclosure - GWill Finance" description="Some links on GWill Finance are affiliate links. Here is exactly how they work and what they never change." crumb="Affiliate Disclosure">
+<section class="legal-hero">
+  <div class="hero-grain" aria-hidden="true"></div>
+  <div class="con legal-hero-inner">
+    <nav class="gwill-breadcrumbs" aria-label="Breadcrumb">
+      <ol class="gwill-breadcrumbs__list">
+        <li class="gwill-breadcrumbs__item"><a href={base}><span>Home</span></a></li>
+        <li class="gwill-breadcrumbs__item gwill-breadcrumbs__item--current"><span aria-current="page">Affiliate Disclosure</span></li>
+      </ol>
+    </nav>
+    <p class="legal-hero-label">Legal</p>
+    <h1 class="legal-hero-title">Affiliate Disclosure</h1>
+    <p class="legal-updated">Last updated: {updated}</p>
+  </div>
 </section>
-<section class="legal-section"><div class="con legal-layout">
-<nav class="legal-toc" aria-label="On this page">
-<p class="legal-toc-label">On this page</p>
-<ol class="legal-toc-list">
-<li><a href="#how-it-works">How it works</a></li>
-<li><a href="#independence">Independence promise</a></li>
-<li><a href="#identification">How links are identified</a></li>
-<li><a href="#cost-to-you">Cost to you</a></li>
-</ol>
-</nav>
-<div class="legal-body">
-<div class="legal-block" id="how-it-works">
-<h2>How it works</h2>
-<p>GWill Finance may earn a commission when you open an account or buy through links to banks, fintech apps, and services recommended on this site. That commission is paid by the company, and it is what keeps every guide free to read.</p>
-</div>
-<div class="legal-block" id="independence">
-<h2>Independence promise</h2>
-<p>Commissions never decide what gets recommended. Apps are tested with real use first, downsides are published alongside upsides, and a company cannot pay for a better verdict or to suppress criticism.</p>
-</div>
-<div class="legal-block" id="identification">
-<h2>How links are identified</h2>
-<p>Articles that contain affiliate links say so in a disclosure box near the top of the page. Where a link earns a commission, the surrounding text makes that relationship clear before you click.</p>
-</div>
-<div class="legal-block" id="cost-to-you">
-<h2>Cost to you</h2>
-<p>Using an affiliate link costs you nothing extra — you pay the same price or fee the company publishes. If you would rather not use an affiliate link, you can always reach the same company by searching for it directly.</p>
-</div>
-</div>
-</div></section>
+<section class="legal-section">
+  <div class="con legal-layout">
+    <div class="ad-bg"></div>
+    <nav class="legal-toc" aria-label="On this page">
+      <p class="legal-toc-label">On this page</p>
+      <ol class="legal-toc-list">
+        {toc.map(([id, t]) => (<li><a href={`#${id}`}>{t}</a></li>))}
+      </ol>
+    </nav>
+    <div class="legal-body">
+      <p>Short version: some links on this site are affiliate links. If you sign up through them, I may earn a commission — at no extra cost to you. This never changes my ratings or what I write.</p>
+      <h2 id="how-affiliate-links-work">How affiliate links work</h2>
+      <p>When you click an affiliate link and sign up or make a purchase, the provider pays the site a small referral commission. You pay the same price either way — the commission comes out of the provider's marketing budget, not your pocket.</p>
+      <h2 id="what-i-promise">What I promise</h2>
+      <ul>
+        <li>Every app reviewed on this site is personally tested with real money before it is recommended.</li>
+        <li>Affiliate relationships never change a rating, a verdict, or whether something gets covered at all.</li>
+        <li>Apps I genuinely dislike are never recommended, affiliate link or not.</li>
+        <li>Affiliate disclosure appears on every article that contains affiliate links.</li>
+      </ul>
+      <h2 id="why-affiliate-links-exist">Why affiliate links exist</h2>
+      <p>This site stays free to read because of affiliate commissions. They fund the testing, the time, and the hosting — nothing else. If an article helps you and you sign up through a link, you're also keeping the site alive.</p>
+      <h2 id="questions">Questions</h2>
+      <p>If you ever want to know whether a specific link is an affiliate link, ask via the contact page — the answer is always given honestly.</p>
+      <p><em>Last updated: August 2026.</em></p>
+      <div class="ad-bg" style="margin-top:32px"></div>
+    </div>
+  </div>
+</section>
 </Layout>

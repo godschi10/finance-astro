@@ -3,6 +3,43 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.6.6] — 2026-09-30
+
+### Content pages imported + canonical posts imported — forms are REAL now
+
+- **About, Affiliate Disclosure, Privacy Policy, Disclaimer, Newsletter,
+  Contact, Newsletter-Thanks ported from the live templates** (King's order):
+  page-about.php (.about-hero + .what-i-do six-card $hc array + .sb-layout
+  editorial/Elsewhere/Newsletter sidebar), page-legal.php dark hero + sticky
+  TOC + gold-dot .legal-body for the three legal pages with the live
+  post_content VERBATIM (heading ids match live anchors), page-newsletter.php
+  (.nl-hero ₦ mark, perks, the page content) and template-contact.php
+  (.phd + routed form + Contact Details/Work With Me/Newsletter sidebar with
+  the template's inline styles verbatim). New src/styles/pages.css carries
+  the verbatim §31/34/35/43/44/45 style.css blocks; the port's invented
+  legal CSS and prose.css layer were retired in favour of the theme's.
+- **Contact + newsletter forms went from placeholder to real**: the WP
+  admin-ajax leg is replaced by new Worker endpoints on comments-api
+  (POST /forms + GET /forms/nonce + GET /api/forms/list desk). Contract
+  mirrors inc/forms.php: honeypot fake-success, HMAC-hour nonce, 5-min/IP
+  rate limit, WP's exact error/success strings, newsletter dedupe, routed
+  messages stored in D1 (form_submissions / newsletter_emails tables
+  created remotely). gwill-forms.js ports assets/js/forms.js behaviour
+  (nonce first, FormData, aria-busy loading, success-msg replace, redirect
+  to data-success-url). Browser-proven end to end: newsletter submit
+  redirects to /newsletter-thanks/ and lands a DB row; contact form shows
+  "Thank you. Your message has been sent." and persists the row.
+- **All 10 canonical live posts imported** (item 7: "any other page or post
+  left"): scripts/port-posts.py converts WP REST content to the port's
+  markdown (wp-block tables kept as raw HTML so .wp-block-table CSS styles
+  them, WP dates, featured 1200x675 covers downloaded with srcset variants,
+  categories mapped). 7 new article pages + 3 port files replaced by the
+  canonical live copy under the existing canonical slugs (no shipped URL
+  breaks); 4 port-only guides kept alongside. 78 pages built; sitemap 74;
+  category/filter/search/OG/comments/related verified in browser.
+- **[FIX] homepage + every newsletter form now carries data-success-url**, so
+  the thanks redirect matches live on all 4 form instances.
+
 ## [0.6.5] — 2026-09-30
 
 ### Calculator accuracy certification + two real bugs fixed

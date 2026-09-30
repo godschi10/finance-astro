@@ -1,43 +1,86 @@
 ---
+// Port of page-about.php (gwill-finance-theme "About" template), imported
+// from the live https://finance.fitnesslova.qzz.io/about/ capture 2026-09-30.
+// Anatomy mirrored: .about-hero (dot-grid + gold-bleed layers, breadcrumb,
+// 88px Gravatar .aav, h1, subtitle, bio, b-gold + b-ghost CTAs) →
+// .what-i-do band (shd "What I Do" + .g3 of the template's six $hc cards
+// verbatim, 6th = about-card--gold) → .con editorial (banner ad + .sb-layout
+// "Why this blog exists" block + sidebar: .sw "Elsewhere" network links,
+// .sw "Newsletter" + the newsletter form partial keyed gwill-newsletter-1).
+// NOTE: the live "Why this blog exists" paragraph is EMPTY on the source site
+// (ACF field unset, post_content blank) — this port fills the slot with one
+// honest in-voice paragraph instead of shipping a blank block; King may
+// replace the wording, the template position is faithful.
 import Layout from "../layouts/Layout.astro";
-// The port's own .art-body prose typography moved out of the layout so the
-// ported article page can use the theme's instead. This page still wants it.
-import "../styles/prose.css";
+import NewsletterForm from "../components/NewsletterForm.astro";
+import { GRAVATAR } from "../data/content";
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
-const doing = [
-  { emoji: "📚", title: "In-depth guides", text: "Savings, investing, crypto, banking, remittance, dollar accounts — each one tested, each one priced in naira." },
-  { emoji: "🧪", title: "App reviews", text: "Real transfers through PiggyVest, Grey, Geegpay and the rest, so you know the true cost before your money moves." },
-  { emoji: "🧮", title: "Money calculators", text: "Sixteen tools with verified maths — tax, transfers, savings, loans — plus live amount conversions." },
-  { emoji: "✉️", title: "Weekly letter", text: "Rate changes and money moves, launching soon. No spam, unsubscribe anytime." },
+const cards = [
+  { emoji: "📰", title: "Finance Content", text: "In-depth guides, comparisons, and explainers on Nigerian personal finance. Written in plain English, tested against reality." },
+  { emoji: "📱", title: "Fintech App Reviews", text: "Honest reviews of savings, investment, crypto, and payment apps. Tested with real money before any recommendation." },
+  { emoji: "📧", title: "Weekly Newsletter", text: "Rate changes, new app reviews, and money moves worth making. Free, every week, straight to your inbox." },
+  { emoji: "🌐", title: "Web Development", text: "I built this site. For WordPress projects and web dev work, see gwillchijioke.com." },
+  { emoji: "🤝", title: "Brand Partnerships", text: "Sponsored content and reviews for fintech companies. Only brands I can honestly recommend. See Contact for rates." },
+  { emoji: "📊", title: "Affiliate Disclosure", text: "Some links earn me a commission. Always disclosed. Never changes my ratings. Only recommended if I'd use it myself.", gold: true },
 ];
 ---
-<Layout title="About - GWill Finance" description="About GWill Finance: independent Nigerian money guides — tested with real transfers, free to read." crumb="About">
-<section class="legal-hero" aria-labelledby="about-h">
-  <div class="con legal-hero-inner">
-    <p class="crumbs"><a href={base}>Home</a> › About</p>
-    <p class="legal-hero-label">About</p>
-    <h1 class="legal-hero-title" id="about-h">Nigerian money, <span class="g">tested —</span> not theorised.</h1>
-    <div class="ledger" aria-hidden="true"></div>
-    <p class="hero-sub">GWill Finance is an independent personal-finance publication for Nigerians. Every guide is tried with real money before it is published. No sponsored rankings. No jargon. No AI slop.</p>
+<Layout title="About - GWill Finance" description="About GWill Finance and Gwill Chijioke: web developer and finance writer. Every app tested with real money before it gets recommended." crumb="About">
+<div class="about-hero">
+  <div class="con" style="max-width:none;padding-top:0;padding-bottom:0;position:relative;z-index:1">
+    <nav class="gwill-breadcrumbs" aria-label="Breadcrumb">
+      <ol class="gwill-breadcrumbs__list">
+        <li class="gwill-breadcrumbs__item"><a href={base}><span>Home</span></a></li>
+        <li class="gwill-breadcrumbs__item gwill-breadcrumbs__item--current"><span aria-current="page">About</span></li>
+      </ol>
+    </nav>
+    <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;max-width:720px">
+      <div class="aav"><img alt="" src={GRAVATAR} width="88" height="88" loading="lazy" decoding="async" /></div>
+      <div>
+        <h1 style="font-size:34px;font-weight:800;letter-spacing:-0.04em;color:#f0ede6;margin-bottom:6px">About</h1>
+        <p style="font-size:12px;font-weight:300;color:var(--dark-dim);margin-bottom:14px;letter-spacing:0.04em">Web developer · Finance writer · Nigeria</p>
+        <p style="font-size:15px;font-weight:300;color:#c4b89a;line-height:1.85;max-width:480px">I test every app before writing about it. I don't recommend what I haven't used. This blog exists because most Nigerian finance content is vague, sponsored, or written by people who've never opened the apps they're describing.</p>
+        <div style="display:flex;gap:10px;margin-top:18px">
+          <a class="btn b-gold" style="font-size:12px" href={`${base}articles/`}>Read My Articles →</a>
+          <a class="btn b-ghost" style="font-size:12px;border-color:var(--dark-b);color:#f0ede6" href={`${base}contact/`}>Work With Me</a>
+        </div>
+      </div>
+    </div>
   </div>
-</section>
-<section class="con sg" aria-label="What this site does">
-  <div class="shd"><h2 class="stitle">What I do</h2></div>
-  <div class="g3">
-    {doing.map((d) => (
-      <article class="card"><div class="card-body">
-        <span style="font-size:32px" aria-hidden="true">{d.emoji}</span>
-        <p class="card-t">{d.title}</p>
-        <p class="card-ex" style="-webkit-line-clamp:4">{d.text}</p>
-      </div></article>
+</div>
+<div class="what-i-do">
+  <div class="shd mb20"><h2 class="stitle">What I Do</h2></div>
+  <div class="g3" style="gap:12px">
+    {cards.map((c) => (
+      <div class={c.gold ? "about-card about-card--gold" : "about-card"}>
+        <div class="about-card-emoji">{c.emoji}</div>
+        <div class="about-card-title" style={c.gold ? "color:var(--gold)" : undefined}>{c.title}</div>
+        <div class="about-card-text">{c.text}</div>
+      </div>
     ))}
   </div>
-  <div class="art-body" style="margin-top:28px;max-width:62ch">
-    <h2>How testing works</h2>
-    <p>When an app is reviewed here, it held real naira. Transfers are timed, spreads are measured against the mid-market rate, withdrawal penalties are triggered on purpose — so the numbers you read are the numbers you will meet.</p>
-    <h2>How the site stays free</h2>
-    <p>Selected links to apps may earn a commission at no cost to you. It never buys placement: the cheapest honest option wins every comparison, commission or not. Anything paid for is labelled.</p>
+</div>
+<div class="con" style="margin-top:48px;padding-bottom:48px">
+  <div class="ad-bg"></div>
+  <div class="sb-layout">
+    <div style="max-width:640px">
+      <h2 style="font-size:20px;font-weight:800;color:var(--text);letter-spacing:-0.03em;margin-bottom:10px">Why this blog exists</h2>
+      <p class="fz14 fw3 cm-c lh mb20">Most Nigerian finance content tells you what a bank wants you to hear. This site runs on tests instead — real transfers, real fees measured against the mid-market rate, real screenshots of what happens when a withdrawal breaks. If an app wastes your money, it says so, commission or no commission. That is the whole point.</p>
+      <div class="ad-bg" style="margin-top:24px"></div>
+    </div>
+    <div>
+      <div class="sw">
+        <div class="sw-t">Elsewhere</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <a style="display:flex;gap:10px;align-items:center;font-size:12px;font-weight:300;color:var(--text-mid)" href="https://gwillchijioke.com" target="_blank" rel="noopener noreferrer"><span class="about-net about-net--main">G.</span>gwillchijioke.com, main site</a>
+          <a style="display:flex;gap:10px;align-items:center;font-size:12px;font-weight:300;color:var(--text-mid)" href="https://tech.gwillchijioke.com" target="_blank" rel="noopener noreferrer"><span class="about-net about-net--tech">&gt;_</span>tech.gwillchijioke.com</a>
+        </div>
+      </div>
+      <div class="sw">
+        <div class="sw-t">Newsletter</div>
+        <p class="fz11 fw3 cd lh mb12">Weekly Nigerian finance digest. Free.</p>
+        <NewsletterForm id="gwill-newsletter-1" />
+      </div>
+    </div>
   </div>
-  <p style="margin-top:20px"><a class="btn b-gold" href={`${base}articles/`}>Browse all articles →</a></p>
-</section>
+</div>
 </Layout>

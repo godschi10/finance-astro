@@ -1,48 +1,59 @@
 ---
+// Port of page-legal.php (Template Name: Legal) for the Disclaimer page,
+// imported from the live https://finance.fitnesslova.qzz.io/disclaimer/
+// capture 2026-09-30. Anatomy mirrored: .legal-hero (hero-grain, breadcrumb,
+// "Legal" label, hero title, .legal-updated stamp = date_i18n('F Y') at build
+// time like live) → .legal-section > .legal-layout (banner ad first spanning
+// the grid, .legal-toc sticky "On this page" with the live anchor ids,
+// .legal-body carrying the page's post_content VERBATIM — headings keep the
+// live wp-block ids so the TOC anchors match the source exactly).
 import Layout from "../layouts/Layout.astro";
-const updated = "September 2026";
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const updated = new Date().toLocaleString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+const toc = [
+  ["not-financial-advice", "Not financial advice"],
+  ["information-accuracy", "Information accuracy"],
+  ["no-liability", "No liability"],
+  ["external-links", "External links"],
+];
 ---
-<Layout title="Disclaimer - GWill Finance" description="The limits of the financial information published on GWill Finance." crumb="Disclaimer">
-<section class="legal-hero"><div class="hero-grain" aria-hidden="true"></div>
-<div class="con legal-hero-inner">
-<p class="crumbs"><a href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/`}>Home</a> › Disclaimer</p>
-<p class="legal-hero-label">Legal</p>
-<h1 class="legal-hero-title"><span class="g">Disclaimer</span></h1>
-<p class="legal-seal">Last reviewed — {updated} · v0.1.0</p>
-</div>
+<Layout title="Disclaimer - GWill Finance" description="Everything on GWill Finance is general information, not professional financial advice. The full disclaimer." crumb="Disclaimer">
+<section class="legal-hero">
+  <div class="hero-grain" aria-hidden="true"></div>
+  <div class="con legal-hero-inner">
+    <nav class="gwill-breadcrumbs" aria-label="Breadcrumb">
+      <ol class="gwill-breadcrumbs__list">
+        <li class="gwill-breadcrumbs__item"><a href={base}><span>Home</span></a></li>
+        <li class="gwill-breadcrumbs__item gwill-breadcrumbs__item--current"><span aria-current="page">Disclaimer</span></li>
+      </ol>
+    </nav>
+    <p class="legal-hero-label">Legal</p>
+    <h1 class="legal-hero-title">Disclaimer</h1>
+    <p class="legal-updated">Last updated: {updated}</p>
+  </div>
 </section>
-<section class="legal-section"><div class="con legal-layout">
-<nav class="legal-toc" aria-label="On this page">
-<p class="legal-toc-label">On this page</p>
-<ol class="legal-toc-list">
-<li><a href="#not-advice">Not financial advice</a></li>
-<li><a href="#accuracy">Accuracy and rates</a></li>
-<li><a href="#calculators">Calculators</a></li>
-<li><a href="#external-links">External links</a></li>
-<li><a href="#liability">Liability</a></li>
-</ol>
-</nav>
-<div class="legal-body">
-<div class="legal-block" id="not-advice">
-<h2>Not financial advice</h2>
-<p>Everything on GWill Finance is general educational information about Nigerian personal finance. It is not personal financial advice, and it does not consider your income, obligations, or risk tolerance. Talk to a licensed professional before acting on anything you read here.</p>
-</div>
-<div class="legal-block" id="accuracy">
-<h2>Accuracy and rates</h2>
-<p>Exchange rates, fees, and app features change fast. Every guide carries the date it was last checked, and maintained figures (transfer fees, savings rates, parallel-market spreads) carry a visible verified stamp. Always confirm the current number with the provider before you move money.</p>
-</div>
-<div class="legal-block" id="calculators">
-<h2>Calculators</h2>
-<p>Money calculators illustrate scenarios, not predictions — taxes, fees, and market moves mean real results differ from any projection shown on screen.</p>
-</div>
-<div class="legal-block" id="external-links">
-<h2>External links</h2>
-<p>Links to banks, fintech apps, and other publications are provided for convenience. We do not control those sites and are not responsible for their content, terms, or availability.</p>
-</div>
-<div class="legal-block" id="liability">
-<h2>Liability</h2>
-<p>To the fullest extent permitted by law, GWill Finance is not liable for any loss or damage arising from your use of, or reliance on, the information on this site.</p>
-</div>
-</div>
-</div></section>
+<section class="legal-section">
+  <div class="con legal-layout">
+    <div class="ad-bg"></div>
+    <nav class="legal-toc" aria-label="On this page">
+      <p class="legal-toc-label">On this page</p>
+      <ol class="legal-toc-list">
+        {toc.map(([id, t]) => (<li><a href={`#${id}`}>{t}</a></li>))}
+      </ol>
+    </nav>
+    <div class="legal-body">
+      <p>Everything on this site is written by a real person who tests apps and moves real money — but it is general information, not professional financial advice.</p>
+      <h2 id="not-financial-advice">Not financial advice</h2>
+      <p>Articles on this site share personal experience, comparisons, and opinions about Nigerian finance products. They are not a recommendation to buy, sell, or invest in anything. Your situation is yours alone — do your own research, and consider a licensed financial advisor for decisions involving significant money.</p>
+      <h2 id="information-accuracy">Information accuracy</h2>
+      <p>Rates, fees, and product features change. Every article states when it was last updated, and links to official sources where possible. Still, always confirm current terms on the provider's own site before committing money.</p>
+      <h2 id="no-liability">No liability</h2>
+      <p>To the fullest extent permitted by law, the author is not liable for any loss or damage arising from decisions made based on content on this site. Money moves carry risk — including loss of capital. Only risk what you can afford to lose.</p>
+      <h2 id="external-links">External links</h2>
+      <p>Links to third-party sites are provided for convenience. This site has no control over their content and accepts no responsibility for them.</p>
+      <p><em>Last updated: August 2026.</em></p>
+      <div class="ad-bg" style="margin-top:32px"></div>
+    </div>
+  </div>
+</section>
 </Layout>

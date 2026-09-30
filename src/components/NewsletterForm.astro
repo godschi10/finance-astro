@@ -16,11 +16,12 @@ interface Props {
   id: string;
 }
 const { id } = Astro.props;
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
 
 <div class="gwill-newsletter">
   <p class="gwill-newsletter__prompt">Get new posts in your inbox.</p>
-  <form class="gwill-form gwill-form--newsletter" method="post" novalidate>
+  <form class="gwill-form gwill-form--newsletter" method="post" data-success-url={`${base}newsletter-thanks/`} novalidate>
     <div class="gwill-honey" aria-hidden="true">
       <label for={`gwill_hp_${id}`}>Leave this blank</label>
       <input type="text" name="gwill_hp" id={`gwill_hp_${id}`} tabindex="-1" autocomplete="off" />

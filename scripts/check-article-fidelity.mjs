@@ -209,8 +209,10 @@ const checks = [
   ["the template imports the article stylesheet", /import "\.\.\/\.\.\/styles\/article\.css"/.test(tpl)],
   ["no port-authored .art-body prose is left in the layout",
     !/\.art-body\{margin-top:20px/.test(l) && !/\.art-body h2::before/.test(l)],
-  ["that prose moved to prose.css, imported by the pages that need it",
-    exists("src/styles/prose.css") && /styles\/prose\.css/.test(about) && /styles\/prose\.css/.test(contact)],
+  ["2026-09-30: about + contact are faithful live-template ports (page-about.php /\n    template-contact.php anatomy), so the port-invented prose.css layer is retired:\n    they must NOT import it, and the theme vocabulary is present instead",
+    !/styles\/prose\.css/.test(about) && !/styles\/prose\.css/.test(contact) &&
+    /about-hero/.test(about) && /what-i-do/.test(about) && /about-card/.test(about) &&
+    /page-surface/.test(contact) && /cl-layout/.test(contact)],
   ["the article stylesheet carries the theme's rules verbatim (spot checks)",
     /\.prog-f \{ height: 100%; width: 0;/.test(c) &&
     /\.share-row \{ display: flex; align-items: center; gap: 8px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var\(--border-dim\); flex-wrap: wrap; \}/.test(c) &&

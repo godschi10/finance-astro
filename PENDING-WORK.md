@@ -31,6 +31,16 @@ Read this at session start.
       (+offset 2px) stacked with the pill's focus-within ring. Measure port
       vs live WP @390 dark on a REAL tap before touching anything.
 
+## NEXT ROUND — King's orders, 2026-09-30 v8
+
+- [x] **G3. Import About/Affiliate/Privacy/Disclaimer/Newsletter/Contact +
+      anything left** — all 7 content pages ported from live templates;
+      forms made REAL (Worker /forms + D1 tables, browser-proven E2E);
+      all 10 canonical live posts imported (78 pages, gates+audit green).
+- [ ] **G3-followup: Brevo delivery** — newsletter emails collect into D1
+      now; actual weekly send needs a Brevo list key from the King (WP-side
+      Brevo secret is not shared). Desk: /api/forms/list?token=<ADMIN_TOKEN>.
+
 ## NEXT ROUND — King's orders, 2026-09-30 v7
 
 - [x] **G2. "Make sure all calculators are accurate and without errors"** —

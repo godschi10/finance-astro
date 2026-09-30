@@ -128,7 +128,7 @@ const checks = [
   ["newsletter meta = 3 ✓ items + 2 dots", count(indexTpl, "✓ ") === 3 && count(indexTpl, 'class="dot"') === 2],
   ["form prompt copy", has(indexTpl, "Get new posts in your inbox.")],
   ["form is .gwill-form.gwill-form--newsletter, method=post, novalidate",
-    has(indexTpl, 'class="gwill-form gwill-form--newsletter" method="post" novalidate')],
+    has(indexTpl, 'class="gwill-form gwill-form--newsletter" method="post" data-success-url=')],
   ["honeypot field exactly as WP ships it",
     has(indexTpl, '<label for="gwill_hp_gwill-newsletter-1">Leave this blank</label>') &&
     has(indexTpl, 'name="gwill_hp" id="gwill_hp_gwill-newsletter-1" tabindex="-1" autocomplete="off"')],
