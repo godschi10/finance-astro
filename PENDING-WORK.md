@@ -14,7 +14,7 @@ Read this at session start.
 - [ ] **DESIGN-LANGUAGE.md v1.0 STAMPED** — King approved ALL five §9
       recommendations 2026-09-30 (Q1 mono-everything KEPT · Q2 rates ladder YES
       · Q3 history feed DEFER · Q4 sticky result YES · Q5 dark --surface-3 YES).
-- [ ] **R1 Number Law — SHIPPED? pending push** — v0.7.0: additive
+- [x] **R1 Number Law — SHIPPED v0.7.0** (2026-09-30) — additive
       `src/styles/numbers.css` (tabular-nums on every refreshing/aligning
       figure) + `--surface-3:#1c1a15` dark 4th tier. No verbatim rule touched.
       Gates 6/6 PASS; CDP proof 6 surfaces × 390+1280 × light+dark
