@@ -31,6 +31,18 @@ Read this at session start.
       (+offset 2px) stacked with the pill's focus-within ring. Measure port
       vs live WP @390 dark on a REAL tap before touching anything.
 
+## NEXT ROUND — King's orders, 2026-09-30 v10
+
+- [x] **T2. Sitewide spacing cramp** (6 phone screenshots, calculators +
+      conversion landing pages): root cause was a CORRUPTED CSS comment that
+      made Chrome swallow the base `.art-body` 16px/1.8 rule → every
+      calculator silently ran 15px/27px vs live. Fixed comment + import
+      order + amount-page anatomy + FAQ answers + tables + related cards.
+      New gate check-css-parse.mjs (proven able to fail) + spacing-audit.py
+      inventory. Live parity proven at 390 AND 1280.
+- [ ] **T2-followup (optional)**: /mod/ desk density kept as-is (console
+      look, port-owned); flagged to King, his call if he wants it loosened.
+
 ## NEXT ROUND — King's orders, 2026-09-30 v9
 
 - [x] **T1. Top currency strip stale vs calculators** — build-time fetch

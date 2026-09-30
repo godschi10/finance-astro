@@ -38,15 +38,21 @@ const unitLine = unitLineOf(d.unit_rate, d.rev_rate, d.from, d.to);
 <p class="fx-result-note" id="am-foot" style="opacity:.72">Snapshot · {FX_SNAPSHOT.as_of} · swaps to live timestamp when the feed answers</p>
 </div>
 </div>
-<div class="hr"></div>
+<!-- v0.6.8 (King: cramp on the conversion landing pages): the LIVE amount
+     template wraps this copy zone in `.fx-copy art-body` — h2 20px with 28/10
+     margins, body 16px/1.8. The port had pulled it outside the wrapper with
+     .95rem/10px inline overrides, so every section sat flush under the last.
+     Restored to the live anatomy (the .hr divider stays — port section-break). -->
+<div class="fx-copy art-body" style="margin-top:28px">
 {sections.map((s) => (
-<div><h2 class="tool-h2">{s.h2}</h2>{s.body.map((p) => (<p set:html={p} style="margin-top:10px;color:var(--text-mid);font-size:.95rem"></p>))}</div>
+<div><h2>{s.h2}</h2>{s.body.map((p) => (<p set:html={p}></p>))}</div>
 ))}
 <div class="hr"></div>
-<h2 class="tool-h2">Neighbouring conversions</h2>
-<p style="margin-top:8px">{sibs.map((s, i) => (<span><a class="slink" href={pageUrl(s.slug)}>{s.h1}</a>{i < sibs.length - 1 ? " · " : ""}</span>))}</p>
-<h2 class="tool-h2">The other direction</h2>
-<p style="margin-top:8px">{opps.map((s, i) => (<span><a class="slink" href={pageUrl(s.slug)}>{s.h1}</a>{i < opps.length - 1 ? " · " : ""}</span>))}</p>
+<h2>Neighbouring conversions</h2>
+<p>{sibs.map((s, i) => (<span><a class="slink" href={pageUrl(s.slug)}>{s.h1}</a>{i < sibs.length - 1 ? " · " : ""}</span>))}</p>
+<h2>The other direction</h2>
+<p>{opps.map((s, i) => (<span><a class="slink" href={pageUrl(s.slug)}>{s.h1}</a>{i < opps.length - 1 ? " · " : ""}</span>))}</p>
+</div>
 </ToolShell>
 <div data-amount-slug={slug} hidden></div>
 <script>

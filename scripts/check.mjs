@@ -13,6 +13,7 @@ import { dirname, join } from "node:path";
 const here = dirname(fileURLToPath(import.meta.url));
 
 const GATES = [
+  "check-css-parse.mjs", // v0.6.8: every stylesheet must PARSE clean (a swallowed rule = invisible site-wide cramp)
   "check-header-fidelity.mjs", // WP→Astro header port contract (source assertions)
   "check-footer-fidelity.mjs", // WP→Astro footer port contract (source assertions)
   "check-homepage-fidelity.mjs", // WP→Astro homepage port contract (source assertions)

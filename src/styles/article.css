@@ -353,7 +353,7 @@
 .page-surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 40px 44px; box-shadow: var(--sh-sm); }
 .ac .ac-t a::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; z-index: 1; }
 
-@media (max-width: 767px) at style.css:2413-2417
+/* The mobile TOC visibility switch lives in @media (max-width: 767px) at style.css:2413-2417
  * (see §4.4 below). Desktop: .toc-mobile { display: none; } hides the whole dropdown because the
  * sidebar TOC takes over.
  */

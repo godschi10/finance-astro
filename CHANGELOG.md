@@ -3,6 +3,54 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.6.8] — 2026-09-30
+
+### Sitewide spacing repair — the port's copy ran smaller and tighter than the theme
+
+- **[FIX · ROOT CAUSE] article.css had a CORRUPTED comment** (introduced in
+  6cad5a6): `@media (max-width: 767px) at style.css:2413-2417` lost its `/*`
+  opener, so Chrome parsed the comment prose as an at-rule and SWALLOWED the
+  base `.art-body { font-size:16px; line-height:1.8 }` typography rule that
+  followed it — while every source grep still saw the bytes. Result: every
+  calculator's copy silently fell through to `.fx-copy` 15px/27px (live serves
+  16px/28.8px) — the "not enough space between text" the King photographed
+  across the money pages. Restored the comment opener; the base rule parses
+  again (verified at render: 16px/28.8 + 20px/36 h2 at 390px AND 17px/32.3 +
+  24px h2 at 1280px, matching live byte-for-byte).
+- **[FIX] Layout import order**: tools.css now imports BEFORE article.css so
+  `.art-body` wins `.fx-copy` on the shared `.fx-copy art-body` wrapper —
+  the same source order WP's style.css produces (art-body at line 2040 after
+  fx-copy at 1341). Comment pins the contract.
+- **[FIX] Amount ("conversion") pages**: the section copy + "Neighbouring
+  conversions" + "The other direction" blocks were pulled OUTSIDE the live
+  `.fx-copy art-body` wrapper with `.95rem/10px` inline overrides — flush
+  under each other. Restored inside the wrapper exactly like
+  page-amount-converter.php renders (28px h2 seat, 10px under, 16px body).
+- **[FIX] FAQ answers** (net-new port block): answers read at 14.4px with an
+  8px seat — now full body texture (1rem/1.8) under a 12px gap, card padding
+  12/14 → 14/16. The FAQ wrapper's 8px top margin → 24px.
+- **[FIX] Calculator result tables** (st): .75rem/10px → the theme's own
+  st-table anatomy (12px rows, 10px/14px header, 12px/14px cells, --text-mid).
+- **[FIX] Related-tool cards**: excerpt 11px bare → 13px/1.6, title seat
+  6px → 8px.
+- **[FIX] Footer gate conflict resolved honestly**: the mobile-blurb inline
+  `margin-top:4px;font-size:11px` IS WP footer.php:122's own bytes — restored
+  verbatim (a fidelity gate pinned it; my sitewide sweep had deleted it). The
+  11px blurb is the theme's design, not port cramp; left as the theme ships.
+- **[NEW] scripts/check-css-parse.mjs** (wired into `npm run check` as the
+  FIRST gate): postcss-parses every stylesheet with zero warnings, fails on
+  at-rule prose outside comments (the swallow signature), pins the cascade
+  anchors (.art-body 16px/1.8 + h2 20px, .fx-copy 15px verbatim) and the
+  Layout import ORDER. Proven it can fail: re-inserting the corruption makes
+  it torch the build.
+- **[NEW] scripts/spacing-audit.py**: cramp inventory over dist/ (font/margin
+  floors on reading copy) — the 58 remaining hits are theme-verbatim rules
+  (receipt labels, st-table 9-10px headers, ftag) that ALSO sit on the live
+  site: parity, not drift. Deliberate floor excludes dense chrome.
+- NOT touched: ticker digits, mono figures, badges/chips, receipt stamps,
+  the /mod/ desk's dense console look, vibe-comments plugin vocabulary — all
+  theme-shipped sizes; changing them would be re-design, not fidelity.
+
 ## [0.6.7] — 2026-09-30
 
 ### Build-time data freshness — ticker, converter, amount pages, stats strip

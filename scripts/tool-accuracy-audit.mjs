@@ -64,7 +64,16 @@ async function main() {
   for (const c of CASES) {
     errors.length = 0;
     await send("Page.navigate", { url: `${BASE}/money-tools/${c.slug}/` });
-    await new Promise((r) => setTimeout(r, 3600));
+    // v0.6.8: POLL readiness instead of asserting after a fixed sleep — a cold
+    // Chrome (just restarted / memory-starved) parses a 130KB inlined page
+    // slower than 3.6s, and getElementById then reports static markup as
+    // "missing" (three phantom FAILs on the v0.6.8 verification run).
+    for (let t = 0; t < 40; t++) {
+      const ready = await ev(`document.readyState === 'complete' && !!document.querySelector('main')`);
+      if (ready) break;
+      await new Promise((r) => setTimeout(r, 250));
+    }
+    await new Promise((r) => setTimeout(r, 900)); // module scripts' first paint of results
     const problems = [];
     // missing DOM targets wired by the script?
     const missing = await ev(`(function(){var refs=new Set();var scripts=Array.prototype.map.call(document.scripts,function(s){return s.type==='module'&&s.src?s.src:''}).filter(Boolean);return ""})()`);

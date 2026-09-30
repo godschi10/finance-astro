@@ -8,8 +8,14 @@ import Footer from "../components/Footer.astro";
 import "../styles/footer.css";
 import "../styles/home.css"; // WP stylesheet sections the homepage renders
 import "../styles/search404.css"; // WP slice — /search/ + /404/ vocabulary (.phd, .search-pill, .error-404, .es-*)
-import "../styles/article.css"; // category art gradients (.i-sav etc.) + card rules the search cards reuse
 import "../styles/tools.css"; // verbatim theme calculator vocabulary (style.css 1244-1500, hx/fxap blocks) for /money-tools/ pages
+import "../styles/article.css"; // category art gradients (.i-sav etc.) + card rules the search cards reuse
+// ORDER IS THE CASCADE CONTRACT (v0.6.8): in WP's style.css .art-body is served
+// AFTER .fx-copy — on <div class="fx-copy art-body"> the ART-BODY typography wins
+// (live measures 16px/1.8 copy + 20px h2 at 390px). Importing article last
+// reproduces that winner exactly; importing it first silently shrank every
+// calculator's copy to 15px/27px (King: "not enough space between text or
+// elements especially in all calculators"). Do not re-swap.
 import "../styles/forms.css"; // WP stylesheet section 46 (FORMS) — control geometry
 import "../styles/pages.css"; // §34/35/43/44/45 verbatim blocks: about cards, legal, newsletter pages
 // Shared chrome: head, self-hosted fonts, finance tokens (light + dark),
