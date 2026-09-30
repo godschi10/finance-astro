@@ -3,6 +3,35 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.0] — 2026-09-30 — Design Language R1: The Number Law
+**Phase change.** The King approved the sitewide design upgrade: research
+complete (`~/work/research-notes/finance-design-research-2026-09-30.md`),
+constitution stamped (`docs/DESIGN-LANGUAGE.md` v1.0, all five §9 decisions:
+mono-everything KEPT · rates ladder YES · history DEFER · sticky result YES ·
+dark tier YES). This is rung R1 — additive only.
+
+- `src/styles/numbers.css` — NEW additive layer (DESIGN-LANGUAGE §1):
+  `font-variant-numeric: tabular-nums` on every figure that refreshes or
+  column-aligns — `.fxap-figure`, `.receipt-fig`, `.fx-big`, `.receipt-sub`,
+  `.receipt-note`, `.fx-line b`, `.fx-rate-*`, `.st-table td`, `.st-amt`,
+  `.sr-rate`, `.t-rate`, `.si-n`. No verbatim WP rule rewritten; the layer
+  only ADDS properties the fidelity sheets never set, so the v0.6.8 cascade
+  contract is untouched. Imported LAST in Layout.astro by design (no conflict
+  to win; future rungs extend this file instead of scattering number rules).
+- `--surface-3:#1c1a15` — dark theme's 4th warm-black tier (King's Q5;
+  Linear surface-ladder doctrine). Token-only: nothing consumes it until the
+  R6/R9 floating-panel rungs.
+- `docs/DESIGN-LANGUAGE.md` — draft-1 → **v1.0 STAMPED**; §0 rule of
+  construction: additive layers only, 6-gate battery green per rung.
+
+**Proof (CDP, localhost preview mount):** six surfaces × phone 390 + desktop
+1280 × light + dark — every money figure computes `tabular-nums` at the
+feast scale (floor 30.4px @390, cap 48px @1280, tracking −0.912/−1.44px
+unchanged); `--surface-3` resolves `#1c1a15` in dark, empty in light;
+screenshots `r1-*.png` luminance-verified per theme. Gates: css-parse covers
+numbers.css automatically (scan is directory-wide) — **6/6 PASS**; tool
+accuracy audit re-run on the R1 build.
+
 ## [0.6.8] — 2026-09-30
 
 ### Sitewide spacing repair — the port's copy ran smaller and tighter than the theme

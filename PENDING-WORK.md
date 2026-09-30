@@ -4,6 +4,28 @@ Ledger law: every order gets a line here immediately. `CODED-UNCOMMITTED ≠ DON
 a fix is done only when the served bytes and the rendered page prove it.
 Read this at session start.
 
+## ACTIVE — Design Upgrade Phase, King's order 2026-09-30
+      "upgrade the design of the entire website, little by little... serious
+      research for UI and UX... professional, no AI slop... sitewide first"
+- [x] **SITEWIDE RESEARCH** — complete 2026-09-30, evidence:
+      ~/work/research-notes/finance-design-research-2026-09-30.md
+      (NN/g calculators, Wise/XE live anatomy, Coinbase/Stripe/Mastercard/
+      Linear/Revolut/Kraken token specs, anti-slop canon, money-form law).
+- [ ] **DESIGN-LANGUAGE.md v1.0 STAMPED** — King approved ALL five §9
+      recommendations 2026-09-30 (Q1 mono-everything KEPT · Q2 rates ladder YES
+      · Q3 history feed DEFER · Q4 sticky result YES · Q5 dark --surface-3 YES).
+- [ ] **R1 Number Law — SHIPPED? pending push** — v0.7.0: additive
+      `src/styles/numbers.css` (tabular-nums on every refreshing/aligning
+      figure) + `--surface-3:#1c1a15` dark 4th tier. No verbatim rule touched.
+      Gates 6/6 PASS; CDP proof 6 surfaces × 390+1280 × light+dark
+      (r1-*.png in ~/work/research-notes); accuracy audit re-running.
+- [ ] RUNGS: R2 controls → R3 converter composition + rates ladder →
+      R4 calculator anatomy + sticky results + K5/K6 audits → R5 hub/hero →
+      R6 chrome + live dot → R7 odometer → R8 ledger captions → R9
+      seal/colophon → R10 motion pass + article polish + 404/search/desk.
+      Each rung: one surface, 360px+1280px light+dark screenshots, King
+      approval, gates green, batch ship.
+
 ## NEXT ROUND — King's 2 orders, 2026-09-28 v2 (screenshots: comments + /search/ focus)
 
 - [x] **C1. "My comments needs to be showing an author label or star like social

@@ -1,0 +1,37 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   NUMBERS.CSS — DESIGN-LANGUAGE.md §1 "The Number Law" (rung R1, v0.7.0)
+   ══════════════════════════════════════════════════════════════════════════
+   ADDITIVE LAYER ONLY. No WP-verbatim rule from tools.css / article.css /
+   header.css / footer.css / home.css is rewritten here — this file only ADDS
+   properties those files never set (font-variant-numeric), so it cannot
+   invert the v0.6.8 cascade contract (tools.css → article.css) and the 6-gate
+   battery is untouched. The check-css-parse gate covers this file the same as
+   every stylesheet in src/styles (postcss parse + comment-swallow probe).
+
+   WHY tabular-nums: figures in tables and live-refresh panels must hold
+   column alignment digit-for-digit when values tick (borrowed: Coinbase mono-
+   every-number spec, Stripe fontFeatureSettings:'tnum' doctrine, uxpatterns
+   currency-input decimal-stacking law). JetBrains Mono is already fixed-width,
+   so this law is a no-visual-risk hardening: it makes the promise explicit,
+   survives any future proportional fallback, and is the foundation the R3
+   rates-ladder and R8 ledger-caption rungs build on.
+
+   Import this LAST in Layout.astro: nothing here needs to win a conflict, and
+   placing it last means future rungs extend the same file rather than scatter
+   number rules across the verbatim sheets.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* N1 — figures that refresh or align in columns */
+.fxap-figure,        /* amount-page hero conversion (money feast) */
+.receipt-fig,        /* converter + calculator result figures */
+.fx-big,             /* theme's legacy result scale (kept for parity) */
+.receipt-sub, .receipt-note, /* rate/parallel lines inside the receipt */
+.fx-line b,          /* receipt breakdown figures */
+.fx-rate-sym, .fx-rate-main span, /* converter rate grid values */
+.st-table td, .st-amt, /* comparison tables */
+.sr-rate,            /* savings-rate comparator bars */
+.t-rate,             /* live ticker values */
+.si-n                /* homepage stats strip numbers */
+{
+  font-variant-numeric: tabular-nums;
+}

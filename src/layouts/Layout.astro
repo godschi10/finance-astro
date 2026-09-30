@@ -18,6 +18,7 @@ import "../styles/article.css"; // category art gradients (.i-sav etc.) + card r
 // elements especially in all calculators"). Do not re-swap.
 import "../styles/forms.css"; // WP stylesheet section 46 (FORMS) — control geometry
 import "../styles/pages.css"; // §34/35/43/44/45 verbatim blocks: about cards, legal, newsletter pages
+import "../styles/numbers.css"; // DESIGN-LANGUAGE §1 Number Law (R1) — ADDITIVE only: tabular-nums where money figures refresh/align. Never rewrites a verbatim rule; import last by design.
 // Shared chrome: head, self-hosted fonts, finance tokens (light + dark),
 // skip-link, ticker, desktop nav + mobile drawer, footer. Staging-safe SEO:
 // Pages origin + /finance-astro base everywhere, site-wide noindex on staging.
@@ -395,7 +396,7 @@ const searchBase = `${base}search/`;
   :root{--con-pad:20px}
 }
 [data-theme="dark"]{
-  --bg:#0d0b08;--surface:#131210;--surface-2:#171512;
+  --bg:#0d0b08;--surface:#131210;--surface-2:#171512;--surface-3:#1c1a15; /* R1/Q5: 4th warm-black tier for floating panels (Linear surface-ladder doctrine) */
   --text:#f0ede6;--art-copy:#e8e4dc;--art-dim:#8a8070;
   --border:#211f1a;--border-dim:#1d1a16;
   --text-mid:#c4b89a;--text-dim:#8f8575;
