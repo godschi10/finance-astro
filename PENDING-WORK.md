@@ -31,6 +31,55 @@ Read this at session start.
       (+offset 2px) stacked with the pill's focus-within ring. Measure port
       vs live WP @390 dark on a REAL tap before touching anything.
 
+## NEXT ROUND — King's 2 orders, 2026-09-30 v3 (screenshot: /search/?q=gut)
+
+- [x] **D1. "Let there be space between '1 result for gut' and the card below
+      it"** — ROOT CAUSE: the port rendered the count line TWICE. WP keeps it
+      once, inside the `.phd` result header (`<h1>Search</h1><p>1 result for
+      <strong>gut</strong></p>`), then `.con` (margin-top:28px) carries the
+      pill + grid. The port ALSO had a second `<p id="result-count">` wedged
+      between the search pill and `.g3` with computed margin-bottom 0 and
+      grid margin-top 0 — measured `gapToGrid: 0` at 390px and 1280px on the
+      live public build. FIX: the duplicate element is gone; the JS now writes
+      the header line only (`countEl = #search-count-p`). Verified @390px:
+      header "1 result for gut", `dup:false`, pill margin 24px, card 80px
+      below the pill.
+- [x] **D2. "Import the archive pages: category, tags, all posts, and any type
+      of archive pages that exist"** — WP archive census on the live origin
+      (2026-09-29/30 probes): category archives 200 (9 of them, incl. the
+      child fixed-income + uncategorized), /all-articles/ 200 (+ /page/2/),
+      year archives /2026/ 200 (+ /page/2/), month archives /2026/01/ 200,
+      day archives 404, /tag/* 404 (the site has NO tag archives — zero tag
+      links on any post), /author/* 404, /blog/ + /posts/ 404. SHIPPED:
+      every archive type that EXISTS, in the theme's own anatomy
+      (.phd header + .gwill-breadcrumbs/.bc + badge + h1 + verbatim WP
+      intro + .pill-strip (surface-2 bg, 1px border, 12px con-pad) + .cp
+      pills with .cp.on current + .con (28px/40px) + collapsed .ad-bg + .g3):
+      • /articles/ = the WP "All Articles" archive — .phd + verbatim intro
+        ("No filler. No AI slop.") + the .flex.aic.jsb.g16.mb20 toolbar
+        (10 pills: All .cp.on + 9 categories, plus the inline search form
+        posting into /search/) + 8 cards + the ad slot;
+      • categories: /category/{savings,investing,crypto,banking,remittance,
+        dollar-accounts,budgeting,fixed-income,uncategorized}/ — the 3 new
+        ones imported (budgeting/fixed-income/uncategorized) with the WP
+        archive descriptors captured verbatim, badges bsl, and the strip
+        showing all 9 with the current one .cp.on;
+      • the CHILD category /category/investing/fixed-income/ (WP answers
+        both the nested and flat path — both are built);
+      • date archives /2026/ + /2026/{03,07,08,09}/ — h1 "Articles", the
+        date only in the breadcrumb, exactly as WP prints them;
+      • pagination (§38): WP's posts_per_page = 10, page N at
+        <archive>/page/N/. src/lib/pagination.ts + ArchivePagination.astro
+        (nav.navigation.pagination → h2.screen-reader-text → div.nav-links →
+        span.page-numbers.current + a.page-numbers + a.next "Next →") with
+        /articles/page/N/, /{year}/page/N/ and /category/{slug}/page/N/
+        routes. At the port's 8-post corpus WP would also print no
+        pagination; the contract renders only when an archive exceeds one
+        page. PROVEN with a forced PER_PAGE=2 probe build: pages 2/3/4
+        generated with byte-level WP markup, then reverted to 10.
+      • tags: NOTHING to import — the live site has no tag archives at all
+        (every /tag/ probe 404, zero tag links on posts). Reported honestly.
+
 ## NEXT ROUND — King's 4 bug reports, 2026-09-28 (screenshots: /search/ + 404 + spotlight)
 
 - [x] **B1. "Search form looks ugly and large. Why the excessive space"** —

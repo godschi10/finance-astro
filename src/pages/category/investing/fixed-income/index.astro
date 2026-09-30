@@ -1,0 +1,64 @@
+---
+import Layout from "../../../../layouts/Layout.astro";
+import ArticleCard from "../../../../components/ArticleCard.astro";
+import { CATEGORIES, CATEGORY_META, catBySlug } from "../../../../data/site";
+import { allArticles, fmtMonthYear } from "../../../../data/content";
+
+// WP serves the child category /category/fixed-income/ at BOTH the nested
+// path (the pill href's investing/fixed-income) and the flat path — probed
+// 200/200 on the live origin 2026-09-29. Both routes render the same archive.
+// Card rows = the PARENT investing category's posts (WP: the child archive
+// lists the child's own posts; the only child post, best-investment-apps…,
+// carries both fixed-income + investing — category-investing covers it).
+const posts = await allArticles();
+const rows = posts
+  .filter((p) => p.data.category === "fixed-income")
+  .map((p) => ({
+    slug: p.slug,
+    title: p.data.title,
+    excerpt: p.data.description,
+    date: fmtMonthYear(p.data.pubDate),
+    readMins: p.data.readMins,
+    author: p.data.author,
+  }));
+const cat = catBySlug("fixed-income");
+const meta = CATEGORY_META["fixed-income"];
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const pillCats = CATEGORIES;
+---
+<Layout title={`${cat.name} - GWill Finance`} description={meta.desc} crumb={cat.name}>
+<section class="phd" aria-labelledby="cat-h">
+  <nav class="bc" aria-label="Breadcrumb">
+    <span class="bc-i"><a href={base}>Home</a></span>
+    <span class="bc-s">›</span>
+    <span class="bc-i"><a href={`${base}articles/`}>All Articles</a></span>
+    <span class="bc-s">›</span>
+    <span class="bc-i"><a href={`${base}category/investing/`}>Investing</a></span>
+    <span class="bc-s">›</span>
+    <span class="bc-i" aria-current="page">{cat.name}</span>
+  </nav>
+  <span class={`badge ${cat.badge}`} style="margin-bottom:12px;display:inline-flex">{cat.name}</span>
+  <h1 id="cat-h">{meta.h1}</h1>
+  <p>{meta.desc}</p>
+</section>
+<div class="pill-strip">
+  <div class="cp-strip" role="group" aria-label="Browse categories">
+    <a class="cp" href={`${base}articles/`}>All</a>
+    {pillCats.map((c) => (
+      <a class={`cp${c.slug === "fixed-income" ? " on" : ""}`} href={c.slug === "fixed-income" ? `${base}category/fixed-income/` : `${base}category/${c.slug}/`} aria-current={c.slug === "fixed-income" ? "page" : undefined}>{c.name}</a>
+    ))}
+  </div>
+</div>
+<section class="con" style="margin-top:28px;padding-bottom:40px">
+  <div class="ad-bg"></div>
+  {rows.length === 0 ? (
+    <p class="card-meta">No guides here yet — the next batch lands in this category first.</p>
+  ) : (
+    <div class="g3">
+      {rows.map((p) => (
+        <ArticleCard slug={p.slug} title={p.title} excerpt={p.excerpt} category="investing" date={p.date} readMins={p.readMins} author={p.author} />
+      ))}
+    </div>
+  )}
+</section>
+</Layout>

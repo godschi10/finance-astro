@@ -42,7 +42,52 @@ export const CATEGORIES: Category[] = [
   { slug: "banking", name: "Banking", emoji: "\u{1F3E6}", badge: "bsl", art: "i-ban", chip: "db-s" },
   { slug: "remittance", name: "Remittance", emoji: "\u2708\uFE0F", badge: "bsl", art: "i-rem", chip: "db-g" },
   { slug: "dollar-accounts", name: "Dollar Accounts", emoji: "\u{1F4B5}", badge: "bg", art: "i-dol", chip: "db-gr" },
+  { slug: "budgeting", name: "Budgeting", emoji: "\u{1F4B0}", badge: "bsl", art: "i-dol", chip: "db-g" },
+  { slug: "fixed-income", name: "Fixed Income", emoji: "\u{1F4C9}", badge: "bsl", art: "i-inv", chip: "db-gr" },
+  // The theme's pill strips list Uncategorized too (homepage cp buttons + db
+  // chips + every archive strip, captured live 2026-09-29). Its archive is
+  // empty on WP as well — h1 only, no grid.
+  { slug: "uncategorized", name: "Uncategorized", emoji: "\u{1F4C1}", badge: "bsl", art: "i-ban", chip: "db-s" },
 ];
+
+// WP category archive descriptors, captured verbatim from the live origin
+// (h1 + archive intro <p>, 2026-09-29). The theme prints these on every
+// category archive header; uncategorized has none (h1 only).
+export const CATEGORY_META: Record<string, { h1: string; desc?: string }> = {
+  savings: {
+    h1: "Savings in Nigeria",
+    desc: "Honest, tested guides to Nigerian savings apps \u2014 PiggyVest, Cowrywise, SafeLock and more. Real rates, real withdrawal experience, no hype.",
+  },
+  investing: {
+    h1: "Investing in Nigeria",
+    desc: "Nigerian investing explained without jargon \u2014 Risevest, Trove, Bamboo, mutual funds and what beginners should actually do with their money.",
+  },
+  crypto: {
+    h1: "Crypto in Nigeria",
+    desc: "Crypto in Nigeria after the SEC rules \u2014 what is legal, what still works, and where Nigerians actually trade in 2026.",
+  },
+  banking: {
+    h1: "Banking in Nigeria",
+    desc: "Nigerian banking apps compared honestly \u2014 Kuda, Moniepoint and more, tested for daily use, fees and reliability.",
+  },
+  remittance: {
+    h1: "Remittance in Nigeria",
+    desc: "Sending and receiving money across borders \u2014 Wise, Remitly, WorldRemit and SWIFT tested with real transfers to Nigeria.",
+  },
+  "dollar-accounts": {
+    h1: "Dollar Accounts in Nigeria",
+    desc: "Dollar account apps for Nigerians \u2014 Grey, Vance, Geegpay and Chipper Cash tested with real money. Fees, limits and virtual cards.",
+  },
+  budgeting: {
+    h1: "Budgeting in Nigeria",
+    desc: "Budgeting guides for Nigerians \u2014 how to track spending, save more and make every naira work harder.",
+  },
+  "fixed-income": {
+    h1: "Fixed Income in Nigeria",
+    desc: "Treasury bills, fixed deposits, bonds and other predictable Nigerian investment options \u2014 explained without the broker jargon.",
+  },
+  uncategorized: { h1: "Uncategorized in Nigeria" },
+};
 
 // Footer link groups — faithful port of inc/footer-links.php (gwill-finance-theme
 // 1.13.39). The theme renders these in three places: the desktop footer's

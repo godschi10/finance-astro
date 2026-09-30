@@ -1,0 +1,79 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ArticleCard from "../../components/ArticleCard.astro";
+import { CATEGORIES } from "../../data/site";
+import { allArticles, fmtLongMonthYear } from "../../data/content";
+
+// Faithful port of the theme's MONTH archive (archive.php), captured from the
+// live origin 2026-09-29 (finance-truth/archives/wp-month-2026-01.html):
+//   .phd: breadcrumbs (Home › {Month Year}, aria-current) + h1 "Articles"
+//   .pill-strip: .cp-strip "All" → /articles/ + full category pill set
+//   .con style="margin-top:28px;padding-bottom:40px": .ad-bg (collapses when
+//     empty) + .g3 of .ac cards (no pagination at this corpus size)
+// WP prints NO badge and NO description on month archives (h1 only).
+export async function getStaticPaths() {
+  const posts = await allArticles();
+  const keys = new Map<string, { year: number; month: number }>();
+  posts.forEach((p) => {
+    const d = p.data.pubDate;
+    const key = `${d.getUTCFullYear()}/${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+    if (!keys.has(key)) keys.set(key, { year: d.getUTCFullYear(), month: d.getUTCMonth() + 1 });
+  });
+  return Array.from(keys.entries())
+    .sort((a, b) => (a[1].year !== b[1].year ? b[1].year - a[1].year : b[1].month - a[1].month))
+    .map(([key, { year, month }]) => ({
+      params: { year: String(year), month: String(month).padStart(2, "0") },
+      props: {
+        year,
+        month,
+        posts: posts
+          .filter((p) => {
+            const d = p.data.pubDate;
+            return d.getUTCFullYear() === year && d.getUTCMonth() + 1 === month;
+          })
+          .map((p) => ({
+            slug: p.slug,
+            title: p.data.title,
+            excerpt: p.data.description,
+            date: fmtLongMonthYear(p.data.pubDate),
+            readMins: p.data.readMins,
+            author: p.data.author,
+            category: p.data.category,
+          })),
+      },
+    }));
+}
+
+const { year, month, posts } = Astro.props;
+const monthName = new Date(Date.UTC(year, month - 1, 1)).toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+
+---
+<Layout title={`${monthName} - GWill Finance`} description={`Every ${monthName} article on GWill Finance — savings, investing, crypto, banking and remittance guides.`} crumb={monthName}>
+<section class="phd" aria-labelledby="month-h">
+  <nav class="bc" aria-label="Breadcrumb">
+    <span class="bc-i"><a href={base}>Home</a></span>
+    <span class="bc-s">›</span>
+    <span class="bc-i"><a href={`${base}${year}/`}>{year}</a></span>
+    <span class="bc-s">›</span>
+    <span class="bc-i" aria-current="page">{monthName}</span>
+  </nav>
+  <h1 id="month-h">Articles</h1>
+</section>
+<div class="pill-strip">
+  <div class="cp-strip" role="group" aria-label="Browse categories">
+    <a class="cp" href={`${base}articles/`}>All</a>
+    {CATEGORIES.map((c) => (
+      <a class="cp" href={`${base}category/${c.slug}/`}>{c.name}</a>
+    ))}
+  </div>
+</div>
+<section class="con" style="margin-top:28px;padding-bottom:40px">
+  <div class="ad-bg"></div>
+  <div class="g3">
+    {posts.map((p) => (
+      <ArticleCard slug={p.slug} title={p.title} excerpt={p.excerpt} category={p.category} date={p.date} readMins={p.readMins} author={p.author} />
+    ))}
+  </div>
+</section>
+</Layout>

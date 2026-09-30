@@ -30,8 +30,9 @@ import { norm, toks, smartMatch, highlight, escHtml } from './search-core.js';
   var input = document.getElementById('search-input');
   var form = document.querySelector('.search-form');
   var grid = document.getElementById('search-results-grid');
-  var countEl = document.getElementById('result-count');
-  var countP = document.getElementById('search-count-p');
+  // WP contract: the count line lives in the .phd HEADER (p after h1) —
+  // "{n} results for <strong>{q}</strong>". One element, one line.
+  var countEl = document.getElementById('search-count-p');
   var empty = document.getElementById('search-empty');
   if (!input || !grid || !countEl || !empty) return;
 
@@ -96,7 +97,6 @@ import { norm, toks, smartMatch, highlight, escHtml } from './search-core.js';
       for (var i = 0; i < matches.length; i++) allHtml += card(matches[i].p, []);
       grid.innerHTML = allHtml;
       countEl.textContent = 'Showing all ' + matches.length + ' entries';
-      countP.textContent = 'Every guide and calculator, searched on your device.';
       empty.hidden = matches.length !== 0;
       syncUrl('');
       return;
@@ -106,7 +106,6 @@ import { norm, toks, smartMatch, highlight, escHtml } from './search-core.js';
     for (var j = 0; j < matches.length; j++) html += card(matches[j].p, qtoks);
     grid.innerHTML = html;
     countEl.innerHTML = matches.length + ' ' + (matches.length === 1 ? 'result' : 'results') + ' for <strong>' + escHtml(q) + '</strong>';
-    countP.textContent = matches.length + ' ' + (matches.length === 1 ? 'result' : 'results') + ' for “' + q + '”';
     empty.hidden = matches.length !== 0;
     syncUrl(q);
   }

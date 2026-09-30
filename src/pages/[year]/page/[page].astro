@@ -1,0 +1,78 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import ArticleCard from "../../../components/ArticleCard.astro";
+import ArchivePagination from "../../../components/ArchivePagination.astro";
+import { CATEGORIES } from "../../../data/site";
+import { allArticles, fmtLongMonthYear } from "../../../data/content";
+import { paginate } from "../../../lib/pagination";
+
+// /{year}/page/N/ — WP's paginated year archive (probed 200 on
+// /2026/page/2/ live 2026-09-29). Emits pages 2..N only when the year holds
+// more than posts_per_page (10) articles; page 1 is /{year}/.
+export async function getStaticPaths() {
+  const posts = await allArticles();
+  const byYear = new Map<number, typeof posts>();
+  posts.forEach((p) => {
+    const y = p.data.pubDate.getUTCFullYear();
+    if (!byYear.has(y)) byYear.set(y, []);
+    byYear.get(y)!.push(p);
+  });
+  const out: { params: { year: string; page: string }; props: any }[] = [];
+  for (const [year, list] of byYear) {
+    const pages = paginate(list);
+    if (pages.length < 2) continue;
+    pages.slice(1).forEach((slice, i) => {
+      out.push({
+        params: { year: String(year), page: String(i + 2) },
+        props: {
+          year,
+          current: i + 2,
+          total: pages.length,
+          rows: slice.map((p) => ({
+            slug: p.slug,
+            title: p.data.title,
+            excerpt: p.data.description,
+            date: fmtLongMonthYear(p.data.pubDate),
+            readMins: p.data.readMins,
+            author: p.data.author,
+            category: p.data.category,
+          })),
+        },
+      });
+    });
+  }
+  return out;
+}
+
+const { year, current, total, rows } = Astro.props;
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+---
+<Layout title={`${year} - Page ${current} - GWill Finance`} description={`Every ${year} article on GWill Finance — savings, investing, crypto, banking and remittance guides.`} crumb={String(year)}>
+<section class="phd" aria-labelledby="year-h">
+  <nav class="bc" aria-label="Breadcrumb">
+    <span class="bc-i"><a href={base}>Home</a></span>
+    <span class="bc-s">›</span>
+    <span class="bc-i"><a href={`${base}${year}/`}>{year}</a></span>
+    <span class="bc-s">›</span>
+    <span class="bc-i" aria-current="page">Page {current}</span>
+  </nav>
+  <h1 id="year-h">Articles</h1>
+</section>
+<div class="pill-strip">
+  <div class="cp-strip" role="group" aria-label="Browse categories">
+    <a class="cp" href={`${base}articles/`}>All</a>
+    {CATEGORIES.map((c) => (
+      <a class="cp" href={`${base}category/${c.slug}/`}>{c.name}</a>
+    ))}
+  </div>
+</div>
+<section class="con" style="margin-top:28px;padding-bottom:40px">
+  <div class="ad-bg"></div>
+  <div class="g3">
+    {rows.map((p) => (
+      <ArticleCard slug={p.slug} title={p.title} excerpt={p.excerpt} category={p.category} date={p.date} readMins={p.readMins} author={p.author} />
+    ))}
+  </div>
+  <ArchivePagination current={current} total={total} archivePath={String(year)} />
+</section>
+</Layout>

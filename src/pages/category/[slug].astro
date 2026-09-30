@@ -1,9 +1,23 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import ArticleCard from "../../components/ArticleCard.astro";
-import { CATEGORIES, catBySlug } from "../../data/site";
+import { CATEGORIES, CATEGORY_META, catBySlug } from "../../data/site";
 import { allArticles, fmtMonthYear } from "../../data/content";
 
+// Faithful port of the theme's category archive (archive.php + header.php
+// pill-strip + template-parts/content.php cards), captured from the live
+// origin 2026-09-29 (finance-truth/archives/wp-cat-*.html):
+//   .phd: breadcrumbs (Home › All Articles › {Cat}, aria-current) +
+//     span.badge.{badge} style="margin-bottom:12px;display:inline-flex" +
+//     h1 "{Cat} in Nigeria" + p archive intro (verbatim WP copy)
+//   .pill-strip (bg surface-2, border-bottom, 12px con-pad): .cp-strip
+//     "All" → /articles/ + 6 categories + Budgeting + Fixed Income +
+//     Uncategorized, .cp.on on the current category
+//   .con style="margin-top:28px;padding-bottom:40px": .ad-bg (collapses
+//     when empty, v1.12.10) + .g3 of .ac cards
+// Empty category: no grid (Uncategorized serves h1 only + pills + ad).
+// WP's child category /category/fixed-income/ ALSO answers at the flat
+// path — both routes are built below (fixed-income.astro re-exports this).
 export async function getStaticPaths() {
   const posts = await allArticles();
   return CATEGORIES.map((c) => ({
@@ -26,28 +40,43 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const { posts } = Astro.props;
 const cat = catBySlug(slug ?? "");
+const meta = CATEGORY_META[slug ?? ""] ?? { h1: `${cat.name} in Nigeria` };
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+// WP archive pill strip: "All" + the 9 categories (CATEGORIES carries
+// Budgeting, Fixed Income and Uncategorized — captured live 2026-09-29).
+const pillCats = CATEGORIES;
 ---
-<Layout title={`${cat.name} Guides in Nigeria - GWill Finance`} description={`Every ${cat.name.toLowerCase()} guide for Nigerians: tested, priced in naira, free to read.`} crumb={cat.name}>
-<section class="con sg" aria-labelledby="cat-h">
-  <p class="crumbs"><a href={base}>Home</a> › <a href={`${base}articles/`}>All Articles</a> › {cat.name}</p>
-  <span class={`badge ${cat.badge}`}>{cat.emoji} {cat.name}</span>
-  <h1 class="hold-title" id="cat-h">{cat.name} in Nigeria</h1>
-  <p style="margin-top:8px;color:var(--text-mid);max-width:62ch">Every {cat.name.toLowerCase()} guide, newest first.</p>
-  <div class="cp-strip" style="margin-top:20px" role="group" aria-label="Browse other categories">
-    {CATEGORIES.map((c) => (
-      <a class="chip" href={`${base}category/${c.slug}/`} style="text-decoration:none" aria-current={c.slug === slug ? "page" : undefined}>{c.name}</a>
+<Layout title={`${cat.name} - GWill Finance`} description={meta.desc ?? `Every ${cat.name.toLowerCase()} guide for Nigerians: tested, priced in naira, free to read.`} crumb={cat.name}>
+<section class="phd" aria-labelledby="cat-h">
+  <nav class="bc" aria-label="Breadcrumb">
+    <span class="bc-i"><a href={base}>Home</a></span>
+    <span class="bc-s">›</span>
+    <span class="bc-i"><a href={`${base}articles/`}>All Articles</a></span>
+    <span class="bc-s">›</span>
+    <span class="bc-i" aria-current="page">{cat.name}</span>
+  </nav>
+  <span class={`badge ${cat.badge}`} style="margin-bottom:12px;display:inline-flex">{cat.name}</span>
+  <h1 id="cat-h">{meta.h1}</h1>
+  {meta.desc && <p>{meta.desc}</p>}
+</section>
+<div class="pill-strip">
+  <div class="cp-strip" role="group" aria-label="Browse categories">
+    <a class="cp" href={`${base}articles/`}>All</a>
+    {pillCats.map((c) => (
+      <a class={`cp${c.slug === slug ? " on" : ""}`} href={`${base}category/${c.slug}/`} aria-current={c.slug === slug ? "page" : undefined}>{c.name}</a>
     ))}
   </div>
+</div>
+<section class="con" style="margin-top:28px;padding-bottom:40px">
+  <div class="ad-bg"></div>
   {posts.length === 0 ? (
-    <p class="card-meta" style="margin-top:20px">No guides here yet — the next batch lands in this category first.</p>
+    <p class="card-meta">No guides here yet — the next batch lands in this category first.</p>
   ) : (
-    <div class="g3" style="margin-top:20px">
+    <div class="g3">
       {posts.map((p) => (
         <ArticleCard slug={p.slug} title={p.title} excerpt={p.excerpt} category={slug!} date={p.date} readMins={p.readMins} author={p.author} />
       ))}
     </div>
   )}
-  <div class="ad-bg">Ad slot — fills when ads are configured.</div>
 </section>
 </Layout>

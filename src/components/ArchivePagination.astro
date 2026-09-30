@@ -1,0 +1,36 @@
+---
+// Theme's archive pagination (style.css §38), verbatim markup:
+//   nav.navigation.pagination[aria-label="Posts pagination"]
+//     h2.screen-reader-text "Posts pagination"
+//     div.nav-links > span.page-numbers.current + a.page-numbers + a.next
+// Renders only when the archive has more than one page — WP prints nothing
+// for a single page (the theme has no "1" for a 1-page query either).
+interface Props {
+  /** 1-based current page. */
+  current: number;
+  /** Total pages for this archive. */
+  total: number;
+  /** Archive path WITHOUT base/trailing slash, e.g. "articles" or "2026/09". */
+  archivePath: string;
+}
+const { current, total, archivePath } = Astro.props;
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const trimmed = archivePath.replace(/^\/|\/$/g, "");
+const pageUrl = (n: number) => (n === 1 ? `${base}${trimmed}/` : `${base}${trimmed}/page/${n}/`);
+const pages = Array.from({ length: total }, (_, i) => i + 1);
+---
+{total > 1 && (
+  <nav class="navigation pagination" aria-label="Posts pagination">
+    <h2 class="screen-reader-text">Posts pagination</h2>
+    <div class="nav-links">
+      {pages.map((n) =>
+        n === current ? (
+          <span aria-current="page" class="page-numbers current">{n}</span>
+        ) : (
+          <a class="page-numbers" href={pageUrl(n)}>{n}</a>
+        )
+      )}
+      {current < total && <a class="next page-numbers" href={pageUrl(current + 1)}>Next →</a>}
+    </div>
+  </nav>
+)}

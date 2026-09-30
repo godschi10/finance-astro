@@ -3,6 +3,45 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.6.0] — 2026-09-30
+
+### King's 2 orders — the /search/ count gap + the whole archive family
+
+- **"Let there be space between '1 result for gut' and the card below it"** —
+  real bug: the port printed the count line TWICE. WP keeps it once in the
+  `.phd` result header; the port also had a `<p id="result-count">` wedged
+  between the search pill and the grid with 0px computed gaps (measured
+  `gapToGrid: 0` at 390px and 1280px on the live build). The duplicate is
+  gone — the controller writes the header line only. Verified @390px:
+  header reads "1 result for gut", no duplicate node, pill margin 24px, card
+  80px below the pill.
+- **Archives imported — every type the live site actually has:**
+  - `/articles/` rebuilt as WP's "All Articles" archive: `.phd` breadcrumb
+    header + verbatim intro ("No filler. No AI slop."), the
+    `.flex.aic.jsb.g16.mb20` toolbar (10 pills — All + the 9 categories —
+    plus the inline search form posting into `/search/`), 8 cards, ad slot.
+  - **Three new category archives**: `budgeting`, `fixed-income`,
+    `uncategorized` (WP's archive descriptors captured verbatim; badges
+    `bsl`), plus the CHILD route `/category/investing/fixed-income/` (WP
+    answers both the nested and the flat path). Every archive strip now
+    carries all 9 categories with the current one `.cp.on`.
+  - **Date archives** `/2026/` + `/2026/03/07/08/09/` — h1 "Articles" with
+    the date in the breadcrumb, exactly WP's anatomy (`.pill-strip`
+    surface-2 strip, `.con` 28/40, collapsed `.ad-bg`).
+  - **Pagination** (§38): WP's `posts_per_page = 10`, page N at
+    `<archive>/page/N/`. `src/lib/pagination.ts` + `ArchivePagination.astro`
+    reproduce `nav.navigation.pagination` byte-for-byte, wired into
+    `/articles/page/N/`, `/{year}/page/N/` and `/category/{slug}/page/N/`.
+    Renders only when an archive exceeds one page (at 8 posts WP prints
+    nothing either); proven with a forced PER_PAGE=2 probe build that
+    emitted pages 2/3/4 with the exact WP markup, then reverted to 10.
+  - **Tags: nothing to import** — the live site has no tag archives
+    (every `/tag/` probe 404s; zero tag links on any post). Author archives
+    and day archives do not exist there either.
+  - Homepage chips/pills now list all 9 categories, matching WP.
+  - Sitemap carries the new archive routes (60 URLs).
+- Article fidelity gates: 147/147 PASS. Build: 64 pages.
+
 ## [0.5.2] — 2026-09-28
 
 ### King's 2 orders — the author badge/star + the real gravatar
