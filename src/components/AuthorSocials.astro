@@ -10,8 +10,10 @@
 // author with no socials renders no .abio-s wrapper at all.
 interface Props {
   socials: Record<string, string | undefined>;
+  /** author.php:167 renders the row as .abio-s.author-socials — extra class. */
+  extraClass?: string;
 }
-const { socials } = Astro.props;
+const { socials, extraClass = "" } = Astro.props;
 // Keyed by the port's AUTHORS short keys, in the theme's own field order.
 const ICONS: Record<string, { aria: string; svg: string }> = {
   website: { aria: 'Website', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>' },
@@ -25,7 +27,7 @@ const ICONS: Record<string, { aria: string; svg: string }> = {
 const keys = Object.keys(ICONS);
 ---
 {keys.some((k) => socials[k]) && (
-  <div class="abio-s">
+  <div class={`abio-s${extraClass ? " " + extraClass : ""}`}>
     {keys.map((k) =>
       socials[k] ? (
         <a class="abio-si" href={socials[k]} target="_blank" rel="noopener noreferrer" aria-label={ICONS[k].aria} set:html={ICONS[k].svg} />

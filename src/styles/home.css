@@ -107,14 +107,25 @@
    -------------------------------------------------------------------------- */
 .ac-img img { width: 100%; height: 100%; object-fit: cover; }
 .ac-emoji { position: relative; z-index: 1; font-size: 28px; }
-.ac-body { padding: 16px 20px 20px; position: relative; }
+.ac-body { padding: 16px 20px 20px; position: static; }
 .ac-body .badge { margin-bottom: 10px; }
 .ac-t { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.35; letter-spacing: -0.02em; margin-bottom: 8px; }
 .ac-ex { font-size: 11px; font-weight: 300; color: var(--text-dim); line-height: 1.65; margin-bottom: 12px; }
 .ac-ft { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border-dim); }
 .a-dt { font-size: 10px; color: var(--text-dim); font-weight: 300; }
 .a-rd { font-size: 10px; color: var(--gold); font-weight: 700; }
-.ac h3 a::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; z-index: 1; }
+/* Port fix (King 2026-09-30): the theme's template-parts/content.php emits
+   <h2 class="ac-t"> (finance-home.html truth: 9/9 h2, zero h3) — the WP
+   stylesheet's `.ac h3 a::after` stretched-link therefore matches NOTHING on
+   the live site's article cards, and the port inherited the dead selector.
+   The King wants the whole card clickable: target the real markup. .ac-body is
+   static (theme truth has it relative, but WP's own overlay there only
+   covered the body — with position:static the inset:0 overlay spans the
+   full .ac box INCLUDING the art strip, which is what the theme comment
+   'Fully clickable card' always meant). The badge is lifted
+   to z-index:2 below so a click on the category pill opens the category
+   instead of the article (nested navigation pattern). */
+.ac .ac-t a::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; z-index: 1; }
 .ac .badge { position: relative; z-index: 2; }
 
 /* --------------------------------------------------------------------------

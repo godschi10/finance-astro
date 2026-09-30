@@ -323,7 +323,37 @@
 .toc-list a.toc-sub { padding-left: 28px; font-size: 12px; color: var(--text-dim); }
 .toc-mobile { display: none; }
 /*
- * The mobile TOC visibility switch lives in @media (max-width: 767px) at style.css:2413-2417
+ * The mobile TOC visibility switch lives in /* ── 30. Author archive profile header (style.css:2313-2331, theme v1.0.217) ──
+   Ported with the author archive (King order 2026-09-30: "You didn't port
+   author archive"). Mirrors the About hero (.about-hero .aav) and single-post
+   author bio (.abio) language — the theme's own comment: whole-site coherence
+   over page-specific styling. */
+.author-head { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+.author-av {
+  width: 88px; height: 88px; border-radius: 50%;
+  background: var(--gold-muted); border: 3px solid var(--gold-border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; font-weight: 800; color: var(--gold); flex-shrink: 0; overflow: hidden;
+}
+.author-av img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.author-id { min-width: 0; flex: 1 1 240px; }
+.author-id h1 { margin-bottom: 6px; }
+.author-id p { margin-bottom: 0; }
+.author-socials { margin-top: 14px; }
+.author-socials .abio-si { width: 34px; height: 34px; }
+.author-socials .abio-si svg { width: 15px; height: 15px; }
+/* Port-only (the theme's CSS omits these two but its templates need them):
+   the archive's empty state (.page-surface, base omitted from the verbatim
+   slices — mobile override at §50 already shipped at line ~904) and the card
+   stretched-link on the REAL card markup. The theme's content.php emits
+   h2.ac-t (finance-home.html truth: 9/9 h2, zero h3) — its `.ac h3 a::after`
+   therefore matches NOTHING and the cards are only half-clickable live; the
+   King ordered them fully clickable, and the image link must survive as its
+   own anchor (see home.css note + ArticleCard). */
+.page-surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 40px 44px; box-shadow: var(--sh-sm); }
+.ac .ac-t a::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; z-index: 1; }
+
+@media (max-width: 767px) at style.css:2413-2417
  * (see §4.4 below). Desktop: .toc-mobile { display: none; } hides the whole dropdown because the
  * sidebar TOC takes over.
  */
@@ -578,15 +608,16 @@
 .ac-img::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.45), transparent); pointer-events: none; }
 .ac-img img { width: 100%; height: 100%; object-fit: cover; }
 .ac-emoji { position: relative; z-index: 1; font-size: 28px; }
-.ac-body { padding: 16px 20px 20px; position: relative; }
+.ac-body { padding: 16px 20px 20px; position: static; }
 .ac-body .badge { margin-bottom: 10px; }
 .ac-t { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.35; letter-spacing: -0.02em; margin-bottom: 8px; }
 .ac-ex { font-size: 11px; font-weight: 300; color: var(--text-dim); line-height: 1.65; margin-bottom: 12px; }
 .ac-ft { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border-dim); }
 .a-dt { font-size: 10px; color: var(--text-dim); font-weight: 300; }
 .a-rd { font-size: 10px; color: var(--gold); font-weight: 700; }
-/* Fully clickable card */
-.ac h3 a::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; z-index: 1; }
+/* Fully clickable card (port fix: real markup is h2.ac-t, not h3 — see
+   home.css note; the badge stays independently clickable at z-index:2). */
+.ac .ac-t a::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; z-index: 1; }
 .ac .badge { position: relative; z-index: 2; }
 /*
  * @supports fallback for the card art box — style.css:761-763:
@@ -1150,3 +1181,4 @@
    --r-sm, --sh-gold, --sh-sm, --surface, --surface-2, --t, --t-md, --text,
    --text-dim, --text-mid.
    ══════════════════════════════════════════════════════════════════════════ */
+

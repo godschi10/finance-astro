@@ -3,6 +3,47 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.6.2] — 2026-09-30
+
+### King's 3 reports: author archive, fully-clickable cards, the orange focus ring
+
+- **Author archive ported for real** — the old page was an invented anatomy
+  (`.con.sg` + `.author-bio` + text-link socials). Now it is the theme's
+  `author.php` verbatim: `.phd` → `.bc` Home › {display_name} (helpers.php
+  is_author branch carries no "All Articles" crumb) → `.author-head` →
+  `.author-av` with the 96px get_avatar output (the real godschi10@gmail.com
+  Gravatar, shared `GRAVATAR` constant) → `.author-id` h1 + bio p →
+  `.abio-s.author-socials` icon row (AuthorSocials gains the `extraClass`
+  prop exactly as the template renders it) → `.con` margin-top:28 /
+  padding-bottom:48 → `.ad-bg` + `.g3` + the_posts_pagination contract, and
+  the empty state `.page-surface` > h2 "No posts from this author yet".
+  Theme §30 CSS (`.author-head/.author-av/.author-id/.author-socials`) ported
+  from style.css:2313-2331; §50 phone override (64px avatar) verified live:
+  64px @390w, 88px @1280w. SEO description matches inc/seo.php
+  ('Articles written by %s on GWill Finance.'). Dead invented CSS removed
+  from Layout.astro.
+- **Cards clickable everywhere** — ROOT CAUSE: the theme's stretched-link
+  selector `.ac h3 a::after` matches NOTHING on its own markup (content.php
+  emits h2.ac-t — truth: 9/9 h2, zero h3; the comment says "Fully clickable
+  card" but only the body ever was). The port inherited the dead rule.
+  Fixed on `.ac .ac-t a::after` (title link is the only per-card anchor),
+  `.ac-body` set static so the overlay spans the FULL card box including the
+  art strip, and the featured-image anchor (`a.ac-img`, z-index:2) keeps its
+  own href. Badge stays z-index:2: tapping the category pill navigates to its
+  category, not the post. Browser-proven at 390px: art → article, body →
+  article, Read → article, badge → /category/savings/. Search-result cards
+  (same vocabulary) inherit the fix.
+- **Thick orange border inside the search form — gone at the root.** Two
+  rings were stacking on every mobile tap (Chrome/Android matches
+  :focus-visible on tapped text inputs): (1) the port's stale global
+  `a/button:focus-visible { outline:3px solid var(--gold-b); offset:3px }` —
+  the theme's is `2px var(--gold-btn)`/dark `--gold-b`, offset 2px, and also
+  covers [tabindex]; (2) `.search-field:focus-visible` drawing its own gold
+  ring INSIDE the pill. The field now outlines none: the pill itself is the
+  focus indicator (:focus-within gold border + soft glow — WCAG 2.4.7 held
+  by the pill ring, as the theme's anatomy intends). Verified: computed
+  outline-width 0px while focused.
+
 ## [0.6.0] — 2026-09-30
 
 ### King's 2 orders — the /search/ count gap + the whole archive family

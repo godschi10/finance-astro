@@ -1,8 +1,28 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import ArticleCard from "../../components/ArticleCard.astro";
-import { AUTHORS, authorBySlug, allArticles, fmtMonthYear } from "../../data/content";
+import AuthorSocials from "../../components/AuthorSocials.astro";
+import ArchivePagination from "../../components/ArchivePagination.astro";
+import { AUTHORS, authorBySlug, allArticles, fmtMonthYear, GRAVATAR } from "../../data/content";
+import { paginate } from "../../lib/pagination";
 
+// Faithful port of the theme's author.php (gwill-finance-theme 1.13.39, v1.0.217
+// profile redesign) — King order 2026-09-30: "You didn't port author archive".
+// The old page invented its own .con.sg/.author-bio anatomy; this is the
+// template's real markup:
+//   .phd: gwill_breadcrumbs() is_author branch = Home › {display_name}
+//     (inc/helpers.php:521-529 — author archives carry NO "All Articles" crumb)
+//     + .author-head > .author-av > get_avatar($author_id, 96, lazy)
+//                    > .author-id > h1 {display_name} + p {bio}
+//                                   + .abio-s.author-socials > a.abio-si
+//   .con style="margin-top:28px;padding-bottom:48px": .ad-bg banner slot +
+//     .g3 grid-loop of .ac cards + the_posts_pagination (mid_size 2, ← Prev /
+//     Next →) when the author exceeds posts_per_page
+//   empty state: .page-surface > h2 style="margin-top:0" "No posts from this
+//     author yet"
+// SEO description — inc/seo.php:149-154: 'Articles written by %1$s on %2$s.'
+// Gravatar: the real photo registered to godschi10@gmail.com (King, 2026-09-28),
+// same hash constant as the article byline (data/content.ts).
 export async function getStaticPaths() {
   const posts = await allArticles();
   return AUTHORS.map((a) => ({
@@ -27,27 +47,41 @@ const { slug } = Astro.params;
 const { posts } = Astro.props;
 const author = authorBySlug(slug ?? "");
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const pages = paginate(posts);
 ---
-<Layout title={`${author.name} - GWill Finance`} description={`Articles by ${author.name}: ${author.role}. Tested Nigerian finance guides, free to read.`} crumb={author.name}>
-<section class="con sg" aria-labelledby="author-h">
-  <p class="crumbs"><a href={base}>Home</a> › <a href={`${base}articles/`}>All Articles</a> › {author.name}</p>
-  <div class="author-bio" style="margin-top:0">
-    <div class="author-mark" aria-hidden="true">₦</div>
-    <div>
-      <h1 class="hold-title" id="author-h">{author.name}</h1>
-      <p class="author-role">{author.role} · {posts.length} {posts.length === 1 ? "guide" : "guides"}</p>
-      <p class="author-text">{author.bio}</p>
-      <div class="author-socials">
-        {Object.entries(author.socials).map(([label, href]) => (
-          <a href={href} target="_blank" rel="noopener noreferrer">{label}</a>
-        ))}
-      </div>
+<Layout title={`${author.name} - GWill Finance`} description={`Articles written by ${author.name} on GWill Finance.`} crumb={author.name}>
+<section class="phd" aria-labelledby="author-h">
+  <nav class="bc" aria-label="Breadcrumb">
+    <span class="bc-i"><a href={base}>Home</a></span>
+    <span class="bc-s">›</span>
+    <span class="bc-i" aria-current="page">{author.name}</span>
+  </nav>
+  <div class="author-head">
+    <div class="author-av">
+      <img alt={author.name} src={`${GRAVATAR}?s=96&d=wavatar&r=g`} srcset={`${GRAVATAR}?s=192&d=wavatar&r=g 2x`} width="96" height="96" class="avatar avatar-96 wp-user-avatar photo" loading="lazy" decoding="async" />
+    </div>
+    <div class="author-id">
+      <h1 id="author-h">{author.name}</h1>
+      {author.bio && <p>{author.bio}</p>}
+      <AuthorSocials socials={author.socials ?? {}} extraClass="author-socials" />
     </div>
   </div>
-  <div class="g3" style="margin-top:24px">
-    {posts.map((p) => (
-      <ArticleCard slug={p.slug} title={p.title} excerpt={p.excerpt} category={p.category} date={p.date} readMins={p.readMins} author={p.author} />
-    ))}
-  </div>
+</section>
+<section class="con" style="margin-top:28px;padding-bottom:48px">
+  <div class="ad-bg"></div>
+  {posts.length === 0 ? (
+    <div class="page-surface">
+      <h2 style="margin-top:0">No posts from this author yet</h2>
+    </div>
+  ) : (
+    <>
+      <div class="g3">
+        {posts.map((p) => (
+          <ArticleCard slug={p.slug} title={p.title} excerpt={p.excerpt} category={p.category} date={p.date} readMins={p.readMins} author={p.author} />
+        ))}
+      </div>
+      <ArchivePagination current={1} total={pages.length} archivePath={`author/${slug}`} />
+    </>
+  )}
 </section>
 </Layout>

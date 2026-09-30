@@ -31,6 +31,29 @@ Read this at session start.
       (+offset 2px) stacked with the pill's focus-within ring. Measure port
       vs live WP @390 dark on a REAL tap before touching anything.
 
+## NEXT ROUND — King's 3 reports, 2026-09-30 v4 (screenshots: search form ring)
+
+- [x] **E1. "You didn't port author archive"** — right: the old page was an
+      invented anatomy. Shipped the real author.php port (§30 CSS included):
+      .phd Home › {name} + .author-head (96px Gravatar .author-av,
+      .author-id h1+bio, .abio-s.author-socials icons) + .con 28/48 +
+      .ad-bg + .g3 + pagination + .page-surface empty state. Phone/desktop
+      avatar sizes verified live (64/88). Dead Layout.astro author CSS removed.
+- [x] **E2. "Each post card clickable everywhere, and its category pill
+      clickable to its own category"** — the theme's stretched-link selector
+      targeted h3 (cards are h2.ac-t — dead code live). Rewired:
+      .ac .ac-t a::after overlay spans the whole card (ac-body static),
+      featured-image anchor keeps its own href (z-index:2), badge stays
+      z-index:2 → pill opens its category, card opens the post. Browser-proven
+      at 390px on /articles/ (4/4 click targets correct).
+- [x] **E3. "Thick orange border inside search form still there"** — third
+      report; root cause found for good: TWO focus rings stacking per tap on
+      mobile Chrome — the port's stale global focus-visible (3px --gold-b/
+      offset 3px; theme truth: 2px --gold-btn, dark --gold-b, offset 2px, +
+      [tabindex]) AND .search-field:focus-visible's own ring inside the pill.
+      Field now outlines none; the pill's :focus-within gold border+glow is
+      the indicator (WCAG 2.4.7). Computed proof: outline-width 0px focused.
+
 ## NEXT ROUND — King's 2 orders, 2026-09-30 v3 (screenshot: /search/?q=gut)
 
 - [x] **D1. "Let there be space between '1 result for gut' and the card below

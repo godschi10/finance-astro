@@ -71,11 +71,14 @@
   font-family: var(--font);
 }
 .search-field::placeholder { color: var(--text-dim); }
-.search-field:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 2px;
-  border-radius: var(--r-sm);
-}
+/* Port fix (King 2026-09-30, 3rd report of the "thick orange border inside
+   the form"): the theme's .search-field:focus-visible ring renders INSIDE the
+   pill as a second bright-orange outline on every mobile tap (Chrome for
+   Android matches :focus-visible on tapped text fields). The pill already
+   carries the WCAG 2.4.7 focus indicator: the :focus-within gold border +
+   soft glow above — the only visible focus affordance that fits the pill's
+   anatomy. The field itself draws nothing extra. */
+.search-field:focus-visible { outline: none; }
 .search-submit {
   background: var(--gold-btn);
   color: #fff;

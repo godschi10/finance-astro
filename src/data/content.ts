@@ -28,6 +28,12 @@ export const authorBySlug = (slug: string) =>
     socials: {} as Record<string, string>,
   };
 
+// The real Gravatar registered to godschi10@gmail.com (King, 2026-09-28 —
+// verified grayscale portrait). Shared by the article byline (20/48px) and the
+// author archive head (96px). Single-edit data file: one constant for the hash.
+export const GRAVATAR =
+  "https://secure.gravatar.com/avatar/cd2c5f952ac6bbcba85fbf973b030b6d5af4f62f46e3c4a37abbcb7dfc28b6a9";
+
 export const fmtMonthYear = (d: Date) =>
   d.toLocaleDateString("en-GB", { month: "short", year: "numeric" });
 

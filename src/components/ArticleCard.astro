@@ -37,7 +37,8 @@ const cardSrcset = imageSrcset
 ---
 <article id={`post-${slug}`} class={`ac category-${category}`} data-cat={category}>
   {image ? (
-    <a class="ac-img" href={url} tabindex="-1" aria-hidden="true">
+    <!-- position:relative + z-index:2: the title's stretched overlay covers the card (fully-clickable), the image link stays its own clickable anchor. -->
+    <a class="ac-img" style="position:relative;z-index:2" href={url} tabindex="-1" aria-hidden="true">
       <img
         width="300"
         height="169"
