@@ -11,7 +11,9 @@
 // gwill-newsletter-2 like the live page → leaderboard ad).
 // The form is REAL in this port: the WP admin-ajax leg is replaced by the
 // comments-api Worker /forms endpoint (gwill-forms.js), so submissions are
-// validated, honeypotted, rate-limited, stored, and emailed to the King.
+// validated, honeypotted, rate-limited, and stored in D1 (the /api/forms/list
+// desk; email forwarding activates as soon as RESEND_API_KEY/EMAIL_TO secrets
+// are set on the Worker).
 import Layout from "../layouts/Layout.astro";
 import ContactRoutedForm from "../components/ContactRoutedForm.astro";
 import NewsletterForm from "../components/NewsletterForm.astro";
