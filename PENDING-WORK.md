@@ -55,8 +55,31 @@ Read this at session start.
       kept), verified in git diff. NOTE 2: pre-stamp plan said "sticky
       results" inside R4 — NOT in stamped §11 R4 line; deferred, flag to King
       if he wants it re-added.
-- [ ] RUNGS remaining: R6 chrome + live dot →
-      R7 odometer → R8 ledger captions → R9
+- [x] **R6 Chrome + live dot — SHIPPED v0.7.5** (2026-10-01) — **OpenCode
+      Manager took over at King's order**; Hermes stopped mid-probe and left
+      the rung code-complete. Executed under @manager-opencode: @builder ran
+      the accuracy audit the King killed mid-run, @builder wrote release
+      docs, @qa-inspector ran the independent gate, @manager-opencode
+      committed/pushed/shipped/verified served bytes. Additive chrome.css
+      (89 lines, imported after hub.css), header.css untouched (its media
+      regexes are header-gate anchors), no gate edited, no !important.
+      Gold hairline `rgba(245,158,11,0.22)` under both sticky bars (color
+      only), nav 700 all widths + 13px only >=1024px (tablet 11px stays
+      authoritative), ticker mono, drawer 15px / 14px 20px, phone
+      .gs-input 48px + .gs-foot hidden (kbd markup kept — header gate
+      asserts it). SIGNATURE live dot: 6px --green pulse 2s + "LIVE"
+      9px/.14em gold, placed BEFORE .ticker-drag so marquee halves stay
+      identical. Proofs: build exit 0 / 78 pages, 6/6 gates (vectors 95/0),
+      audit 26/26, CDP probe clean, **SERVED VERIFIED** on
+      https://godschi10.github.io/finance-astro/ — main `d854ad9`, pages-dist
+      `1748696` `built`, served HTML sha256 byte-identical to dist
+      (1c86b3a3…), 1x .tl + 12x t-pair + 12/12 on subpages, `.sh,.mh{…
+      #f59e0b38}`, sheen 0, 9 routes 200. NOTE: served hairline is MINIFIED
+      to `#f59e0b38` — grep the hex, not the spaced rgba, or it false-
+      negatives. NOTE 2: site.ts TICKER_STATIC rides along in the commit
+      (build-time fetch-snapshot refresh, not a design edit). NOTE 3:
+      handoff brief committed as docs/TRANSFER-OPENCODE-MANAGER.md.
+- [ ] RUNGS remaining: R7 odometer → R8 ledger captions → R9
       seal/colophon → R10 motion pass + article polish + 404/search/desk.
       Each rung: one surface, 360px+1280px light+dark screenshots, King
       approval, gates green, batch ship.
