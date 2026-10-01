@@ -19,14 +19,16 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   related={[{ href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers", excerpt: "Card fees, failed-transfer reversals, and support tested — what digital banks actually save you." }]},
   disclaimer="This calculator is for informational guidance only and is not tax, financial or investment advice. Tax rules and personal circumstances vary, confirm your figures with a licensed tax professional.",>
 <div class="fx-card">
+<p class="anat-stamp">PAYE · NTA 2026 · Nigeria</p>
 <div class="tgrid c3">
 <div class="field"><label for="st-gross">Monthly gross ₦</label><input id="st-gross" type="text" min="0" step="any" value="300000" inputmode="decimal"></div>
-<div class="field"><label for="st-pension">Pension %</label><input id="st-pension" type="text" min="0" max="100" step="any" value="8" inputmode="decimal"></div>
-<div class="field"><label for="st-rent">Annual rent ₦</label><input id="st-rent" type="text" min="0" step="any" value="0" inputmode="decimal"></div>
+<div class="field"><label for="st-pension">Pension %</label><input id="st-pension" type="text" min="0" max="100" step="any" value="8" inputmode="decimal"><p class="hint">Your rate comes off before tax bands apply.</p></div>
+<div class="field"><label for="st-rent">Annual rent ₦</label><input id="st-rent" type="text" min="0" step="any" value="0" inputmode="decimal"><p class="hint">20% of rent relieves taxable income, cap ₦500k.</p></div>
 <div class="field"><label for="st-nhf">NHF monthly ₦</label><input id="st-nhf" type="text" min="0" step="any" value="0" inputmode="decimal"></div>
 <div class="field"><label for="st-nhis">NHIS monthly ₦</label><input id="st-nhis" type="text" min="0" step="any" value="0" inputmode="decimal"></div>
 <div class="field"><label for="st-life">Life assurance monthly ₦</label><input id="st-life" type="text" min="0" step="any" value="0" inputmode="decimal"></div>
 </div>
+<div class="tgrid" style="margin-top:10px"><div><button type="button" class="anat-reset" data-anat-reset>Reset</button></div></div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Take-home monthly</p>
 <p class="receipt-fig" id="st-fig">₦{n(seed.net_monthly)}</p>
@@ -38,7 +40,12 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>PAYE tax (annual)</span><b id="st-tax">₦{n(seed.tax_annual)}</b></div>
 </div>
 <p class="receipt-foot">NTA 2026 bands · rent relief cap ₦500k</p>
+<p class="anat-verdict" id="st-verdict">Take-home after pension, reliefs and PAYE on NTA 2026 bands.</p>
 </div>
+<details class="anat-methodology">
+<summary>How we calculate this</summary>
+<p>Annual gross = monthly gross × 12. Pension (your rate), NHF, NHIS and life assurance come off first. Rent relief is 20% of annual rent, capped at ₦500,000. What remains is taxable income, taxed on the NTA 2026 bands in force since 1 January 2026: 0% on the first ₦800,000, then 15% to ₦3m, 18% to ₦12m, 21% to ₦25m, 23% to ₦50m and 25% above. Monthly gross at or below the ₦70,000 minimum wage is exempt from PAYE; pension still applies. The old-vs-new table reruns the same math on the Finance Act bands (7%–24% with the ₦200,000 + 20% CRA).</p>
+</details>
 </div>
 <div class="hr"></div>
 <h2 class="tool-h2">Old vs new bands</h2>
@@ -87,6 +94,10 @@ function render() {
   t("st-old-tax").textContent = n(c.old.tax_annual);
   t("st-old-net").textContent = n(c.old.net_monthly);
   t("st-save").textContent = `You keep ${n(c.save_monthly)}/mo more under the new bands.`;
+  const vr = document.getElementById("st-verdict") as HTMLElement | null;
+  if (vr) vr.textContent = r.exempt
+    ? `At ₦${formatGrouped(gross, 0)} monthly you are at or under the ₦70,000 minimum wage, so no PAYE is due — only your deductions apply.`
+    : `Your effective PAYE rate is ${((r.tax_annual / (gross * 12 || 1)) * 100).toFixed(1)}% on ₦${formatGrouped(gross * 12, 0)} annual gross.`;
   const tb = document.querySelector("#st-bands tbody") as HTMLElement;
   tb.innerHTML = "";
   for (const b of payeBandBreakdown(r.taxable, payeBands2026())) {

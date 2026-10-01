@@ -35,8 +35,16 @@ Read this at session start.
       26/26, independent CDP probe (row1==unit, swap flip, 390 overflow
       clean, 5 luminance-checked shots). Site.ts ticker diff = fetch-snapshot
       pipeline side effect, not R3.
-- [ ] RUNGS remaining after R3: calculator anatomy + sticky results +
-      K5/K6 audits → hub/hero →
+- [x] **R4 Calculator anatomy — SHIPPED v0.7.3** (2026-10-01) — audit-first:
+      K5 73 inputs 0 unrealistic (zero defaults changed); K6 0/16 → 15/15
+      resets (anatomy.js, .con scope); K7 methodology 0/16 → 16/16 + runtime
+      verdicts; K3 12 hints (existing .hint); C6 per-tool anat-stamp.
+      Crash-continuation session repaired 2 inherited defects (brace, 3 dead
+      buttons). Manager proofs: build 0, 6/6, 26/26, independent probe on 2
+      non-probed tools (reset exact, verdict math verified), 4 shots.
+- [ ] RUNGS remaining: hub/hero →
+      (note: pre-stamp plan said "sticky results" inside R4 — NOT in stamped
+      §11 R4 line; deferred, flag to King if he wants it re-added)
       R6 chrome + live dot → R7 odometer → R8 ledger captions → R9
       seal/colophon → R10 motion pass + article polish + 404/search/desk.
       Each rung: one surface, 360px+1280px light+dark screenshots, King

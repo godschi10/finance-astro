@@ -16,6 +16,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   disclaimer="This allocator is for informational guidance only and is not financial advice. The 50/30/20 rule and its bucket percentages are a starting framework, not a guarantee, adjust them to your circumstances and confirm significant decisions with a licensed adviser.",>
 <div class="field" style="max-width:320px;margin-top:18px"><label for="al-inc">Monthly income ₦</label><input id="al-inc" type="text" min="0" step="any" value={budgetAllocatorSeedIncome()} inputmode="decimal"></div>
 <div class="fx-card">
+<p class="anat-stamp">NEEDS HALF · ITEMIZED · NIGERIA</p>
 <div class="tgrid c3" style="margin-top:14px">
 {seed.buckets.filter((b) => b.id !== "other").map((b) => (
 <div class="field"><label for={`al-${b.id}`}>{b.label} % of needs</label><input id={`al-${b.id}`} type="text" min="0" max="100" step="any" value={(b.share * 100).toFixed(0)} inputmode="decimal" data-al-bucket={b.id}></div>
@@ -32,7 +33,13 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ))}
 </div>
 <p class="receipt-foot">Shares of needs · naira follows instantly</p>
+<p class="anat-verdict" id="al-verdict">Every bucket priced from your income.</p>
 </div>
+<div class="tgrid" style="margin-top:10px"><div><button type="button" class="anat-reset" data-anat-reset>Reset</button></div></div>
+<details class="anat-methodology">
+<summary>How we calculate this</summary>
+<p>Income is split 50% needs, 30% wants, 20% savings, then the needs half is divided by your bucket shares (default rent 40%, food 25%, transport 15%, data 10%, utilities 7%). Whatever the named shares do not cover appears as "Other needs", so the naira always adds back to your income — no bucket is ever silently rounded away.</p>
+</details>
 </div>
 </ToolShell>
 <script>
@@ -61,6 +68,11 @@ function render() {
     const amt = document.createElement("b"); amt.textContent = nn(b.amount);
     div.appendChild(s); div.appendChild(amt); box.appendChild(div);
   }
+  const other = r.buckets.find((b) => b.id === "other");
+  const vr = document.getElementById("al-verdict") as HTMLElement | null;
+  if (vr) vr.textContent = other && other.amount > 0
+    ? `${nn(r.needs)} goes to needs — ${nn(other.amount)} of it is unassigned "Other needs".`
+    : `Your shares fully assign the ${nn(r.needs)} needs half.`;
 }
 inc.addEventListener("input", render);
 document.querySelectorAll("[data-al-bucket]").forEach((el) => el.addEventListener("input", render));

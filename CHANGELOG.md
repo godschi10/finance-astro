@@ -3,6 +3,57 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.3] — 2026-10-01 — Design Language R4: Calculator Anatomy (K3/K5/K6/K7)
+Every calculator now explains itself, restarts itself, and signs its work
+(DESIGN-LANGUAGE §11 rung R4). Executed via freebuff shelter — the run
+crashed mid-flight at 12:57 (provider stream death, zero session memory) and
+a continuation session resumed from the on-disk diff, repairing two of the
+crashed session's defects (a build-breaking brace in budget-allocator, three
+reset buttons missing their `data-anat-reset` binding) without reverting any
+completed work. Manager re-verified every claim independently.
+
+**Phase-1 audit first (K5/K6/K7, before any visual edit):**
+- **K5 default honesty: 73 inputs across 16 tools — 0 unrealistic.** No
+  default was changed (changing honest zeros like rent/NHF would be
+  manufacture, not repair). Full table in /tmp/r4-freebuff/AUDIT.md.
+- **K6 reset: 0/16 tools had one.** All 15 interactive tools now carry
+  `.anat-reset`; amount pages have no inputs (honest n/a).
+- **K7 methodology: 0/16 tools had a disclosure.** Now 16/16.
+
+**Implemented (additive only, 210 insertions / 20 deletions):**
+- **K3** — 12 rationale hints reusing the existing `.hint` class, only where
+  the formula is genuinely non-obvious (pension, rent relief, rate
+  frequency, drip…); self-evident fields untouched.
+- **K6** — `src/scripts/anatomy.js` (new, 46-line IIFE): captures
+  server-rendered defaults at boot; reset sets `.value` + dispatches the
+  `input`/`change` events each tool's own compute listens to. Scope is
+  ToolShell's `.con` (verified to contain exactly the tool's inputs — a
+  prior-session `.fx-card` scope silently skipped fields outside the card).
+- **K7** — `.anat-verdict` runtime sentence on all 15 interactive tools,
+  computed from each script's own values (effective PAYE rate, true APR,
+  annuity monthly, runway months…) — no hardcoded claims; savings-goal
+  adopts the site's own `.prog` bar as its progress signal; and
+  `details.anat-methodology` "How we calculate this" on all 16 surfaces,
+  describing each script's ACTUAL math as coded.
+- **C6 signature** — one `.anat-stamp` per tool (gold mono 9px, hairline
+  border, unique per tool: `TRUE APR · LENDING · NIGERIA`,
+  `NGX TOTAL RETURN · DRIP-AWARE`…), slot-compatible with C3 since tool
+  heroes carry no filled-gold CTA. Existing strong signatures (ladder,
+  split-figure, ranked tables) kept.
+- `src/styles/anatomy.css` (new, 71 lines) — the ONE new control (reset)
+  + verdict/stamp type; K3 needed zero new CSS (`.hint` already matches the
+  spec). Imported after ladder.css: cascade R1→R2→R3→R4.
+
+**Proof (Manager's own runs)**: build exit 0 (78 pages) · 6/6 gates ·
+accuracy **26/26, 0 fail** · independent CDP probe on two tools the worker
+did NOT probe: loan-repayment perturb ₦100,000→₦777,777 figure
+`₦130,000→₦1,011,110` (777,777×1.3 ✓), reset restored all three inputs +
+`₦130,000` exactly; dividend select+number reset restored `3/500000`;
+methodology text dumps real formulas (verdict's 2333.9% true-APR checks out
+as 1.3^(365/30)−1) · stamps present, zero `!important`/gradient in diff
+(the 2 grep hits are the English word in article prose) · screenshots
+`r4-st-tax 156.7/23.2 phone · r4-goal 143.9/17.0 desk`.
+
 ## [0.7.2] — 2026-10-01 — Design Language R3: Converter Composition + Rates Ladder
 The converter stops being an empty box you type into and becomes an
 *instrument panel* (DESIGN-LANGUAGE §5 steps 1–5, 8, 9 — steps 6/7

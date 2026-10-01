@@ -16,13 +16,15 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   related={[{ href: `${base}articles/cheapest-way-receive-dollars-nigeria/`, title: "Cheapest Way to Receive Dollars in Nigeria (2026 Compared)", excerpt: "Wise, Grey, Geegpay, and domiciliary accounts compared on fees, speed, and exchange margins." }, { href: `${base}articles/grey-vs-geegpay-dollar-account/`, title: "Grey vs Geegpay: Which Dollar Account Should You Open?", excerpt: "Account opening, conversion spreads, card support, and payout speed — tested with real transfers." }, { href: `${base}articles/piggyvest-vs-cowrywise-2026/`, title: "PiggyVest vs Cowrywise in 2026: Which Saves You More?", excerpt: "Interest rates, withdrawal rules, fees, and app experience compared side by side." }, { href: `${base}articles/ngn-dollar-cost-averaging-guide/`, title: "Dollar-Cost Averaging Into NGX Stocks on a \u20a650k Salary", excerpt: "A step-by-step plan for buying Nigerian stocks every month without timing the market." }]},
   disclaimer="This calculator is for informational guidance only and is not financial or lending advice. Figures reflect the interest rate you enter; lenders may add fees, and actual terms vary. Confirm the full repayment schedule with your lender before signing.",>
 <div class="fx-card">
+<p class="anat-stamp">TRUE APR · LENDING · NIGERIA</p>
 <div class="tgrid c3">
 <div class="field"><label for="ln-amt">Loan amount ₦</label><input id="ln-amt" type="text" min="0" step="any" value={LOAN_SEED.amount} inputmode="decimal"></div>
 <div class="field"><label for="ln-tenor">Tenor</label><input id="ln-tenor" type="text" min="1" step="1" value={LOAN_SEED.tenor} inputmode="numeric"></div>
 <div class="field"><label for="ln-unit">Tenor unit</label><select id="ln-unit"><option value="days" selected>Days</option><option value="months">Months</option></select></div>
-<div class="field"><label for="ln-rate">Quoted rate %</label><input id="ln-rate" type="text" min="0" step="any" value={LOAN_SEED.rate} inputmode="decimal"></div>
-<div class="field"><label for="ln-mode">Rate type</label><select id="ln-mode"><option value="daily" selected>Per day (loan apps)</option><option value="flat">Flat per month</option><option value="reducing">Reducing balance</option></select></div>
+<div class="field"><label for="ln-rate">Quoted rate %</label><input id="ln-rate" type="text" min="0" step="any" value={LOAN_SEED.rate} inputmode="decimal"><p class="hint">Enter it exactly as the lender advertises.</p></div>
+<div class="field"><label for="ln-mode">Rate type</label><select id="ln-mode"><option value="daily" selected>Per day (loan apps)</option><option value="flat">Flat per month</option><option value="reducing">Reducing balance</option></select><p class="hint">Flat/daily rates cost far more than they read.</p></div>
 </div>
+<div class="tgrid" style="margin-top:10px"><div><button type="button" class="anat-reset" data-anat-reset>Reset</button></div></div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">You repay <span id="ln-period">{seed.period}</span></p>
 <p class="receipt-fig" id="ln-fig">₦{n(seed.installment)}</p>
@@ -32,7 +34,12 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Interest</span><b id="ln-int">₦{n(seed.interest)}</b></div>
 <div class="receipt-row"><span>True APR</span><b id="ln-apr">{(seed.apr * 100).toFixed(1)}%</b></div>
 <p class="receipt-foot">APR solved from the repayment stream</p>
+<p class="anat-verdict" id="ln-verdict">The annualized truth behind the quote.</p>
 </div>
+<details class="anat-methodology">
+<summary>How we calculate this</summary>
+<p>Per day: interest = amount × rate × days, repaid once at term; the effective daily rate is (repay ÷ amount)^(1/days) − 1, annualized as (1+daily)³⁶⁵ − 1. Flat per month: every installment = amount ÷ months + amount × rate — interest stays on the original balance. Reducing balance: the standard amortized installment at rate ÷ 12. For flat and reducing, the true APR solves (by 200-step bisection) the rate where the present value of the installments equals the amount, then annualizes. Fees the lender charges separately are not modeled.</p>
+</details>
 </div>
 </ToolShell>
 <script>
@@ -56,6 +63,8 @@ function render() {
   t("ln-tot").textContent = nn(r.total);
   t("ln-int").textContent = nn(r.interest);
   t("ln-apr").textContent = (r.apr * 100).toFixed(1) + "%";
+  const vr = document.getElementById("ln-verdict") as HTMLElement | null;
+  if (vr) vr.textContent = `This ${r.mode === "daily" ? "daily" : r.mode === "flat" ? "flat" : "reducing-balance"} quote costs ${((r.total / r.amount - 1) * 100).toFixed(1)}% of what you borrow — a true APR of ${(r.apr * 100).toFixed(1)}%.`;
 }
 ["ln-amt", "ln-tenor", "ln-rate"].forEach((id) => g(id).addEventListener("input", render));
 (document.getElementById("ln-unit") as HTMLSelectElement).addEventListener("change", render);

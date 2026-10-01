@@ -18,10 +18,12 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   copy={[["h2", "How to read the USD to naira trend"],["p", "The line above plots the number of naira one $ buys on each recorded day. When the line rises, the naira is weakening (your naira buys fewer USD); when it falls, the naira is strengthening. The stat strip summarises the change: the 30-day figure tells you whether the last month has moved in your favour or against it."],["p", "A falling USD-to-naira line is good news if you buy foreign currency for tuition, travel or imports, you need fewer naira. It is bad news if you earn naira and hold foreign savings, or if you run a business that imports. The converse is true when the line climbs. The trend is how you size the risk before you move money."],["h2", "Why the naira moves in steps, not smoothly"],["p", "The official USD/NGN rate does not drift continuously, it adjusts in steps around FX-policy decisions, currency-supply changes and market demand. That is why the chart shows distinct points joined by straight lines rather than a smoothed curve: each point is a real recorded rate for that date, and the gaps between them are exactly where the market held steady before stepping again."],["p", "This is why the daily movement can look small while a month or a quarter shows a meaningful shift. A 30-day view smooths out the daily noise; a 90-day or 1-year view reveals the underlying direction. For someone planning a large transfer or a dollar-denominated purchase, the longer window is the one that matters, the daily spread is noise, but the trend decides your cost."],["h2", "Official rate vs the street rate in the trend"],["p", "This chart tracks the official mid-market rate. When USD is the base, the parallel (street) rate trades at a spread above it, use the converter's \"Parallel market\" toggle to see that estimate alongside. Tracking both over time is how experienced Nigerians read where the real cost of foreign exchange is heading."],["p", "The gap between the official and parallel rate is the practical cost of limited dollar supply. A widening gap usually signals tighter supply or higher demand; a narrowing gap suggests the market is easing. If you plan to convert naira in the near term, checking both the trend and the current spread tells you whether to move now or wait."],["h2", "How to use the history chart to time a transfer"],["p", "Read the 30-day change first: is the naira gaining or losing ground against this currency? Then switch to the 6-month or 1-year view to confirm the trend is real and not a short-term wobble. Finally, compare against the parallel rate in the converter. Nobody can call the exact bottom, but the combination of a real trend and a realistic spread tells you whether converting today is a fair deal or an expensive one."],["h2", "Rate history questions"],["h3", "When does the chart update?"],["p", "Daily, matching the source&#039;s daily snapshots. The current point always reflects the latest published rate."],["h3", "Are these real rates or estimates?"],["p", "Real recorded rates from an openly-licensed currency dataset, cached briefly on our server. We never fabricate a trend, the line connects genuine data points."],["h3", "Is this the rate my bank will give me?"],["p", "No, this is the official mid-market rate. Banks, bureaux and platforms add a margin on top, and the parallel market trades higher. Use the main converter to get the live figure."]]},
   disclaimer="Rates are indicative and sourced from openly-licensed daily data. They are not a quote and do not constitute financial advice. Confirm the live rate before any transaction.",>
 <div class="fx-card">
+<p class="anat-stamp">USD → NGN · STEPS, NOT DRIFT</p>
 <div class="tgrid c2">
 <div class="field"><label for="xh-days">Window</label><select id="xh-days"><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option></select></div>
 <div class="field"><label for="xh-base">Base</label><select id="xh-base" disabled><option>USD → NGN (more bases land later)</option></select></div>
 </div>
+<div class="tgrid" style="margin-top:10px"><div><button type="button" class="anat-reset" data-anat-reset>Reset</button></div></div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">USD → NGN · <span id="xh-n">0 points on this device</span></p>
 <p class="receipt-fig" id="xh-fig">₦{fxNumber(seed.current, 0)}</p>
@@ -29,7 +31,12 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-div" aria-hidden="true"></div>
 <div id="xh-chart" role="img" aria-label="Dollar to naira trend chart"></div>
 <p class="receipt-foot" id="xh-foot">Snapshot · {FX_SNAPSHOT.as_of}</p>
+<p class="anat-verdict" id="xh-verdict">Official mid-market trend, device-collected.</p>
 </div>
+<details class="anat-methodology">
+<summary>How we calculate this</summary>
+<p>Each visit fetches the current USD→NGN mid-market rate and keeps a dated point on your device (capped at 120 points; nothing is backfilled or invented). The chart connects the points inside your chosen 30- or 90-day window; the stat line prints the window's change, percent change, low and high from the same points. A rising line means the naira is weakening; the official rate is the mid-market figure, before bank and parallel spreads.</p>
+</details>
 </div>
 </ToolShell>
 <script>
@@ -89,6 +96,10 @@ async function render() {
     ? `${arrow} ₦${fxNumber(Math.abs(s.change), 0)} (${s.change_pct.toFixed(1)}%) across the window · low ₦${fxNumber(s.min, 0)} · high ₦${fxNumber(s.max, 0)}`
     : "Snapshot anchor — fetch live to start the trend";
   (document.getElementById("xh-foot") as HTMLElement).textContent = win.length > 1 ? `${win.length} device-collected points` : "Snapshot · Sep 2026";
+  const vr = document.getElementById("xh-verdict") as HTMLElement | null;
+  if (vr) vr.textContent = win.length > 1
+    ? `Across the window the naira ${s.direction === "up" ? "weakened" : "strengthened"} by ${s.change_pct.toFixed(1)}% against the dollar.`
+    : `Only the ₦${fxNumber(s.current, 0)} snapshot anchor exists so far — visit again to build the trend.`;
   draw(win);
 }
 document.getElementById("xh-days")?.addEventListener("change", render);

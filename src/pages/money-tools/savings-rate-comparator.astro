@@ -16,14 +16,21 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   related={[{ href: `${base}articles/piggyvest-vs-cowrywise-2026/`, title: "PiggyVest vs Cowrywise in 2026: Which Saves You More?", excerpt: "Interest rates, withdrawal rules, fees, and app experience compared side by side." }, { href: `${base}articles/ngn-dollar-cost-averaging-guide/`, title: "Dollar-Cost Averaging Into NGX Stocks on a \u20a650k Salary", excerpt: "A step-by-step plan for buying Nigerian stocks every month without timing the market." }, { href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers", excerpt: "Card fees, failed-transfer reversals, and support tested — what digital banks actually save you." }]},
   disclaimer="This comparator is for informational guidance only and is not financial advice. Rates are indicative maintained figures that change; verify with each provider before committing. Nothing here is a guarantee of returns or deposit insurance.",>
 <div class="field" style="max-width:320px;margin-top:18px"><label for="sr-amt">Test an amount (₦)</label><input id="sr-amt" type="text" min="0" step="any" value="500000" inputmode="decimal"><p class="hint">Yearly interest each plan would pay on it.</p></div>
-<div class="receipt" aria-live="polite">
+<div class="fx-card">
+<p class="anat-stamp">RATE TRACKER · MAINTAINED · NIGERIA</p>
 <p class="receipt-lbl">Top payer · <span id="sr-top">{rows[0].provider} {rows[0].product}</span></p>
 <p class="receipt-fig" id="sr-fig">{rows[0].rate.toFixed(1)}%</p>
 <p class="receipt-sub" id="sr-sub">on ₦500,000 ≈ ₦{(500000 * rows[0].rate / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })} a year</p>
 <div class="receipt-div" aria-hidden="true"></div>
 <p class="receipt-note">Indicative marketing rates — confirm before you lock funds.</p>
 <p class="receipt-foot">{verified}</p>
+<p class="anat-verdict" id="sr-verdict">Headline rates, best first — lock terms differ.</p>
 </div>
+<div class="tgrid" style="margin-top:10px"><div><button type="button" class="anat-reset" data-anat-reset>Reset</button></div></div>
+<details class="anat-methodology">
+<summary>How we calculate this</summary>
+<p>The table is a maintained snapshot of providers' advertised headline rates, sorted best-first, verified September 2026 — not live quotes. Your test amount is multiplied by each headline rate for a simple (non-compounded) indicative yearly figure. Locked and flexible products are labeled in the bars; locked plans usually pay more because the money cannot be withdrawn for the term. NDIC insurance covers banks and CBN-licensed digital banks, not every fintech platform — check the provider line before you lock.</p>
+</details>
 <div class="hr"></div>
 <h2 class="tool-h2">Every plan, best first</h2>
 <div id="sr-bars">
@@ -58,6 +65,8 @@ function render() {
   const top = rows[0];
   (document.getElementById("sr-fig") as HTMLElement).textContent = top.rate.toFixed(1) + "%";
   (document.getElementById("sr-sub") as HTMLElement).textContent = `on ${fmt(a)} ≈ ${fmt(a * top.rate / 100)} a year`;
+  const vr = document.getElementById("sr-verdict") as HTMLElement | null;
+  if (vr) vr.textContent = `${top.provider} ${top.product} leads at ${top.rate.toFixed(1)}% — check the lock term and insurance before you commit.`;
   document.querySelectorAll("#sr-bars .bar-row").forEach((el, i) => {
     const r = rows[i];
     (el.querySelector("[data-sr-out]") as HTMLElement).textContent = `${r.rate.toFixed(1)}% · ${fmt(a * r.rate / 100)}/yr`;
