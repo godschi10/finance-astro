@@ -3,6 +3,85 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.6] — 2026-10-01 — King's phone fixes: hero underline out, double category out
+Two retraction edits, both from the King's own phone screenshots, both
+pure subtraction — nothing added, no gate touched, no verbatim-WP rule
+reinterpreted. This is a CORRECTION release: it takes back two things the
+design run had proudly stamped, and it leaves one visible debt open and
+unfixed on purpose (see Known issues).
+
+- **The ledger rule is RETRACTED — and it was a signature.** The 48×3px
+  solid `var(--gold-b)` bar between the hero sub and the CTAs was R5's
+  named SIGNATURE (see 0.7.4), implemented as `.hero-sub::after` because
+  the homepage fidelity gate forbids a real `.ledger` DOM element — the
+  pseudo delivered the plan's exact geometry with zero markup invention,
+  and the gate was never edited. The King: *"remove that small underline
+  in the hero section it's useless."* The rule and its SIGNATURE comment
+  are gone from hub.css, replaced in place by a plain retraction note.
+  Said plainly, because it should not be dressed up: **this retires a
+  signature the King himself stamped in R5.** The plan's 28px sub→CTAs
+  contract (12 + 3 + 13) loses its middle term by order, and the gap now
+  rides alone on `.hero-sub{margin-bottom:13px}` — measured 13px live,
+  neither collapsed to 0 nor doubled.
+- **The C7 `.hold-title::before` bar is a DIFFERENT element and is
+  deliberately untouched.** It is also a 48×3 gold rule (`Layout.astro:468`),
+  it is also a pseudo, and it is the section-anchor bar for the
+  `.hold` rhyme on tools/legal pages. Same geometry, different job, its
+  own approval — one King's order retracting the hero rule does not
+  generalize to it. (Correction of record: this rule lives in
+  `src/layouts/Layout.astro:468`, not `base.css`.)
+- **Duplicated category label in the featured card — one kept, fidelity
+  wins.** The featured card printed the category TWICE: R5's `ac-artword`
+  wordmark on the ink tile AND a verbatim `a.badge` pill in the body. King:
+  *"bad and ugly keep one."* **The `a.badge` pill was KEPT** because it is
+  verbatim WordPress `template-parts/content.php` markup AND it is the
+  working category-archive link (`href={base}category/{slug}/`) — the wordmark
+  was decorative. Removing the pill would have been a functional regression
+  dressed as a cleanup, so the decorative span lost instead: the
+  `ac-artword` was removed from the featured card only (`index.astro:68`).
+  Fidelity over novelty, and the archive link still works.
+- **Ink tile height unaffected, by construction not by luck.** `.feat-img`
+  is `min-height` — 260px base / 200px tablet / 170px phone, by tier — and
+  the removed `ac-artword` was `position: absolute`, so it never
+  contributed a single pixel of height in the first place. Measured
+  **348×170 phone, 501×290 desk**.
+- **`ArticleCard.astro` deliberately UNCHANGED.** The grid cards still carry
+  the same wordmark-plus-badge doubling the featured card just lost. That is
+  a second call, not a freebie: it awaits the King's decision and was
+  declared out of scope here rather than half-decided.
+- Diff is 2 files, 5 insertions / 14 deletions — `index.astro` one line,
+  `hub.css` the rule plus its comment. No `src/**` beyond those two, no
+  `scripts/**`, no `!important`, no gate edit.
+
+**Proof (@qa-inspector's runs, built/served bytes)**: build exit 0 (78
+pages) · `npm run check` **6/6 gates green** (article gate 147/147, vectors
+95/0) · tool-accuracy-audit **26 pass / 0 fail** · `.hero-sub::after` count
+**0** in `src`, `dist` and served, computed `content: none` · sub→CTA gap
+measured **13px** · `.feat-img .ac-artword` count **0** · `.feat-body .badge`
+count **1** · **0 JS errors** · sheen **0** · screenshots
+`r7-hotfix-hero-light-phone.png` (lum 68.0),
+`r7-hotfix-hero-dark-phone.png` (33.9),
+`r7-hotfix-featured-light-phone.png`,
+`r7-hotfix-featured-dark-phone.png`,
+`r7-hotfix-home-desk-light.png` (94.3)
+(/home/opc/work/research-notes/).
+
+**Known issues — OPEN, not fixed in this release:**
+- **(a) The ink tile now reads as a void.** With the wordmark gone, the
+  flat `#0d0b08` tile sits at **~96.8% empty ink / ~3.2% glyph coverage**
+  and reads as a black hole on the cream page. Flagged by @designer.
+  Recommended remedy — a **96px / 64px `min-height` + glyph pair inside the
+  existing 767px block in `hub.css`** — is **NOT applied**: it is queued for
+  the King's approval, and shipping an unapproved second change under cover
+  of a retraction release is exactly the over-reach the design law forbids.
+- **(b) Latent specificity bug — phone emoji downscale never applies.**
+  `Layout.astro:441` `.feat-img>span:first-child{font-size:56px}` scores
+  **(0,2,1)** and beats the 767px `.feat-emoji{font-size:32px}` rule at
+  **(0,1,0)**, so the featured emoji measures **56px at 390** where the
+  verbatim phone rule says 32px. Pre-existing, unrelated to this release's
+  intent, and left in place rather than silently folded into a design
+  retraction — it needs its own approval like any other change.
+
 ## [0.7.5] — 2026-10-01 — Design Language R6: Chrome + live dot
 The chrome stops being a frame the content sits in and becomes the site's
 dark-on-cream boundary (DESIGN-LANGUAGE rung R6, plan §P1-4 · Chrome:
