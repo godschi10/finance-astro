@@ -16,9 +16,9 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   disclaimer="This calculator is for informational guidance only and is not tax, payroll or financial advice. Figures follow the Nigeria Tax Act 2025 with assumed deductions, confirm your exact salary and tax with your employer or a licensed adviser.",>
 <div class="fx-card">
 <div class="tgrid c3">
-<div class="field"><label for="gn-net">Target take-home ₦/mo</label><input id="gn-net" type="number" min="0" step="any" value="250000" inputmode="decimal"></div>
-<div class="field"><label for="gn-pen">Pension %</label><input id="gn-pen" type="number" min="0" max="100" step="any" value="8" inputmode="decimal"></div>
-<div class="field"><label for="gn-rent">Annual rent ₦</label><input id="gn-rent" type="number" min="0" step="any" value="0" inputmode="decimal"></div>
+<div class="field"><label for="gn-net">Target take-home ₦/mo</label><input id="gn-net" type="text" min="0" step="any" value="250000" inputmode="decimal"></div>
+<div class="field"><label for="gn-pen">Pension %</label><input id="gn-pen" type="text" min="0" max="100" step="any" value="8" inputmode="decimal"></div>
+<div class="field"><label for="gn-rent">Annual rent ₦</label><input id="gn-rent" type="text" min="0" step="any" value="0" inputmode="decimal"></div>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Gross to negotiate</p>
@@ -33,15 +33,16 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </div>
 </ToolShell>
 <script>
+const pm = v => { const n = Number(String(v).replace(/[^\d.eE-]/g, '')); return Number.isFinite(n) ? n : 0; };
 import { reverseGross } from "../../lib/gross-to-net";
 import { formatGrouped } from "../../lib/format";
 const n = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 function render() {
-  const net = Math.max(0, Number(g("gn-net").value) || 0);
-  const pen = Math.min(100, Math.max(0, Number(g("gn-pen").value) || 0)) / 100;
-  const rent = Math.max(0, Number(g("gn-rent").value) || 0);
+  const net = Math.max(0, pm(g("gn-net").value) || 0);
+  const pen = Math.min(100, Math.max(0, pm(g("gn-pen").value) || 0)) / 100;
+  const rent = Math.max(0, pm(g("gn-rent").value) || 0);
   const r = reverseGross(net, pen, 0, rent);
   t("gn-fig").textContent = n(r.gross_monthly);
   t("gn-sub").textContent = `Nets ${n(r.net_monthly)}/mo after ${n(r.tax_monthly)} tax`;

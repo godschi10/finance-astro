@@ -19,6 +19,7 @@ import "../styles/article.css"; // category art gradients (.i-sav etc.) + card r
 import "../styles/forms.css"; // WP stylesheet section 46 (FORMS) — control geometry
 import "../styles/pages.css"; // §34/35/43/44/45 verbatim blocks: about cards, legal, newsletter pages
 import "../styles/numbers.css"; // DESIGN-LANGUAGE §1 Number Law (R1) — ADDITIVE only: tabular-nums where money figures refresh/align. Never rewrites a verbatim rule; import last by design.
+import "../styles/controls.css"; // DESIGN-LANGUAGE §6 money-form controls (R2) — ADDITIVE only: F3 ₦-in-field (.fi), F2 dip, F4 phone targets, button press. No WP rule rewritten; focus gold stays owned by ToolShell/Layout. Imported after numbers.css by design (R1 → R2).
 // Shared chrome: head, self-hosted fonts, finance tokens (light + dark),
 // skip-link, ticker, desktop nav + mobile drawer, footer. Staging-safe SEO:
 // Pages origin + /finance-astro base everywhere, site-wide noindex on staging.
@@ -749,6 +750,7 @@ if (window.matchMedia && window.matchMedia('(hover: none)').matches) {
 <script>
   import "../scripts/spotlight-search.js";
   import "../scripts/ticker-live.js";
+  import "../scripts/money-controls.js"; // R2 money-form behaviors (₦-in-field, blur grouping) — inert outside money-tools (selector-gated)
 </script>
 <script src="../scripts/gwill-forms.js"></script>
 </body>

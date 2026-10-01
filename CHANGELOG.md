@@ -3,6 +3,48 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.1] — 2026-10-01 — Design Language R2: The Control Law
+**Money inputs are now instruments, not spreadsheet cells** (DESIGN-LANGUAGE §6
+F1–F4, rung R2). Executed via freebuff shelter (native delegate engine threw
+its schema-module fault again this session — the ladder held), then
+independently re-verified file-by-file by the Manager.
+
+- **F1 — no more `type=number`**: all 54 money inputs across the 15
+  money-tools pages are `type="text" inputmode="decimal"` (stepper arrows and
+  comma-rejection gone; every id/value/label/step attribute byte-identical —
+  the diff is exactly the type word). Each page script gained a parse-tolerant
+  reader `pm()` — typed `₦1,500`, `1,500.25`, even stray letters never break
+  the live compute; all 54 `Number(.value)` reads rewired through it. Selects
+  untouched. No formula changed anywhere (diff math: +123 = 54 type + 15 pm-def
+  + 54 reads; −108 = 54 + 54; zero other lines).
+- **F3 — ₦ inside the field**: `src/scripts/money-controls.js` (new, dep-free
+  IIFE) wraps every `.field` with a ₦ label + decimal input in a `span.fi` and
+  paints an aria-hidden gold-dim ₦ at `left:12px` (28px text gutter reserved);
+  Years/Months (inputmode=numeric) and non-₦ fields are skipped by design.
+  Wired sitewide exactly like spotlight-search/ticker-live; selector-gated so
+  it is inert elsewhere.
+- **F2 — the reformat cue**: blur comma-groups the integer part only
+  (fractional tail byte-preserved), then a 200ms opacity dip (`.fx-dip`) says
+  "I reformatted your number"; focus strips commas back for clean caret math.
+  pm() re-tolerates commas on the next input event — the loop is closed.
+- **F4/press**: phone `@media` min-heights (inputs/selects 48px, `.swapbtn`
+  44px — restates ToolShell, cannot shrink desktop), `.swapbtn:active`
+  press dip (translateY(1px)+brightness .96, 120ms). Focus gold 2px stays
+  owned by the verbatim ToolShell rule — NOT duplicated (documented in
+  controls.css header; re-declaring it would only risk a cascade fight).
+- `src/styles/controls.css` — new additive layer, imported AFTER numbers.css
+  (R1→R2 cascade order); no `!important`, no WP-verbatim rule rewritten;
+  prefers-reduced-motion mirror pinned. `scripts/r2-*.mjs` kept as audit trail.
+
+**Proof**: build exit 0 (Manager's own rebuild) · 6/6 gates PASS · accuracy
+audit **26/26, 0 fail** on the R2 build · CDP probes: type 1500→blur→`1,500`
+with ₦ inside field (rect+color+pointer-events verified), focus→`1500`,
+`1500.2500`→`1,500.2500` (tail byte-exact), live results still recompute
+through pm() (converter 2500→₦3,321,614; salary-tax 2,500,000→₦1,860,167).
+Screenshots `r2-{st,cc}-{light,dark}-{phone,desk}.png` (theme seeded via the
+real v3 localStorage key — media-emulation alone is defeated by the stored
+choice; noted for all future dark proofs).
+
 ## [0.7.0] — 2026-09-30 — Design Language R1: The Number Law
 **Phase change.** The King approved the sitewide design upgrade: research
 complete (`~/work/research-notes/finance-design-research-2026-09-30.md`),

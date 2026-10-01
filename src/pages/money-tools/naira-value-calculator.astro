@@ -18,9 +18,9 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   disclaimer="This calculator is for informational guidance only and is not financial advice. Inflation and depreciation figures are estimates based on the rate you enter; actual Nigerian inflation varies. Confirm significant decisions with a licensed adviser.",>
 <div class="fx-card">
 <div class="tgrid c3">
-<div class="field"><label for="nv-val">Amount ₦</label><input id="nv-val" type="number" min="0" step="any" value={s.value} inputmode="decimal"></div>
-<div class="field"><label for="nv-infl">Inflation %/yr</label><input id="nv-infl" type="number" min="0" step="any" value="20" inputmode="decimal"></div>
-<div class="field"><label for="nv-yrs">Years</label><input id="nv-yrs" type="number" min="1" step="1" value={s.years} inputmode="numeric"></div>
+<div class="field"><label for="nv-val">Amount ₦</label><input id="nv-val" type="text" min="0" step="any" value={s.value} inputmode="decimal"></div>
+<div class="field"><label for="nv-infl">Inflation %/yr</label><input id="nv-infl" type="text" min="0" step="any" value="20" inputmode="decimal"></div>
+<div class="field"><label for="nv-yrs">Years</label><input id="nv-yrs" type="text" min="1" step="1" value={s.years} inputmode="numeric"></div>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">To buy the same in <span id="nv-yr">5</span> years you need</p>
@@ -42,15 +42,16 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </table></div>
 </ToolShell>
 <script>
+const pm = v => { const n = Number(String(v).replace(/[^\d.eE-]/g, '')); return Number.isFinite(n) ? n : 0; };
 import { nairaValue, nairaValueHistory } from "../../lib/naira-value";
 import { formatGrouped } from "../../lib/format";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 function render() {
-  const v = Math.max(0, Number(g("nv-val").value) || 0);
-  const infl = Math.max(0, Number(g("nv-infl").value) || 0) / 100;
-  const yrs = Math.max(1, Math.trunc(Number(g("nv-yrs").value) || 5));
+  const v = Math.max(0, pm(g("nv-val").value) || 0);
+  const infl = Math.max(0, pm(g("nv-infl").value) || 0) / 100;
+  const yrs = Math.max(1, Math.trunc(pm(g("nv-yrs").value) || 5));
   const r = nairaValue(v, infl, yrs, 0);
   t("nv-yr").textContent = String(yrs);
   t("nv-fig").textContent = nn(r.future);

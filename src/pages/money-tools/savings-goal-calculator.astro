@@ -17,10 +17,10 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   disclaimer="This calculator is for informational guidance only and is not financial or investment advice. Rates are not guaranteed, confirm your plan with a licensed financial adviser.",>
 <div class="fx-card">
 <div class="tgrid c3">
-<div class="field"><label for="sg-target">Target ₦</label><input id="sg-target" type="number" min="0" step="any" value="5000000" inputmode="decimal"></div>
-<div class="field"><label for="sg-cur">Have now ₦</label><input id="sg-cur" type="number" min="0" step="any" value="500000" inputmode="decimal"></div>
-<div class="field"><label for="sg-rate">Annual rate %</label><input id="sg-rate" type="number" min="0" step="any" value="15" inputmode="decimal"></div>
-<div class="field"><label for="sg-mo">Months</label><input id="sg-mo" type="number" min="1" step="1" value="24" inputmode="numeric"></div>
+<div class="field"><label for="sg-target">Target ₦</label><input id="sg-target" type="text" min="0" step="any" value="5000000" inputmode="decimal"></div>
+<div class="field"><label for="sg-cur">Have now ₦</label><input id="sg-cur" type="text" min="0" step="any" value="500000" inputmode="decimal"></div>
+<div class="field"><label for="sg-rate">Annual rate %</label><input id="sg-rate" type="text" min="0" step="any" value="15" inputmode="decimal"></div>
+<div class="field"><label for="sg-mo">Months</label><input id="sg-mo" type="text" min="1" step="1" value="24" inputmode="numeric"></div>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Save monthly</p>
@@ -42,16 +42,17 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </table></div>
 </ToolShell>
 <script>
+const pm = v => { const n = Number(String(v).replace(/[^\d.eE-]/g, '')); return Number.isFinite(n) ? n : 0; };
 import { savingsCalculate, savingsSchedule } from "../../lib/savings";
 import { formatGrouped } from "../../lib/format";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 function render() {
-  const target = Math.max(0, Number(g("sg-target").value) || 0);
-  const cur = Math.max(0, Number(g("sg-cur").value) || 0);
-  const rate = Math.max(0, Number(g("sg-rate").value) || 0) / 100;
-  const mo = Math.max(1, Math.trunc(Number(g("sg-mo").value) || 24));
+  const target = Math.max(0, pm(g("sg-target").value) || 0);
+  const cur = Math.max(0, pm(g("sg-cur").value) || 0);
+  const rate = Math.max(0, pm(g("sg-rate").value) || 0) / 100;
+  const mo = Math.max(1, Math.trunc(pm(g("sg-mo").value) || 24));
   const r = savingsCalculate(target, cur, rate, mo, "monthly");
   t("sg-fig").textContent = r.goal_reached ? "₦0 — goal reached" : nn(r.monthly);
   t("sg-sub").textContent = `Total ${nn(r.total)} · interest ${nn(r.interest)}`;

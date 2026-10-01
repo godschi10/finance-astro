@@ -17,11 +17,11 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   disclaimer="This calculator is for informational guidance only and is not financial or investment advice. Rates are not guaranteed, confirm your plan with a licensed financial adviser.",>
 <div class="fx-card">
 <div class="tgrid c3">
-<div class="field"><label for="ci-prin">Starting principal ₦</label><input id="ci-prin" type="number" min="0" step="any" value="100000" inputmode="decimal"></div>
-<div class="field"><label for="ci-dep">Deposit per period ₦</label><input id="ci-dep" type="number" min="0" step="any" value="50000" inputmode="decimal"></div>
+<div class="field"><label for="ci-prin">Starting principal ₦</label><input id="ci-prin" type="text" min="0" step="any" value="100000" inputmode="decimal"></div>
+<div class="field"><label for="ci-dep">Deposit per period ₦</label><input id="ci-dep" type="text" min="0" step="any" value="50000" inputmode="decimal"></div>
 <div class="field"><label for="ci-freq">Deposit frequency</label><select id="ci-freq"><option value="monthly" selected>Monthly</option><option value="weekly">Weekly</option><option value="biweekly">Bi-weekly</option><option value="quarterly">Quarterly</option><option value="annual">Annual</option></select></div>
-<div class="field"><label for="ci-rate">Annual rate %</label><input id="ci-rate" type="number" min="0" step="any" value="10" inputmode="decimal"></div>
-<div class="field"><label for="ci-yrs">Years</label><input id="ci-yrs" type="number" min="1" step="1" value="5" inputmode="numeric"></div>
+<div class="field"><label for="ci-rate">Annual rate %</label><input id="ci-rate" type="text" min="0" step="any" value="10" inputmode="decimal"></div>
+<div class="field"><label for="ci-yrs">Years</label><input id="ci-yrs" type="text" min="1" step="1" value="5" inputmode="numeric"></div>
 <div class="field"><label for="ci-cmp">Compounding</label><select id="ci-cmp"><option value="monthly" selected>Monthly</option><option value="quarterly">Quarterly</option><option value="daily">Daily</option><option value="annual">Annual</option></select></div>
 </div>
 <div class="receipt" aria-live="polite">
@@ -44,6 +44,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </table></div>
 </ToolShell>
 <script>
+const pm = v => { const n = Number(String(v).replace(/[^\d.eE-]/g, '')); return Number.isFinite(n) ? n : 0; };
 import { compoundGrowth, compoundSchedule } from "../../lib/savings";
 import { formatGrouped } from "../../lib/format";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
@@ -51,10 +52,10 @@ const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 const sel = (id: string) => (document.getElementById(id) as HTMLSelectElement).value;
 function render() {
-  const p = Math.max(0, Number(g("ci-prin").value) || 0);
-  const d = Math.max(0, Number(g("ci-dep").value) || 0);
-  const rate = Math.max(0, Number(g("ci-rate").value) || 0) / 100;
-  const yrs = Math.max(1, Math.trunc(Number(g("ci-yrs").value) || 5));
+  const p = Math.max(0, pm(g("ci-prin").value) || 0);
+  const d = Math.max(0, pm(g("ci-dep").value) || 0);
+  const rate = Math.max(0, pm(g("ci-rate").value) || 0) / 100;
+  const yrs = Math.max(1, Math.trunc(pm(g("ci-yrs").value) || 5));
   const r = compoundGrowth(p, d, rate, yrs * 12, sel("ci-cmp"), sel("ci-freq"));
   t("ci-fig").textContent = nn(r.future);
   t("ci-sub").textContent = `You put in ${nn(r.deposited)} · interest earned ${nn(r.interest)}`;
