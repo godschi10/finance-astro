@@ -3,6 +3,61 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.4] — 2026-10-01 — Design Language R5: Hub + Hero
+The homepage stops being a flat stack and becomes a designed spread
+(plan §P0-1 hero + §P0-2 cards, rung R5). **Executed DIRECTLY by the
+Manager** — all three delegation paths were down simultaneously (native
+engine's schema-module fault, freebuff 0/25 Freebucks, opencode opt-in-gated
++ 3-min leg limit), which is the delegation law's stated condition for
+direct work; freebuff retakes the ladder at refill.
+
+- **P0-1 hero**: plan-exact spacing/type now live — phone padding
+  56/20/52 (was 40/20/48), tablet 64/32/60, desktop 72/48/68 stands;
+  phone H1 floor 38px (verbatim media had 30px), phone sub 15px (was 13);
+  tag 10px/0.16em 6/14; chips row gets its hairline (1px
+  rgba(245,158,11,.18) + 20px pad-top) and pills 10px/5/12 with 44px phone
+  targets; CTAs 48px phone min-height.
+- **SIGNATURE — the ledger rule**: 48×3px solid `var(--gold-b)` between sub
+  and CTAs, left-aligned, static. Implemented as `.hero-sub::after` (the
+  homepage fidelity gate explicitly forbids a `.ledger` DOM element — the
+  pseudo-element delivers the plan's exact geometry with zero markup
+  invention, and the gate stayed untouched).
+- **P0-2 stamp corner**: `.ac-img`/`.feat-img` art tiles now flat brand ink
+  `#0d0b08` (pastels overridden by cascade, `.i-*` class hooks kept), the
+  category emoji stays at 40px card / 56px featured in warm-cream, plus a
+  10px uppercase category wordmark bottom-left in the badge tint
+  (`ac-artword` on ArticleCard fallback + featured). Real-photo thumbs
+  always win — all 9 homepage cards are photos today, the ink tile is the
+  fallback the archive (10 cards, photo:false) proves live.
+- **Sanctioned subtractions** (the only verbatim-WP removals of the whole
+  design run so far): the three `::after` white-sheen gradients
+  (home.css ×2, article.css ×1), commented in place with the §P0-2
+  citation.
+- **Hierarchy**: featured body earns the single 3px gold left bar (D2's
+  ration: the grid's only gold accent); `.ac:hover` drops `sh-gold` bloom →
+  `sh-sm`, title→gold becomes the one hover signal; grid gaps 16/20/24.
+- **M3 motion**: hub cards once-in-view translateY(6px)+fade 0.55s,
+  fires once, reduced-motion mirrored. Armed BY JS ONLY inside index.astro's
+  existing WP-ported script block (the gate truncates the template at the
+  first `<script` — mid-file scripts break its structural predicates), with
+  a viewport-scoped 2s safety so below-fold cards keep their scroll reveal.
+- All homepage overrides are scoped `.hero:has(.hero-cats)` so tools/legal
+  article heroes keep their own anatomy (C7 rhyme untouched there).
+
+**Proof (Manager's runs)**: build exit 0 (78 pages) · **6/6 gates green**
+including the homepage fidelity contract (after re-structuring to satisfy
+it: pseudo-element ledger + in-script M3 — the gate was NEVER edited) ·
+accuracy **26/26, 0 fail** · CDP: phone hero 56/20/52 + H1 38px + sub 15px,
+ledger `48px×3px rgb(245,158,11)` in light AND dark, chips hairline
+`1px rgba(245,158,11,0.18) pt:20` + db `10px 5px 14px`, featured bar
+`3px rgb(245,158,11)`, sheens `none` both tiles, M3 armed 9 cards →
+6 revealed on scroll (opacity 1), **no-JS: 9/9 cards visible, unarmed**,
+archive: scrollW 390 + ink fallback + wordmark "Investing", no stray tabs ·
+screenshots r5-{home,archive}-{light,dark}-{phone,desk} (light 64/92,
+dark 33.5/22.2, archive 170 — separation verified, homepage light reads
+darker than tools pages because the dark hero slab + ink tiles are the
+brand, not a regression).
+
 ## [0.7.3] — 2026-10-01 — Design Language R4: Calculator Anatomy (K3/K5/K6/K7)
 Every calculator now explains itself, restarts itself, and signs its work
 (DESIGN-LANGUAGE §11 rung R4). Executed via freebuff shelter — the run

@@ -65,7 +65,7 @@ const trim32 = (s: string) => {
 <div class="con sg">
 <div class="shd"><h2 class="stitle">Featured Article</h2></div>
 <div class="feat">
-<div class={`feat-img ${fcat.art}`}><span class="feat-emoji">{fcat.emoji}</span></div>
+<div class={`feat-img ${fcat.art}`}><span class="feat-emoji">{fcat.emoji}</span><span class={`ac-artword ${fcat.badge}`}>{fcat.name}</span></div>
 <div class="feat-body">
 <a class={`badge ${fcat.badge}`} href={`${base}category/${featured.data.category}/`}>{fcat.name}</a>
 <div class="feat-t"><a href={furl}>{featured.data.title}</a></div>
@@ -285,5 +285,33 @@ status.textContent="This form isn't connected yet — the list opens at launch, 
 }
 }catch(e){}
 })();
+
+// ── 6. M3 (DESIGN-LANGUAGE): hub cards once-in-view translateY(6px)+fade ──
+// 0.55s, fires once. .m3-armed is added HERE (by JS) — no-JS never arms and
+// cards stay fully visible. Armed only when IntersectionObserver exists; a 2s
+// safety reveals only cards STRANDED IN VIEWPORT (below-fold keeps its scroll
+// reveal). Article prose never animates (fidelity-protected).
+try{
+(function(){
+var mgrid=document.getElementById("gwill-posts-grid");
+if(!mgrid||typeof IntersectionObserver==="undefined")return;
+var mcards=mgrid.querySelectorAll(".ac");
+if(!mcards.length)return;
+document.documentElement.classList.add("m3-armed");
+var mreveal=function(c){c.classList.add("m3-in");};
+var mio=new IntersectionObserver(function(entries){
+for(var i=0;i<entries.length;i++){
+if(entries[i].isIntersecting){mreveal(entries[i].target);mio.unobserve(entries[i].target);}
+}
+},{rootMargin:"0px 0px -40px 0px",threshold:0.05});
+Array.prototype.forEach.call(mcards,function(c){mio.observe(c);});
+setTimeout(function(){
+Array.prototype.forEach.call(mcards,function(c){
+var r=c.getBoundingClientRect();
+if(r.top<window.innerHeight&&r.bottom>0)mreveal(c);
+});
+},2000);
+})();
+}catch(e){}
 </script>
 </Layout>

@@ -1,0 +1,124 @@
+/* ============================================================================
+   HUB.CSS — Design Language rung R5 "Hub + Hero" (additive layer)
+   Cascade order: numbers.css → controls.css → ladder.css → anatomy.css → hub.css
+   (R1 → R2 → R3 → R4 → R5). Import LAST.
+
+   Sourcing rule: every number here is quoted from the stamped
+   docs/DESIGN-UPGRADE-PLAN.md §P0-1 (hero) and §P0-2 (cards/featured),
+   plus DESIGN-LANGUAGE C7 (ledger rule), D2 (hairline/ration), M3 (motion).
+
+   SHARED-CLASS SAFETY: .hero / .hero-h / .hero-sub / / .hero-acts / .hero-tag
+   also render on tools/legal/about heroes. Homepage-only overrides below are
+   therefore scoped with `.hero:has(.hero-cats)` (the Topics row renders on the
+   homepage front-page hero ONLY — verified: index.astro sole user).
+   .ac / .ac-img / .feat / .feat-img are intentionally UNSCOPED: P0-2 covers
+   "homepage + archives" and both share these classes.
+
+   SANCTIONED SUBTRACTIONS (plan P0-2, verbatim-WP removals) are NOT here —
+   they were made in place in home.css + article.css (the ::after sheen
+   gradients), commented with the plan citation.
+   ========================================================================= */
+
+/* ── P0-1 HERO · spacing contract (tag→h1 22 · h1→sub 16 · sub→ctas 28 ·
+      ctas→chips 36 already hold via verbatim margins; hero padding is the
+      delta: phone 56/20/52, tablet 64/32/60, desktop 72/48/68 stands) ── */
+.hero:has(.hero-cats) { padding-top: 72px; padding-bottom: 68px; }
+@media (max-width: 1023px) {
+  .hero:has(.hero-cats) { padding: 64px var(--con-pad) 60px; }
+}
+@media (max-width: 767px) {
+  .hero:has(.hero-cats) { padding: 56px 20px 52px; }
+}
+
+/* ── P0-1 type: tag 10px/0.16em 6/14 · H1 clamp floor 38px on phone ·
+      sub 0.9375rem/1.75 (base holds; phone verbatim drops to 13px — plan
+      floor is 15px) ── */
+.hero:has(.hero-cats) .hero-tag { letter-spacing: 0.16em; padding: 6px 14px; }
+@media (max-width: 767px) {
+  .hero:has(.hero-cats) .hero-h { font-size: 38px; }
+  .hero:has(.hero-cats) .hero-sub { font-size: 15px; }
+}
+
+/* ── P0-1 SIGNATURE: "the ledger rule" — 48×3 solid gold between sub and
+      CTAs, left-aligned, never animated. Rendered as .hero-sub::after
+      (decorative pseudo — the homepage gate forbids a .ledger DOM element,
+      and pseudo geometry satisfies the plan's visual contract exactly).
+      12 + 3 + 13 = 28px sub→CTAs contract. ── */
+.hero:has(.hero-cats) .hero-sub { margin-bottom: 13px; }
+.hero:has(.hero-cats) .hero-sub::after {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 3px;
+  background: var(--gold-b);
+  margin-top: 12px;
+}
+
+/* ── P0-1 chips: hairline row separator (1px gold-tint, 20px pad-top),
+      chip pill 10px/0.1em 5/12, 44px phone touch target · CTAs phone
+      48px min-height (13px/800/12 24/6px radius already verbatim) ── */
+.hero:has(.hero-cats) .hero-cats {
+  border-top: 1px solid rgba(245, 158, 11, 0.18);
+  padding-top: 20px;
+}
+.hero:has(.hero-cats) .hero-cats .db { font-size: 10px; padding: 5px 12px; }
+@media (max-width: 767px) {
+  .hero:has(.hero-cats) .hero-cats .db { min-height: 44px; padding: 5px 14px; }
+  .hero:has(.hero-cats) .hero-acts .bh,
+  .hero:has(.hero-cats) .hero-acts .bhg { min-height: 48px; align-items: center; }
+}
+
+/* ── P0-2 SIGNATURE: "the stamp corner" — flat category-ink tile replaces
+      the pastel wash (.i-* stays the class hook, background overridden to
+      brand ink #0d0b08; real-photo thumbs sit on top and always win).
+      Emoji kept per category, warm-cream, 40px card / 56px featured.
+      Wordmark: 10px uppercase bottom-left in the category tint. ── */
+.ac-img, .feat-img { background: #0d0b08; }
+.ac-emoji { font-size: 40px; line-height: 1; color: #f0ede6; }
+.feat-emoji { font-size: 56px; line-height: 1; color: #f0ede6; }
+.ac-artword {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  z-index: 1;
+}
+/* category tint (badge vocabulary color half only — no fill, C4) */
+.ac-artword.bg { color: var(--gold); }
+.ac-artword.bgn { color: var(--green); }
+.ac-artword.bpu { color: var(--purple); }
+.ac-artword.bsl { color: #c4b89a; }
+.ac-artword.brd { color: var(--red); }
+
+/* ── P0-2 hierarchy: featured body earns the single 3px gold left bar
+      (D2 ration: the grid's ONLY gold accent) ── */
+.feat-body { border-left: 3px solid var(--gold-b); }
+
+/* ── P0-2 hover: keep lift + gold border, gold SHADOW drops to sh-sm
+      (sh-gold blooms on dense grids), title→gold = the one signal ── */
+.ac:hover { box-shadow: var(--sh-sm); }
+.ac:hover .ac-t, .ac:hover .ac-t a { color: var(--gold); }
+
+/* ── P0-2 grid: phone 16 (verbatim) · tablet 2-col gap 20 · desktop 3-col
+      gap 24 (verbatim .g3 holds 16 — plan raises the two wide tiers) ── */
+@media (min-width: 768px) and (max-width: 1023px) { .g3 { gap: 20px; } }
+@media (min-width: 1024px) { .g3 { gap: 24px; } }
+
+/* ── M3 hub motion — cards once-in-view translateY(6px)+fade 0.55s.
+      .m3-armed is added by JS only; NO-JS = no class = fully visible.
+      Reduced-motion: instant visible, no transform (mirrors verbatim
+      prefers-reduced-motion contract). ── */
+.m3-armed .g3 .ac { opacity: 0; transform: translateY(6px); }
+.m3-armed .g3 .ac.m3-in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.55s cubic-bezier(0.23, 1, 0.32, 1),
+    transform 0.55s cubic-bezier(0.23, 1, 0.32, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .m3-armed .g3 .ac { opacity: 1; transform: none; }
+  .m3-armed .g3 .ac.m3-in { transition: none; }
+}

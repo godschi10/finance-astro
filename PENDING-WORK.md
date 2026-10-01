@@ -42,10 +42,21 @@ Read this at session start.
       Crash-continuation session repaired 2 inherited defects (brace, 3 dead
       buttons). Manager proofs: build 0, 6/6, 26/26, independent probe on 2
       non-probed tools (reset exact, verdict math verified), 4 shots.
-- [ ] RUNGS remaining: hub/hero →
-      (note: pre-stamp plan said "sticky results" inside R4 — NOT in stamped
-      §11 R4 line; deferred, flag to King if he wants it re-added)
-      R6 chrome + live dot → R7 odometer → R8 ledger captions → R9
+- [x] **R5 Hub + hero — SHIPPED v0.7.4** (2026-10-01) — **Manager-executed
+      directly**: native broken (schema module) + freebuff 0/25 Freebucks +
+      opencode opt-in-gated → delegation law's all-3-failed condition met.
+      Hero plan-exact (56/20/52 phone, H1 38, ledger rule via .hero-sub::after
+      — homepage gate FORBIDS .ledger element, gate untouched), stamp-corner
+      ink tiles + ac-artword wordmark, featured 3px gold bar, sheen ×3 killed
+      (ONLY verbatim subtractions, cited), M3 in existing script block (gate
+      truncates at first <script>), :has(.hero-cats) scoping protects tools
+      heroes. Proofs: 6/6 gates, 26/26, CDP full matrix, no-JS 9/9, 5 shots.
+      NOTE: fuzzy patch once hit wrong home.css site — repaired (feat-img img
+      kept), verified in git diff. NOTE 2: pre-stamp plan said "sticky
+      results" inside R4 — NOT in stamped §11 R4 line; deferred, flag to King
+      if he wants it re-added.
+- [ ] RUNGS remaining: R6 chrome + live dot →
+      R7 odometer → R8 ledger captions → R9
       seal/colophon → R10 motion pass + article polish + 404/search/desk.
       Each rung: one surface, 360px+1280px light+dark screenshots, King
       approval, gates green, batch ship.
