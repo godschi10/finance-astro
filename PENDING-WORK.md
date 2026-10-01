@@ -19,8 +19,20 @@ Read this at session start.
       figure) + `--surface-3:#1c1a15` dark 4th tier. No verbatim rule touched.
       Gates 6/6 PASS; CDP proof 6 surfaces × 390+1280 × light+dark
       (r1-*.png in ~/work/research-notes); accuracy audit re-running.
-- [ ] RUNGS: R2 controls → R3 converter composition + rates ladder →
-      R4 calculator anatomy + sticky results + K5/K6 audits → R5 hub/hero →
+- [x] **R2 Controls — SHIPPED v0.7.1** (2026-10-01) — freebuff shelter executed
+      (native delegate engine dead: schema-module fault ×4). 54 type=number→text
+      + pm() tolerance; money-controls.js ₦-in-field/blur grouping/dip;
+      controls.css additive. Manager re-verified: diff math exact, 6/6 gates,
+      26/26 accuracy, CDP lifecycle probes, true light/dark shots (v3 storage
+      seed). Live on staging (served bytes: .fi-sym, pm fingerprint, text
+      inputs). Ledger + CHANGELOG shipped with commit 9cea4d4.
+- [~] **R3 Converter composition + rates ladder — DISPATCHED** to freebuff
+      shelter (fb-r3, brief /tmp/r3-freebuff/BRIEF.md, deliverable
+      /tmp/r3-freebuff/R3-DONE.md, watcher armed ~90min). §5 steps 1–5+8/9 only
+      (6/7 DEFERRED per King). Dynamic ladder on converter, build-time ladder on
+      amount pages, additive ladder.css after controls.css.
+- [ ] RUNGS remaining after R3: calculator anatomy + sticky results +
+      K5/K6 audits → hub/hero →
       R6 chrome + live dot → R7 odometer → R8 ledger captions → R9
       seal/colophon → R10 motion pass + article polish + 404/search/desk.
       Each rung: one surface, 360px+1280px light+dark screenshots, King
