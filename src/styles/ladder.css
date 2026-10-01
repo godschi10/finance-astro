@@ -1,0 +1,36 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   LADDER.CSS — DESIGN-LANGUAGE.md §5 step ⑤ "two-direction rates ladder"
+   (rung R3, converter composition + rates ladder)
+   ══════════════════════════════════════════════════════════════════════════
+   ADDITIVE LAYER ONLY, same doctrine as numbers.css (R1) / controls.css (R2):
+   no WP-verbatim rule from tools.css / ToolShell.astro / any sheet is rewritten
+   here. Verified by grep BEFORE writing this file:
+   - tools.css:163 already styles .st-table th (9px / 700 / 0.14em uppercase
+     var(--text-dim)) — the commission's exact header spec. ADD NOTHING.
+   - tools.css:168 already styles .st-table .st-amt (mono, right-aligned,
+     700, nowrap). ADD NOTHING.
+   - tools.css:166 already owns tbody row hover (var(--gold-muted), the real
+     token — --surface-3 exists only in the dark theme block). ADD NOTHING.
+   Therefore this file introduces ONE new selector family, .fx-ladder, which
+   exists nowhere else in src/ — it only positions two .st-table columns side
+   by side and stacks them on phones. Everything inside the columns is the
+   verbatim tools.css vocabulary, untouched. No !important anywhere.
+   The N6 stamp line reuses .receipt-foot + .hint verbatim — no new stamp
+   class was needed, so none is added.
+
+   Import AFTER controls.css in Layout.astro (R1 → R2 → R3 cascade order).
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* (a) the two-column ladder shell. Columns are equal-width .st-table blocks;
+   the single stamp line (.receipt-foot.hint) sits inline after them and takes
+   the full row via flex-basis below. */
+.fx-ladder { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; margin-top: 18px; }
+.fx-ladder > .st-table { flex: 1 1 0; min-width: 0; }
+.fx-ladder > .receipt-foot { flex: 1 1 100%; }
+
+/* (b) phones: stack to a single column (≤767px, the same breakpoint the
+   verbatim .con > .st-table-wrap full-bleed rule uses — this selector family
+   is INSIDE that wrapper, so the negative-margin break-out keeps working). */
+@media (max-width: 767px) {
+  .fx-ladder { flex-direction: column; flex-wrap: nowrap; gap: 12px; }
+}

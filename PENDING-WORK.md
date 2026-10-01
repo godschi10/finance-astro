@@ -26,11 +26,15 @@ Read this at session start.
       26/26 accuracy, CDP lifecycle probes, true light/dark shots (v3 storage
       seed). Live on staging (served bytes: .fi-sym, pm fingerprint, text
       inputs). Ledger + CHANGELOG shipped with commit 9cea4d4.
-- [~] **R3 Converter composition + rates ladder — DISPATCHED** to freebuff
-      shelter (fb-r3, brief /tmp/r3-freebuff/BRIEF.md, deliverable
-      /tmp/r3-freebuff/R3-DONE.md, watcher armed ~90min). §5 steps 1–5+8/9 only
-      (6/7 DEFERRED per King). Dynamic ladder on converter, build-time ladder on
-      amount pages, additive ladder.css after controls.css.
+- [x] **R3 Converter composition + rates ladder — SHIPPED v0.7.2** (2026-10-01)
+      — freebuff first attempt died on provider stream failure (zero file
+      changes, clean retry). `#cc-ladder` dynamic 2-col ladder on converter,
+      build-time twin on 16 amount pages, ladder.css after controls.css
+      (tools.css already owns th/amt/hover — grep-verified, nothing
+      redeclared), N6 stamp as receipt-foot. Manager proofs: build 0, 6/6,
+      26/26, independent CDP probe (row1==unit, swap flip, 390 overflow
+      clean, 5 luminance-checked shots). Site.ts ticker diff = fetch-snapshot
+      pipeline side effect, not R3.
 - [ ] RUNGS remaining after R3: calculator anatomy + sticky results +
       K5/K6 audits → hub/hero →
       R6 chrome + live dot → R7 odometer → R8 ledger captions → R9

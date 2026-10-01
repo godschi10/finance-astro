@@ -3,6 +3,47 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.2] — 2026-10-01 — Design Language R3: Converter Composition + Rates Ladder
+The converter stops being an empty box you type into and becomes an
+*instrument panel* (DESIGN-LANGUAGE §5 steps 1–5, 8, 9 — steps 6/7
+stats-band/sparkline DEFERRED by the King and deliberately NOT built).
+Executed via freebuff shelter (first attempt died on a provider stream
+failure — "Giving up after repeated stream recoveries", zero file changes;
+retry landed clean), then independently re-verified by the Manager.
+
+- **Dynamic ladder on the converter** — `#cc-ladder` (new id, sole addition)
+  mounts inside the .fx-card after the receipt: two verbatim `.st-table`
+  tables side by side — forward q ∈ 1/5/10/25/50/100/500/1000 FROM→TO,
+  reverse q ∈ 1/100/500/1000/5000/10000 TO→FROM (non-NGN targets use the
+  1/5/10/25/50/100 step set) — rebuilt by the same `render()` on every
+  input/swap/select through `fxConvert`/`money()`. Row 1 always equals the
+  hero unit line (`1 USD = ₦1,329` verified equal by string compare).
+- **Build-time ladder on all 16 amount pages** — `[amount].astro` adds the
+  same two-column anatomy as a `.con` child (the pattern that engages the
+  verbatim ≤767px full-bleed rule), values from `amountFmt(q * d.unit_rate)`
+  / `d.rev_rate` — the SAME helpers as the hero, zero recomputation. The
+  "Neighbouring conversions" link block stays untouched (SEO).
+- **N6 disclosure (step 8)** — single stamp under each ladder reusing
+  `.receipt-foot.hint` / `.fx-result-note`: `mid-market · {as_of} · live at
+  build — refreshes in your browser · informational, not a quote` — no new
+  trust block invented.
+- `src/styles/ladder.css` (new, 36 lines) — imported AFTER controls.css
+  (R1→R2→R3 cascade documented in Layout) and contains ONLY the `.fx-ladder`
+  flex shell: tools.css already owns `.st-table th` (9px/0.14em uppercase),
+  `.st-amt` (mono right), and tbody hover — grep-verified, so NOTHING was
+  redeclared. No `!important`. css-parse gate passes.
+- `scripts/r3-cdp-probe.mjs` kept as the rung's idempotent probe harness.
+
+**Proof (Manager's own runs, not the worker's word)**: build exit 0 (78
+pages) · 6/6 gates PASS · accuracy **26/26, 0 fail** · independent CDP probe:
+ladder visible @390, 8 fwd rows, 2 tables, row1 `1 USD = ₦1,329` == `#cc-unit`,
+swap flips header `USD → NGN` → `NGN → USD` and row1 → `1 NGN = $0.00`,
+amount page row1 `$1.00 = ₦1,329` matches `1 × 1,328.6457` via `amountFmt`,
+`scrollWidth == 390` on both pages (no sideways scroll), stamp present in
+card, zero JS errors, neighbours links intact · screenshots
+`r3-cc-light-phone 152.2 / r3-cc-dark-phone 23.9 / r3-cc-light-desk 125.7 /
+r3-am-light-phone 140.8 / r3-am-dark-desk 17.0` (v3 storage-key seeding).
+
 ## [0.7.1] — 2026-10-01 — Design Language R2: The Control Law
 **Money inputs are now instruments, not spreadsheet cells** (DESIGN-LANGUAGE §6
 F1–F4, rung R2). Executed via freebuff shelter (native delegate engine threw

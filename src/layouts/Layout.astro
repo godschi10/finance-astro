@@ -20,6 +20,7 @@ import "../styles/forms.css"; // WP stylesheet section 46 (FORMS) — control ge
 import "../styles/pages.css"; // §34/35/43/44/45 verbatim blocks: about cards, legal, newsletter pages
 import "../styles/numbers.css"; // DESIGN-LANGUAGE §1 Number Law (R1) — ADDITIVE only: tabular-nums where money figures refresh/align. Never rewrites a verbatim rule; import last by design.
 import "../styles/controls.css"; // DESIGN-LANGUAGE §6 money-form controls (R2) — ADDITIVE only: F3 ₦-in-field (.fi), F2 dip, F4 phone targets, button press. No WP rule rewritten; focus gold stays owned by ToolShell/Layout. Imported after numbers.css by design (R1 → R2).
+import "../styles/ladder.css"; // DESIGN-LANGUAGE §5 step ⑤ rates ladder (R3) — ADDITIVE only: the .fx-ladder two-column flex is the ONE selector tools.css lacks; th/td/hover anatomy is reused verbatim from tools.css .st-table (grep-verified: add nothing). Imported after controls.css by design (R1 → R2 → R3).
 // Shared chrome: head, self-hosted fonts, finance tokens (light + dark),
 // skip-link, ticker, desktop nav + mobile drawer, footer. Staging-safe SEO:
 // Pages origin + /finance-astro base everywhere, site-wide noindex on staging.
