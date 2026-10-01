@@ -3,6 +3,62 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.5] — 2026-10-01 — Design Language R6: Chrome + live dot
+The chrome stops being a frame the content sits in and becomes the site's
+dark-on-cream boundary (DESIGN-LANGUAGE rung R6, plan §P1-4 · Chrome:
+ticker + header + search + theme pill). Everything here is ADDITIVE — one
+new stylesheet, 89 lines, imported after hub.css so the cascade reads
+R1 → … → R5 → R6. `header.css` is deliberately untouched: the header
+fidelity gate reads that file directly and asserts its media queries
+(tablet fit-size, 767px show/hide switch), so it stays anchor, not edit
+target.
+
+- **Gold hairline**: 1px `rgba(245,158,11,0.22)` under BOTH sticky bars
+  (`.sh` desktop, `.mh` mobile) — border-COLOR only, the 1px geometry and
+  both bar heights (64/56px) are untouched. The header is the
+  dark-on-cream edge; it earns the one gold rule in chrome.
+- **Nav hierarchy**: `.snav-list > li > a` font-weight 700 at ALL widths
+  (was 500 — links and the Newsletter CTA stop competing at one weight);
+  font-size 13px only inside `@media (min-width: 1024px)`, so header.css's
+  tablet 11px fit-size still governs 768–1023px where the bar is tightest.
+- **Ticker voice**: `font-family: var(--font-mono)` on the strip.
+  `.t-pair` (10px) and `.t-rate` (11px) carry explicit sizes and inherit
+  the family — the rate line was already plan-correct, unchanged.
+- **SIGNATURE — the live dot**: 6px solid `var(--green)` pulsing dot
+  (`tl-pulse`, 2s ease-in-out, opacity 1→0.35 + scale 1→0.72), plus "LIVE"
+  in 9px uppercase `0.14em` gold (`--gold-b`). It appears ONCE, never
+  per-item. `prefers-reduced-motion: reduce` sets `animation: none`.
+  Placed as a flow child of `.ticker` BEFORE `.ticker-drag` — outside the
+  marquee entirely, so the two ticker halves stay byte-identical and the
+  seam is untouched; its `--dark` bed + 1px `#2c2822` edge masks the items
+  sliding cleanly behind it as they pass.
+- **Drawer touch targets**: `.mno-list > li > a` → 15px, padding
+  `14px 20px`. `font-weight: 700` and `min-height: 48px` are already in
+  header.css and are preserved, so every item keeps a 44px+ target.
+- **Search panel on phone**: `.gs-input` `min-height: 48px` with 13px
+  vertical padding (box-sizing: border-box, so the 40px right clear-button
+  gutter is not clipped); `.gs-foot` hidden below 768px. The kbd hint
+  markup STAYS in the layout — the header fidelity gate asserts
+  `<kbd>↑</kbd><kbd>↓</kbd>`, `<kbd>Enter</kbd>`, `<kbd>Esc</kbd>` are
+  present, so this hides the row with CSS rather than deleting markup the
+  contract owns.
+- No `!important` anywhere, no WP rule rewritten (the single grep hit is
+  the word inside chrome.css's own header comment), zero edits to any
+  file under `scripts/`.
+
+**Proof (Manager's runs)**: build exit 0 (78 pages) · `npm run check`
+**6/6 gates green** (accuracy audit re-run on this tree: **26 pass /
+0 fail**) · CDP: exactly **1 `.tl`** in the DOM, dot computed `6px × 6px`
+at `rgb(21,128,61)`, animation `tl-pulse 2s`, the two marquee halves
+measured **equal at 897 × 2** (no seam drift), gold hairline present on
+`.sh` AND `.mh` in light AND dark, nav links `13px / 700` at desktop,
+`scrollWidth` 390 on phone with no horizontal overflow, **zero JS
+errors** · screenshots
+`r6-desk-light.png`, `r6-desk-dark.png`, `r6-phone-light.png`,
+`r6-phone-dark.png`, `r6-phone-drawer.png`, `r6-phone-search.png`,
+`r6-phone-search-light.png`, `r6-phone-light-top.png`
+(/home/opc/work/research-notes/).
+
 ## [0.7.4] — 2026-10-01 — Design Language R5: Hub + Hero
 The homepage stops being a flat stack and becomes a designed spread
 (plan §P0-1 hero + §P0-2 cards, rung R5). **Executed DIRECTLY by the

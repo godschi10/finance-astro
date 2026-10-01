@@ -1,0 +1,89 @@
+/* ─────────────────────────────────────────────────────────────
+   chrome.css — DESIGN-LANGUAGE plan §P1-4 (R6: ticker/header/search
+   + the live dot). ADDITIVE only: header.css is untouched by design —
+   its media-query regexes are header-fidelity gate anchors (tablet 30px
+   strip, 767px show/hide switch), so every elevation here rides later
+   cascade with equal-or-higher specificity. No !important. No WP rule
+   rewritten; only color/weight/size additions the plan lists.
+   Imported after hub.css by design (R1 → … → R5 → R6).
+   ───────────────────────────────────────────────────────────── */
+
+/* ── Rules: the header is the dark-on-cream boundary — it earns the
+      one gold rule in chrome (1px gold-tinted hairline under BOTH
+      sticky bars; only the border-COLOR changes, geometry untouched). ── */
+.sh { border-bottom-color: rgba(245, 158, 11, 0.22); }
+.mh { border-bottom-color: rgba(245, 158, 11, 0.22); }
+
+/* ── Type: nav links 13px/700. Weight lifts at ALL widths (hierarchy is
+      the point: links and CTA stop competing at one weight); the 13px
+      desktop size rides min-width:1024px so header.css's tablet 11px
+      fit-size (WP section 49 rhythm) keeps governing 768–1023px. ── */
+.snav-list > li > a { font-weight: 700; }
+@media (min-width: 1024px) {
+  .snav-list > li > a { font-size: 13px; }
+}
+
+/* ── Type: ticker 11px mono (font-family on the strip; .t-pair/.t-rate
+      carry explicit 10px/11px sizes and inherit the family — sizes are
+      plan-correct already: rate line = 11px). ── */
+.ticker { font-family: var(--font-mono); }
+
+/* ── SIGNATURE (one per rung): "the live dot" — 6px solid green pulsing
+      dot (2s) + LIVE in 9px uppercase 0.14em gold, pinned BEFORE the
+      first ticker item as a flow child of .ticker (outside .ticker-drag
+      → zero marquee-seam impact; halves stay identical). Appears once,
+      never per-item. Respects prefers-reduced-motion. Its dark bed acts
+      as a left mask so items slide cleanly behind it. ── */
+.tl {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex: none;
+  height: 100%;
+  padding-right: 14px;
+  padding-left: max(var(--con-pad), 14px);
+  border-right: 1px solid #2c2822;
+  background: var(--dark);
+  position: relative;
+  z-index: 2;
+}
+.tl-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  flex: none;
+  animation: tl-pulse 2s ease-in-out infinite;
+}
+.tl-tx {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--gold-b);
+  text-transform: uppercase;
+  line-height: 1;
+}
+@keyframes tl-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.72); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tl-dot { animation: none; }
+}
+
+/* ── Drawer: links 15px/700 (weight already 700 in header.css), item
+      padding 14px 20px → 44px+ targets (min-height 48px stays). ── */
+.mno-list > li > a { font-size: 15px; padding: 14px 20px; }
+
+/* ── Search panel: input 48px phone; kbd footer desktop-only (the
+      markup stays — header fidelity asserts the kbd hints exist; this
+      only hides .gs-foot below 768px). ── */
+@media (max-width: 767px) {
+  .gs-input {
+    box-sizing: border-box;
+    min-height: 48px;
+    padding-top: 13px;
+    padding-bottom: 13px;
+  }
+  .gs-foot { display: none; }
+}
