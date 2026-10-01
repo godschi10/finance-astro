@@ -39,20 +39,11 @@
   .hero:has(.hero-cats) .hero-sub { font-size: 15px; }
 }
 
-/* ── P0-1 SIGNATURE: "the ledger rule" — 48×3 solid gold between sub and
-      CTAs, left-aligned, never animated. Rendered as .hero-sub::after
-      (decorative pseudo — the homepage gate forbids a .ledger DOM element,
-      and pseudo geometry satisfies the plan's visual contract exactly).
-      12 + 3 + 13 = 28px sub→CTAs contract. ── */
+/* ── P0-1 sub→CTAs gap only. The "ledger rule" (48×3 gold ::after bar
+      between sub and CTAs) was RETRACTED by the King in v0.7.6 — he
+      called it useless; the rule and its comment are gone, and this
+      margin-bottom now carries the gap on its own. ── */
 .hero:has(.hero-cats) .hero-sub { margin-bottom: 13px; }
-.hero:has(.hero-cats) .hero-sub::after {
-  content: "";
-  display: block;
-  width: 48px;
-  height: 3px;
-  background: var(--gold-b);
-  margin-top: 12px;
-}
 
 /* ── P0-1 chips: hairline row separator (1px gold-tint, 20px pad-top),
       chip pill 10px/0.1em 5/12, 44px phone touch target · CTAs phone
