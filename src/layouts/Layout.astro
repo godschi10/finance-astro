@@ -19,8 +19,7 @@ import "../styles/article.css"; // category art gradients (.i-sav etc.) + card r
 import "../styles/forms.css"; // WP stylesheet section 46 (FORMS) — control geometry
 import "../styles/pages.css"; // §34/35/43/44/45 verbatim blocks: about cards, legal, newsletter pages
 import "../styles/numbers.css"; // DESIGN-LANGUAGE §1 Number Law (R1) — ADDITIVE only: tabular-nums where money figures refresh/align. Never rewrites a verbatim rule; import last by design.
-import "../styles/controls.css"; // DESIGN-LANGUAGE §6 money-form controls (R2) — ADDITIVE only: F3 ₦-in-field (.fi), F2 dip, F4 phone targets, button press. No WP rule rewritten; focus gold stays owned by ToolShell/Layout. Imported after numbers.css by design (R1 → R2).
-import "../styles/hub.css"; // DESIGN-LANGUAGE plan §P0-1/§P0-2 hub+hero (R5) — ADDITIVE only: ledger rule placement, hero spacing/type per plan (home-scoped via .hero:has(.hero-cats)), stamp-corner ink tile + wordmark, featured gold bar, hover de-bloom, M3 motion. The plan-sanctioned sheen-kill subtractions were made IN PLACE in home.css/article.css (commented with citation). Imported after controls.css by design (R1 → R2 → R5; R3 ladder + R4 anatomy reverted).
+import "../styles/hub.css"; // DESIGN-LANGUAGE plan §P0-1/§P0-2 hub+hero (R5) — ADDITIVE only: ledger rule placement, hero spacing/type per plan (home-scoped via .hero:has(.hero-cats)), stamp-corner ink tile + wordmark, featured gold bar, hover de-bloom, M3 motion. The plan-sanctioned sheen-kill subtractions were made IN PLACE in home.css/article.css (commented with citation). Imported after numbers.css by design (R1 → R5; R2 controls + R3 ladder + R4 anatomy reverted by King order).
 import "../styles/chrome.css"; // DESIGN-LANGUAGE plan §P1-4 chrome (R6) — ADDITIVE only: gold hairline under sticky headers (border-color only), nav 13px/700, ticker mono, SIGNATURE live dot (.tl flow child of .ticker — outside .ticker-drag so the marquee seam stays identical), drawer 15px/14×20, search input 48px phone + kbd footer desktop-only. header.css untouched (gate anchors). Imported after hub.css by design (R1 → … → R5 → R6).
 import "../styles/r7.css"; // DESIGN-LANGUAGE plan §P0-2 stamp corner (R7) — ADDITIVE only: featured plate goes from a centred orphan on an undifferentiated ink field to a corner-anchored stamp — phone min-height 170→116px band, align flex-end/flex-start, dot-grid ::before, inset 14px hairline ::after plate edge, and a dark-mode warm-black lift to var(--surface-2) #171512 (C2 step 3) that kills the #0d0b08-on-#0d0b08 collapse. Glyph clamp(48px,9vw,84px) at (0,3,1) beats Layout.astro:442 (0,2,1); [data-theme="dark"] .feat .feat-img (0,3,0) beats .ac-img,.feat-img (0,1,0). Fidelity guard :has(> img)::before/::after { content: none } yields the whole decorative layer to a real thumbnail. No !important, no gradient wash, no gold, no DOM/JS change. Desktop height is deliberately NOT reduced (grid stretch, not min-height, is binding at ≥1024px). Imported after chrome.css by design (R1 → … → R6 → R7).
 // Shared chrome: head, self-hosted fonts, finance tokens (light + dark),
@@ -753,7 +752,6 @@ if (window.matchMedia && window.matchMedia('(hover: none)').matches) {
 <script>
   import "../scripts/spotlight-search.js";
   import "../scripts/ticker-live.js";
-  import "../scripts/money-controls.js"; // R2 money-form behaviors (₦-in-field, blur grouping) — inert outside money-tools (selector-gated)
 </script>
 <script src="../scripts/gwill-forms.js"></script>
 </body>

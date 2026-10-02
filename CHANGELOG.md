@@ -5,6 +5,7 @@ All notable changes to the finance-astro port. Format loosely follows
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ## [0.7.7] — 2026-10-02 — Design Language R7: the featured stamp corner
 The featured card's media plate stops being one flat ink field carrying
 a lone centred emoji, and becomes a corner-anchored stamp on a framed
@@ -429,6 +430,8 @@ Screenshots `r2-{st,cc}-{light,dark}-{phone,desk}.png` (theme seeded via the
 real v3 localStorage key — media-emulation alone is defeated by the stored
 choice; noted for all future dark proofs).
 
+=======
+>>>>>>> parent of 9cea4d4 (feat(design): Rung R2 — The Control Law (v0.7.1))
 ## [0.7.0] — 2026-09-30 — Design Language R1: The Number Law
 **Phase change.** The King approved the sitewide design upgrade: research
 complete (`~/work/research-notes/finance-design-research-2026-09-30.md`),

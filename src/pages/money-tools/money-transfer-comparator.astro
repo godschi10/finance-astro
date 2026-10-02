@@ -20,7 +20,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   disclaimer="This comparator is for informational guidance only and is not financial advice. Fee and rate-markup figures are estimates that vary by delivery method, speed, amount and payment channel. Always confirm the final quote with the provider before sending.",>
 <div class="fx-card">
 <div class="tgrid c3">
-<div class="field"><label for="tc-amt">Amount to send</label><input id="tc-amt" type="text" min="0" step="any" value={TRANSFER_SEED.amount} inputmode="decimal"></div>
+<div class="field"><label for="tc-amt">Amount to send</label><input id="tc-amt" type="number" min="0" step="any" value={TRANSFER_SEED.amount} inputmode="decimal"></div>
 <div class="field"><label for="tc-dir">Direction</label><select id="tc-dir"><option value="to-nigeria">Send to Nigeria (USD→NGN)</option><option value="from-nigeria" selected>Send from Nigeria (NGN→USD)</option></select></div>
 <div class="field"><label for="tc-src">Send currency</label><select id="tc-src"><option>USD</option><option>GBP</option><option>EUR</option><option>CAD</option></select><p class="hint">Foreign leg only; naira side is automatic.</p></div>
 </div>
@@ -51,7 +51,6 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="bar-note" id="tc-fresh" style="margin-top:10px">{FX_SNAPSHOT.as_of} (indicative snapshot)</p>
 </ToolShell>
 <script>
-const pm = v => { const n = Number(String(v).replace(/[^\d.eE-]/g, '')); return Number.isFinite(n) ? n : 0; };
 import { transferQuote, transferVerified } from "../../lib/transfer";
 import { fxNumber, fxFetchLive } from "../../lib/fx";
 import { FX_SNAPSHOT } from "../../data/fx-snapshot";
@@ -61,7 +60,7 @@ const amt = document.getElementById("tc-amt") as HTMLInputElement;
 const dir = document.getElementById("tc-dir") as HTMLSelectElement;
 const src = document.getElementById("tc-src") as HTMLSelectElement;
 function render() {
-  const a = Math.max(0, pm(amt.value) || 0);
+  const a = Math.max(0, Number(amt.value) || 0);
   const d = dir.value === "from-nigeria" ? "from-nigeria" : "to-nigeria";
   const s = d === "from-nigeria" ? "NGN" : src.value;
   const q = transferQuote(a, d, s, d === "from-nigeria" ? src.value : "NGN", { rates, as_of: asOf, ok: true });

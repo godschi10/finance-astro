@@ -33,7 +33,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   related={[{ href: `${base}articles/grey-vs-geegpay-dollar-account/`, title: "Grey vs Geegpay: Which Dollar Account Should You Open?", excerpt: "Account opening, conversion spreads, card support, and payout speed — tested with real transfers." }, { href: `${base}articles/cheapest-way-receive-dollars-nigeria/`, title: "Cheapest Way to Receive Dollars in Nigeria (2026 Compared)", excerpt: "Wise, Grey, Geegpay, and domiciliary accounts compared on fees, speed, and exchange margins." }, { href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers", excerpt: "Card fees, failed-transfer reversals, and support tested — what digital banks actually save you." }, { href: `${base}articles/ngn-dollar-cost-averaging-guide/`, title: "Dollar-Cost Averaging Into NGX Stocks on a \u20a650k Salary", excerpt: "A step-by-step plan for buying Nigerian stocks every month without timing the market." }]},>
 <div class="fx-card">
 <div class="tgrid c3">
-<div class="field"><label for="cc-amt">Amount</label><input id="cc-amt" type="text" min="0" step="any" value="100" inputmode="decimal"></div>
+<div class="field"><label for="cc-amt">Amount</label><input id="cc-amt" type="number" min="0" step="any" value="100" inputmode="decimal"></div>
 <div class="field"><label for="cc-from">From</label><select id="cc-from">{codes.map((c) => (<option value={c} selected={c === seed.from}>{c} — {cur[c].name}</option>))}</select></div>
 <div class="field"><label for="cc-to">To</label><select id="cc-to">{codes.map((c) => (<option value={c} selected={c === seed.to}>{c} — {cur[c].name}</option>))}</select></div>
 </div>
@@ -49,7 +49,6 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </div>
 </ToolShell>
 <script>
-const pm = v => { const n = Number(String(v).replace(/[^\d.eE-]/g, '')); return Number.isFinite(n) ? n : 0; };
 import { fxConvert, fxParallelNgnUsd, fxParallelSpread, fxNumber, fxFetchLive } from "../../lib/fx";
 import { FX_SNAPSHOT, FX_SNAPSHOT_LABEL } from "../../data/fx-snapshot";
 let rates = FX_SNAPSHOT.rates;
@@ -67,7 +66,7 @@ function money(v: number, code: string): string {
   return (sym[code] ?? "") + fxNumber(v, dec);
 }
 function render() {
-  const a = Math.max(0, pm(amt.value) || 0);
+  const a = Math.max(0, Number(amt.value) || 0);
   const f = from.value, t = to.value;
   const c = fxConvert(a, f, t, rates);
   const u = fxConvert(1, f, t, rates);

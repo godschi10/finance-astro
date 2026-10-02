@@ -2,6 +2,7 @@
   "name": "finance-astro",
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   "version": "0.7.7",
 =======
   "version": "0.7.2",
@@ -9,6 +10,9 @@
 =======
   "version": "0.7.1",
 >>>>>>> parent of b63f89f (feat(design): Rung R3 — Converter Composition + Rates Ladder (v0.7.2))
+=======
+  "version": "0.7.0",
+>>>>>>> parent of 9cea4d4 (feat(design): Rung R2 — The Control Law (v0.7.1))
   "type": "module",
   "scripts": {
     "build": "node scripts/fetch-snapshot.mjs && astro build",

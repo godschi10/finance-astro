@@ -288,6 +288,7 @@ export const catBySlug = (slug: string): Category =>
 // pairs per source. Never hand-edit the values; they are generated.
 export const TICKER_STATIC = [
 <<<<<<< HEAD
+<<<<<<< HEAD
   { label: "USD/NGN", value: "₦1,328", src: "fx" },
   { label: "GBP/NGN", value: "₦1,754", src: "fx" },
   { label: "EUR/NGN", value: "₦1,496", src: "fx" },
@@ -308,4 +309,12 @@ export const TICKER_STATIC = [
   { label: "ETH/USD", value: "$2,682", src: "eth" },
   { label: "XAU/USD", value: "$4,163", src: "gold" },
 >>>>>>> parent of b63f89f (feat(design): Rung R3 — Converter Composition + Rates Ladder (v0.7.2))
+=======
+  { label: "USD/NGN", value: "₦1,327", src: "fx" },
+  { label: "GBP/NGN", value: "₦1,756", src: "fx" },
+  { label: "EUR/NGN", value: "₦1,506", src: "fx" },
+  { label: "BTC/USD", value: "$83,706", src: "btc" },
+  { label: "ETH/USD", value: "$2,683", src: "eth" },
+  { label: "XAU/USD", value: "$4,158", src: "gold" },
+>>>>>>> parent of 9cea4d4 (feat(design): Rung R2 — The Control Law (v0.7.1))
 ];

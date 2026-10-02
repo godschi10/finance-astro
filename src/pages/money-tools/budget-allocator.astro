@@ -14,11 +14,11 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   badge="The 50/30/20 rule · in real naira",
   copy={[["p", "A standard 50/30/20 calculator tells you how much of your salary should go to needs, wants and savings, three numbers. But money is spent in smaller, less abstract categories, and in Nigeria those categories look very specific: rent, food, transport, data and utility bills. Knowing you should spend ₦125,000 on needs is useful; knowing that rent should take about ₦50,000 of it and food about ₦31,000 is actually actionable. That is the gap this allocator closes."],["p", "For most Nigerian earners, housing is the single biggest monthly line, frequently taking 40% or more of the needs slice. Food is usually second and the most variable, a review of your last month of spend will show it moving with prices. Transport and fuel move with the cost of petrol, and data and airtime are now as essential as electricity, not optional extras. This allocator defaults to a realistic starting split so your first pass is within range, then lets you rebalance every bucket to the amount you actually pay."],["p", "The line between a need and a want gets blurry fast. Housing, food to cook, transport to work and electricity to keep your home running are needs. The food delivery you order out of convenience, the premium streaming plans you barely use, and the new phone you do not need are wants. The rule&#039;s value is forcing you to draw that line honestly, and the allocator gives each side a real naira figure so the trade-off is concrete rather than guilt-based."],["p", "The defaults, 40% rent, 25% food, 15% transport, 10% data and 7% bills, are indicative Nigerian starting points, not laws. If you live in a high-rent city and own a car, rent and transport will take more and leave less for food. If you work from home, transport collapses and data rises. Edit any bucket in the calculator and the whole plan rebalances instantly, always reconciling back to your income. There is no correct answer; there is only the version that matches how you actually live."],["p", "If you only want the three world buckets, needs, wants and savings, our 50/30/20 budget calculator gives you exactly that in one step, with a budget-checker to score your actual month. This allocator keeps the same three-way split but goes further, drilling the needs half into the real monthly lines, rent, food, transport, data and bills, so the plan becomes a concrete spending list you can act on. Use the plain splitter for the big picture and its checker; use the allocator when you want to see exactly where the needs money is meant to go."],["p", "All three tools share the same 50/30/20 foundation, so they agree on the numbers, they just answer different questions."],["p", "The 20% savings-and-debt slice is where your future grows. Once it is earmarked, make it earn, see it compound with our compound interest calculator, or set a specific target with our savings goal calculator. And remember inflation quietly erodes any goal, our inflation-adjusted calculator shows what you truly need to save."],["h2", "Budget allocator questions"],["h3", "What is a 50/30/20 budget in naira?"],["p", "A budgeting rule that divides your take-home pay into 50% for needs, 30% for wants and 20% for savings and debt repayment, with each slice shown as a real naira amount for a Nigerian salary."],["h3", "How much of a ₦250,000 salary should go to rent, food and transport?"],["p", "On a ₦125,000 needs slice, a common starting point is 40% rent, 25% food, 15% transport, 10% data and 7% bills, but these are editable benchmarks, not rules. Adjust them to what you actually pay."],["h3", "Are the naira bucket percentages fixed?"],["p", "No. The defaults are indicative Nigerian starting points (rent greatest, then food, transport, data and utilities). You can rebalance any bucket in the calculator; the plan always reconciles to your income."],["h3", "Should I use gross or net pay for a budget?"],["p", "Use your take-home (net) pay, what actually reaches your account after tax, because that is what you genuinely have to spend and save."]]},
   disclaimer="This allocator is for informational guidance only and is not financial advice. The 50/30/20 rule and its bucket percentages are a starting framework, not a guarantee, adjust them to your circumstances and confirm significant decisions with a licensed adviser.",>
-<div class="field" style="max-width:320px;margin-top:18px"><label for="al-inc">Monthly income ₦</label><input id="al-inc" type="text" min="0" step="any" value={budgetAllocatorSeedIncome()} inputmode="decimal"></div>
+<div class="field" style="max-width:320px;margin-top:18px"><label for="al-inc">Monthly income ₦</label><input id="al-inc" type="number" min="0" step="any" value={budgetAllocatorSeedIncome()} inputmode="decimal"></div>
 <div class="fx-card">
 <div class="tgrid c3" style="margin-top:14px">
 {seed.buckets.filter((b) => b.id !== "other").map((b) => (
-<div class="field"><label for={`al-${b.id}`}>{b.label} % of needs</label><input id={`al-${b.id}`} type="text" min="0" max="100" step="any" value={(b.share * 100).toFixed(0)} inputmode="decimal" data-al-bucket={b.id}></div>
+<div class="field"><label for={`al-${b.id}`}>{b.label} % of needs</label><input id={`al-${b.id}`} type="number" min="0" max="100" step="any" value={(b.share * 100).toFixed(0)} inputmode="decimal" data-al-bucket={b.id}></div>
 ))}
 </div>
 <div class="receipt" aria-live="polite">
@@ -36,7 +36,6 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </div>
 </ToolShell>
 <script>
-const pm = v => { const n = Number(String(v).replace(/[^\d.eE-]/g, '')); return Number.isFinite(n) ? n : 0; };
 import { budgetAllocator } from "../../lib/allocator";
 import { formatGrouped } from "../../lib/format";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
@@ -45,9 +44,9 @@ function render() {
   const shares: Record<string, number> = {};
   document.querySelectorAll("[data-al-bucket]").forEach((el) => {
     const inp = el as HTMLInputElement;
-    shares[inp.dataset.alBucket as string] = Math.max(0, pm(inp.value) || 0) / 100;
+    shares[inp.dataset.alBucket as string] = Math.max(0, Number(inp.value) || 0) / 100;
   });
-  const r = budgetAllocator(Math.max(0, pm(inc.value) || 0), 0.5, 0.3, 0.2, shares);
+  const r = budgetAllocator(Math.max(0, Number(inc.value) || 0), 0.5, 0.3, 0.2, shares);
   (document.getElementById("al-needs") as HTMLElement).textContent = nn(r.needs);
   (document.getElementById("al-fig") as HTMLElement).textContent = nn(r.needs);
   (document.getElementById("al-wants") as HTMLElement).textContent = nn(r.wants);
