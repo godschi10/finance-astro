@@ -8,11 +8,17 @@
    Imported after hub.css by design (R1 → … → R5 → R6).
    ───────────────────────────────────────────────────────────── */
 
-/* ── Rules: the header is the dark-on-cream boundary — it earns the
-      one gold rule in chrome (1px gold-tinted hairline under BOTH
-      sticky bars; only the border-COLOR changes, geometry untouched). ── */
-.sh { border-bottom-color: rgba(245, 158, 11, 0.22); }
-.mh { border-bottom-color: rgba(245, 158, 11, 0.22); }
+/* ── RETRACTED (v0.7.8): the one gold rule in chrome — a gold-tinted
+      hairline under BOTH sticky bars. The King ordered it removed: it sat
+      directly above the article reading-progress bar (.prog, position:
+      sticky; top: var(--header-h) — article.css:81), and two adjacent
+      horizontal rules under the header read as a double edge competing for
+      attention. The rules are DELETED, not neutralised — no
+      `border-bottom: none`, no border-bottom-color override, no !important.
+      header.css's verbatim `border-bottom: 1px solid var(--border)` (:62
+      .sh + :599 .mh) is therefore back in sole charge: the header still
+      carries its NEUTRAL theme 1px edge (that is the theme's own rule, not
+      an addition here) — only the gold tint is gone. ── */
 
 /* ── Type: nav links 13px/700. Weight lifts at ALL widths (hierarchy is
       the point: links and CTA stop competing at one weight); the 13px
