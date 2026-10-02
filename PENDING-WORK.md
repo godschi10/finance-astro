@@ -26,7 +26,6 @@ Read this at session start.
       26/26 accuracy, CDP lifecycle probes, true light/dark shots (v3 storage
       seed). Live on staging (served bytes: .fi-sym, pm fingerprint, text
       inputs). Ledger + CHANGELOG shipped with commit 9cea4d4.
-<<<<<<< HEAD
 - [x] **R3 Converter composition + rates ladder — SHIPPED v0.7.2** (2026-10-01)
       — freebuff first attempt died on provider stream failure (zero file
       changes, clean retry). `#cc-ladder` dynamic 2-col ladder on converter,
@@ -36,7 +35,6 @@ Read this at session start.
       26/26, independent CDP probe (row1==unit, swap flip, 390 overflow
       clean, 5 luminance-checked shots). Site.ts ticker diff = fetch-snapshot
       pipeline side effect, not R3.
-<<<<<<< HEAD
 - [x] **R4 Calculator anatomy — SHIPPED v0.7.3** (2026-10-01) — audit-first:
       K5 73 inputs 0 unrealistic (zero defaults changed); K6 0/16 → 15/15
       resets (anatomy.js, .con scope); K7 methodology 0/16 → 16/16 + runtime
@@ -82,18 +80,9 @@ Read this at session start.
       (build-time fetch-snapshot refresh, not a design edit). NOTE 3:
       handoff brief committed as docs/TRANSFER-OPENCODE-MANAGER.md.
 - [ ] RUNGS remaining: R7 odometer → R8 ledger captions → R9
-=======
-=======
-- [~] **R3 Converter composition + rates ladder — DISPATCHED** to freebuff
-      shelter (fb-r3, brief /tmp/r3-freebuff/BRIEF.md, deliverable
-      /tmp/r3-freebuff/R3-DONE.md, watcher armed ~90min). §5 steps 1–5+8/9 only
-      (6/7 DEFERRED per King). Dynamic ladder on converter, build-time ladder on
-      amount pages, additive ladder.css after controls.css.
->>>>>>> parent of b63f89f (feat(design): Rung R3 — Converter Composition + Rates Ladder (v0.7.2))
 - [ ] RUNGS remaining after R3: calculator anatomy + sticky results +
       K5/K6 audits → hub/hero →
       R6 chrome + live dot → R7 odometer → R8 ledger captions → R9
->>>>>>> parent of 85d2adc (feat(design): Rung R4 — Calculator Anatomy K3/K5/K6/K7 (v0.7.3))
       seal/colophon → R10 motion pass + article polish + 404/search/desk.
       Each rung: one surface, 360px+1280px light+dark screenshots, King
       approval, gates green, batch ship.
