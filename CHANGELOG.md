@@ -3,6 +3,102 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.7] — 2026-10-02 — Design Language R7: the featured stamp corner
+The featured card's media plate stops being one flat ink field carrying
+a lone centred emoji, and becomes a corner-anchored stamp on a framed
+band (plan §P0-2 "stamp corner", rung R7 — the work 0.7.6 left open).
+ADDITIVE only: one new stylesheet, 78 lines, imported after `chrome.css`
+so the cascade reads R1 → … → R6 → R7. `home.css`, `article.css`,
+`header.css`, `base.css` and `hub.css` are untouched by design, and
+`index.astro:68` was not edited — the homepage fidelity gate asserts
+`feat-img` + `feat-emoji` in that template and it stays green.
+
+- **The void was real; a bigger dot was the wrong remedy.** 0.7.6
+  removed the duplicate category wordmark from this card, which left the
+  plate as a single `#0d0b08` field holding one centred emoji — measured
+  **99% one flat colour / 96.8% empty ink** (0.7.6's Known issue (a)),
+  and in dark mode the plate was `rgb(13,11,8)` on a `rgb(13,11,8)`
+  page: a **1.00:1 collapse**, no edge at all. @qa-inspector explicitly
+  recommended AGAINST a bigger-glyph remedy — even an impossible 56×56
+  emoji caps at **5.33%** coverage, and the residual single-colour share
+  is C4's *mandated* honest flat colour, not slack. So this is a
+  **structural fix, not a scale change**: the plate had to stop being an
+  undifferentiated field and stop being centre-anchored.
+- **Corner-anchored stamp.** `.feat .feat-img` flips to
+  `align-items: flex-end` / `justify-content: flex-start`, and the glyph
+  is re-targeted as `.feat .feat-img > span.feat-emoji` —
+  `position: absolute; left: 26px; bottom: 22px`, `z-index: 1`,
+  `font-size: clamp(48px, 9vw, 84px)`, `line-height: 1`, colour
+  `#f0ede6`, `pointer-events: none`. A centred orphan becomes an
+  off-centre anchor: **□3** is the check the old plate actually failed.
+- **The plate became a band on the phone.** `min-height` **170px →
+  116px**, with a 768–1023px tier at **140px**. Phone only — see the
+  deliberate limit below, which is stated rather than buried.
+- **Dot-grid field, `::before`**: `radial-gradient(circle,
+  rgba(240,237,230,0.055) 1px, transparent 1px)`, `background-size:
+  28px 28px`, `background-position: 14px 14px`. Same 1px-dot,
+  28px-pitch texture the hero already carries at `home.css:59`
+  (`.hero::before`) — in cream, because this plate is dark in BOTH
+  modes. It is a sanctioned texture, not a wash.
+- **Inset hairline plate edge, `::after`**: `inset: 14px`,
+  `1px solid rgba(240,237,230,0.20)`, `border-radius: var(--r-sm)`
+  (6px — R1's closed ladder). D1's default elevation is a hairline, no
+  shadow; this edge is also what makes the plate legible in dark mode,
+  where the fill lift on its own is thin.
+- **Dark-mode lift**: `[data-theme="dark"] .feat .feat-img` →
+  `var(--surface-2)` = **`#171512`**, step 3 of the C2 warm-black
+  ladder (`Layout.astro:405`). This is what breaks the collapse — the
+  plate is no longer the page colour — and the hairline above is what
+  makes the difference read.
+- **Fidelity guard — real photos always win**:
+  `.feat .feat-img:has(> img)::before, .feat .feat-img:has(> img)::after
+  { content: none }`. Both new layers are absolutely positioned and
+  would paint OVER a static `<img>` if this slot ever gains one, so the
+  fallback decoration yields the moment a thumbnail is present. Today
+  `index.astro:68` emits no `<img>` at all, so this is the plan's P0-2
+  law made **enforceable** instead of merely stated.
+- **Specificity was the fix, not a footnote.** The glyph rule lands at
+  **(0,3,1)** and beats the pre-existing `.feat-img>span:first-child` at
+  `src/layouts/Layout.astro:442` — **(0,2,1)**. *Line 442, not 441:*
+  earlier notes, and 0.7.6's own Known issue (b), said 441. That older
+  rule was silently defeating the phone downscale — **media queries add
+  zero specificity** — so the verbatim `.feat-emoji { font-size: 32px }`
+  in the 767px blocks (`home.css:497`, `article.css:881`) at
+  **(0,1,0)** had never once applied, and the glyph rendered **56px at
+  390**. This release closes that latent bug by out-specifying the rule
+  that was eating it: no `!important`, and neither file edited.
+- **Laws held**: no `!important` anywhere in the file, no gradient wash
+  (C4), **no gold added** — the card's existing 3px gold left bar on
+  `.feat-body` (`hub.css:89`) remains its single rationed D2 accent,
+  and the frame, dots and glyph are all cream. No DOM and no JS change.
+  `header.css`, `base.css`, `home.css`, `article.css` and `hub.css` are
+  all untouched. Zero edits under `scripts/`.
+- **Deliberate limit — desktop plate height is NOT reduced.** At
+  ≥1024px the plate is grid-stretched to `.feat-body`: with
+  `min-height: 116px` applied it still measured **290.016px**. So there
+  `min-height` is not the binding constraint, and **a height fix is not
+  a lever** — only the frame and the corner stamp carry the desktop
+  read. Said plainly because it deserves saying: this release does not
+  shrink the desktop plate, and it does not pretend to.
+
+**Proof (Manager's runs, this tree)**: build exit 0 (78 pages) ·
+`npm run check` **6/6 gates green** (vectors `pass=95 fail=0`) ·
+`node scripts/tool-accuracy-audit.mjs` **26 pass / 0 fail** · `dist`
+confirms the r7 rules present in served bytes — `.feat .feat-img
+{ min-height: 116px }`, the dark `var(--surface-2)` lift, both pseudo
+layers, the `clamp(48px, 9vw, 84px)` glyph, and the fidelity guard
+`.feat .feat-img:has(>img):before, .feat .feat-img:has(>img):after
+{ content: none }` — and shows the r7 block served *before*
+`.feat-img>span:first-child{font-size:56px}` in source order while still
+winning, which is the specificity claim above, proven in bytes. The
+accuracy audit needed a slow **serial** run on this memory-constrained
+box (**26 cases over ~10 min**); an earlier attempt was abandoned rather
+than trusted, because shared CDP tab contention had previously produced
+a false 15/11 and only one clean serial run counts. Served-byte CDP
+verification is a separate @qa-inspector run — no screenshot or
+luminance figure from it is quoted here, because none was handed to this
+entry.
+
 ## [0.7.6] — 2026-10-01 — King's phone fixes: hero underline out, double category out
 Two retraction edits, both from the King's own phone screenshots, both
 pure subtraction — nothing added, no gate touched, no verbatim-WP rule

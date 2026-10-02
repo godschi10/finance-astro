@@ -1,0 +1,78 @@
+/* ─────────────────────────────────────────────────────────────
+   r7.css — DESIGN-LANGUAGE plan §P0-2 "stamp corner" (R7: the
+   featured plate). ADDITIVE only: home.css / article.css /
+   header.css / base.css are untouched by design — every rule here
+   is a NEW selector-or-combinator at equal-or-higher specificity than
+   the verbatim rule it corrects. No !important. No gradient wash. No
+   gold added. No DOM or JS change.
+   Imported after chrome.css by design (R1 → … → R6 → R7).
+   ───────────────────────────────────────────────────────────── */
+
+/* ── Why: with the duplicate category wordmark removed (v0.7.6), the
+      featured media slot emits ONE glyph on a large flat ink field,
+      centred — anti-slop □3. It also collapsed to the page colour in
+      dark mode (#0d0b08 on #0d0b08, 1.00:1). The fix is structural:
+      a corner-anchored stamp, an inset hairline plate edge, a dot-grid
+      field, and one dark-mode surface-lift. Desktop height is NOT
+      reduced on purpose: at ≥1024px the plate is grid-stretched to
+      .feat-body, so min-height is not the binding constraint (measured
+      290.016px with min-height:116px applied) — the frame and corner
+      stamp carry it there instead.
+      Law: C4 honest flat colour · C2 warm-black ladder (#171512 =
+      step 3) · C1 mono-everything · D1 default elevation =
+      1px hairline, no shadow · D2 zero gold · R1 radius ladder
+      (var(--r-sm) = 6px) · □3 off-centre composition ·
+      M0 no motion. ── */
+
+.feat .feat-img {                         /* (0,2,0) */
+  background: #0d0b08;
+  min-height: 116px;                      /* phone band (was 170) */
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+[data-theme="dark"] .feat .feat-img {      /* (0,3,0) */
+  background: var(--surface-2);           /* #171512 = C2 warm-black ladder step 3 */
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .feat .feat-img { min-height: 140px; }  /* (0,2,0) */
+}
+
+.feat .feat-img::before {                 /* (0,2,0) + pseudo */
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(240,237,230,0.055) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-position: 14px 14px;
+}
+.feat .feat-img::after {                  /* (0,2,0) + pseudo */
+  content: '';
+  position: absolute;
+  inset: 14px;
+  pointer-events: none;
+  border: 1px solid rgba(240,237,230,0.20);
+  border-radius: var(--r-sm);
+}
+
+.feat .feat-img > span.feat-emoji {       /* (0,3,1) — BEATS Layout.astro:442 (0,2,1) */
+  position: absolute;
+  left: 26px;
+  bottom: 22px;
+  z-index: 1;
+  margin: 0;
+  font-size: clamp(48px, 9vw, 84px);
+  line-height: 1;
+  color: #f0ede6;
+  pointer-events: none;
+}
+
+/* FIDELITY GUARD — "real-photo thumbnails always win over any fallback
+   treatment" (plan P0-2). These two layers are absolutely positioned and would
+   paint OVER a static <img> if the featured slot ever gains one. They are the
+   fallback's decoration, so they yield the moment a photo is present.
+   Today index.astro:68 never emits <img>; this is the law made enforceable. */
+.feat .feat-img:has(> img)::before,
+.feat .feat-img:has(> img)::after {      /* (0,3,1) */
+  content: none;
+}
