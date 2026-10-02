@@ -1,6 +1,10 @@
 {
   "name": "finance-astro",
+<<<<<<< HEAD
   "version": "0.7.7",
+=======
+  "version": "0.7.2",
+>>>>>>> parent of 85d2adc (feat(design): Rung R4 — Calculator Anatomy K3/K5/K6/K7 (v0.7.3))
   "type": "module",
   "scripts": {
     "build": "node scripts/fetch-snapshot.mjs && astro build",

@@ -32,17 +32,12 @@ const unitLine = unitLineOf(d.unit_rate, d.rev_rate, d.from, d.to);
 ---
 <ToolShell title={`${d.seo.title} - GWill Finance`} description={d.seo.meta_desc} slug={slug} tool={d.seo.h1} lede={lede} verified={`Mid-market ${FX_SNAPSHOT.as_of} (${FX_SNAPSHOT_LABEL}) · receipt refreshes live`} badge={`Live rate · updated ${FX_SNAPSHOT.as_of}`} faqs={faqs} rawFaq>
 <div class="fx-card">
-<p class="anat-stamp">FX AMOUNT · MID-MARKET · {d.from} → {d.to}</p>
 <div class="fxap-hero">
 <p class="fxap-figure" id="am-fig"><span class="fxap-side">{amountFmt(d.amount, d.from)}</span><span class="fxap-eq">=</span><span class="fxap-side fxap-result" id="am-fig-r">{amountFmt(d.converted, d.to)}</span></p>
 <p class="fx-result-note" id="am-unit">{unitLine} · {FX_SNAPSHOT.as_of} · mid-market, before provider fees</p>
 <p class="fx-result-note" id="am-foot" style="opacity:.72">Snapshot · {FX_SNAPSHOT.as_of} · swaps to live timestamp when the feed answers</p>
 </div>
 </div>
-<details class="anat-methodology">
-<summary>How we calculate this</summary>
-<p>The converted figure is the page's amount × (rates[to] ÷ rates[from]) on USD-anchored mid-market rates — the build-time snapshot at render, refreshed live in your browser when open.er-api.com answers; the timestamp above tells you which is showing. The ladder brackets are the same rate applied to fixed amounts. This is the mid-market rate before any provider fee, spread or parallel-market premium — what your bank or app actually gives you will be lower on the naira side.</p>
-</details>
 <!-- R3 §5 step ⑤ — build-time rates ladder (DESIGN-LANGUAGE.md §5, Wise+XE
      sequence). Sibling of the hero .fx-card inside .con, matching the page's
      existing anatomy (tables elsewhere in the tools mount as .con >

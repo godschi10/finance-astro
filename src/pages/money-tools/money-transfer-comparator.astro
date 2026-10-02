@@ -19,7 +19,6 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   related={[{ href: `${base}articles/cheapest-way-receive-dollars-nigeria/`, title: "Cheapest Way to Receive Dollars in Nigeria (2026 Compared)", excerpt: "Wise, Grey, Geegpay, and domiciliary accounts compared on fees, speed, and exchange margins." }, { href: `${base}articles/grey-vs-geegpay-dollar-account/`, title: "Grey vs Geegpay: Which Dollar Account Should You Open?", excerpt: "Account opening, conversion spreads, card support, and payout speed — tested with real transfers." }, { href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers", excerpt: "Card fees, failed-transfer reversals, and support tested — what digital banks actually save you." }]},
   disclaimer="This comparator is for informational guidance only and is not financial advice. Fee and rate-markup figures are estimates that vary by delivery method, speed, amount and payment channel. Always confirm the final quote with the provider before sending.",>
 <div class="fx-card">
-<p class="anat-stamp">REMITTANCE · FEE + RATE · NIGERIA</p>
 <div class="tgrid c3">
 <div class="field"><label for="tc-amt">Amount to send</label><input id="tc-amt" type="text" min="0" step="any" value={TRANSFER_SEED.amount} inputmode="decimal"></div>
 <div class="field"><label for="tc-dir">Direction</label><select id="tc-dir"><option value="to-nigeria">Send to Nigeria (USD→NGN)</option><option value="from-nigeria" selected>Send from Nigeria (NGN→USD)</option></select></div>
@@ -32,13 +31,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-div" aria-hidden="true"></div>
 <p class="receipt-note">Fee model verified {transferVerified()} · FX base refreshes live when the feed answers.</p>
 <p class="receipt-foot">Estimates — confirm with your provider</p>
-<p class="anat-verdict" id="tc-verdict">Ranked on what actually lands.</p>
 </div>
-<div class="tgrid" style="margin-top:10px"><div><button type="button" class="anat-reset" data-anat-reset>Reset</button></div></div>
-<details class="anat-methodology">
-<summary>How we calculate this</summary>
-<p>Each provider is quoted as fee = flat + % × amount (the maintained fee model, verified September 2026), applied to the mid-market rate converted through the live USD base — the recipient gets (amount − fee) × mid-market × (1 − that provider's rate markup). Rows sort by what actually lands, so the "Best" tag is the received amount, not the headline fee. LemFi's zero fee and the parallel channel's margin live in their rate markups, not as separate fees. The base rate is the build snapshot refreshed live in your browser; the fee model itself is a maintained estimate.</p>
-</details>
 </div>
 <div class="hr"></div>
 <h2 class="tool-h2">Every provider, ranked</h2>
@@ -78,8 +71,6 @@ function render() {
   const top = q.rows[0];
   (document.getElementById("tc-fig") as HTMLElement).textContent = top ? `${sym}${fxNumber(top.received, top.received < 100 ? 2 : 0)}` : "—";
   (document.getElementById("tc-sub") as HTMLElement).textContent = top ? `${top.name} · mid-market ${fxNumber(q.mid, 6)}` : "";
-  const vr = document.getElementById("tc-verdict") as HTMLElement | null;
-  if (vr) vr.textContent = top ? `${top.name} delivers the most on ₦${fxNumber(a, 0)}.` : "Enter an amount to rank providers.";
   const tb = document.querySelector("#tc-table tbody") as HTMLElement;
   tb.innerHTML = "";
   q.rows.forEach((r, i) => {

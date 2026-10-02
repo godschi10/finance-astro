@@ -16,16 +16,14 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   related={[{ href: `${base}articles/p2p-crypto-nigeria-safely/`, title: "How to Buy Crypto P2P in Nigeria Without Getting Scammed", excerpt: "Escrow rules, red flags, and the exact verification steps before you release a single naira." }, { href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers", excerpt: "Card fees, failed-transfer reversals, and support tested — what digital banks actually save you." }, { href: `${base}articles/ngn-dollar-cost-averaging-guide/`, title: "Dollar-Cost Averaging Into NGX Stocks on a \u20a650k Salary", excerpt: "A step-by-step plan for buying Nigerian stocks every month without timing the market." }, { href: `${base}articles/piggyvest-vs-cowrywise-2026/`, title: "PiggyVest vs Cowrywise in 2026: Which Saves You More?", excerpt: "Interest rates, withdrawal rules, fees, and app experience compared side by side." }]},
   disclaimer="This calculator is for informational guidance only and is not financial advice. Crypto prices, fees and the P2P spread change constantly, and crypto is a volatile and risky asset, the figures shown are estimates based on what you enter. Confirm the exact quote and terms with the platform before you trade.",>
 <div class="fx-card">
-<p class="anat-stamp">P2P SPREAD · NAIRA · NIGERIA</p>
 <div class="tgrid c3">
 <div class="field"><label for="cp-inv">To invest ₦</label><input id="cp-inv" type="text" min="0" step="any" value={CRYPTO_SEED.invest} inputmode="decimal"></div>
 <div class="field"><label for="cp-buy">Buy rate ₦</label><input id="cp-buy" type="text" min="0" step="any" value={CRYPTO_SEED.buy_rate} inputmode="decimal"></div>
-<div class="field"><label for="cp-sell">Sell rate ₦</label><input id="cp-sell" type="text" min="0" step="any" value={CRYPTO_SEED.sell_rate} inputmode="decimal"><p class="hint">Below break-even the round-trip loses.</p></div>
+<div class="field"><label for="cp-sell">Sell rate ₦</label><input id="cp-sell" type="text" min="0" step="any" value={CRYPTO_SEED.sell_rate} inputmode="decimal"></div>
 <div class="field"><label for="cp-bf">Buy fee %</label><input id="cp-bf" type="text" min="0" step="any" value="1" inputmode="decimal"></div>
 <div class="field"><label for="cp-sf">Sell fee %</label><input id="cp-sf" type="text" min="0" step="any" value="1" inputmode="decimal"></div>
 <div class="field"><label for="cp-flat">Flat charges ₦</label><input id="cp-flat" type="text" min="0" step="any" value="0" inputmode="decimal"></div>
 </div>
-<div class="tgrid" style="margin-top:10px"><div><button type="button" class="anat-reset" data-anat-reset>Reset</button></div></div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Profit</p>
 <p class="receipt-fig" id="cp-fig">₦{n(seed.profit)}</p>
@@ -35,12 +33,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Break-even sell rate</span><b id="cp-be">₦{n(seed.break_even_rate, 2)}</b></div>
 <div class="receipt-row"><span>Price gap value</span><b id="cp-gap">₦{n(seed.price_gap)}</b></div>
 <p class="receipt-foot">P2P-aware · not financial advice</p>
-<p class="anat-verdict" id="cp-verdict">Profit after both fee legs and the spread.</p>
 </div>
-<details class="anat-methodology">
-<summary>How we calculate this</summary>
-<p>Buy: the buy fee (your %) and flat charges come off first, and what remains buys coins at the buy rate — coins = (invest − buy fee − flat) ÷ buy rate. Sell: gross proceeds = coins × sell rate, the sell fee comes off that, and profit = net proceeds − your original investment. ROI = profit ÷ invest. Break-even sell rate = invest ÷ (coins × (1 − sell fee)) — the price where the trade returns exactly your money. The buy/sell rate gap is the P2P spread; it is part of the price inputs, not a separate fee.</p>
-</details>
 </div>
 </ToolShell>
 <script>
@@ -64,10 +57,6 @@ function render() {
   t("cp-fees").textContent = nn(r.fees_ngn);
   t("cp-be").textContent = nn(r.break_even_rate, 2);
   t("cp-gap").textContent = nn(r.price_gap);
-  const vr = document.getElementById("cp-verdict") as HTMLElement | null;
-  if (vr) vr.textContent = r.profit >= 0
-    ? `This trade nets ₦${formatGrouped(Math.abs(r.profit), 0)} after ₦${formatGrouped(r.fees_ngn, 0)} in fees — a ${(r.roi * 100).toFixed(1)}% return.`
-    : `This trade loses ₦${formatGrouped(Math.abs(r.profit), 0)} after ₦${formatGrouped(r.fees_ngn, 0)} in fees — you need a sell rate above ₦${formatGrouped(r.break_even_rate, 2)}.`;
 }
 ["cp-inv", "cp-buy", "cp-sell", "cp-bf", "cp-sf", "cp-flat"].forEach((id) => g(id).addEventListener("input", render));
 render();

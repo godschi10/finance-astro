@@ -18,16 +18,14 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   related={[{ href: `${base}articles/ngn-dollar-cost-averaging-guide/`, title: "Dollar-Cost Averaging Into NGX Stocks on a \u20a650k Salary", excerpt: "A step-by-step plan for buying Nigerian stocks every month without timing the market." }, { href: `${base}articles/piggyvest-vs-cowrywise-2026/`, title: "PiggyVest vs Cowrywise in 2026: Which Saves You More?", excerpt: "Interest rates, withdrawal rules, fees, and app experience compared side by side." }]},
   disclaimer="This estimator is for informational guidance only and is not financial advice. Dividend and price figures are indicative or based on inputs you provide, and Nigerian stocks carry real risk, capital can fall as well as rise. Confirm major decisions with a licensed investment adviser.",>
 <div class="fx-card">
-<p class="anat-stamp">NGX TOTAL RETURN · DRIP-AWARE</p>
 <div class="tgrid c3">
 <div class="field"><label for="dv-stock">NGX stock</label><select id="dv-stock">{stocks.map((s, i) => (<option value={i} selected={s.ticker === "GTCO"}>{s.name} ({s.ticker})</option>))}</select></div>
 <div class="field"><label for="dv-inv">Investment ₦</label><input id="dv-inv" type="text" min="0" step="any" value={DIVIDEND_SEED.investment} inputmode="decimal"></div>
 <div class="field"><label for="dv-pg">Price growth %/yr</label><input id="dv-pg" type="text" min="0" step="any" value="10" inputmode="decimal"></div>
 <div class="field"><label for="dv-dg">Dividend growth %/yr</label><input id="dv-dg" type="text" min="0" step="any" value="8" inputmode="decimal"></div>
 <div class="field"><label for="dv-yrs">Years</label><input id="dv-yrs" type="text" min="1" step="1" value={DIVIDEND_SEED.years} inputmode="numeric"></div>
-<div class="field"><label for="dv-drip">Dividends</label><select id="dv-drip"><option value="1" selected>Reinvest (DRIP)</option><option value="0">Take cash</option></select><p class="hint">Reinvestment compounds share count.</p></div>
+<div class="field"><label for="dv-drip">Dividends</label><select id="dv-drip"><option value="1" selected>Reinvest (DRIP)</option><option value="0">Take cash</option></select></div>
 </div>
-<div class="tgrid" style="margin-top:10px"><div><button type="button" class="anat-reset" data-anat-reset>Reset</button></div></div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Portfolio end value</p>
 <p class="receipt-fig" id="dv-fig">₦{n(seed.end_value)}</p>
@@ -37,12 +35,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Starting yield</span><b id="dv-yld">{(seed.yield * 100).toFixed(2)}%</b></div>
 <div class="receipt-row"><span>Cash dividends total</span><b id="dv-cash">₦{n(seed.cash_total)}</b></div>
 <p class="receipt-foot">Indicative projection · not investment advice</p>
-<p class="anat-verdict" id="dv-verdict">Forward projection at your growth inputs.</p>
 </div>
-<details class="anat-methodology">
-<summary>How we calculate this</summary>
-<p>Starting shares = investment ÷ the selected stock's price; starting yield = DPS ÷ price. Each year the price grows by your price-growth rate and the dividend per share by your dividend-growth rate; the year's dividend = shares × new DPS. With DRIP the dividend buys more shares at that year's price; with cash it accumulates uninvested. End value = shares × final price (cash mode adds the collected dividends). CAGR = (total ÷ investment)^(1/years) − 1. The stock table is a maintained, dated snapshot — prices are indicative, not live.</p>
-</details>
 </div>
 <div class="hr"></div>
 <h2 class="tool-h2">Year by year</h2>
@@ -62,11 +55,9 @@ const stocks = ngxDividendStocks();
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 function render() {
-  const dripStr = (document.getElementById("dv-drip") as HTMLSelectElement).value;
-  const invest = Math.max(0, pm(g("dv-inv").value) || 0);
   const s = stocks[Number((document.getElementById("dv-stock") as HTMLSelectElement).value) || 0] ?? stocks[0];
   const r = dividendProject(
-    invest,
+    Math.max(0, pm(g("dv-inv").value) || 0),
     s.price, s.dps,
     Math.max(0, pm(g("dv-pg").value) || 0) / 100,
     Math.max(0, pm(g("dv-dg").value) || 0) / 100,
@@ -78,10 +69,6 @@ function render() {
   t("dv-sh").textContent = formatGrouped(r.shares, 2);
   t("dv-yld").textContent = (r.yield * 100).toFixed(2) + "%";
   t("dv-cash").textContent = nn(r.cash_total);
-  const vr = document.getElementById("dv-verdict") as HTMLElement | null;
-  if (vr) vr.textContent = dripStr === "1"
-    ? `Reinvesting compounds this to ${nn(r.end_value)} — a ${(r.cagr * 100).toFixed(1)}% annual rate on ₦${formatGrouped(invest, 0)}.`
-    : `Taking cash ends at ${nn(r.end_value)} held plus ${nn(r.cash_total)} collected — a ${(r.cagr * 100).toFixed(1)}% annual rate.`;
   const tb = document.querySelector("#dv-table tbody") as HTMLElement;
   tb.innerHTML = "";
   for (const y of r.yearly) {

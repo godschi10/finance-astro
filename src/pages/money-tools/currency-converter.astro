@@ -32,13 +32,12 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   ctaNote="Converting cash is the worst way to get dollars, you lose to the parallel market rate. These apps give you a real USD account at the true rate:",
   related={[{ href: `${base}articles/grey-vs-geegpay-dollar-account/`, title: "Grey vs Geegpay: Which Dollar Account Should You Open?", excerpt: "Account opening, conversion spreads, card support, and payout speed — tested with real transfers." }, { href: `${base}articles/cheapest-way-receive-dollars-nigeria/`, title: "Cheapest Way to Receive Dollars in Nigeria (2026 Compared)", excerpt: "Wise, Grey, Geegpay, and domiciliary accounts compared on fees, speed, and exchange margins." }, { href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers", excerpt: "Card fees, failed-transfer reversals, and support tested — what digital banks actually save you." }, { href: `${base}articles/ngn-dollar-cost-averaging-guide/`, title: "Dollar-Cost Averaging Into NGX Stocks on a \u20a650k Salary", excerpt: "A step-by-step plan for buying Nigerian stocks every month without timing the market." }]},>
 <div class="fx-card">
-<p class="anat-stamp">MID-MARKET · LIVE FEED · NIGERIA</p>
 <div class="tgrid c3">
 <div class="field"><label for="cc-amt">Amount</label><input id="cc-amt" type="text" min="0" step="any" value="100" inputmode="decimal"></div>
 <div class="field"><label for="cc-from">From</label><select id="cc-from">{codes.map((c) => (<option value={c} selected={c === seed.from}>{c} — {cur[c].name}</option>))}</select></div>
 <div class="field"><label for="cc-to">To</label><select id="cc-to">{codes.map((c) => (<option value={c} selected={c === seed.to}>{c} — {cur[c].name}</option>))}</select></div>
 </div>
-<div style="margin-top:12px"><button class="swapbtn" id="cc-swap" type="button" aria-label="Swap currencies">⇄</button> <span class="hint" id="cc-fresh" style="font-size:12px;color:var(--text-dim)">{FX_SNAPSHOT.as_of} ({FX_SNAPSHOT_LABEL})</span> <button type="button" class="anat-reset" data-anat-reset style="margin-left:8px">Reset</button></div>
+<div style="margin-top:12px"><button class="swapbtn" id="cc-swap" type="button" aria-label="Swap currencies">⇄</button> <span class="hint" id="cc-fresh" style="font-size:12px;color:var(--text-dim)">{FX_SNAPSHOT.as_of} ({FX_SNAPSHOT_LABEL})</span></div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">You get</p>
 <p class="receipt-fig" id="cc-fig">{fxNumber(converted, 2)}</p>
@@ -46,12 +45,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-div" aria-hidden="true"></div>
 <p class="receipt-note" id="cc-par">Parallel estimate ≈ ₦{fxNumber(seed.amount * parallel, 0)} (estimated, not a quote)</p>
 <p class="receipt-foot" id="cc-foot">Snapshot · {FX_SNAPSHOT.as_of}</p>
-<p class="anat-verdict" id="cc-verdict">Mid-market, before any provider fee or margin.</p>
 </div>
-<details class="anat-methodology">
-<summary>How we calculate this</summary>
-<p>Rates are USD-anchored mid-market figures from open.er-api.com — snapshotted at build time and refreshed live in your browser within about a second of load; if the feed is unreachable the snapshot stands, honestly stamped. A conversion multiplies the amount by rates[to] ÷ rates[from]. The parallel estimate is the official naira rate × a 1.045 street-premium factor — an estimate, never a quote. The ladder below prints fixed brackets in both directions at the same rate.</p>
-</details>
 <!-- R3 §5 step 5 — rates ladder (DESIGN-LANGUAGE.md §5, Wise+XE sequence):
      inside the .fx-card, after the .receipt block. ONE new id (#cc-ladder);
      rebuilt by render() on every input/swap/select change exactly like the
@@ -105,8 +99,6 @@ function render() {
   const u = fxConvert(1, f, t, rates);
   fig.textContent = (t === "NGN" ? "₦" : "") + fxNumber(c, t === "NGN" ? 0 : 2);
   unitEl.textContent = `1 ${f} = ${money(u, t)}`;
-  const vr = document.getElementById("cc-verdict") as HTMLElement | null;
-  if (vr) vr.textContent = `${f} → ${t} at the mid-market rate — banks and apps add their own spread on top.`;
   renderLadder(f, t);
   if (t === "NGN" && rates["NGN"] > 0) {
     const p = fxParallelNgnUsd(fxConvert(1, f, "USD", rates) * rates["NGN"], fxParallelSpread());

@@ -17,13 +17,11 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   copy={[["p", "Naira inflation is not a number on a chart, it is the slow erosion of the money you already hold. When you park ₦1,000,000 in your account and prices rise 20% a year, you still have that 1 million, but it now buys a fraction of what it did. This calculator makes that explicit: it shows the future naira amount needed to buy the same basket, and the percentage of buying power inflation has quietly taken. That is the difference between nominal money and real money."],["p", "Nominal is the face value, the number on the note, the figure in your bank balance. Real is what that money actually buys once inflation is accounted for. When you hear that a salary was \"adjusted for inflation,\" it means the nominal number was raised so the real purchasing power stayed flat. Without that adjustment, a flat salary is quietly a pay cut: the naira figure does not change, but everything it can buy shrinks. This is why comparing a future amount to a current one in nominal terms is misleading, the honest comparison is always in today&#039;s purchasing power."],["p", "Inflation works against you the same way interest works for you, it compounds. The first year costs you 20%, but the second takes a further 20% of the smaller remainder, so the loss accelerates. Over five years at 20%, a naira retains only about 40% of its buying power. That is why a five- or ten-year goal set in today&#039;s prices needs far more than you think, and why the year-by-year table matters, you can see the decay steepen."],["p", "The inverse is just as important. If a plan promises you ₦2,000,000 in five years, that is not ₦2,000,000 in today&#039;s terms, the present value is meaningfully lower once inflation is applied. Discounting future naira to today is how you compare a future windfall to the price of the same thing now. This calculator does both directions in one place, which is why it pairs with, rather than replaces, our savings tools."],["p", "To preserve purchasing power, your money must earn a return above inflation, not just any return. A savings account at 4% while inflation runs 20% is a guaranteed loss of real value. Compare your options with our savings rate comparator, see growth compound with our compound interest calculator, and set a real (inflation-aware) target with our inflation-adjusted savings calculator. If you want a monthly saving figure for a specific goal, our savings goal calculator solves that directly."],["p", "The inflation-savings tool and this one are often confused, so here is the clean split. Inflation-savings is goal-first: you name a target (say a ₦2 million car), it inflates that car to its future price and tells you what to save each month. This naira-value tool is value-first: you start from money you already hold and ask what it becomes. This one also answers the inverse, what a future naira amount is worth today, which is how you sanity-check any promised future sum. Use inflation-savings to plan a purchase; use this to understand what your current money is quietly losing."],["h2", "Naira value questions"],["h3", "What is ₦1,000,000 today worth in 5 years?"],["p", "At 20.0% annual inflation, ₦1,000,000 today buys the same basket that would cost about ₦2,488,320 in 5 years, meaning the naira has lost 59.8% of its buying power over that time."],["h3", "How much buying power does inflation take?"],["p", "Inflation erodes value exponentially. Over 5 years at 20%, a naira retains only about 40% of its purchasing power, that is the depreciation this calculator makes visible."],["h3", "How is this different from a savings-goal calculator?"],["p", "A savings-goal calculator starts from a target you name. This one starts from money you hold today and shows what it is worth in the future, plus the inverse, what future naira is worth today (present value)."],["h3", "What inflation rate should I use for naira?"],["p", "Recent Nigerian inflation has run 20-30%. Use a realistic rate from NBS or the CBN; when in doubt, err on the high side so your plan is not short-changed."]]},
   disclaimer="This calculator is for informational guidance only and is not financial advice. Inflation and depreciation figures are estimates based on the rate you enter; actual Nigerian inflation varies. Confirm significant decisions with a licensed adviser.",>
 <div class="fx-card">
-<p class="anat-stamp">PURCHASING POWER · NIGERIA</p>
 <div class="tgrid c3">
 <div class="field"><label for="nv-val">Amount ₦</label><input id="nv-val" type="text" min="0" step="any" value={s.value} inputmode="decimal"></div>
-<div class="field"><label for="nv-infl">Inflation %/yr</label><input id="nv-infl" type="text" min="0" step="any" value="20" inputmode="decimal"><p class="hint">Food inflation has run hotter than headline.</p></div>
+<div class="field"><label for="nv-infl">Inflation %/yr</label><input id="nv-infl" type="text" min="0" step="any" value="20" inputmode="decimal"></div>
 <div class="field"><label for="nv-yrs">Years</label><input id="nv-yrs" type="text" min="1" step="1" value={s.years} inputmode="numeric"></div>
 </div>
-<div class="tgrid" style="margin-top:10px"><div><button type="button" class="anat-reset" data-anat-reset>Reset</button></div></div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">To buy the same in <span id="nv-yr">5</span> years you need</p>
 <p class="receipt-fig" id="nv-fig">₦{n(seed.future)}</p>
@@ -32,12 +30,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Future price tag</span><b id="nv-fut">₦{n(seed.future)}</b></div>
 <div class="receipt-row"><span>Buying power lost</span><b id="nv-lost">{(seed.lost_fraction * 100).toFixed(1)}%</b></div>
 <p class="receipt-foot">Purchasing-power view · inflation compounds</p>
-<p class="anat-verdict" id="nv-verdict">The same basket, priced in future naira.</p>
 </div>
-<details class="anat-methodology">
-<summary>How we calculate this</summary>
-<p>The future price tag = amount × (1 + inflation)^years — inflation compounds, so the loss accelerates. Buying power lost = 1 − amount ÷ future tag (at 20% for 5 years, about 59.8% of today's buying power is gone). The year-by-year table applies the same compounding once per year.</p>
-</details>
 </div>
 <div class="hr"></div>
 <h2 class="tool-h2">Erosion, year by year</h2>
@@ -59,15 +52,12 @@ function render() {
   const v = Math.max(0, pm(g("nv-val").value) || 0);
   const infl = Math.max(0, pm(g("nv-infl").value) || 0) / 100;
   const yrs = Math.max(1, Math.trunc(pm(g("nv-yrs").value) || 5));
-  const inflStr = (infl * 100).toFixed(1);
   const r = nairaValue(v, infl, yrs, 0);
   t("nv-yr").textContent = String(yrs);
   t("nv-fig").textContent = nn(r.future);
   t("nv-sub").textContent = `${nn(r.value)} today loses ${(r.lost_fraction * 100).toFixed(1)}% of its buying power`;
   t("nv-fut").textContent = nn(r.future);
   t("nv-lost").textContent = (r.lost_fraction * 100).toFixed(1) + "%";
-  const vr = document.getElementById("nv-verdict") as HTMLElement | null;
-  if (vr) vr.textContent = `₦${formatGrouped(v, 0)} today buys what ₦${formatGrouped(r.future, 0)} will buy in ${yrs} years at ${inflStr}% inflation.`;
   const tb = document.querySelector("#nv-table tbody") as HTMLElement;
   tb.innerHTML = "";
   for (const row of nairaValueHistory(v, infl, yrs)) {

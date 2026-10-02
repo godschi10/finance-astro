@@ -17,7 +17,6 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   copy={[["p", "The 50/30/20 rule is the most popular budgeting method for a reason: it is simple enough to remember and flexible enough to stick to. You divide your take-home pay into three buckets, 50% to needs, 30% to wants, 20% to savings and debt repayment. No complicated categories, no spreadsheet required. It is a starting point you can adjust as your life changes."],["p", "Needs are the things you cannot function without: rent or mortgage, food, transport to work, utility bills, and the minimum payments on your debt. Wants are everything else, the takeaways, the subscriptions you barely use, the upgrade you do not need. The rule&#039;s real value is forcing you to draw that line honestly. Most budgets that fail do so because wants quietly sneak into the needs column."],["p", "In Nigeria, high inflation and rising costs make strict needs-heavy budgets common, housing and food can easily consume well over 50%. That is fine. Treat 50/30/20 as a target to move toward, not a rule to feel guilty about. Start by tracking what your needs actually cost, then push the savings slice up over time. Even starting at 10% savings and inching toward 20% beats saving nothing at all. Use your take-home (net) pay, the money that actually lands in your account, not your gross."],["p", "The 20% savings-and-debt bucket is the seed that grows your future. Once you are saving, put it to work, see it compound with our compound interest calculator, or set a specific target with our savings goal calculator. And remember inflation erodes any goal, our inflation-adjusted calculator shows what you truly need to save."],["p", "Strict 50/30/20 assumes your big needs cost about half your take-home. In high-cost Nigerian cities, rent and food alone can push well past that, which is not a failure of the rule, just a reality to plan around. The important part is to keep the savings slice conscious and growing, even if the mix leans heavier on needs. Adjust the three sliders above to whatever split your numbers actually support, rather than forcing a 50/30/20 square peg."],["p", "50/30/20 gives you the three big numbers. To turn them into a budget you can actually spend against, break the needs bucket into real Nigerian categories, rent, food, transport, data, utilities. Our budget allocator takes this same 50/30/20 split and digs into the needs half, showing exactly how much of each takes you to rent, food, transport and more, with every category editable so the plan always adds up."],["p", "Start from your take-home pay, never your gross. Whatever your income, the goal is the same: give every naira a job, so nothing leaks away unnoticed."],["p", "The rule fails when people treat it as a rigid law instead of a compass. One classic mistake is budgeting on gross pay, which inflates every bucket and leaves you chasing money that never landed. Another is stuffing the wants bucket with expenses that are really needs in disguise, the \"basic\" phone plan you upgraded twice, the meal delivery that quietly became dinner. And the third is ignoring the leftover entirely: if your three percentages do not sum to 100, the leftover has no job, so it disappears into the void of everyday spending."],["p", "The fix for all three is honest categorising. Budget on what hits your account. When something feels like a want, ask whether you would genuinely afford to drop it this month, if it is a bill you must pay, it belongs in needs. And make sure your split adds up. The calculator below flags any unallocated remainder so you can add it to savings rather than let it vanish."],["p", "Freelancers, commission earners and seasonal workers face a question the 50/30/20 rule glosses over: what is your \"take-home\" when every month is different? The workable answer is to base the budget on your average of the last three months, not your best month. Budget on the average, and when a good month arrives, sweep the surplus past the 20% savings slice rather than inflating your wants."],["p", "Because the rule is percentage-based, it scales with whatever number you enter, that is precisely why this tool takes a single income figure and lets you adjust the three splits. Set the income to your moving average and the buckets adjust automatically, so a lean month is no longer a mystery and a strong month becomes a chance to save more."],["h2", "Budgeting questions"],["h3", "What is the 50/30/20 rule?"],["p", "A simple budget that puts 50% of your take-home pay toward needs, 30% toward wants, and 20% toward savings and paying down debt."],["h3", "How much should I allocate from a ₦250,000 salary?"],["p", "About ₦125,000 for needs, ₦75,000 for wants, and ₦50,000 for savings/debt each month."],["h3", "Should I use gross or net income?"],["p", "Use your take-home (net) pay, the amount that actually reaches your account after tax, because that is what you can genuinely spend and save."],["h3", "What counts as a need versus a want?"],["p", "Needs are what you cannot do without: housing, food, transport, utilities, minimum debt payments. Wants are the rest, dining out, entertainment, upgrading your phone. If in doubt, it is a want."]]},
   disclaimer="This calculator is for informational guidance only and is not financial advice. The 50/30/20 rule is a budgeting framework, not a guarantee of outcomes, adjust it to your circumstances and confirm major decisions with a licensed adviser.",>
 <div class="fx-card">
-<p class="anat-stamp">BUDGET · 50/30/20 · NIGERIA</p>
 <div class="tgrid c3">
 <div class="field"><label for="bg-inc">Monthly income ₦</label><input id="bg-inc" type="text" min="0" step="any" value={income} inputmode="decimal"></div>
 <div class="field"><label for="bg-needs">Needs %</label><input id="bg-needs" type="text" min="0" max="100" step="any" value="50" inputmode="decimal"></div>
@@ -26,7 +25,6 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="bg-spw">Spent on wants ₦</label><input id="bg-spw" type="text" min="0" step="any" value="90000" inputmode="decimal"></div>
 <div class="field"><label for="bg-sps">Put to savings ₦</label><input id="bg-sps" type="text" min="0" step="any" value="30000" inputmode="decimal"></div>
 </div>
-<div class="tgrid" style="margin-top:10px"><div><button type="button" class="anat-reset" data-anat-reset>Reset</button></div></div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Your three buckets</p>
 <p class="receipt-fig" id="bg-fig">₦{n(seed.needs)} · ₦{n(seed.wants)} · ₦{n(seed.savings)}</p>
@@ -36,12 +34,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Wants left</span><b id="bg-rw">₦{n(chk.wants_remaining)}</b></div>
 <div class="receipt-row"><span>Savings gap</span><b id="bg-rs">₦{n(chk.savings_remaining)}</b></div>
 <p class="receipt-foot">Plan vs actual · unassigned stays visible</p>
-<p class="anat-verdict" id="bg-verdict">Plan first, actuals second — leftovers named.</p>
 </div>
-<details class="anat-methodology">
-<summary>How we calculate this</summary>
-<p>The plan buckets are income × your percentages (savings takes whatever remains after needs and wants, so the split always reconciles). The checker rows subtract what you actually spent or put away from each planned bucket — a negative figure means that bucket is over budget. Anything between the three percentages and 100% shows up as "leftover" rather than vanishing into a bucket.</p>
-</details>
 </div>
 </ToolShell>
 <script>
@@ -66,16 +59,6 @@ function render() {
   (document.getElementById("bg-rn") as HTMLElement).textContent = nn(c.needs_remaining);
   (document.getElementById("bg-rw") as HTMLElement).textContent = nn(c.wants_remaining);
   (document.getElementById("bg-rs") as HTMLElement).textContent = nn(c.savings_remaining);
-  const vr = document.getElementById("bg-verdict") as HTMLElement | null;
-  if (vr) {
-    const over = [];
-    if (c.needs_remaining < 0) over.push(`needs by ${nn(-c.needs_remaining)}`);
-    if (c.wants_remaining < 0) over.push(`wants by ${nn(-c.wants_remaining)}`);
-    if (c.savings_remaining < 0) over.push(`savings by ${nn(-c.savings_remaining)}`);
-    vr.textContent = over.length
-      ? `You are over plan: ${over.join(", ")}.`
-      : `Within plan — ${nn(c.needs_remaining + c.wants_remaining + c.savings_remaining)} of the buckets is unspent.`;
-  }
 }
 ["bg-inc", "bg-needs", "bg-wants", "bg-spn", "bg-spw", "bg-sps"].forEach((id) => g(id).addEventListener("input", render));
 render();

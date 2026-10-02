@@ -3,6 +3,7 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+<<<<<<< HEAD
 ## [0.7.7] — 2026-10-02 — Design Language R7: the featured stamp corner
 The featured card's media plate stops being one flat ink field carrying
 a lone centred emoji, and becomes a corner-anchored stamp on a framed
@@ -340,6 +341,8 @@ as 1.3^(365/30)−1) · stamps present, zero `!important`/gradient in diff
 (the 2 grep hits are the English word in article prose) · screenshots
 `r4-st-tax 156.7/23.2 phone · r4-goal 143.9/17.0 desk`.
 
+=======
+>>>>>>> parent of 85d2adc (feat(design): Rung R4 — Calculator Anatomy K3/K5/K6/K7 (v0.7.3))
 ## [0.7.2] — 2026-10-01 — Design Language R3: Converter Composition + Rates Ladder
 The converter stops being an empty box you type into and becomes an
 *instrument panel* (DESIGN-LANGUAGE §5 steps 1–5, 8, 9 — steps 6/7

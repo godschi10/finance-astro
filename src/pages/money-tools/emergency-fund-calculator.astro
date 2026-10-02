@@ -18,15 +18,13 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   related={[{ href: `${base}articles/piggyvest-vs-cowrywise-2026/`, title: "PiggyVest vs Cowrywise in 2026: Which Saves You More?", excerpt: "Interest rates, withdrawal rules, fees, and app experience compared side by side." }, { href: `${base}articles/grey-vs-geegpay-dollar-account/`, title: "Grey vs Geegpay: Which Dollar Account Should You Open?", excerpt: "Account opening, conversion spreads, card support, and payout speed — tested with real transfers." }, { href: `${base}articles/ngn-dollar-cost-averaging-guide/`, title: "Dollar-Cost Averaging Into NGX Stocks on a \u20a650k Salary", excerpt: "A step-by-step plan for buying Nigerian stocks every month without timing the market." }, { href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers", excerpt: "Card fees, failed-transfer reversals, and support tested — what digital banks actually save you." }]},
   disclaimer="This calculator is for informational guidance only and is not financial advice. The 3-6 month rule is a guideline, and the inflation-adjusted projection is an estimate based on the rate you enter. Adjust to your circumstances and confirm significant decisions with a licensed adviser.",>
 <div class="fx-card">
-<p class="anat-stamp">RUNWAY · SAFETY NET · NIGERIA</p>
 <div class="tgrid c3">
 <div class="field"><label for="em-ess">Monthly essentials ₦</label><input id="em-ess" type="text" min="0" step="any" value={EMERGENCY_SEED.essentials} inputmode="decimal"></div>
 <div class="field"><label for="em-saved">Saved so far ₦</label><input id="em-saved" type="text" min="0" step="any" value={EMERGENCY_SEED.saved} inputmode="decimal"></div>
 <div class="field"><label for="em-mo">Monthly saving ₦</label><input id="em-mo" type="text" min="0" step="any" value={EMERGENCY_SEED.monthly} inputmode="decimal"></div>
-<div class="field"><label for="em-cover">Cover (months)</label><input id="em-cover" type="text" min="1" step="any" value={EMERGENCY_SEED.cover} inputmode="decimal"><p class="hint">6 for salaried; more if income is irregular.</p></div>
+<div class="field"><label for="em-cover">Cover (months)</label><input id="em-cover" type="text" min="1" step="any" value={EMERGENCY_SEED.cover} inputmode="decimal"></div>
 <div class="field"><label for="em-infl">Inflation %/yr</label><input id="em-infl" type="text" min="0" step="any" value="20" inputmode="decimal"></div>
 </div>
-<div class="tgrid" style="margin-top:10px"><div><button type="button" class="anat-reset" data-anat-reset>Reset</button></div></div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Your runway today</p>
 <p class="receipt-fig" id="em-fig">{seed.runway_now.toFixed(1)} months</p>
@@ -36,12 +34,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Months to finish</span><b id="em-mtr">{seed.months_to_reach > 0 ? seed.months_to_reach.toFixed(1) : "— (save something monthly)"}</b></div>
 <div class="receipt-row"><span>Progress</span><b id="em-pct">{pct}%</b></div>
 <p class="receipt-foot">6-month default · inflation-adjusted</p>
-<p class="anat-verdict" id="em-verdict">Runway measured in months, not naira.</p>
 </div>
-<details class="anat-methodology">
-<summary>How we calculate this</summary>
-<p>Runway = saved ÷ monthly essentials. Target = monthly essentials × cover months. Months to finish = target ÷ monthly saving (only if you save something). Because prices move while you save, the real target re-prices your essentials at your inflation rate over the months the plan takes, then multiplies by cover again — the honest finish line. Progress % = saved ÷ target, capped at 100.</p>
-</details>
 </div>
 </ToolShell>
 <script>
@@ -52,7 +45,6 @@ const nn = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 function render() {
-  const monthsCoverStr = String(Math.max(1, pm(g("em-cover").value) || 6));
   const r = emergencyFund(
     Math.max(0, pm(g("em-ess").value) || 0),
     Math.max(0, pm(g("em-saved").value) || 0),
@@ -66,8 +58,6 @@ function render() {
   const p = Math.min(100, Math.round(r.progress_pct));
   t("em-pct").textContent = p + "%";
   (document.getElementById("em-bar") as HTMLElement).style.width = p + "%";
-  const vr = document.getElementById("em-verdict") as HTMLElement | null;
-  if (vr) vr.textContent = `Your ₦${formatGrouped(r.saved, 0)} covers ${r.runway_now.toFixed(1)} months of essentials; reaching ${monthsCoverStr} months costs ₦${formatGrouped(r.gap, 0)} more.`;
 }
 ["em-ess", "em-saved", "em-mo", "em-cover", "em-infl"].forEach((id) => g(id).addEventListener("input", render));
 render();

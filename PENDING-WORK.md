@@ -35,6 +35,7 @@ Read this at session start.
       26/26, independent CDP probe (row1==unit, swap flip, 390 overflow
       clean, 5 luminance-checked shots). Site.ts ticker diff = fetch-snapshot
       pipeline side effect, not R3.
+<<<<<<< HEAD
 - [x] **R4 Calculator anatomy — SHIPPED v0.7.3** (2026-10-01) — audit-first:
       K5 73 inputs 0 unrealistic (zero defaults changed); K6 0/16 → 15/15
       resets (anatomy.js, .con scope); K7 methodology 0/16 → 16/16 + runtime
@@ -80,6 +81,11 @@ Read this at session start.
       (build-time fetch-snapshot refresh, not a design edit). NOTE 3:
       handoff brief committed as docs/TRANSFER-OPENCODE-MANAGER.md.
 - [ ] RUNGS remaining: R7 odometer → R8 ledger captions → R9
+=======
+- [ ] RUNGS remaining after R3: calculator anatomy + sticky results +
+      K5/K6 audits → hub/hero →
+      R6 chrome + live dot → R7 odometer → R8 ledger captions → R9
+>>>>>>> parent of 85d2adc (feat(design): Rung R4 — Calculator Anatomy K3/K5/K6/K7 (v0.7.3))
       seal/colophon → R10 motion pass + article polish + 404/search/desk.
       Each rung: one surface, 360px+1280px light+dark screenshots, King
       approval, gates green, batch ship.

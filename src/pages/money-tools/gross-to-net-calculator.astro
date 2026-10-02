@@ -15,13 +15,11 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   copy={[["p", "Most salary discussions start from gross, the figure on your offer letter, and work forward to the net that arrives in your account. But when you are negotiating, planning a budget or comparing two offers, it is often more useful to start from the take-home you need and ask: what gross produces that? Because PAYE rises with gross, there is exactly one gross for any given net, and this calculator finds it precisely."],["p", "The calculator applies the current NTA 2025 schedule: a 0% band on the first ₦800,000 of annual taxable income, progressive 15% to 25% bands above that, a rent relief of 20% of annual rent (capped ₦500,000), and a complete minimum-wage exemption for those earning ₦70,000 a month or less. Because the first slice is tax-free, the relationship between gross and net is not linear, which is exactly why a simple multiplier fails and a proper solver is needed."],["p", "If an employer quotes a net figure (\"you will take home ₦X\"), this tells you what the actual gross is, and whether that is competitive. If you want a specific take-home, say, ₦300,000, this shows the gross offer you should ask for, and the tax gap between gross and net that your employer will deduct."],["p", "The gap between your gross and net is more than just PAYE. The breakdown table shows each piece: the pension contribution (8% by default), the National Housing Fund, NHIS, any life assurance and other reliefs you claim, and the rent relief that lowers your taxable income. Each deduction and relief moves the gross you need in a different direction, more deductions mean you need a higher gross for the same take-home, while more reliefs mean you need a lower one."],["p", "Under the Nigeria Tax Act 2025, employees earning ₦70,000 a month or less are completely exempt from PAYE. So if your target take-home is at or below that level, the gross you need is essentially the same as the net, no tax to deduct. Above it, the progressive bands start to bite."],["p", "This calculator works backward, net to gross. To go the other way, from a salary you have been offered to the take-home you will actually receive, use our Nigeria Tax Calculator . It also compares the old and new tax bands and shows how much the Nigeria Tax Act 2025 saves you."],["h2", "Gross to net questions"],["h3", "How do I find gross salary from net pay?"],["p", "Because PAYE rises with gross salary, the calculator binary-searches the gross that produces your target take-home under the current Nigeria Tax Act 2025 bands, so the two always agree exactly."],["h3", "What gross salary gives me ₦250,000 take home per month?"],["p", "About ₦308,192 a month before tax, assuming the default 8% pension, no NHF and no rent relief. The calculator shows the PAYE and deductions too."],["h3", "How is this different from the salary tax calculator?"],["p", "The salary tax calculator goes forward, gross in, net out. This one reverses it: you tell it the net you want, it returns the gross you must earn."],["h3", "Does rent relief change the gross I need?"],["p", "Yes. Rent relief lowers your taxable income, so with rent relief you need a slightly lower gross to hit the same take-home. Enter your annual rent to see the effect."]]},
   disclaimer="This calculator is for informational guidance only and is not tax, payroll or financial advice. Figures follow the Nigeria Tax Act 2025 with assumed deductions, confirm your exact salary and tax with your employer or a licensed adviser.",>
 <div class="fx-card">
-<p class="anat-stamp">Reverse PAYE · NTA 2026 · Nigeria</p>
 <div class="tgrid c3">
 <div class="field"><label for="gn-net">Target take-home ₦/mo</label><input id="gn-net" type="text" min="0" step="any" value="250000" inputmode="decimal"></div>
-<div class="field"><label for="gn-pen">Pension %</label><input id="gn-pen" type="text" min="0" max="100" step="any" value="8" inputmode="decimal"><p class="hint">Pension comes off even below the tax threshold.</p></div>
-<div class="field"><label for="gn-rent">Annual rent ₦</label><input id="gn-rent" type="text" min="0" step="any" value="0" inputmode="decimal"><p class="hint">Rent relief lowers the gross you need.</p></div>
+<div class="field"><label for="gn-pen">Pension %</label><input id="gn-pen" type="text" min="0" max="100" step="any" value="8" inputmode="decimal"></div>
+<div class="field"><label for="gn-rent">Annual rent ₦</label><input id="gn-rent" type="text" min="0" step="any" value="0" inputmode="decimal"></div>
 </div>
-<div class="tgrid" style="margin-top:10px"><div><button type="button" class="anat-reset" data-anat-reset>Reset</button></div></div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Gross to negotiate</p>
 <p class="receipt-fig" id="gn-fig">₦{n(seed.gross_monthly)}</p>
@@ -31,12 +29,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Rent relief /mo</span><b id="gn-rel">₦{n(seed.relief_monthly)}</b></div>
 <div class="receipt-row"><span>Deductions /mo</span><b id="gn-ded">₦{n(seed.deductions_monthly)}</b></div>
 <p class="receipt-foot">NTA 2026 bands · binary-solved</p>
-<p class="anat-verdict" id="gn-verdict">Solved backwards through the same NTA 2026 PAYE.</p>
 </div>
-<details class="anat-methodology">
-<summary>How we calculate this</summary>
-<p>The tool binary-searches 100 iterations for the monthly gross whose NTA 2026 take-home equals your target — the same payeCalculate engine as the salary tax calculator, run in reverse. That engine applies your pension rate, then rent relief (20% of annual rent, capped ₦500,000), then taxes the remainder on the 2026 bands (0% to ₦800k, 15%–25% above), with the ₦70,000 minimum-wage exemption. The gross is the negotiation figure; the receipt shows the deductions that sit between it and your target net.</p>
-</details>
 </div>
 </ToolShell>
 <script>
@@ -56,11 +49,6 @@ function render() {
   t("gn-pen2").textContent = n(r.pension_monthly);
   t("gn-rel").textContent = n(r.relief_monthly);
   t("gn-ded").textContent = n(r.deductions_monthly);
-  const vr = document.getElementById("gn-verdict") as HTMLElement | null;
-  if (vr) {
-    const effPct = r.gross_monthly > 0 ? ((r.deductions_monthly / r.gross_monthly) * 100).toFixed(1) : "0.0";
-    vr.textContent = `To take home ₦${n(net)} you must negotiate a gross of about ₦${n(r.gross_monthly)} — deductions and tax take ${effPct}% of it.`;
-  }
 }
 ["gn-net", "gn-pen", "gn-rent"].forEach((id) => g(id).addEventListener("input", render));
 render();
