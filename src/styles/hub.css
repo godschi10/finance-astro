@@ -62,27 +62,10 @@
 /* ── P0-2 SIGNATURE: "the stamp corner" — flat category-ink tile replaces
       the pastel wash (.i-* stays the class hook, background overridden to
       brand ink #0d0b08; real-photo thumbs sit on top and always win).
-      Emoji kept per category, warm-cream, 40px card / 56px featured.
-      Wordmark: 10px uppercase bottom-left in the category tint. ── */
+      Emoji kept per category, warm-cream, 40px card / 56px featured. ── */
 .ac-img, .feat-img { background: #0d0b08; }
 .ac-emoji { font-size: 40px; line-height: 1; color: #f0ede6; }
 .feat-emoji { font-size: 56px; line-height: 1; color: #f0ede6; }
-.ac-artword {
-  position: absolute;
-  left: 12px;
-  bottom: 10px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  z-index: 1;
-}
-/* category tint (badge vocabulary color half only — no fill, C4) */
-.ac-artword.bg { color: var(--gold); }
-.ac-artword.bgn { color: var(--green); }
-.ac-artword.bpu { color: var(--purple); }
-.ac-artword.bsl { color: #c4b89a; }
-.ac-artword.brd { color: var(--red); }
 
 /* ── P0-2 hierarchy: featured body earns the single 3px gold left bar
       (D2 ration: the grid's ONLY gold accent) ── */
