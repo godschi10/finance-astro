@@ -3,6 +3,45 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.10] — 2026-10-02 — Hero CTA retargeted to the money calculators (King override)
+The homepage hero's secondary button now routes to the 18 calculators
+instead of the apps hub. King: *"that 'Finance Apps' button should be
+changed and linked to the finance calculators I feel they will bring more
+clicks from my homepage"*, then confirmed *"money calculators I mean"*.
+
+- `src/pages/index.astro:47` — `<a class="bhg" href={`${base}apps/`}>Finance Apps</a>`
+  becomes `<a class="bhg" href={`${base}money-tools/`}>Money Calculators</a>`.
+  One line. The `.bhg` ghost-button class is untouched, so the button keeps
+  its exact appearance; only href and inner text moved.
+- Copy reuses existing site vocabulary rather than inventing new wording —
+  the `/money-tools/` hub H1 (index.astro:72) and the footer link
+  (`src/data/site.ts:121`) are both already "Money Calculators".
+- **`/apps/` is NOT orphaned.** It keeps 5 inbound links on the homepage
+  (2 in the header mega-menu + 3 in the footer, from `NAV` and
+  `FOOTER_GROUPS` in `site.ts`), and both pages serve 200.
+
+**GATE — a deliberate, recorded divergence, not a softened check.**
+`scripts/check-homepage-fidelity.mjs:83` asserted the hero's secondary CTA
+must target `/apps/` with the copy "Finance Apps". That assertion encodes
+WP fidelity: the live WordPress theme routes that button to the apps hub.
+Fidelity to WP is the correct default for this port, and it was correct
+until today — the King has now deliberately overruled it on conversion
+grounds. The assertion was UPDATED to expect `/money-tools/` and its
+comment records the override, its date, the King's stated reason, and the
+fact that the live theme still sends the CTA to `/apps/`.
+
+This was the only option that keeps the gate meaningful. The alternatives
+were rejected deliberately: leaving the gate red would have shipped 5/6 and
+trained everyone to ignore red gates (the state in which real bugs hide),
+and reverting would have ignored a direct King order. The gate remains
+live and will catch any future drift of this CTA away from the new target.
+
+Proofs: build exit 0 / 78 pages; `npm run check` **6/6 green** (homepage
+fidelity 123/123, article gate 147/147, vectors 95/0); dist confirms
+`class="bhg" href="/finance-astro/money-tools/"` present in `hero-acts`,
+the old `/apps/` CTA string absent (0 occurrences), and `/apps/` still
+referenced 5 times.
+
 ## [0.7.7] — 2026-10-02 — Design Language R7: the featured stamp corner
 The featured card's media plate stops being one flat ink field carrying
 a lone centred emoji, and becomes a corner-anchored stamp on a framed

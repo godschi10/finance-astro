@@ -80,7 +80,22 @@ const checks = [
   ["hero sub copy", has(indexTpl, "Savings, investing, dollar accounts, crypto, and every fintech app worth your attention. Tested by Gwill. No jargon. No AI slop.")],
   ["hero CTAs are .bh / .bhg (not .btn)", count(indexTpl, 'class="bh"') === 1 && count(indexTpl, 'class="bhg"') === 1],
   ["primary CTA copy + target", has(indexTpl, 'class="bh" href={`${base}articles/`}>Browse All Articles →</a>')],
-  ["secondary CTA copy + target is /apps/ (WP says Finance Apps)", has(indexTpl, 'class="bhg" href={`${base}apps/`}>Finance Apps</a>')],
+  // KING OVERRIDE 2026-10-02 (v0.7.10): the hero's secondary CTA now targets
+  // the money calculators, NOT the live WP target /apps/. The King's reason:
+  // "that 'Finance Apps' button should be changed and linked to the finance
+  // calculators I feel they will bring more clicks from my homepage" — the 18
+  // calculators are the site's strongest asset and the hero should route to
+  // them.
+  // This is a DELIBERATE, RECORDED divergence from WP fidelity, not a port
+  // defect: the live theme still sends that CTA to /apps/. Fidelity to WP was
+  // the correct default; the King has now overruled it on conversion grounds.
+  // The .bhg class and the /apps/ page itself are untouched — /apps/ keeps 5
+  // inbound links (2 header nav + 3 footer), so it is not orphaned.
+  // Copy is the site's existing vocabulary, not invented: the /money-tools/
+  // hub H1 (src/pages/money-tools/index.astro:72) and the footer link
+  // (src/data/site.ts:121) are both already "Money Calculators".
+  ["secondary CTA copy + target is /money-tools/ (KING OVERRIDE 2026-10-02; WP says /apps/ 'Finance Apps')",
+    has(indexTpl, 'class="bhg" href={`${base}money-tools/`}>Money Calculators</a>')],
   ["hero topics label", has(indexTpl, '<span class="hero-cats-lbl">Topics:</span>')],
   ["chips use the theme's .db + per-slug chip class", has(indexTpl, 'class={`db ${c.chip}`}') && has(indexTpl, "CATEGORIES.map")],
   ["no .ledger element (does not exist in WP)", !has(indexTpl, "ledger")],
