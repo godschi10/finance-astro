@@ -1,10 +1,14 @@
 {
   "name": "finance-astro",
 <<<<<<< HEAD
+<<<<<<< HEAD
   "version": "0.7.7",
 =======
   "version": "0.7.2",
 >>>>>>> parent of 85d2adc (feat(design): Rung R4 — Calculator Anatomy K3/K5/K6/K7 (v0.7.3))
+=======
+  "version": "0.7.1",
+>>>>>>> parent of b63f89f (feat(design): Rung R3 — Converter Composition + Rates Ladder (v0.7.2))
   "type": "module",
   "scripts": {
     "build": "node scripts/fetch-snapshot.mjs && astro build",

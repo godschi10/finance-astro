@@ -4,6 +4,7 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ## [0.7.7] — 2026-10-02 — Design Language R7: the featured stamp corner
 The featured card's media plate stops being one flat ink field carrying
 a lone centred emoji, and becomes a corner-anchored stamp on a framed
@@ -384,6 +385,8 @@ card, zero JS errors, neighbours links intact · screenshots
 `r3-cc-light-phone 152.2 / r3-cc-dark-phone 23.9 / r3-cc-light-desk 125.7 /
 r3-am-light-phone 140.8 / r3-am-dark-desk 17.0` (v3 storage-key seeding).
 
+=======
+>>>>>>> parent of b63f89f (feat(design): Rung R3 — Converter Composition + Rates Ladder (v0.7.2))
 ## [0.7.1] — 2026-10-01 — Design Language R2: The Control Law
 **Money inputs are now instruments, not spreadsheet cells** (DESIGN-LANGUAGE §6
 F1–F4, rung R2). Executed via freebuff shelter (native delegate engine threw

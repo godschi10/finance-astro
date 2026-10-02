@@ -46,11 +46,6 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-note" id="cc-par">Parallel estimate ≈ ₦{fxNumber(seed.amount * parallel, 0)} (estimated, not a quote)</p>
 <p class="receipt-foot" id="cc-foot">Snapshot · {FX_SNAPSHOT.as_of}</p>
 </div>
-<!-- R3 §5 step 5 — rates ladder (DESIGN-LANGUAGE.md §5, Wise+XE sequence):
-     inside the .fx-card, after the .receipt block. ONE new id (#cc-ladder);
-     rebuilt by render() on every input/swap/select change exactly like the
-     fig. Hidden until the first render resolves it. -->
-<div class="st-table-wrap fx-ladder" id="cc-ladder" hidden></div>
 </div>
 </ToolShell>
 <script>
@@ -66,31 +61,10 @@ const unitEl = document.getElementById("cc-unit") as HTMLElement;
 const par = document.getElementById("cc-par") as HTMLElement;
 const fresh = document.getElementById("cc-fresh") as HTMLElement;
 const foot = document.getElementById("cc-foot") as HTMLElement;
-const ladder = document.getElementById("cc-ladder") as HTMLElement;
 function money(v: number, code: string): string {
   const sym: Record<string, string> = { NGN: "₦", USD: "$", GBP: "£", EUR: "€" };
   const dec = code === "NGN" ? 0 : v < 100 ? 2 : 0;
   return (sym[code] ?? "") + fxNumber(v, dec);
-}
-// R3 §5 step 5 — the rates ladder. Same engine, same helpers, same money()
-// decimals as the unit line: q FROM→TO forward, q TO→FROM reverse. The N6
-// birth-certificate stamp prints ONCE under the ladder (step 8 lives there —
-// no extra trust block). No new ids; everything inside #cc-ladder.
-const FWD_STEPS = [1, 5, 10, 25, 50, 100, 500, 1000];
-const REV_STEPS_NGN = [1, 100, 500, 1000, 5000, 10000];
-const REV_STEPS = [1, 5, 10, 25, 50, 100];
-function ladderCol(qs: number[], fromC: string, toC: string): string {
-  const rows = qs.map((q) => {
-    const v = fxConvert(q, fromC, toC, rates);
-    return `<tr><td>${fxNumber(q, 0)} ${fromC}</td><td class="st-amt">= ${money(v, toC)}</td></tr>`;
-  }).join("");
-  return `<table class="st-table"><thead><tr><th colspan="2">${fromC} → ${toC}</th></tr></thead><tbody>${rows}</tbody></table>`;
-}
-function renderLadder(f: string, t: string) {
-  ladder.hidden = false;
-  ladder.innerHTML =
-    ladderCol(FWD_STEPS, f, t) + ladderCol(t === "NGN" ? REV_STEPS_NGN : REV_STEPS, t, f) +
-    `<p class="receipt-foot hint">mid-market · ${FX_SNAPSHOT.as_of} · ${FX_SNAPSHOT_LABEL} · informational, not a quote</p>`;
 }
 function render() {
   const a = Math.max(0, pm(amt.value) || 0);
@@ -99,7 +73,6 @@ function render() {
   const u = fxConvert(1, f, t, rates);
   fig.textContent = (t === "NGN" ? "₦" : "") + fxNumber(c, t === "NGN" ? 0 : 2);
   unitEl.textContent = `1 ${f} = ${money(u, t)}`;
-  renderLadder(f, t);
   if (t === "NGN" && rates["NGN"] > 0) {
     const p = fxParallelNgnUsd(fxConvert(1, f, "USD", rates) * rates["NGN"], fxParallelSpread());
     par.textContent = `Parallel estimate ≈ ₦${fxNumber(a * p, 0)} (estimated, not a quote)`;
