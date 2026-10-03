@@ -349,7 +349,11 @@ const noscriptNotice =
     patched — see src/scripts/vibe-comments.js for the change list. Everything
     else, the render core included, is verbatim.
 -->
-<script is:inline set:html={`var vibeComments = ${JSON.stringify(VIBE_CONFIG)};`}></script>
+<!-- 2026-10-03 security audit: escape "<" in the serialized config so no
+     closing-tag sequence (</script>) in any config value can break out of
+     this inline script context — same pattern Layout.astro uses for its
+     JSON-LD. Data is build-time today; this makes it structurally safe. -->
+<script is:inline set:html={`var vibeComments = ${JSON.stringify(VIBE_CONFIG).replace(/</g, "\\u003c")};`}></script>
 <script>
   // King's order 2026-09-26 (faster): the client module is LAZY — fetched and
   // executed only when a reader clicks Load Comments. Astro hoists this

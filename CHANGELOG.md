@@ -3,7 +3,54 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
-## [0.7.10] — 2026-10-02 — Hero CTA retargeted to the money calculators (King override)
+## [0.7.11] — 2026-10-03 — Security audit fixes: frame-buster, CSP, session-scoped desk token
+The 2026-10-03 four-auditor security audit (master report:
+`~/work/research-notes/security-audit-MASTER-2026-10-03.md`) found
+2 HIGH · 14 MEDIUM · ~20 LOW across this site and its comments Worker.
+This release ships the site-side half; the Worker half shipped as
+comments-api `cf7ceea` + a full secret rotation the same day.
+
+- **Frame-buster on the /mod/ desk (MEDIUM).** `src/pages/mod.astro:50-59` —
+  a synchronous inline script breaks the desk out of any frame before the
+  desk markup parses. GitHub Pages cannot set `frame-ancestors` as a header
+  and browsers ignore meta-delivered `frame-ancestors`, so this script is
+  the REAL control; the meta value ships anyway as defence-in-depth.
+  Verified in-browser both directions: no misfire top-level, and a framed
+  desk navigates the top window out.
+- **Desk token now session-scoped (MEDIUM).** The moderation token moved
+  from localStorage to sessionStorage (same key, `gwill-mod-token`), and
+  desk boot wipes any legacy localStorage forever-token on every visit.
+  UX change the King should know: **the desk now asks for the token once
+  per tab session** instead of remembering it forever.
+- **Meta CSP (MEDIUM).** `src/layouts/Layout.astro:165` — script/style
+  'self' 'unsafe-inline' (Astro inlines both; nonce plumbing is a larger
+  change), img-src self + gravatar/ytimg/vimeocdn + data:, connect-src
+  self + comments-api + the five FX/crypto APIs, frame-src the three video
+  facades, form-action self + comments-api, base-uri 'self',
+  object-src 'none'. Every runtime fetch origin in dist is in the policy —
+  verified live in-browser with zero blocked resources and the FX ticker
+  still populating from all external APIs.
+- **`</script>` escaping (LOW).** `VibeComments.astro:356` — the config JSON
+  is now serialized with `<` escaped to `\u003c`, same pattern the JSON-LD
+  block already uses. Build-time data today; structurally safe forever.
+- **Commenter email now session-scoped (LOW).** `vibe-comments.js:2476-2519`
+  — the comment form's email field persists to sessionStorage, not
+  localStorage (identity is saved on blur, not submit, so clear-after-submit
+  would not have worked; session scope does). Display name unchanged.
+- **http:// link upgraded (LOW).** `gutenberg-elements-showcase.md:157` —
+  `http://finance.gwillchijioke.com` → `https://`. Honest note: the domain
+  has no public DNS at all right now (NXDOMAIN), so the link is dead under
+  both schemes; https is the only future-correct endpoint.
+- **Referrer-Policy (NICE-TO-HAVE).** `Layout.astro:171` —
+  `strict-origin-when-cross-origin`, matching the referrerPolicy the site's
+  own video facades already use: same-origin referrers kept, cross-origin
+  sites get the origin only, never article paths.
+
+Proofs: build exit 0 / 78 pages; `npm run check` 6/6 green (homepage 123,
+article 147/147, vectors 95/0); CDP on the live preview — 0 real console
+errors across homepage/article/mod, 0 blocked resources, FX ticker live
+across all external APIs, 9 comments rendering from the Worker, frame-buster
+proven both directions, legacy localStorage token wiped on boot.
 The homepage hero's secondary button now routes to the 18 calculators
 instead of the apps hub. King: *"that 'Finance Apps' button should be
 changed and linked to the finance calculators I feel they will bring more

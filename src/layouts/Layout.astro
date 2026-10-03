@@ -151,6 +151,24 @@ const searchBase = `${base}search/`;
 <meta name="robots" content="noindex,nofollow">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#0d0b08">
+<!-- 2026-10-03 security audit: meta CSP. Origins are the dist-verified runtime
+     set: connect-src = the comments-api Worker (forms + comments + /mod/ desk)
+     + the ticker's free keyless price APIs (er-api FX, gold-api, coinbase /
+     coingecko / binance BTC+ETH); img-src = self + gravatar avatars +
+     YouTube/Vimeo embed poster art + data: (inline SVG); frame-src = the three
+     embed players the article video facades inject. 'unsafe-inline' on
+     script-src/style-src is unavoidable: Astro inlines every script/style and
+     there is no nonce plumbing on GitHub Pages. NOTE: frame-ancestors is
+     IGNORED by browsers when delivered via <meta> — it is shipped here for
+     defence-in-depth only; the REAL framing control is the frame-buster script
+     on the /mod/ desk (src/pages/mod.astro). -->
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://secure.gravatar.com https://i.ytimg.com https://i.vimeocdn.com data:; connect-src 'self' https://comments-api.gwill.workers.dev https://open.er-api.com https://api.coingecko.com https://api.coinbase.com https://api.binance.com https://api.gold-api.com; frame-src https://player.vimeo.com https://open.spotify.com https://www.youtube.com; frame-ancestors 'none'; form-action 'self' https://comments-api.gwill.workers.dev; base-uri 'self'; object-src 'none'">
+<!-- 2026-10-03 security audit: Referrer-Policy. strict-origin-when-cross-origin
+     (not no-referrer): it matches the referrerPolicy the site's own video
+     facades already set on their embed iframes (article.js), keeps useful
+     same-origin referrers, and sends cross-origin sites the origin only —
+     never article paths or query strings. -->
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <link rel="preload" href={`${base}fonts/jetbrains-mono-latin-800-normal.woff2`} as="font" type="font/woff2" crossorigin>
 <link rel="preload" href={`${base}fonts/jetbrains-mono-latin-700-normal.woff2`} as="font" type="font/woff2" crossorigin>
 <title>{title}</title>

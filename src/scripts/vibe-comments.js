@@ -2393,12 +2393,17 @@
     }
 
     /**
-     * Guest identity persistence via localStorage.
+     * Guest identity persistence: name + id via localStorage, email via
+     * sessionStorage (2026-10-03 security audit — email is PII).
      * ─────────────────────────────────────────────
      * Three independent pieces of guest state are stored:
      *
      *   vibe_guest_name   - display name, pre-filled in the comment form.
-     *   vibe_guest_email  - email, pre-filled in the comment form.
+     *   vibe_guest_email  - email, pre-filled in the comment form. PII:
+     *                       session-scoped (sessionStorage) since the
+     *                       2026-10-03 security audit — it dies with the
+     *                       tab, never remembered forever; any legacy
+     *                       localStorage copy is wiped on first read.
      *   vibe_gid          - stable random UUID used as the reaction identity
      *                       (H1 fix). Sent to the server as vibe_guest_id and
      *                       hashed with AUTH_KEY to produce the guest_token
@@ -2468,7 +2473,12 @@
                 localStorage.setItem('vibe_guest_name', author.value.trim());
             }
             if (email && email.value.trim()) {
-                localStorage.setItem('vibe_guest_email', email.value.trim());
+                /* 2026-10-03 security audit: email is PII — session-scoped
+                   storage only, dies with the tab (name stays remembered).
+                   Also wipe any legacy localStorage copy from the old
+                   forever-persistence scheme. */
+                sessionStorage.setItem('vibe_guest_email', email.value.trim());
+                localStorage.removeItem('vibe_guest_email');
             }
         } catch (e) { /* localStorage unavailable (private browsing, storage full) */ }
     }
@@ -2479,7 +2489,11 @@
         var name   = '';
         try {
             name           = localStorage.getItem('vibe_guest_name')  || '';
-            var savedEmail = localStorage.getItem('vibe_guest_email') || '';
+            /* 2026-10-03 security audit: email is PII — read from the
+               session-scoped store; wipe any legacy localStorage copy so the
+               pre-audit forever-email dies on this visit. */
+            localStorage.removeItem('vibe_guest_email');
+            var savedEmail = sessionStorage.getItem('vibe_guest_email')  || '';
             if (author && !author.value && name)       author.value = name;
             if (email  && !email.value  && savedEmail) email.value  = savedEmail;
         } catch (e) { return; }
@@ -2500,7 +2514,8 @@
         notice.querySelector('.vibe-recall-clear').addEventListener('click', function() {
             try {
                 localStorage.removeItem('vibe_guest_name');
-                localStorage.removeItem('vibe_guest_email');
+                localStorage.removeItem('vibe_guest_email'); // legacy (pre-2026-10-03)
+                sessionStorage.removeItem('vibe_guest_email');
             } catch (e) {}
             if (author) author.value = '';
             if (email)  email.value  = '';

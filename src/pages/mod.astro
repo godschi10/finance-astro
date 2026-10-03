@@ -14,9 +14,10 @@
  *   - rows labelled by POST NAME with a real link (+ #comment-<id>)
  *   - trash is terminal-capable ("Delete forever", two-tap inline confirm,
  *     never native confirm()); hard delete only from trash
- *   - token persisted in localStorage (sessionStorage fallback); empty
- *     unlock reuses the saved token, never wipes it; phone-restore re-reads
- *     the jar on pageshow + visibilitychange
+ *   - token persisted in sessionStorage ONLY — it dies with the tab session
+ *     (2026-10-03 security audit); any legacy localStorage token is wiped on
+ *     boot; empty unlock reuses the saved token, never wipes it; phone-restore
+ *     re-reads the jar on pageshow + visibilitychange
  *   - version stamp on the lock form
  *   - 44px touch targets, text-cage laws, no horizontal scrollers
  *
@@ -46,6 +47,16 @@ const POST_NAMES = {
 ---
 
 <Layout title="Comments desk — GWill Finance" description="Moderation desk." noCanonical={true}>
+  <!-- 2026-10-03 security audit: frame-buster — Pages cannot set frame-ancestors.
+       A crafted iframe could drive one-tap Approve/Spam/Trash on the
+       auto-unlocked desk. This synchronous script breaks the page out of any
+       frame BEFORE the desk markup below it is parsed. (The Layout's meta CSP
+       also ships frame-ancestors 'none', but meta-delivered frame-ancestors
+       is IGNORED by browsers — THIS script is the real control.) -->
+  <script is:inline>
+    /* 2026-10-03 security audit: frame-buster — Pages cannot set frame-ancestors. */
+    if (top !== self) { top.location = self.location; }
+  </script>
   <style is:global>
     /* ═══ DESK — one global sheet (runtime-built rows must dress) ═══ */
     .mod-wrap { max-width: 860px; margin: 0 auto; padding: 44px var(--con-pad) 64px; }
@@ -188,7 +199,7 @@ const POST_NAMES = {
     <!-- ── the ONE gate ─────────────────────────────────────────────── -->
     <section class="mod-lock" id="mod-lock" hidden>
       <h2>Unlock the desk</h2>
-      <p>Enter the moderation token. It is stored on this device only.</p>
+      <p>Enter the moderation token. It is kept on this device only, until this tab closes.</p>
       <form id="mod-unlock">
         <input type="password" id="mod-token" autocomplete="current-password"
                placeholder="Moderation token" aria-label="Moderation token" />
@@ -268,14 +279,18 @@ const POST_NAMES = {
       }
 
       function readJar() {
-        try { return localStorage.getItem(JAR) || sessionStorage.getItem(JAR) || ""; }
+        /* 2026-10-03 security audit: sessionStorage ONLY — the token dies
+           with the tab session. Key name unchanged. */
+        try { return sessionStorage.getItem(JAR) || ""; }
         catch (e) { return ""; }
       }
       function writeJar(t) {
-        try { localStorage.setItem(JAR, t); sessionStorage.setItem(JAR, t); } catch (e) {}
+        try { sessionStorage.setItem(JAR, t); } catch (e) {}
       }
       function clearJar() {
-        try { localStorage.removeItem(JAR); sessionStorage.removeItem(JAR); } catch (e) {}
+        /* localStorage removal also kills any pre-2026-10-03 legacy token. */
+        try { localStorage.removeItem(JAR); } catch (e) {}
+        try { sessionStorage.removeItem(JAR); } catch (e) {}
       }
 
       function api(path, opts) {
@@ -650,8 +665,10 @@ const POST_NAMES = {
       });
 
       /* Phone-restore: the OS can kill the renderer and wake the page with
-         dead sessionStorage but the DOM snapshot intact — re-read the
-         persistent jar on pageshow + visibilitychange and walk straight in. */
+         the DOM snapshot intact — re-read the (session-scoped) jar on
+         pageshow + visibilitychange and walk straight in if it survived;
+         if the tab session died with it, the gate shows, by design
+         (2026-10-03 security audit). */
       function maybeRestore() {
         if (unlocked) return;
         var saved = readJar();
@@ -662,6 +679,10 @@ const POST_NAMES = {
 
       /* Boot: saved token walks straight in; otherwise show the gate. */
       (function boot() {
+        /* 2026-10-03 security audit: the jar is sessionStorage ONLY. Wipe
+           any legacy localStorage token on every visit so the old
+           forever-token dies with this one page load. */
+        try { localStorage.removeItem(JAR); } catch (e) {}
         var saved = readJar();
         if (saved) { unlock(saved); return; }
         lock.hidden = false;
