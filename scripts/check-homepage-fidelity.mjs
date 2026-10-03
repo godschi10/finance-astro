@@ -186,15 +186,36 @@ const checks = [
   ["no invented card classes left", !has(card, 'class="card"') && !has(card, "tile-wm") && !has(card, "card-art")],
   ["card does not render the author (WP cards don't)", !has(card, "{author}")],
 
-  // ── data: the theme's exact maps ──────────────────────────────────────────
+  // ── data: the category maps ────────────────────────────────────────────────
+  // KING OVERRIDE 2026-10-03 (v0.7.12): the King ordered every category to
+  // carry its own brand-matched color pill, with new categories auto-claiming
+  // a color on creation. His words: "savings crypto and dollar account
+  // category pill has a custom color that match the brand. I want others to
+  // auto claim a new color on creation so that all categories have color
+  // pill. and make sure which ever color matches the site brand color
+  // palette." The WP theme ships only five badge modifiers (bg/bgn/bpu/bsl/
+  // brd) and mapped most categories to slate; the port extends the theme's
+  // OWN Tailwind-pastel badge vocabulary (.bpu/.bsl already are Tailwind
+  // pastels) with five hues so each category is distinct. savings (bgn),
+  // crypto (bpu) and dollar-accounts (bg) are the King's named three and are
+  // UNCHANGED. The live WP theme still maps investing/banking/remittance to
+  // bgn/bsl/bsl — this is a deliberate, recorded divergence, not a port bug.
+  // Uncategorized keeps slate: it is the catch-all, and slate is its
+  // semantic color, not a real category's claim.
   ["Category carries the chip class field", has(site, "chip: string;")],
-  ["savings = bgn / i-sav / db-g", has(site, 'slug: "savings"') && has(site, 'badge: "bgn", art: "i-sav", chip: "db-g"')],
-  ["investing = bgn / i-inv / db-gr (port previously had bg)", has(site, 'badge: "bgn", art: "i-inv", chip: "db-gr"')],
-  ["crypto = bpu / i-cry / db-p", has(site, 'badge: "bpu", art: "i-cry", chip: "db-p"')],
-  ["banking = bsl / i-ban / db-s", has(site, 'badge: "bsl", art: "i-ban", chip: "db-s"')],
-  ["remittance = bsl / i-rem / db-g (port previously had brd)", has(site, 'badge: "bsl", art: "i-rem", chip: "db-g"')],
-  ["dollar-accounts = bg / i-dol / db-gr (port previously had bsl)", has(site, 'badge: "bg", art: "i-dol", chip: "db-gr"')],
-  ["unknown slug falls back to the theme's bsl / i-dol / db-g", has(site, 'badge: "bsl",\n    art: "i-dol",\n    chip: "db-g",')],
+  ["savings = bgn / i-sav / db-g (King's named three — untouched)", has(site, 'slug: "savings"') && has(site, 'badge: "bgn", art: "i-sav", chip: "db-g"')],
+  ["investing = bte / i-inv / db-te (KING OVERRIDE 2026-10-03; WP says bgn)", has(site, 'badge: "bte", art: "i-inv", chip: "db-te"')],
+  ["crypto = bpu / i-cry / db-p (King's named three — untouched)", has(site, 'badge: "bpu", art: "i-cry", chip: "db-p"')],
+  ["banking = bbl / i-ban / db-bl (KING OVERRIDE 2026-10-03; WP says bsl)", has(site, 'badge: "bbl", art: "i-ban", chip: "db-bl"')],
+  ["remittance = bcy / i-rem / db-cy (KING OVERRIDE 2026-10-03; WP says bsl)", has(site, 'badge: "bcy", art: "i-rem", chip: "db-cy"')],
+  ["dollar-accounts = bg / i-dol / db-gr (King's named three — untouched)", has(site, 'badge: "bg", art: "i-dol", chip: "db-gr"')],
+  ["budgeting = bpk / i-dol / db-pk (KING OVERRIDE 2026-10-03)", has(site, 'badge: "bpk", art: "i-dol", chip: "db-pk"')],
+  ["fixed-income = bin / i-inv / db-in (KING OVERRIDE 2026-10-03)", has(site, 'badge: "bin", art: "i-inv", chip: "db-in"')],
+  ["uncategorized keeps slate = bsl / i-ban / db-s (catch-all semantic)", has(site, 'badge: "bsl", art: "i-ban", chip: "db-s"')],
+  ["auto-claim exists (KING OVERRIDE 2026-10-03): palette + deterministic hash",
+    has(site, "export function autoClaim") && has(site, "export const BADGE_PALETTE") && has(site, "export const CHIP_PALETTE")],
+  ["unknown slug auto-claims a color instead of defaulting to slate (KING OVERRIDE 2026-10-03)",
+    has(site, "const claim = autoClaim(slug);") && has(site, "badge: claim.badge") && has(site, "chip: claim.chip")],
 
   // ── stylesheet: the values measurement had to fight for ───────────────────
   [".con = theme's 1100px container with var(--con-pad) padding", has(css, ".con{max-width:1100px;margin:0auto;padding:0var(--con-pad)}")],

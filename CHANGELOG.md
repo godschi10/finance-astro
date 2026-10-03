@@ -3,6 +3,55 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.12] — 2026-10-03 — Every category gets its own brand-matched pill
+King: *"savings crypto and dollar account category pill has a custom color
+that match the brand. I want others to auto claim a new color on creation so
+that all categories have color pill. and make sure which ever color matches
+the site brand color palette."*
+
+Before this, savings (green), crypto (purple) and dollar-accounts (gold)
+were the ONLY categories with distinct pills — investing shared savings'
+green and banking, remittance, budgeting and fixed-income were all grey
+slate. After: every category carries its own hue.
+
+- **Five new badge hues** added to article.css in the theme's OWN
+  Tailwind-pastel badge vocabulary (`.bpu`/`.bsl` already are Tailwind
+  pastels — this extends the theme's pattern rather than inventing a new
+  design language): `.bte` teal, `.bbl` blue, `.bcy` cyan, `.bpk` rose,
+  `.bin` indigo — light pastel + dark rgba, exactly matching the existing
+  light/dark patterns.
+- **Five matching chip classes** in home.css (`.db-te/.db-bl/.db-cy/.db-pk/
+  .db-in`) so the hero "Topics:" row stays coherent with the cards.
+- **New mapping:** investing→teal, banking→blue, remittance→cyan,
+  budgeting→rose, fixed-income→indigo. **The King's named three are
+  untouched:** savings=green, crypto=purple, dollar-accounts=gold.
+  Uncategorized deliberately keeps slate — it is the catch-all, and grey is
+  its semantic colour, not a real category's claim.
+- **AUTO-CLAIM (the King's core requirement):** `autoClaim(slug)` in
+  site.ts — a deterministic djb2 hash over a 9-colour palette (slate last,
+  so it is claimed least). `catBySlug`'s unknown-slug fallback now calls it,
+  so any category created without an explicit mapping **claims a stable
+  colour on creation** — same slug, same colour, forever, across builds.
+  Proven: `autoClaim("insurance")` → cyan, `("loans")` → green,
+  `("side-hustles")` → purple, deterministic across runs. A category later
+  promoted to an explicit CATEGORIES entry should pin its badge+chip.
+- **GATE:** the homepage fidelity gate asserted the WP-verbatim mapping
+  (investing=bgn, banking/bsl, remittance=bsl, unknown-slug→bsl). Those
+  assertions encoded WP fidelity — the live theme still maps them that way
+  — and the King has now deliberately overruled that fidelity decision, as
+  he did for the hero CTA in v0.7.10. The assertions were UPDATED to expect
+  the new mapping with the override, date and his stated reason recorded in
+  the gate, and the gate now also asserts budgeting and fixed-income
+  explicitly (they had no assertions before) plus the existence of
+  autoClaim and the palette arrays. The gate stays live and will catch any
+  future drift of this mapping.
+- Proofs: build exit 0 / 78 pages; `npm run check` **6/6 green** (article
+  147/147, vectors 95/0); dist carries all five new light+dark badge rules
+  inlined; new badges verified across dist (bte 29, bbl 27, bcy 16, bpk 7,
+  bin 2 across archives and cards); hero chips exactly one of each new
+  class; the King's three unchanged in dist; the only remaining `bsl`
+  anywhere is the uncategorized archive page.
+
 ## [0.7.11] — 2026-10-03 — Security audit fixes: frame-buster, CSP, session-scoped desk token
 The 2026-10-03 four-auditor security audit (master report:
 `~/work/research-notes/security-audit-MASTER-2026-10-03.md`) found

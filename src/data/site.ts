@@ -37,18 +37,29 @@ export interface Category {
 //   crypto db-p · banking db-s · remittance db-g · dollar-accounts db-gr.
 export const CATEGORIES: Category[] = [
   { slug: "savings", name: "Savings", emoji: "\u{1F437}", badge: "bgn", art: "i-sav", chip: "db-g" },
-  { slug: "investing", name: "Investing", emoji: "\u{1F4C8}", badge: "bgn", art: "i-inv", chip: "db-gr" },
+  { slug: "investing", name: "Investing", emoji: "\u{1F4C8}", badge: "bte", art: "i-inv", chip: "db-te" },
   { slug: "crypto", name: "Crypto", emoji: "\u20BF", badge: "bpu", art: "i-cry", chip: "db-p" },
-  { slug: "banking", name: "Banking", emoji: "\u{1F3E6}", badge: "bsl", art: "i-ban", chip: "db-s" },
-  { slug: "remittance", name: "Remittance", emoji: "\u2708\uFE0F", badge: "bsl", art: "i-rem", chip: "db-g" },
+  { slug: "banking", name: "Banking", emoji: "\u{1F3E6}", badge: "bbl", art: "i-ban", chip: "db-bl" },
+  { slug: "remittance", name: "Remittance", emoji: "\u2708\uFE0F", badge: "bcy", art: "i-rem", chip: "db-cy" },
   { slug: "dollar-accounts", name: "Dollar Accounts", emoji: "\u{1F4B5}", badge: "bg", art: "i-dol", chip: "db-gr" },
-  { slug: "budgeting", name: "Budgeting", emoji: "\u{1F4B0}", badge: "bsl", art: "i-dol", chip: "db-g" },
-  { slug: "fixed-income", name: "Fixed Income", emoji: "\u{1F4C9}", badge: "bsl", art: "i-inv", chip: "db-gr" },
+  { slug: "budgeting", name: "Budgeting", emoji: "\u{1F4B0}", badge: "bpk", art: "i-dol", chip: "db-pk" },
+  { slug: "fixed-income", name: "Fixed Income", emoji: "\u{1F4C9}", badge: "bin", art: "i-inv", chip: "db-in" },
   // The theme's pill strips list Uncategorized too (homepage cp buttons + db
   // chips + every archive strip, captured live 2026-09-29). Its archive is
   // empty on WP as well — h1 only, no grid.
   { slug: "uncategorized", name: "Uncategorized", emoji: "\u{1F4C1}", badge: "bsl", art: "i-ban", chip: "db-s" },
 ];
+
+// 2026-10-03 King order: new categories auto-claim a color on creation. Deterministic hash so a slug keeps its color across builds; slate is last in the palette so it is claimed least. A category promoted to an explicit CATEGORIES entry should pin its badge+chip explicitly.
+export const BADGE_PALETTE = ["bg","bgn","bpu","bte","bbl","bcy","bpk","bin","bsl"] as const;
+export const CHIP_PALETTE = ["db-g","db-gr","db-p","db-te","db-bl","db-cy","db-pk","db-in","db-s"] as const;
+
+export function autoClaim(slug: string): { badge: string; chip: string } {
+  let h = 5381;
+  for (let i = 0; i < slug.length; i++) h = ((h * 33) ^ slug.charCodeAt(i)) >>> 0;
+  const idx = h % BADGE_PALETTE.length;
+  return { badge: BADGE_PALETTE[idx], chip: CHIP_PALETTE[idx] };
+}
 
 // WP category archive descriptors, captured verbatim from the live origin
 // (h1 + archive intro <p>, 2026-09-29). The theme prints these on every
@@ -272,15 +283,17 @@ export const POSTS: Post[] = [
 // index.astro falls back to the newest article if this slug ever disappears.
 export const FEATURED_SLUG = "grey-vs-geegpay-dollar-account";
 
-export const catBySlug = (slug: string): Category =>
-  CATEGORIES.find((c) => c.slug === slug) ?? {
+export const catBySlug = (slug: string): Category => {
+  const claim = autoClaim(slug);
+  return CATEGORIES.find((c) => c.slug === slug) ?? {
     slug,
     name: "Finance",
     emoji: "\u{1F4B0}",
-    badge: "bsl",
+    badge: claim.badge,
     art: "i-dol",
-    chip: "db-g",
+    chip: claim.chip,
   };
+};
 
 // TICKER_STATIC is REWRITTEN at build time by scripts/fetch-snapshot.mjs
 // from the same feeds the calculators use — label = data-pair, value =
@@ -290,7 +303,7 @@ export const TICKER_STATIC = [
   { label: "USD/NGN", value: "₦1,331", src: "fx" },
   { label: "GBP/NGN", value: "₦1,759", src: "fx" },
   { label: "EUR/NGN", value: "₦1,497", src: "fx" },
-  { label: "BTC/USD", value: "$84,676", src: "btc" },
-  { label: "ETH/USD", value: "$2,685", src: "eth" },
+  { label: "BTC/USD", value: "$84,835", src: "btc" },
+  { label: "ETH/USD", value: "$2,681", src: "eth" },
   { label: "XAU/USD", value: "$4,142", src: "gold" },
 ];

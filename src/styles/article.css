@@ -144,9 +144,20 @@
 .bgn { background: var(--green-muted); border-color: var(--green-border); color: var(--green); }
 .bpu { background: #f5f0ff; border-color: #d0b4fe; color: var(--purple); }
 .bsl { background: #f1f5f9; border-color: #cbd5e1; color: #475569; }
+/* 2026-10-03 King order: every category gets its own brand-matched pill. These five extend the theme's own Tailwind-pastel badge vocabulary (see .bpu/.bsl) so new categories can claim distinct hues. */
+.bte { background: #f0fdfa; border-color: #99f6e4; color: #0f766e; }   /* teal */
+.bbl { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }   /* blue */
+.bcy { background: #ecfeff; border-color: #a5f3fc; color: #0e7490; }   /* cyan */
+.bpk { background: #fff1f2; border-color: #fecdd3; color: #be123c; }   /* rose */
+.bin { background: #eef2ff; border-color: #c7d2fe; color: #4338ca; }   /* indigo */
 .brd { background: var(--red-muted); border-color: var(--red-border); color: var(--red); }
 [data-theme="dark"] .bpu { background: rgba(124,58,237,0.12); border-color: rgba(124,58,237,0.25); color: #a78bfa; }
 [data-theme="dark"] .bsl { background: rgba(148,163,184,0.08); border-color: rgba(148,163,184,0.2); color: #94a3b8; }
+[data-theme="dark"] .bte { background: rgba(13,148,136,0.12); border-color: rgba(13,148,136,0.25); color: #2dd4bf; }
+[data-theme="dark"] .bbl { background: rgba(37,99,235,0.12); border-color: rgba(37,99,235,0.25); color: #60a5fa; }
+[data-theme="dark"] .bcy { background: rgba(6,182,212,0.12); border-color: rgba(6,182,212,0.25); color: #22d3ee; }
+[data-theme="dark"] .bpk { background: rgba(225,29,72,0.12); border-color: rgba(225,29,72,0.25); color: #fb7185; }
+[data-theme="dark"] .bin { background: rgba(79,70,229,0.12); border-color: rgba(79,70,229,0.25); color: #818cf8; }
 [data-theme="dark"] .brd { background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.2); color: #f87171; }
 
 /* ══ 3.6 Disclosure — style.css:927-930 ══ */

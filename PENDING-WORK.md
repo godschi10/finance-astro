@@ -87,6 +87,51 @@ Read this at session start.
       Each rung: one surface, 360px+1280px light+dark screenshots, King
       approval, gates green, batch ship.
 
+## SHIPPED — 2026-10-03 · CATEGORY COLOUR PILLS — v0.7.12
+King: *"savings crypto and dollar account category pill has a custom color
+that match the brand. I want others to auto claim a new color on creation so
+that all categories have color pill. and make sure which ever color matches
+the site brand color palette."*
+- [x] **Every category now carries its own brand-matched pill.** Before:
+      savings/crypto/dollar-accounts were the ONLY distinct ones; investing
+      shared savings' green and banking/remittance/budgeting/fixed-income
+      were all grey slate. Executed under @manager-opencode: @builder wrote
+      the five new hues + the auto-claim hash; @qa-inspector ran the
+      independent pixel gate; @manager-opencode updated the fidelity gate,
+      committed, pushed, served-verified. Shipped under the ship-log lane.
+- [x] **Five new badge hues** (article.css, theme's own Tailwind-pastel
+      vocabulary — `.bpu`/`.bsl` already are Tailwind pastels): `.bte` teal,
+      `.bbl` blue, `.bcy` cyan, `.bpk` rose, `.bin` indigo — light pastel +
+      dark rgba, matching the existing patterns exactly. Plus five matching
+      hero chips (`.db-te/.db-bl/.db-cy/.db-pk/.db-in`) so the Topics row
+      stays coherent with the cards.
+- [x] **King's three UNTOUCHED** — savings green, crypto purple,
+      dollar-accounts gold. QA proved it by `git diff -U0` filtered to real
+      rule lines: EMPTY; rule counts identical HEAD vs worktree (5→5, 4→4).
+- [x] **AUTO-CLAIM** — `autoClaim(slug)` in site.ts: deterministic djb2 over
+      a 9-colour palette, slate last. `catBySlug`'s missing-slug fallback
+      calls it, so a category created without an explicit mapping claims a
+      stable colour FOREVER (same slug, same colour, across builds). Proven
+      inert for all eight live categories — only the fallback branch calls it.
+      Uncategorized keeps slate deliberately: it is the catch-all, and grey is
+      its semantic colour, not a claim.
+- [x] **GATE updated honestly** — the homepage fidelity gate asserted the
+      WP-verbatim map (investing=bgn, banking/remittance=bsl, unknown→bsl). The
+      King has overruled that fidelity decision, as he did for the hero CTA in
+      v0.7.10. Assertions UPDATED to the new map with the override, date and
+      his stated reason recorded in the gate; budgeting + fixed-income (which
+      had NO assertions at all before) are now asserted, plus autoClaim's
+      existence and the palette arrays. The gate stays live against drift.
+- Proofs: build exit 0 / 78 pages; `npm run check` 6/6 (article 147/147,
+      vectors 95/0); QA computed-style table 9 badges × 2 themes matching the
+      briefed map exactly; collision check by CIEDE76 + CIEDE2000 + cropped
+      rendered pixels — min ΔE2000 **7.41** (banking blue vs fixed-income
+      indigo) against a 5.0 indistinguishability floor, so no two categories
+      read the same at pill size; contrast light-mode weakest NEW pill 5.15 vs
+      the King's three at 4.78–4.91 (every new pill beats the precedent);
+      9/9 hero chips one each, zero JS console errors, no horizontal overflow
+      at 390px. Report: ~/work/research-notes/v0712-pill-verification.md
+
 ## NEXT ROUND — King's 2 orders, 2026-09-28 v2 (screenshots: comments + /search/ focus)
 
 - [x] **C1. "My comments needs to be showing an author label or star like social
