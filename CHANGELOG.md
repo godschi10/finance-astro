@@ -3,6 +3,26 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.19] — 2026-10-04 — The real logo on every card, and the controls I left raw
+King rejected v0.7.18: "These are not my logos… og image doesn't have a single
+place with my finance blog actual logo" + "why is the check box in the calculator
+unstyled… there are plenty unstyled elements u added to calculators."
+
+- **The logo.** I had invented a `#`-in-a-plate mark. His real lockup was in
+  the repo the whole time (`Layout.astro:552`, `header.css:70-92`): `₦` in gold
+  + `gwillchijioke` in ink + the gold→green underline. All 34 cards now carry
+  that exact lockup; the invented plate is gone from source. The ₦ is typeset
+  after proving the bake face renders it as a real glyph (not tofu).
+- **The unstyled sweep.** My own class-vs-stylesheet diff found the rest of
+  what he suspected: `.tool-h2` (11 uses, 8 pages, styled nowhere) now carries
+  the tool heading scale; `.tool-faq` proven dead and removed. The 80+ unclassed
+  number inputs were proven NOT defects (styled via `.field` descendants).
+- **The checkbox** is now `.tgl`, a gold switch in the site's own vocabulary:
+  44px target, gold focus ring in both themes, behaviour unchanged.
+- **A wrong glyph swap** printed "N50k" on one card — removed; the real ₦ bakes.
+- Proofs: 79 pages; 6/6 (article 147/147, vectors 95/95); 0 tofu across 74
+  codepoints in all 34 cards; brand card gold 4,235px.
+
 ## [0.7.18] — 2026-10-04 — Premium OG cards: 34 brand-true share images
 King: *"the og image is looking like shit… use our logo and all that and design
 a premium OG image… all the pictures and brand files are made SVG logo."*

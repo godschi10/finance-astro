@@ -104,9 +104,10 @@ const swapsSeen = new Map();
 
 /**
  * Write only when the bytes differ. Prints one line per card either way.
- * `copy` is passed through cardText() first: the shipped font subset has no
- * naira sign and no arrow (spec 0.2 / 2.3), so those are rewritten to ASCII and
- * every substitution is logged rather than hidden.
+ * `copy` is passed through cardText() first: cardText() rewrites the arrow to a
+ * slash (a copy choice, matching the site's own "USD/NGN" pair labels) and
+ * deliberately does NOT rewrite the naira sign — the bake face carries U+20A6,
+ * so "₦50k" stays "₦50k". Every substitution is logged, not hidden.
  */
 function emit(file, card, copy = {}) {
   const fields = {};
@@ -143,18 +144,18 @@ const failures = [];
 const push = (file, card, copy) => jobs.push({ file, card, copy });
 
 // ── brand ────────────────────────────────────────────────────────────────────
-// Wordmark + tagline, ink ground, gold rule at y=442, tick as a right-hand
-// counterweight (spec 3.1).
+// The logo lockup IS the brand line, so SITE.name is deliberately NOT passed as
+// a headline — the King rejected a card that printed "GWill Finance" under a
+// mark that was not his. Tagline only; the tick counterweights on the right.
 try {
   const site = readFileSync(path.join(root, "src", "data", "site.ts"), "utf8");
   const pick = (key) => {
     const m = new RegExp(`${key}:\\s*"([^"]*)"`).exec(site);
     return m ? m[1] : "";
   };
-  const name = pick("name");
   const tagline = pick("tagline");
   if (!tagline) throw new Error("no SITE.tagline found in src/data/site.ts");
-  push("brand.png", { variant: "brand", tick: "MONEY TOOLS · GUIDES · RATES" }, { headline: name, lede: tagline });
+  push("brand.png", { variant: "brand", tick: "MONEY TOOLS · GUIDES · RATES" }, { lede: tagline });
 } catch (e) {
   failures.push(`brand: ${e.message}`);
 }
@@ -254,7 +255,7 @@ for (const { file, card, copy } of jobs) {
 }
 
 if (swapsSeen.size) {
-  console.log(`\ngen-og: glyph substitutions (font subset has no such codepoint):`);
+  console.log(`\ngen-og: copy substitutions (not codepoint fallbacks — the bake face has U+20A6):`);
   for (const [k, n] of swapsSeen) console.log(`  ${k} × ${n}`);
 }
 

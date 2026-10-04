@@ -21,6 +21,40 @@ logo."
       file size sane) + QA renders the actual shared card in a 1200×630
       context and screenshots it.
 
+## SHIPPED — 2026-10-04 · REAL LOGO ON EVERY CARD + CONTROL FIXES — v0.7.19
+King rejected v0.7.18: *"These are not my logos you pissing me off… og image
+doesn't have a single place with my finance blog actual logo. U suck"* + *"And
+why is the check box in the calculator unstyled… that means there are plenty
+unstyled elements u added to calculators and God knows where else."*
+- [x] **The logo mistake, owned.** I invented a `#`-in-a-plate mark. His real
+      logo was IN THE REPO the whole time — `Layout.astro:552` `.logo` →
+      `<span class="n">₦</span><span class="nm">gwillchijioke</span>` with
+      `header.css:70-92` (800/-0.03em, `.n` gold + 14px glow, gold→green 1.5px
+      underline @.65). I never read it. Now every one of the 34 cards carries
+      that exact lockup: ₦ typeset in the bake face (proved non-tofu: 2 stems
+      top+bottom, 62% mid-ink vs tofu's 1 run/100%/8%), wordmark at logo scale,
+      gold→green gradient underline dropped 0.27em to clear the descenders.
+      Plate/`#` deleted from source entirely.
+- [x] **My own sweep found the other two unstyled things** (the King was right
+      about "God knows where else"): `.tool-h2` — used in **11 places across 8
+      pages**, styled NOWHERE → now 22px/800/-0.02em in the tool vocabulary;
+      `.tool-faq` — dead class, proven no-op, removed. The 80+ unclassed
+      `<input type=number>` are NOT defects (they sit inside `.field` wrappers
+      styled by descendant selectors) — proven, not assumed.
+- [x] **The checkbox → a real in-theme control**: `.tgl` gold switch (hidden
+      native input + 40×22 track + 16px ink thumb), 44px hit target, gold
+      `:focus-visible` ring in both themes, id + checked default untouched so
+      the page script is unchanged. Verified: real Tab reaches it, Space flips
+      it, no double-toggle, and it reads as part of the card in 4 screenshots.
+- [x] **One card defect the builder flagged and I sent back**: a wrong glyph
+      swap printed "on a **N**50k Salary" — swap removed (proved the bake face
+      HAS U+20A6), real ₦ now renders. Its own false premise about `→` was
+      self-corrected by testing; the swap stays as a copy choice, relabelled.
+- Proofs: build 79 pages; 6/6 (article 147/147, vectors 95/95); all 34 cards
+      re-baked, **0 tofu** across 74 distinct codepoints (exhaustive test) and
+      0 hollow-box glyphs (four-side-closure scan, validated against a real
+      tofu control); brand gold 4,235px; 1 of 34 cards changed by the glyph fix.
+
 ## SHIPPED — 2026-10-04 · PREMIUM OG CARDS — v0.7.18
 King: *"the og image is looking like shit… use our logo and all that and design
 a premium OG image… all the pictures and brand files are made SVG logo."*

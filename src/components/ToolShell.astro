@@ -87,7 +87,7 @@ if (faqs.length) graph.push({
     </div>
   )}
   {faqs.length > 0 && (
-    <div class="fx-copy art-body tool-faq" aria-label="Frequently asked questions" style="margin-top:24px">
+    <div class="fx-copy art-body" aria-label="Frequently asked questions" style="margin-top:24px">
       <h2>Questions</h2>
       {faqs.map((f) => (<details class="faq"><summary>{f.q}</summary>{rawFaq ? <p set:html={f.a}></p> : <p>{f.a}</p>}</details>))}
     </div>
@@ -142,6 +142,12 @@ if (faqs.length) graph.push({
 .receipt-row{display:flex;justify-content:space-between;gap:12px;font-size:.85rem;padding:6px 0;color:#e8e4dc}
 .receipt-row b{font-variant-numeric:tabular-nums;white-space:nowrap}
 .hr{border-top:1px solid var(--border-dim);margin:26px 0 0}
+/* v0.7.0: tool-body section heading ("Year by year", "Full table"). The class
+   shipped in 8 calculator pages with NO rule anywhere — those h2s rendered as
+   the browser default. Texture is the tool pages' OWN .fx-copy h2
+   (styles/tools.css:60) verbatim, so one page never carries two heading
+   scales (this and the FAQ "Questions" h2 sit on the same page). */
+.tool-h2{font-size:22px;font-weight:800;letter-spacing:-.02em;color:var(--text);margin:28px 0 10px}
 .st-wrap{overflow-x:auto;margin:18px calc(-1 * 16px) 0;padding:0 16px}
 @media(min-width:768px){.st-wrap{margin-left:0;margin-right:0;padding:0}}
 /* v0.6.8: table type + cells match the theme's OWN st-table anatomy
@@ -166,6 +172,23 @@ details.faq summary{font-weight:700;cursor:pointer;min-height:44px}
 details.faq p{margin-top:12px;font-size:1rem;line-height:1.8;color:var(--text-mid)}
 .swapbtn{width:44px;height:44px;border-radius:50%;border:1px solid var(--gold-b);background:var(--surface);color:var(--gold);font-size:18px;line-height:1}
 .swapbtn:hover{transform:rotate(180deg);transition:transform var(--t-md)}
+/* v0.7.0: .tgl — the calculators' gold switch. The native checkbox shipped
+   with no class and no rule, so it painted the browser's blue box on a black
+   card. The real <input> stays in the markup (page scripts read .checked) but
+   is visually replaced by track + thumb; it stretches over the whole label so
+   the touch target is the site's own 44px minimum — same rule as
+   details.faq summary above. Off = border-tone track + mid ink; on = gold track
+   + ink thumb (the .btag / .b-gold inverse already in the theme). --border (not
+   --surface-2) is the off track: --surface-2 sat too close to the dark card. */
+.tgl{position:relative;display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 2px;font-size:12px;color:var(--text-dim);cursor:pointer;user-select:none}
+.tgl input{position:absolute;left:0;top:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.tgl-track{position:relative;flex:0 0 auto;width:40px;height:22px;border-radius:var(--pill);background:var(--border);border:1px solid var(--border);transition:background var(--t-md),border-color var(--t-md)}
+.tgl-thumb{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--text-mid);box-shadow:var(--sh-sm);transition:transform var(--t-md),background var(--t-md)}
+.tgl-lbl{line-height:1.4}
+.tgl input:checked+.tgl-track{background:var(--gold-b);border-color:var(--gold-b)}
+.tgl input:checked+.tgl-track .tgl-thumb{transform:translateX(18px);background:#0d0b08}
+.tgl input:checked~.tgl-lbl{color:var(--text)}
+.tgl input:focus-visible+.tgl-track{outline:2px solid var(--gold-b);outline-offset:2px}
 .crumbs{font-size:12px;color:var(--text-dim);margin-bottom:16px}
 .crumbs a{color:var(--gold)}
 .slink{color:var(--gold);font-weight:700}

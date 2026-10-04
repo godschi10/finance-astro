@@ -37,7 +37,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="cc-from">From</label><select id="cc-from">{codes.map((c) => (<option value={c} selected={c === seed.from}>{c} — {cur[c].name}</option>))}</select></div>
 <div class="field"><label for="cc-to">To</label><select id="cc-to">{codes.map((c) => (<option value={c} selected={c === seed.to}>{c} — {cur[c].name}</option>))}</select></div>
 </div>
-<div style="margin-top:12px"><button class="swapbtn" id="cc-swap" type="button" aria-label="Swap currencies">⇄</button> <span class="hint" id="cc-fresh" style="font-size:12px;color:var(--text-dim)">{FX_SNAPSHOT.as_of} ({FX_SNAPSHOT_LABEL})</span> <label class="hint" style="margin-left:12px"><input type="checkbox" id="cc-partoggle" checked> Parallel-market estimate</label></div>
+<div style="margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px"><button class="swapbtn" id="cc-swap" type="button" aria-label="Swap currencies">⇄</button> <span class="hint" id="cc-fresh" style="font-size:12px;color:var(--text-dim)">{FX_SNAPSHOT.as_of} ({FX_SNAPSHOT_LABEL})</span> <label class="hint tgl"><input type="checkbox" id="cc-partoggle" checked> <span class="tgl-track" aria-hidden="true"><span class="tgl-thumb"></span></span> <span class="tgl-lbl">Parallel-market estimate</span></label></div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">You get</p>
 <p class="receipt-fig" id="cc-fig">{fxNumber(converted, 2)}</p>

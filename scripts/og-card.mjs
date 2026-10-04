@@ -11,21 +11,29 @@
 //   1. NO @font-face / woff2. rsvg-convert resolves faces through fontconfig and
 //      the repo's JetBrains woff2 files are not installed system-wide, so a
 //      webfont reference silently renders blank. A STACK only.
-//   2. The naira glyph is NEVER typed. The shipped latin subset has no U+20A6
-//      (spec 0.2) and no U+2192 (spec 2.3), so the mark is geometry (spec 5.1)
-//      and cardText() rewrites the two known-absent codepoints before they can
-//      become a render-time lottery.
+//   2. The BAKE FACE is not the shipped subset. An OG card is rasterised once by
+//      rsvg and served as a PNG; no browser ever lays it out, so a codepoint the
+//      site's own webfont lacks is still perfectly safe here as long as
+//      fontconfig's answer carries it. FONT resolves to Source Code Pro, which
+//      HAS U+20A6 (real glyph: 2 ink stems top and bottom, 60% mid-ink; a tofu
+//      box is 1 run across 100% of the top row with 9% mid-ink). So the naira
+//      sign is never rewritten — it bakes as the real sign, in data copy AND in
+//      the logo lockup. Only the arrow is swapped, and that is a copy choice.
+//      See TEXT_SWAPS for the full measurement table.
 //   3. The wrapper is pure arithmetic, not a measuring loop. Advance is exactly
 //      0.600 em in both the bake face and the shipped face (spec 0.2 / 6.2), so
-//      chars per line is fontSize x 0.600 and never depends on kerning.
+//      chars per line is fontSize x 0.600 and never depends on kerning. Measured
+//      again for this leg on 'n' x10, 'g' x13 and U+20A6 x5: 60.000px per char
+//      at font-size 100, i.e. 0.6000 em, no exceptions.
 //
 // One deliberate, documented departure from the proofs: spec 2.3 forbids
 // letter-spacing on WRAPPED text because it breaks the 0.600 em identity the
 // char cap is computed from. The proofs carry -0.02em on the tool name and the
-// article title (both wrappable); here only the single-line BRAND wordmark keeps
-// its tracking token. Widest real effect: 33 chars x 52px x 0.02 = 34px of line
-// length on a 1040px measure (3.3%) — never an overflow, since tracking of this
-// sign only ever narrows the estimate.
+// article title (both wrappable); here only single-line items keep their
+// tracking token — the logo lockup, whose tracking is part of the mark itself.
+// Widest real effect: 33 chars x 52px x 0.02 = 34px of line length on a 1040px
+// measure (3.3%) — never an overflow, since tracking of this sign only ever
+// narrows the estimate.
 
 /* ── CANVAS + GRID (spec 1.1) ─────────────────────────────────────────────── */
 export const CANVAS = { w: 1200, h: 630 };
@@ -36,11 +44,11 @@ export const GRID = { x: 80, right: 1120, width: 1040 };
 /* ── PALETTE (spec 4.1) ───────────────────────────────────────────────────── */
 export const PALETTE = {
   ink: "#0d0b08", // card ground
-  plate: "#131210", // mark plate (NOT ink — an ink plate is invisible)
-  text: "#f0ede6", // bright text
+  text: "#f0ede6", // bright text -- the dark-theme --text token
   dim: "#8f8575", // meta / lede / tick
-  gold: "#f59e0b", // accent; the ONLY gold on a card
+  gold: "#f59e0b", // accent; the ONLY gold on a card -- the dark-theme --gold
   goldMuted: "#fef9ee", // live-domain footer, at .82
+  green: "#22c55e", // the dark-theme --green; the logo underline's far stop
   glow: "#d97706", // gold glow core
   dot: "#ffffff", // dot-grid, at .035
 };
@@ -90,7 +98,9 @@ export const FOOTER_BASELINE = 524;
 export const FOOTER_TEXT = "finance.gwillchijioke.com";
 
 export const BASELINES = {
-  brand: { headline: 340, lede: 392 },
+  // The BRAND card has no headline baseline: its headline slot is the logo
+  // lockup, whose baseline lives in WORDMARK.place.brand.
+  brand: { lede: 392 },
   tool: { headline: 252, lede: 388 },
   article: { headline: 252, meta: 404 },
 };
@@ -104,34 +114,89 @@ export const RULE = {
   y: { brand: 442, tool: 460, article: 460 },
 };
 
-/* ── THE MARK (spec 5) ────────────────────────────────────────────────────── */
+/* ── THE LOGO LOCKUP ───────────────────────────────────────────────────────── */
 
 /**
- * Authored once on a 64-unit grid and scaled by size/64, so stroke weights scale
- * with it automatically. Pure rect primitives — the font subset has no naira
- * sign, so a text glyph would render differently on every machine (spec 0.2).
+ * The site's real wordmark, transcribed from the source of truth:
+ *
+ *   src/layouts/Layout.astro:552   <a class="logo"><span class="n">₦</span><span class="nm">gwillchijioke</span></a>
+ *   src/styles/header.css:70-92    .logo { font-weight:800; font-size:18px; letter-spacing:-0.03em }
+ *                                 .logo .n  { color:var(--gold); text-shadow:0 0 14px var(--gold-glow); margin-right:0.14em }
+ *                                 .logo .nm { color:var(--text) }
+ *                                 .logo::after { bottom:-3px; height:1.5px; opacity:.65;
+ *                                               background:linear-gradient(90deg,var(--gold),var(--green)) }
+ *
+ * That gold -> GREEN rule is part of his mark, not decoration: the live header
+ * wears it. An earlier leg of this card banned green, and the King rejected the
+ * result for not being his logo. So the underline keeps the green.
+ *
+ * Every token below is expressed in em against the lockup's own font-size, and
+ * the ONLY input is `size`, so the logo is the header lockup at any scale with
+ * no second set of coordinates to drift out of step.
  */
-export const MARK = {
-  unit: 64,
-  plate: { x: 0, y: 0, w: 64, h: 64, rx: 12, fill: PALETTE.plate },
-  hairline: { x: 0.5, y: 0.5, w: 63, h: 63, rx: 11.5, strokeWidth: 1 },
-  glyph: {
-    fill: PALETTE.gold,
-    rx: 1.6,
-    rects: [
-      { x: 20, y: 13, w: 5, h: 38 }, // vertical L
-      { x: 39, y: 13, w: 5, h: 38 }, // vertical R
-      { x: 16, y: 23, w: 32, h: 5 }, // crossbar 1
-      { x: 16, y: 36, w: 32, h: 5 }, // crossbar 2
-    ],
+export const WORDMARK = {
+  naira: "₦",
+  name: "gwillchijioke",
+  /** font shorthand of `.logo`, minus the size. */
+  weight: 800,
+  tracking: -0.03, // em, letter-spacing
+  gap: 0.14, // em, `.logo .n { margin-right }` between the glyph and the name
+  rule: {
+    heightEm: 1.5 / 18, // 1.5px tall at the header's 18px
+    // `.logo::after { bottom: -3px }` is 3px below the INLINE BOX, not below the
+    // baseline. The box has to clear the descender first: measured on this box,
+    // "gwillchijioke" descends 0.190 em while the naira glyph sits on the
+    // baseline. 0.190 + a 0.08 em air gap = 0.27 em. The first cut used the
+    // header's raw 0.167 em and the rule sliced straight through the g and j.
+    dropEm: 0.27,
+    opacity: 0.65, // `.logo::after { opacity }`
   },
-  /** Placement + scale per variant (spec 5.2). */
+  /**
+   * `.logo .n { text-shadow: 0 0 14px var(--gold-glow) }` with --gold-glow
+   * rgba(245,158,11,.35). CSS states the shadow's blur RADIUS, so a faithful
+   * sigma would be 7px at 18px = 0.389em; at the brand card's 88px that is a
+   * 34px bloom, which reads as a halo blob rather than a lit glyph. Capped to
+   * 0.26em and verified by eye on the baked card.
+   */
+  glow: { sigmaEm: 0.26, color: "#f59e0b", opacity: 0.35 },
+
+  /** Placement per variant. `baseline` is the lockup's TEXT baseline, not a top. */
   place: {
-    brand: { x: 80, y: 76, scale: 2.625 }, // 168 x 168 — the brand card's hero
-    tool: { x: 80, y: 64, scale: 1 },
-    article: { x: 80, y: 64, scale: 1 },
+    // 316 puts the lockup optically centred (ink spans 248..333, rule 340..347)
+    // and leaves the spec'd lede baseline 392 and gold rule 442 untouched below.
+    brand: { x: 80, baseline: 316, size: 88 }, // the hero — 8.12em x 88 = 715px
+    tool: { x: 80, baseline: 104, size: 38 }, // header 18px -> 38px
+    article: { x: 80, baseline: 104, size: 38 },
   },
 };
+
+/**
+ * Inline-box width of the lockup, in em of its own font-size.
+ *
+ * CSS letter-spacing is added AFTER every character including the last, so the
+ * box is `chars x (advance + tracking)`, and `.logo .n`'s margin-right adds one
+ * more gap between the glyph and the name:
+ *   (1 + 13) x 0.57 + 0.14 = 8.12 em        // 'gwillchijioke' is THIRTEEN chars
+ * `.logo::after` spans `left:0; right:0` of that same box, so the underline
+ * width IS this number — the logo can never outgrow its own rule. Verified on
+ * the baked card: the name's ink ends at x=387 and the rule ends at x=389.
+ */
+export const WORDMARK_EM = (1 + WORDMARK.name.length) * (ADVANCE + WORDMARK.tracking) + WORDMARK.gap;
+
+export function wordmarkWidth(size) {
+  return WORDMARK_EM * size;
+}
+
+/** Distance from the lockup's left edge to where the name starts. */
+export function wordmarkNameX(size) {
+  return (ADVANCE + WORDMARK.tracking + WORDMARK.gap) * size;
+}
+
+/** The gold -> green rule: y of its top edge, its height, and its own width. */
+export function wordmarkRule(size, baseline) {
+  const h = Math.max(2, Math.round(WORDMARK.rule.heightEm * size));
+  return { y: Math.round(baseline + WORDMARK.rule.dropEm * size), h };
+}
 
 /* ── CHIP (spec 3.2 geometry) ─────────────────────────────────────────────── */
 
@@ -183,16 +248,33 @@ export const FONT = "DejaVu Sans Mono, monospace";
 /* ── TEXT SAFETY ──────────────────────────────────────────────────────────── */
 
 /**
- * Card text may never contain a codepoint the shipped subset lacks.
- * Spec 0.2 / 2.3: U+20A6 (naira) and U+2192 (arrow) are both ABSENT, so they
- * would render as tofu or an OS-substituted glyph. Both are rewritten to the
- * nearest ASCII the data already uses elsewhere, and every swap is reported so
- * the generator can log it rather than hide it.
+ * Card text may never carry a codepoint the BAKE FACE lacks.
+ *
+ * The bake face is whatever fontconfig hands rsvg for FONT above — Source Code
+ * Pro — and it is NOT the shipped site subset. An OG card is rasterised once and
+ * served as a PNG; it is never laid out by a browser, so "the shipped subset has
+ * no U+20A6" was never a constraint on this file. Swapping it to a plain "N"
+ * turned a headline into "on a N50k Salary" — a different number, on a card the
+ * King reads as his own words.
+ *
+ * U+20A6 is therefore NOT swapped, and that is measured, not assumed. Rendered
+ * alone at 180px through this exact stack:
+ *
+ *   cp        char  bbox      topRuns  topCov%  botRuns  botCov%  mid%   verdict
+ *   U+20A6    '₦'   102x114    2        49       2        49       60    REAL GLYPH
+ *   TOFU-CTL  ''    125x137    1       100       1        99        9    TOFU/BOX
+ *
+ * Two ink stems on the top row and two on the bottom, with 60% ink across the
+ * middle, is a glyph. A tofu box is ONE unbroken run across 100% of its top row
+ * with under 10% mid-ink — that is the control, and the control fails.
+ *
+ * U+2192 KEEPS its swap, but for the honest reason rather than the old one: the
+ * arrow renders (same test: 1% top coverage, 100% mid-ink — a solid shaft), so
+ * this is a COPY choice, "USD/NGN" over "USD→NGN" to match the two labels the
+ * rest of the site already uses. The old "U+2192 absent from the font subset"
+ * claim was false and is corrected here.
  */
-const TEXT_SWAPS = [
-  ["→", "/", "U+2192 absent from the font subset"],
-  ["₦", "N", "U+20A6 absent from the font subset"],
-];
+const TEXT_SWAPS = [["→", "/", "copy choice: USD/NGN, matching the site's own pair labels"]];
 
 /**
  * @param {string} str
@@ -279,29 +361,67 @@ function textNode({ x, y, str, t, anchor, opacity }) {
   return `<text ${attrs.join(" ")}>${esc(str)}</text>`;
 }
 
-/** The ₦ plate at 1:1 units; callers scale it via a transform. */
-function markPath() {
-  const p = MARK.plate;
-  const h = MARK.hairline;
-  const g = MARK.glyph;
-  return [
-    `<rect x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}" rx="${p.rx}" fill="${p.fill}"/>`,
-    `<rect x="${h.x}" y="${h.y}" width="${h.w}" height="${h.h}" rx="${h.rx}" fill="none" stroke="url(#og-plateedge)" stroke-width="${h.strokeWidth}"/>`,
-    `<g fill="${g.fill}">`,
-    ...g.rects.map((r) => `<rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" rx="${g.rx}"/>`),
-    `</g>`,
-  ].join("");
+/**
+ * The gold -> green underline, drawn across the lockup's full inline box, the
+ * way `.logo::after` does with left:0 / right:0.
+ *
+ * @param {number} x the lockup's left edge, in card coordinates
+ */
+function wordmarkRuleNode(x, size, baseline) {
+  const r = wordmarkRule(size, baseline);
+  return `<rect x="${x}" y="${r.y}" width="${Math.round(wordmarkWidth(size))}" height="${r.h}" rx="${Math.min(2, r.h / 2)}" fill="url(#og-lockuprule)" fill-opacity="${WORDMARK.rule.opacity}"/>`;
 }
 
-/** Shared shell + defs, byte-identical to the proofs (spec 3.0, 4.3, 4.4, 4.5). */
+/**
+ * The lockup: the naira glyph in gold (with the header's glow bloom) and the
+ * name in --text, sharing one baseline exactly as `.logo`'s
+ * `align-items: baseline` puts them on one line.
+ *
+ * The glyph and the name are two <text> nodes rather than two <tspan>s because
+ * librsvg applies `filter` to a tspan unreliably; a node each keeps the bloom
+ * on the glyph alone and still shares one y. The 0.14em gap between them is the
+ * margin the header gets from `.logo .n { margin-right }`.
+ *
+ * Both x values are ABSOLUTE card coordinates — there is no wrapping <g>, so
+ * there is exactly one authority for where the lockup sits and no way to apply
+ * its origin twice.
+ *
+ * @param {number} x the lockup's left edge, in card coordinates
+ * @param {string} glowId filter id sized for this variant
+ */
+function wordmark(x, baseline, size, glowId) {
+  const common = [
+    `font-family="${FONT}"`,
+    `font-size="${size}"`,
+    `font-weight="${WORDMARK.weight}"`,
+    `letter-spacing="${WORDMARK.tracking}em"`,
+  ].join(" ");
+  return [
+    `<text x="${x}" y="${baseline}" ${common} fill="${PALETTE.gold}" filter="url(#${glowId})">${esc(WORDMARK.naira)}</text>`,
+    `<text x="${x + wordmarkNameX(size)}" y="${baseline}" ${common} fill="${PALETTE.text}">${esc(WORDMARK.name)}</text>`,
+  ].join("\n");
+}
+
+/** Shared shell + defs (spec 3.0, 4.3, 4.4, 4.5). */
 function shell() {
+  // One bloom filter per size actually used, so stdDeviation is in real px and
+  // never has to be re-derived at paint time.
+  const glow = (id, size) =>
+    `<filter id="${id}" x="-80%" y="-80%" width="260%" height="260%" color-interpolation-filters="sRGB">` +
+    `<feGaussianBlur in="SourceAlpha" stdDeviation="${(WORDMARK.glow.sigmaEm * size).toFixed(2)}" result="blur"/>` +
+    `<feFlood flood-color="${WORDMARK.glow.color}" flood-opacity="${WORDMARK.glow.opacity}" result="tint"/>` +
+    `<feComposite in="tint" in2="blur" operator="in" result="halo"/>` +
+    `<feMerge><feMergeNode in="halo"/><feMergeNode in="SourceGraphic"/></feMerge>` +
+    `</filter>`;
   return {
     defs: [
       `<defs>`,
       `<pattern id="og-dotgrid" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="1.5" fill="${PALETTE.dot}" fill-opacity="0.035"/></pattern>`,
       `<radialGradient id="og-goldglow" cx="0.5" cy="0.5" r="0.5"><stop offset="0%" stop-color="${PALETTE.glow}" stop-opacity="0.10"/><stop offset="65%" stop-color="${PALETTE.glow}" stop-opacity="0"/></radialGradient>`,
-      `<linearGradient id="og-plateedge" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${PALETTE.text}" stop-opacity="0.20"/><stop offset="100%" stop-color="${PALETTE.text}" stop-opacity="0.08"/></linearGradient>`,
-      `<g id="og-mark">${markPath()}</g>`,
+      // `.logo::after` — var(--gold) -> var(--green), left to right.
+      `<linearGradient id="og-lockuprule" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="${PALETTE.gold}"/><stop offset="100%" stop-color="${PALETTE.green}"/></linearGradient>`,
+      glow("og-wm-glow-brand", WORDMARK.place.brand.size),
+      glow("og-wm-glow-small", WORDMARK.place.tool.size),
       `</defs>`,
     ].join("\n"),
     // No radius and no border on the card itself — platforms crop it (spec 4.5).
@@ -313,7 +433,7 @@ function shell() {
   };
 }
 
-/** Category / tool chip, right-aligned, vertically centred on the 64px mark. */
+/** Category / tool chip, right-aligned, vertically centred on the logo row. */
 function chip(label, color) {
   if (!label) return "";
   const text = String(label).toUpperCase();
@@ -339,27 +459,29 @@ function footer(tick) {
 /**
  * Render one card.
  *
+ * BRAND: the headline slot IS the logo lockup — `headline` is not consumed,
+ * because the King rejected a card that printed his brand name under a mark
+ * that was not his. The lockup IS the brand; the tagline and the live domain
+ * carry the rest.
+ *
  * @param {{variant: 'brand'|'tool'|'article', headline?: string, lede?: string,
  *          meta?: string, chip?: string, chipColor?: string, tick?: string}} card
  * @returns {string} standalone SVG markup, 1200 x 630
  */
 export function renderCard({ variant = "brand", headline = "", lede = "", meta = "", chip: chipLabel = "", chipColor: chipHue = "", tick = "" } = {}) {
-  const v = MARK.place[variant] ? variant : "brand";
+  const v = WORDMARK.place[variant] ? variant : "brand";
   const { defs, ground } = shell();
   const body = [];
 
-  // Z1 · logo zone — always top-left, never moves (spec 1.2).
-  const place = MARK.place[v];
-  body.push(`<use href="#og-mark" transform="translate(${place.x},${place.y})${place.scale !== 1 ? ` scale(${place.scale})` : ""}"/>`);
+  // Z1 · logo zone — always top-left, never moves (spec 1.2). On the brand card
+  // it is the hero at 88px; on tool/article it sits in the header's own slot.
+  const place = WORDMARK.place[v];
+  body.push(wordmark(place.x, place.baseline, place.size, v === "brand" ? "og-wm-glow-brand" : "og-wm-glow-small"));
+  body.push(wordmarkRuleNode(place.x, place.size, place.baseline));
 
   // Z2 · headline zone.
   if (v === "brand") {
-    // Wordmark + tagline. Both single-line items, so the wordmark keeps its
-    // -0.02em tracking token; no wrapping is possible.
-    const w = wrapText(headline, TYPE.hero.size, 1);
-    for (const [i, line] of w.lines.entries()) {
-      body.push(textNode({ x: GRID.x, y: BASELINES.brand.headline + i * lineHeight(TYPE.hero.size), str: line, t: TYPE.hero }));
-    }
+    // No headline: the lockup above is the brand line. Tagline only.
     if (lede) {
       const l = wrapText(lede, TYPE.lede.size, 1);
       for (const [i, line] of l.lines.entries()) {
