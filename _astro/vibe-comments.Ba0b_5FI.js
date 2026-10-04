@@ -159,8 +159,6 @@
      * After choosing a reaction the picker closes and the summary updates.
      * No absolute positioning - fully inline, no overflow concerns.
      */
-    // Sort reactions by count descending, drop zeros.
-    // Highest-count reaction is always first in the summary display.
     function getSortedReactions(reactions) {
         return REACTION_DEFS
             .map(function(def) {
@@ -170,9 +168,6 @@
             .sort(function(a, b) { return b.count - a.count; });
     }
 
-    // Build the innerHTML for the summary button.
-    // Shows each non-zero reaction as emoji+count pair, sorted desc.
-    // User's own reaction pair gets .vibe-rx-mine for a blue count accent.
     // Summary is ALWAYS: stacked emoji bubbles + one aggregate total.
     // Per-type counts only appear inside the picker - never in this button.
     function buildSummaryInner(sorted, userReaction) {
@@ -413,7 +408,7 @@
                     if (note) {
                         note.textContent = permission === 'denied'
                             ? str('pushBlocked', 'Notifications are blocked for this site in your browser settings.')
-                            : 'Permission not granted - the checkbox stays off.';
+                            : 'Notifications stayed off — turn them on in your browser settings to retry.';
                         note.hidden = false;
                     }
                     return;
@@ -432,14 +427,14 @@
                 }).then(function(sub) {
                     replyPushSub = sub;
                     if (note) {
-                        note.textContent = str('pushWillNotify', 'You will get a push notification on this device when someone replies to your comment.');
+                        note.textContent = str('pushWillNotify', 'We\'ll notify you on this device when someone replies.');
                         note.hidden = false;
                     }
                 }).catch(function() {
                     box.checked = false;
                     replyPushSub = null;
                     if (note) {
-                        note.textContent = str('pushEnableFail', 'Could not enable notifications on this device.');
+                        note.textContent = str('pushEnableFail', 'Couldn\'t turn on notifications on this device.');
                         note.hidden = false;
                     }
                 });
@@ -712,7 +707,6 @@
             }
         });
 
-        // Click anywhere outside closes the dropdown.
         document.addEventListener('click', function(e) {
             if (mentionDrop && !mentionDrop.contains(e.target)) mentionCloseDrop();
         });
@@ -1267,7 +1261,7 @@
         // v3.18.0 consent law - the Notify toggle: the comment's author can
         // flip reply-email consent anytime, no window. Strangers never see it.
         const notifyBtnHtml = comment.owns
-            ? '<button type="button" class="vibe-notify-btn" data-comment-id="' + cid + '" data-on="' + (comment.notify_on ? '1' : '0') + '" title="' + str('notifyTitle', 'Reply alerts for this thread (emails and browser notifications) - click to switch') + '">'
+            ? '<button type="button" class="vibe-notify-btn" data-comment-id="' + cid + '" data-on="' + (comment.notify_on ? '1' : '0') + '" title="' + str('notifyTitle', 'Reply alerts for this thread — click to switch on or off') + '">'
                 + bellIcon(comment.notify_on ? str('bellOn', 'On') : str('bellOff', 'Off'))
               + '</button>'
             : '';
@@ -1751,7 +1745,7 @@
         var badge = document.createElement('div');
         badge.className = 'vibe-draft-badge';
 
-        var label = document.createTextNode(str('draftRestored', 'Draft restored - '));
+        var label = document.createTextNode(str('draftRestored', 'Draft restored.'));
         var btn   = document.createElement('button');
         btn.type        = 'button';
         btn.className   = 'vibe-draft-clear';
@@ -1781,7 +1775,6 @@
 
         const draftKey = initDraftSave();
 
-        // Ctrl+Enter / Cmd+Enter submits the form.
         const textarea = form.querySelector('textarea[name="comment"]');
         if (textarea) {
             textarea.addEventListener('keydown', function(e) {
@@ -1885,9 +1878,9 @@
                         console.error('Server returned non-JSON:', text.substring(0, 500));
                         // Detect WordPress fatal error HTML
                         if (text.indexOf('critical error') !== -1 || text.indexOf('wp-die-message') !== -1) {
-                            throw new Error(str('serverFatal', 'A server fatal error occurred. Check error logs or contact support.'));
+                            throw new Error(str('serverFatal', 'Something broke on our side. Please try again in a moment.'));
                         }
-                        throw new Error(str('invalidResponse', 'Server returned an invalid response. Check browser console for details.'));
+                        throw new Error(str('invalidResponse', 'Something came back wrong. Please try again in a moment.'));
                     });
                 }
                 return res.json();
@@ -1930,7 +1923,6 @@
                     resetFormPosition();
                     saveGuestIdentity();
 
-                    // Warm, personalised feedback - improves perceived quality.
                     var name = data.author || (config.isLoggedIn ? '' : '');
                     if (result.data.awaiting_moderation) {
                         showSuccess(name
@@ -2533,9 +2525,6 @@
         if (email)  { email.addEventListener('blur',  saveGuestIdentity); }
     }
 
-    /**
-     * Guest form toggle
-     */
     function initGuestToggle() {
         // King's order 2026-09-26: guest is the ONLY auth path, so the guest
         // fields render EXPOSED (the component no longer ships the
@@ -2674,7 +2663,7 @@
         const modes = [
             { id: 'newest', label: '\u2193', title: str('sortNewest', 'Newest first') },
             { id: 'oldest', label: '\u2191', title: str('sortOldest', 'Oldest first') },
-            { id: 'top',    label: '\u2b50', title: str('sortTop', 'Top - most reacted') },
+            { id: 'top',    label: '\u2b50', title: str('sortTop', 'Most reacted') },
         ];
         let idx = 0;  // current mode index - reassigned on each click
 
