@@ -1,7 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { CATEGORIES } from "../data/site";
-import { TOOLS, allArticles, fmtMonthYear } from "../data/content";
 
 // Faithful port of the theme's search results page (searchform.php +
 // template-parts/content.php cards) + the upgraded smart engine
@@ -17,28 +16,6 @@ import { TOOLS, allArticles, fmtMonthYear } from "../data/content";
 //     p.es-copy + .cp-strip category links + a.btn.b-gold "← Back to Home"
 // WP pagination is absent at this corpus size (page-numbers: 0 in the
 // capture) — the header count line is the WP contract.
-const posts = await allArticles();
-const index = {
-  articles: posts.map((p) => {
-    const c = CATEGORIES.find((x) => x.slug === p.data.category);
-    return {
-      kind: "article",
-      slug: p.slug,
-      title: p.data.title,
-      desc: p.data.description,
-      category: p.data.category,
-      categoryName: c?.name ?? "Finance",
-      badge: c?.badge ?? "bsl",
-      art: c?.art ?? "",
-      emoji: c?.emoji ?? "",
-      date: fmtMonthYear(p.data.pubDate),
-      readMins: p.data.readMins,
-      author: p.data.author,
-      body: p.body.slice(0, 2000),
-    };
-  }),
-  tools: TOOLS.map((t) => ({ kind: "tool", slug: t.slug, title: t.name, desc: t.desc, category: "tools", categoryName: "Calculator", badge: "bsl", art: "", emoji: "" })),
-};
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 const initialQ = (Astro.url.searchParams.get("q") ?? "").slice(0, 80);
 const catList = CATEGORIES.filter((c) => c.slug !== "uncategorized");
@@ -87,7 +64,6 @@ const catList = CATEGORIES.filter((c) => c.slug !== "uncategorized");
       <a class="btn b-gold" href={base}>← Back to Home</a>
     </div>
   </div>
-  <script type="application/json" id="search-index" set:html={JSON.stringify(index).replace(/</g, "\\u003c")}></script>
 </section>
 <script>
   import "../scripts/search-results.js";

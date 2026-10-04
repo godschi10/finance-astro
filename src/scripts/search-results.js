@@ -21,10 +21,17 @@ import { toks, smartMatch, highlight, escHtml } from './search-core.js';
 (function () {
   'use strict';
 
-  var idx = { articles: [], tools: [] };
+  var rawPool = [];
   try {
-    var el = document.getElementById('search-index');
-    if (el) idx = JSON.parse(el.textContent || '{"articles":[],"tools":[]}');
+    // The Layout embeds ONE shared corpus (#gwill-search-index) on every
+    // page — the spotlight reads it too. Prefer it; fall back to the legacy
+    // per-page #search-index if absent.
+    var el = document.getElementById('gwill-search-index') || document.getElementById('search-index');
+    if (el) {
+      var raw = JSON.parse(el.textContent || '[]');
+      if (raw && raw.articles && raw.tools) rawPool = raw.articles.concat(raw.tools);
+      else if (raw && typeof raw.length === 'number') rawPool = raw;
+    }
   } catch (e) {}
 
   var input = document.getElementById('search-input');
@@ -49,6 +56,7 @@ import { toks, smartMatch, highlight, escHtml } from './search-core.js';
   } catch (e) {}
 
   function href(it) {
+    if (it.url) return it.url;
     return it.kind === 'tool' ? homeHref + 'money-tools/' + it.slug + '/' : homeHref + 'articles/' + it.slug + '/';
   }
 
@@ -79,11 +87,17 @@ import { toks, smartMatch, highlight, escHtml } from './search-core.js';
 
   function run() {
     var q = (input.value || '').trim();
-    // smartMatch's category hit reads p.cat (the theme's index field). The
-    // page index carries category=slug + categoryName=name — map cat over
-    // so category-name matches score (and the pill filter still sees slug).
-    var pool = idx.articles.concat(idx.tools).map(function (p) {
-      return Object.assign({}, p, { cat: p.cat || p.categoryName || '' });
+    // smartMatch's category hit reads p.cat (the theme's index field). Map
+    // the corpus's field names so both the Layout corpus (excerpt/cat/mins/
+    // url) and the legacy shape (desc/categoryName/readMins/slug) score and
+    // render identically, and the pill filter still sees the slug.
+    var pool = rawPool.map(function (p) {
+      return Object.assign({}, p, {
+        cat: p.cat || p.categoryName || '',
+        desc: (p.desc != null ? p.desc : p.excerpt) || '',
+        categoryName: p.categoryName || p.cat || '',
+        readMins: p.readMins || p.mins || 1,
+      });
     });
     var matches = smartMatch(q, pool, 50);
     // Category pill filter applies AFTER scoring (the theme filters the pool

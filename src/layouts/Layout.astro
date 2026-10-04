@@ -5,6 +5,7 @@ import { TOOLS, allArticles as allPosts, fmtMonthYear } from "../data/content";
 import "../styles/base.css"; // WP stylesheet section 2 (RESET/BASE) — the anchor reset
 import "../styles/header.css";
 import Footer from "../components/Footer.astro";
+import FormsScript from "../components/FormsScript.astro";
 import "../styles/footer.css";
 import "../styles/home.css"; // WP stylesheet sections the homepage renders
 import "../styles/search404.css"; // WP slice — /search/ + /404/ vocabulary (.phd, .search-pill, .error-404, .es-*)
@@ -37,8 +38,10 @@ interface Props {
   publishedTime?: string;
   modifiedTime?: string;
   articleAuthor?: string;
+  /** Route renders a .gwill-form (newsletter/contact) — ships gwill-forms.js. */
+  forms?: boolean;
 }
-const { title, description, noCanonical = false, crumb = "", ogImage = null, isArticle = false, publishedTime, modifiedTime, articleAuthor } = Astro.props;
+const { title, description, noCanonical = false, crumb = "", ogImage = null, isArticle = false, publishedTime, modifiedTime, articleAuthor, forms = false } = Astro.props;
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 const origin = (Astro.site?.toString() ?? "https://godschi10.github.io").replace(/\/$/, "");
 const homeUrl = `${origin}${base}`;
@@ -48,10 +51,10 @@ const isHome = pagePath === base;
 const canonical = `${origin}${pagePath}`;
 const ogUrl = noCanonical ? homeUrl : canonical;
 // social-meta.php gwill_social_meta_image(): the post's featured image first,
-// then the theme's branded 1200×675 share card (assets/brand/
-// gwill-social-share.png — the wordmark logo on the finance palette) so every
-// non-article page still shares as a rich card, never a bare-text one.
-const BRAND_SHARE = { url: `${homeUrl}images/gwill-social-share.png`, width: 1200, height: 675 };
+// then the theme's branded 1200×630 share card (public/images/og/brand.png —
+// written by `npm run gen:og`, the wordmark logo on the finance palette) so
+// every non-article page still shares as a rich card, never a bare-text one.
+const BRAND_SHARE = { url: `${homeUrl}images/og/brand.png`, width: 1200, height: 630, alt: "GWill Finance — Nigerian money. Explained." };
 const og = ogImage ? { ...ogImage, url: ogImage.url.startsWith("http") ? ogImage.url : `${origin}${ogImage.url}` } : BRAND_SHARE;
 const ogAbs = og.url;
 const ogAlt = og.alt || title;
@@ -568,7 +571,7 @@ main{display:block;min-width:0}
 </button>
 </div>
 </header>
-<div class="mno" id="mobile-nav" role="dialog" aria-modal="false" aria-label="Mobile navigation" aria-hidden="true" inert>
+<div class="mno" id="mobile-nav" role="dialog" aria-modal="true" aria-label="Mobile navigation" aria-hidden="true" inert>
 <div class="mno-top">
 <a class="mlogo" href={homeUrl}><span class="n">₦</span><span class="nm">gwillchijioke</span></a>
 <button class="mno-close" type="button" aria-label="Close navigation menu">✕</button>
@@ -771,6 +774,6 @@ if (window.matchMedia && window.matchMedia('(hover: none)').matches) {
   import "../scripts/spotlight-search.js";
   import "../scripts/ticker-live.js";
 </script>
-<script src="../scripts/gwill-forms.js"></script>
+{forms && <FormsScript />}
 </body>
 </html>

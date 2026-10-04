@@ -1,0 +1,7 @@
+---
+// Ships the gwill-forms.js module on pages that render .gwill-form. Kept as a
+// component boundary so Astro only emits the script where this renders (a
+// {curr && <script src>} expression inside Layout was verified to inline the
+// module on EVERY route — the compiler hoists script tags out of expressions).
+---
+<script src="../scripts/gwill-forms.js"></script>

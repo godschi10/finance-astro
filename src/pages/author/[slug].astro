@@ -76,7 +76,7 @@ const pages = paginate(posts);
   ) : (
     <>
       <div class="g3">
-        {posts.map((p) => (
+        {pages[0].map((p) => (
           <ArticleCard slug={p.slug} title={p.title} excerpt={p.excerpt} category={p.category} date={p.date} readMins={p.readMins} author={p.author} />
         ))}
       </div>

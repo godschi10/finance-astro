@@ -3,6 +3,49 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.18] — 2026-10-04 — Premium OG cards: 34 brand-true share images
+King: *"the og image is looking like shit… use our logo and all that and design
+a premium OG image… all the pictures and brand files are made SVG logo."*
+
+- **Root cause, found before designing:** the shipped card was 1200×**675** with
+  a clipped calculator screenshot (not a brand card) and the wrong height baked
+  into `og:image:height`. Two facts forced the design: the shipped JetBrains Mono
+  subset has **no ₦ glyph** (U+20A6 missing → the mark is 4 SVG rects, never
+  text), and the 7 category art files each carry a stale `₦ gwillchijioke`
+  wordmark plus 7 files cover 15 articles → article art is **not** overlaid.
+- **Design (@designer, coordinate contract + 3 rendered proofs):** dark ink
+  ground (gold-on-ink 9.15:1 vs 3.4:1 on cream — cream vanishes in a WhatsApp
+  bubble), 1200×630, footer baseline 524 (clear of the Twitter bottom-10%
+  crop), 168px mark on the brand card / 64px elsewhere, dot-grid + gold glow
+  ported from the site's own hero CSS, 88×4 gold rule, category-coloured chip.
+- **Generator (@builder):** `scripts/og-card.mjs` + `scripts/gen-og.mjs` as the
+  first build step — 34 cards (brand, 16 tools + hub + amount family, 15
+  articles), idempotent, rsvg stdin, output gitignored. Brand card is
+  **byte-identical** to the designer's proof.
+- **Wiring:** ToolShell now forwards `ogImage` (26 tool pages were falling back
+  to the brand card); article pages point at their own card; `BRAND_SHARE`
+  height 675→630; the orphaned `gwill-social-share.png` deleted behind a
+  zero-reference gate.
+- **Proofs:** 79 pages; 6/6 gates (article 147/147, vectors 95/95); meta census
+  reconciles (37 brand + 27 tool + 15 article, one og:image per page, zero old
+  refs); 34/34 PNGs present; PIL: 1200×630, gold present, **0 bright pixels in
+  the bottom 10%**, 80px margins.
+
+## [0.7.17] — 2026-10-04 — Architecture audit fixes: the one broken link, concurrent counts, type-checking
+
+- **Author page 2 route added** — `author/[slug]` rendered pagination to a page
+  that never existed; every author with >10 posts was serving 404s.
+- **Concurrent comment counts:** 15 serial `AbortSignal.timeout(4000)` Worker
+  fetches at build → `Promise.allSettled` (route phase 7.16s → 0.9s; worst case
+  with a hanging Worker 60s → ~4s).
+- **`gwill-forms.js` route-scoped** via a Layout `forms` prop + `FormsScript`
+  component (Astro hoists `src` scripts out of expressions — the component
+  boundary is the working pattern).
+- **Drawer `aria-modal="true"`** (was `false` while scroll-locked + focus-trapped).
+- **`/search/` corpus dedupe** — one shared `#gwill-search-index`.
+- **tsconfig + `@astrojs/check` + `typescript`** wired (`npm run check:types`);
+  the 21-error backlog is reported, not gated.
+
 ## [0.7.16] — 2026-10-04 — Calculator correctness mission: every tool audited, proven, fixed
 King: 50-30-20 screenshot showed empty % fields computing ₦0·₦0·₦1,000,000
 silently. Fix this calculator, research ALL calculators for missing

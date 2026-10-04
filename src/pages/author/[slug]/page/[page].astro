@@ -1,0 +1,65 @@
+---
+import Layout from "../../../../layouts/Layout.astro";
+import ArticleCard from "../../../../components/ArticleCard.astro";
+import ArchivePagination from "../../../../components/ArchivePagination.astro";
+import { AUTHORS, allArticles, fmtMonthYear } from "../../../../data/content";
+import { paginate } from "../../../../lib/pagination";
+
+// /author/{slug}/page/N/ — WP's paginated author archive. Emits pages 2..N
+// only when the author exceeds posts_per_page (10); page 1 is
+// /author/{slug}/. Mirrors articles/page/[page].astro, keyed by slug+page.
+export async function getStaticPaths() {
+  const posts = await allArticles();
+  const out: { params: { slug: string; page: string }; props: any }[] = [];
+  for (const a of AUTHORS) {
+    const authorPosts = posts.filter((p) => p.data.authorSlug === a.slug);
+    const pages = paginate(authorPosts);
+    if (pages.length < 2) continue;
+    pages.slice(1).forEach((slice, i) => {
+      out.push({
+        params: { slug: a.slug, page: String(i + 2) },
+        props: {
+          current: i + 2,
+          total: pages.length,
+          authorName: a.name,
+          authorSlug: a.slug,
+          rows: slice.map((p) => ({
+            slug: p.slug,
+            title: p.data.title,
+            excerpt: p.data.description,
+            date: fmtMonthYear(p.data.pubDate),
+            readMins: p.data.readMins,
+            author: p.data.author,
+            category: p.data.category,
+          })),
+        },
+      });
+    });
+  }
+  return out;
+}
+
+const { current, total, authorName, authorSlug, rows } = Astro.props;
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+---
+<Layout title={`${authorName} - Page ${current} - GWill Finance`} description={`Articles written by ${authorName} on GWill Finance.`} crumb={authorName}>
+<section class="phd" aria-labelledby="author-h">
+  <nav class="bc" aria-label="Breadcrumb">
+    <span class="bc-i"><a href={base}>Home</a></span>
+    <span class="bc-s">›</span>
+    <span class="bc-i"><a href={`${base}author/${authorSlug}/`}>{authorName}</a></span>
+    <span class="bc-s">›</span>
+    <span class="bc-i" aria-current="page">Page {current}</span>
+  </nav>
+  <h1 id="author-h">{authorName}</h1>
+</section>
+<section class="con" style="margin-top:28px;padding-bottom:48px">
+  <div class="ad-bg"></div>
+  <div class="g3">
+    {rows.map((p) => (
+      <ArticleCard slug={p.slug} title={p.title} excerpt={p.excerpt} category={p.category} date={p.date} readMins={p.readMins} author={p.author} />
+    ))}
+  </div>
+  <ArchivePagination current={current} total={total} archivePath={`author/${authorSlug}`} />
+</section>
+</Layout>

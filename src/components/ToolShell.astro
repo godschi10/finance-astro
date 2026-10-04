@@ -36,12 +36,13 @@ interface Props {
   related?: Related[];       // "Related guides" .g3 of .app-card
   relatedTitle?: string;     // live: "Related guides"
   disclaimer?: string;       // .fx-disclaimer (live: rate-source honesty note)
+  ogImage?: { url: string; width: number; height: number; alt?: string } | null; // per-tool share card (passed straight to Layout)
 }
 const {
   title, description, slug, tool, lede, verified, badge = "Free · No sign-up · Always updated",
   crumb = tool,
   faqs = [], rawFaq = false, copy = [], ctas = [], ctaNote = "", ctaTitle = "Get the best rate",
-  related = [], relatedTitle = "Related guides", disclaimer = "",
+  related = [], relatedTitle = "Related guides", disclaimer = "", ogImage = null,
 } = Astro.props;
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 const ld = (obj: unknown) => JSON.stringify(obj).replace(/</g, "\\u003c");
@@ -56,7 +57,7 @@ if (faqs.length) graph.push({
   mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
 });
 ---
-<Layout title={title} description={description} crumb={tool}>
+<Layout title={title} description={description} crumb={tool} ogImage={ogImage}>
 <script type="application/ld+json" set:html={ld({ "@context": "https://schema.org", "@graph": graph })}></script>
 <div class="apps-hero">
   <div style="position:absolute;top:0;right:0;bottom:0;left:0;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:28px 28px;pointer-events:none"></div>

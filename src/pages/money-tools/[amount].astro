@@ -30,7 +30,7 @@ const opps = amountOpposite(slug).map((s) => ({ slug: s, h1: amountSeo(s, amount
 const equation = `${amountFmt(d.amount, d.from)} = ${amountFmt(d.converted, d.to)}`;
 const unitLine = unitLineOf(d.unit_rate, d.rev_rate, d.from, d.to);
 ---
-<ToolShell title={`${d.seo.title} - GWill Finance`} description={d.seo.meta_desc} slug={slug} tool={d.seo.h1} lede={lede} verified={`Mid-market ${FX_SNAPSHOT.as_of} (${FX_SNAPSHOT_LABEL}) · receipt refreshes live`} badge={`Live rate · updated ${FX_SNAPSHOT.as_of}`} faqs={faqs} rawFaq>
+<ToolShell title={`${d.seo.title} - GWill Finance`} description={d.seo.meta_desc} slug={slug} tool={d.seo.h1} lede={lede} verified={`Mid-market ${FX_SNAPSHOT.as_of} (${FX_SNAPSHOT_LABEL}) · receipt refreshes live`} badge={`Live rate · updated ${FX_SNAPSHOT.as_of}`} faqs={faqs} rawFaq ogImage={{ url: `${base}images/og/tool-amount.png`, width: 1200, height: 630, alt: "Amount Converter" }}>
 <div class="fx-card">
 <div class="fxap-hero">
 <p class="fxap-figure" id="am-fig"><span class="fxap-side">{amountFmt(d.amount, d.from)}</span><span class="fxap-eq">=</span><span class="fxap-side fxap-result" id="am-fig-r">{amountFmt(d.converted, d.to)}</span></p>
