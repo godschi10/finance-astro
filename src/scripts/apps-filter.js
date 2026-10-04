@@ -66,7 +66,7 @@ Table of Contents
 
   pills.forEach(function (pill) {
     pill.addEventListener('click', function () {
-      if (pill.classList.contains('on')) return; // already showing this
+      if (pill.classList.contains('on')) return;
       applyFilter(pill.getAttribute('data-filter') || 'all', pill);
     });
   });

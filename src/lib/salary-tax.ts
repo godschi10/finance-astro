@@ -8,7 +8,7 @@ export interface PayeBand {
   rate: number;
 }
 
-export function payeBandsOld(): PayeBand[] {
+export function payeBands2023(): PayeBand[] {
   return [
     { low: 0, high: 300000, rate: 0.07 },
     { low: 300000, high: 600000, rate: 0.11 },
@@ -18,6 +18,9 @@ export function payeBandsOld(): PayeBand[] {
     { low: 3200000, high: null, rate: 0.24 },
   ];
 }
+
+/** Alias kept: gate scripts/vectors-check.mjs calls payeBandsOld(). */
+export const payeBandsOld = payeBands2023;
 
 export function payeBands2026(): PayeBand[] {
   return [
@@ -93,7 +96,7 @@ export function payeCalculate(
 
   let tax = 0;
   if (!exempt) {
-    const bands = use2026 ? payeBands2026() : payeBandsOld();
+    const bands = use2026 ? payeBands2026() : payeBands2023();
     for (const b of bands) {
       if (taxable <= b.low) break;
       if (b.high === null) {
@@ -142,8 +145,8 @@ export function payeCompare(
   otherMonthly = 0,
 ): PayeCompare {
   const old = payeCalculate(monthlyGross, pensionRate, nhfMonthly, annualRent, false, nhisMonthly, lifeMonthly, otherMonthly);
-  const neu = payeCalculate(monthlyGross, pensionRate, nhfMonthly, annualRent, true, nhisMonthly, lifeMonthly, otherMonthly);
-  return { old, new: neu, save_monthly: neu.net_monthly - old.net_monthly, save_annual: neu.net_annual - old.net_annual };
+  const cur = payeCalculate(monthlyGross, pensionRate, nhfMonthly, annualRent, true, nhisMonthly, lifeMonthly, otherMonthly);
+  return { old, new: cur, save_monthly: cur.net_monthly - old.net_monthly, save_annual: cur.net_annual - old.net_annual };
 }
 
 export interface BreakdownRow {
@@ -185,11 +188,11 @@ export interface BandCompare {
 }
 
 export function payeBandCompare(taxable: number): BandCompare {
-  const old = payeBandBreakdown(taxable, payeBandsOld());
-  const neu = payeBandBreakdown(taxable, payeBands2026());
+  const old = payeBandBreakdown(taxable, payeBands2023());
+  const cur = payeBandBreakdown(taxable, payeBands2026());
   const oldTax = old.reduce((s, r) => s + r.tax, 0);
-  const newTax = neu.reduce((s, r) => s + r.tax, 0);
-  return { old, new: neu, old_tax: oldTax, new_tax: newTax, save_annual: oldTax - newTax };
+  const newTax = cur.reduce((s, r) => s + r.tax, 0);
+  return { old, new: cur, old_tax: oldTax, new_tax: newTax, save_annual: oldTax - newTax };
 }
 
 export interface BonusTax {
@@ -220,5 +223,5 @@ export function payeBonusTax(
     const taxWithBonus = withBonus.reduce((s, b) => s + b.tax, 0);
     bonusTax = Math.max(0, taxWithBonus - base.tax_annual);
   }
-  return { bonus, tax: bonusTax, net: bonus - bonusTax, rate: bonus > 0 ? bonusTax / bonus : 0 };
+  return { bonus, tax: bonusTax, net: bonus - bonusTax, rate: bonusTax / bonus };
 }

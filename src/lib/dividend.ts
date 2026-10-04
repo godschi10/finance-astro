@@ -50,7 +50,7 @@ export interface DividendProjection {
   yield: number;
   end_price: number;
   end_value: number;
-  divs: number[];
+  divs: number;
   cash_total: number;
   gain: number;
   cagr: number;
@@ -74,7 +74,7 @@ export function dividendProject(
   years = Math.max(1, Math.min(40, Math.trunc(years)));
 
   const shares = price > 0 ? investment / price : 0;
-  const yld = price > 0 ? dps / price : 0;
+  const initialYield = price > 0 ? dps / price : 0;
 
   const yearly: DividendYear[] = [];
   let cashTotal = 0;
@@ -104,17 +104,14 @@ export function dividendProject(
   const gain = totalEnd - investment;
   const cagr = investment > 0 && totalEnd > 0 ? Math.pow(totalEnd / investment, 1 / years) - 1 : 0;
 
-  // NOTE: PHP returns the per-year dividend list under the `divs` key in some
-  // builds and the cash total in others; vectors expect `divs` numeric total
-  // plus `cash_total`. We expose both: divs = cash total (numeric parity).
   return {
     investment, price, dps,
     price_growth: priceGrowth, div_growth: divGrowth,
-    years, drip, shares, yield: yld,
+    years, drip, shares, yield: initialYield,
     end_price: endPrice, end_value: endValue,
-    divs: cashTotal as unknown as number[],
+    divs: cashTotal,
     cash_total: cashTotal, gain, cagr, yearly,
-  } as unknown as DividendProjection;
+  };
 }
 
 /** Seeded worked example (mirrors the PHP template seed). */

@@ -51,7 +51,7 @@
             msg.textContent = (d.data && d.data.message) || "Message sent!";
             form.replaceWith(msg);
           } else {
-            const err = (d && d.data && d.data.message) || "Something went wrong. Please try again.";
+            const err = (d && d.data && d.data.message) || "Couldn't send that. Check your connection and try again.";
             status.textContent = err;
             status.classList.add("gwill-form__status--error");
             setLoading(form, submit, false);

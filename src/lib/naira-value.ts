@@ -105,6 +105,5 @@ export function nairaValueSave(
   };
 }
 
-export function nairaValueSeed(): { value: number; infl: number; years: number; months: number } {
-  return { value: 1000000, infl: 0.2, years: 5, months: 0 };
-}
+// KING FINGERPRINT FIX 2026-10-04: single seed convention — consts everywhere.
+export const NAIRA_VALUE_SEED = { value: 1000000, infl: 0.2, years: 5, months: 0 };

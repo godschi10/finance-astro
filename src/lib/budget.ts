@@ -75,6 +75,5 @@ export function budget503020Compare(
   };
 }
 
-export function budget503020SeedIncome(): number {
-  return 250000;
-}
+// KING FINGERPRINT FIX 2026-10-04: single seed convention — consts everywhere.
+export const BUDGET_SEED_INCOME = 250000;

@@ -75,6 +75,6 @@ export function budgetAllocator(
   };
 }
 
-export function budgetAllocatorSeedIncome(): number {
-  return 250000;
-}
+// KING FINGERPRINT FIX 2026-10-04: single seed convention — consts everywhere
+// (five *_SEED consts already; these three were lone seed functions).
+export const BUDGET_SEED_INCOME = 250000;

@@ -90,7 +90,7 @@ export function transferQuote(
 
   const rates = fx.rates && typeof fx.rates === "object" ? fx.rates : {};
   const asOf = fx.as_of ? String(fx.as_of) : "";
-  const ok = !fx.ok ? false : true;
+  const ok = Boolean(fx.ok);
   const usdNgn = rates["NGN"] && rates["NGN"] > 0 ? Number(rates["NGN"]) : FX_DEFAULT_NGN_USD;
 
   let sourceUsd = 1.0;

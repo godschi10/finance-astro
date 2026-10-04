@@ -47,7 +47,7 @@ export function cryptoProfit(
   const sellFeeNgn = sellGross * sellFee;
   const sellNet = sellGross - sellFeeNgn;
   const profit = sellNet - invest;
-  const roi = invest > 0 ? profit / invest : 0;
+  const roi = profit / invest;
   const feesNgn = buyFeeNgn + flatNgn + sellFeeNgn;
   const priceGap = coins * (sellRate - buyRate);
   const breakEven = coins > 0 && 1 - sellFee > 0 ? invest / (coins * (1 - sellFee)) : 0;

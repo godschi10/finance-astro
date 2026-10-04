@@ -82,7 +82,7 @@ const checks = [
     has(indexTpl, '<h1 class="hero-h"><span class="g">Nigerian money.</span><br><span class="w">Explained.</span></h1>')],
   ["hero sub copy", has(indexTpl, "Savings, investing, dollar accounts, crypto, and every fintech app worth your attention. Tested by Gwill. No jargon. No AI slop.")],
   ["hero CTAs are .bh / .bhg (not .btn)", count(indexTpl, 'class="bh"') === 1 && count(indexTpl, 'class="bhg"') === 1],
-  ["primary CTA copy + target", has(indexTpl, 'class="bh" href={`${base}articles/`}>Browse All Articles →</a>')],
+  ["primary CTA copy + target (KING FINGERPRINT FIX 2026-10-04: sentence case — 'Browse all articles')", has(indexTpl, 'class="bh" href={`${base}articles/`}>Browse all articles →</a>')],
   // KING OVERRIDE 2026-10-02 (v0.7.10): the hero's secondary CTA now targets
   // the money calculators, NOT the live WP target /apps/. The King's reason:
   // "that 'Finance Apps' button should be changed and linked to the finance
@@ -145,8 +145,8 @@ const checks = [
   // ── 8. newsletter ─────────────────────────────────────────────────────────
   ["newsletter band wrapper", has(indexTpl, '<div class="nl-s">') && has(indexTpl, '<div class="nl-copy">')],
   ["newsletter heading copy", has(indexTpl, '<h2 class="nl-h">Nigerian money news, weekly.</h2>')],
-  ["newsletter blurb is the shipped copy incl. the ⚡ WP's default lacks",
-    has(indexTpl, "Rate changes, app reviews, and the financial moves worth making. Free, no spam, unsubscribe anytime. ⚡")],
+  ["newsletter blurb is the shipped copy (KING FINGERPRINT FIX 2026-10-04: stray ⚡ removed — port-introduced decoration WP's default lacks)",
+    has(indexTpl, "Rate changes, app reviews, and the financial moves worth making. Free, no spam, unsubscribe anytime.")],
   ["newsletter meta = 3 ✓ items + 2 dots", count(indexTpl, "✓ ") === 3 && count(indexTpl, 'class="dot"') === 2],
   ["form prompt copy", has(indexTpl, "Get new posts in your inbox.")],
   ["form is .gwill-form.gwill-form--newsletter, method=post, novalidate",
@@ -162,8 +162,8 @@ const checks = [
   ["submit carries both WP labels", has(indexTpl, '<span class="gwill-form__submit-text">Subscribe</span>') && has(indexTpl, '<span class="gwill-form__submit-loading" aria-hidden="true">Subscribing…</span>')],
   ["status region is a live alert", has(indexTpl, '<div class="gwill-form__status" role="alert" aria-live="polite"></div>')],
   ["no 'no email field here yet' draft notice", !has(indexTpl, "No email field here yet") && !has(indexTpl, "fake control")],
-  ["the form explains itself honestly instead of faking a subscription",
-    has(indexJs, "the list opens at launch, so nothing was sent") && !has(indexJs, "location.href")],
+  ["homepage newsletter submits via the shared gwill-forms.js path like /newsletter/ (KING FINGERPRINT FIX 2026-10-04: the 'not connected' stub contradicted the live list — the form carries gwill-form class + data-success-url, so the stub only blocked real subscriptions; hijack deleted, shared path owns the submit)",
+    !has(indexJs, "nothing was sent") && has(indexTpl, 'data-success-url=')],
 
   // ── behaviour (ported from main.js / category-filter.js) ──────────────────
   ["pill strip is wrapped with WP's chrome", has(indexJs, "cp-strip-wrap") && has(indexJs, "cp-scroll-btn cp-scroll-prev") && has(indexJs, "cp-scroll-btn cp-scroll-next")],

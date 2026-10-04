@@ -163,10 +163,10 @@ const cases = [
     crypto: C.CRYPTO_SEED,
     dividend: D.DIVIDEND_SEED,
     emergency: EM.EMERGENCY_SEED,
-    naira: NV.nairaValueSeed(),
+    naira: NV.NAIRA_VALUE_SEED,
     transfer: T.TRANSFER_SEED,
-    budget503020: B.budget503020SeedIncome(),
-    allocator: AL.budgetAllocatorSeedIncome(),
+    budget503020: B.BUDGET_SEED_INCOME,
+    allocator: AL.BUDGET_SEED_INCOME,
   }],
 ];
 

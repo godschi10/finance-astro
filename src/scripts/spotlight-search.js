@@ -202,7 +202,7 @@ import { norm, toks, smartMatch, highlight, escHtml } from './search-core.js';
     if (v.length < MIN_CHARS) {
       results.innerHTML = '';
       results.classList.remove('has-results');
-      if (v.length) showState('Keep typing, at least 2 characters.');
+      if (v.length) showState('Keep typing, at least 2 characters…');
       return;
     }
     timer = setTimeout(function () { renderResults(v); }, DEBOUNCE);

@@ -1,9 +1,9 @@
 ---
 import ToolShell from "../../components/ToolShell.astro";
-import { nairaValue, nairaValueHistory, nairaValueSeed } from "../../lib/naira-value";
+import { nairaValue, nairaValueHistory, NAIRA_VALUE_SEED } from "../../lib/naira-value";
 import { formatGrouped } from "../../lib/format";
 const n = (v: number) => formatGrouped(v, 0);
-const s = nairaValueSeed();
+const s = NAIRA_VALUE_SEED;
 const seed = nairaValue(s.value, s.infl, s.years, s.months);
 const hist = nairaValueHistory(s.value, s.infl, s.years);
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;

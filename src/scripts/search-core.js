@@ -20,19 +20,17 @@
  *   +34 / prefix +28 / fuzzy +15, else title +20 / slug +12 / excerpt +8 /
  *   category +6; ALL-tokens-in-title +40, ALL-tokens-anywhere +25;
  *   ties → newer first; top N).
- * - highlight(): escapeHtml FIRST (& first), then case-insensitive marks,
- *   longest tokens first (no double-wraps). Tokens are a-z0-9 post-norm →
- *   safe against escaped text.
+ * - highlight(): single-pass mark on RAW text BEFORE escaping (longest
+ *   tokens first, no double-wraps) — marking escaped text hit entity
+ *   interiors (e.g. "amp" in "&amp;").
  *
  * @package GWill_Finance
  */
 
-// ── escHtml ─────────────────────────────────────────────────────
 export function escHtml(s) {
-  return String(s).replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"');
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// ── norm ────────────────────────────────────────────────────────
 export function norm(s) {
   s = String(s || '').toLowerCase();
   if (s.normalize) s = s.normalize('NFD'); // strips diacritics
@@ -41,14 +39,12 @@ export function norm(s) {
     .replace(/\s+/g, ' ').trim();
 }
 
-// ── toks ────────────────────────────────────────────────────────
 export function toks(s) {
   var n = norm(s);
   return n ? n.split(' ') : [];
 }
 
 // Bounded Levenshtein, typo tolerance (returns 9 when clearly too far).
-// ── editDist ────────────────────────────────────────────────────
 export function editDist(a, b) {
   var la = a.length, lb = b.length;
   if (a === b) return 0;
@@ -71,7 +67,6 @@ export function editDist(a, b) {
 // so 2-char tokens never fuzzy-match into junk). The first-letter anchor
 // blocks unrelated words that happen to sit within edit distance
 // ("battery" vs "matter" = dist 2, same length, unrelated meaning).
-// ── fuzzyOk ─────────────────────────────────────────────────────
 export function fuzzyOk(tok, word) {
   var l = word.length;
   if (l >= 6) return editDist(tok, word) <= 2 && tok[0] === word[0];
@@ -79,7 +74,6 @@ export function fuzzyOk(tok, word) {
   return tok === word;
 }
 
-// ── escRe ───────────────────────────────────────────────────────
 export function escRe(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -152,15 +146,17 @@ export function smartMatch(query, posts, maxResults) {
   return scored.slice(0, MAX);
 }
 
-// ── highlight ───────────────────────────────────────────────────
 export function highlight(text, qtoks) {
-  var out = escHtml(text);
-  // Longest tokens first so overlapping marks never double-wrap.
-  var ordered = qtoks.slice().sort(function (a, b) { return b.length - a.length; });
-  for (var i = 0; i < ordered.length; i++) {
-    var tok = ordered[i];
-    if (tok.length < 2) continue;
-    out = out.replace(new RegExp('(' + escRe(tok) + ')', 'gi'), '<mark>$1</mark>');
-  }
-  return out;
+  // Mark BEFORE escaping: single-pass split on raw text (longest tokens
+  // first so the alternation prefers the longest), escape each segment,
+  // wrap matches. Marking escaped text hit entity interiors (query "amp"
+  // inside "&amp;" → "&<mark>amp</mark>;") and shredded the entity, and
+  // sequential passes could match inside earlier <mark> tags.
+  var ordered = qtoks.slice().sort(function (a, b) { return b.length - a.length; })
+    .filter(function (t) { return t.length >= 2; });
+  if (!ordered.length) return escHtml(text);
+  var re = new RegExp('(' + ordered.map(escRe).join('|') + ')', 'gi');
+  return String(text).split(re).map(function (part, i) {
+    return (i % 2 === 1) ? '<mark>' + escHtml(part) + '</mark>' : escHtml(part);
+  }).join('');
 }

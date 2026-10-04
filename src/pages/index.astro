@@ -43,7 +43,7 @@ const trim32 = (s: string) => {
 <h1 class="hero-h"><span class="g">Nigerian money.</span><br><span class="w">Explained.</span></h1>
 <p class="hero-sub">Savings, investing, dollar accounts, crypto, and every fintech app worth your attention. Tested by Gwill. No jargon. No AI slop.</p>
 <div class="hero-acts">
-<a class="bh" href={`${base}articles/`}>Browse All Articles →</a>
+<a class="bh" href={`${base}articles/`}>Browse all articles →</a>
 <a class="bhg" href={`${base}money-tools/`}>Money Calculators</a>
 </div>
 <div class="hero-cats">
@@ -107,7 +107,7 @@ const trim32 = (s: string) => {
 <div class="nl-s">
 <div class="nl-copy">
 <h2 class="nl-h">Nigerian money news, weekly.</h2>
-<p>Rate changes, app reviews, and the financial moves worth making. Free, no spam, unsubscribe anytime. ⚡</p>
+<p>Rate changes, app reviews, and the financial moves worth making. Free, no spam, unsubscribe anytime.</p>
 <div class="nl-meta"><span>✓ Free</span><span class="dot"></span><span>✓ No spam</span><span class="dot"></span><span>✓ Unsubscribe anytime</span></div>
 </div>
 <div class="gwill-newsletter">
@@ -264,25 +264,13 @@ var done=function(){img.classList.add("gwill-img-in");};
 if(img.complete)done();else{img.addEventListener("load",done);img.addEventListener("error",done);}
 });
 
-// ── 5. newsletter — honest submit ─────────────────────────────────────────
-// The WP form POSTs to admin-ajax (action=gwill_contact_form) and redirects to
-// /newsletter-thanks/. This build has no subscriber backend and no list yet, so
-// the form stays pixel-identical but says what actually happened instead of
-// faking a subscription. Nothing is sent anywhere.
-var nform=document.querySelector(".gwill-form--newsletter");
-if(nform){
-nform.addEventListener("submit",function(e){
-e.preventDefault();
-var status=nform.querySelector(".gwill-form__status");
-var input=nform.querySelector('input[type="email"]');
-if(!status)return;
-if(input&&!input.checkValidity()){
-status.textContent="Enter a valid email address.";
-return;
-}
-status.textContent="This form isn't connected yet — the list opens at launch, so nothing was sent.";
-});
-}
+// ── 5. newsletter — shared gwill-forms.js path ─────────────────────────────
+// KING FINGERPRINT FIX 2026-10-04: the old inline stub ("This form isn't
+// connected yet…") contradicted the live list — /newsletter/ subscribes for
+// real through gwill-forms.js, and this form carries the same gwill-form class
+// + data-success-url, so the stub only blocked real subscriptions. Deleted the
+// hijack; the shared path owns the submit now (same "Subscribing…" →
+// /newsletter-thanks/ contract as /newsletter/).
 }catch(e){}
 })();
 

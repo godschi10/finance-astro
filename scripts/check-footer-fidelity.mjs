@@ -59,7 +59,7 @@ const checks = [
   ["install buttons x2 each (desktop+mobile)", count(footer, "data-install-app") === 2 && count(footer, "data-install-ios") === 2],
   ["install buttons start hidden (WP contract)", count(footer, "hidden") >= 4],
   ["install labels + states from WP", has(footer, 'data-label-alt="Install not available"') && has(footer, 'data-label-done="App installed"')],
-  ["iOS button dashed variant + guide text", count(footer, 'class="finstall finstall--ios"') === 2 && has(footerRaw, "Tap Share (⌫) then “Add to Home Screen”")],
+  ["iOS button dashed variant + guide text (KING FINGERPRINT FIX 2026-10-04: ⌫ is the delete key, not the Share icon — wording fixed)", count(footer, 'class="finstall finstall--ios"') === 2 && has(footerRaw, "Tap Share, then “Add to Home Screen”")],
 
   // ── columns + bottom bar ──────────────────────────────────────────────────
   ["column titles: Articles / Finance Apps / Network (desktop)", ["Articles", "Finance Apps", "Network"].every((t) => has(footerRaw, t))],
@@ -106,7 +106,7 @@ const checks = [
   ["phone: .footer hidden / .mfooter shown at ≤767px", /@media \(max-width: 767px\) \{ .*\.mfooter \{ display: block; \} \.footer \{ display: none; \} \}/.test(css)],
   ["desktop/tablet: .mfooter hidden at ≥768px", css.includes("@media (min-width: 768px) { .mfooter { display: none; } }")],
   ["touch: hover style must not stick after a tap (WP section 54)", css.includes("@media (hover: none) { .fsoc .soci:hover { border-color: var(--dark-b); color: var(--dark-dim); transform: none; } }")],
-  ["bell explains itself when there is no push backend", has(footerRaw, "Push notifications need a push service")],
+  ["bell explains itself when there is no push backend (KING FINGERPRINT FIX 2026-10-04: dev-speak replaced with plain words)", has(footerRaw, "Notifications aren't available yet")],
   ["every icon is rendered as markup, never escaped text", !/>\{ICON\./.test(footerRaw) && (footerRaw.match(/set:html=\{ICON/g) || []).length >= 8],
   ["print: drop the grid + CTA row", css.includes("@media print { .ftop, .fpush, .ad-bg--footer { display: none !important; } }")],
 ];

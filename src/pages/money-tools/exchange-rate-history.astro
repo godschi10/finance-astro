@@ -20,12 +20,12 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="fx-card">
 <div class="tgrid c2">
 <div class="field"><label for="xh-days">Window</label><select id="xh-days"><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option></select></div>
-<div class="field"><label for="xh-base">Base</label><select id="xh-base" disabled><option>USD → NGN (more bases land later)</option></select></div>
+<div class="field"><label for="xh-base">Base</label><select id="xh-base" disabled><option>USD → NGN (more coming)</option></select></div>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">USD → NGN · <span id="xh-n">0 points on this device</span></p>
 <p class="receipt-fig" id="xh-fig">₦{fxNumber(seed.current, 0)}</p>
-<p class="receipt-sub" id="xh-sub">Snapshot anchor — fetch live to start the trend</p>
+<p class="receipt-sub" id="xh-sub">Snapshot — the live rate loads on each visit</p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div id="xh-chart" role="img" aria-label="Dollar to naira trend chart"></div>
 <p class="receipt-foot" id="xh-foot">Snapshot · {FX_SNAPSHOT.as_of}</p>
@@ -87,7 +87,7 @@ async function render() {
   const arrow = s.direction === "up" ? "▲" : "▼";
   (document.getElementById("xh-sub") as HTMLElement).textContent = win.length > 1
     ? `${arrow} ₦${fxNumber(Math.abs(s.change), 0)} (${s.change_pct.toFixed(1)}%) across the window · low ₦${fxNumber(s.min, 0)} · high ₦${fxNumber(s.max, 0)}`
-    : "Snapshot anchor — fetch live to start the trend";
+    : "Snapshot — the live rate loads on each visit";
   (document.getElementById("xh-foot") as HTMLElement).textContent = win.length > 1 ? `${win.length} device-collected points` : "Snapshot · Sep 2026";
   draw(win);
 }

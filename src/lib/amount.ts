@@ -58,23 +58,23 @@ export interface AmountSeo {
 /** Keyword-targeted title/meta/H1 (generated unless the entry overrides). */
 export function amountSeo(slug: string, c: AmountCfg): AmountSeo {
   const a = Number(c.amount);
-  const amlf = millionLabel(a);
-  const amtl = amlf.toLowerCase();
+  const label = millionLabel(a);
+  const labelLower = label.toLowerCase();
   let h1: string;
   let title: string;
   let desc: string;
   if ("NGN" === c.to) {
     const fromName = CUR_NAMES[c.from] ?? c.from;
     const fromLower = CUR_LOWER[c.from] ?? String(c.from).toLowerCase();
-    h1 = `${amlf} ${fromName} to Naira`;
+    h1 = `${label} ${fromName} to Naira`;
     title = `${h1}, Live Rate`;
-    desc = `How much is ${amtl} ${fromLower} in naira today? The live mid-market figure, what it buys in Nigeria, and how to get the best real-world rate.`;
+    desc = `How much is ${labelLower} ${fromLower} in naira today? The live mid-market figure, what it buys in Nigeria, and how to get the best real-world rate.`;
   } else {
     const toName = CUR_NAMES[c.to] ?? c.to;
     const toLower = CUR_LOWER[c.to] ?? String(c.to).toLowerCase();
-    h1 = `${amlf} Naira to ${toName}`;
+    h1 = `${label} Naira to ${toName}`;
     title = `${h1}, Live Rate`;
-    desc = `What is ${amtl} naira in ${toLower} today? The live mid-market answer plus real Nigerian context on fees, spreads and currency goals.`;
+    desc = `What is ${labelLower} naira in ${toLower} today? The live mid-market answer plus real Nigerian context on fees, spreads and currency goals.`;
   }
   return {
     title: c.title ?? title,

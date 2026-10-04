@@ -41,7 +41,7 @@ const SOCIALS = [
 ] as const;
 
 const GUID =
-  "Tap Share (⌫) then “Add to Home Screen”, then open the app from your Home Screen to enable notifications.";
+  "Tap Share, then “Add to Home Screen”, then open the app from your Home Screen to turn on notifications.";
 const LINK_COLS_DESKTOP = [
   { title: "Articles", links: FOOTER_GROUPS.articles },
   { title: "Finance Apps", links: FOOTER_GROUPS.apps },
@@ -279,7 +279,7 @@ const LEGAL = [
     var PUSH_ENDPOINT = "";
     var canPush = !!PUSH_ENDPOINT && "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
     var NOTE =
-      "Push notifications need a push service, which this static build does not have yet. Nothing was subscribed.";
+      "Notifications aren't available yet — nothing was turned on.";
     document.querySelectorAll("[data-push-bell]").forEach(function (bell) {
       bell.addEventListener("click", function () {
         if (canPush) return;

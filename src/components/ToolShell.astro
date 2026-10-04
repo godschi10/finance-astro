@@ -85,7 +85,7 @@ if (faqs.length) graph.push({
   )}
   {faqs.length > 0 && (
     <div class="fx-copy art-body tool-faq" aria-label="Frequently asked questions" style="margin-top:24px">
-      <h2>Questions, answered</h2>
+      <h2>Questions</h2>
       {faqs.map((f) => (<details class="faq"><summary>{f.q}</summary>{rawFaq ? <p set:html={f.a}></p> : <p>{f.a}</p>}</details>))}
     </div>
   )}

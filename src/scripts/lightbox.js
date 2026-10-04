@@ -15,21 +15,13 @@
 /*
 Table of Contents
 1. State
-2. Build DOM
-3. build
-4. Touch / swipe
-5. open
-6. close
-7. navigate
-8. Show current
-9. showImage
-10. Presentational-image guard
-11. isPresentational
-12. Gather images in context
-13. gatherImages
-14. Init: attach click handlers
-15. init
-16. Kick off after DOM
+2. Build DOM (build)
+3. Touch / swipe
+4. open / close / navigate
+5. showImage
+6. Presentational-image guard (isPresentational)
+7. gatherImages
+8. init + DOM-ready kickoff
 */
 
 (function() {
@@ -39,14 +31,12 @@ Table of Contents
   // fallback keeps output identical when no translation is loaded.
   var L_I18N = ( typeof window.GwillLightbox !== 'undefined' && window.GwillLightbox.i18n ) || {};
 
-  // ── 1. State ──────────────────────────────────────────────────
   var overlay, img, closeBtn, prevBtn, nextBtn, counterEl, captionEl;
   var currentImg, images, currentIndex;
   // The image that opened the dialog, focus returns here on close (2.4.3).
   var lastTrigger = null;
 
   // ── 2. Build DOM ──────────────────────────────────────────────
-  // ── 3. build ──────────────────────────────────────────────────
   function build() {
     if (overlay) return;
 
@@ -72,7 +62,7 @@ Table of Contents
     counterEl = overlay.querySelector('.gl-counter');
     captionEl = overlay.querySelector('.gl-caption');
 
-    // Events
+    // Overlay / nav / keyboard bindings
     closeBtn.addEventListener('click', close);
     overlay.addEventListener('click', function(e) {
       if (e.target === overlay) close();
@@ -125,7 +115,6 @@ Table of Contents
     }, { passive: true });
   }
 
-  // ── 5. open ───────────────────────────────────────────────────
   function open(imgEl, index) {
     build();
     images = gatherImages(imgEl);
@@ -139,7 +128,6 @@ Table of Contents
     if (closeBtn) closeBtn.focus();
   }
 
-  // ── 6. close ──────────────────────────────────────────────────
   function close() {
     overlay.classList.remove('gl-open');
     document.body.style.overflow = '';
@@ -147,7 +135,6 @@ Table of Contents
     if (lastTrigger && lastTrigger.focus) { lastTrigger.focus(); lastTrigger = null; }
   }
 
-  // ── 7. navigate ───────────────────────────────────────────────
   function navigate(dir) {
     if (!images || images.length < 2) return;
     currentIndex = (currentIndex + dir + images.length) % images.length;
@@ -155,7 +142,6 @@ Table of Contents
   }
 
   // ── 8. Show current ───────────────────────────────────────────
-  // ── 9. showImage ──────────────────────────────────────────────
   function showImage() {
     if (!images || !images[currentIndex]) return;
     var el = images[currentIndex];
@@ -172,15 +158,12 @@ Table of Contents
     img.src = fullSrc || src;
     img.alt = el.alt || '';
 
-    // Caption
     var fig = el.closest('figure');
     var cap = fig ? fig.querySelector('.wp-element-caption, figcaption') : null;
     captionEl.textContent = cap ? cap.textContent : '';
 
-    // Counter
     counterEl.textContent = images.length > 1 ? (currentIndex + 1) + ' / ' + images.length : '';
 
-    // Nav visibility
     prevBtn.style.display = images.length > 1 ? '' : 'none';
     nextBtn.style.display = images.length > 1 ? '' : 'none';
   }
@@ -191,7 +174,6 @@ Table of Contents
   // agentic-browsing audit: "Elements marked as presentational should be
   // consistently ignored". Marking them role=button made the tree
   // ambiguous (interactive AND presentational at once).
-  // ── 11. isPresentational ──────────────────────────────────────
   function isPresentational(img) {
     if (img.closest('.wp-block-cover')) return true;
     if (img.getAttribute('role') === 'presentation') return true;
@@ -201,7 +183,6 @@ Table of Contents
   }
 
   // ── 12. Gather images in context ──────────────────────────────
-  // ── 13. gatherImages ──────────────────────────────────────────
   function gatherImages(startEl) {
     // If inside a gallery block, get all images in that gallery
     var gallery = startEl.closest('.wp-block-gallery');
@@ -217,7 +198,6 @@ Table of Contents
   }
 
   // ── 14. Init: attach click handlers ───────────────────────────
-  // ── 15. init ──────────────────────────────────────────────────
   function init() {
     // Keyboard-openable images (WCAG 2.1.1): every unlinked art-body image
     // becomes a focusable button that opens the lightbox on Enter/Space.
@@ -242,19 +222,16 @@ Table of Contents
     });
 
     document.addEventListener('click', function(e) {
-      // Only handle clicks on images inside .art-body
       var target = e.target.closest('.art-body img');
       if (!target) return;
       // Skip presentational/decorative images (cover backgrounds etc.)
       if (isPresentational(target)) return;
 
-      // Skip if the image is inside an <a> tag (already linked)
       if (target.closest('a')) return;
 
-      // Skip if inside a gallery that uses native linking
+      // Galleries are scoped inside gatherImages(); every art-body image opens here
       e.preventDefault();
 
-      // Find index
       var allImgs = gatherImages(target);
       var idx = allImgs.indexOf(target);
       open(target, idx !== -1 ? idx : 0);

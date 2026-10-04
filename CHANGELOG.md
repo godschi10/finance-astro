@@ -3,6 +3,29 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.14] — 2026-10-04 — Fingerprint fixes: human comments, human copy, closed escaper hole
+King: *"fix all findings from latest audit before we move on to the next"*
+
+- **Comment trims** (zero behavior change): lightbox TOC collapsed + echo banners
+  deleted (incl. the one false gallery-skip claim rewritten true), search-core's
+  7 name-echo banners deleted, vibe restatements + empty docblock deleted, desk
+  banners downgraded.
+- **Desk speaks English:** "approveing/spaming/trashing" → explicit verb map;
+  past-tense confirmations; token/session/API notes in plain words.
+- **Stale stub deleted:** the homepage "not connected" hijack contradicted the
+  live list — the form now subscribes via gwill-forms.js like /newsletter/.
+- **Seeds unified** to consts; dead guards/ternaries deleted; dividend casts
+  removed (`divs: number`); renames (label/labelLower, cur, initialYield,
+  payeBands2023 with alias for the gate).
+- **escHtml hole closed:** the search escaper was a 4× identity no-op feeding
+  innerHTML — now escapes (`&` first); highlight rewritten mark-before-escape
+  after probes proved entity shredding. Adversarial-proven, no consumer changes.
+- **Microcopy:** server errors in plain words, push/iOS notes fixed, "Questions",
+  "today's rates", emoji stripped, 6 tone unifications.
+- **5 gate pins updated** with overrides recorded. Proofs: build exit 0 / 78 pages;
+  6/6 (article 147/147, vectors 95/0); QA SHIP — strings live in served bytes,
+  XSS probe inert, marks intact, zero JS errors, zero overflow.
+
 ## [0.7.13] — 2026-10-04 — Cleanup audit fixes: dead code pruned, phantom deps pinned
 King: *"Fix all findings before we move to the next."*
 

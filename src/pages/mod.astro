@@ -235,7 +235,7 @@ const POST_NAMES = {
           <button class="mod-tab" data-filter="spam">Spam</button>
           <button class="mod-tab" data-filter="trash">Trash</button>
           <button class="mod-tab" data-filter="all">All</button>
-          <input type="search" id="mod-search" placeholder="Filter loaded page…" aria-label="Filter comments" />
+          <input type="search" id="mod-search" placeholder="Filter these comments…" aria-label="Filter comments" />
         </div>
         <div id="mod-all"></div>
         <div class="mod-pager" id="mod-pager"></div>
@@ -416,7 +416,8 @@ const POST_NAMES = {
       }
 
       function doAction(el, c, action) {
-        say((action === "delete" ? "Deleting" : action + "ing") + " #" + c.id + "…");
+        var verb = action === "approve" ? "Approving" : action === "spam" ? "Spamming" : action === "trash" ? "Trashing" : action === "restore" ? "Restoring" : "Deleting";
+        say(verb + " #" + c.id + "…");
         el.querySelectorAll(".mod-act").forEach(function (b) { b.disabled = true; });
         api("/api/moderation/action", {
           method: "POST",
@@ -424,7 +425,8 @@ const POST_NAMES = {
           body: JSON.stringify({ id: c.id, action: action }),
         }).then(function (res) {
           if (!res.success) throw new Error(res.data && res.data.error || "failed");
-          say("Done: " + action + " #" + c.id + ".");
+          var done = action === "approve" ? "Approved" : action === "spam" ? "Marked spam" : action === "trash" ? "Trashed" : action === "restore" ? "Restored" : "Deleted";
+          say(done + " #" + c.id + ".");
           if (action === "delete") { el.remove(); }
           else {
             var chip = el.querySelector(".mod-chip");
@@ -630,9 +632,9 @@ const POST_NAMES = {
         }).catch(function (e) {
           token = null;
           if (e && e.unauthorized) {
-            say("That token was rejected. Sign out and in again with a valid token.", true);
+            say("That token didn't work. Check it and try again.", true);
           } else {
-            say("Could not reach the comments API. Check your connection and retry.", true);
+            say("Could not reach the comments API. Check your connection and try again.", true);
           }
           lock.hidden = false;
           desk.hidden = true;
@@ -644,7 +646,7 @@ const POST_NAMES = {
         clearJar();
         lock.hidden = false;
         desk.hidden = true;
-        say("Session rejected — sign out and in again.", true);
+        say("Session rejected — please unlock again.", true);
       }
 
       document.getElementById("mod-unlock").addEventListener("submit", function (ev) {

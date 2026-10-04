@@ -46,6 +46,58 @@ King: *"Fix all findings before we move to the next."*
 
 ## ACTIVE — CLEANUP AUDIT, King's order 2026-10-04
 - [x] **FIX LEGS SHIPPED v0.7.13** — full entry below under SHIPPED.
+## ACTIVE — AI-FINGERPRINT AUDIT, King's order 2026-10-04
+Prompt: /home/opc/Astro_Site_Audit/Astro-Code-AI-Fingerprint-Audit-Prompt-1.md
+(5 sections: comments · microcopy · naming/rhythm · docs · overall score 1-10)
+## SHIPPED — 2026-10-04 · FINGERPRINT FIXES — v0.7.14
+King: *"fix all findings from latest audit before we move on to the next"*
+- [x] **All fingerprint findings fixed.** Executed under @manager-opencode: 3 parallel
+      @builders over disjoint files (A: lib + script comment trims; B: vibe pair;
+      C: all other microcopy); @manager-opencode cleared 5 gate-blocked strings,
+      unified seeds, updated 5 gate pins with overrides recorded; escHtml
+      correctness leg with adversarial probes; @qa-inspector proof (SHIP).
+- [x] **Teeth fixed:** desk speaks English ("Approving/Spamming/Trashing/Restoring/
+      Deleting", "Approved/Marked spam/Trashed/Restored/Deleted #12"); dividend
+      type lie removed (`divs: number`, zero casts); stale homepage stub DELETED —
+      the form now really subscribes via gwill-forms.js like /newsletter/ (the
+      "not connected" text contradicted the live list); dead ternaries/guards gone;
+      seeds unified to consts (BUDGET_SEED_INCOME ×2, NAIRA_VALUE_SEED + gate + pages).
+- [x] **Microcopy humanized:** server-fatal/dev-console strings → plain words;
+      push-note + iOS guide fixed (⌫ was the delete key, not Share); "Questions,
+      answered" → "Questions" (all 16 tools); "landscape" → "today's rates";
+      emoji stripped from empty states; 6 tone unifications (… everywhere,
+      Please-form, Nigerian digest, sentence case, hero pill, ellipsis).
+- [x] **escHtml was a REAL HOLE, now closed:** the escaper was a 4× no-op feeding
+      innerHTML sinks — fixed (escape `&` first), and the rewrite exposed +
+      fixed a second latent bug (highlight shredded entities: `amp` matched inside
+      `&amp;`). Proven: XSS vector returns zero live brackets, `amp` no longer
+      shreds, genuine marks still mark. No consumer changes needed.
+- [x] **5 gates updated with overrides recorded** (King-ordered copy changes):
+      homepage CTA casing, blurb ⚡, stub→live-submit invariant, footer glyph +
+      push note. 6/6 green (article 147/147, vectors 95/0).
+- [x] **Proof (QA SHIP):** all new strings in served bytes, old strings gone;
+      adversarial `<img onerror>` search probe — inert text, zero dialogs, marks
+      intact; empty submit never navigates; desk 200; zero JS errors; zero overflow.
+      Report: ~/work/research-notes/fingerprint-proof-qa.md
+
+## ACTIVE — FINGERPRINT FIXES, King's order 2026-10-04
+King: "fix all findings from latest audit before we move on to the next"
+- [x] **FIX LEGS SHIPPED v0.7.14** — full entry below under SHIPPED.
+- [ ] **FIX LEGS** — 3 parallel @builders, DISJOINT files. (closed — shipped v0.7.14)
+      (dividend type lie, transfer boolean, seed unification, dead guards,
+      renames) + S1 script comment trims (lightbox/search-core/apps-filter) +
+      escHtml no-op VERIFY (fix only with proof, else report). Leg B: vibe pair
+      only (vibe-comments.js + VibeComments.astro: S1 trims + S2 string fixes).
+      Leg C: all other S2 microcopy (mod/index/Footer/ToolShell/forms/pages) +
+      6 tone unifications (… everywhere; Please-form; Nigerian digest; sentence
+      case; hero pill; ellipsis). Rule: grep gates for each old string first —
+      gate-anchored = SKIP + report. Proof leg (@qa-inspector after): build +
+      check + served-bytes strings + screenshots.
+- [x] **AUDIT COMPLETE** — master: fingerprint-MASTER-2026-10-04.md.
+      Score **3/10**. Totals: CRITICAL 0 · SHOULD-FIX 28 · NICE-TO-HAVE 47 ·
+      S4 CLEAN. Teeth: "approveing" desk grammar bug, dividend `as unknown as`
+      type lie, stale homepage form contradicting /newsletter/, dead ternary.
+      Fixes wait for the King's word (visible strings + renames = high-risk).
 - [ ] **FIX LEGS** — King: "Fix all findings before we move to the next." (closed — shipped v0.7.13)
       Leg AC (@builder): phantom deps→devDeps, U+200B delete, .gitignore .env,
       engines, dead audit line, node: prefixes, de-absolute gate paths, README/

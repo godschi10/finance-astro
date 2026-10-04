@@ -1,9 +1,9 @@
 ---
 import ToolShell from "../../components/ToolShell.astro";
-import { budget503020, budget503020Compare, budget503020SeedIncome } from "../../lib/budget";
+import { budget503020, budget503020Compare, BUDGET_SEED_INCOME } from "../../lib/budget";
 import { formatGrouped } from "../../lib/format";
 const n = (v: number) => formatGrouped(v, 0);
-const income = budget503020SeedIncome();
+const income = BUDGET_SEED_INCOME;
 const seed = budget503020(income);
 const chk = budget503020Compare(income, 0.5, 0.3, 0.2, 140000, 90000, 30000);
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
