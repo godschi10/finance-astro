@@ -11,7 +11,3 @@ export function paginate<T>(items: T[], perPage: number = PER_PAGE): T[][] {
   for (let i = 0; i < items.length; i += perPage) pages.push(items.slice(i, i + perPage));
   return pages;
 }
-
-export function pageCount(total: number, perPage: number = PER_PAGE): number {
-  return Math.max(1, Math.ceil(total / perPage));
-}

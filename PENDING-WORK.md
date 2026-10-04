@@ -4,6 +4,76 @@ Ledger law: every order gets a line here immediately. `CODED-UNCOMMITTED ≠ DON
 a fix is done only when the served bytes and the rendered page prove it.
 Read this at session start.
 
+## SHIPPED — 2026-10-04 · CLEANUP FIXES — v0.7.13
+King: *"Fix all findings before we move to the next."*
+- [x] **All cleanup findings fixed.** Executed under @manager-opencode: @builder
+      ran Leg AC (config/docs/imports/exports) and Leg B (CSS prune) in parallel
+      over disjoint files; @qa-inspector ran the visual proof leg; @manager-opencode
+      verified both legs' claims, updated 2 gates pinning pre-fix state, committed,
+      pushed, served-verified.
+- [x] **Leg AC:** esbuild+postcss → devDependencies (locked versions, resolution
+      proven, no install); tracked zero-width-space file deleted; .gitignore .env;
+      engines node>=18; 3 gates de-absoluted to fileURLToPath (zero assertions
+      touched); dead audit line removed; node: prefixes; README now lists 6 gates,
+      78 pages, fetch-snapshot step, retired prose note, Layout.astro header anchors;
+      TRANSFER layer chain corrected to the King-reverted reality; article.css token
+      block rewritten RESOLVED; port-posts.py comment fixed to the keep policy;
+      3 unused imports removed; 5 dead exports deleted (payeBreakdown proven
+      redundant — page renders bands inline via payeBandBreakdown); public/sw.js
+      REMOVED (was shipped-but-never-registered; registering would be a feature).
+- [x] **Leg B:** 50 dead tools.css rules pruned (−8.8KB, global sheet); dead ad
+      vocabulary pruned with live-system carve-out (`.ad-slot` base kept — article.js
+      queries it); ticker t-*/gs-pill--plain pruned; 10 dead vibe rules pruned
+      (4 .vibe-rx-t-* kept — live via JS composition); micro-orphans pruned.
+      Total ≈ −19.4KB CSS. The builder's own catch: my audit's "no ad refs" missed
+      the article.js scanner — kept, correctly.
+- [x] **2 gates updated honestly (manager, King-sanctioned pattern):** article gate
+      byte-pin 40720→38197 (pin exists to force review — reviewed); homepage
+      reduced-motion now asserts the invariant (no unguarded animation) instead of
+      pinning `animation-duration:2s` that existed only in dead code. home.css applies
+      zero animations; 5 other sheets keep reduced-motion blocks.
+- [x] **Proof (QA SHIP verdict):** 8 phone pages unchanged (home light/dark luminance
+      185.3 vs 17.3); converter computes (2500→₦3,325,350); salary bands render;
+      comments validation holds with zero POST (no production test post — Worker CORS
+      allowlists production only, pre-existing); ticker paints live figures with zero
+      pruned-class refs; zero JS errors; zero overflow; 6/6 gates.
+      Report: ~/work/research-notes/cleanup-proof-qa.md
+- [x] **Parked with reason (NOT fixed):** wp-block/align forward-compat styles
+      (importer needs them); tsconfig creation (type-error surfacing risk); CI
+      (new infra); prose.retired/port-posts.py/backup branch retention; receipt-div/
+      tool-h used-but-undefined (pre-existing mirror-image, future pass). The King
+      may overrule any of these.
+
+## ACTIVE — CLEANUP AUDIT, King's order 2026-10-04
+- [x] **FIX LEGS SHIPPED v0.7.13** — full entry below under SHIPPED.
+- [ ] **FIX LEGS** — King: "Fix all findings before we move to the next." (closed — shipped v0.7.13)
+      Leg AC (@builder): phantom deps→devDeps, U+200B delete, .gitignore .env,
+      engines, dead audit line, node: prefixes, de-absolute gate paths, README/
+      TRANSFER/article.css/port-posts.py record fixes, 3 unused imports, 4 dead
+      exports (payeBreakdown: delete-if-redundant else report-as-gap), sw.js
+      REMOVE (unregistered=dead; registering would be a new feature).
+      Leg B (@builder, parallel, css-only): tools.css 50-rule prune, ad-*/t-* /
+      gs-pill / vibe-10 / micro-orphan prune. Proof leg (@qa-inspector after):
+      build+check+screenshots+live comment test. Parked with reason: wp-block/
+      align forward-compat (importer needs them), tsconfig creation (type-error
+      surfacing risk), CI (new infra), prose.retired/port-posts.py/backup branch
+      (retention call is the King's).
+Prompt: /home/opc/Astro_Site_Audit/Astro-Cleanup-Audit-Prompt-2.md
+(6 sections: dead code · deps · config/build · comments/docs · naming ·
+assets/public; severity CRITICAL | SHOULD-FIX | NICE-TO-HAVE, file:LINE each)
+- [ ] **AUDIT** — 3 readers dispatched (@manager-opencode): S1+S5 dead/naming,
+      S2+S3 deps/config, S4+S6 comments/assets. Master report consolidates.
+      Fixes wait for the King's word on findings.
+- [x] **AUDIT COMPLETE 2026-10-04** — master:
+      ~/work/research-notes/cleanup-audit-MASTER-2026-10-04.md
+      (sections: s1-s5-dead-naming, s2-s3-deps-config, s4-s6-comments-assets).
+      S1+S5 reader leg aborted 3× (restart + stream failure) — @manager-opencode
+      took it direct per the all-3-failed condition. Totals: CRITICAL 0 ·
+      SHOULD-FIX ~16 · NICE-TO-HAVE ~22 · S5 CLEAN. Headline: 50 dead rules in
+      tools.css (global sheet), dead ad/ticker/vibe classes, 2 phantom deps
+      (esbuild/postcss), tracked zero-width-space file, unregistered sw.js,
+      stale record comments. Fixes AWAIT THE KING'S WORD.
+
 ## ACTIVE — Design Upgrade Phase, King's order 2026-09-30
       "upgrade the design of the entire website, little by little... serious
       research for UI and UX... professional, no AI slop... sitewide first"

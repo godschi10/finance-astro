@@ -1,6 +1,6 @@
 {
   "name": "finance-astro",
-  "version": "0.7.12",
+  "version": "0.7.13",
   "type": "module",
   "scripts": {
     "build": "node scripts/fetch-snapshot.mjs && astro build",
@@ -11,6 +11,11 @@
     "rehype-slug": "^6.0.0"
   },
   "devDependencies": {
+    "esbuild": "^0.27.7",
+    "postcss": "^8.5.28",
     "ws": "^8.22.0"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

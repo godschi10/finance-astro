@@ -110,8 +110,8 @@ for slug, cat in SLUGS:
     open(path, "w").write(front + body)
     made.append((out_slug, slug, os.path.basename(path)))
     print(f"{'REPLACED' if slug in REPLACE else 'ADDED   '} {out_slug:50s} <- {slug} ({mins} min, {words} words)")
-# delete the two port-only lookalikes whose content moved under live slugs
-for gone in ["ngn-dollar-cost-averaging-guide", "p2p-crypto-nigeria-safely", "kuda-vs-traditional-banks-charges", "emergency-fund-naira-inflation"]:
-    p = f"{ART}/{gone}.md"
+# keep the four port-only articles whose content moved under live slugs
+for kept in ["ngn-dollar-cost-averaging-guide", "p2p-crypto-nigeria-safely", "kuda-vs-traditional-banks-charges", "emergency-fund-naira-inflation"]:
+    p = f"{ART}/{kept}.md"
     if os.path.exists(p):
-        print("NOTE keeping port-only article:", gone)
+        print("NOTE keeping port-only article:", kept)

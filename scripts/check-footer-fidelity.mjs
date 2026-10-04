@@ -7,11 +7,15 @@
 // assertions stay readable while remaining exact about values and order.
 import { readFileSync } from "node:fs";
 import assert from "node:assert";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 
-const LAYOUT = "/home/opc/work/finance-astro/src/layouts/Layout.astro";
-const FOOTER = "/home/opc/work/finance-astro/src/components/Footer.astro";
-const SITE = "/home/opc/work/finance-astro/src/data/site.ts";
-const CSSFILE = "/home/opc/work/finance-astro/src/styles/footer.css";
+const here = dirname(fileURLToPath(import.meta.url));
+const root = join(here, "..");
+const LAYOUT = join(root, "src/layouts/Layout.astro");
+const FOOTER = join(root, "src/components/Footer.astro");
+const SITE = join(root, "src/data/site.ts");
+const CSSFILE = join(root, "src/styles/footer.css");
 
 const layout = readFileSync(LAYOUT, "utf8");
 const footerRaw = readFileSync(FOOTER, "utf8");

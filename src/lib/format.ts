@@ -14,11 +14,6 @@ export function roundHalfAway(n: number, dec = 0): number {
   return -Math.floor(-n * f + 0.5 + 1e-9) / f;
 }
 
-/** gwill_paye_number(): ₦-less grouped figure, callers add the symbol. */
-export function payeNumber(n: number, dec = 0): string {
-  return formatGrouped(n, dec);
-}
-
 export function naira(n: number, dec = 0): string {
   return "₦" + formatGrouped(n, dec);
 }

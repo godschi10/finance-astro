@@ -152,39 +152,6 @@ export interface BreakdownRow {
   kind: "income" | "deduction" | "tax" | "net";
 }
 
-export function payeBreakdown(
-  monthlyGross: number,
-  pensionRate = 0.08,
-  nhfMonthly = 0,
-  annualRent = 0,
-  use2026 = true,
-  nhisMonthly = 0,
-  lifeMonthly = 0,
-  otherMonthly = 0,
-): BreakdownRow[] {
-  const r = payeCalculate(monthlyGross, pensionRate, nhfMonthly, annualRent, use2026, nhisMonthly, lifeMonthly, otherMonthly);
-  const rows: BreakdownRow[] = [
-    { label: "Gross annual income", amount: r.gross_annual, kind: "income" },
-    { label: "Pension (employee)", amount: -r.pension_annual, kind: "deduction" },
-    { label: "National Housing Fund (NHF)", amount: -r.nhf_annual, kind: "deduction" },
-    { label: "NHIS (health insurance)", amount: -r.nhis_annual, kind: "deduction" },
-    { label: "Life assurance", amount: -r.life_annual, kind: "deduction" },
-    { label: "Other reliefs", amount: -r.other_annual, kind: "deduction" },
-  ];
-  rows.push(
-    use2026
-      ? { label: "Rent relief (20% of rent, cap ₦500k)", amount: -r.relief_annual, kind: "deduction" }
-      : { label: "Consolidated Relief Allowance (CRA)", amount: -r.relief_annual, kind: "deduction" },
-  );
-  rows.push(
-    { label: "Taxable income", amount: r.taxable, kind: "tax" },
-    { label: "PAYE tax (annual)", amount: -r.tax_annual, kind: "tax" },
-    { label: "Take-home pay (annual)", amount: r.net_annual, kind: "net" },
-    { label: "Take-home pay (monthly)", amount: r.net_monthly, kind: "net" },
-  );
-  return rows;
-}
-
 export interface BandSlice {
   low: number;
   high: number | null;

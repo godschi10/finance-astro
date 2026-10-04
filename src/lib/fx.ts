@@ -98,13 +98,6 @@ export function fxNumber(n: number, dec = 2): string {
   return formatGrouped(n, dec);
 }
 
-/** Honest freshness label — fallback figures are never called "live". */
-export function fxFreshnessLabel(fx: FxRates): string {
-  if (!fx.ok) return "estimated, market feed unavailable";
-  if (fx.as_of) return fx.as_of;
-  return "live";
-}
-
 /** Live fetch for the client (open.er-api.com, 8s abort, throws on failure). */
 export async function fxFetchLive(signal?: AbortSignal): Promise<FxRates> {
   const res = await fetch("https://open.er-api.com/v6/latest/USD", { signal });

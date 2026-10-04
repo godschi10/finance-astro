@@ -557,8 +557,6 @@
  * style.css:2167-2169 (manual callout class, used inside article copy):
  */
 /* Callouts (manual class) */
-.callout { background: var(--gold-muted); border-left: 3px solid var(--gold); padding: 14px 18px; border-radius: 0 var(--r-sm) var(--r-sm) 0; margin: 18px 0; font-size: 14px; color: var(--text-mid); }
-.callout strong { color: var(--gold); }
 /*
  * style.css:2171-2177 (dark-mode content overrides):
  */
@@ -658,7 +656,7 @@
 
 /* ══ 3.17 Comments area — style.css:2951-2963 ══ */
 .comments-area { margin-top: 40px; }
-.comments-title, .comment-reply-title { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 16px; }
+.comments-title { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 16px; }
 .comment-list { list-style: none; }
 .comment { margin-bottom: 20px; }
 .comment-list .children { list-style: none; margin: 16px 0 0 24px; }
@@ -767,24 +765,10 @@
   background: repeating-linear-gradient(-45deg, transparent, transparent 8px, rgba(0,0,0,0.025) 8px, rgba(0,0,0,0.025) 9px);
   pointer-events: none;
 }
-.ad-txt { font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #9a9080; position: relative; z-index: 1; }
-.ad-ring {
-  width: 28px; height: 28px; border-radius: 50%;
-  border: 3px solid var(--border); border-top-color: var(--gold);
-  animation: gwill-spin 0.8s linear infinite;
-  flex: none; z-index: 1; margin-bottom: 2px;
-}
-.ad-leader { height: 90px; }
-.ad-rect { height: 280px; max-width: 336px; margin: 24px auto; }
-.ad-sq { height: 250px; }
-.ad-banner { height: 60px; }
 .ad-bg { margin-bottom: 24px; }
 .ad-bg:empty, .ad-bg:not(:has(> .ad-slot)), .gwill-comment-ad:empty { display: none; }
 .gwill-comment-ad { width: 100%; margin: 28px 0; }
-.gwill-comment-ad .ad-rect { margin: 0 auto; }
 .ad-slot { margin: 24px 0; position: relative; }
-.ad-sticky .ad-slot, .ad-slot.ad-feed { margin: 0; }
-.ad-rect { margin: 24px auto; }
 /*
  * @keyframes used by .ad-ring — style.css:887:
  */
@@ -918,9 +902,6 @@
   .art-body > .wp-block-code, .art-body > .wp-block-pullquote, .art-body > .wp-block-quote {
     margin-left: calc(-1 * var(--con-pad)); margin-right: calc(-1 * var(--con-pad)); width: auto; max-width: none; border-radius: 0;
   }
-  /* The in-content ad keeps its centered 336px box (don't let the body's
-     full-bleed margins left-align it) */
-  .art-body > .ad-rect { margin-left: auto; margin-right: auto; max-width: 336px; width: 100%; }
   .art-body > .wp-block-image img, .art-body > .wp-block-gallery img { border-radius: 0; }
   /* Full-bleed readability: cream page bg replaces the old white card in
      light mode, so body copy steps up a shade, theme-aware, so dark mode
@@ -947,8 +928,6 @@
   .mfooter { display: block; }
   .footer { display: none; }
   .error-404 { padding: 60px 20px 80px; }
-  .ad-rect { height: 250px; }
-  .ad-feed { height: 120px; }
   /* iOS zoom-on-focus (WCAG 1.4.4 + 2.5.8): Safari auto-zooms the page
      when a form control with font-size < 16px receives focus. Every input,
      select and textarea on the site was below 16px (12-14px), tapping any
@@ -970,16 +949,6 @@
   .t-rate { font-size: 12px; }
   .db { font-size: 11px; }
 }
-/*
- * (h) Ad slot sizes, phone — style.css:1744-1750
- */
-@media (max-width: 767px) {
-  /* Phone + mini-tab: 320×50 leaders/banners, 300×250 rects/feeds. */
-  .ad-leader, .ad-banner { height: 50px; }
-  .ad-rect { height: 250px; max-width: 300px; }
-  .ad-feed { height: 250px; }
-  .ad-sq { height: 250px; }
-}
 
 /* ══ 4.5 @media (min-width: 768px) — hides mobile chrome, style.css:3108-3110 ══ */
 /* Desktop / tablet default above 767 */
@@ -992,27 +961,7 @@
  * min-width: 768px rule.
  */
 
-/* ══ 4.6 Ad slot sizes, tablet — style.css:1751-1760 ══ */
-@media (min-width: 768px) and (max-width: 1023px) {
-  /* Tablet: 728×90 preferred (468×60 has limited advertiser supply per
-     AdSense, sub-optimal performance). Height 90px so a real 728×90
-     code never gets clipped by the slot's overflow:hidden. */
-  .ad-leader { height: 90px; }
-  .ad-banner { height: 90px; }
-  .ad-rect { height: 280px; }
-  .ad-feed { height: 250px; }
-  .ad-sq { height: 250px; }
-}
 
-/* ══ 4.7 Ad slot sizes, desktop — style.css:1761-1768 ══ */
-@media (min-width: 1024px) {
-  /* PC: full 728×90 leaders/banners, 336×280 rects/feeds, 300×250 sidebar. */
-  .ad-leader { height: 90px; }
-  .ad-banner { height: 90px; }
-  .ad-rect { height: 280px; }
-  .ad-feed { height: 280px; }
-  .ad-sq { height: 250px; }
-}
 
 /* ══ 4.8 @media (pointer: coarse) — touch ergonomics, style.css:3125-3144 ══ */
 @media (pointer: coarse) {
@@ -1078,7 +1027,6 @@
 .no-flex-gap .sw .gwill-form--newsletter__fields > * + * { margin-top: 8px; }
 .no-flex-gap .m-nl .gwill-form--newsletter__fields > * + * { margin-left: 8px; }
 .no-flex-gap .ad-slot > * + * { margin-top: 4px; }
-.no-flex-gap .ad-slot__spinner > * + * { margin-top: 4px; }
 .no-flex-gap .bc > * + * { margin-left: 6px; }
 .no-flex-gap .gwill-breadcrumbs__list > * + * { margin-left: 6px; }
 .no-flex-gap .gwill-breadcrumbs__item > * + * { margin-left: 6px; }
@@ -1106,8 +1054,7 @@
   .ad-bg, .gwill-comment-ad, .share-row, .share-b, .cp-strip, .cp-scroll-btn,
   .gconsent, .gpwa, .gwill-bell-panel, .gbp-btn, .m-nl-wrap, .article-sidebar,
   .sw, .prog, .ftop, .fpush, .toc-list, .toc-dropdown, .legal-toc,
-  .search-form, .btt { display: none !important; }
-  body.ad-sticky-visible .ad-sticky { display: none !important; }
+  .search-form { display: none !important; }
   main, article, .art-body, .con { display: block !important; width: auto !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
   a { color: #0d0b08; text-decoration: underline; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 10px; color: #555; }
@@ -1135,7 +1082,6 @@
 [data-theme="dark"] .toc-list a:hover { background: #1c1a16; color: #f0ede6; }
 [data-theme="dark"] .toc-list a.toc-sub { color: #7a6f5e; }
 [data-theme="dark"] .ad-slot { background: #171512; border-color: #2c2822; }
-[data-theme="dark"] .ad-txt { color: #5a5248; }
 [data-theme="dark"] .m-nl { background: #1e1b16; border: 1px solid rgba(245, 158, 11, 0.25); box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5); }
 /* NOTE (duplication kept, not merged): this [data-theme="dark"] .m-nl rule is the
    spec's own second copy of the identical rule already emitted at style.css:974 in
@@ -1143,38 +1089,38 @@
    source order rather than merged, and the two lines are byte-identical. */
 
 /* ══════════════════════════════════════════════════════════════════════════
-   TOKENS MISSING FROM THE PORT — resolve before shipping
+   TOKENS FORMERLY MISSING — RESOLVED (installed in Layout.astro:404/:430)
    ══════════════════════════════════════════════════════════════════════════
    Every var(--token) the rules above reference was checked against the tokens
    that actually exist in this port: src/layouts/Layout.astro (:root +
    [data-theme="dark"]), src/styles/header.css:11 (--font-mono) and
-   src/styles/home.css:883 (--gold-input-border). Two tokens are referenced by
-   the rules above but declared NOWHERE in the port. Their var() names are kept
-   exactly as the theme writes them — no substitution, no invented value — so
-   each affected declaration is invalid at computed-value time and drops out
-   (neither rule has a fallback value) until the token exists. The theme's own
-   values are recorded here for the reviewer.
+   src/styles/home.css:947 (--gold-input-border). The two tokens below were
+   referenced by the rules above but declared NOWHERE in the port; they are
+   NOW INSTALLED in src/layouts/Layout.astro — :root at :404,
+   [data-theme="dark"] at :430 — with the theme's own values, recorded below.
+   The .brd rule resolves in both themes, and the article gate pins the
+   tokens ("no uninstalled tokens are left" assertion). Their var() names are
+   kept exactly as the theme writes them — no substitution, no invented value.
 
    -- 1. --red-muted ---------------------------------------------------------
       used by    : .brd  (style.css:676 — cluster "3.5 Badge" above)
       theme light: --red-muted: #fff1f2;                (style.css:124)
       theme dark : --red-muted: rgba(248,113,113,0.1);  (style.css:163)
-      port has   : --red only (#b91c1c light / #f87171 dark).
-      effect now : .brd gets no background; the .bg/.bgn/.bpu/.bsl siblings do.
+      port has   : installed at Layout.astro:404/:430 (was: --red only).
+      effect now : .brd resolves (was: no background while its siblings had one).
 
    -- 2. --red-border --------------------------------------------------------
       used by    : .brd  (style.css:676 — cluster "3.5 Badge" above)
       theme light: --red-border: #fecdd3;               (style.css:125)
       theme dark : --red-border: rgba(248,113,113,0.3); (style.css:164)
-      port has   : nothing equivalent.
-      effect now : .brd keeps .badge's "border: 1px solid" but with no colour,
-                   so the border computes to currentColor instead of red-border.
+      port has   : installed at Layout.astro:404/:430 (was: nothing equivalent).
+      effect now : .brd resolves (was: border fell back to currentColor).
 
    NOT affected: the dark variant [data-theme="dark"] .brd (style.css:684) uses
    literal rgba() values, not these tokens.
 
-   Suggested fix — the theme's own values, commented out. The port's token owner
-   should install them in src/layouts/Layout.astro, not here:
+   Installed — the theme's own values below now live in
+   src/layouts/Layout.astro (:404 / :430), not here:
 
    :root {
      --red-muted: #fff1f2;

@@ -19,8 +19,10 @@ stamped docs — read BOTH before touching anything:
 
 **Standing law (never violate):**
 1. Port live WordPress markup/CSS/data/scripts/interactions — never invent layouts.
-2. Additive CSS layers only: `numbers.css → controls.css → ladder.css → anatomy.css
-   → hub.css → chrome.css`, imported in that order in `src/layouts/Layout.astro`.
+2. Additive CSS layers only: `numbers.css → hub.css → chrome.css → r7.css`,
+   imported in that order in `src/layouts/Layout.astro` (the R2–R4
+   controls/ladder/anatomy layers were reverted by King order — those files
+   do not exist).
    No `!important`. Never rewrite a verbatim WP rule in place unless the plan
    sanctions it (cite the plan line in a comment).
 3. **Never edit a gate script to make it pass** (`scripts/check-*.mjs`,

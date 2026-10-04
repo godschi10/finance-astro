@@ -73,24 +73,6 @@ export function relatedTo(all: Article[], current: Article, n = 3): Article[] {
   return others.slice(0, 2);
 }
 
-// Headings for the sticky TOC — extracted from the raw markdown body.
-export function tocOf(body: string): { depth: number; text: string; id: string }[] {
-  const slugify = (s: string) =>
-    s
-      .toLowerCase()
-      .replace(/₦|\$/g, "")
-      .replace(/[^a-z0-9\s-]/g, "")
-      .trim()
-      .replace(/\s+/g, "-");
-  return body
-    .split("\n")
-    .filter((l) => l.startsWith("## "))
-    .map((l) => {
-      const text = l.replace(/^##\s+/, "").trim();
-      return { depth: 2, text, id: slugify(text) };
-    });
-}
-
 export { CATEGORIES, catBySlug };
 
 // Tools catalogue for search + sitemap (mirrors tools/index.astro — keep in

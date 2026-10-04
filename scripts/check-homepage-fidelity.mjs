@@ -10,8 +10,11 @@
 // is a verbatim WP value, and each was confirmed by measuring the built page
 // against the live WordPress homepage (docs/port/06-homepage-verification.md).
 import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 
-const ROOT = "/home/opc/work/finance-astro";
+const here = dirname(fileURLToPath(import.meta.url));
+const ROOT = join(here, "..");
 const INDEX = `${ROOT}/src/pages/index.astro`;
 const CARD = `${ROOT}/src/components/ArticleCard.astro`;
 const SITE = `${ROOT}/src/data/site.ts`;
@@ -280,7 +283,8 @@ const checks = [
     !has(css, ".gwill-honey{") && !has(css, ".gwill-form__submit-loading{display:none}")],
   ["loading swap rules kept for a future endpoint", has(formsCss, ".gwill-form__submit[data-loading].gwill-form__submit-text{display:none}")],
   ["touch reset for the pills (WP section 54 discipline)", has(css, "@media(hover:none)")],
-  ["reduced-motion honoured", has(css, "@media(prefers-reduced-motion:reduce)") && has(css, "animation-duration:2s")],
+  ["reduced-motion honoured (KING CLEANUP 2026-10-04: home.css's only animation-duration:2s belonged to the deleted dead spinner/ad rules — home.css applies no animation now, and article/chrome/header/hub/vibe sheets keep their own reduced-motion blocks; this asserts the invariant instead of pinning a dead value)",
+    !has(css, "animation:") || has(css, "@media(prefers-reduced-motion:reduce)")],
   ["print rules present", has(css, "@mediaprint")],
   ["aspect-ratio fallback kept", has(css, "@supportsnot(aspect-ratio:16/9)")],
   ["no duplicate dark TOKEN block (Layout already owns them; only element rules here)",

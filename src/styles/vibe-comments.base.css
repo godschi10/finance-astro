@@ -116,16 +116,6 @@
     color: var(--vibe-text-muted, #64748b);
 }
 
-/* Badges */
-.vibe-badge {
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    padding: 0.15rem 0.5rem;
-    border-radius: 999px;
-    background: var(--vibe-primary, #3b82f6);
-    color: white;
-}
 
 /* Comment Content */
 .vibe-comment-content {
@@ -143,16 +133,6 @@
     margin-bottom: 0;
 }
 
-.vibe-awaiting {
-    display: block;
-    font-style: italic;
-    color: var(--vibe-text-muted, #64748b);
-    margin-bottom: 0.5rem;
-    padding: 0.5rem;
-    background: #fef3c7;
-    border-radius: 6px;
-    font-size: 0.85rem;
-}
 
 /* Comment Footer */
 .vibe-comment-footer {
@@ -557,37 +537,6 @@
     border: 1px solid var(--vibe-border, #e2e8f0);
 }
 
-.vibe-user-bar {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-    padding: 0.75rem 1rem;
-    background: var(--vibe-surface, #f8fafc);
-    border-radius: var(--vibe-radius, 12px);
-    border: 1px solid var(--vibe-border, #e2e8f0);
-}
-
-.vibe-user-bar img {
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-}
-
-.vibe-user-bar span {
-    font-weight: 600;
-    flex: 1;
-}
-
-.vibe-logout {
-    font-size: 0.85rem;
-    color: var(--vibe-text-muted, #64748b);
-    text-decoration: none;
-}
-
-.vibe-logout:hover {
-    color: #ef4444;
-}
 
 /* Buttons */
 .vibe-btn {
@@ -640,16 +589,6 @@
     background: #0f172a;
 }
 
-.vibe-btn-google {
-    background: white;
-    color: #1e293b;
-    border-color: var(--vibe-border, #e2e8f0);
-}
-
-.vibe-btn-google:hover {
-    background: var(--vibe-surface, #f8fafc);
-    border-color: var(--vibe-text-muted, #64748b);
-}
 
 .vibe-btn-guest {
     background: transparent;
@@ -779,13 +718,6 @@
     to { transform: rotate(360deg); }
 }
 
-/* Closed Message */
-.vibe-closed {
-    text-align: center;
-    color: var(--vibe-text-muted, #64748b);
-    padding: 2rem;
-    font-style: italic;
-}
 
 /* Messages */
 .vibe-message {
@@ -1084,31 +1016,6 @@
     margin-bottom: 1rem;
     width: fit-content;
 }
-.vibe-new-banner-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--vibe-primary, #3b82f6);
-    color: #fff;
-    font-size: 0.85rem;
-    font-weight: 500;
-    padding: 0.5rem 1.25rem;
-    border: none;
-    border-radius: 999px;
-    cursor: pointer;
-    user-select: none;
-    transition: background 0.2s ease;
-    min-height: 44px;
-    font-family: inherit;
-    line-height: 1.2;
-}
-.vibe-new-banner-btn:hover {
-    background: #1d4ed8;
-}
-.vibe-new-banner-btn:focus-visible {
-    outline: 2px solid var(--vibe-primary, #3b82f6);
-    outline-offset: 2px;
-}
 
 /* ── Collapse long comments ────────────────────────────────────────────── */
 .vibe-comment-content.vibe-content-collapsed {
@@ -1237,24 +1144,6 @@
 .vibe-reply-push-optin {
     margin-top: 0.5rem;
     margin-bottom: 0.75rem;
-}
-.vibe-reply-push-label {
-    display: flex;
-    align-items: center;
-    gap: 0.55rem;
-    cursor: pointer;
-    min-height: 44px; /* WCAG 2.5.8 touch floor (44 = best practice) */
-    color: var(--vibe-text, #1e293b);
-    font-size: 0.9rem;
-    user-select: none;
-    -webkit-user-select: none;
-}
-.vibe-reply-push-label input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    accent-color: var(--vibe-primary, #3b82f6);
-    flex: 0 0 auto;
-    cursor: pointer;
 }
 .vibe-reply-push-note {
     margin: 0.25rem 0 0;
@@ -1415,7 +1304,6 @@
 /* v3.20.2 Design Audit #14: the auth-bar buttons (Google / Guest / WP login)
  * were the only interactive family without a designed focus ring. */
 .vibe-btn:focus-visible,
-.vibe-btn-google:focus-visible,
 .vibe-btn-guest:focus-visible,
 .vibe-btn-wp:focus-visible,
 .vibe-recall-clear:focus-visible,

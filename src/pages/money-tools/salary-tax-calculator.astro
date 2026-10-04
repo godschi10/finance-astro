@@ -1,6 +1,6 @@
 ---
 import ToolShell from "../../components/ToolShell.astro";
-import { payeCalculate, payeCompare, payeBandBreakdown, payeBands2026, MINIMUM_WAGE_MONTHLY } from "../../lib/salary-tax";
+import { payeCalculate, payeCompare, payeBandBreakdown, payeBands2026 } from "../../lib/salary-tax";
 import { formatGrouped } from "../../lib/format";
 const n = (v: number, d = 0) => formatGrouped(v, d);
 const seed = payeCalculate(300000, 0.08, 0, 0, true);

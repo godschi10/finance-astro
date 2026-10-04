@@ -4,10 +4,14 @@
 // on full success; prints each FAIL and exits 1 otherwise.
 import { readFileSync } from "node:fs";
 import assert from "node:assert";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 
-const LAYOUT = "/home/opc/work/finance-astro/src/layouts/Layout.astro";
-const SITES = "/home/opc/work/finance-astro/src/data/site.ts";
-const HEADERCSS = "/home/opc/work/finance-astro/src/styles/header.css";
+const here = dirname(fileURLToPath(import.meta.url));
+const root = join(here, "..");
+const LAYOUT = join(root, "src/layouts/Layout.astro");
+const SITES = join(root, "src/data/site.ts");
+const HEADERCSS = join(root, "src/styles/header.css");
 const layout = readFileSync(LAYOUT, "utf8");
 const site = readFileSync(SITES, "utf8");
 const css = readFileSync(HEADERCSS, "utf8");

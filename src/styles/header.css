@@ -52,9 +52,6 @@
 }
 .t-pair { font-size: 10px; font-weight: 700; color: var(--dark-dim); letter-spacing: 0.1em; }
 .t-rate { font-size: 11px; font-weight: 700; color: #f0ede6; letter-spacing: 0.04em; }
-.t-up { font-size: 9px; font-weight: 700; color: #22c55e; }
-.t-dn { font-size: 9px; font-weight: 700; color: #f87171; }
-.t-cm { font-size: 9px; color: var(--dark-dim); }
 
 /* ── 5. HEADER (desktop) ─────────────────────────── */
 .sh {
@@ -529,7 +526,6 @@
   border-radius: var(--pill);
   white-space: nowrap;
 }
-.gs-pill--plain { background: var(--surface-2); border-color: var(--border); color: var(--text-dim); }
 .gs-viewall {
   display: block;
   text-align: center;

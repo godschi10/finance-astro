@@ -213,8 +213,7 @@
   .search-submit { height: 44px; }
 }
 @media print {
-  .search-form,
-  .btt { display: none !important; }
+  .search-form { display: none !important; }
 }
 
 /* ── Archive pill-strip wrapper (WP theme verbatim, top-level) ──

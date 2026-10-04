@@ -19,8 +19,8 @@
  *     (live WP serves art-body after fx-copy; the import order IS the winner).
  */
 import postcss from "postcss";
-import { readFileSync, readdirSync } from "fs";
-import { join } from "path";
+import { readFileSync, readdirSync } from "node:fs";
+import { join } from "node:path";
 
 const dir = "src/styles";
 let fail = 0;

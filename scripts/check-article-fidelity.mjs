@@ -383,7 +383,12 @@ for (const cls of ["wp-block-quote", "wp-block-pullquote", "wp-block-table",
     t.indexOf("vibe-comments.base.css") > -1 &&
     t.indexOf("vibe-comments.base.css") < t.indexOf("vibe-comments.gold.css")]);
   checks.push(["both stylesheets are the plugin/theme copies, gold carries the desk-era brand skin",
-    Buffer.byteLength(read("src/styles/vibe-comments.base.css"), "utf8") === 40720 &&
+    // KING CLEANUP 2026-10-04: base.css 40720 -> 38197. The 2523-byte delta is
+    // the 10 verified-dead rules pruned by royal order (vibe-badge/awaiting/
+    // user-bar/logout/google/closed/new-banner-btn/push-label + 2 orphans);
+    // the 4 .vibe-rx-t-* rules are untouched (live via JS composition). This pin
+    // exists to force manager review of exactly this kind of change — reviewed.
+    Buffer.byteLength(read("src/styles/vibe-comments.base.css"), "utf8") === 38197 &&
     Buffer.byteLength(read("src/styles/vibe-comments.gold.css"), "utf8") > 24412 &&
     read("src/styles/vibe-comments.gold.css").includes("vibe-auth-note")]);
   checks.push(["the live Worker base is wired, not a placeholder",

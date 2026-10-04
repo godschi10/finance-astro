@@ -111,20 +111,6 @@ Table of Contents
   background: var(--vibe-primary-hover) !important;
   color: #fff !important;
 }
-.vibe-btn-wp, .vibe-btn-google, .vibe-btn-guest {
-  font-family: 'JetBrains Mono', monospace !important;
-  font-size: 12px !important;
-  font-weight: 600 !important;
-  padding: 10px 18px !important;
-  border-radius: var(--vibe-radius) !important;
-  color: var(--vibe-text) !important;
-  border: 1px solid var(--vibe-border) !important;
-  background: var(--vibe-bg) !important;
-}
-.vibe-btn-wp:hover, .vibe-btn-google:hover, .vibe-btn-guest:hover {
-  border-color: var(--vibe-primary) !important;
-  color: var(--vibe-primary) !important;
-}
 .vibe-or {
   font-family: 'JetBrains Mono', monospace !important;
   font-size: 10px !important;
@@ -211,12 +197,6 @@ Table of Contents
   color: var(--vibe-primary) !important;
 }
 
-/* ── 10. Awaiting moderation, warm hint instead of amber ─── */
-.vibe-comment-status--pending,
-.vibe-comment-awaiting {
-  background: rgba(217,119,6,0.08) !important;
-  color: var(--vibe-primary) !important;
-}
 
 /* ── 11. Nested replies, thread guide + compact mobile hierarchy ─── */
 .vibe-comment-list ul.children {
@@ -426,19 +406,9 @@ Table of Contents
    a raw Tailwind hex that renders off-brand on light mode. Map each to
    the finance brand (gold for the awaiting-moderation hint, matching
    section 10; brand red for the edit-error validation border). */
-.vibe-comments-section .vibe-awaiting {
-  background: rgba(217, 119, 6, 0.08) !important;
-  color: var(--vibe-primary, #d97706) !important;
-  border-left: 2px solid var(--vibe-primary, #d97706) !important;
-}
 .vibe-comments-section .vibe-edit-textarea.vibe-edit-error {
   border-color: var(--red, #b91c1c) !important;
   box-shadow: 0 0 0 2px rgba(185, 28, 28, 0.08) !important;
-}
-[data-theme="dark"] .vibe-comments-section .vibe-awaiting {
-  background: rgba(245, 158, 11, 0.1) !important;
-  color: var(--vibe-primary, #f59e0b) !important;
-  border-left-color: var(--vibe-primary, #f59e0b) !important;
 }
 [data-theme="dark"] .vibe-comments-section .vibe-edit-textarea.vibe-edit-error {
   border-color: #f87171 !important;
@@ -450,8 +420,7 @@ Table of Contents
    Own-reaction tint, pill container brand-lock, and touch-gated option hover —
    all in the finance gold, same !important fight policy as every rule here. */
 .vibe-comments-section .vibe-reaction-summary,
-.vibe-comments-section .vibe-reply-trigger,
-.vibe-comments-section .vibe-like-btn {
+.vibe-comments-section .vibe-reply-trigger {
   background: transparent !important;
   border-color: var(--vibe-border, #3f3a31) !important;
   color: var(--vibe-primary, #d97706) !important;

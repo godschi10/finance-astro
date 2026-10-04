@@ -16,7 +16,7 @@
  * @package GWill_Finance
  */
 
-import { norm, toks, smartMatch, highlight, escHtml } from './search-core.js';
+import { toks, smartMatch, highlight, escHtml } from './search-core.js';
 
 (function () {
   'use strict';

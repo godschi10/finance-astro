@@ -3,6 +3,44 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.13] — 2026-10-04 — Cleanup audit fixes: dead code pruned, phantom deps pinned
+King: *"Fix all findings before we move to the next."*
+
+- **50 dead rules pruned from tools.css** (−8.8KB) — an abandoned calculator
+  vocabulary nothing rendered. tools.css ships globally, so this weight rode
+  every page. Live vocabulary (fx-card, receipt-*, bar-*, st-table, tool-h)
+  untouched — verified rule by rule.
+- **Dead ad/ticker/vibe/micro-orphan rules pruned** (≈−10.6KB more across
+  article/home/header/search404/vibe skins). Carve-outs kept honestly: the
+  `.ad-slot` base system (article.js queries it), the 4 `.vibe-rx-t-*` rules
+  (live via JS composition), all wp-block/align forward-compat styles (the WP
+  importer can bring articles carrying any block).
+- **Phantom deps pinned:** esbuild + postcss (used by load-bearing gates, missing
+  from package.json) added to devDependencies at their locked versions.
+- **Hygiene:** tracked zero-width-space file deleted, .gitignore gains .env,
+  engines node>=18, 3 gates de-absoluted to fileURLToPath (zero assertions
+  touched), dead audit line removed, node: prefixes, 3 unused imports + 5 dead
+  exports removed (payeBreakdown proven redundant — the page renders bands
+  inline), public/sw.js removed (shipped but never registered; registering
+  would be a new feature, not cleanup).
+- **Records refreshed:** README (6 gates, 78 pages, fetch-snapshot step, retired
+  prose note, real header anchors), TRANSFER layer chain (the King-reverted
+  reality), article.css token block (RESOLVED — its own suggested fix is what
+  shipped), port-posts.py comment (keep policy).
+- **2 gates updated with the override recorded** (same sanctioned pattern as the
+  hero CTA and category map): the article byte-pin 40720→38197 (the pin exists
+  to force manager review — reviewed), and homepage reduced-motion now asserts
+  the invariant (no unguarded animation) instead of pinning a duration value
+  that existed only in dead code.
+- Proofs: build exit 0 / 78 pages; `npm run check` 6/6 (article 147/147,
+  vectors 95/0); QA visual proof — 8 phone pages unchanged (home luminances
+  185.3 vs 17.3), converter computes 2500→₦3,325,350, salary bands render,
+  comments validation holds with zero POST, ticker paints live figures, zero JS
+  errors, zero overflow. Report: ~/work/research-notes/cleanup-proof-qa.md
+- Deliberately parked (the King may overrule): tsconfig creation, CI, retention
+  of prose.retired/port-posts.py/backup branch, receipt-div/tool-h
+  used-but-undefined (pre-existing mirror image).
+
 ## [0.7.12] — 2026-10-03 — Every category gets its own brand-matched pill
 King: *"savings crypto and dollar account category pill has a custom color
 that match the brand. I want others to auto claim a new color on creation so

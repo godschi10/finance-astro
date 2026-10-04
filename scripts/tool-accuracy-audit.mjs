@@ -76,7 +76,6 @@ async function main() {
     await new Promise((r) => setTimeout(r, 900)); // module scripts' first paint of results
     const problems = [];
     // missing DOM targets wired by the script?
-    const missing = await ev(`(function(){var refs=new Set();var scripts=Array.prototype.map.call(document.scripts,function(s){return s.type==='module'&&s.src?s.src:''}).filter(Boolean);return ""})()`);
     // feed inputs
     for (const [iid, val] of c.input) {
       const okIn = await ev(`(function(){var e=document.getElementById(${JSON.stringify(iid)});if(!e)return "MISSING";e.value=${JSON.stringify(val)};e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}));return "OK"})()`);
