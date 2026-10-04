@@ -30,9 +30,13 @@ const { slug, title, excerpt, category, date, readMins, image, imageAlt, imageSr
 const c = catBySlug(category);
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 const url = `${base}articles/${slug}/`;
+// F-01: frontmatter media paths are base-less ("/wp-content/..."); prefix the
+// render-time base here so base moves stay config-only. Absolute URLs pass
+// through untouched (never the case today — all 15 heroes are local).
+const withBase = (p: string) => (p.startsWith("/") ? `${base}${p.slice(1)}` : p);
 // card-media.php: 300w default + 768w candidate (gwill_finance_card_img_srcset)
 const cardSrcset = imageSrcset
-  ? imageSrcset.split(", ").filter((s) => / (300w|768w)$/.test(s.trim())).join(", ")
+  ? imageSrcset.split(", ").filter((s) => / (300w|768w)$/.test(s.trim())).map((s) => withBase(s.trim())).join(", ")
   : "";
 ---
 <article id={`post-${slug}`} class={`ac category-${category}`} data-cat={category}>
@@ -42,7 +46,7 @@ const cardSrcset = imageSrcset
       <img
         width="300"
         height="169"
-        src={image.replace(/\.png$/, "-300x169.png")}
+        src={image ? withBase(image.replace(/\.png$/, "-300x169.png")) : ""}
         class="attachment-medium size-medium wp-post-image"
         alt={imageAlt ?? ""}
         loading="lazy"

@@ -2,10 +2,28 @@
 // Source: gwill-finance-theme inc/finance-helpers.php, inc/footer-links.php,
 // inc/acf-field-groups.php defaults. Maintained tables (FX, transfer fees,
 // savings rates) live as dated src/data/*.ts files.
+//
+// ── Deploy coordinates: SINGLE SOURCE OF TRUTH ──
+// Canonical ORIGIN + BASE are defined ONCE here. This module is pure data
+// (zero imports — verified), so astro.config.mjs imports them with no cycle;
+// the reverse direction (site.ts importing the config) would drag
+// astro/config + rehype plugins into page bundles, so it is NOT done.
+// Env overrides for domain/base moves (defaults reproduce today's committed
+// values byte-for-byte; full move checklist lives in the sibling leg's doc):
+//   SITE_ORIGIN — default "https://godschi10.github.io" (feeds astro `site`)
+//   SITE_BASE   — default "/finance-astro" (feeds astro `base` / BASE_URL)
+export const ORIGIN = process.env.SITE_ORIGIN ?? "https://godschi10.github.io";
+export const BASE = process.env.SITE_BASE ?? "/finance-astro";
+
+// KING PORTABILITY FIX 2026-10-04: single Worker literal — was the same URL
+// copy-pasted in Layout.astro / [slug].astro / mod.astro (CSP keeps its own
+// explicit literal: security policy reads better explicit than interpolated).
+export const COMMENTS_API = "https://comments-api.gwill.workers.dev";
+
 export const SITE = {
   name: "GWill Finance",
   tagline: "Nigerian money. Explained.",
-  origin: "https://godschi10.github.io",
+  origin: ORIGIN,
   description:
     "Nigerian money. Explained. Honest, independent finance guides for Nigerians.",
   socials: {
@@ -303,7 +321,7 @@ export const TICKER_STATIC = [
   { label: "USD/NGN", value: "₦1,330", src: "fx" },
   { label: "GBP/NGN", value: "₦1,758", src: "fx" },
   { label: "EUR/NGN", value: "₦1,497", src: "fx" },
-  { label: "BTC/USD", value: "$85,217", src: "btc" },
-  { label: "ETH/USD", value: "$2,699", src: "eth" },
+  { label: "BTC/USD", value: "$85,153", src: "btc" },
+  { label: "ETH/USD", value: "$2,695", src: "eth" },
   { label: "XAU/USD", value: "$4,142", src: "gold" },
 ];

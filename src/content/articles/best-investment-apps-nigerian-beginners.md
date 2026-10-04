@@ -6,9 +6,9 @@ author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-04-18
 readMins: 2
-image: "/finance-astro/wp-content/uploads/2026/04/investing.png"
+image: "/wp-content/uploads/2026/04/investing.png"
 imageAlt: "Best Investment Apps for Nigerian Beginners"
-imageSrcset: "/finance-astro/wp-content/uploads/2026/04/investing.png 1200w, /finance-astro/wp-content/uploads/2026/04/investing-300x169.png 300w, /finance-astro/wp-content/uploads/2026/04/investing-1024x576.png 1024w, /finance-astro/wp-content/uploads/2026/04/investing-768x432.png 768w"
+imageSrcset: "/wp-content/uploads/2026/04/investing.png 1200w, /wp-content/uploads/2026/04/investing-300x169.png 300w, /wp-content/uploads/2026/04/investing-1024x576.png 1024w, /wp-content/uploads/2026/04/investing-768x432.png 768w"
 ---
 
 Nigerian investment apps have come a long way in the last three years. I put real money into Risevest, Trove, and Bamboo to find out which ones are actually worth your naira (or your dollars) — minimums, real returns, fees, and the fine print nobody talks about.

@@ -36,6 +36,7 @@ const js = read("src/scripts/article.js");
 const nl = read("src/components/NewsletterForm.astro");
 const socials = read("src/components/AuthorSocials.astro");
 const content = read("src/data/content.ts");
+const siteTs = read("src/data/site.ts");
 const cfg = read("astro.config.mjs");
 const about = read("src/pages/about.astro");
 const contact = read("src/pages/contact.astro");
@@ -391,8 +392,8 @@ for (const cls of ["wp-block-quote", "wp-block-pullquote", "wp-block-table",
     Buffer.byteLength(read("src/styles/vibe-comments.base.css"), "utf8") === 38197 &&
     Buffer.byteLength(read("src/styles/vibe-comments.gold.css"), "utf8") > 24412 &&
     read("src/styles/vibe-comments.gold.css").includes("vibe-auth-note")]);
-  checks.push(["the live Worker base is wired, not a placeholder",
-    t.includes('COMMENTS_API = "https://comments-api.gwill.workers.dev"') &&
+  checks.push(["the live Worker base is wired, not a placeholder (KING PORTABILITY FIX 2026-10-04: single COMMENTS_API const in site.ts — was a 3× duplicated literal; CSP keeps its own explicit literal)",
+    siteTs.includes('export const COMMENTS_API = "https://comments-api.gwill.workers.dev"') &&
     t.includes("apiBase={COMMENTS_API}")]);
   checks.push(["heading count baked at build time with a non-fatal 0 fallback",
     t.includes("signal: AbortSignal.timeout(4000)") && t.includes("commentCount = 0")]);

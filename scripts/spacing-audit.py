@@ -21,6 +21,12 @@ intentionally sit tight and the King has never complained about them.
 """
 import re, sys, glob, os
 
+# Repo-root-relative: the audit reads the built dist/ tree no matter which
+# directory it is invoked from (CWD-relative glob breaks under `npm run`
+# from a subdirectory or when a gate spawns it elsewhere).
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DIST_GLOB = os.path.join(REPO_ROOT, "dist", "**", "*.html")
+
 SMALL = {"p":1,"li":1,"dd":1,"dt":1}
 TEXT_TAGS = {"p","li","ul","ol","h2","h3","h4","summary","section","div","span","td","th","figcaption"}
 
@@ -93,7 +99,7 @@ def scan_markup(html, page, out):
             out.append((page,"MARKUP",f"<{tag}> style=\"{style[:60]}\"", f"margin-top {mt.group(1)}px on copy block < 10px"))
 
 def main():
-    pages = sys.argv[1:] or glob.glob("dist/**/*.html", recursive=True)
+    pages = sys.argv[1:] or glob.glob(DIST_GLOB, recursive=True)
     out=[]
     for f in pages:
         html=open(f, encoding="utf-8", errors="ignore").read()

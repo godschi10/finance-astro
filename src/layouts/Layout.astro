@@ -1,5 +1,5 @@
 ---
-import { NAV, TICKER_STATIC, catBySlug, type NavItem } from "../data/site";
+import { NAV, TICKER_STATIC, catBySlug, COMMENTS_API, type NavItem } from "../data/site";
 import { FX_SNAPSHOT_TS } from "../data/fx-snapshot";
 import { TOOLS, allArticles as allPosts, fmtMonthYear } from "../data/content";
 import "../styles/base.css"; // WP stylesheet section 2 (RESET/BASE) — the anchor reset
@@ -60,7 +60,7 @@ const sameAs = ["https://x.com/gwillchijioke", "https://github.com/gwillchijioke
 const showBreadcrumbs = !noCanonical && !isHome && crumb !== "";
 const ld = (obj: unknown) => JSON.stringify(obj).replace(/</g, "\\u003c");
 const website = { "@context": "https://schema.org", "@type": "WebSite", name: siteName, url: homeUrl };
-const organization = { "@context": "https://schema.org", "@type": "Organization", name: siteName, url: homeUrl, logo: `${homeUrl}icons/icon-512.png`, sameAs };
+const organization = { "@context": "https://schema.org", "@type": "Organization", name: siteName, url: homeUrl, logo: `${homeUrl}icons/icon.svg`, sameAs };
 const breadcrumb = { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: homeUrl }, { "@type": "ListItem", position: 2, name: crumb }] };
 const fontFaces = [400, 700, 800].map((weight) =>
   `@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:${weight};font-display:swap;src:url("${base}fonts/jetbrains-mono-latin-${weight}-normal.woff2") format("woff2")}`
@@ -144,7 +144,7 @@ const searchIndexJson = JSON.stringify(searchIndex).replace(/</g, "\\u003c");
 const searchBase = `${base}search/`;
 ---
 <!doctype html>
-<html lang="en" data-forms-api="https://comments-api.gwill.workers.dev">
+<html lang="en" data-forms-api={COMMENTS_API}>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -177,7 +177,7 @@ const searchBase = `${base}search/`;
 {!noCanonical && <link rel="canonical" href={canonical}>}
 <link rel="icon" type="image/svg+xml" href={`${base}icons/icon.svg`}>
 <link rel="manifest" href={`${base}manifest.webmanifest`}>
-<link rel="apple-touch-icon" sizes="180x180" href={`${base}icons/icon-180.png`}>
+<link rel="apple-touch-icon" sizes="any" href={`${base}icons/icon.svg`}>
 <meta property="og:type" content={isArticle ? "article" : "website"}>
 <meta property="og:site_name" content={siteName}>
 <meta property="og:title" content={title}>

@@ -6,9 +6,9 @@ author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-03-22
 readMins: 2
-image: "/finance-astro/wp-content/uploads/2026/03/crypto.png"
+image: "/wp-content/uploads/2026/03/crypto.png"
 imageAlt: "Crypto in Nigeria: Best Apps and What’s Legal in 2026"
-imageSrcset: "/finance-astro/wp-content/uploads/2026/03/crypto.png 1200w, /finance-astro/wp-content/uploads/2026/03/crypto-300x169.png 300w, /finance-astro/wp-content/uploads/2026/03/crypto-1024x576.png 1024w, /finance-astro/wp-content/uploads/2026/03/crypto-768x432.png 768w"
+imageSrcset: "/wp-content/uploads/2026/03/crypto.png 1200w, /wp-content/uploads/2026/03/crypto-300x169.png 300w, /wp-content/uploads/2026/03/crypto-1024x576.png 1024w, /wp-content/uploads/2026/03/crypto-768x432.png 768w"
 ---
 
 After the SEC’s regulations on crypto exchanges in 2024, a lot of Nigerians assumed crypto was dead. It isn’t — but where and how you can trade legally changed. This is the current situation, what’s legal, what isn’t, and where Nigerians actually trade now.

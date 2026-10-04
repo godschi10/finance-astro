@@ -6,9 +6,9 @@ author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-06-10
 readMins: 2
-image: "/finance-astro/wp-content/uploads/2026/06/dollar.png"
+image: "/wp-content/uploads/2026/06/dollar.png"
 imageAlt: "Best Dollar Account Apps for Nigerians in 2026"
-imageSrcset: "/finance-astro/wp-content/uploads/2026/06/dollar.png 1200w, /finance-astro/wp-content/uploads/2026/06/dollar-300x169.png 300w, /finance-astro/wp-content/uploads/2026/06/dollar-1024x576.png 1024w, /finance-astro/wp-content/uploads/2026/06/dollar-768x432.png 768w"
+imageSrcset: "/wp-content/uploads/2026/06/dollar.png 1200w, /wp-content/uploads/2026/06/dollar-300x169.png 300w, /wp-content/uploads/2026/06/dollar-1024x576.png 1024w, /wp-content/uploads/2026/06/dollar-768x432.png 768w"
 ---
 
 If you earn in dollars, receive freelance payments, or want to protect your savings from naira devaluation, a dollar account is not optional anymore. I tested the four biggest apps — Grey, Geegpay, Vance, and Chipper Cash — with real money over four months. Here is the full breakdown.

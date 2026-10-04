@@ -3,6 +3,20 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.15] — 2026-10-04 — Portability fixes: base un-baked, config single-sourced, toolchain pinned
+King: *"Fix all findings before we move to the next one"*
+
+- **CRITICAL:** article media fields no longer bake the deploy base — base-less
+  frontmatter + render-time prefix; importer emits base-less going forward;
+  served bytes byte-identical.
+- **Config:** ORIGIN/BASE single-sourced (site.ts → astro.config), SITE_ORIGIN/
+  SITE_BASE overrides, trailingSlash trialed and reverted honestly, Worker URL
+  one const (CSP stays explicit), MOVE-CHECKLIST.md, ship-pages.sh.
+- **Toolchain:** lockfile regen (astro 5.18.2, npm ci works), .nvmrc,
+  packageManager, py CWD anchoring. Icons → icon.svg; dead link + Rickroll gone.
+- Proofs: build exit 0 / 78 pages; 6/6 (article 147/147, vectors 95/0); QA SHIP —
+  images 32/32 200, prefixes exact, og absolute, zero JS errors, zero overflow.
+
 ## [0.7.14] — 2026-10-04 — Fingerprint fixes: human comments, human copy, closed escaper hole
 King: *"fix all findings from latest audit before we move on to the next"*
 

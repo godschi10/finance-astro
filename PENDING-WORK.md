@@ -83,6 +83,58 @@ King: *"fix all findings from latest audit before we move on to the next"*
 ## ACTIVE — FINGERPRINT FIXES, King's order 2026-10-04
 King: "fix all findings from latest audit before we move on to the next"
 - [x] **FIX LEGS SHIPPED v0.7.14** — full entry below under SHIPPED.
+## SHIPPED — 2026-10-04 · PORTABILITY FIXES — v0.7.15
+King: *"Fix all findings before we move to the next one"*
+- [x] **All portability findings fixed.** 3 parallel @builders (A: toolchain/docs/
+      icons/small content; B: config single-source; C: base-in-content) +
+      @manager-opencode (Worker centralization, 1 gate pin, checklist refresh) +
+      @qa-inspector proof (SHIP).
+- [x] **CRITICAL fixed:** frontmatter media fields base-less + render-prefixed
+      (ArticleCard via withBase, [slug] cover + og); importer emits base-less;
+      search-form already base-relative; body content stays WP-parity + checklist
+      sed. Served bytes byte-identical (normalized for ticker churn).
+- [x] **Config single-source:** ORIGIN/BASE live once in site.ts, astro.config
+      imports them; SITE_ORIGIN/SITE_BASE env overrides (defaults byte-identical);
+      trailingSlash trialed ("always" moved ONE byte) and honestly REVERTED to
+      unset, documented. Worker URL centralized (was 3× literal; CSP keeps explicit
+      literal by design).
+- [x] **Toolchain:** lockfile regen (astro still 5.18.2 — no float, no pin needed;
+      npm ci works again), .nvmrc 26, packageManager npm@11.19.1, ship-pages.sh
+      written (never run — manager runs first), MOVE-CHECKLIST.md (Worker allowlist
+      exact-match, secrets-unchange list, launch decisions, move gate).
+- [x] **Small fixes:** Layout icons → icon.svg (zero icon-*.png refs in dist);
+      showcase NXDOMAIN author link → plain name; p2p Rickroll field dropped
+      (template-conditional, verified safe); py scripts CWD-anchored.
+- [x] **Proof (QA SHIP):** images 32/32 200 with PNG magic; 0 bare /wp-content;
+      og absolute on all 6; hero naturalWidth 390; converter ₦133,014; search
+      marks; ticker 12; mod 200; zero JS errors; zero overflow; 6/6.
+      Report: ~/work/research-notes/portability-proof-qa.md
+- [x] **Observed, not actioned (not audit findings):** ssh key-path/IP strings
+      inside imported WP comment excerpts (public comment content, fidelity demo);
+      spotlight INDEX_BASE fallback literal (fires only with no .gs-form —
+      checklist sed covers it). The King's call if he wants either touched.
+
+## ACTIVE — PORTABILITY FIXES, King's order 2026-10-04
+King: "Fix all findings before we move to the next one"
+- [ ] **FIX LEGS** — 3 parallel @builders, DISJOINT files. Leg A: toolchain
+      (lockfile regen w/ astro pinned if it floats, .nvmrc, packageManager) +
+      ship script + move checklist + manifest icon refs + showcase dead link +
+      p2p frontmatter field + Layout icon lines ONLY. Leg B: config single-source
+      (astro.config ↔ site.ts origin/base, trailingSlash explicit, env override;
+      NO consumer edits — report handoff; names stay stable). Leg C: CRITICAL
+      base-in-content (frontmatter strip + render-prefix in card/article/archive/
+      search templates, importer emitter base-less, search-form action; body
+      content stays WP-parity + checklist sed). Rule: gate-anchored = SKIP +
+      report (manager does gates after). Proof leg (@qa-inspector after):
+      build + check + image-200 sweep + screenshots.
+Prompt: /home/opc/Astro_Site_Audit/Astro-Portability-Audit-Prompt-1.md
+(6 sections: hardcoded URLs · env/secrets · host assumptions · build/deps ·
+content/data · config cleanliness)
+- [x] **AUDIT COMPLETE** — master: portability-MASTER-2026-10-04.md.
+      Totals: CRITICAL 1 (base baked into article content) · SHOULD-FIX ~19 ·
+      NICE-TO-HAVE ~17. Three migration risks: content carries the base; Worker
+      allowlist + scattered literals (silent write-path death on green build);
+      stale lockfile (npm ci refuses). Fixes wait for the King's word.
 - [ ] **FIX LEGS** — 3 parallel @builders, DISJOINT files. (closed — shipped v0.7.14)
       (dividend type lie, transfer boolean, seed unification, dead guards,
       renames) + S1 script comment trims (lightbox/search-core/apps-filter) +

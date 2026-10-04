@@ -6,9 +6,9 @@ author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-02-08
 readMins: 2
-image: "/finance-astro/wp-content/uploads/2026/02/investing.png"
+image: "/wp-content/uploads/2026/02/investing.png"
 imageAlt: "Risevest vs Trove: Where Should You Invest Your Dollars?"
-imageSrcset: "/finance-astro/wp-content/uploads/2026/02/investing.png 1200w, /finance-astro/wp-content/uploads/2026/02/investing-300x169.png 300w, /finance-astro/wp-content/uploads/2026/02/investing-1024x576.png 1024w, /finance-astro/wp-content/uploads/2026/02/investing-768x432.png 768w"
+imageSrcset: "/wp-content/uploads/2026/02/investing.png 1200w, /wp-content/uploads/2026/02/investing-300x169.png 300w, /wp-content/uploads/2026/02/investing-1024x576.png 1024w, /wp-content/uploads/2026/02/investing-768x432.png 768w"
 ---
 
 Risevest and Trove both let Nigerians invest in US markets, but they’re built for completely different people. I tested both with real dollars to settle the question: where should YOUR dollars go?

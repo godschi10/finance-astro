@@ -49,7 +49,7 @@ import "../../styles/embeds.css";
 // because WP enqueues both only on singulars (is_singular() && !is_front_page()).
 import "../../styles/vibe-comments.base.css";
 import "../../styles/vibe-comments.gold.css";
-import { catBySlug } from "../../data/site";
+import { catBySlug, COMMENTS_API } from "../../data/site";
 import {
   allArticles,
   authorBySlug,
@@ -79,7 +79,7 @@ const authorUrl = `${base}author/${d.authorSlug}/`;
 
 // ── Comments (single.php:212-226) ───────────────────────────────────────────
 // The Worker that replaced WordPress admin-ajax for the comments surface.
-const COMMENTS_API = "https://comments-api.gwill.workers.dev";
+// Single const from site.ts (was a 3× duplicated literal).
 
 // The heading count, baked at build time — parity with WP, which bakes the
 // stored comment count in before rendering (comments.php:42-52). Non-fatal by
@@ -191,7 +191,10 @@ const ld = (obj: unknown) => JSON.stringify(obj).replace(/</g, "\\u003c");
 // and looks and has the brand logo and design" — the brand share card (the wordmark
 // on the finance palette) is the fallback for every OTHER page via Layout.BRAND_SHARE.
 // 'c' date format = ISO+00:00 exactly like get_the_date('c') on live.
-const ogImg = d.image ? { url: d.image, width: 1200, height: 675, alt: d.imageAlt ?? d.title } : null;
+// F-01: frontmatter media paths are base-less ("/wp-content/..."); prefix the
+// render-time base here. Layout.astro then prefixes only the origin, so the
+// served og:image bytes are unchanged (origin + base + path, as before).
+const ogImg = d.image ? { url: `${base}${d.image.slice(1)}`, width: 1200, height: 675, alt: d.imageAlt ?? d.title } : null;
 const isoC = (x: Date) => x.toISOString().slice(0, 19) + "+00:00"; // get_the_date('c'): no millis
 const isoDay = (x: Date) => x.toISOString().slice(0, 10);
 const showUpdated = !!d.updated && isoDay(d.updated) !== isoDay(d.pubDate);
@@ -268,13 +271,13 @@ const articleLd = {
             <img
               width="1200"
               height="675"
-              src={d.image}
+              src={`${base}${d.image!.slice(1)}`}
               class="attachment-gwill-hero size-gwill-hero wp-post-image"
               alt={d.imageAlt ?? ""}
               loading="eager"
               fetchpriority="high"
               decoding="async"
-              srcset={d.imageSrcset}
+              srcset={d.imageSrcset ? d.imageSrcset.split(", ").map((s) => `${base}${s.slice(1)}`).join(", ") : undefined}
               sizes="(max-width: 1200px) 100vw, 1200px"
             />
           </div>

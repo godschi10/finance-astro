@@ -6,9 +6,9 @@ author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-05-12
 readMins: 3
-image: "/finance-astro/wp-content/uploads/2026/05/remittance.png"
+image: "/wp-content/uploads/2026/05/remittance.png"
 imageAlt: "How to Receive Money from Abroad in Nigeria"
-imageSrcset: "/finance-astro/wp-content/uploads/2026/05/remittance.png 1200w, /finance-astro/wp-content/uploads/2026/05/remittance-300x169.png 300w, /finance-astro/wp-content/uploads/2026/05/remittance-1024x576.png 1024w, /finance-astro/wp-content/uploads/2026/05/remittance-768x432.png 768w"
+imageSrcset: "/wp-content/uploads/2026/05/remittance.png 1200w, /wp-content/uploads/2026/05/remittance-300x169.png 300w, /wp-content/uploads/2026/05/remittance-1024x576.png 1024w, /wp-content/uploads/2026/05/remittance-768x432.png 768w"
 ---
 
 If you work remotely, have family abroad, or earn in dollars, receiving money into Nigeria can cost you a fortune in hidden fees if you pick the wrong service. I tested the four biggest options over three months — Wise, Remitly, WorldRemit, and direct bank SWIFT — sending real money and comparing what actually arrived in my naira account.

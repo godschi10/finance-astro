@@ -75,7 +75,11 @@ FEAT = {
  "kuda-vs-moniepoint": "2026/04/banking.png",
  "best-investment-apps-nigerian-beginners": "2026/04/investing.png",
 }
-BASE = "/finance-astro"
+# F-01: content media paths stay base-less ("/wp-content/...") — render
+# templates prefix import.meta.env.BASE_URL at build, so base moves are
+# config-only. Do NOT reintroduce a deploy prefix here; it would re-bake the
+# base into every re-imported article.
+BASE = ""
 REPLACE = {  # live slug -> port file whose content the canonical version takes over
                # (port slugs stay canonical links: 10+ tool/app pages already point
                # at them — renaming URLs would break shipped links)

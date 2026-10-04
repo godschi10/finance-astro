@@ -6,9 +6,9 @@ author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-03-10
 readMins: 2
-image: "/finance-astro/wp-content/uploads/2026/03/remittance.png"
+image: "/wp-content/uploads/2026/03/remittance.png"
 imageAlt: "How to Send Money Abroad from Nigeria Cheaply"
-imageSrcset: "/finance-astro/wp-content/uploads/2026/03/remittance.png 1200w, /finance-astro/wp-content/uploads/2026/03/remittance-300x169.png 300w, /finance-astro/wp-content/uploads/2026/03/remittance-1024x576.png 1024w, /finance-astro/wp-content/uploads/2026/03/remittance-768x432.png 768w"
+imageSrcset: "/wp-content/uploads/2026/03/remittance.png 1200w, /wp-content/uploads/2026/03/remittance-300x169.png 300w, /wp-content/uploads/2026/03/remittance-1024x576.png 1024w, /wp-content/uploads/2026/03/remittance-768x432.png 768w"
 ---
 
 Sending money abroad from Nigeria is expensive — if you use the wrong service. Banks will happily charge you 5% plus a flat fee and take five days. I compared Wise, Grey, Chipper Cash, and bank transfer to find the cheapest way to send money out of Nigeria in 2026.

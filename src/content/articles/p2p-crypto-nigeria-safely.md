@@ -6,10 +6,9 @@ author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-08-24
 readMins: 8
-image: "/finance-astro/wp-content/uploads/2026/03/crypto.png"
+image: "/wp-content/uploads/2026/03/crypto.png"
 imageAlt: "Crypto in Nigeria: Best Apps and What’s Legal in 2026"
-imageSrcset: "/finance-astro/wp-content/uploads/2026/03/crypto.png 1200w, /finance-astro/wp-content/uploads/2026/03/crypto-300x169.png 300w, /finance-astro/wp-content/uploads/2026/03/crypto-1024x576.png 1024w, /finance-astro/wp-content/uploads/2026/03/crypto-768x432.png 768w"
-videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+imageSrcset: "/wp-content/uploads/2026/03/crypto.png 1200w, /wp-content/uploads/2026/03/crypto-300x169.png 300w, /wp-content/uploads/2026/03/crypto-1024x576.png 1024w, /wp-content/uploads/2026/03/crypto-768x432.png 768w"
 ---
 
 P2P is how Nigeria buys crypto — bank transfer on one side, USDT on the other, platform escrow in the middle. The system is safe when you respect it and expensive when you improvise. Every scam story I have heard breaks at least one of the rules below.
@@ -30,9 +29,9 @@ The marketplace holds the seller's crypto the moment you open the order. Your na
 
 Price more than 2% better than every other merchant. Pressure to release before confirming receipt. Requests to split payment across multiple accounts. A merchant who goes silent the moment you ask a verification question. Cancel the order, report, re-list — the two minutes you lose are the cheapest insurance in crypto.
 
-## Watch the video walkthrough
+## Video walkthrough
 
-The companion video below shows the full flow on a real order — opening escrow, verifying the merchant, and the exact moment to tap release. Watch it once before your first trade.
+No companion video for this guide yet — the checklist above is the full flow: opening escrow, verifying the merchant, and the exact moment to tap release. Work through it once before your first trade.
 
 ## After the trade
 

@@ -6,9 +6,9 @@ author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-04-05
 readMins: 2
-image: "/finance-astro/wp-content/uploads/2026/04/banking.png"
+image: "/wp-content/uploads/2026/04/banking.png"
 imageAlt: "Kuda vs Moniepoint: Which Is Better for Daily Use?"
-imageSrcset: "/finance-astro/wp-content/uploads/2026/04/banking.png 1200w, /finance-astro/wp-content/uploads/2026/04/banking-300x169.png 300w, /finance-astro/wp-content/uploads/2026/04/banking-1024x576.png 1024w, /finance-astro/wp-content/uploads/2026/04/banking-768x432.png 768w"
+imageSrcset: "/wp-content/uploads/2026/04/banking.png 1200w, /wp-content/uploads/2026/04/banking-300x169.png 300w, /wp-content/uploads/2026/04/banking-1024x576.png 1024w, /wp-content/uploads/2026/04/banking-768x432.png 768w"
 ---
 
 Kuda and Moniepoint are the two biggest digital banks in Nigeria, and both are free. But “free” hides very different trade-offs. I ran both as my primary accounts for two months to find the difference that actually matters for daily transactions.
