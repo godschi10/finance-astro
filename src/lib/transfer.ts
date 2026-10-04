@@ -71,7 +71,7 @@ export function transferQuote(
   dest = "USD",
   fx: FxInput = { rates: {}, as_of: "", ok: false },
 ): TransferQuote {
-  amount = Math.max(0, amount);
+  amount = Number.isFinite(amount) ? Math.max(0, amount) : 0;
   direction = "from-nigeria" === direction ? "from-nigeria" : "to-nigeria";
   const currencies = fxCurrencies();
   source = String(source).toUpperCase().trim();
@@ -105,8 +105,9 @@ export function transferQuote(
     origin = source;
     dest = "NGN";
   } else {
-    const destUsd = ("USD" === dest || !rates[dest] || rates[dest] <= 0) ? 1.0 : 1.0 / Number(rates[dest]);
-    mid = (1.0 / usdNgn) * destUsd;
+    // NGN -> foreign: USD-per-NGN times dest-per-USD (units per 1 USD).
+    const destPerUsd = ("USD" === dest || !rates[dest] || rates[dest] <= 0) ? 1.0 : Number(rates[dest]);
+    mid = (1.0 / usdNgn) * destPerUsd;
     origin = "NGN";
   }
 

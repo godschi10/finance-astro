@@ -48,10 +48,10 @@ const unitLine = unitLineOf(d.unit_rate, d.rev_rate, d.from, d.to);
 <div><h2>{s.h2}</h2>{s.body.map((p) => (<p set:html={p}></p>))}</div>
 ))}
 <div class="hr"></div>
-<h2>Neighbouring conversions</h2>
-<p>{sibs.map((s, i) => (<span><a class="slink" href={pageUrl(s.slug)}>{s.h1}</a>{i < sibs.length - 1 ? " · " : ""}</span>))}</p>
-<h2>The other direction</h2>
-<p>{opps.map((s, i) => (<span><a class="slink" href={pageUrl(s.slug)}>{s.h1}</a>{i < opps.length - 1 ? " · " : ""}</span>))}</p>
+{sibs.length > 0 && <h2>Neighbouring conversions</h2>}
+{sibs.length > 0 && <p>{sibs.map((s, i) => (<span><a class="slink" href={pageUrl(s.slug)}>{s.h1}</a>{i < sibs.length - 1 ? " · " : ""}</span>))}</p>}
+{opps.length > 0 && <h2>The other direction</h2>}
+{opps.length > 0 && <p>{opps.map((s, i) => (<span><a class="slink" href={pageUrl(s.slug)}>{s.h1}</a>{i < opps.length - 1 ? " · " : ""}</span>))}</p>}
 </div>
 </ToolShell>
 <div data-amount-slug={slug} hidden></div>

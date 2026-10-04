@@ -4,6 +4,59 @@ Ledger law: every order gets a line here immediately. `CODED-UNCOMMITTED ≠ DON
 a fix is done only when the served bytes and the rendered page prove it.
 Read this at session start.
 
+## SHIPPED — 2026-10-04 · CALCULATOR CORRECTNESS MISSION — v0.7.16
+King's screenshot showed 50-30-20 with empty % fields → ₦0 · ₦0 · ₦1,000,000
+with no warning. His order: fix this calculator, research ALL calculators for
+missing fields/features/bugs, fix everything while respecting UI/UX.
+- [x] **50-30-20 fixed** — Savings % field added (was: savings silently =
+      remainder, needs/wants blanks = ₦0 and savings = full income), trio math
+      literal, sum honesty note ("Splits add to 130% — buckets use your exact
+      percentages"), negative leftover honest. v0.7.0 look locked.
+- [x] **Research complete** (3 parallel readers, disjoint sets): master:
+      ~/work/research-notes/calc-findings-MASTER.md. Worst: transfer from-Nigeria
+      non-USD rates +74.8% (GBP) / −50.7% (CAD); allocator silent 3×; salary
+      "Best" tag lies at ₦500k; emergency ₦Infinity; NaN/Infinity class;
+      misleading copy-vs-math (compound example ≠ defaults, inflation 2-col copy,
+      Kuda rate vs "up to 16%"); amount pages GBP/EUR blanks + {PARALLEL}.
+- [x] **All fixed, behavior-only.** Transfer from-Nigeria non-USD math corrected
+      (GBP 98.79→56.53, CAD 52.48→106.40, USD legs untouched); allocator oversum
+      warning rail; salary crossover-aware "Best"; emergency Infinity clamped +
+      warn rails on every tool (empty/absurd → honest "Out of range" notes, no
+      silent ₦0s); NaN/Infinity class closed; dividend cash mode labeled honest;
+      savings-goal "Enter a target" on cleared field; compound example synced to
+      true defaults; inflation example + "two rows" copy; amount-page blanks +
+      {PARALLEL} removed; Reset button on all tools. Budget.ts `else` unclamped
+      to literal negative-remaining.
+- [x] **Verification:** build 78 pages; **6/6 gates (article 147/147, vectors
+      95/95)**; QA interaction proof on all 20 components (zero JS errors, no
+      390px overflow, every fixed behaviour reproduced in served bytes —
+      King's case now honest). Proof: ~/work/research-notes/calc-proof-qa.md
+- [x] **Parked with reason:** deploy-time caching/versioning (King must approve),
+      audit-tab button redesign (UI-locked), per-tool knobs the researcher
+      confirmed out-of-scope (speed column — needs lib change; salary other-
+      reliefs — copy never promises; Kuda row — gate-pinned byte-equal against
+      PHP oracle).
+
+## ACTIVE — CALCULATOR CORRECTNESS MISSION, King's order 2026-10-04
+King (screenshot: 50-30-20 with empty % fields → ₦0 · ₦0 · ₦1,000,000): "Fix this
+calculator, then do research on the calculators for missing fields or features,
+and bugs. After finding all, fix all while respecting UI and UX."
+LAW: calculator VISUAL design stays v0.7.0-reverted (rejected-is-final) — fixes
+are behavioral (defaults, validation, math, missing fields in existing vocabulary).
+- [ ] **TRIAGE 50-30-20** — @manager-opencode reads page + lib, scopes the bug.
+- [x] **RESEARCH COMPLETE** — master: ~/work/research-notes/calc-findings-MASTER.md
+      (sets: fx-movement, growth-debt, income-hub). Worst: transfer GBP +74.8% /
+      CAD −50.7%; allocator 3× silent oversum; salary "Best" tag lies at ₦500k.
+- [ ] **FIX LEGS** — 3 parallel @builders on the research sets (FX / growth /
+      income+hub). Rules: behavior-only, v0.7.0 look; NO lib signature changes;
+      vectors 95/95 green; gate-pinned behaviors = PAGE-LEVEL honesty only
+      (manager's clearance: pension-on-gross, bonus tax-free, emergency seed,
+      allocator lib, dividend end_value — no lib remodeling without King's call).
+- [ ] **SHIP** — QA interaction-probes every changed tool; served-bytes proof.
+- [ ] **FIX LEGS** — per findings, behavior-only. Vectors 95/95 + accuracy 26/26
+      stay green; QA interaction-probes every changed tool.
+- [ ] **SHIP** — served-bytes proof per changed tool.
+
 ## SHIPPED — 2026-10-04 · CLEANUP FIXES — v0.7.13
 King: *"Fix all findings before we move to the next."*
 - [x] **All cleanup findings fixed.** Executed under @manager-opencode: @builder

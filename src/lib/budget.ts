@@ -29,7 +29,8 @@ export function budget503020(
     needs,
     wants,
     savings,
-    else: Math.max(0, income - needs - wants - savings),
+    // Honest leftover: literal income − assigned, negative when over-allocated.
+    else: income - needs - wants - savings,
     needs_pct: needsPct,
     wants_pct: wantsPct,
     savings_pct: savingsPct,

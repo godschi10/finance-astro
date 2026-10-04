@@ -204,6 +204,12 @@ export function amountTokens(
     parallel =
       `$${formatGrouped(pv, pv < 100 ? 2 : 0)} at the parallel (street) rate, naira buys a little fewer dollars on the informal market ` +
       "than the official figure implies, because P2P and street rates sit above the official price of a dollar.";
+  } else if (parNgn > 0) {
+    // Non-USD pairs (GBP/EUR→NGN): no parallel cross exists, so never leave
+    // {PARALLEL} blank mid-sentence — the street premium applies regardless.
+    parallel =
+      "Street and P2P trades usually price a few percent above the official figure, " +
+      "so confirm the provider's final payout before sending.";
   }
 
   return {

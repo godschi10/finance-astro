@@ -23,6 +23,7 @@ interface Props {
   slug: string;
   tool: string;      // live hero H1 verbatim (some tools reword it, e.g. the
                      // converter's "Dollar to Naira & Every Currency")
+  lede: string;      // hero sub-copy under the H1 (every tool page passes it)
   crumb?: string;    // breadcrumb current label (live: short tool name)
   verified: string;
   badge?: string;            // gold pill (live: "Live rates · updated …", "NTA 2025 · …")
@@ -76,6 +77,7 @@ if (faqs.length) graph.push({
 <div class="con" style="margin-top:32px;padding-bottom:48px">
   <div class="ad-bg"></div>
   <slot />
+  <div style="margin-top:12px"><button class="btn b-ghost b-sm" type="button" onclick="location.reload()">Reset</button></div>
   {verified && <p class="fxap-conv-note" style="margin-top:14px"><span style="color:var(--gold-b)" aria-hidden="true">◆</span> {verified}</p>}
   {disclaimer && <p class="fx-disclaimer">{disclaimer}</p>}
   {copy.length > 0 && (

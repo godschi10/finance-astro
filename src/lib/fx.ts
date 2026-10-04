@@ -88,7 +88,9 @@ export function fxConvert(
 ): number {
   base = base.toUpperCase();
   quote = quote.toUpperCase();
-  if (!(base in rates) || !(quote in rates) || rates[base] <= 0) return 0;
+  // Positivity (not <= 0): a corrupt/zero feed rate, or NaN which slips
+  // past every <= comparison, degrades to 0 here — never NaN into the UI.
+  if (!(base in rates) || !(quote in rates) || !(rates[base] > 0) || !(rates[quote] > 0)) return 0;
   if (base === quote) return amount;
   return amount * (rates[quote] / rates[base]);
 }
@@ -105,6 +107,12 @@ export async function fxFetchLive(signal?: AbortSignal): Promise<FxRates> {
   const body = await res.json();
   if (!body || body.result !== "success" || !body.rates) throw new Error("fx feed bad body");
   const rates: Record<string, number> = {};
-  for (const k of Object.keys(body.rates)) rates[k] = Number(body.rates[k]);
+  for (const k of Object.keys(body.rates)) {
+    // Bare Number() lets NaN/zero/negative feed values through; keep only
+    // finite-positive rates so converts degrade to 0, never NaN/negative.
+    const v = Number(body.rates[k]);
+    if (Number.isFinite(v) && v > 0) rates[k] = v;
+  }
+  if (!(rates["NGN"] > 0)) throw new Error("fx feed bad NGN");
   return { ok: true, rates, as_of: String(body.time_last_update_utc ?? ""), cached: false };
 }

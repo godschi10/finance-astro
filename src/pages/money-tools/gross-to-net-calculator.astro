@@ -12,23 +12,32 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ]}
 
   badge="Reverse PAYE · NTA 2025",
-  copy={[["p", "Most salary discussions start from gross, the figure on your offer letter, and work forward to the net that arrives in your account. But when you are negotiating, planning a budget or comparing two offers, it is often more useful to start from the take-home you need and ask: what gross produces that? Because PAYE rises with gross, there is exactly one gross for any given net, and this calculator finds it precisely."],["p", "The calculator applies the current NTA 2025 schedule: a 0% band on the first ₦800,000 of annual taxable income, progressive 15% to 25% bands above that, a rent relief of 20% of annual rent (capped ₦500,000), and a complete minimum-wage exemption for those earning ₦70,000 a month or less. Because the first slice is tax-free, the relationship between gross and net is not linear, which is exactly why a simple multiplier fails and a proper solver is needed."],["p", "If an employer quotes a net figure (\"you will take home ₦X\"), this tells you what the actual gross is, and whether that is competitive. If you want a specific take-home, say, ₦300,000, this shows the gross offer you should ask for, and the tax gap between gross and net that your employer will deduct."],["p", "The gap between your gross and net is more than just PAYE. The breakdown table shows each piece: the pension contribution (8% by default), the National Housing Fund, NHIS, any life assurance and other reliefs you claim, and the rent relief that lowers your taxable income. Each deduction and relief moves the gross you need in a different direction, more deductions mean you need a higher gross for the same take-home, while more reliefs mean you need a lower one."],["p", "Under the Nigeria Tax Act 2025, employees earning ₦70,000 a month or less are completely exempt from PAYE. So if your target take-home is at or below that level, the gross you need is essentially the same as the net, no tax to deduct. Above it, the progressive bands start to bite."],["p", "This calculator works backward, net to gross. To go the other way, from a salary you have been offered to the take-home you will actually receive, use our Nigeria Tax Calculator . It also compares the old and new tax bands and shows how much the Nigeria Tax Act 2025 saves you."],["h2", "Gross to net questions"],["h3", "How do I find gross salary from net pay?"],["p", "Because PAYE rises with gross salary, the calculator binary-searches the gross that produces your target take-home under the current Nigeria Tax Act 2025 bands, so the two always agree exactly."],["h3", "What gross salary gives me ₦250,000 take home per month?"],["p", "About ₦308,192 a month before tax, assuming the default 8% pension, no NHF and no rent relief. The calculator shows the PAYE and deductions too."],["h3", "How is this different from the salary tax calculator?"],["p", "The salary tax calculator goes forward, gross in, net out. This one reverses it: you tell it the net you want, it returns the gross you must earn."],["h3", "Does rent relief change the gross I need?"],["p", "Yes. Rent relief lowers your taxable income, so with rent relief you need a slightly lower gross to hit the same take-home. Enter your annual rent to see the effect."]]},
+  copy={[["p", "Most salary discussions start from gross, the figure on your offer letter, and work forward to the net that arrives in your account. But when you are negotiating, planning a budget or comparing two offers, it is often more useful to start from the take-home you need and ask: what gross produces that? Because PAYE rises with gross, there is exactly one gross for any given net, and this calculator finds it precisely."],["p", "The calculator applies the current NTA 2025 schedule: a 0% band on the first ₦800,000 of annual taxable income, progressive 15% to 25% bands above that, a rent relief of 20% of annual rent (capped ₦500,000), and a complete minimum-wage exemption for those earning ₦70,000 a month or less. Because the first slice is tax-free, the relationship between gross and net is not linear, which is exactly why a simple multiplier fails and a proper solver is needed."],["p", "If an employer quotes a net figure (\"you will take home ₦X\"), this tells you what the actual gross is, and whether that is competitive. If you want a specific take-home, say, ₦300,000, this shows the gross offer you should ask for, and the tax gap between gross and net that your employer will deduct."],["p", "The gap between your gross and net is more than just PAYE. The breakdown table shows each piece: the pension contribution (8% by default), the National Housing Fund, NHIS, any life assurance and other reliefs you claim, and the rent relief that lowers your taxable income. Each deduction and relief moves the gross you need in a different direction, more deductions mean you need a higher gross for the same take-home, while more reliefs mean you need a lower one."],["p", "Under the Nigeria Tax Act 2025, employees earning ₦70,000 a month or less are completely exempt from PAYE. Pension still comes off first, so the gross you need sits about 8.7% above the net at the default 8% pension (a ₦60,000 target needs about ₦65,217 gross) — with no PAYE on top."],["p", "This calculator works backward, net to gross. To go the other way, from a salary you have been offered to the take-home you will actually receive, use our Nigeria Tax Calculator . It also compares the old and new tax bands and shows how much the Nigeria Tax Act 2025 saves you."],["h2", "Gross to net questions"],["h3", "How do I find gross salary from net pay?"],["p", "Because PAYE rises with gross salary, the calculator binary-searches the gross that produces your target take-home under the current Nigeria Tax Act 2025 bands, so the two always agree exactly."],["h3", "What gross salary gives me ₦250,000 take home per month?"],["p", "About ₦308,192 a month before tax, assuming the default 8% pension, no NHF and no rent relief. The calculator shows the PAYE and deductions too."],["h3", "How is this different from the salary tax calculator?"],["p", "The salary tax calculator goes forward, gross in, net out. This one reverses it: you tell it the net you want, it returns the gross you must earn."],["h3", "Does rent relief change the gross I need?"],["p", "Yes. Rent relief lowers your taxable income, so with rent relief you need a slightly lower gross to hit the same take-home. Enter your annual rent to see the effect."]]},
   disclaimer="This calculator is for informational guidance only and is not tax, payroll or financial advice. Figures follow the Nigeria Tax Act 2025 with assumed deductions, confirm your exact salary and tax with your employer or a licensed adviser.",>
 <div class="fx-card">
 <div class="tgrid c3">
 <div class="field"><label for="gn-net">Target take-home ₦/mo</label><input id="gn-net" type="number" min="0" step="any" value="250000" inputmode="decimal"></div>
 <div class="field"><label for="gn-pen">Pension %</label><input id="gn-pen" type="number" min="0" max="100" step="any" value="8" inputmode="decimal"></div>
 <div class="field"><label for="gn-rent">Annual rent ₦</label><input id="gn-rent" type="number" min="0" step="any" value="0" inputmode="decimal"></div>
+<div class="field"><label for="gn-nhf">NHF monthly ₦</label><input id="gn-nhf" type="number" min="0" step="any" value="0" inputmode="decimal"></div>
+<div class="field"><label for="gn-nhis">NHIS monthly ₦</label><input id="gn-nhis" type="number" min="0" step="any" value="0" inputmode="decimal"></div>
+<div class="field"><label for="gn-life">Life assurance monthly ₦</label><input id="gn-life" type="number" min="0" step="any" value="0" inputmode="decimal"></div>
+<div class="field"><label for="gn-other">Other reliefs monthly ₦</label><input id="gn-other" type="number" min="0" step="any" value="0" inputmode="decimal"></div>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Gross to negotiate</p>
 <p class="receipt-fig" id="gn-fig">₦{n(seed.gross_monthly)}</p>
-<p class="receipt-sub" id="gn-sub">Nets ₦{n(seed.net_monthly)}/mo after ₦{n(seed.tax_monthly)} tax</p>
+<p class="receipt-sub" id="gn-sub">Nets ₦{n(seed.net_monthly)}/mo after ₦{n(seed.tax_monthly)} tax{seed.exempt ? " · EXEMPT (minimum wage)" : ""}</p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Pension /mo</span><b id="gn-pen2">₦{n(seed.pension_monthly)}</b></div>
+<div class="receipt-row"><span>NHF /mo</span><b id="gn-nhf2">₦{n(seed.nhf_monthly)}</b></div>
+<div class="receipt-row"><span>NHIS /mo</span><b id="gn-nhis2">₦{n(seed.nhis_monthly)}</b></div>
+<div class="receipt-row"><span>Life assurance /mo</span><b id="gn-life2">₦{n(seed.life_monthly)}</b></div>
+<div class="receipt-row"><span>Other reliefs /mo</span><b id="gn-other2">₦{n(seed.other_monthly)}</b></div>
 <div class="receipt-row"><span>Rent relief /mo</span><b id="gn-rel">₦{n(seed.relief_monthly)}</b></div>
 <div class="receipt-row"><span>Deductions /mo</span><b id="gn-ded">₦{n(seed.deductions_monthly)}</b></div>
-<p class="receipt-foot">NTA 2026 bands · binary-solved</p>
+<p class="bar-note" id="gn-warn" hidden></p>
+<p class="receipt-foot">NTA 2026 bands · binary-solved · pension figured on gross as basic</p>
 </div>
 </div>
 </ToolShell>
@@ -39,16 +48,39 @@ const n = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 function render() {
-  const net = Math.max(0, Number(g("gn-net").value) || 0);
-  const pen = Math.min(100, Math.max(0, Number(g("gn-pen").value) || 0)) / 100;
-  const rent = Math.max(0, Number(g("gn-rent").value) || 0);
-  const r = reverseGross(net, pen, 0, rent);
+  const netRaw = Number(g("gn-net").value);
+  const penRaw = Number(g("gn-pen").value);
+  const rentRaw = Number(g("gn-rent").value);
+  const net = Math.max(0, netRaw || 0);
+  const pen = Math.min(100, Math.max(0, penRaw || 0)) / 100;
+  const rent = Math.max(0, rentRaw || 0);
+  const nhf = Math.max(0, Number(g("gn-nhf").value) || 0);
+  const nhis = Math.max(0, Number(g("gn-nhis").value) || 0);
+  const life = Math.max(0, Number(g("gn-life").value) || 0);
+  const other = Math.max(0, Number(g("gn-other").value) || 0);
+  const r = reverseGross(net, pen, nhf, rent, nhis, life, other);
   t("gn-fig").textContent = n(r.gross_monthly);
-  t("gn-sub").textContent = `Nets ${n(r.net_monthly)}/mo after ${n(r.tax_monthly)} tax`;
+  t("gn-sub").textContent = `Nets ${n(r.net_monthly)}/mo after ${n(r.tax_monthly)} tax${r.exempt ? " · EXEMPT (minimum wage)" : ""}`;
   t("gn-pen2").textContent = n(r.pension_monthly);
+  t("gn-nhf2").textContent = n(r.nhf_monthly);
+  t("gn-nhis2").textContent = n(r.nhis_monthly);
+  t("gn-life2").textContent = n(r.life_monthly);
+  t("gn-other2").textContent = n(r.other_monthly);
   t("gn-rel").textContent = n(r.relief_monthly);
   t("gn-ded").textContent = n(r.deductions_monthly);
+  const notes: string[] = [];
+  if (!(netRaw > 0)) notes.push("Enter a target take-home above ₦0 — the gross shows ₦0 until you do.");
+  if (netRaw < 0 || penRaw < 0 || rentRaw < 0) notes.push("Negative entries are treated as ₦0.");
+  if (penRaw > 100) notes.push("Pension capped at 100%.");
+  // Solver ceiling: the engine searches up to ₦100M/mo. Past the maximum
+  // achievable net it returns the ceiling, a gross that does NOT reach the
+  // target — say so instead of printing it silently.
+  if (net > 0 && r.net_monthly < net * (1 - 1e-6)) notes.push("Out of range — that take-home needs a gross above ₦100M/mo. Lower the target.");
+  else if (netRaw > 100000000) notes.push("That target looks unusually large — double-check the figure.");
+  const w = t("gn-warn");
+  w.hidden = notes.length === 0;
+  w.textContent = notes.join(" ");
 }
-["gn-net", "gn-pen", "gn-rent"].forEach((id) => g(id).addEventListener("input", render));
+["gn-net", "gn-pen", "gn-rent", "gn-nhf", "gn-nhis", "gn-life", "gn-other"].forEach((id) => g(id).addEventListener("input", render));
 render();
 </script>

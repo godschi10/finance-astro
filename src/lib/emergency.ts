@@ -32,7 +32,10 @@ export function emergencyFund(
   const runwayNow = essentials > 0 ? saved / essentials : 0;
   const target = essentials * monthsCover;
   const monthsToReach = monthlySave > 0 ? target / monthlySave : 0;
-  const yearsToReach = monthsToReach / 12;
+  // Display-sanity cap: (1+inflation)^years overflows to Infinity for
+  // dust-sized saving or absurd cover/inflation (receipt printed ₦Infinity).
+  // 50y exceeds any emergency build; the pinned seed (0.94y) is untouched.
+  const yearsToReach = Math.min(monthsToReach / 12, 50);
   const futureEssentials = essentials * Math.pow(1 + inflation, yearsToReach);
   const realTarget = futureEssentials * monthsCover;
 

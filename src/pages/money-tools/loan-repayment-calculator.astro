@@ -17,8 +17,8 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   disclaimer="This calculator is for informational guidance only and is not financial or lending advice. Figures reflect the interest rate you enter; lenders may add fees, and actual terms vary. Confirm the full repayment schedule with your lender before signing.",>
 <div class="fx-card">
 <div class="tgrid c3">
-<div class="field"><label for="ln-amt">Loan amount ₦</label><input id="ln-amt" type="number" min="0" step="any" value={LOAN_SEED.amount} inputmode="decimal"></div>
-<div class="field"><label for="ln-tenor">Tenor</label><input id="ln-tenor" type="number" min="1" step="1" value={LOAN_SEED.tenor} inputmode="numeric"></div>
+<div class="field"><label for="ln-amt">Loan amount ₦</label><input id="ln-amt" type="number" min="0" max="1000000000000" step="any" value={LOAN_SEED.amount} inputmode="decimal"></div>
+<div class="field"><label for="ln-tenor">Tenor</label><input id="ln-tenor" type="number" min="1" max="600" step="1" value={LOAN_SEED.tenor} inputmode="numeric"></div>
 <div class="field"><label for="ln-unit">Tenor unit</label><select id="ln-unit"><option value="days" selected>Days</option><option value="months">Months</option></select></div>
 <div class="field"><label for="ln-rate">Quoted rate %</label><input id="ln-rate" type="number" min="0" step="any" value={LOAN_SEED.rate} inputmode="decimal"></div>
 <div class="field"><label for="ln-mode">Rate type</label><select id="ln-mode"><option value="daily" selected>Per day (loan apps)</option><option value="flat">Flat per month</option><option value="reducing">Reducing balance</option></select></div>
@@ -31,7 +31,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Total repaid</span><b id="ln-tot">₦{n(seed.total)}</b></div>
 <div class="receipt-row"><span>Interest</span><b id="ln-int">₦{n(seed.interest)}</b></div>
 <div class="receipt-row"><span>True APR</span><b id="ln-apr">{(seed.apr * 100).toFixed(1)}%</b></div>
-<p class="receipt-foot">APR solved from the repayment stream</p>
+<p class="receipt-foot">APR solved from the repayment stream · day tenors round up to whole months · lender fees excluded</p>
 </div>
 </div>
 </ToolShell>
@@ -50,6 +50,14 @@ function render() {
     (document.getElementById("ln-mode") as HTMLSelectElement).value,
   );
   t("ln-period").textContent = r.period;
+  if (!Number.isFinite(r.installment) || !Number.isFinite(r.total) || !Number.isFinite(r.interest) || !Number.isFinite(r.apr)) {
+    t("ln-fig").textContent = "Out of range";
+    t("ln-sub").textContent = "No confident total at this input — lower the amount, tenor, or rate.";
+    t("ln-tot").textContent = "—";
+    t("ln-int").textContent = "—";
+    t("ln-apr").textContent = "—";
+    return;
+  }
   t("ln-fig").textContent = nn(r.installment);
   t("ln-sub").textContent = `Total ${nn(r.total)} · interest ${nn(r.interest)} · true APR ${(r.apr * 100).toFixed(1)}%`;
   t("ln-tot").textContent = nn(r.total);

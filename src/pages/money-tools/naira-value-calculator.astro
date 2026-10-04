@@ -1,11 +1,14 @@
 ---
 import ToolShell from "../../components/ToolShell.astro";
-import { nairaValue, nairaValueHistory, NAIRA_VALUE_SEED } from "../../lib/naira-value";
+import { nairaValue, nairaValueHistory, nairaValuePv, nairaValueSave, NAIRA_VALUE_SEED } from "../../lib/naira-value";
 import { formatGrouped } from "../../lib/format";
 const n = (v: number) => formatGrouped(v, 0);
 const s = NAIRA_VALUE_SEED;
 const seed = nairaValue(s.value, s.infl, s.years, s.months);
 const hist = nairaValueHistory(s.value, s.infl, s.years);
+// Copy-promised reverse views (lede + "both directions"): seeds paint with JS disabled.
+const pvSeed = nairaValuePv(2000000, s.infl, s.years, s.months);
+const svSeed = nairaValueSave(10000000, 1000000, 0.15, s.infl, s.years, s.months, "monthly");
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
 <ToolShell title="Naira Value Calculator, Inflation Erosion - GWill Finance" description="What will your naira be worth in 5 years? Present vs future purchasing power, erosion share, and year-by-year decay." slug="naira-value-calculator" tool="Naira Value Calculator" crumb="Naira Value Calculator (Inflation / Depreciation)" lede="Inflation is a silent debit. Enter any sum and see what it still buys after N years — and what you must save to stand still." verified="Purchasing-power view · 20% default inflation" faqs={[
@@ -18,18 +21,53 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   disclaimer="This calculator is for informational guidance only and is not financial advice. Inflation and depreciation figures are estimates based on the rate you enter; actual Nigerian inflation varies. Confirm significant decisions with a licensed adviser.",>
 <div class="fx-card">
 <div class="tgrid c3">
-<div class="field"><label for="nv-val">Amount ₦</label><input id="nv-val" type="number" min="0" step="any" value={s.value} inputmode="decimal"></div>
-<div class="field"><label for="nv-infl">Inflation %/yr</label><input id="nv-infl" type="number" min="0" step="any" value="20" inputmode="decimal"></div>
-<div class="field"><label for="nv-yrs">Years</label><input id="nv-yrs" type="number" min="1" step="1" value={s.years} inputmode="numeric"></div>
+<div class="field"><label for="nv-val">Amount ₦</label><input id="nv-val" type="number" min="0" max="1000000000000" step="any" value={s.value} inputmode="decimal"></div>
+<div class="field"><label for="nv-infl">Inflation %/yr</label><input id="nv-infl" type="number" min="0" max="200" step="any" value="20" inputmode="decimal"></div>
+<div class="field"><label for="nv-yrs">Years</label><input id="nv-yrs" type="number" min="1" max="100" step="1" value={s.years} inputmode="numeric"></div>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">To buy the same in <span id="nv-yr">5</span> years you need</p>
 <p class="receipt-fig" id="nv-fig">₦{n(seed.future)}</p>
 <p class="receipt-sub" id="nv-sub">₦{n(seed.value)} today loses {(seed.lost_fraction * 100).toFixed(1)}% of its buying power</p>
+<p class="receipt-note" id="nv-warn" hidden></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Future price tag</span><b id="nv-fut">₦{n(seed.future)}</b></div>
 <div class="receipt-row"><span>Buying power lost</span><b id="nv-lost">{(seed.lost_fraction * 100).toFixed(1)}%</b></div>
 <p class="receipt-foot">Purchasing-power view · inflation compounds</p>
+</div>
+</div>
+<div class="hr"></div>
+<h2 class="tool-h2">What a future sum is worth today</h2>
+<div class="fx-card">
+<div class="tgrid c3">
+<div class="field"><label for="nv-pv">Future amount ₦</label><input id="nv-pv" type="number" min="0" max="1000000000000" step="any" value="2000000" inputmode="decimal"><p class="hint">Uses the inflation and years above.</p></div>
+</div>
+<div class="receipt" aria-live="polite">
+<p class="receipt-lbl">Worth in today's buying power</p>
+<p class="receipt-fig" id="nv-pv-fig">₦{n(pvSeed.pv)}</p>
+<p class="receipt-sub" id="nv-pv-sub">₦{n(pvSeed.future)} in {s.years} years buys what ₦{n(pvSeed.pv)} buys today</p>
+<div class="receipt-div" aria-hidden="true"></div>
+<div class="receipt-row"><span>Future price tag</span><b id="nv-pv-fut">₦{n(pvSeed.future)}</b></div>
+<div class="receipt-row"><span>Discount to today</span><b id="nv-pv-disc">{(pvSeed.discount_rate * 100).toFixed(1)}%</b></div>
+<p class="receipt-foot">Discounted at the inflation above — the reverse direction</p>
+</div>
+</div>
+<div class="hr"></div>
+<h2 class="tool-h2">What you must save to stand still</h2>
+<div class="fx-card">
+<div class="tgrid c3">
+<div class="field"><label for="nv-tgt">Goal in today's ₦</label><input id="nv-tgt" type="number" min="0" max="1000000000000" step="any" value="10000000" inputmode="decimal"></div>
+<div class="field"><label for="nv-cur">Saved already ₦</label><input id="nv-cur" type="number" min="0" max="1000000000000" step="any" value="1000000" inputmode="decimal"></div>
+<div class="field"><label for="nv-ret">Return %/yr</label><input id="nv-ret" type="number" min="0" max="100" step="any" value="15" inputmode="decimal"><p class="hint">Uses the inflation and years above.</p></div>
+</div>
+<div class="receipt" aria-live="polite">
+<p class="receipt-lbl">Save monthly to stand still</p>
+<p class="receipt-fig" id="nv-sv-fig">₦{n(svSeed.real_monthly)}</p>
+<p class="receipt-sub" id="nv-sv-sub">Inflation moves your ₦{n(svSeed.target)} goal to ₦{n(svSeed.real_target)}</p>
+<div class="receipt-div" aria-hidden="true"></div>
+<div class="receipt-row"><span>Goal at future prices</span><b id="nv-sv-real">₦{n(svSeed.real_target)}</b></div>
+<div class="receipt-row"><span>Extra vs ignoring inflation</span><b id="nv-sv-gap">₦{n(svSeed.gap_monthly)}</b></div>
+<p class="receipt-foot">Monthly, same horizon and inflation as above</p>
 </div>
 </div>
 <div class="hr"></div>
@@ -42,32 +80,69 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </table></div>
 </ToolShell>
 <script>
-import { nairaValue, nairaValueHistory } from "../../lib/naira-value";
+import { nairaValue, nairaValueHistory, nairaValuePv, nairaValueSave } from "../../lib/naira-value";
 import { formatGrouped } from "../../lib/format";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 function render() {
+  const rawV = g("nv-val").value.trim();
   const v = Math.max(0, Number(g("nv-val").value) || 0);
-  const infl = Math.max(0, Number(g("nv-infl").value) || 0) / 100;
-  const yrs = Math.max(1, Math.trunc(Number(g("nv-yrs").value) || 5));
+  let inflPct = Math.max(0, Number(g("nv-infl").value) || 0);
+  let yrs = Math.max(1, Math.trunc(Number(g("nv-yrs").value) || 5));
+  // Clamp + warn, never silent: absurd inputs say so instead of printing ₦Infinity.
+  const notes: string[] = [];
+  if (rawV === "") notes.push("Enter an amount — empty counts as ₦0.");
+  if (inflPct > 200) { inflPct = 200; notes.push("Inflation capped at 200%/yr for display."); }
+  if (yrs > 100) { yrs = 100; notes.push("Horizon capped at 100 years."); }
+  const infl = inflPct / 100;
   const r = nairaValue(v, infl, yrs, 0);
+  const w = t("nv-warn");
+  const tooBig = !Number.isFinite(r.future);
+  if (tooBig) notes.push("Too large to display — lower the amount or the rate.");
+  w.hidden = notes.length === 0;
+  w.textContent = notes.join(" ");
   t("nv-yr").textContent = String(yrs);
-  t("nv-fig").textContent = nn(r.future);
+  t("nv-fig").textContent = tooBig ? "—" : nn(r.future);
   t("nv-sub").textContent = `${nn(r.value)} today loses ${(r.lost_fraction * 100).toFixed(1)}% of its buying power`;
-  t("nv-fut").textContent = nn(r.future);
+  t("nv-fut").textContent = tooBig ? "—" : nn(r.future);
   t("nv-lost").textContent = (r.lost_fraction * 100).toFixed(1) + "%";
   const tb = document.querySelector("#nv-table tbody") as HTMLElement;
   tb.innerHTML = "";
-  for (const row of nairaValueHistory(v, infl, yrs)) {
+  if (tooBig) {
     const tr = document.createElement("tr");
     tr.innerHTML = `<td></td><td class="n"></td><td class="n"></td>`;
-    (tr.children[0] as HTMLElement).textContent = String(row.year);
-    (tr.children[1] as HTMLElement).textContent = nn(row.amount);
-    (tr.children[2] as HTMLElement).textContent = (row.lost * 100).toFixed(1) + "%";
+    (tr.children[0] as HTMLElement).textContent = "—";
+    (tr.children[1] as HTMLElement).textContent = "Too large to display";
+    (tr.children[2] as HTMLElement).textContent = "—";
     tb.appendChild(tr);
+  } else {
+    for (const row of nairaValueHistory(v, infl, yrs)) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td></td><td class="n"></td><td class="n"></td>`;
+      (tr.children[0] as HTMLElement).textContent = String(row.year);
+      (tr.children[1] as HTMLElement).textContent = nn(row.amount);
+      (tr.children[2] as HTMLElement).textContent = (row.lost * 100).toFixed(1) + "%";
+      tb.appendChild(tr);
+    }
   }
+  // Reverse direction: discount a future sum to today at the same rate/horizon.
+  const fut = Math.max(0, Number(g("nv-pv").value) || 0);
+  const pv = nairaValuePv(fut, infl, yrs, 0);
+  t("nv-pv-fig").textContent = Number.isFinite(pv.pv) ? nn(pv.pv) : "—";
+  t("nv-pv-sub").textContent = `${nn(pv.future)} in ${yrs} years buys what ${nn(pv.pv)} buys today`;
+  t("nv-pv-fut").textContent = nn(pv.future);
+  t("nv-pv-disc").textContent = (pv.discount_rate * 100).toFixed(1) + "%";
+  // Stand-still savings: the monthly cost of the inflation-moved goal.
+  const tgt = Math.max(0, Number(g("nv-tgt").value) || 0);
+  const cur = Math.max(0, Number(g("nv-cur").value) || 0);
+  const ret = Math.max(0, Number(g("nv-ret").value) || 0) / 100;
+  const sv = nairaValueSave(tgt, cur, ret, infl, yrs, 0, "monthly");
+  t("nv-sv-fig").textContent = Number.isFinite(sv.real_monthly) ? nn(sv.real_monthly) : "—";
+  t("nv-sv-sub").textContent = `Inflation moves your ${nn(sv.target)} goal to ${nn(sv.real_target)}`;
+  t("nv-sv-real").textContent = Number.isFinite(sv.real_target) ? nn(sv.real_target) : "—";
+  t("nv-sv-gap").textContent = Number.isFinite(sv.gap_monthly) ? nn(sv.gap_monthly) : "—";
 }
-["nv-val", "nv-infl", "nv-yrs"].forEach((id) => g(id).addEventListener("input", render));
+["nv-val", "nv-infl", "nv-yrs", "nv-pv", "nv-tgt", "nv-cur", "nv-ret"].forEach((id) => g(id).addEventListener("input", render));
 render();
 </script>

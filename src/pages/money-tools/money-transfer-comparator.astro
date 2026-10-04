@@ -28,6 +28,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-lbl">Best payout for <span id="tc-sum-amt">₦100,000</span></p>
 <p class="receipt-fig" id="tc-fig">{seed.rows[0] ? fxNumber(seed.rows[0].received, 2) : "—"}</p>
 <p class="receipt-sub" id="tc-sub">{seed.rows[0]?.name ?? ""} · mid-market {fxNumber(seed.mid, 6)}</p>
+<p class="receipt-note" id="tc-warn" hidden></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <p class="receipt-note">Fee model verified {transferVerified()} · FX base refreshes live when the feed answers.</p>
 <p class="receipt-foot">Estimates — confirm with your provider</p>
@@ -60,24 +61,30 @@ const amt = document.getElementById("tc-amt") as HTMLInputElement;
 const dir = document.getElementById("tc-dir") as HTMLSelectElement;
 const src = document.getElementById("tc-src") as HTMLSelectElement;
 function render() {
+  const raw = amt.value.trim();
   const a = Math.max(0, Number(amt.value) || 0);
   const d = dir.value === "from-nigeria" ? "from-nigeria" : "to-nigeria";
   const s = d === "from-nigeria" ? "NGN" : src.value;
   const q = transferQuote(a, d, s, d === "from-nigeria" ? src.value : "NGN", { rates, as_of: asOf, ok: true });
   const sym = q.dest === "NGN" ? "₦" : "$";
   const osym = q.origin === "NGN" ? "₦" : "$";
+  // No winner on a zero transfer: suppress the Best tag instead of crowning a $0 tie.
+  const ranked = a > 0;
   (document.getElementById("tc-sum-amt") as HTMLElement).textContent = `${osym}${fxNumber(a, 0)}`;
-  const top = q.rows[0];
+  const top = ranked ? q.rows[0] : undefined;
+  const warn = document.getElementById("tc-warn") as HTMLElement;
+  warn.hidden = ranked;
+  warn.textContent = raw === "" ? "Enter an amount — every provider shows 0 until you do." : "Zero sends nothing — no winner on a 0 transfer.";
   (document.getElementById("tc-fig") as HTMLElement).textContent = top ? `${sym}${fxNumber(top.received, top.received < 100 ? 2 : 0)}` : "—";
-  (document.getElementById("tc-sub") as HTMLElement).textContent = top ? `${top.name} · mid-market ${fxNumber(q.mid, 6)}` : "";
+  (document.getElementById("tc-sub") as HTMLElement).textContent = top ? `${top.name} · mid-market ${fxNumber(q.mid, 6)}` : "Enter an amount above zero to rank providers";
   const tb = document.querySelector("#tc-table tbody") as HTMLElement;
   tb.innerHTML = "";
   q.rows.forEach((r, i) => {
     const tr = document.createElement("tr");
-    if (i === 0) tr.className = "win";
+    if (ranked && i === 0) tr.className = "win";
     tr.innerHTML = `<td></td><td class="n"></td><td class="n"></td><td class="n"></td>`;
     (tr.children[0] as HTMLElement).textContent = r.name;
-    if (i === 0) { const b = document.createElement("span"); b.className = "btag"; b.textContent = "Best"; tr.children[0].appendChild(b); }
+    if (ranked && i === 0) { const b = document.createElement("span"); b.className = "btag"; b.textContent = "Best"; tr.children[0].appendChild(b); }
     (tr.children[1] as HTMLElement).textContent = `${osym}${fxNumber(r.fee, 2)}`;
     (tr.children[2] as HTMLElement).textContent = fxNumber(r.rate, 4);
     (tr.children[3] as HTMLElement).textContent = `${sym}${fxNumber(r.received, r.received < 100 ? 2 : 0)}`;
@@ -94,7 +101,9 @@ render();
     const t = setTimeout(() => ctl.abort(), 8000);
     const live = await fxFetchLive(ctl.signal);
     clearTimeout(t);
-    if (live.rates?.["NGN"] > 0) {
+    // Same snapshot-path rule as the converter: a partial feed never swaps in.
+    const keys = Object.keys(FX_SNAPSHOT.rates);
+    if (live.rates && keys.every((k) => (live.rates[k] ?? 0) > 0)) {
       rates = live.rates; asOf = live.as_of || "just now";
       (document.getElementById("tc-fresh") as HTMLElement).textContent = "live · " + asOf;
       render();

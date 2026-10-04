@@ -21,9 +21,9 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="tgrid c3">
 <div class="field"><label for="em-ess">Monthly essentials ₦</label><input id="em-ess" type="number" min="0" step="any" value={EMERGENCY_SEED.essentials} inputmode="decimal"></div>
 <div class="field"><label for="em-saved">Saved so far ₦</label><input id="em-saved" type="number" min="0" step="any" value={EMERGENCY_SEED.saved} inputmode="decimal"></div>
-<div class="field"><label for="em-mo">Monthly saving ₦</label><input id="em-mo" type="number" min="0" step="any" value={EMERGENCY_SEED.monthly} inputmode="decimal"></div>
-<div class="field"><label for="em-cover">Cover (months)</label><input id="em-cover" type="number" min="1" step="any" value={EMERGENCY_SEED.cover} inputmode="decimal"></div>
-<div class="field"><label for="em-infl">Inflation %/yr</label><input id="em-infl" type="number" min="0" step="any" value="20" inputmode="decimal"></div>
+<div class="field"><label for="em-mo">Monthly saving ₦</label><input id="em-mo" type="number" min="0" max="100000000" step="any" value={EMERGENCY_SEED.monthly} inputmode="decimal"></div>
+<div class="field"><label for="em-cover">Cover (months)</label><input id="em-cover" type="number" min="1" max="60" step="any" value={EMERGENCY_SEED.cover} inputmode="decimal"></div>
+<div class="field"><label for="em-infl">Inflation %/yr</label><input id="em-infl" type="number" min="0" max="100" step="any" value="20" inputmode="decimal"></div>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Your runway today</p>
@@ -33,7 +33,9 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Months to finish</span><b id="em-mtr">{seed.months_to_reach > 0 ? seed.months_to_reach.toFixed(1) : "— (save something monthly)"}</b></div>
 <div class="receipt-row"><span>Progress</span><b id="em-pct">{pct}%</b></div>
+<p class="bar-note" id="em-warn" hidden></p>
 <p class="receipt-foot">6-month default · inflation-adjusted</p>
+<p class="receipt-foot">Gap + progress vs today's naira target — the real target is the inflated finish line</p>
 </div>
 </div>
 </ToolShell>
@@ -44,19 +46,37 @@ const nn = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 function render() {
+  const essRaw = Number(g("em-ess").value);
+  const savedRaw = Number(g("em-saved").value);
+  const moRaw = Number(g("em-mo").value);
+  const coverRaw = g("em-cover").value;
+  const inflRaw = Number(g("em-infl").value);
   const r = emergencyFund(
-    Math.max(0, Number(g("em-ess").value) || 0),
-    Math.max(0, Number(g("em-saved").value) || 0),
-    Math.max(0, Number(g("em-mo").value) || 0),
-    Math.max(1, Number(g("em-cover").value) || 6),
-    Math.max(0, Number(g("em-infl").value) || 0) / 100,
+    Math.max(0, essRaw || 0),
+    Math.max(0, savedRaw || 0),
+    Math.max(0, moRaw || 0),
+    Math.max(1, Number(coverRaw) || 6),
+    Math.max(0, inflRaw || 0) / 100,
   );
+  // Finite-result guard: absurd cover/inflation/saving used to compound into
+  // ₦Infinity. Never print it — say the plan is out of range instead.
+  const fz = (v: number) => Number.isFinite(v) ? nn(v) : "out of range";
+  const mtrBad = !Number.isFinite(r.months_to_reach) || r.months_to_reach > 12000;
+  const tgtBad = !Number.isFinite(r.target) || !Number.isFinite(r.gap) || !Number.isFinite(r.real_target) || r.real_target > 1e15;
   t("em-fig").textContent = r.runway_now.toFixed(1) + " months";
-  t("em-sub").textContent = `Target ${nn(r.target)} · gap ${nn(r.gap)} · real (inflated) target ${nn(r.real_target)}`;
-  t("em-mtr").textContent = r.months_to_reach > 0 ? r.months_to_reach.toFixed(1) : "— (save something monthly)";
+  t("em-sub").textContent = `Target ${fz(r.target)} · gap ${fz(r.gap)} · real (inflated) target ${fz(r.real_target)}`;
+  t("em-mtr").textContent = !Number.isFinite(r.months_to_reach) ? "out of range" : r.months_to_reach > 0 ? r.months_to_reach.toFixed(1) : "— (save something monthly)";
   const p = Math.min(100, Math.round(r.progress_pct));
   t("em-pct").textContent = p + "%";
   (document.getElementById("em-bar") as HTMLElement).style.width = p + "%";
+  const notes: string[] = [];
+  if (!(essRaw > 0) && !(savedRaw > 0) && !(moRaw > 0)) notes.push("Enter your monthly essentials and saving to see the plan.");
+  if (mtrBad || tgtBad) notes.push("Out of range — lower the target: fewer months' cover, lower inflation, or a larger monthly saving.");
+  else if (coverRaw === "") notes.push("Cover defaults to 6 months — set your own if needed.");
+  if (essRaw < 0 || savedRaw < 0 || moRaw < 0 || inflRaw < 0) notes.push("Negative entries are treated as ₦0.");
+  const w = t("em-warn");
+  w.hidden = notes.length === 0;
+  w.textContent = notes.join(" ");
 }
 ["em-ess", "em-saved", "em-mo", "em-cover", "em-infl"].forEach((id) => g(id).addEventListener("input", render));
 render();

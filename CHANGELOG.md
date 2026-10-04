@@ -3,6 +3,26 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.16] — 2026-10-04 — Calculator correctness mission: every tool audited, proven, fixed
+King: 50-30-20 screenshot showed empty % fields computing ₦0·₦0·₦1,000,000
+silently. Fix this calculator, research ALL calculators for missing
+fields/features/bugs, fix all while respecting UI/UX.
+
+- **50-30-20**: Savings % field added (cleared fields used to zero the buckets
+  and hand the full income to savings); trio math literal; sum-honesty note;
+  negative leftover honest; zero CSS changes.
+- **All tools researched** (3 readers, disjoint sets); worst bugs fixed:
+  transfer from-Nigeria non-USD overstated +74.8% GBP / −50.7% CAD → corrected,
+  USD legs untouched; allocator silent 3× oversum → warning rail; salary "Best"
+  tag lied at ₦500k → crossover-aware; emergency Infinity → clamped + rail;
+  NaN/Infinity class + empty/absurd silent zeros closed everywhere with honest
+  "Out of range" notes; dividend cash headline labelled; savings-goal cleared
+  field no longer reads "goal reached"; compound example + inflation copy
+  synced to reality; amount-page blanks/{PARALLEL} removed; Reset on all tools.
+- **Verification:** 6/6 gates (article 147/147, vectors 95/95); QA interaction
+  proof across 20 components (zero JS errors, no overflow, every fix
+  reproduced); v0.7.0 design LOCKED — no visual changes.
+
 ## [0.7.15] — 2026-10-04 — Portability fixes: base un-baked, config single-sourced, toolchain pinned
 King: *"Fix all findings before we move to the next one"*
 

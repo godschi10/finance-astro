@@ -37,11 +37,12 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="cc-from">From</label><select id="cc-from">{codes.map((c) => (<option value={c} selected={c === seed.from}>{c} — {cur[c].name}</option>))}</select></div>
 <div class="field"><label for="cc-to">To</label><select id="cc-to">{codes.map((c) => (<option value={c} selected={c === seed.to}>{c} — {cur[c].name}</option>))}</select></div>
 </div>
-<div style="margin-top:12px"><button class="swapbtn" id="cc-swap" type="button" aria-label="Swap currencies">⇄</button> <span class="hint" id="cc-fresh" style="font-size:12px;color:var(--text-dim)">{FX_SNAPSHOT.as_of} ({FX_SNAPSHOT_LABEL})</span></div>
+<div style="margin-top:12px"><button class="swapbtn" id="cc-swap" type="button" aria-label="Swap currencies">⇄</button> <span class="hint" id="cc-fresh" style="font-size:12px;color:var(--text-dim)">{FX_SNAPSHOT.as_of} ({FX_SNAPSHOT_LABEL})</span> <label class="hint" style="margin-left:12px"><input type="checkbox" id="cc-partoggle" checked> Parallel-market estimate</label></div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">You get</p>
 <p class="receipt-fig" id="cc-fig">{fxNumber(converted, 2)}</p>
 <p class="receipt-sub" id="cc-unit">1 {seed.from} = {fxNumber(unit, 2)} {seed.to}</p>
+<p class="receipt-note" id="cc-warn" hidden></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <p class="receipt-note" id="cc-par">Parallel estimate ≈ ₦{fxNumber(seed.amount * parallel, 0)} (estimated, not a quote)</p>
 <p class="receipt-foot" id="cc-foot">Snapshot · {FX_SNAPSHOT.as_of}</p>
@@ -58,6 +59,8 @@ const to = document.getElementById("cc-to") as HTMLSelectElement;
 const fig = document.getElementById("cc-fig") as HTMLElement;
 const unitEl = document.getElementById("cc-unit") as HTMLElement;
 const par = document.getElementById("cc-par") as HTMLElement;
+const warn = document.getElementById("cc-warn") as HTMLElement;
+const partoggle = document.getElementById("cc-partoggle") as HTMLInputElement;
 const fresh = document.getElementById("cc-fresh") as HTMLElement;
 const foot = document.getElementById("cc-foot") as HTMLElement;
 function money(v: number, code: string): string {
@@ -66,19 +69,24 @@ function money(v: number, code: string): string {
   return (sym[code] ?? "") + fxNumber(v, dec);
 }
 function render() {
+  const raw = amt.value.trim();
   const a = Math.max(0, Number(amt.value) || 0);
   const f = from.value, t = to.value;
   const c = fxConvert(a, f, t, rates);
   const u = fxConvert(1, f, t, rates);
   fig.textContent = (t === "NGN" ? "₦" : "") + fxNumber(c, t === "NGN" ? 0 : 2);
   unitEl.textContent = `1 ${f} = ${money(u, t)}`;
-  if (t === "NGN" && rates["NGN"] > 0) {
+  // Empty/negative is not a quote: say so instead of printing a confident zero.
+  warn.hidden = raw !== "" && Number(raw) >= 0;
+  warn.textContent = raw === "" ? "Enter an amount — empty counts as 0, not a quote." : "Negative amounts count as 0.";
+  if (partoggle.checked && t === "NGN" && f !== t && rates["NGN"] > 0) {
     const p = fxParallelNgnUsd(fxConvert(1, f, "USD", rates) * rates["NGN"], fxParallelSpread());
     par.textContent = `Parallel estimate ≈ ₦${fxNumber(a * p, 0)} (estimated, not a quote)`;
     par.hidden = false;
   } else par.hidden = true;
 }
 amt.addEventListener("input", render);
+partoggle.addEventListener("change", render);
 from.addEventListener("change", render);
 to.addEventListener("change", render);
 document.getElementById("cc-swap")?.addEventListener("click", () => {
@@ -91,7 +99,11 @@ render();
     const t = setTimeout(() => ctl.abort(), 8000);
     const live = await fxFetchLive(ctl.signal);
     clearTimeout(t);
-    if (live.rates && live.rates["NGN"] > 0) {
+    // Corrupt/partial feeds stay on the committed snapshot path: every
+    // snapshot key must arrive finite-positive, else the snapshot stands.
+    const keys = Object.keys(FX_SNAPSHOT.rates);
+    const clean = keys.every((k) => (live.rates[k] ?? 0) > 0);
+    if (live.rates && clean) {
       rates = live.rates;
       fresh.textContent = "live · " + (live.as_of || "just now");
       foot.textContent = "Live · " + (live.as_of || "just now");
