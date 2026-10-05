@@ -110,11 +110,13 @@ function holdOffer(hold: boolean): void {
     const s = p.querySelector("span");
     const b = p.querySelector("b");
     if (hold) {
-      if (s && !kept.has(s)) kept.set(s, s.textContent || "");
       if (s) s.textContent = OFFER_HELD;
       if (b) { b.setAttribute("aria-disabled", "true"); b.style.pointerEvents = "none"; b.style.opacity = ".45"; }
     } else {
-      if (s && kept.has(s)) s.textContent = kept.get(s) || "";
+      /* Releasing restores the BUTTON only. The offer's words belong to the
+         spine's own paint(), which recomputes them from the live fields on
+         every input — a text captured while held is stale by definition, and
+         putting it back would print a figure the visitor has already changed. */
       if (b) { b.removeAttribute("aria-disabled"); b.style.pointerEvents = ""; b.style.opacity = ""; }
     }
   });
@@ -142,6 +144,54 @@ const FIGURES = ".receipt-fig, .receipt-row b, [data-sf-fig]";
 const SUB_VOICE = "Enter your numbers above — empty counts as ₦0.";
 const kept = new Map<Element, string>();
 
+/* ── D-B: the voice line may not DELETE the render's targets ────────────────
+   A few .receipt-sub lines carry children the page's own render() writes into:
+   50/30/20's #bg-else, the allocator's #al-wants / #al-sav. Writing
+   `sub.textContent = SUB_VOICE` removed those nodes, and because every render
+   addresses them by id, the receipt was dead from that keystroke on — nothing
+   the visitor typed could ever bring it back. Those are the only subs at risk,
+   and only they are held: their children move into a display:none holder, which
+   keeps them in the document (getElementById still finds them, the render keeps
+   writing into them, un-hiding shows the values it wrote) while the voice line
+   goes in beside the holder as its own element.
+
+   The rest are one line of prose the page owns wholesale and rewrites on every
+   render — salary-tax's "Tax ₦…/mo", and the sibling lines under a receipt that
+   already speaks. Overwriting those destroys nothing: the page puts its own
+   words straight back on its next render, which is exactly what should happen
+   when it leaves the empty state. Un-holding also tolerates a held sub being
+   rewritten from under us (a wholesale textContent drops the holder): if the
+   holder is no longer our child, its children went with it and the page's fresh
+   words are authoritative, so we only forget it. */
+const HELD = "data-sf-held";
+const VOICE = "data-sf-voice";
+const held = new Map<Element, Element>();
+
+function speak(sub: Element, on: boolean): void {
+  if (on) {
+    if (held.has(sub)) return;
+    if (!sub.querySelector("[id]")) { sub.textContent = SUB_VOICE; return; }
+    const w = document.createElement("span");
+    w.setAttribute(HELD, "");
+    w.style.display = "none";
+    while (sub.firstChild) w.appendChild(sub.firstChild);
+    sub.appendChild(w);
+    held.set(sub, w);
+    const v = document.createElement("span");
+    v.setAttribute(VOICE, "");
+    v.textContent = SUB_VOICE;
+    sub.appendChild(v);
+  } else {
+    const v = sub.querySelector("[" + VOICE + "]");
+    const w = held.get(sub);
+    if (v) v.remove();
+    if (w) {
+      if (w.parentNode === sub) { while (w.firstChild) sub.insertBefore(w.firstChild, w); w.remove(); }
+      held.delete(sub);
+    }
+  }
+}
+
 function paintEmpty(isEmpty: boolean): void {
   const line = document.querySelector("[data-sf-card]");
   if (line) line.hidden = !isEmpty;
@@ -149,29 +199,28 @@ function paintEmpty(isEmpty: boolean): void {
     const foot = r.querySelector("[data-sf-foot]");
     if (foot) foot.hidden = !isEmpty;
     let said = false; // one voice line per receipt
-    if (isEmpty) {
-      /* Capture BEFORE the spine blanks, or "—" would become the restore value. */
-      r.querySelectorAll(FIGURES).forEach((n) => { if (!kept.has(n)) kept.set(n, n.textContent || ""); });
-    }
-    smartFields.markEmpty(r, isEmpty);
     r.querySelectorAll(".receipt-sub").forEach((n) => {
       if (isEmpty) {
-        /* Capture BEFORE overwriting, so the live text comes back intact. */
-        if (!kept.has(n)) kept.set(n, n.textContent || "");
         /* One voice line per RECEIPT, not per page: naira-value has three
            receipts and each needs its own, while 50/30/20's single receipt has
            two .receipt-sub lines and must speak once. */
-        if (!said) { n.textContent = SUB_VOICE; said = true; }
+        if (!said) { speak(n, true); said = true; }
         else if (/₦/.test(n.textContent || "")) n.textContent = "";
-      } else if (kept.has(n)) n.textContent = kept.get(n) || "";
+      } else speak(n, false);
     });
     if (isEmpty) {
-      r.querySelectorAll(FIGURES).forEach((n) => { n.textContent = "—"; });
+      /* Capture BEFORE the spine blanks, or "—" would become the restore value. */
+      r.querySelectorAll(FIGURES).forEach((n) => { if (!kept.has(n)) kept.set(n, n.textContent || ""); n.textContent = "—"; });
     } else {
-      /* Live text is authoritative again — the page's own render() rewrites
-         these on every input, so restoring the captured text can never drift. */
-      r.querySelectorAll(FIGURES).forEach((n) => { if (kept.has(n)) n.textContent = kept.get(n) || ""; });
+      /* ONLY a withheld dash is put back, and only from the capture taken
+         before the spine blanked it. The page's own render() rewrites these
+         nodes on every input, so any wider restore would overwrite live
+         figures with whatever they said the last time the page was empty. */
+      r.querySelectorAll(FIGURES).forEach((n) => {
+        if ((n.textContent || "").trim() === "—" && kept.has(n)) n.textContent = kept.get(n) || "";
+      });
     }
+    smartFields.markEmpty(r, isEmpty);
   });
 }
 
@@ -437,23 +486,46 @@ export function sfIsEmpty(slug: string, get: Get): boolean {
 export function sfBind(slug: string, get: Get): void {
   if (syncing) return;
   syncing = true;
-  /* The spine repaints offer text on EVERY input, so re-assert the honest line
-     after each one too — otherwise the first keystroke after a clear brings the
-     gold "₦0" offer straight back. Deferred by a tick so it runs after paint(). */
-  document.addEventListener("input", () => {
-    if (sfIsEmpty(slug, get)) setTimeout(() => holdOffer(true), 0);
-  });
+  /* ── D-C: the empty state is a function of the CURRENT values ──────────────
+     Fourteen of the fifteen money pages used to call sfEmpty() ONCE at load,
+     outside render(), which decided the empty state before the visitor touched
+     anything: type your own income and those pages stayed in whatever state
+     load chose, and Clear examples withheld their figures for good. The state
+     is now judged on every input the page already listens for. This listener is
+     delegated on `document`, so it runs AFTER the page's own render() (target
+     phase first, document bubble second) — the figures being judged are the
+     ones the page has just written, which is exactly what 50/30/20 gets by
+     calling sfEmpty() at the foot of its render(). `change` is included so the
+     select-driven pages (converter, transfer comparator) agree with their own
+     render too. The predicate reads VALUES, never badge state, so it is
+     order-independent on first paint. */
+  const judge = () => {
+    const empty = sfIsEmpty(slug, get);
+    paintEmpty(empty);
+    holdOffer(empty);
+  };
+  document.addEventListener("input", judge);
+  document.addEventListener("change", judge);
+  /* Bind this page's emptiness test to the spine's own Clear examples too: it
+     blanks the fields and dispatches the input events above, and the timeout
+     puts us after the spine's paint(), which rewrites the offer line — so the
+     honest offer text lands last and stays. */
   document.addEventListener("click", (e) => {
     const t = e.target as HTMLElement | null;
     if (!t || !t.closest || !t.closest("[data-sf-clear]")) return;
-    /* After the spine's own handler runs, every seed has been blanked and its
-       SAMPLE removed, so sfIsEmpty now agrees with the receipt it just forced.
-       The timeout also puts us after the spine's paint(), which rewrites the
-       offer line — so the honest offer text lands last and stays. */
     setTimeout(() => {
-      const empty = sfIsEmpty(slug, get);
-      paintEmpty(empty);
-      holdOffer(empty);
+      if (sfIsEmpty(slug, get)) { judge(); return; }
+      /* The spine force-blanks every receipt AFTER it dispatches the field
+         events, so a visitor who still holds values of their own (Clear examples
+         only removes what still wears SAMPLE) would be left with the spine's
+         dashes and no render left to answer. Press the page's own button once,
+         on a field that still holds a value, and its render repaints the real
+         figures over them — the same hook Reset already uses. */
+      const cfg = TOOL_FIELDS[slug];
+      const ids = cfg.required.concat(cfg.seeds).filter((x, i, a) => a.indexOf(x) === i);
+      const el = document.getElementById(ids.find((x) => get(x).trim() !== "") || "");
+      if (el) el.dispatchEvent(new Event(el.tagName === "SELECT" ? "change" : "input", { bubbles: true }));
+      judge();
     }, 0);
   });
 }

@@ -131,19 +131,16 @@ function reset() {
   resetting = false;
 
   /* ── The receipt's own state ──────────────────────────────────────────────
-     Fourteen of the fifteen money pages call sfEmpty() ONCE at load instead of
-     from render(), so once Clear examples withholds the figures those pages can
-     never unpick it: the dashes sit there for good, and the reset receipt would
-     come back dimmed and hollow. The withheld state is the SPINE's own
-     vocabulary — markEmpty() sets data-sfe, and ToolShell styles it — and this
-     page has just re-rendered real figures straight over the dashes, so the
-     spine is the right place to unpick it. Same for the honest lines Clear
-     examples raised: after Reset the page reads exactly as delivered.
-     A figure still showing "—" afterwards means the page's render genuinely did
-     not finish (Clear examples' prose rewrite destroys a nested render target on
-     budget-allocator and 50/30/20), and only a reload brings those back. The key
-     is already gone, so that reload lands on the server's example, never on the
-     visitor's numbers. */
+     The withheld state is the SPINE's own vocabulary — markEmpty() sets
+     data-sfe, and ToolShell styles it — and this page has just re-rendered
+     real figures straight over the dashes, so the spine is the right place to
+     unpick it. Same for the honest lines Clear examples raised: after Reset the
+     page reads exactly as delivered. A figure still showing "—" afterwards means
+     the page's render genuinely did not finish, which would be a real bug — the
+     honest blank's voice line now HIDES the render's children instead of
+     deleting them (tool-fields.ts, speak()), so nothing it writes into can be
+     destroyed by the blank. The key is already gone, so the safety reload that
+     guard still allows lands on the server's example, never the visitor's. */
   let unfinished = false;
   $$(".receipt[data-sfe]").forEach((r) => {
     markEmpty(r, false);

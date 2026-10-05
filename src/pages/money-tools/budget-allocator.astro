@@ -24,7 +24,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ))}
 </div>
 <div class="receipt" aria-live="polite">
-<p class="receipt-lbl">Needs half: <span data-sf-fig>₦{n(seed.needs)}</span></p>
+<p class="receipt-lbl">Needs half: <span data-sf-fig id="al-needs">₦{n(seed.needs)}</span></p>
 <p class="receipt-fig" id="al-fig">₦{n(seed.needs)}</p>
 <p class="receipt-sub">Wants <span data-sf-fig id="al-wants">₦{n(seed.wants)}</span> · savings <span data-sf-fig id="al-sav">₦{n(seed.savings)}</span></p>
 <div class="receipt-div" aria-hidden="true"></div>
