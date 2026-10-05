@@ -32,8 +32,10 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   ctaNote="Converting cash is the worst way to get dollars, you lose to the parallel market rate. These apps give you a real USD account at the true rate:",
   related={[{ href: `${base}articles/grey-vs-geegpay-dollar-account/`, title: "Grey vs Geegpay: Which Dollar Account Should You Open?", excerpt: "Account opening, conversion spreads, card support, and payout speed — tested with real transfers." }, { href: `${base}articles/cheapest-way-receive-dollars-nigeria/`, title: "Cheapest Way to Receive Dollars in Nigeria (2026 Compared)", excerpt: "Wise, Grey, Geegpay, and domiciliary accounts compared on fees, speed, and exchange margins." }, { href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers", excerpt: "Card fees, failed-transfer reversals, and support tested — what digital banks actually save you." }, { href: `${base}articles/ngn-dollar-cost-averaging-guide/`, title: "Dollar-Cost Averaging Into NGX Stocks on a \u20a650k Salary", excerpt: "A step-by-step plan for buying Nigerian stocks every month without timing the market." }]}, ogImage={{ url: `${base}images/og/tool-currency-converter.png`, width: 1200, height: 630, alt: "Dollar to Naira & Every Currency" }}>
 <div class="fx-card">
+<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
-<div class="field"><label for="cc-amt">Amount</label><input id="cc-amt" type="number" min="0" step="any" value="100" inputmode="decimal"></div>
+
+<div class="field"><label for="cc-amt">Amount (₦ $ £ € and 12 more)</label><input id="cc-amt" type="text" value="100" inputmode="decimal"></div>
 <div class="field"><label for="cc-from">From</label><select id="cc-from">{codes.map((c) => (<option value={c} selected={c === seed.from}>{c} — {cur[c].name}</option>))}</select></div>
 <div class="field"><label for="cc-to">To</label><select id="cc-to">{codes.map((c) => (<option value={c} selected={c === seed.to}>{c} — {cur[c].name}</option>))}</select></div>
 </div>
@@ -44,14 +46,18 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-sub" id="cc-unit">1 {seed.from} = {fxNumber(unit, 2)} {seed.to}</p>
 <p class="receipt-note" id="cc-warn" hidden></p>
 <div class="receipt-div" aria-hidden="true"></div>
-<p class="receipt-note" id="cc-par">Parallel estimate ≈ ₦{fxNumber(seed.amount * parallel, 0)} (estimated, not a quote)</p>
+<p class="receipt-note" data-sf-fig id="cc-par">Parallel estimate ≈ ₦{fxNumber(seed.amount * parallel, 0)} (estimated, not a quote)</p>
 <p class="receipt-foot" id="cc-foot">Snapshot · {FX_SNAPSHOT.as_of}</p>
+<p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
 </ToolShell>
 <script>
 import { fxConvert, fxParallelNgnUsd, fxParallelSpread, fxNumber, fxFetchLive } from "../../lib/fx";
 import { FX_SNAPSHOT, FX_SNAPSHOT_LABEL } from "../../data/fx-snapshot";
+import { pm } from "../../scripts/pm";
+import smartFields from "../../scripts/smart-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
 let rates = FX_SNAPSHOT.rates;
 const amt = document.getElementById("cc-amt") as HTMLInputElement;
 const from = document.getElementById("cc-from") as HTMLSelectElement;
@@ -63,6 +69,7 @@ const warn = document.getElementById("cc-warn") as HTMLElement;
 const partoggle = document.getElementById("cc-partoggle") as HTMLInputElement;
 const fresh = document.getElementById("cc-fresh") as HTMLElement;
 const foot = document.getElementById("cc-foot") as HTMLElement;
+const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
 function money(v: number, code: string): string {
   const sym: Record<string, string> = { NGN: "₦", USD: "$", GBP: "£", EUR: "€" };
   const dec = code === "NGN" ? 0 : v < 100 ? 2 : 0;
@@ -70,14 +77,14 @@ function money(v: number, code: string): string {
 }
 function render() {
   const raw = amt.value.trim();
-  const a = Math.max(0, Number(amt.value) || 0);
+  const a = Math.max(0, pm(amt.value) || 0);
   const f = from.value, t = to.value;
   const c = fxConvert(a, f, t, rates);
   const u = fxConvert(1, f, t, rates);
   fig.textContent = (t === "NGN" ? "₦" : "") + fxNumber(c, t === "NGN" ? 0 : 2);
   unitEl.textContent = `1 ${f} = ${money(u, t)}`;
   // Empty/negative is not a quote: say so instead of printing a confident zero.
-  warn.hidden = raw !== "" && Number(raw) >= 0;
+  warn.hidden = raw !== "" && pm(raw) >= 0;
   warn.textContent = raw === "" ? "Enter an amount — empty counts as 0, not a quote." : "Negative amounts count as 0.";
   if (partoggle.checked && t === "NGN" && f !== t && rates["NGN"] > 0) {
     const p = fxParallelNgnUsd(fxConvert(1, f, "USD", rates) * rates["NGN"], fxParallelSpread());
@@ -85,6 +92,7 @@ function render() {
     par.hidden = false;
   } else par.hidden = true;
 }
+  sfEmpty(sfIsEmpty("currency-converter", gv));
 amt.addEventListener("input", render);
 partoggle.addEventListener("change", render);
 from.addEventListener("change", render);
@@ -92,6 +100,8 @@ to.addEventListener("change", render);
 document.getElementById("cc-swap")?.addEventListener("click", () => {
   const v = from.value; from.value = to.value; to.value = v; render();
 });
+smartFields.register(TOOL_FIELDS["currency-converter"]);
+sfBind("currency-converter", gv);
 render();
 (async () => {
   try {

@@ -16,10 +16,12 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   copy={[["p", "The amount you need each month is not simply the gap divided by the months. Your existing savings grow with interest, and each new deposit earns interest too. This calculator solves that properly, subtracting the growth of what you already have, then spreading the rest across your timeline. The result is the honest monthly figure, not a rough guess."],["p", "Compound interest is interest earned on your interest. When your savings earn interest that stays in the account, next month you earn interest on the original amount plus the interest from the month before, so your balance accelerates over time. That acceleration is what lets a small monthly saving become a large one, and it is why starting early matters so much."],["p", "Pick a realistic rate for where your money will sit, savings accounts, fixed deposits or money-market funds. A higher assumed rate is not guaranteed, and a lower one makes your plan more conservative and safer. Ranges below are indicative, always check today's actual rates with our savings rate comparator, which tracks the best paying platforms right now:"],["p", "Most Nigerians building a mid-term goal use a money-market fund or fixed deposit, so 10-15% is a sensible planning rate. Type your instrument's actual figure directly into the rate field and the monthly amount drops further."],["p", "Your ₦2,000,000 goal set today will cost more in three years because of inflation. Saving toward today's price can leave you short. Use our inflation-adjusted savings calculator to see what you really need to save, or our naira value calculator to see how much the naira in your pocket is worth in five years."],["p", "The months control lets you price a specific deadline, a school-fee term, a project launch, a rent renewal. Adding a few months at a high interest rate can lower your monthly figure noticeably, because every extra month of compounding does real work. Run the same goal at 24 months and at 28 months to feel the difference."],["p", "Yes, but only slightly for the rates we deal with. The calculator converts any of the four frequencies, monthly, quarterly, daily or annual, into the equivalent monthly rate, so the mathematics stays consistent. Daily compounding earns a fraction more than annual at the same stated rate, because interest is added onto the balance more often. For most Nigerian products the difference is under 1% of your monthly amount."],["h2", "Savings goal questions"],["h3", "Does this include compound interest?"],["p", "Yes, interest is compounded monthly on your whole balance, including the interest you have already earned."],["h3", "What if I already hit my target amount?"],["p", "If what you have already saved meets or passes your goal, the monthly amount shows ₦0, you are already there."],["h3", "Can I change the timeline?"],["p", "Yes, set the number of years you want to reach the goal, and the calculator adjusts the monthly amount up or down automatically."]]},
   disclaimer="This calculator is for informational guidance only and is not financial or investment advice. Rates are not guaranteed, confirm your plan with a licensed financial adviser.", ogImage={{ url: `${base}images/og/tool-savings-goal-calculator.png`, width: 1200, height: 630, alt: "Savings Goal Calculator" }}>
 <div class="fx-card">
+<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
-<div class="field"><label for="sg-target">Target ₦</label><input id="sg-target" type="number" min="0" step="any" value="5000000" inputmode="decimal"></div>
-<div class="field"><label for="sg-cur">Have now ₦</label><input id="sg-cur" type="number" min="0" step="any" value="500000" inputmode="decimal"></div>
-<div class="field"><label for="sg-rate">Annual rate %</label><input id="sg-rate" type="number" min="0" max="100" step="any" value="15" inputmode="decimal"></div>
+
+<div class="field"><label for="sg-target">Target ₦</label><input id="sg-target" type="text" value="5000000" inputmode="decimal"></div>
+<div class="field"><label for="sg-cur">Have now ₦</label><input id="sg-cur" type="text" value="500000" inputmode="decimal"></div>
+<div class="field"><label for="sg-rate">Annual rate %</label><input id="sg-rate" type="text" max="100" value="15" inputmode="decimal"></div>
 <div class="field"><label for="sg-mo">Months</label><input id="sg-mo" type="number" min="1" max="600" step="1" value="24" inputmode="numeric"></div>
 </div>
 <div class="receipt" aria-live="polite">
@@ -31,6 +33,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Interest earned</span><b id="sg-int">₦{n(seed.interest)}</b></div>
 <p class="receipt-note" id="sg-warn" hidden></p>
 <p class="receipt-foot">Annuity-solved · monthly compounding</p>
+<p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
 <div class="hr"></div>
@@ -45,14 +48,18 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <script>
 import { savingsCalculate, savingsSchedule } from "../../lib/savings";
 import { formatGrouped } from "../../lib/format";
+import { pm } from "../../scripts/pm";
+import smartFields from "../../scripts/smart-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
+const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
 function render() {
-  const target = Math.max(0, Number(g("sg-target").value) || 0);
-  const cur = Math.max(0, Number(g("sg-cur").value) || 0);
-  const rate = Math.max(0, Number(g("sg-rate").value) || 0) / 100;
-  const mo = Math.max(1, Math.trunc(Number(g("sg-mo").value) || 24));
+  const target = Math.max(0, pm(g("sg-target").value) || 0);
+  const cur = Math.max(0, pm(g("sg-cur").value) || 0);
+  const rate = Math.max(0, pm(g("sg-rate").value) || 0) / 100;
+  const mo = Math.max(1, Math.trunc(pm(g("sg-mo").value) || 24));
   const warn = t("sg-warn");
   const tb = document.querySelector("#sg-table tbody") as HTMLElement;
   const targetRaw = g("sg-target").value.trim();
@@ -94,6 +101,9 @@ function render() {
     tb.appendChild(tr);
   }
 }
+  sfEmpty(sfIsEmpty("savings-goal-calculator", gv));
 ["sg-target", "sg-cur", "sg-rate", "sg-mo"].forEach((id) => g(id).addEventListener("input", render));
+smartFields.register(TOOL_FIELDS["savings-goal-calculator"]);
+sfBind("savings-goal-calculator", gv);
 render();
 </script>

@@ -58,6 +58,13 @@ const unitLine = unitLineOf(d.unit_rate, d.rev_rate, d.from, d.to);
 <script>
 import { amountPageData, amountFmt } from "../../lib/amount";
 import { fxFetchLive, fxNumber, fxCurrencies } from "../../lib/fx";
+import smartFields from "../../scripts/smart-fields";
+import { TOOL_FIELDS } from "../../data/tool-fields";
+/* The amount family has no inputs of its own — the figure lives in the URL —
+   so the table entry is deliberately empty. register() is still called so the
+   fleet contract is uniform and auditable, and so the Clear-examples control
+   (which lives in ToolShell) stays hidden on a tool that has no seed. */
+smartFields.register(TOOL_FIELDS["amount"]);
 const holder = document.querySelector("[data-amount-slug]");
 const slug = holder && (holder as HTMLElement).dataset.amountSlug || "";
 (async () => {

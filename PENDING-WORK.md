@@ -21,6 +21,62 @@ logo."
       file size sane) + QA renders the actual shared card in a 1200×630
       context and screenshots it.
 
+## SHIPPED — 2026-10-05 · SMART FIELDS — v0.7.20
+King: *"I want fields like these to change dynamic and be smart… all my
+calcutors have no ux plan at all, they don't actually find out how user would use
+the product and be amazed and keep coming back."*
+- [x] **RESEARCH (@researcher, 37 citations)** — the fleet's real defect was not
+      staticness but **dishonesty**: every calculator bakes a seed value, so a
+      first-timer saw a full ₦250,000 receipt he never entered (NN/g: users
+      assume placeholder text is a default and skip the field). Also recovered
+      from history: the ₦-in-field control layer (commit 9cea4d4) + GOV.UK
+      evidence that `type=number` is broken (Safari rounds 16+ digit values on
+      blur; Chrome exponentiates irrecoverably — our fields allow 1e12).
+      Research REFUSED two patterns, with reasons recorded: auto-deriving the
+      user's own 50/30/20 split (seeds sum to exactly 100, fires on load,
+      overrules the page's own FAQ) and any "median salary" chip (a tap turns
+      our honesty into a claim about his income).
+- [x] **DESIGN (@designer)** — the three-state law: `SAMPLE` (gold = ours),
+      `LAST USED` (neutral, dated = yours), plain (yours, no badge). Gold means
+      "we invented this", so a restored rent wears ink, never gold. Empty state
+      keeps the receipt's shape and withholds figures as `—` in --text-dim —
+      never a confident gold ₦0. One new control: `Clear examples` beside the
+      existing `Reset`.
+- [x] **BUILD (3 legs, disjoint files)** — Leg A: `src/scripts/smart-fields.js`
+      + ToolShell CSS/control + the spec's real bug fix (`.receipt` hardcoded
+      `#0d0b08` = `--bg` in dark, so the card dissolved; now `--surface-3`).
+      Leg B: recovered `money-controls.js` + `controls.css` byte-identical from
+      9cea4d4, wired into Layout. Leg C: **57** `type=number`→`type=text`
+      conversions (63 − 6 integer counts), `pm()` tolerant parser, ₦ labels on
+      the two amount fields that were silently inert, and per-tool metadata
+      (`src/data/tool-fields.ts`) declaring seeds/derive/context/remember.
+- [x] **Honest refusals kept in the build:** rent/gross never seeded, restored
+      or auto-filled; the 8% pension and "Lagos rent" context lines were DROPPED
+      because no citable source existed — a stat with no source is not shipped.
+      Sourced context lines only (Guardian median-pay, NBS 15.39%, ₦70k minimum
+      wage), each with a "read the source" link.
+- [x] **Five defects the wiring leg caught itself, not shipped broken:** an
+      order bug that showed the empty state on every first visit; an
+      order-dependent predicate; gold ₦0 leaking through `.receipt-sub` and
+      inline spans; an offer line reading "Plan puts needs at ₦0" while empty;
+      a duplicated voice line on 50/30/20.
+- Proofs: build 79 pages; 6/6 (article 147/147, vectors 95/95); live probes on
+      4 tools × 2 themes × 4 interactions; byte delta **+1,338 B per page**
+      average plus one 8KB shared chunk loaded once per session — inside the
+      3KB ceiling. Screenshots: sf-final-*.png (13) + mc-probe-dark*.png.
+
+## ACTIVE — SMART FIELDS MISSION, King's order 2026-10-04
+King (50/30/20 screenshot): *"I want fields like these to change dynamic and be
+smart… all my calcutors have no ux plan at all, they don't actually find out how
+user would use the product and be amazed and keep coming back."*
+- [ ] **RESEARCH** — @researcher: how top finance tools make inputs smart
+      (pre-fill from context, auto-derive, memory, live guidance, presets,
+      formatting-as-you-type) — ranked, per-tool applicability.
+- [ ] **DESIGN** — @designer: the smart-field system in the v0.7.0 language
+      (phone-first, gold accent, existing tokens only, no new brand surface).
+- [ ] **BUILD** — parallel @builder legs per tool group, each proving smart
+      behaviour on served bytes. Vectors 95/95 + accuracy stay green.
+
 ## SHIPPED — 2026-10-04 · REAL LOGO ON EVERY CARD + CONTROL FIXES — v0.7.19
 King rejected v0.7.18: *"These are not my logos you pissing me off… og image
 doesn't have a single place with my finance blog actual logo. U suck"* + *"And

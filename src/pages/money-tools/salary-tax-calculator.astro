@@ -30,13 +30,15 @@ const saveTxt = tie
   related={[{ href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers", excerpt: "Card fees, failed-transfer reversals, and support tested — what digital banks actually save you." }]},
   disclaimer="This calculator is for informational guidance only and is not tax, financial or investment advice. Tax rules and personal circumstances vary, confirm your figures with a licensed tax professional.", ogImage={{ url: `${base}images/og/tool-salary-tax-calculator.png`, width: 1200, height: 630, alt: "Nigeria Tax Calculator 2026" }}>
 <div class="fx-card">
+<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
-<div class="field"><label for="st-gross">Monthly gross ₦</label><input id="st-gross" type="number" min="0" step="any" value="300000" inputmode="decimal"></div>
-<div class="field"><label for="st-pension">Pension %</label><input id="st-pension" type="number" min="0" max="100" step="any" value="8" inputmode="decimal"></div>
-<div class="field"><label for="st-rent">Annual rent ₦</label><input id="st-rent" type="number" min="0" step="any" value="0" inputmode="decimal"></div>
-<div class="field"><label for="st-nhf">NHF monthly ₦</label><input id="st-nhf" type="number" min="0" step="any" value="0" inputmode="decimal"></div>
-<div class="field"><label for="st-nhis">NHIS monthly ₦</label><input id="st-nhis" type="number" min="0" step="any" value="0" inputmode="decimal"></div>
-<div class="field"><label for="st-life">Life assurance monthly ₦</label><input id="st-life" type="number" min="0" step="any" value="0" inputmode="decimal"></div>
+
+<div class="field"><label for="st-gross">Monthly gross ₦</label><input id="st-gross" type="text" value="300000" inputmode="decimal"></div>
+<div class="field"><label for="st-pension">Pension %</label><input id="st-pension" type="text" max="100" value="8" inputmode="decimal"></div>
+<div class="field"><label for="st-rent">Annual rent ₦</label><input id="st-rent" type="text" value="0" inputmode="decimal"></div>
+<div class="field"><label for="st-nhf">NHF monthly ₦</label><input id="st-nhf" type="text" value="0" inputmode="decimal"></div>
+<div class="field"><label for="st-nhis">NHIS monthly ₦</label><input id="st-nhis" type="text" value="0" inputmode="decimal"></div>
+<div class="field"><label for="st-life">Life assurance monthly ₦</label><input id="st-life" type="text" value="0" inputmode="decimal"></div>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Take-home monthly</p>
@@ -50,6 +52,7 @@ const saveTxt = tie
 </div>
 <p class="receipt-foot">NTA 2026 bands · rent relief cap ₦500k · pension figured on gross as basic</p>
 <p class="receipt-foot">Bonuses taxed at marginal rate — minimum-wage exemption covers salary only</p>
+<p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
 <div class="hr"></div>
@@ -77,20 +80,24 @@ const saveTxt = tie
 <script>
 import { payeCalculate, payeCompare, payeBandBreakdown, payeBands2026 } from "../../lib/salary-tax";
 import { formatGrouped } from "../../lib/format";
+import { pm } from "../../scripts/pm";
+import smartFields from "../../scripts/smart-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
 const n = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
+const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
 function render() {
-  const grossRaw = Number(g("st-gross").value);
-  const penRaw = Number(g("st-pension").value);
-  const rentRaw = Number(g("st-rent").value);
-  const nhfRaw = Number(g("st-nhf").value);
+  const grossRaw = pm(g("st-gross").value);
+  const penRaw = pm(g("st-pension").value);
+  const rentRaw = pm(g("st-rent").value);
+  const nhfRaw = pm(g("st-nhf").value);
   const gross = Math.max(0, grossRaw || 0);
   const pen = Math.min(100, Math.max(0, penRaw || 0)) / 100;
   const rent = Math.max(0, rentRaw || 0);
   const nhf = Math.max(0, nhfRaw || 0);
-  const nhis = Math.max(0, Number(g("st-nhis").value) || 0);
-  const life = Math.max(0, Number(g("st-life").value) || 0);
+  const nhis = Math.max(0, pm(g("st-nhis").value) || 0);
+  const life = Math.max(0, pm(g("st-life").value) || 0);
   const r = payeCalculate(gross, pen, nhf, rent, true, nhis, life, 0);
   t("st-fig").textContent = n(r.net_monthly);
   t("st-sub").textContent = `Tax ${n(r.tax_monthly)}/mo · taxable ${n(r.taxable)}/yr${r.exempt ? " · EXEMPT (minimum wage)" : ""}`;
@@ -134,6 +141,9 @@ function render() {
     tb.appendChild(tr);
   }
 }
+  sfEmpty(sfIsEmpty("salary-tax-calculator", gv));
 ["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life"].forEach((id) => g(id).addEventListener("input", render));
+smartFields.register(TOOL_FIELDS["salary-tax-calculator"]);
+sfBind("salary-tax-calculator", gv);
 render();
 </script>

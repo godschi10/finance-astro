@@ -16,13 +16,15 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   related={[{ href: `${base}articles/p2p-crypto-nigeria-safely/`, title: "How to Buy Crypto P2P in Nigeria Without Getting Scammed", excerpt: "Escrow rules, red flags, and the exact verification steps before you release a single naira." }, { href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers", excerpt: "Card fees, failed-transfer reversals, and support tested — what digital banks actually save you." }, { href: `${base}articles/ngn-dollar-cost-averaging-guide/`, title: "Dollar-Cost Averaging Into NGX Stocks on a \u20a650k Salary", excerpt: "A step-by-step plan for buying Nigerian stocks every month without timing the market." }, { href: `${base}articles/piggyvest-vs-cowrywise-2026/`, title: "PiggyVest vs Cowrywise in 2026: Which Saves You More?", excerpt: "Interest rates, withdrawal rules, fees, and app experience compared side by side." }]},
   disclaimer="This calculator is for informational guidance only and is not financial advice. Crypto prices, fees and the P2P spread change constantly, and crypto is a volatile and risky asset, the figures shown are estimates based on what you enter. Confirm the exact quote and terms with the platform before you trade.", ogImage={{ url: `${base}images/og/tool-crypto-profit-calculator.png`, width: 1200, height: 630, alt: "Crypto Profit Calculator" }}>
 <div class="fx-card">
+<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
-<div class="field"><label for="cp-inv">To invest ₦</label><input id="cp-inv" type="number" min="0" step="any" value={CRYPTO_SEED.invest} inputmode="decimal"></div>
-<div class="field"><label for="cp-buy">Buy rate ₦</label><input id="cp-buy" type="number" min="0" step="any" value={CRYPTO_SEED.buy_rate} inputmode="decimal"></div>
-<div class="field"><label for="cp-sell">Sell rate ₦</label><input id="cp-sell" type="number" min="0" step="any" value={CRYPTO_SEED.sell_rate} inputmode="decimal"></div>
-<div class="field"><label for="cp-bf">Buy fee %</label><input id="cp-bf" type="number" min="0" step="any" value="1" inputmode="decimal"></div>
-<div class="field"><label for="cp-sf">Sell fee %</label><input id="cp-sf" type="number" min="0" step="any" value="1" inputmode="decimal"></div>
-<div class="field"><label for="cp-flat">Flat charges ₦</label><input id="cp-flat" type="number" min="0" step="any" value="0" inputmode="decimal"></div>
+
+<div class="field"><label for="cp-inv">To invest ₦</label><input id="cp-inv" type="text" value={CRYPTO_SEED.invest} inputmode="decimal"></div>
+<div class="field"><label for="cp-buy">Buy rate ₦</label><input id="cp-buy" type="text" value={CRYPTO_SEED.buy_rate} inputmode="decimal"></div>
+<div class="field"><label for="cp-sell">Sell rate ₦</label><input id="cp-sell" type="text" value={CRYPTO_SEED.sell_rate} inputmode="decimal"></div>
+<div class="field"><label for="cp-bf">Buy fee %</label><input id="cp-bf" type="text" value="1" inputmode="decimal"></div>
+<div class="field"><label for="cp-sf">Sell fee %</label><input id="cp-sf" type="text" value="1" inputmode="decimal"></div>
+<div class="field"><label for="cp-flat">Flat charges ₦</label><input id="cp-flat" type="text" value="0" inputmode="decimal"></div>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Profit</p>
@@ -33,23 +35,28 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Break-even sell rate</span><b id="cp-be">₦{n(seed.break_even_rate, 2)}</b></div>
 <div class="receipt-row"><span>Price gap value</span><b id="cp-gap">₦{n(seed.price_gap)}</b></div>
 <p class="receipt-foot">P2P-aware · not financial advice</p>
+<p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
 </ToolShell>
 <script>
 import { cryptoProfit } from "../../lib/crypto";
 import { formatGrouped } from "../../lib/format";
+import { pm } from "../../scripts/pm";
+import smartFields from "../../scripts/smart-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
 const nn = (v: number, d = 0) => "₦" + formatGrouped(v, d);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
+const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
 function render() {
   const r = cryptoProfit(
-    Math.max(0, Number(g("cp-inv").value) || 0),
-    Math.max(0, Number(g("cp-buy").value) || 0),
-    Math.max(0, Number(g("cp-sell").value) || 0),
-    Math.max(0, Number(g("cp-bf").value) || 0) / 100,
-    Math.max(0, Number(g("cp-sf").value) || 0) / 100,
-    Math.max(0, Number(g("cp-flat").value) || 0),
+    Math.max(0, pm(g("cp-inv").value) || 0),
+    Math.max(0, pm(g("cp-buy").value) || 0),
+    Math.max(0, pm(g("cp-sell").value) || 0),
+    Math.max(0, pm(g("cp-bf").value) || 0) / 100,
+    Math.max(0, pm(g("cp-sf").value) || 0) / 100,
+    Math.max(0, pm(g("cp-flat").value) || 0),
   );
   t("cp-fig").textContent = (r.profit < 0 ? "−" : "") + nn(Math.abs(r.profit));
   t("cp-sub").textContent = `ROI ${(r.roi * 100).toFixed(2)}% · ${formatGrouped(r.coins, 4)} coins · sell nets ${nn(r.sell_net)}`;
@@ -57,6 +64,9 @@ function render() {
   t("cp-be").textContent = nn(r.break_even_rate, 2);
   t("cp-gap").textContent = nn(r.price_gap);
 }
+  sfEmpty(sfIsEmpty("crypto-profit-calculator", gv));
 ["cp-inv", "cp-buy", "cp-sell", "cp-bf", "cp-sf", "cp-flat"].forEach((id) => g(id).addEventListener("input", render));
+smartFields.register(TOOL_FIELDS["crypto-profit-calculator"]);
+sfBind("crypto-profit-calculator", gv);
 render();
 </script>

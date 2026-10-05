@@ -78,7 +78,10 @@ if (faqs.length) graph.push({
 <div class="con" style="margin-top:32px;padding-bottom:48px">
   <div class="ad-bg"></div>
   <slot />
-  <div style="margin-top:12px"><button class="btn b-ghost b-sm" type="button" onclick="location.reload()">Reset</button></div>
+  <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px">
+    <button class="btn b-ghost b-sm" type="button" data-sf-clear hidden>Clear examples</button>
+    <button class="btn b-ghost b-sm" type="button" onclick="location.reload()">Reset</button>
+  </div>
   {verified && <p class="fxap-conv-note" style="margin-top:14px"><span style="color:var(--gold-b)" aria-hidden="true">◆</span> {verified}</p>}
   {disclaimer && <p class="fx-disclaimer">{disclaimer}</p>}
   {copy.length > 0 && (
@@ -132,6 +135,57 @@ if (faqs.length) graph.push({
 .field input,.field select{width:100%;min-height:48px;padding:12px 14px;font:inherit;font-size:1rem;background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:10px}
 .field input:focus,.field select:focus{outline:2px solid var(--gold-b);outline-offset:1px;border-color:var(--gold-b)}
 .field .hint{font-size:12px;color:var(--text-dim);margin-top:4px}
+/* v0.7.20 smart fields — the three-state contract. Additive after .field/.hint:
+   these are NEW class hooks + NEW state attributes only. No verbatim rule from
+   tools.css / numbers.css / the dark receipt is rewritten. Focus gold stays
+   owned by .field input:focus (line 133) — deliberately not restated here. */
+
+/* — state 1: SAMPLE. A scenario we invented. Gold + dashed = provisional,
+     the same grammar the receipt's dashed gold rule already teaches. */
+.field[data-sd] label{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.field[data-sd] input{border-bottom:2px dashed var(--gold-b)}
+.field[data-sd] .sd{
+  font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--gold);background:var(--gold-muted);border:1px solid var(--gold-border);
+  border-radius:var(--pill);padding:3px 8px;white-space:nowrap;flex:0 0 auto;
+}
+/* — state 2: LAST USED. YOUR number, dated. Deliberately NEUTRAL: gold means
+     "a scenario we invented", so restoring your own rent must not wear gold.
+     Same shape, ink tokens, hairline border. */
+.field[data-r] label{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.field[data-r] .sd{
+  font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text-dim);background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--pill);padding:3px 8px;white-space:nowrap;flex:0 0 auto;
+}
+
+/* — the derived-value offer. One action per line, and it is unambiguous. */
+.offer{font-size:12px;color:var(--text-mid);margin-top:8px;display:flex;
+  align-items:baseline;gap:8px;flex-wrap:wrap}
+.offer b{font-size:9px;font-weight:800;letter-spacing:.12em;background:var(--gold-b);
+  color:#0d0b08;border-radius:var(--pill);padding:7px 11px;min-height:44px;
+  display:inline-flex;align-items:center;cursor:pointer;flex:0 0 auto}
+
+/* — the echo. A number the tool ALREADY computes, surfaced at the field.
+     Non-interactive by design: if it needs an action it is an .offer. */
+.echo{font-size:12px;color:var(--text-dim);margin-top:6px;
+  border-left:2px solid var(--border-dim);padding-left:10px}
+
+/* — the sourced context line + its birth certificate (N6). */
+.ctx{font-size:12px;color:var(--text-mid);margin-top:10px}
+.ctx-src{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text-dim);margin-top:2px;display:block}
+
+/* — dark-mode receipt lift. ToolShell's .receipt hardcodes #0d0b08, which is
+     IDENTICAL to --bg in dark: the slip dissolves into the page. r7.css
+     already made this exact fix for .feat. Same token, same reason. */
+[data-theme="dark"] .receipt{background:var(--surface-3);border:1px solid var(--border)}
+
+/* — §4 the honest empty state. markEmpty() writes "—" into the figures and sets
+     [data-sfe]; the withheld "—" must NOT wear gold, or withholding the hero
+     would still hand over the site's most persuasive typography to a number
+     the user never entered. Token-only, same ladder as every rule above. */
+[data-sfe] .receipt-fig,[data-sfe] .receipt-row b{color:var(--text-dim)}
 .receipt{background:#0d0b08;color:#f0ede6;border-radius:16px;padding:18px;margin-top:18px;box-shadow:var(--sh-md)}
 .receipt-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#8f8575}
 .receipt-fig{font-size:clamp(1.9rem,6vw,3rem);line-height:1.1;letter-spacing:-.03em;font-weight:800;color:var(--gold-b);margin-top:6px;overflow-wrap:anywhere}
@@ -195,4 +249,12 @@ details.faq p{margin-top:12px;font-size:1rem;line-height:1.8;color:var(--text-mi
 .prog{height:10px;border-radius:100px;background:var(--border-dim);overflow:hidden;margin-top:8px}
 .prog i{display:block;height:100%;background:var(--green-btn)}
 </style>
+<script>
+// v0.7.20 smart-fields SPINE — loaded HERE and nowhere else, so it is
+// route-scoped to /money-tools/* (ToolShell has no other consumer) and is
+// inert on every other page. One import, one instance: a tool page that wants
+// badges calls smartFields.register({...}) from its OWN script, after this
+// module has run. Zero dependencies, ~2KB with its CSS.
+import "../scripts/smart-fields.js";
+</script>
 </Layout>

@@ -15,14 +15,16 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   copy={[["p", "Most salary discussions start from gross, the figure on your offer letter, and work forward to the net that arrives in your account. But when you are negotiating, planning a budget or comparing two offers, it is often more useful to start from the take-home you need and ask: what gross produces that? Because PAYE rises with gross, there is exactly one gross for any given net, and this calculator finds it precisely."],["p", "The calculator applies the current NTA 2025 schedule: a 0% band on the first ₦800,000 of annual taxable income, progressive 15% to 25% bands above that, a rent relief of 20% of annual rent (capped ₦500,000), and a complete minimum-wage exemption for those earning ₦70,000 a month or less. Because the first slice is tax-free, the relationship between gross and net is not linear, which is exactly why a simple multiplier fails and a proper solver is needed."],["p", "If an employer quotes a net figure (\"you will take home ₦X\"), this tells you what the actual gross is, and whether that is competitive. If you want a specific take-home, say, ₦300,000, this shows the gross offer you should ask for, and the tax gap between gross and net that your employer will deduct."],["p", "The gap between your gross and net is more than just PAYE. The breakdown table shows each piece: the pension contribution (8% by default), the National Housing Fund, NHIS, any life assurance and other reliefs you claim, and the rent relief that lowers your taxable income. Each deduction and relief moves the gross you need in a different direction, more deductions mean you need a higher gross for the same take-home, while more reliefs mean you need a lower one."],["p", "Under the Nigeria Tax Act 2025, employees earning ₦70,000 a month or less are completely exempt from PAYE. Pension still comes off first, so the gross you need sits about 8.7% above the net at the default 8% pension (a ₦60,000 target needs about ₦65,217 gross) — with no PAYE on top."],["p", "This calculator works backward, net to gross. To go the other way, from a salary you have been offered to the take-home you will actually receive, use our Nigeria Tax Calculator . It also compares the old and new tax bands and shows how much the Nigeria Tax Act 2025 saves you."],["h2", "Gross to net questions"],["h3", "How do I find gross salary from net pay?"],["p", "Because PAYE rises with gross salary, the calculator binary-searches the gross that produces your target take-home under the current Nigeria Tax Act 2025 bands, so the two always agree exactly."],["h3", "What gross salary gives me ₦250,000 take home per month?"],["p", "About ₦308,192 a month before tax, assuming the default 8% pension, no NHF and no rent relief. The calculator shows the PAYE and deductions too."],["h3", "How is this different from the salary tax calculator?"],["p", "The salary tax calculator goes forward, gross in, net out. This one reverses it: you tell it the net you want, it returns the gross you must earn."],["h3", "Does rent relief change the gross I need?"],["p", "Yes. Rent relief lowers your taxable income, so with rent relief you need a slightly lower gross to hit the same take-home. Enter your annual rent to see the effect."]]},
   disclaimer="This calculator is for informational guidance only and is not tax, payroll or financial advice. Figures follow the Nigeria Tax Act 2025 with assumed deductions, confirm your exact salary and tax with your employer or a licensed adviser.", ogImage={{ url: `${base}images/og/tool-gross-to-net-calculator.png`, width: 1200, height: 630, alt: "Gross to Net Calculator" }}>
 <div class="fx-card">
+<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
-<div class="field"><label for="gn-net">Target take-home ₦/mo</label><input id="gn-net" type="number" min="0" step="any" value="250000" inputmode="decimal"></div>
-<div class="field"><label for="gn-pen">Pension %</label><input id="gn-pen" type="number" min="0" max="100" step="any" value="8" inputmode="decimal"></div>
-<div class="field"><label for="gn-rent">Annual rent ₦</label><input id="gn-rent" type="number" min="0" step="any" value="0" inputmode="decimal"></div>
-<div class="field"><label for="gn-nhf">NHF monthly ₦</label><input id="gn-nhf" type="number" min="0" step="any" value="0" inputmode="decimal"></div>
-<div class="field"><label for="gn-nhis">NHIS monthly ₦</label><input id="gn-nhis" type="number" min="0" step="any" value="0" inputmode="decimal"></div>
-<div class="field"><label for="gn-life">Life assurance monthly ₦</label><input id="gn-life" type="number" min="0" step="any" value="0" inputmode="decimal"></div>
-<div class="field"><label for="gn-other">Other reliefs monthly ₦</label><input id="gn-other" type="number" min="0" step="any" value="0" inputmode="decimal"></div>
+
+<div class="field"><label for="gn-net">Target take-home ₦/mo</label><input id="gn-net" type="text" value="250000" inputmode="decimal"></div>
+<div class="field"><label for="gn-pen">Pension %</label><input id="gn-pen" type="text" max="100" value="8" inputmode="decimal"></div>
+<div class="field"><label for="gn-rent">Annual rent ₦</label><input id="gn-rent" type="text" value="0" inputmode="decimal"></div>
+<div class="field"><label for="gn-nhf">NHF monthly ₦</label><input id="gn-nhf" type="text" value="0" inputmode="decimal"></div>
+<div class="field"><label for="gn-nhis">NHIS monthly ₦</label><input id="gn-nhis" type="text" value="0" inputmode="decimal"></div>
+<div class="field"><label for="gn-life">Life assurance monthly ₦</label><input id="gn-life" type="text" value="0" inputmode="decimal"></div>
+<div class="field"><label for="gn-other">Other reliefs monthly ₦</label><input id="gn-other" type="text" value="0" inputmode="decimal"></div>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Gross to negotiate</p>
@@ -38,26 +40,31 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Deductions /mo</span><b id="gn-ded">₦{n(seed.deductions_monthly)}</b></div>
 <p class="bar-note" id="gn-warn" hidden></p>
 <p class="receipt-foot">NTA 2026 bands · binary-solved · pension figured on gross as basic</p>
+<p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
 </ToolShell>
 <script>
 import { reverseGross } from "../../lib/gross-to-net";
 import { formatGrouped } from "../../lib/format";
+import { pm } from "../../scripts/pm";
+import smartFields from "../../scripts/smart-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
 const n = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
+const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
 function render() {
-  const netRaw = Number(g("gn-net").value);
-  const penRaw = Number(g("gn-pen").value);
-  const rentRaw = Number(g("gn-rent").value);
+  const netRaw = pm(g("gn-net").value);
+  const penRaw = pm(g("gn-pen").value);
+  const rentRaw = pm(g("gn-rent").value);
   const net = Math.max(0, netRaw || 0);
   const pen = Math.min(100, Math.max(0, penRaw || 0)) / 100;
   const rent = Math.max(0, rentRaw || 0);
-  const nhf = Math.max(0, Number(g("gn-nhf").value) || 0);
-  const nhis = Math.max(0, Number(g("gn-nhis").value) || 0);
-  const life = Math.max(0, Number(g("gn-life").value) || 0);
-  const other = Math.max(0, Number(g("gn-other").value) || 0);
+  const nhf = Math.max(0, pm(g("gn-nhf").value) || 0);
+  const nhis = Math.max(0, pm(g("gn-nhis").value) || 0);
+  const life = Math.max(0, pm(g("gn-life").value) || 0);
+  const other = Math.max(0, pm(g("gn-other").value) || 0);
   const r = reverseGross(net, pen, nhf, rent, nhis, life, other);
   t("gn-fig").textContent = n(r.gross_monthly);
   t("gn-sub").textContent = `Nets ${n(r.net_monthly)}/mo after ${n(r.tax_monthly)} tax${r.exempt ? " · EXEMPT (minimum wage)" : ""}`;
@@ -81,6 +88,9 @@ function render() {
   w.hidden = notes.length === 0;
   w.textContent = notes.join(" ");
 }
+  sfEmpty(sfIsEmpty("gross-to-net-calculator", gv));
 ["gn-net", "gn-pen", "gn-rent", "gn-nhf", "gn-nhis", "gn-life", "gn-other"].forEach((id) => g(id).addEventListener("input", render));
+smartFields.register(TOOL_FIELDS["gross-to-net-calculator"]);
+sfBind("gross-to-net-calculator", gv);
 render();
 </script>

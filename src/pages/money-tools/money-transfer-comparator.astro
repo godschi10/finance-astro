@@ -19,19 +19,22 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   related={[{ href: `${base}articles/cheapest-way-receive-dollars-nigeria/`, title: "Cheapest Way to Receive Dollars in Nigeria (2026 Compared)", excerpt: "Wise, Grey, Geegpay, and domiciliary accounts compared on fees, speed, and exchange margins." }, { href: `${base}articles/grey-vs-geegpay-dollar-account/`, title: "Grey vs Geegpay: Which Dollar Account Should You Open?", excerpt: "Account opening, conversion spreads, card support, and payout speed — tested with real transfers." }, { href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers", excerpt: "Card fees, failed-transfer reversals, and support tested — what digital banks actually save you." }]},
   disclaimer="This comparator is for informational guidance only and is not financial advice. Fee and rate-markup figures are estimates that vary by delivery method, speed, amount and payment channel. Always confirm the final quote with the provider before sending.", ogImage={{ url: `${base}images/og/tool-money-transfer-comparator.png`, width: 1200, height: 630, alt: "Send Money to Nigeria, Best Rate" }}>
 <div class="fx-card">
+<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
-<div class="field"><label for="tc-amt">Amount to send</label><input id="tc-amt" type="number" min="0" step="any" value={TRANSFER_SEED.amount} inputmode="decimal"></div>
+
+<div class="field"><label for="tc-amt">Amount to send (₦ out, $ in)</label><input id="tc-amt" type="text" value={TRANSFER_SEED.amount} inputmode="decimal"></div>
 <div class="field"><label for="tc-dir">Direction</label><select id="tc-dir"><option value="to-nigeria">Send to Nigeria (USD→NGN)</option><option value="from-nigeria" selected>Send from Nigeria (NGN→USD)</option></select></div>
 <div class="field"><label for="tc-src">Send currency</label><select id="tc-src"><option>USD</option><option>GBP</option><option>EUR</option><option>CAD</option></select><p class="hint">Foreign leg only; naira side is automatic.</p></div>
 </div>
 <div class="receipt" aria-live="polite">
-<p class="receipt-lbl">Best payout for <span id="tc-sum-amt">₦100,000</span></p>
+<p class="receipt-lbl">Best payout for <span data-sf-fig id="tc-sum-amt">₦100,000</span></p>
 <p class="receipt-fig" id="tc-fig">{seed.rows[0] ? fxNumber(seed.rows[0].received, 2) : "—"}</p>
 <p class="receipt-sub" id="tc-sub">{seed.rows[0]?.name ?? ""} · mid-market {fxNumber(seed.mid, 6)}</p>
 <p class="receipt-note" id="tc-warn" hidden></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <p class="receipt-note">Fee model verified {transferVerified()} · FX base refreshes live when the feed answers.</p>
 <p class="receipt-foot">Estimates — confirm with your provider</p>
+<p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
 <div class="hr"></div>
@@ -55,14 +58,18 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 import { transferQuote, transferVerified } from "../../lib/transfer";
 import { fxNumber, fxFetchLive } from "../../lib/fx";
 import { FX_SNAPSHOT } from "../../data/fx-snapshot";
+import { pm } from "../../scripts/pm";
+import smartFields from "../../scripts/smart-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
 let rates = FX_SNAPSHOT.rates;
 let asOf = FX_SNAPSHOT.as_of;
 const amt = document.getElementById("tc-amt") as HTMLInputElement;
 const dir = document.getElementById("tc-dir") as HTMLSelectElement;
 const src = document.getElementById("tc-src") as HTMLSelectElement;
+const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
 function render() {
   const raw = amt.value.trim();
-  const a = Math.max(0, Number(amt.value) || 0);
+  const a = Math.max(0, pm(amt.value) || 0);
   const d = dir.value === "from-nigeria" ? "from-nigeria" : "to-nigeria";
   const s = d === "from-nigeria" ? "NGN" : src.value;
   const q = transferQuote(a, d, s, d === "from-nigeria" ? src.value : "NGN", { rates, as_of: asOf, ok: true });
@@ -91,9 +98,12 @@ function render() {
     tb.appendChild(tr);
   });
 }
+  sfEmpty(sfIsEmpty("money-transfer-comparator", gv));
 amt.addEventListener("input", render);
 dir.addEventListener("change", render);
 src.addEventListener("change", render);
+smartFields.register(TOOL_FIELDS["money-transfer-comparator"]);
+sfBind("money-transfer-comparator", gv);
 render();
 (async () => {
   try {

@@ -20,9 +20,11 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   copy={[["p", "Naira inflation is not a number on a chart, it is the slow erosion of the money you already hold. When you park ₦1,000,000 in your account and prices rise 20% a year, you still have that 1 million, but it now buys a fraction of what it did. This calculator makes that explicit: it shows the future naira amount needed to buy the same basket, and the percentage of buying power inflation has quietly taken. That is the difference between nominal money and real money."],["p", "Nominal is the face value, the number on the note, the figure in your bank balance. Real is what that money actually buys once inflation is accounted for. When you hear that a salary was \"adjusted for inflation,\" it means the nominal number was raised so the real purchasing power stayed flat. Without that adjustment, a flat salary is quietly a pay cut: the naira figure does not change, but everything it can buy shrinks. This is why comparing a future amount to a current one in nominal terms is misleading, the honest comparison is always in today&#039;s purchasing power."],["p", "Inflation works against you the same way interest works for you, it compounds. The first year costs you 20%, but the second takes a further 20% of the smaller remainder, so the loss accelerates. Over five years at 20%, a naira retains only about 40% of its buying power. That is why a five- or ten-year goal set in today&#039;s prices needs far more than you think, and why the year-by-year table matters, you can see the decay steepen."],["p", "The inverse is just as important. If a plan promises you ₦2,000,000 in five years, that is not ₦2,000,000 in today&#039;s terms, the present value is meaningfully lower once inflation is applied. Discounting future naira to today is how you compare a future windfall to the price of the same thing now. This calculator does both directions in one place, which is why it pairs with, rather than replaces, our savings tools."],["p", "To preserve purchasing power, your money must earn a return above inflation, not just any return. A savings account at 4% while inflation runs 20% is a guaranteed loss of real value. Compare your options with our savings rate comparator, see growth compound with our compound interest calculator, and set a real (inflation-aware) target with our inflation-adjusted savings calculator. If you want a monthly saving figure for a specific goal, our savings goal calculator solves that directly."],["p", "The inflation-savings tool and this one are often confused, so here is the clean split. Inflation-savings is goal-first: you name a target (say a ₦2 million car), it inflates that car to its future price and tells you what to save each month. This naira-value tool is value-first: you start from money you already hold and ask what it becomes. This one also answers the inverse, what a future naira amount is worth today, which is how you sanity-check any promised future sum. Use inflation-savings to plan a purchase; use this to understand what your current money is quietly losing."],["h2", "Naira value questions"],["h3", "What is ₦1,000,000 today worth in 5 years?"],["p", "At 20.0% annual inflation, ₦1,000,000 today buys the same basket that would cost about ₦2,488,320 in 5 years, meaning the naira has lost 59.8% of its buying power over that time."],["h3", "How much buying power does inflation take?"],["p", "Inflation erodes value exponentially. Over 5 years at 20%, a naira retains only about 40% of its purchasing power, that is the depreciation this calculator makes visible."],["h3", "How is this different from a savings-goal calculator?"],["p", "A savings-goal calculator starts from a target you name. This one starts from money you hold today and shows what it is worth in the future, plus the inverse, what future naira is worth today (present value)."],["h3", "What inflation rate should I use for naira?"],["p", "Recent Nigerian inflation has run 20-30%. Use a realistic rate from NBS or the CBN; when in doubt, err on the high side so your plan is not short-changed."]]},
   disclaimer="This calculator is for informational guidance only and is not financial advice. Inflation and depreciation figures are estimates based on the rate you enter; actual Nigerian inflation varies. Confirm significant decisions with a licensed adviser.", ogImage={{ url: `${base}images/og/tool-naira-value-calculator.png`, width: 1200, height: 630, alt: "Naira Value Calculator" }}>
 <div class="fx-card">
+<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
-<div class="field"><label for="nv-val">Amount ₦</label><input id="nv-val" type="number" min="0" max="1000000000000" step="any" value={s.value} inputmode="decimal"></div>
-<div class="field"><label for="nv-infl">Inflation %/yr</label><input id="nv-infl" type="number" min="0" max="200" step="any" value="20" inputmode="decimal"></div>
+
+<div class="field"><label for="nv-val">Amount ₦</label><input id="nv-val" type="text" max="1000000000000" value={s.value} inputmode="decimal"></div>
+<div class="field"><label for="nv-infl">Inflation %/yr</label><input id="nv-infl" type="text" max="200" value="20" inputmode="decimal"></div>
 <div class="field"><label for="nv-yrs">Years</label><input id="nv-yrs" type="number" min="1" max="100" step="1" value={s.years} inputmode="numeric"></div>
 </div>
 <div class="receipt" aria-live="polite">
@@ -34,13 +36,14 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Future price tag</span><b id="nv-fut">₦{n(seed.future)}</b></div>
 <div class="receipt-row"><span>Buying power lost</span><b id="nv-lost">{(seed.lost_fraction * 100).toFixed(1)}%</b></div>
 <p class="receipt-foot">Purchasing-power view · inflation compounds</p>
+<p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
 <div class="hr"></div>
 <h2 class="tool-h2">What a future sum is worth today</h2>
 <div class="fx-card">
 <div class="tgrid c3">
-<div class="field"><label for="nv-pv">Future amount ₦</label><input id="nv-pv" type="number" min="0" max="1000000000000" step="any" value="2000000" inputmode="decimal"><p class="hint">Uses the inflation and years above.</p></div>
+<div class="field"><label for="nv-pv">Future amount ₦</label><input id="nv-pv" type="text" max="1000000000000" value="2000000" inputmode="decimal"><p class="hint">Uses the inflation and years above.</p></div>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Worth in today's buying power</p>
@@ -50,15 +53,16 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Future price tag</span><b id="nv-pv-fut">₦{n(pvSeed.future)}</b></div>
 <div class="receipt-row"><span>Discount to today</span><b id="nv-pv-disc">{(pvSeed.discount_rate * 100).toFixed(1)}%</b></div>
 <p class="receipt-foot">Discounted at the inflation above — the reverse direction</p>
+<p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
 <div class="hr"></div>
 <h2 class="tool-h2">What you must save to stand still</h2>
 <div class="fx-card">
 <div class="tgrid c3">
-<div class="field"><label for="nv-tgt">Goal in today's ₦</label><input id="nv-tgt" type="number" min="0" max="1000000000000" step="any" value="10000000" inputmode="decimal"></div>
-<div class="field"><label for="nv-cur">Saved already ₦</label><input id="nv-cur" type="number" min="0" max="1000000000000" step="any" value="1000000" inputmode="decimal"></div>
-<div class="field"><label for="nv-ret">Return %/yr</label><input id="nv-ret" type="number" min="0" max="100" step="any" value="15" inputmode="decimal"><p class="hint">Uses the inflation and years above.</p></div>
+<div class="field"><label for="nv-tgt">Goal in today's ₦</label><input id="nv-tgt" type="text" max="1000000000000" value="10000000" inputmode="decimal"></div>
+<div class="field"><label for="nv-cur">Saved already ₦</label><input id="nv-cur" type="text" max="1000000000000" value="1000000" inputmode="decimal"></div>
+<div class="field"><label for="nv-ret">Return %/yr</label><input id="nv-ret" type="text" max="100" value="15" inputmode="decimal"><p class="hint">Uses the inflation and years above.</p></div>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Save monthly to stand still</p>
@@ -68,6 +72,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Goal at future prices</span><b id="nv-sv-real">₦{n(svSeed.real_target)}</b></div>
 <div class="receipt-row"><span>Extra vs ignoring inflation</span><b id="nv-sv-gap">₦{n(svSeed.gap_monthly)}</b></div>
 <p class="receipt-foot">Monthly, same horizon and inflation as above</p>
+<p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
 <div class="hr"></div>
@@ -82,14 +87,18 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <script>
 import { nairaValue, nairaValueHistory, nairaValuePv, nairaValueSave } from "../../lib/naira-value";
 import { formatGrouped } from "../../lib/format";
+import { pm } from "../../scripts/pm";
+import smartFields from "../../scripts/smart-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
+const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
 function render() {
   const rawV = g("nv-val").value.trim();
-  const v = Math.max(0, Number(g("nv-val").value) || 0);
-  let inflPct = Math.max(0, Number(g("nv-infl").value) || 0);
-  let yrs = Math.max(1, Math.trunc(Number(g("nv-yrs").value) || 5));
+  const v = Math.max(0, pm(g("nv-val").value) || 0);
+  let inflPct = Math.max(0, pm(g("nv-infl").value) || 0);
+  let yrs = Math.max(1, Math.trunc(pm(g("nv-yrs").value) || 5));
   // Clamp + warn, never silent: absurd inputs say so instead of printing ₦Infinity.
   const notes: string[] = [];
   if (rawV === "") notes.push("Enter an amount — empty counts as ₦0.");
@@ -127,22 +136,25 @@ function render() {
     }
   }
   // Reverse direction: discount a future sum to today at the same rate/horizon.
-  const fut = Math.max(0, Number(g("nv-pv").value) || 0);
+  const fut = Math.max(0, pm(g("nv-pv").value) || 0);
   const pv = nairaValuePv(fut, infl, yrs, 0);
   t("nv-pv-fig").textContent = Number.isFinite(pv.pv) ? nn(pv.pv) : "—";
   t("nv-pv-sub").textContent = `${nn(pv.future)} in ${yrs} years buys what ${nn(pv.pv)} buys today`;
   t("nv-pv-fut").textContent = nn(pv.future);
   t("nv-pv-disc").textContent = (pv.discount_rate * 100).toFixed(1) + "%";
   // Stand-still savings: the monthly cost of the inflation-moved goal.
-  const tgt = Math.max(0, Number(g("nv-tgt").value) || 0);
-  const cur = Math.max(0, Number(g("nv-cur").value) || 0);
-  const ret = Math.max(0, Number(g("nv-ret").value) || 0) / 100;
+  const tgt = Math.max(0, pm(g("nv-tgt").value) || 0);
+  const cur = Math.max(0, pm(g("nv-cur").value) || 0);
+  const ret = Math.max(0, pm(g("nv-ret").value) || 0) / 100;
   const sv = nairaValueSave(tgt, cur, ret, infl, yrs, 0, "monthly");
   t("nv-sv-fig").textContent = Number.isFinite(sv.real_monthly) ? nn(sv.real_monthly) : "—";
   t("nv-sv-sub").textContent = `Inflation moves your ${nn(sv.target)} goal to ${nn(sv.real_target)}`;
   t("nv-sv-real").textContent = Number.isFinite(sv.real_target) ? nn(sv.real_target) : "—";
   t("nv-sv-gap").textContent = Number.isFinite(sv.gap_monthly) ? nn(sv.gap_monthly) : "—";
 }
+  sfEmpty(sfIsEmpty("naira-value-calculator", gv));
 ["nv-val", "nv-infl", "nv-yrs", "nv-pv", "nv-tgt", "nv-cur", "nv-ret"].forEach((id) => g(id).addEventListener("input", render));
+smartFields.register(TOOL_FIELDS["naira-value-calculator"]);
+sfBind("naira-value-calculator", gv);
 render();
 </script>

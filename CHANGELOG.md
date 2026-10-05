@@ -3,6 +3,38 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.20] — 2026-10-05 — Smart fields: the fleet stops pretending it filled them in
+King: *"I want fields like these to change dynamic and be smart… all my
+calcutors have no ux plan at all, they don't actually find out how user would use
+the product and be amazed and keep coming back."*
+
+- **The real defect was honesty, not staticness.** Every calculator baked a
+  seed value, so a first-timer saw a full ₦250,000 receipt he never entered.
+  Now every non-user number wears a gold `SAMPLE` tag with a dashed rule, and
+  the moment he types in a field that tag disappears — the field becomes his.
+- **Three states, one law:** `SAMPLE` (gold = ours) · `LAST USED` (neutral,
+  dated = his) · plain (his, no badge). Gold never means "yours".
+- **`Clear examples`** empties every worked example in one tap and hands the
+  receipt an honest empty state: the shape stays, the figures show `—` in dim
+  ink. No confident gold ₦0 — a zero nobody entered is not a result.
+- **₦ fields work properly now:** 57 fields converted from `type=number` to
+  `type=text` + `inputmode` (63 minus 6 genuine integer counts), with the
+  recovered in-field ₦ symbol, blur-time comma grouping and a tolerant parser
+  that reads `"1,234.5"`, `"₦1,234.50"` and `""` correctly. `type=number` was
+  silently rounding large values in Safari and exponentiating them in Chrome.
+- **Memory:** the last numbers he used are restored, dated and badged neutrally
+  — rent and gross never restore, because a stale rent silently moves a
+  take-home claim.
+- **Sourced context lines only:** Guardian median pay, NBS 15.39% inflation,
+  the ₦70,000 statutory minimum wage — each with a "read the source" link. Two
+  context lines were DROPPED because no citable source existed; a statistic with
+  no source does not ship.
+- **A real bug fixed:** the calculator receipt hardcoded `#0d0b08`, identical
+  to the page background in dark mode, so the card dissolved into the page.
+- Proofs: 79 pages; 6/6 gates (article 147/147, vectors 95/95); live probes on
+  4 tools x 2 themes x 4 interactions; +1,338 B per page average, one shared
+  8KB chunk per session — inside the 3KB budget.
+
 ## [0.7.19] — 2026-10-04 — The real logo on every card, and the controls I left raw
 King rejected v0.7.18: "These are not my logos… og image doesn't have a single
 place with my finance blog actual logo" + "why is the check box in the calculator

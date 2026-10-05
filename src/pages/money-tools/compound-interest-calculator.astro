@@ -16,11 +16,13 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   copy={[["p", "Compound interest is interest earned on interest. Each month, your balance earns interest, and because that interest stays in the account, next month you earn interest on the original amount plus the interest from the month before. Over years, this compounding makes your balance accelerate: the growth is not a straight line but a curve that steepens with time."],["p", "The savings-goal calculator answers \"how much do I need to save each month to reach a target?\" This calculator answers the opposite question: \"if I put in this much, what will I end up with?\" Use both together, set a target, then see how different monthly contributions change your final balance."],["p", "Nigerian savings accounts, fixed deposits and money-market funds typically pay a few percent to low double-digits. Use a rate close to what your money will actually earn, a sky-high assumption looks impressive on screen but will not hold in reality, and a conservative one keeps your plan honest."],["p", "The more often interest is compounded, the faster your balance grows, daily compounding beats annual. And contributing more frequently (weekly vs monthly) makes a big difference, because more of your money starts earning interest sooner. Try the two frequency selectors above to see the swing."],["p", "This calculator projects how much you will HAVE. If you want to know how much to save to reach a specific target, use our savings goal calculator. And since inflation quietly shrinks any future goal, our inflation-adjusted calculator shows what you truly need. If you want to see how much your naira will buy in the future, the naira value calculator shows how inflation erodes purchasing power. If you hold dividend stocks instead, our dividend & ROI estimator projects the total return with reinvested (DRIP) versus cash dividends."],["p", "Take the default: ₦100,000 to start, ₦50,000 added each month, at 10% a year for 5 years. Over those five years you deposit ₦3,100,000 of your own money. Compound interest turns it into roughly ₦4,036,385, about ₦936,385 of that is pure growth on top of what you put in. That is the effect of leaving your money to compound instead of withdrawing the interest every month."],["p", "Notice how the year-by-year table accelerates: the first year adds a modest amount, but by the later years the interest each year is far larger. The earlier you start, and the longer you leave it, the more of the final balance is earned interest rather than your own deposits. This is why time in the market matters more than timing the market when it comes to savings."],["h2", "Compound interest questions"],["h3", "How is compound interest calculated?"],["p", "Each month, your balance earns interest, and that interest is added back into the balance, so next month you earn interest on the original amount plus last month's interest. Over time that compounding makes growth accelerate."],["h3", "How does the compound frequency change the result?"],["p", "The selector defaults to monthly compounding, but you can switch to quarterly, daily or annually. Daily compounding means interest is added more often, so it grows slightly faster than monthly; annual compounds once a year and grows slightly slower. The difference matters most over long horizons."],["h3", "How much will ₦100,000 grow to in 5 years at 10%?"],["p", "With ₦50,000 added each month, about ₦4,036,385, of which roughly ₦936,385 is interest earned on top of what you deposited."],["h3", "What does \"interest earned\" mean in the table?"],["p", "It is the difference between your final balance and the total you actually deposited, the pure growth that compounding produced on top of your own money."],["h3", "Why does the balance grow faster in later years?"],["p", "Because interest is earned on a larger base each month. Early on, growth is mostly your deposits; later, the accumulated interest starts earning its own interest, that is the compounding effect."],["h3", "What interest rate should I assume?"],["p", "Use a realistic rate for where your money sits, Nigerian savings accounts, fixed deposits or money-market funds. Higher assumed rates are not guaranteed."]]},
   disclaimer="This calculator is for informational guidance only and is not financial or investment advice. Rates are not guaranteed, confirm your plan with a licensed financial adviser.", ogImage={{ url: `${base}images/og/tool-compound-interest-calculator.png`, width: 1200, height: 630, alt: "Compound Interest Calculator" }}>
 <div class="fx-card">
+<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
-<div class="field"><label for="ci-prin">Starting principal ₦</label><input id="ci-prin" type="number" min="0" step="any" value="100000" inputmode="decimal"></div>
-<div class="field"><label for="ci-dep">Deposit per period ₦</label><input id="ci-dep" type="number" min="0" step="any" value="50000" inputmode="decimal"></div>
+
+<div class="field"><label for="ci-prin">Starting principal ₦</label><input id="ci-prin" type="text" value="100000" inputmode="decimal"></div>
+<div class="field"><label for="ci-dep">Deposit per period ₦</label><input id="ci-dep" type="text" value="50000" inputmode="decimal"></div>
 <div class="field"><label for="ci-freq">Deposit frequency</label><select id="ci-freq"><option value="monthly" selected>Monthly</option><option value="weekly">Weekly</option><option value="biweekly">Bi-weekly</option><option value="quarterly">Quarterly</option><option value="annual">Annual</option></select></div>
-<div class="field"><label for="ci-rate">Annual rate %</label><input id="ci-rate" type="number" min="0" max="100" step="any" value="10" inputmode="decimal"></div>
+<div class="field"><label for="ci-rate">Annual rate %</label><input id="ci-rate" type="text" max="100" value="10" inputmode="decimal"></div>
 <div class="field"><label for="ci-yrs">Years</label><input id="ci-yrs" type="number" min="1" max="50" step="1" value="5" inputmode="numeric"></div>
 <div class="field"><label for="ci-cmp">Compounding</label><select id="ci-cmp"><option value="monthly" selected>Monthly</option><option value="quarterly">Quarterly</option><option value="daily">Daily</option><option value="annual">Annual</option></select></div>
 </div>
@@ -33,6 +35,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Interest</span><b id="ci-int">₦{n(seed.interest)}</b></div>
 <p class="receipt-note" id="ci-warn" hidden></p>
 <p class="receipt-foot">Compounding does the heavy lifting</p>
+<p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
 <div class="hr"></div>
@@ -47,15 +50,19 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <script>
 import { compoundGrowth, compoundSchedule } from "../../lib/savings";
 import { formatGrouped } from "../../lib/format";
+import { pm } from "../../scripts/pm";
+import smartFields from "../../scripts/smart-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
+const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
 const sel = (id: string) => (document.getElementById(id) as HTMLSelectElement).value;
 function render() {
-  const p = Math.max(0, Number(g("ci-prin").value) || 0);
-  const d = Math.max(0, Number(g("ci-dep").value) || 0);
-  const rate = Math.max(0, Number(g("ci-rate").value) || 0) / 100;
-  const yrs = Math.max(1, Math.trunc(Number(g("ci-yrs").value) || 5));
+  const p = Math.max(0, pm(g("ci-prin").value) || 0);
+  const d = Math.max(0, pm(g("ci-dep").value) || 0);
+  const rate = Math.max(0, pm(g("ci-rate").value) || 0) / 100;
+  const yrs = Math.max(1, Math.trunc(pm(g("ci-yrs").value) || 5));
   const r = compoundGrowth(p, d, rate, yrs * 12, sel("ci-cmp"), sel("ci-freq"));
   const warn = t("ci-warn");
   const tb = document.querySelector("#ci-table tbody") as HTMLElement;
@@ -86,7 +93,10 @@ function render() {
     tb.appendChild(tr);
   }
 }
+  sfEmpty(sfIsEmpty("compound-interest-calculator", gv));
 ["ci-prin", "ci-dep", "ci-rate", "ci-yrs"].forEach((id) => g(id).addEventListener("input", render));
 ["ci-freq", "ci-cmp"].forEach((id) => (document.getElementById(id) as HTMLSelectElement).addEventListener("change", render));
+smartFields.register(TOOL_FIELDS["compound-interest-calculator"]);
+sfBind("compound-interest-calculator", gv);
 render();
 </script>

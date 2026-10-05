@@ -18,12 +18,14 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   related={[{ href: `${base}articles/piggyvest-vs-cowrywise-2026/`, title: "PiggyVest vs Cowrywise in 2026: Which Saves You More?", excerpt: "Interest rates, withdrawal rules, fees, and app experience compared side by side." }, { href: `${base}articles/grey-vs-geegpay-dollar-account/`, title: "Grey vs Geegpay: Which Dollar Account Should You Open?", excerpt: "Account opening, conversion spreads, card support, and payout speed — tested with real transfers." }, { href: `${base}articles/ngn-dollar-cost-averaging-guide/`, title: "Dollar-Cost Averaging Into NGX Stocks on a \u20a650k Salary", excerpt: "A step-by-step plan for buying Nigerian stocks every month without timing the market." }, { href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers", excerpt: "Card fees, failed-transfer reversals, and support tested — what digital banks actually save you." }]},
   disclaimer="This calculator is for informational guidance only and is not financial advice. The 3-6 month rule is a guideline, and the inflation-adjusted projection is an estimate based on the rate you enter. Adjust to your circumstances and confirm significant decisions with a licensed adviser.", ogImage={{ url: `${base}images/og/tool-emergency-fund-calculator.png`, width: 1200, height: 630, alt: "Emergency Fund Calculator" }}>
 <div class="fx-card">
+<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
-<div class="field"><label for="em-ess">Monthly essentials ₦</label><input id="em-ess" type="number" min="0" step="any" value={EMERGENCY_SEED.essentials} inputmode="decimal"></div>
-<div class="field"><label for="em-saved">Saved so far ₦</label><input id="em-saved" type="number" min="0" step="any" value={EMERGENCY_SEED.saved} inputmode="decimal"></div>
-<div class="field"><label for="em-mo">Monthly saving ₦</label><input id="em-mo" type="number" min="0" max="100000000" step="any" value={EMERGENCY_SEED.monthly} inputmode="decimal"></div>
-<div class="field"><label for="em-cover">Cover (months)</label><input id="em-cover" type="number" min="1" max="60" step="any" value={EMERGENCY_SEED.cover} inputmode="decimal"></div>
-<div class="field"><label for="em-infl">Inflation %/yr</label><input id="em-infl" type="number" min="0" max="100" step="any" value="20" inputmode="decimal"></div>
+
+<div class="field"><label for="em-ess">Monthly essentials ₦</label><input id="em-ess" type="text" value={EMERGENCY_SEED.essentials} inputmode="decimal"></div>
+<div class="field"><label for="em-saved">Saved so far ₦</label><input id="em-saved" type="text" value={EMERGENCY_SEED.saved} inputmode="decimal"></div>
+<div class="field"><label for="em-mo">Monthly saving ₦</label><input id="em-mo" type="text" max="100000000" value={EMERGENCY_SEED.monthly} inputmode="decimal"></div>
+<div class="field"><label for="em-cover">Cover (months)</label><input id="em-cover" type="text" max="60" value={EMERGENCY_SEED.cover} inputmode="decimal"></div>
+<div class="field"><label for="em-infl">Inflation %/yr</label><input id="em-infl" type="text" max="100" value="20" inputmode="decimal"></div>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Your runway today</p>
@@ -36,26 +38,31 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="bar-note" id="em-warn" hidden></p>
 <p class="receipt-foot">6-month default · inflation-adjusted</p>
 <p class="receipt-foot">Gap + progress vs today's naira target — the real target is the inflated finish line</p>
+<p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
 </ToolShell>
 <script>
 import { emergencyFund } from "../../lib/emergency";
 import { formatGrouped } from "../../lib/format";
+import { pm } from "../../scripts/pm";
+import smartFields from "../../scripts/smart-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
+const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
 function render() {
-  const essRaw = Number(g("em-ess").value);
-  const savedRaw = Number(g("em-saved").value);
-  const moRaw = Number(g("em-mo").value);
+  const essRaw = pm(g("em-ess").value);
+  const savedRaw = pm(g("em-saved").value);
+  const moRaw = pm(g("em-mo").value);
   const coverRaw = g("em-cover").value;
-  const inflRaw = Number(g("em-infl").value);
+  const inflRaw = pm(g("em-infl").value);
   const r = emergencyFund(
     Math.max(0, essRaw || 0),
     Math.max(0, savedRaw || 0),
     Math.max(0, moRaw || 0),
-    Math.max(1, Number(coverRaw) || 6),
+    Math.max(1, pm(coverRaw) || 6),
     Math.max(0, inflRaw || 0) / 100,
   );
   // Finite-result guard: absurd cover/inflation/saving used to compound into
@@ -78,6 +85,9 @@ function render() {
   w.hidden = notes.length === 0;
   w.textContent = notes.join(" ");
 }
+  sfEmpty(sfIsEmpty("emergency-fund-calculator", gv));
 ["em-ess", "em-saved", "em-mo", "em-cover", "em-infl"].forEach((id) => g(id).addEventListener("input", render));
+smartFields.register(TOOL_FIELDS["emergency-fund-calculator"]);
+sfBind("emergency-fund-calculator", gv);
 render();
 </script>

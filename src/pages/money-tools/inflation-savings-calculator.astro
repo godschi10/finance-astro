@@ -15,11 +15,13 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   copy={[["p", "Set a target today and you are pricing it in today&#039;s naira. But inflation is the silent tax on money held over time, the same car, school fees or deposit that costs ₦2,000,000 now will cost noticeably more in three years. If you save toward today&#039;s price, you arrive at your deadline short of the real amount. This calculator inflates the target by your chosen inflation rate so you see the true figure."],["p", "The two rows show the same goal two ways. The nominal row is what most calculators give you, the monthly amount to hit today&#039;s price. The inflation-adjusted row is what you actually need, and the gap between them is the extra you must save each month to win. That gap is the real, honest cost of not planning for inflation."],["p", "Nigerian inflation has trended high recently, official figures have run in the 20-30% range. Start with a realistic NBS/CBN rate, then err on the high side: it is far better to over-save now and end up ahead than to under-save and fall short. This calculator also lets you compare your earning rate against inflation, if your interest is below inflation, you are losing real value even as the balance grows."],["p", "The number that matters is the gap between what you earn and what inflation erodes. If your money earns 10% while inflation is 20%, your balance grows on paper but you lose buying power every year. To genuinely beat inflation, your return must be above it. This is why parking savings in a low-yield account quietly loses value, the calculator shows the honest monthly amount you need to reach your goal in real terms."],["p", "A worked example: the default shows a ₦10,000,000 goal with ₦1,000,000 already saved, at 15% earning and 20% inflation over 5 years. Ignoring inflation, the monthly need is about ₦89,109. But the true future cost of the goal is ₦24,883,200, so you really need about ₦257,140 a month. That ₦168,030 gap is the real, honest cost of not planning for inflation."],["p", "Use this with our savings goal calculator to solve the monthly amount toward a future target, and the compound-interest calculator to see how a principal and monthly contributions grow. To understand how much your naira will buy in future years, the naira value calculator shows the purchasing-power decay directly."],["h2", "Inflation and savings questions"],["h3", "Why does inflation change my savings target?"],["p", "A goal priced in today's naira will cost more in the future. A ₦10,000,000 goal at 20% annual inflation costs about ₦24,883,200 in five years, so saving toward today's price leaves you short."],["h3", "How much should I save monthly to beat inflation?"],["p", "For a ₦10,000,000 target (₦1,000,000 already saved, 15% earning rate, 20% inflation over 5 years) you need about ₦257,140 monthly, versus ₦89,109 if you ignored inflation."],["h3", "What inflation rate should I use?"],["p", "Use a realistic Nigerian inflation rate, recent years have run in the 20-30% range. Official NBS figures and the CBN rate are good starting points; err on the high side to be safe."],["h3", "Does my interest rate beat inflation?"],["p", "If your earning rate is below inflation, you are losing real value even as the balance grows. For a plan to win, your return must beat inflation, another reason to compare the two figures here."]]},
   disclaimer="This calculator is for informational guidance only and is not financial, tax or investment advice. Inflation and interest rates are not guaranteed, confirm your plan with a licensed financial adviser.", ogImage={{ url: `${base}images/og/tool-inflation-savings-calculator.png`, width: 1200, height: 630, alt: "Inflation-Adjusted Savings Calculator" }}>
 <div class="fx-card">
+<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
-<div class="field"><label for="is-target">Goal today ₦</label><input id="is-target" type="number" min="0" step="any" value="10000000" inputmode="decimal"></div>
-<div class="field"><label for="is-cur">Have now ₦</label><input id="is-cur" type="number" min="0" step="any" value="1000000" inputmode="decimal"></div>
-<div class="field"><label for="is-rate">Return %/yr</label><input id="is-rate" type="number" min="0" max="100" step="any" value="15" inputmode="decimal"></div>
-<div class="field"><label for="is-infl">Inflation %/yr</label><input id="is-infl" type="number" min="0" max="100" step="any" value="20" inputmode="decimal"></div>
+
+<div class="field"><label for="is-target">Goal today ₦</label><input id="is-target" type="text" value="10000000" inputmode="decimal"></div>
+<div class="field"><label for="is-cur">Have now ₦</label><input id="is-cur" type="text" value="1000000" inputmode="decimal"></div>
+<div class="field"><label for="is-rate">Return %/yr</label><input id="is-rate" type="text" max="100" value="15" inputmode="decimal"></div>
+<div class="field"><label for="is-infl">Inflation %/yr</label><input id="is-infl" type="text" max="100" value="20" inputmode="decimal"></div>
 <div class="field"><label for="is-yrs">Years</label><input id="is-yrs" type="number" min="1" max="50" step="1" value="5" inputmode="numeric"></div>
 </div>
 <div class="receipt" aria-live="polite">
@@ -32,22 +34,27 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Monthly gap</span><b id="is-gap">₦{n(seed.gap_monthly)}</b></div>
 <p class="receipt-note" id="is-warn" hidden></p>
 <p class="receipt-foot">The gap is the monthly truth</p>
+<p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
 </ToolShell>
 <script>
 import { inflationAdjustedGoal } from "../../lib/inflation";
 import { formatGrouped } from "../../lib/format";
+import { pm } from "../../scripts/pm";
+import smartFields from "../../scripts/smart-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
+const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
 function render() {
   const r = inflationAdjustedGoal(
-    Math.max(0, Number(g("is-target").value) || 0),
-    Math.max(0, Number(g("is-cur").value) || 0),
-    Math.max(0, Number(g("is-rate").value) || 0) / 100,
-    Math.max(0, Number(g("is-infl").value) || 0) / 100,
-    Math.max(1, Math.trunc(Number(g("is-yrs").value) || 5)),
+    Math.max(0, pm(g("is-target").value) || 0),
+    Math.max(0, pm(g("is-cur").value) || 0),
+    Math.max(0, pm(g("is-rate").value) || 0) / 100,
+    Math.max(0, pm(g("is-infl").value) || 0) / 100,
+    Math.max(1, Math.trunc(pm(g("is-yrs").value) || 5)),
     0, "monthly", "monthly",
   );
   const warn = t("is-warn");
@@ -69,6 +76,9 @@ function render() {
   t("is-real").textContent = nn(r.real_monthly);
   t("is-gap").textContent = nn(r.gap_monthly);
 }
+  sfEmpty(sfIsEmpty("inflation-savings-calculator", gv));
 ["is-target", "is-cur", "is-rate", "is-infl", "is-yrs"].forEach((id) => g(id).addEventListener("input", render));
+smartFields.register(TOOL_FIELDS["inflation-savings-calculator"]);
+sfBind("inflation-savings-calculator", gv);
 render();
 </script>
