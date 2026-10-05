@@ -3,6 +3,38 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.21] — 2026-10-05 — Architecture close-out: the four parked findings
+King: "Fix all findings before we move on to the next one."
+
+- **The stylesheet split, measured rather than assumed.** The audit said every
+  page shipped the whole theme stylesheet; @builder built a ground-truth matrix
+  of "classes defined per sheet × classes rendered per built page" and found
+  **13 of 14 sheets are genuinely consumed by every page** — home.css,
+  article.css, pages.css, search404.css, tools.css and hub.css all render
+  vocabulary on every archive, tool and legal page. Only `r7.css` (the R7
+  featured-stamp layer, every selector `.feat`-scoped) is genuinely
+  homepage-only, so it alone moved to the page that renders it. Result: every
+  non-homepage page ships **856 bytes less CSS**, the homepage is unchanged
+  (+1 B, the `<style>` wrapper moving). Zero rule edits — `git diff src/styles/`
+  is empty — and visual parity proven by computed-style comparison plus pixel
+  diffs inside run-to-run noise (0.75%, confined to the live ticker marquee).
+- **One archive, one door.** `/category/fixed-income/` is now canonical; the
+  nested `/category/investing/fixed-income/` is a 652-byte canonical pointer
+  instead of 181KB of duplicate archive HTML. Chosen on evidence: 26 distinct
+  entry points already build the flat shape from the shared category list, and
+  the nested href is pinned by the header gate. One door, no duplicate content.
+- **The orphaned year archives are now reachable.** A footer **Archive** block
+  (both footers, matching the footer's own link idiom, zero CSS, zero gates)
+  exposes all 11 date routes — years and months, both previously unreachable.
+  They were kept, not deleted: they are WordPress-faithful, fully populated, and
+  the site's only chronological index.
+- **The tool manifest.** One list of 16 tools now drives the hub page and the
+  per-tool share card; the 16 duplicated `ogImage` props are gone. Measured
+  honestly: only 2 of 16 props were real identity duplication (12.8% of lines) —
+  the other 87% is ported WordPress copy with citations, which stays where it
+  is. Meta parity proven byte-identical on 16/16 tool pages and 10/10 amount
+  pages.
+
 ## [0.7.20] — 2026-10-05 — Smart fields: the fleet stops pretending it filled them in
 King: *"I want fields like these to change dynamic and be smart… all my
 calcutors have no ux plan at all, they don't actually find out how user would use

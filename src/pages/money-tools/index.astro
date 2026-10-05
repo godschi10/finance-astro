@@ -17,27 +17,16 @@
 // Card copy (title/emoji/gradient/desc) is the live template's verbatim.
 import Layout from "../../layouts/Layout.astro";
 import { amountSlugs } from "../../lib/amount";
+import { TOOL_MANIFEST } from "../../data/tool-manifest";
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 
-// page-tools.php gwill_tools_card() arguments, template order, verbatim.
-const tools = [
-  { slug: "currency-converter", title: "Currency Converter", emoji: "💱", grad: "#fef3c7,#fcd34d", desc: "Convert Naira to Dollar, Pound and Euro at today’s live rate, any amount, instantly." },
-  { slug: "salary-tax-calculator", title: "Nigeria Tax Calculator", emoji: "🧾", grad: "#dcfce7,#86efac", desc: "Work out your take-home pay under the Nigeria Tax Act 2025, the new 0% band, rent relief and an old-vs-new comparison." },
-  { slug: "savings-goal-calculator", title: "Savings Goal Calculator", emoji: "🎯", grad: "#ede9fe,#c4b5fd", desc: "See exactly how much to save each month to hit your target, with compound interest built in." },
-  { slug: "exchange-rate-history", title: "Rate History Chart", emoji: "📈", grad: "#fce7f3,#fbcfe8", desc: "See the dollar to naira trend over 30 and 90 days, the real recorded rates, updated daily." },
-  { slug: "compound-interest-calculator", title: "Compound Interest Calculator", emoji: "📊", grad: "#e0f2fe,#bae6fd", desc: "See how your savings grow with compound interest, project your balance year by year." },
-  { slug: "inflation-savings-calculator", title: "Inflation Savings Calculator", emoji: "🔥", grad: "#fee2e2,#fecaca", desc: "See what inflation really does to your savings goal, and how much more you must save each month." },
-  { slug: "gross-to-net-calculator", title: "Gross to Net Calculator", emoji: "💰", grad: "#ccfbf1,#99f6e4", desc: "Start from the take-home pay you want and find the gross salary you need, under NTA 2025." },
-  { slug: "50-30-20-budget-calculator", title: "50/30/20 Budget Calculator", emoji: "🧮", grad: "#fef9c3,#fde047", desc: "Split your take-home pay into needs, wants and savings with the 50/30/20 rule, exact naira for each." },
-  { slug: "budget-allocator", title: "Budget Allocator (50/30/20 in Naira)", emoji: "🧮", grad: "#fef9c3,#fde047", desc: "Split your pay 50/30/20 and see the needs half broken into real naira buckets, rent, food, transport, data and bills." },
-  { slug: "naira-value-calculator", title: "Naira Value Calculator (Inflation / Depreciation)", emoji: "💸", grad: "#fef9c3,#fde047", desc: "What is ₦1M today really worth in 5 years? See how inflation erodes the naira, and what future money is worth today." },
-  { slug: "crypto-profit-calculator", title: "Crypto Profit Calculator (Naira, P2P-aware)", emoji: "🪙", grad: "#fef9c3,#fde047", desc: "Work out the real naira profit on a crypto trade, with the P2P buy/sell spread shown as its own cost." },
-  { slug: "dividend-calculator", title: "Dividend / ROI Estimator (Nigerian Stocks, NGX)", emoji: "📈", grad: "#fef9c3,#fde047", desc: "Project the total return of a Nigerian dividend stock, with the DRIP reinvestment effect shown year by year, in naira." },
-  { slug: "emergency-fund-calculator", title: "Emergency Fund Calculator (Naira, Inflation-adjusted)", emoji: "🛟", grad: "#fef9c3,#fde047", desc: "How many months of runway does your savings cover? Get the naira target, time to reach it, and the inflation-adjusted amount." },
-  { slug: "loan-repayment-calculator", title: "Loan Repayment Calculator", emoji: "💰", grad: "#fee2e2,#fca5a5", desc: "See the true cost of a Nigerian loan, enter the rate as the lender quotes it and get the real APR." },
-  { slug: "money-transfer-comparator", title: "Money-Transfer Comparator", emoji: "🔁", grad: "#cffafe,#67e8f9", desc: "Compare Wise, Remitly, Western Union, WorldRemit & LemFi on fee + real rate, who actually gets you the most." },
-  { slug: "savings-rate-comparator", title: "Savings Rate Comparator", emoji: "🏦", grad: "#ecfccb,#bef264", desc: "Who pays the most on your savings right now, PiggyVest, Cowrywise, Kuda, Renmoney, FairMoney + FD rates." },
-];
+// page-tools.php gwill_tools_card() arguments, template order, verbatim — but no
+// longer a SECOND hand-kept list of the sixteen tools (v0.7.21 leg D2). This
+// page used to carry its own tools[] literal, which meant a slug lived in three
+// places (here, data/content.ts TOOLS, data/tool-fields.ts TOOL_FIELDS) and a
+// rename was three edits with nothing checking that the three agreed. It now
+// reads the one manifest, in the same template order, with the same copy.
+const tools = TOOL_MANIFEST;
 
 // page-tools.php $amount_slugs — the live hub prints exactly these 8 chips
 // (resolved against the port's own amount registry so links never 404).

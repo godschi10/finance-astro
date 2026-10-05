@@ -21,6 +21,21 @@ logo."
       file size sane) + QA renders the actual shared card in a 1200×630
       context and screenshots it.
 
+## ACTIVE — ARCH CLOSE-OUT, King's order 2026-10-05
+King: "Fix all findings before we move on to the next one" (the 4 parked
+architecture findings).
+- [ ] **Leg D1** — Layout CSS split: page-scoped stylesheets move to the pages
+      that consume them; global layer (base/header/footer/forms/controls/
+      numbers/chrome) stays. BYTE-PARITY PROOF REQUIRED + 6 gates + visual
+      parity screenshots per page type before ship.
+- [ ] **Leg D2** — ToolShell props manifest: 16 near-identical prop blocks +
+      the second tools[] literal in money-tools/index → one source in
+      src/data/tool-fields.ts (already exists from v0.7.20).
+- [ ] **Leg D3** — [year] archive routes: keep-or-delete decision recorded;
+      deleting needs a backup branch + gate grep first.
+- [ ] **Leg D4** — fixed-income canonical: both URLs serve an empty archive;
+      pick ONE and make the other stop existing.
+
 ## SHIPPED — 2026-10-05 · SMART FIELDS — v0.7.20
 King: *"I want fields like these to change dynamic and be smart… all my
 calcutors have no ux plan at all, they don't actually find out how user would use

@@ -1,6 +1,22 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import ArticleCard from "../components/ArticleCard.astro";
+// The featured-stamp sheet (R7), imported HERE rather than in the layout: every
+// selector in it is `.feat`-descendant-scoped and this homepage is the only page
+// in the build that emits .feat markup, so it stops landing in the other 78 pages'
+// inlined cascade (-856 B each).
+//
+// CASCADE, measured not assumed (2026-10-05): Astro emits a page's OWN stylesheet
+// BEFORE the layout's, so this sheet now leads the cascade block instead of trailing
+// it — the reverse of what the Layout import comment assumed. That is safe here
+// because r7.css is order-independent by construction (its own header: "every rule
+// here is a NEW selector-or-combinator at equal-or-higher specificity than the
+// verbatim rule it corrects"), and the build proves it: for every real element
+// .feat-img -> .feat .feat-img (0,2,0) beats .feat-img / .ac-img,.feat-img (0,1,0);
+// .feat-emoji -> .feat .feat-img>span.feat-emoji (0,3,1) beats .feat-emoji (0,1,0)
+// and .feat-img>span:first-child (0,2,1); the ::before/::after plate layers and the
+// :has(>img) guard have no competitor in any sheet. No rule relies on source order.
+import "../styles/r7.css";
 import { SITE, CATEGORIES, catBySlug, FEATURED_SLUG } from "../data/site";
 import { allArticles, fmtMonthYear, APPS } from "../data/content";
 import { readdirSync } from "node:fs";

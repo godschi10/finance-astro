@@ -11,6 +11,33 @@ import { allArticles, fmtLongMonthYear } from "../../data/content";
 //   .con style="margin-top:28px;padding-bottom:40px": .ad-bg (collapses when
 //     empty) + .g3 of .ac cards (no pagination at this corpus size)
 // WP prints NO badge and NO description on month archives (h1 only).
+//
+// ── FINDING B: ORPHANED TREE — NOT DELETED, AWAITING THE KING'S WORD ──────
+// The architecture audit flagged this tree (year + month + paged archives) as
+// orphaned. Re-proven by this leg, and the claim is HALF WRONG — corrected
+// before anyone acts on it:
+//   inbound hrefs from any page/footer/article card .... 11 (all INTERNAL to
+//     this tree: the month archives' breadcrumb → the year archive, and the
+//     year index's pagination → /2026/page/2/). ZERO external entry points —
+//     no nav item, no footer link, no article card, no pill strip anywhere
+//     outside src/pages/[year]/** points here.
+//   BUT src/pages/sitemap.xml.ts DOES list them — 11 <loc> entries
+//     (2026/, 2026/01..09/, 2026/page/2/). The audit's "zero inbound links
+//     from … sitemap" is incorrect and must not be repeated.
+// Deleting the tree therefore also removes 11 sitemap <loc> entries — and
+// sitemap.xml.ts is outside this leg's lane.
+// Gate census: scripts/check-*.mjs contains NO assertion on these routes —
+// no /20XX/ path, no year/month route check, no page-count check. Nothing
+// would go red. That is necessary, not sufficient.
+// WP DOES have year/month archives (archive.php), and this file's own header
+// records the theme's real month archive captured live 2026-09-29
+// (finance-truth/archives/wp-month-2026-01.html) — so the fidelity contract
+// that produced this port arguably requires the surface to exist. It is also
+// the site's ONLY chronological index; deleting it removes a working,
+// populated, WP-faithful archive purely because nothing links to it yet.
+// RECOMMENDATION: KEEP, and make it reachable (an "Archive" link listing
+// years in components/Footer.astro, which this leg does not own). Deletion is
+// a King decision and has NOT been performed.
 export async function getStaticPaths() {
   const posts = await allArticles();
   const keys = new Map<string, { year: number; month: number }>();

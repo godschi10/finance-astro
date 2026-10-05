@@ -14,6 +14,7 @@
 // The theme class vocabulary (fx-card/fx-field/st-table/sr-chart/fx-rate…)
 // is ported verbatim in styles/tools.css; pages slot real markup in.
 import Layout from "../layouts/Layout.astro";
+import { ogCardFor } from "../data/tool-manifest";
 interface Faq { q: string; a: string; }
 interface Related { href: string; title: string; excerpt: string; }
 interface Cta { label: string; href: string; ghost?: boolean; }
@@ -36,15 +37,29 @@ interface Props {
   related?: Related[];       // "Related guides" .g3 of .app-card
   relatedTitle?: string;     // live: "Related guides"
   disclaimer?: string;       // .fx-disclaimer (live: rate-source honesty note)
-  ogImage?: { url: string; width: number; height: number; alt?: string } | null; // per-tool share card (passed straight to Layout)
+  ogImage?: { url: string; width: number; height: number; alt?: string } | null; // per-tool share card (passed straight to Layout). OMIT it and the card is derived from the one manifest — see ogCardFor() below. Pass `null` to force NO card.
 }
 const {
   title, description, slug, tool, lede, verified, badge = "Free · No sign-up · Always updated",
   crumb = tool,
   faqs = [], rawFaq = false, copy = [], ctas = [], ctaNote = "", ctaTitle = "Get the best rate",
-  related = [], relatedTitle = "Related guides", disclaimer = "", ogImage = null,
+  related = [], relatedTitle = "Related guides", disclaimer = "", ogImage,
 } = Astro.props;
+/* The share card, from ONE source (v0.7.21 leg D2). All sixteen tool pages used
+   to hand-write the same shape — url images/og/tool-<slug>.png, 1200x630, alt =
+   the hero H1 — which is three copies of one fact and one rename away from a
+   broken card. It is now derived from the manifest the hub also reads.
+   The sentinels matter: `undefined` (prop omitted) means "derive", an explicit
+   `null` still means "no card at all", and that is how [amount].astro keeps its
+   ONE shared tool-amount.png across all 79 amount routes — a slug the manifest
+   does not know returns null and the page's own prop wins untouched.
+   `base` is prefixed HERE, not in the manifest: the manifest stays base-agnostic
+   (a plain node script may read it), and Layout concatenates ogImage.url onto
+   the site origin, so the path must arrive here already carrying the leading
+   slash + BASE_URL or the served URL loses /finance-astro/. */
+const derived = ogCardFor(slug);
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const og = ogImage === undefined ? (derived ? { ...derived, url: `${base}${derived.url}` } : null) : ogImage;
 const ld = (obj: unknown) => JSON.stringify(obj).replace(/</g, "\\u003c");
 const pageUrl = `${(Astro.site?.toString() ?? "https://godschi10.github.io").replace(/\/$/, "")}${base}money-tools/${slug}/`;
 const graph: unknown[] = [{
@@ -57,7 +72,7 @@ if (faqs.length) graph.push({
   mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
 });
 ---
-<Layout title={title} description={description} crumb={tool} ogImage={ogImage}>
+<Layout title={title} description={description} crumb={tool} ogImage={og}>
 <script type="application/ld+json" set:html={ld({ "@context": "https://schema.org", "@graph": graph })}></script>
 <div class="apps-hero">
   <div style="position:absolute;top:0;right:0;bottom:0;left:0;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:28px 28px;pointer-events:none"></div>

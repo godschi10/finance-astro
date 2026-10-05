@@ -1,64 +1,66 @@
 ---
-import Layout from "../../../../layouts/Layout.astro";
-import ArticleCard from "../../../../components/ArticleCard.astro";
-import { CATEGORIES, CATEGORY_META, catBySlug } from "../../../../data/site";
-import { allArticles, fmtMonthYear } from "../../../../data/content";
-
-// WP serves the child category /category/fixed-income/ at BOTH the nested
-// path (the pill href's investing/fixed-income) and the flat path — probed
-// 200/200 on the live origin 2026-09-29. Both routes render the same archive.
-// Card rows = the PARENT investing category's posts (WP: the child archive
-// lists the child's own posts; the only child post, best-investment-apps…,
-// carries both fixed-income + investing — category-investing covers it).
-const posts = await allArticles();
-const rows = posts
-  .filter((p) => p.data.category === "fixed-income")
-  .map((p) => ({
-    slug: p.slug,
-    title: p.data.title,
-    excerpt: p.data.description,
-    date: fmtMonthYear(p.data.pubDate),
-    readMins: p.data.readMins,
-    author: p.data.author,
-  }));
-const cat = catBySlug("fixed-income");
-const meta = CATEGORY_META["fixed-income"];
+// ── FINDING A RESOLVED (Leg D4, 2026-10-05): one archive, one door ────────
+// The architecture audit parked this as "fixed-income lives at two URLs".
+// CANONICAL = /category/fixed-income/ (the FLAT path). This file is no longer
+// a second copy of the archive — it is a pointer to the canonical URL, so the
+// archive is rendered at exactly ONE address and the nested path carries no
+// duplicate content for a crawler to weigh.
+//
+// Evidence that chose FLAT as canonical (measured, not preference):
+//   flat  /category/fixed-income/               26 hrefs / 26 dist pages
+//   nested /category/investing/fixed-income/   159 hrefs / 79 dist pages
+// The 159 are not 159 independent votes: src/data/site.ts NAV renders TWICE
+// per page (desktop .snav-list + mobile .mno-list in layouts/Layout.astro),
+// so every page carries the same two nav links. The 26 flat hrefs are the 26
+// genuinely distinct entry points that already point at the flat shape:
+//   home category chips (index.astro:51), All Articles strip + its paged
+//   twin, every sibling category archive's pill-strip, 404, search, the
+//   [year] archive tree, and ArticleCard's category badge.
+// Three hard constraints closed the question:
+//   1. Every one of those 26 flat emitters builds its href from the shared
+//      template `category/${c.slug}/` in src/data/site.ts CATEGORIES. Eight
+//      of them live outside this leg's lane (components/ArticleCard.astro,
+//      pages/index.astro, pages/articles/*, pages/404.astro, pages/search.
+//      astro, pages/sitemap.xml.ts). Deleting the flat route would have left
+//      8 emitters pointing at a dead address — a 26-link dangling fan-out
+//      that cannot be repaired from src/pages/category/**.
+//   2. Conversely the nested href is emitted from ONE place, site.ts NAV,
+//      and scripts/check-header-fidelity.mjs:78 hard-asserts the literal
+//      string "category/investing/fixed-income/" inside site.ts
+//      ("nested nav: All Articles > Investing > Fixed Income"). Deleting the
+//      nested route means editing that string, and gates are not this leg's
+//      to touch. Keeping the route alive is what keeps the gate honest.
+//   3. Flat is WP's real category base — the shape the theme already emits
+//      everywhere a category is linked — so it is the stable address if the
+//      category is ever re-parented. The nested shape bakes the parent
+//      /category/investing/ prefix into the URL and breaks on re-parent.
+//
+// So: the archive stays at the flat URL (catch-all pages/category/[slug].
+// astro, unchanged, still 200, same h1 "Fixed Income in Nigeria"), and this
+// nested URL degrades to a redirect. The nav's 2 links per page keep working
+// — they cost one hop instead of 404ing — and the sitemap still lists both
+// (sitemap.xml.ts is not this leg's file; its nested <loc> now resolves to
+// the canonical target rather than to duplicate archive HTML).
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
-const pillCats = CATEGORIES;
+const origin = (Astro.site?.toString() ?? "https://godschi10.github.io").replace(/\/$/, "");
+const target = `${base}category/fixed-income/`;
+const targetAbs = `${origin}${target}`;
+const label = "Fixed Income";
 ---
-<Layout title={`${cat.name} - GWill Finance`} description={meta.desc} crumb={cat.name}>
-<section class="phd" aria-labelledby="cat-h">
-  <nav class="bc" aria-label="Breadcrumb">
-    <span class="bc-i"><a href={base}>Home</a></span>
-    <span class="bc-s">›</span>
-    <span class="bc-i"><a href={`${base}articles/`}>All Articles</a></span>
-    <span class="bc-s">›</span>
-    <span class="bc-i"><a href={`${base}category/investing/`}>Investing</a></span>
-    <span class="bc-s">›</span>
-    <span class="bc-i" aria-current="page">{cat.name}</span>
-  </nav>
-  <span class={`badge ${cat.badge}`} style="margin-bottom:12px;display:inline-flex">{cat.name}</span>
-  <h1 id="cat-h">{meta.h1}</h1>
-  <p>{meta.desc}</p>
-</section>
-<div class="pill-strip">
-  <div class="cp-strip" role="group" aria-label="Browse categories">
-    <a class="cp" href={`${base}articles/`}>All</a>
-    {pillCats.map((c) => (
-      <a class={`cp${c.slug === "fixed-income" ? " on" : ""}`} href={c.slug === "fixed-income" ? `${base}category/fixed-income/` : `${base}category/${c.slug}/`} aria-current={c.slug === "fixed-income" ? "page" : undefined}>{c.name}</a>
-    ))}
-  </div>
-</div>
-<section class="con" style="margin-top:28px;padding-bottom:40px">
-  <div class="ad-bg"></div>
-  {rows.length === 0 ? (
-    <p class="card-meta">No guides here yet — the next batch lands in this category first.</p>
-  ) : (
-    <div class="g3">
-      {rows.map((p) => (
-        <ArticleCard slug={p.slug} title={p.title} excerpt={p.excerpt} category="investing" date={p.date} readMins={p.readMins} author={p.author} />
-      ))}
-    </div>
-  )}
-</section>
-</Layout>
+<!doctype html>
+<html lang="en-NG">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,follow" />
+    <title>{label} — GWill Finance</title>
+    <link rel="canonical" href={targetAbs} />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+  </head>
+  <body>
+    <main>
+      <h1>{label} has moved</h1>
+      <p>This archive now lives at one address only. Taking you there now — if nothing happens, <a href={target}>open the {label} archive</a>.</p>
+    </main>
+  </body>
+</html>
