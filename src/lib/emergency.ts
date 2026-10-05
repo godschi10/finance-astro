@@ -31,6 +31,29 @@ export function emergencyFund(
 
   const runwayNow = essentials > 0 ? saved / essentials : 0;
   const target = essentials * monthsCover;
+  /* ── C1 — A KNOWN, LIVE DEFECT. DO NOT "FIX" IT WITHOUT THE ORACLE. ──────────
+     `monthsToReach` ignores `saved`, so it is mathematically INDEPENDENT of
+     how much the visitor has already put away. Verified live at 390px: at
+     saved = 900,000 the receipt prints gap ₦0, a 100% bar, and still "11.3
+     months". `gap` is computed eight lines below and then ignored here.
+
+     The one-line fix is `(target - saved) / monthlySave`, and it is CORRECT:
+     proven on the live DOM, it moves 11.3 -> 5.6 -> 0.0 as saved goes
+     0 -> 450,000 -> 900,000, and it correctly drops years_to_reach,
+     future_essentials and real_target with it, so the "inflated finish line"
+     stops being inflated by money already saved.
+
+     IT IS NOT APPLIED because this file is a faithful port of the WordPress
+     engine (inc/emergency-fund.php, byte-identical logic including the
+     `max(1.0, $months_cover)` clamp) and scripts/vectors-check.mjs gates it
+     against a FROZEN PHP oracle in scripts/php-harness/vectors.json. That
+     oracle carries the same bug: emergency_seed pins months_to_reach to
+     11.25. Applying the fix turns the vectors gate RED on four fields
+     (months_to_reach, years_to_reach, future_essentials, real_target) —
+     measured, not assumed. The PHP source of truth must be fixed FIRST and
+     vectors.json regenerated, which is a gate/oracle change and therefore
+     @manager's call, not a code-fix leg's. Do not silently diverge this port
+     from PHP to make the numbers look better. */
   const monthsToReach = monthlySave > 0 ? target / monthlySave : 0;
   // Display-sanity cap: (1+inflation)^years overflows to Infinity for
   // dust-sized saving or absurd cover/inflation (receipt printed ₦Infinity).

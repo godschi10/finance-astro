@@ -57,7 +57,7 @@ import { fxConvert, fxParallelNgnUsd, fxParallelSpread, fxNumber, fxFetchLive } 
 import { FX_SNAPSHOT, FX_SNAPSHOT_LABEL } from "../../data/fx-snapshot";
 import { pm } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 let rates = FX_SNAPSHOT.rates;
 const amt = document.getElementById("cc-amt") as HTMLInputElement;
 const from = document.getElementById("cc-from") as HTMLSelectElement;
@@ -81,14 +81,16 @@ function render() {
   const f = from.value, t = to.value;
   const c = fxConvert(a, f, t, rates);
   const u = fxConvert(1, f, t, rates);
-  fig.textContent = (t === "NGN" ? "₦" : "") + fxNumber(c, t === "NGN" ? 0 : 2);
+  sfFig(fig, ["cc-amt"], (t === "NGN" ? "₦" : "") + fxNumber(c, t === "NGN" ? 0 : 2));
   unitEl.textContent = `1 ${f} = ${money(u, t)}`;
   // Empty/negative is not a quote: say so instead of printing a confident zero.
   warn.hidden = raw !== "" && pm(raw) >= 0;
-  warn.textContent = raw === "" ? "Enter an amount — empty counts as 0, not a quote." : "Negative amounts count as 0.";
+  warn.textContent = raw === "" ? "Enter an amount — an empty field is not ₦0." : "Negative amounts count as 0.";
   if (partoggle.checked && t === "NGN" && f !== t && rates["NGN"] > 0) {
     const p = fxParallelNgnUsd(fxConvert(1, f, "USD", rates) * rates["NGN"], fxParallelSpread());
-    par.textContent = `Parallel estimate ≈ ₦${fxNumber(a * p, 0)} (estimated, not a quote)`;
+    /* THE ZERO LAW: a parallel estimate off an un-entered amount is ₦0 with a
+       confident "estimate" in front of it. Same withholding as the hero. */
+    sfFig(par, ["cc-amt"], `Parallel estimate ≈ ₦${fxNumber(a * p, 0)} (estimated, not a quote)`);
     par.hidden = false;
   } else par.hidden = true;
 }

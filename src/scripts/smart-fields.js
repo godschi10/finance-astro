@@ -26,6 +26,11 @@
  *     remember: ["bg-inc", ...],                   // ids persisted per tool
  *   })
  *   smartFields.markEmpty(receipt, isEmpty)        // withhold figures as "—" (§4)
+ *   writeInto(inputEl, value)                       // THE ONLY way a tool writes an
+ *                                                    // input: fires the page's own input
+ *                                                    // event AND marks the id derived, so
+ *                                                    // save() never persists it as the
+ *                                                    // visitor's own "Last used" (HN-4)
  *
  * RESET (v0.7.22) — the button owns no markup of its own; the module binds it.
  * Reset means "forget me, give me the worked example back" (§2a): it drops this
@@ -49,6 +54,33 @@
 const NEVER = ["st-rent", "gn-rent", "st-gross"];
 const EXPIRES = 30 * 864e5; // §2g — past 30 days a LAST USED value is dropped, not offered
 const KEY = (tool) => "gwill-sf-" + tool;
+/* ── A DERIVED VALUE IS NEVER THE VISITOR'S (HN-4) ───────────────────────────
+   save() persisted ANY non-empty value in MEM, and restore() hands it back
+   wearing data-r "Last used". So a figure the TOOL computed — the §2(b) offer's
+   "Use this" writing budget503020(...).needs into a field — came back next
+   visit stamped as the visitor's own remembered number. A number no human typed
+   must never be presented as the user's memory: it is the same wrong-number
+   class as the §2g exclusion list, in the opposite direction, and it goes LIVE
+   the moment any tool writes an input.
+
+   THE GUARD IS GENERAL, NOT A SPECIAL CASE. Every write the tool makes into a
+   field goes through writeInto(), which flags the id as derived for exactly the
+   duration of its own synthetic input event. A visitor who then types in that
+   field CLEARS the flag in the same listener, so "the current value is the
+   tool's" is never confused with "the visitor has taken it over". Anything that
+   writes a derived value later must use writeInto(); that is the whole contract.
+   Writing the value without it is the bug this replaces. */
+const DERIVED = new Set();
+let writing = false;
+function writeInto(el, value) {
+  writing = true;
+  try {
+    el.value = value;
+    /* The page's own rails must recompute, so the event still fires — it just
+       no longer counts as the visitor having typed. */
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+  } finally { writing = false; }
+}
 const $ = (s, r) => (r || document).querySelector(s);
 const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
 const el = (id) => document.getElementById(id);
@@ -92,6 +124,7 @@ function reset() {
   resetting = true; // save() stands down for this whole pass, so memory cannot
   try { localStorage.removeItem(KEY(TOOL)); } catch {} // re-persist the seeds we are writing now
   dead.clear(); // a dismissed seed is welcome again — Reset is the way back to it
+  DERIVED.clear(); // nothing here is the visitor's any more, so nothing is "derived"
 
   /* Nothing was ever registered here (no calculator called register()), so there is
      no delivered state to go back to. Forget the key and reload: the button still
@@ -175,7 +208,7 @@ function mark(f, attr, text, title) {
 function save() {
   if (!TOOL || resetting) return; // during a reset, silence is the contract
   const v = {};
-  Object.keys(MEM).forEach((id) => { const s = MEM[id].value; if (s !== "") v[id] = s; });
+  Object.keys(MEM).forEach((id) => { const s = MEM[id].value; if (s !== "" && !DERIVED.has(id)) v[id] = s; });
   try {
     if (Object.keys(v).length) localStorage.setItem(KEY(TOOL), JSON.stringify({ t: Date.now(), v }));
     else localStorage.removeItem(KEY(TOOL));
@@ -208,10 +241,16 @@ function offer(o) {
   b.setAttribute("data-use", o.field);
   b.textContent = "Use this";
   b.addEventListener("click", () => {
+    /* BREAK-3. Inertness used to be CSS-only: `pointer-events:none` stops a real
+       tap but a programmatic .click() ignores it, and the handler wrote the
+       withheld figure anyway. aria-disabled is already the spine's own marker
+       for "held", so it is the right thing to test — and this only fires in the
+       state where writing was already wrong, so the released path (attribute
+       absent) is byte-identical to before. */
+    if (b.getAttribute("aria-disabled")) return;
     const i = el(o.field);
     if (!i) return;
-    i.value = String(typeof o.use === "function" ? o.use() : o.use);
-    i.dispatchEvent(new Event("input", { bubbles: true })); // the page's own rails recompute
+    writeInto(i, String(typeof o.use === "function" ? o.use() : o.use));
   });
   p.appendChild(s); p.appendChild(b);
   f.insertAdjacentElement("afterend", p);
@@ -306,6 +345,9 @@ function boot() {
        stripping and the dead-seed marking below are for a human typing, and
        would otherwise undo the SAMPLE state reset() has just re-armed. */
     if (!resetting && f && f.hasAttribute("data-sd")) { mark(f, "", "", ""); if (i.id) dead.add(i.id); }
+    /* A tool-written value is flagged derived and never persisted; a keystroke
+       in that same field is the visitor taking it over, and clears the flag. */
+    if (i.id) { if (writing) DERIVED.add(i.id); else DERIVED.delete(i.id); }
     save();
     paint();
   });
@@ -321,4 +363,4 @@ if (document.readyState === "loading") document.addEventListener("DOMContentLoad
 else boot();
 
 export default smartFields;
-export { register, markEmpty };
+export { register, markEmpty, writeInto };

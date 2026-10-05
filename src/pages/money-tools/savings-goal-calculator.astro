@@ -50,16 +50,27 @@ import { savingsCalculate, savingsSchedule } from "../../lib/savings";
 import { formatGrouped } from "../../lib/format";
 import { pm } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+/* THE ZERO LAW. The engine reads all four, so every figure waits on all four:
+   "have now" cleared must not silently pay the plan as if nothing were saved. */
+const ALL = ["sg-target", "sg-cur", "sg-rate", "sg-mo"];
 function render() {
   const target = Math.max(0, pm(g("sg-target").value) || 0);
   const cur = Math.max(0, pm(g("sg-cur").value) || 0);
   const rate = Math.max(0, pm(g("sg-rate").value) || 0) / 100;
-  const mo = Math.max(1, Math.trunc(pm(g("sg-mo").value) || 24));
+  /* M2 — THE ZERO LAW. `pm("0") || 24` short-circuited a deliberate 0 to the
+   seed, so a visitor who typed 0 months to their deadline was shown the 24-month
+   plan with the warning row hidden. Zero months is a real, meaningful answer —
+   there is no time left to save — so it is said, not swapped for a seed. The
+   engine keeps its own months >= 1 floor (a faithful, gate-verified port), so a
+   zero-month deadline is answered here in the page's own words. */
+const moRawStr = g("sg-mo").value.trim();
+const moZero = /\d/.test(moRawStr) && pm(moRawStr) === 0;
+const mo = moZero ? 1 : Math.max(1, Math.trunc(pm(moRawStr) || 24));
   const warn = t("sg-warn");
   const tb = document.querySelector("#sg-table tbody") as HTMLElement;
   const targetRaw = g("sg-target").value.trim();
@@ -70,6 +81,19 @@ function render() {
     t("sg-sub").textContent = "No monthly figure until the target is set.";
     t("sg-tot").textContent = "—";
     t("sg-int").textContent = "—";
+    tb.innerHTML = "";
+    return;
+  }
+  if (moZero) {
+    /* Zero months to a deadline: the goal cannot be reached by saving, because
+       there is no time to save in. Say exactly that, and do not dress the
+       seed's monthly figure up as this visitor's plan. */
+    warn.hidden = false;
+    warn.textContent = "0 months to your deadline — there is no time left to save into it. Set a deadline above 0 months.";
+    t("sg-fig").textContent = "No time left";
+    t("sg-sub").textContent = `You hold ${nn(cur)} against a ${nn(target)} goal — ${nn(target - cur)} still to find.`;
+    t("sg-tot").textContent = nn(cur);
+    t("sg-int").textContent = nn(0);
     tb.innerHTML = "";
     return;
   }
@@ -86,10 +110,10 @@ function render() {
   }
   warn.hidden = true;
   warn.textContent = "";
-  t("sg-fig").textContent = r.goal_reached ? "₦0 — goal reached" : nn(r.monthly);
-  t("sg-sub").textContent = `Total ${nn(r.total)} · interest ${nn(r.interest)}`;
-  t("sg-tot").textContent = nn(r.total);
-  t("sg-int").textContent = nn(r.interest);
+  sfFig(t("sg-fig"), ALL, r.goal_reached ? "₦0 — goal reached" : nn(r.monthly));
+  sfFig(t("sg-sub"), ALL, `Total ${nn(r.total)} · interest ${nn(r.interest)}`);
+  sfFig(t("sg-tot"), ALL, nn(r.total));
+  sfFig(t("sg-int"), ALL, nn(r.interest));
   tb.innerHTML = "";
   for (const row of savingsSchedule(target, cur, rate, mo, "monthly")) {
     const tr = document.createElement("tr");

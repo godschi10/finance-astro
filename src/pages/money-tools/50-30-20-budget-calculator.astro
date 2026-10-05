@@ -5,7 +5,21 @@ import { formatGrouped } from "../../lib/format";
 const n = (v: number) => formatGrouped(v, 0);
 const income = BUDGET_SEED_INCOME;
 const seed = budget503020(income);
-const chk = budget503020Compare(income, 0.5, 0.3, 0.2, 140000, 90000, 30000);
+/* The seed month must be INTERNALLY CONSISTENT, because this is the first
+   thing every visitor sees. It was not: income 250,000 at 50/30/20 puts needs
+   at 125,000, while "Spent on needs" shipped 140,000 — so the flagship tool
+   opened on ₦-15,000 of needs remaining, i.e. on a negative number, on a page
+   whose entire argument is that its figures are honest. Wants had the same
+   fault (-15,000). Income and the 50/30/20 split are untouched (BUDGET_SEED_INCOME
+   is asserted by the vectors gate and named in the page's own sourced context
+   line), so only the three ACTUAL-spend seeds move, and they now describe one
+   real month: 120,000 spent on needs (5,000 under plan), 65,000 on wants
+   (10,000 under), 40,000 put to savings (10,000 SHORT of the 20% the plan asks
+   for). 225,000 spent of 250,000 earned. Every "left" figure is non-negative,
+   and the one gap the example still shows — savings 10,000 light — is the
+   honest, instructive one for a budget tool to show. */
+const seedActuals = { needs: 120000, wants: 65000, savings: 40000 };
+const chk = budget503020Compare(income, 0.5, 0.3, 0.2, seedActuals.needs, seedActuals.wants, seedActuals.savings);
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
 <ToolShell title="50/30/20 Budget Calculator, Nigeria - GWill Finance" description="Split any income into needs, wants, savings — then check real spending against the plan and see what is left." slug="50-30-20-budget-calculator" tool="50/30/20 Budget Calculator" lede="Half for needs, a third for wants, a fifth for future-you. Set the income, check your actual spending, keep the remainder." verified="Plan vs actual checker · splits adjustable" faqs={[
@@ -23,9 +37,9 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="bg-needs">Needs %</label><input id="bg-needs" type="text" max="100" value="50" inputmode="decimal" placeholder="50"></div>
 <div class="field"><label for="bg-wants">Wants %</label><input id="bg-wants" type="text" max="100" value="30" inputmode="decimal" placeholder="30"></div>
 <div class="field"><label for="bg-save">Savings %</label><input id="bg-save" type="text" max="100" value="20" inputmode="decimal" placeholder="20"></div>
-<div class="field"><label for="bg-spn">Spent on needs ₦</label><input id="bg-spn" type="text" value="140000" inputmode="decimal"></div>
-<div class="field"><label for="bg-spw">Spent on wants ₦</label><input id="bg-spw" type="text" value="90000" inputmode="decimal"></div>
-<div class="field"><label for="bg-sps">Put to savings ₦</label><input id="bg-sps" type="text" value="30000" inputmode="decimal"></div>
+<div class="field"><label for="bg-spn">Spent on needs ₦</label><input id="bg-spn" type="text" value={String(seedActuals.needs)} inputmode="decimal"></div>
+<div class="field"><label for="bg-spw">Spent on wants ₦</label><input id="bg-spw" type="text" value={String(seedActuals.wants)} inputmode="decimal"></div>
+<div class="field"><label for="bg-sps">Put to savings ₦</label><input id="bg-sps" type="text" value={String(seedActuals.savings)} inputmode="decimal"></div>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Your three buckets</p>
@@ -46,7 +60,7 @@ import { budget503020, budget503020Compare } from "../../lib/budget";
 import { formatGrouped } from "../../lib/format";
 import { pm } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
@@ -57,20 +71,22 @@ function render() {
   const wp = Math.max(0, pm(g("bg-wants").value) || 0) / 100;
   const svp = Math.max(0, pm(g("bg-save").value) || 0) / 100;
   const plan = budget503020(inc, np, wp, svp);
-  t("bg-fig").textContent = `${nn(plan.needs)} · ${nn(plan.wants)} · ${nn(plan.savings)}`;
-  t("bg-else").textContent = nn(plan.else);
+  /* THE ZERO LAW: every figure declares the ids it is derived from. A split the
+     visitor never entered cannot print a gold ₦0 bucket. */
+  sfFig(t("bg-fig"), ["bg-inc", "bg-needs", "bg-wants", "bg-save"], `${nn(plan.needs)} · ${nn(plan.wants)} · ${nn(plan.savings)}`);
+  sfFig(t("bg-else"), ["bg-inc", "bg-needs", "bg-wants", "bg-save"], nn(plan.else));
   const anyEmpty = g("bg-needs").value === "" || g("bg-wants").value === "" || g("bg-save").value === "";
   const total = Math.round((np + wp + svp) * 100);
   t("bg-sumnote").textContent = anyEmpty
-    ? "Set all three splits — empty counts as 0"
+    ? "Set all three splits — an empty split is not a zero"
     : (total === 100 ? "" : `Splits add to ${total}% — buckets use your exact percentages`);
   const c = budget503020Compare(inc, np, wp, svp,
     Math.max(0, pm(g("bg-spn").value) || 0),
     Math.max(0, pm(g("bg-spw").value) || 0),
     Math.max(0, pm(g("bg-sps").value) || 0));
-  (document.getElementById("bg-rn") as HTMLElement).textContent = nn(c.needs_remaining);
-  (document.getElementById("bg-rw") as HTMLElement).textContent = nn(c.wants_remaining);
-  (document.getElementById("bg-rs") as HTMLElement).textContent = nn(c.savings_remaining);
+  sfFig(t("bg-rn"), ["bg-inc", "bg-needs", "bg-spn"], nn(c.needs_remaining));
+  sfFig(t("bg-rw"), ["bg-inc", "bg-wants", "bg-spw"], nn(c.wants_remaining));
+  sfFig(t("bg-rs"), ["bg-inc", "bg-save", "bg-sps"], nn(c.savings_remaining));
   sfEmpty(sfIsEmpty("50-30-20-budget-calculator", gv));
 }
 ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"].forEach((id) => g(id).addEventListener("input", render));

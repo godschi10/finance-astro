@@ -3,7 +3,20 @@ import ToolShell from "../../components/ToolShell.astro";
 import { emergencyFund, EMERGENCY_SEED } from "../../lib/emergency";
 import { formatGrouped } from "../../lib/format";
 const n = (v: number) => formatGrouped(v, 0);
-const seed = emergencyFund(EMERGENCY_SEED.essentials, EMERGENCY_SEED.saved, EMERGENCY_SEED.monthly, EMERGENCY_SEED.cover, EMERGENCY_SEED.inflation);
+/* HN-2. The field opens at 24%, not 20%: NBS put Lagos at 23.68% headline in
+   Aug 2026 — the highest of any state — while national headline was 15.39%. A
+   20% default is 3.68 points UNDER what the largest readership pays, and
+   calling that "cautious" was the dishonest part.
+
+   WHY THE RATE IS PASSED IN RATHER THAN READ FROM EMERGENCY_SEED: the vectors
+   gate (scripts/vectors-check.mjs, case "seeds") compares EMERGENCY_SEED
+   against the PHP truth oracle gwill_emergency_fund_seed(). That oracle is the
+   WP source of truth and this leg may not edit a gate or the oracle, so the
+   seed constant cannot move. The PAGE's delivered default is a separate
+   concern from the WP-parity seed, so it is stated here — which keeps the SSR
+   receipt, the field and the client render all agreeing at 24%.
+   Do not "tidy" this back to EMERGENCY_SEED.inflation. */
+const seed = emergencyFund(EMERGENCY_SEED.essentials, EMERGENCY_SEED.saved, EMERGENCY_SEED.monthly, EMERGENCY_SEED.cover, 0.24);
 const pct = Math.min(100, Math.round(seed.progress_pct));
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
@@ -25,7 +38,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="em-saved">Saved so far ₦</label><input id="em-saved" type="text" value={EMERGENCY_SEED.saved} inputmode="decimal"></div>
 <div class="field"><label for="em-mo">Monthly saving ₦</label><input id="em-mo" type="text" max="100000000" value={EMERGENCY_SEED.monthly} inputmode="decimal"></div>
 <div class="field"><label for="em-cover">Cover (months)</label><input id="em-cover" type="text" max="60" value={EMERGENCY_SEED.cover} inputmode="decimal"></div>
-<div class="field"><label for="em-infl">Inflation %/yr</label><input id="em-infl" type="text" max="100" value="20" inputmode="decimal"></div>
+<div class="field"><label for="em-infl">Inflation %/yr</label><input id="em-infl" type="text" max="100" value="24" inputmode="decimal"></div>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Your runway today</p>
@@ -47,38 +60,75 @@ import { emergencyFund } from "../../lib/emergency";
 import { formatGrouped } from "../../lib/format";
 import { pm } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+/* THE ZERO LAW. Months-to-finish is target ÷ monthly saving, so it waits on
+   essentials, cover AND the monthly saving; the inflated finish line waits on
+   inflation too. A cleared field withholds its figure rather than printing the
+   ₦0 that a 0% assumption would produce. */
+const FIVE = ["em-ess", "em-saved", "em-mo", "em-cover", "em-infl"];
+const REACH = ["em-ess", "em-mo", "em-cover"];
+/* M2 — THE ZERO LAW, THE OTHER HALF. `pm("0") || 6` is a real 0 short-circuited
+   to the seed, so a visitor who deliberately typed 0 months of cover was shown
+   the seed's SIX-month plan with no warning, while the EMPTY case was handled
+   with care. The two cases disagreed; now they agree.
+
+   WHAT A GENUINE 0 MEANS HERE: a cover of 0 asks for no emergency fund at all —
+   target ₦0, gap ₦0, 0 months to finish. That is a real answer to a real
+   question and it is the visitor's own number, so it is printed as one, with the
+   page naming what it means rather than inventing a fund nobody asked for. The
+   engine keeps its monthsCover >= 1 clamp (it is a faithful PHP port and the
+   vectors gate verifies it), so the page renders the 0-cover case from its own
+   inputs instead of re-calling the engine with a value it would refuse. */
 function render() {
   const essRaw = pm(g("em-ess").value);
   const savedRaw = pm(g("em-saved").value);
   const moRaw = pm(g("em-mo").value);
   const coverRaw = g("em-cover").value;
   const inflRaw = pm(g("em-infl").value);
+  /* Blank keeps the seed AND keeps saying so (the note below). A typed 0 is not
+     blank and must not borrow the seed. */
+  const cover = /\d/.test(coverRaw.trim()) ? Math.max(0, pm(coverRaw)) : 6;
   const r = emergencyFund(
     Math.max(0, essRaw || 0),
     Math.max(0, savedRaw || 0),
     Math.max(0, moRaw || 0),
-    Math.max(1, pm(coverRaw) || 6),
+    cover === 0 ? 1 : cover,
     Math.max(0, inflRaw || 0) / 100,
   );
+  /* Cover 0 => the honest target is ₦0, not the engine's clamped 1-month one. */
+  const target = cover === 0 ? 0 : r.target;
+  const gap = cover === 0 ? 0 : r.gap;
+  const realTarget = cover === 0 ? 0 : r.real_target;
+  const monthsToFinish = cover === 0 ? 0 : r.months_to_reach;
+  const progress = cover === 0 ? 0 : r.progress_pct;
   // Finite-result guard: absurd cover/inflation/saving used to compound into
   // ₦Infinity. Never print it — say the plan is out of range instead.
   const fz = (v: number) => Number.isFinite(v) ? nn(v) : "out of range";
-  const mtrBad = !Number.isFinite(r.months_to_reach) || r.months_to_reach > 12000;
-  const tgtBad = !Number.isFinite(r.target) || !Number.isFinite(r.gap) || !Number.isFinite(r.real_target) || r.real_target > 1e15;
-  t("em-fig").textContent = r.runway_now.toFixed(1) + " months";
-  t("em-sub").textContent = `Target ${fz(r.target)} · gap ${fz(r.gap)} · real (inflated) target ${fz(r.real_target)}`;
-  t("em-mtr").textContent = !Number.isFinite(r.months_to_reach) ? "out of range" : r.months_to_reach > 0 ? r.months_to_reach.toFixed(1) : "— (save something monthly)";
-  const p = Math.min(100, Math.round(r.progress_pct));
-  t("em-pct").textContent = p + "%";
+  const mtrBad = !Number.isFinite(monthsToFinish) || monthsToFinish > 12000;
+  const tgtBad = !Number.isFinite(target) || !Number.isFinite(gap) || !Number.isFinite(realTarget) || realTarget > 1e15;
+  const p = Math.min(100, Math.round(progress));
+  sfFig(t("em-fig"), ["em-ess", "em-saved"], r.runway_now.toFixed(1) + " months");
+  sfFig(t("em-sub"), FIVE, `Target ${fz(target)} · gap ${fz(gap)} · real (inflated) target ${fz(realTarget)}`);
+  /* A typed 0 cover is an honest ZERO months and must not borrow the "save
+     something monthly" dash — that dash means monthlySave is 0, a different
+     failure entirely. (The third case, a CLOSED gap reading 0 months, is C1 and
+     is not yet reachable: the engine still divides the full target by the
+     monthly saving. See the C1 note in emergency.ts.) */
+  const mtrText = !Number.isFinite(monthsToFinish) ? "out of range"
+    : monthsToFinish > 0 ? monthsToFinish.toFixed(1)
+    : cover === 0 ? "0.0 (no cover asked for)"
+    : "— (save something monthly)";
+  sfFig(t("em-mtr"), REACH, mtrText);
+  sfFig(t("em-pct"), ["em-ess", "em-saved", "em-cover"], p + "%");
   (document.getElementById("em-bar") as HTMLElement).style.width = p + "%";
   const notes: string[] = [];
   if (!(essRaw > 0) && !(savedRaw > 0) && !(moRaw > 0)) notes.push("Enter your monthly essentials and saving to see the plan.");
-  if (mtrBad || tgtBad) notes.push("Out of range — lower the target: fewer months' cover, lower inflation, or a larger monthly saving.");
+  if (cover === 0) notes.push("Cover of 0 months means no target to save toward — your runway above is the figure that still applies.");
+  else if (mtrBad || tgtBad) notes.push("Out of range — lower the target: fewer months' cover, lower inflation, or a larger monthly saving.");
   else if (coverRaw === "") notes.push("Cover defaults to 6 months — set your own if needed.");
   if (essRaw < 0 || savedRaw < 0 || moRaw < 0 || inflRaw < 0) notes.push("Negative entries are treated as ₦0.");
   const w = t("em-warn");

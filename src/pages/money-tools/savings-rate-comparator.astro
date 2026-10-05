@@ -52,7 +52,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 import { savingsRateData } from "../../lib/savings-rate";
 import { pm } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 const rows = [...savingsRateData()].sort((a, b) => b.rate - a.rate);
 const max = Math.max(...rows.map((r) => r.rate));
 const amt = document.getElementById("sr-amt") as HTMLInputElement;
@@ -61,11 +61,14 @@ function render() {
   const a = Math.max(0, pm(amt.value) || 0);
   const fmt = (n: number) => "₦" + Math.round(n).toLocaleString("en-US");
   const top = rows[0];
+  /* THE ZERO LAW. sr-fig is the plan's own rate — it reads nothing the visitor
+     can clear, so it always prints. Everything that multiplies THAT RATE by the
+     test amount waits on the amount. */
   (document.getElementById("sr-fig") as HTMLElement).textContent = top.rate.toFixed(1) + "%";
-  (document.getElementById("sr-sub") as HTMLElement).textContent = `on ${fmt(a)} ≈ ${fmt(a * top.rate / 100)} a year` + (a < top.min ? ` · below the ${fmt(top.min)} minimum — not eligible at this amount` : "");
+  sfFig(document.getElementById("sr-sub") as HTMLElement, ["sr-amt"], `on ${fmt(a)} ≈ ${fmt(a * top.rate / 100)} a year` + (a < top.min ? ` · below the ${fmt(top.min)} minimum — not eligible at this amount` : ""));
   document.querySelectorAll("#sr-bars .bar-row").forEach((el, i) => {
     const r = rows[i];
-    (el.querySelector("[data-sr-out]") as HTMLElement).textContent = `${r.rate.toFixed(1)}% · ${fmt(a * r.rate / 100)}/yr` + (a < r.min ? ` · needs min ${fmt(r.min)}` : "");
+    sfFig(el.querySelector("[data-sr-out]") as HTMLElement, ["sr-amt"], `${r.rate.toFixed(1)}% · ${fmt(a * r.rate / 100)}/yr` + (a < r.min ? ` · needs min ${fmt(r.min)}` : ""));
     ((el.querySelector(".bar i") as HTMLElement).style.width = (r.rate / max * 100).toFixed(1) + "%");
   });
 }

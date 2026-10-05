@@ -55,21 +55,31 @@ import { dividendProject, ngxDividendStocks } from "../../lib/dividend";
 import { formatGrouped } from "../../lib/format";
 import { pm } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 const nn = (v: number, d = 0) => "₦" + formatGrouped(v, d);
 const stocks = ngxDividendStocks();
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+/* THE ZERO LAW: the four typed inputs are the whole projection. */
+const ALL = ["dv-inv", "dv-pg", "dv-dg", "dv-yrs"];
 function render() {
   const s = stocks[Number((document.getElementById("dv-stock") as HTMLSelectElement).value) || 0] ?? stocks[0];
   const drip = (document.getElementById("dv-drip") as HTMLSelectElement).value === "1";
+  /* M2 — THE ZERO LAW. A typed 0 horizon short-circuited to the 5-year seed, so
+     "what if I hold for 0 years" was answered with a 5-year projection. Zero
+     years is honest and meaningful: no holding period, no price growth, no
+     dividends — the portfolio is worth exactly what was invested. The engine
+     keeps its years >= 1 floor (faithful port, gate-verified), so the zero
+     horizon is priced here rather than smuggled past it. */
+  const yrsRawStr = g("dv-yrs").value.trim();
+  const yrsZero = /\d/.test(yrsRawStr) && pm(yrsRawStr) === 0;
   const r = dividendProject(
     Math.max(0, pm(g("dv-inv").value) || 0),
     s.price, s.dps,
     Math.max(0, pm(g("dv-pg").value) || 0) / 100,
     Math.max(0, pm(g("dv-dg").value) || 0) / 100,
-    Math.max(1, Math.trunc(pm(g("dv-yrs").value) || 5)),
+    yrsZero ? 1 : Math.max(1, Math.trunc(pm(yrsRawStr) || 5)),
     drip,
   );
   const warn = t("dv-warn");
@@ -88,12 +98,28 @@ function render() {
   }
   warn.hidden = true;
   warn.textContent = "";
+  if (yrsZero) {
+    /* 0 years: the holding period has not started, so there is no growth and
+       no dividend yet. The portfolio is worth exactly the investment — a real
+       answer, not a missing one. */
+    warn.hidden = false;
+    warn.textContent = "0 years — no holding period yet, so no price growth and no dividends. The portfolio is worth what you put in.";
+    const inv = Math.max(0, pm(g("dv-inv").value) || 0);
+    t("dv-lbl").textContent = "Portfolio end value";
+    sfFig(t("dv-fig"), ALL, nn(inv));
+    sfFig(t("dv-sub"), ALL, `Cash dividends ${nn(0)} · gain ${nn(0)} · CAGR ${(0).toFixed(1)}%`);
+    sfFig(t("dv-sh"), ALL, formatGrouped(s.price > 0 ? inv / s.price : 0, 2));
+    sfFig(t("dv-yld"), ALL, (r.yield * 100).toFixed(2) + "%");
+    sfFig(t("dv-cash"), ALL, nn(0));
+    tb.innerHTML = "";
+    return;
+  }
   t("dv-lbl").textContent = drip ? "Portfolio end value" : "Total value incl. cash dividends";
-  t("dv-fig").textContent = drip ? nn(r.end_value) : nn(r.end_value + r.cash_total);
-  t("dv-sub").textContent = `Cash dividends ${nn(r.cash_total)} · gain ${nn(r.gain)} · CAGR ${(r.cagr * 100).toFixed(1)}%`;
-  t("dv-sh").textContent = formatGrouped(r.shares, 2);
-  t("dv-yld").textContent = (r.yield * 100).toFixed(2) + "%";
-  t("dv-cash").textContent = nn(r.cash_total);
+  sfFig(t("dv-fig"), ALL, drip ? nn(r.end_value) : nn(r.end_value + r.cash_total));
+  sfFig(t("dv-sub"), ALL, `Cash dividends ${nn(r.cash_total)} · gain ${nn(r.gain)} · CAGR ${(r.cagr * 100).toFixed(1)}%`);
+  sfFig(t("dv-sh"), ALL, formatGrouped(r.shares, 2));
+  sfFig(t("dv-yld"), ["dv-inv", "dv-dg"], (r.yield * 100).toFixed(2) + "%");
+  sfFig(t("dv-cash"), ALL, nn(r.cash_total));
   tb.innerHTML = "";
   for (const y of r.yearly) {
     const tr = document.createElement("tr");

@@ -44,15 +44,17 @@ import { budgetAllocator } from "../../lib/allocator";
 import { formatGrouped } from "../../lib/format";
 import { pm } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
 const inc = document.getElementById("al-inc") as HTMLInputElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
 function render() {
   const shares: Record<string, number> = {};
+  const shareIds: string[] = [];
   document.querySelectorAll("[data-al-bucket]").forEach((el) => {
     const inp = el as HTMLInputElement;
     shares[inp.dataset.alBucket as string] = Math.max(0, pm(inp.value) || 0) / 100;
+    shareIds.push(inp.id);
   });
   const r = budgetAllocator(Math.max(0, pm(inc.value) || 0), 0.5, 0.3, 0.2, shares);
   const warn = document.getElementById("al-warn") as HTMLElement;
@@ -65,17 +67,23 @@ function render() {
     warn.hidden = true;
     warn.textContent = "";
   }
-  (document.getElementById("al-needs") as HTMLElement).textContent = nn(r.needs);
-  (document.getElementById("al-fig") as HTMLElement).textContent = nn(r.needs);
-  (document.getElementById("al-wants") as HTMLElement).textContent = nn(r.wants);
-  (document.getElementById("al-sav") as HTMLElement).textContent = nn(r.savings);
+  /* THE ZERO LAW. An uncleared income may still print every bucket in gold —
+     that is a real answer to a real input. A cleared share may not: its bucket
+     would be needs × 0, a ₦0 the visitor never asked for. */
+  sfFig(document.getElementById("al-needs") as HTMLElement, ["al-inc"], nn(r.needs));
+  sfFig(document.getElementById("al-fig") as HTMLElement, ["al-inc"], nn(r.needs));
+  sfFig(document.getElementById("al-wants") as HTMLElement, ["al-inc"], nn(r.wants));
+  sfFig(document.getElementById("al-sav") as HTMLElement, ["al-inc"], nn(r.savings));
   const box = document.getElementById("al-rows") as HTMLElement;
   box.innerHTML = "";
   for (const b of r.buckets) {
     const div = document.createElement("div");
     div.className = "receipt-row";
     const s = document.createElement("span"); s.textContent = b.label;
-    const amt = document.createElement("b"); amt.textContent = nn(b.amount);
+    const amt = document.createElement("b");
+    /* The residual "Other needs" row is what is left of needs after every named
+       share, so it waits on ALL of them, not on one. */
+    sfFig(amt, b.id === "other" ? ["al-inc"].concat(shareIds) : ["al-inc", "al-" + b.id], nn(b.amount));
     div.appendChild(s); div.appendChild(amt); box.appendChild(div);
   }
 }

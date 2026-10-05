@@ -52,17 +52,27 @@ import { compoundGrowth, compoundSchedule } from "../../lib/savings";
 import { formatGrouped } from "../../lib/format";
 import { pm } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
 const sel = (id: string) => (document.getElementById(id) as HTMLSelectElement).value;
+/* THE ZERO LAW: all four typed inputs feed compoundGrowth, so all four gate the
+   receipt. A cleared principal must not print a gold ₦0 future value. */
+const ALL = ["ci-prin", "ci-dep", "ci-rate", "ci-yrs"];
 function render() {
   const p = Math.max(0, pm(g("ci-prin").value) || 0);
   const d = Math.max(0, pm(g("ci-dep").value) || 0);
   const rate = Math.max(0, pm(g("ci-rate").value) || 0) / 100;
-  const yrs = Math.max(1, Math.trunc(pm(g("ci-yrs").value) || 5));
+  /* M2 — THE ZERO LAW. A typed 0 used to short-circuit to the 5-year seed, so
+   "how much if I save for 0 years" was silently answered with a 5-year plan.
+   Zero years is the honest and meaningful answer — nothing compounds, nothing is
+   deposited, you keep the principal — and it is printed as such. The engine's
+   own months >= 1 floor is untouched (faithful port, gate-verified). */
+const yrsRawStr = g("ci-yrs").value.trim();
+const yrsZero = /\d/.test(yrsRawStr) && pm(yrsRawStr) === 0;
+const yrs = yrsZero ? 1 : Math.max(1, Math.trunc(pm(yrsRawStr) || 5));
   const r = compoundGrowth(p, d, rate, yrs * 12, sel("ci-cmp"), sel("ci-freq"));
   const warn = t("ci-warn");
   const tb = document.querySelector("#ci-table tbody") as HTMLElement;
@@ -78,10 +88,22 @@ function render() {
   }
   warn.hidden = true;
   warn.textContent = "";
-  t("ci-fig").textContent = nn(r.future);
-  t("ci-sub").textContent = `You put in ${nn(r.deposited)} · interest earned ${nn(r.interest)}`;
-  t("ci-dep2").textContent = nn(r.deposited);
-  t("ci-int").textContent = nn(r.interest);
+  if (yrsZero) {
+    /* 0 years: no compounding period has elapsed, so the deposit is the
+       principal and interest is a real, earned ₦0 — not a missing figure. */
+    warn.hidden = false;
+    warn.textContent = "0 years — no time passes, so nothing compounds. You keep exactly what you put in.";
+    sfFig(t("ci-fig"), ALL, nn(p));
+    sfFig(t("ci-sub"), ALL, `You put in ${nn(p)} · interest earned ${nn(0)}`);
+    sfFig(t("ci-dep2"), ALL, nn(p));
+    sfFig(t("ci-int"), ALL, nn(0));
+    tb.innerHTML = "";
+    return;
+  }
+  sfFig(t("ci-fig"), ALL, nn(r.future));
+  sfFig(t("ci-sub"), ALL, `You put in ${nn(r.deposited)} · interest earned ${nn(r.interest)}`);
+  sfFig(t("ci-dep2"), ALL, nn(r.deposited));
+  sfFig(t("ci-int"), ALL, nn(r.interest));
   tb.innerHTML = "";
   for (const row of compoundSchedule(p, d, rate, yrs * 12, sel("ci-cmp"), sel("ci-freq"))) {
     const tr = document.createElement("tr");

@@ -53,7 +53,10 @@ import { formatGrouped } from "../lib/format";
    module: it is imported exclusively by client scripts, so `document` is
    always present when these closures run. */
 type Get = (id: string) => string;
-export interface SfOffer { field: string; text: string | (() => string); use: number | (() => number); hideUntil?: string[]; }
+/* `needs` = the ids this offer's FIGURE is derived from. Optional, so every
+   offer that does not read the visitor's inputs (salary tax's statutory ₦70,000)
+   declares nothing and is left exactly as it was. */
+export interface SfOffer { field: string; text: string | (() => string); use: number | (() => number); hideUntil?: string[]; needs?: string[]; }
 export interface SfCtx { field: string; text: string; src: string; href: string; }
 export interface SfTool {
   /** localStorage namespacing key. */
@@ -122,6 +125,107 @@ function holdOffer(hold: boolean): void {
   });
 }
 
+/* ── THE ZERO LAW — an absent input is UNKNOWN, not zero ─────────────────────
+   pm() is the repo's tolerant money reader, and pm("") is 0: Number("") is 0 and
+   isFinite(0) is true (pm.js). So a BLANK field reached the 50/30/20 derivation
+   as 0% and the offer published "Plan puts needs at ₦0" over a LIVE gold button
+   that wrote 0 into a money field. A derived zero is the exact figure §4.5
+   forbids — a number the visitor never entered, wearing the offer's own voice.
+   An offer now DECLARES the ids its figure comes from, and while any of them is
+   blank it WITHHOLDS: the words name what is missing, and the button goes inert
+   on the spine's own vocabulary (the same aria-disabled/pointer-events/opacity
+   triple OFFER_HELD uses), so a zero can neither be shown nor be filled in.
+   A value with no digit at all counts as blank, because pm() reads "." and
+   "abc" as 0 exactly as it reads "". A real 0 IS a real 0: "0" has a digit, so
+   a visitor who genuinely enters zero still gets the honest zero. */
+const isBlank = (id: string): boolean => !/\d/.test(gv(id).trim());
+
+/* The label the visitor actually reads, so the waiting line names the missing
+   input in the page's own words and never leaks a field id.
+
+   TEXT NODES ONLY, never textContent. smart-fields appends its SAMPLE / LAST
+   USED badge INSIDE the label (mark(), smart-fields.js), so textContent was
+   "Needs %Last used" and the withheld sentence shipped garbled — the exact
+   line BREAK-1 caught on the flagship tool. Reading only the label's own text
+   children skips every injected element by construction, so no badge shape
+   added later can contaminate a label-derived sentence again. */
+const labelOf = (id: string): string => {
+  const l = document.querySelector('label[for="' + id + '"]');
+  if (!l) return id;
+  let t = "";
+  l.childNodes.forEach((n) => { if (n.nodeType === 3) t += n.textContent || ""; });
+  t = t.trim();
+  return t || id;
+};
+
+/* One offer, one pill, addressed by the data-use attribute the SPINE wrote when
+   it built the button — so an offer rebuilt by Reset is guarded with no
+   bookkeeping kept here. Nothing is created, moved, hidden or restyled: the
+   pill the spine built is the pill whose words change. */
+function guardOffer(o: SfOffer, pageEmpty: boolean): void {
+  if (!o.needs || !o.needs.length) return; // a constant offer has nothing to wait for
+  if (pageEmpty) return;                   // OFFER_HELD already owns the empty page
+  const b = document.querySelector('.offer b[data-use="' + o.field + '"]') as HTMLElement | null;
+  if (!b) return;
+  const s = b.parentElement ? b.parentElement.querySelector("span") as HTMLElement | null : null;
+  const missing = o.needs.filter(isBlank);
+  if (missing.length) {
+    if (s) s.textContent = "Nothing to compute yet — " + missing.map(labelOf).join(" and ") +
+      (missing.length > 1 ? " are empty, not zero." : " is empty, not zero.");
+    b.setAttribute("aria-disabled", "true"); b.style.pointerEvents = "none"; b.style.opacity = ".45";
+  } else {
+    /* Release restores the BUTTON only. The words belong to the spine's own
+       paint(), which recomputes them from the live fields on every input and
+       runs BEFORE this — so what is on screen is always the live figure, never
+       a copy captured while held. */
+    b.removeAttribute("aria-disabled"); b.style.pointerEvents = ""; b.style.opacity = "";
+  }
+}
+
+/* ── THE ZERO LAW, FLEET-WIDE (v0.7.24) ─────────────────────────────────────
+   THE LAW: a figure derived from an input the visitor never entered must never
+   be printed as a gold naira amount. It reads as a dimmed "—", the vocabulary
+   D-C already established for the empty state.
+
+   WHY IT IS NOT sfIsEmpty: sfIsEmpty() answers "is the WHOLE PAGE empty", and
+   it withholds only then. "Income typed, one dependent field cleared" is not an
+   empty page, so every partial-empty state fell through to pm("") → 0 and the
+   page printed its product in full gold. That is the same lie sixteen times,
+   once per page, from sixteen render() functions — so it is fixed once here.
+
+   THE TEST IS "DID THE VISITOR ENTER THIS", NEVER "IS THE RESULT ZERO". A
+   visitor who genuinely types 0 gets an honest ₦0 (the "0% savings is a real
+   plan" case is a real plan); a visitor who never touched the field gets a dash.
+   isBlank() is the same predicate guardOffer() uses: no digit in the field, so
+   "" and "." and "abc" are all un-entered while "0" is entered.
+
+   THE CALL SITE, one pattern, every page:
+     sfFig(t("xx-fig"), ["a", "b"], nn(plan.a * plan.b));
+   `deps` are the ids the figure is DERIVED FROM and nothing else — a row that
+   only echoes one input lists that one id. deps: [] means "this figure reads
+   nothing the visitor can blank", and it always prints. Nothing is created,
+   moved, hidden or restyled: the node the page's own render() already writes is
+   the node whose text changes, and the withheld dash wears the SAME
+   --text-dim token the shipped [data-sfe] empty state uses — inline, so no
+   stylesheet, ToolShell or gate had to be touched to get the honest colour. */
+export const SF_DASH = "—";
+/* Marks a figure this render deliberately withheld. paintEmpty() restores a
+   captured dash on its way out of the empty state; it must not mistake a
+   deliberate dash for a stale one and put an old number back under it. */
+const NO = "data-sf-no";
+export function sfFig(el: HTMLElement | null, deps: readonly string[], real: string): void {
+  if (!el) return;
+  if (deps.length && deps.some(isBlank)) {
+    el.textContent = SF_DASH;
+    el.setAttribute(NO, "");
+    el.style.color = "var(--text-dim)";
+    return;
+  }
+  el.textContent = real;
+  el.removeAttribute(NO);
+  el.style.color = "";
+}
+
 /* The spine's clearExamples() empties the receipt AFTER it dispatches the
    per-field `input` events, so on the last field the page has already rendered
    with the badge still on screen — the card line would then lag the receipt by
@@ -133,15 +237,20 @@ let syncing = false;
 /* The spine withholds .receipt-fig and .receipt-row b. §4's rule is stricter:
    "PROSE-vs-STRUCTURE — .receipt-fig and the row values are FIGURES → withhold."
    So .receipt-sub is handled too, but per §4.4 it does NOT become a bare dash:
-   it carries the rail voice verbatim from the spec —
-   "Enter your numbers above — empty counts as ₦0." — so the line under the
-   hero keeps TALKING instead of leaving a confident gold-family ₦0 sitting
-   under a dimmed dash. That is exactly the failure §4.5 forbids.
+   it carries a rail voice so the line under the hero keeps TALKING instead of
+   leaving a confident gold-family ₦0 sitting under a dimmed dash. That is
+   exactly the failure §4.5 forbids.
    PROSE is untouched by design: .receipt-note and .bar-note carry the pages'
    own honest rails (warnings, comparisons) and the brief requires those keep
    working unchanged. */
 const FIGURES = ".receipt-fig, .receipt-row b, [data-sf-fig]";
-const SUB_VOICE = "Enter your numbers above — empty counts as ₦0.";
+/* HN-1. This line used to read "Enter your numbers above — empty counts as
+   ₦0." That is the exact falsehood this whole feature exists to prevent: an
+   empty field is NOTHING ENTERED, never a zero. The line sat inside the rail
+   built to stop the visitor thinking it, and told them the opposite in the
+   visitor's own voice. Same length, same rhythm, same slot in the sentence —
+   only the claim is now true. */
+const SUB_VOICE = "Enter your numbers above — an empty field is not ₦0.";
 const kept = new Map<Element, string>();
 
 /* ── D-B: the voice line may not DELETE the render's targets ────────────────
@@ -217,7 +326,8 @@ function paintEmpty(isEmpty: boolean): void {
          nodes on every input, so any wider restore would overwrite live
          figures with whatever they said the last time the page was empty. */
       r.querySelectorAll(FIGURES).forEach((n) => {
-        if ((n.textContent || "").trim() === "—" && kept.has(n)) n.textContent = kept.get(n) || "";
+        if (n.hasAttribute(NO)) return;
+        if ((n.textContent || "").trim() === SF_DASH && kept.has(n)) n.textContent = kept.get(n) || "";
       });
     }
     smartFields.markEmpty(r, isEmpty);
@@ -235,8 +345,14 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     derive: [{
       /* The one blessed offer: ₦ from %. Value is budget503020(...).needs —
          already computed by the page's own render(), no new maths. Hidden
-         until income or a split % is touched, so it never fires on load. */
+         until income or a split % is touched, so it never fires on load.
+         `needs` names the two ids the OFFERED NUMBER depends on — income ×
+         needs% — and nothing else: wants% and savings% do not enter
+         plan.needs, so requiring them would withhold a figure that is already
+         correct. While either is blank this offer withholds (guardOffer), which
+         is what stops pm("") → 0% from publishing a ₦0 nobody entered. */
       field: "bg-spn",
+      needs: ["bg-inc", "bg-needs"],
       hideUntil: ["bg-inc", "bg-needs", "bg-wants", "bg-save"],
       text: (): string => {
         const plan = budget503020(
@@ -248,7 +364,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     }],
     context: [{
       field: "bg-inc",
-      text: "Median Nigerian pay is roughly ₦120k–₦150k a month, so this ₦250,000 example sits above it — it is a scenario, not your salary.",
+      text: "Median Nigerian pay is roughly ₦120k–₦150k a month, and this site's worked example sits above it — a scenario, not your salary.",
       src: "Guardian · May 2026",
       href: "https://guardian.ng/nigerian/what-is-the-average-salary-in-nigeria/",
     }],
@@ -266,7 +382,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     derive: [],
     context: [{
       field: "al-inc",
-      text: "Median Nigerian pay is roughly ₦120k–₦150k a month, so this ₦250,000 example sits above it — it is a scenario, not your salary.",
+      text: "Median Nigerian pay is roughly ₦120k–₦150k a month, and this site's worked example sits above it — a scenario, not your salary.",
       src: "Guardian · May 2026",
       href: "https://guardian.ng/nigerian/what-is-the-average-salary-in-nigeria/",
     }],
@@ -326,9 +442,9 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     derive: [],
     context: [{
       field: "em-infl",
-      text: "NBS reported 15.39% headline inflation in Aug 2026. We start at 20% as a cautious band — raise it if your own costs run hotter.",
-      src: "NBS · Aug 2026",
-      href: "https://www.nigerianstat.gov.ng/",
+      text: "NBS put national headline inflation at 15.39% in Aug 2026, but Lagos ran 23.68% — the highest of any state. We start at 24% so the default is not below what a Lagos household pays. Raise it if your own costs run hotter.",
+      src: "Nigerian Observer · NBS Aug 2026",
+      href: "https://nigerianobservernews.com/2026/09/nigerias-inflation-rate-drops-to-15-39-in-august-nbs/",
     }],
     remember: ["em-ess", "em-saved", "em-mo", "em-cover", "em-infl"],
     required: ["em-ess", "em-saved", "em-mo", "em-cover", "em-infl"],
@@ -362,9 +478,9 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     derive: [],
     context: [{
       field: "is-infl",
-      text: "NBS reported 15.39% headline inflation in Aug 2026. We start at 20% as a cautious band — the gap below is priced at whatever you set.",
-      src: "NBS · Aug 2026",
-      href: "https://www.nigerianstat.gov.ng/",
+      text: "NBS put national headline inflation at 15.39% in Aug 2026, but Lagos ran 23.68% — the highest of any state. We start at 24% so the default is not below what a Lagos household pays — the gap below is priced at the rate in this field.",
+      src: "Nigerian Observer · NBS Aug 2026",
+      href: "https://nigerianobservernews.com/2026/09/nigerias-inflation-rate-drops-to-15-39-in-august-nbs/",
     }],
     remember: ["is-target", "is-cur", "is-rate", "is-infl", "is-yrs"],
     required: ["is-target", "is-cur", "is-rate", "is-infl", "is-yrs"],
@@ -377,9 +493,9 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     derive: [],
     context: [{
       field: "nv-infl",
-      text: "NBS reported 15.39% headline inflation in Aug 2026. We start at 20% as a cautious band — test 25–30% if your spending is mostly food and transport.",
-      src: "NBS · Aug 2026",
-      href: "https://www.nigerianstat.gov.ng/",
+      text: "NBS put national headline inflation at 15.39% in Aug 2026, but Lagos ran 23.68% — the highest of any state. We start at 24% so the default is not below what a Lagos household pays — test 25–30% if your spending is mostly food and transport.",
+      src: "Nigerian Observer · NBS Aug 2026",
+      href: "https://nigerianobservernews.com/2026/09/nigerias-inflation-rate-drops-to-15-39-in-august-nbs/",
     }],
     remember: ["nv-val", "nv-infl", "nv-yrs", "nv-pv", "nv-tgt", "nv-cur", "nv-ret"],
     required: ["nv-val", "nv-infl", "nv-yrs", "nv-pv", "nv-tgt", "nv-cur", "nv-ret"],
@@ -503,6 +619,11 @@ export function sfBind(slug: string, get: Get): void {
     const empty = sfIsEmpty(slug, get);
     paintEmpty(empty);
     holdOffer(empty);
+    /* THE ZERO LAW. sfIsEmpty() answers "is the whole PAGE empty", and
+       "income typed, percentages cleared" is not an empty page — which is
+       exactly how the ₦0 offer got through. So each offer guards its OWN
+       inputs, every time, after the spine has repainted the line. */
+    (TOOL_FIELDS[slug] ? TOOL_FIELDS[slug].derive : []).forEach((o) => guardOffer(o, empty));
   };
   document.addEventListener("input", judge);
   document.addEventListener("change", judge);

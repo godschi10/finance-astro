@@ -49,11 +49,16 @@ import { reverseGross } from "../../lib/gross-to-net";
 import { formatGrouped } from "../../lib/format";
 import { pm } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 const n = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+/* THE ZERO LAW. The gross is SOLVED from the target take-home, so every row on
+   this page hangs off gn-net: an uncleared target must not print a gold ₦0
+   "gross to negotiate", and each relief row additionally waits on its own
+   field, because gross × 0% relief is a deduction the visitor never claimed. */
+const ALL = ["gn-net", "gn-pen", "gn-rent", "gn-nhf", "gn-nhis", "gn-life", "gn-other"];
 function render() {
   const netRaw = pm(g("gn-net").value);
   const penRaw = pm(g("gn-pen").value);
@@ -66,17 +71,17 @@ function render() {
   const life = Math.max(0, pm(g("gn-life").value) || 0);
   const other = Math.max(0, pm(g("gn-other").value) || 0);
   const r = reverseGross(net, pen, nhf, rent, nhis, life, other);
-  t("gn-fig").textContent = n(r.gross_monthly);
-  t("gn-sub").textContent = `Nets ${n(r.net_monthly)}/mo after ${n(r.tax_monthly)} tax${r.exempt ? " · EXEMPT (minimum wage)" : ""}`;
-  t("gn-pen2").textContent = n(r.pension_monthly);
-  t("gn-nhf2").textContent = n(r.nhf_monthly);
-  t("gn-nhis2").textContent = n(r.nhis_monthly);
-  t("gn-life2").textContent = n(r.life_monthly);
-  t("gn-other2").textContent = n(r.other_monthly);
-  t("gn-rel").textContent = n(r.relief_monthly);
-  t("gn-ded").textContent = n(r.deductions_monthly);
+  sfFig(t("gn-fig"), ALL, n(r.gross_monthly));
+  sfFig(t("gn-sub"), ALL, `Nets ${n(r.net_monthly)}/mo after ${n(r.tax_monthly)} tax${r.exempt ? " · EXEMPT (minimum wage)" : ""}`);
+  sfFig(t("gn-pen2"), ["gn-net", "gn-pen"], n(r.pension_monthly));
+  sfFig(t("gn-nhf2"), ["gn-net", "gn-nhf"], n(r.nhf_monthly));
+  sfFig(t("gn-nhis2"), ["gn-net", "gn-nhis"], n(r.nhis_monthly));
+  sfFig(t("gn-life2"), ["gn-net", "gn-life"], n(r.life_monthly));
+  sfFig(t("gn-other2"), ["gn-net", "gn-other"], n(r.other_monthly));
+  sfFig(t("gn-rel"), ["gn-net", "gn-rent"], n(r.relief_monthly));
+  sfFig(t("gn-ded"), ALL, n(r.deductions_monthly));
   const notes: string[] = [];
-  if (!(netRaw > 0)) notes.push("Enter a target take-home above ₦0 — the gross shows ₦0 until you do.");
+  if (!(netRaw > 0)) notes.push("Enter a target take-home above ₦0 — the gross waits until you do.");
   if (netRaw < 0 || penRaw < 0 || rentRaw < 0) notes.push("Negative entries are treated as ₦0.");
   if (penRaw > 100) notes.push("Pension capped at 100%.");
   // Solver ceiling: the engine searches up to ₦100M/mo. Past the maximum

@@ -44,11 +44,15 @@ import { cryptoProfit } from "../../lib/crypto";
 import { formatGrouped } from "../../lib/format";
 import { pm } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 const nn = (v: number, d = 0) => "₦" + formatGrouped(v, d);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+/* THE ZERO LAW. cryptoProfit() short-circuits to an all-zero result when any of
+   invest/buy/sell is missing, so without this the receipt printed a confident
+   gold ₦0 profit, ₦0 fees and a ₦0 break-even for a visitor who entered nothing. */
+const ALL = ["cp-inv", "cp-buy", "cp-sell", "cp-bf", "cp-sf", "cp-flat"];
 function render() {
   const r = cryptoProfit(
     Math.max(0, pm(g("cp-inv").value) || 0),
@@ -58,11 +62,13 @@ function render() {
     Math.max(0, pm(g("cp-sf").value) || 0) / 100,
     Math.max(0, pm(g("cp-flat").value) || 0),
   );
-  t("cp-fig").textContent = (r.profit < 0 ? "−" : "") + nn(Math.abs(r.profit));
-  t("cp-sub").textContent = `ROI ${(r.roi * 100).toFixed(2)}% · ${formatGrouped(r.coins, 4)} coins · sell nets ${nn(r.sell_net)}`;
-  t("cp-fees").textContent = nn(r.fees_ngn);
-  t("cp-be").textContent = nn(r.break_even_rate, 2);
-  t("cp-gap").textContent = nn(r.price_gap);
+  sfFig(t("cp-fig"), ALL, (r.profit < 0 ? "−" : "") + nn(Math.abs(r.profit)));
+  sfFig(t("cp-sub"), ALL, `ROI ${(r.roi * 100).toFixed(2)}% · ${formatGrouped(r.coins, 4)} coins · sell nets ${nn(r.sell_net)}`);
+  sfFig(t("cp-fees"), ALL, nn(r.fees_ngn));
+  /* Break-even is invest ÷ (coins × (1 − sell fee)), so it needs the three
+     numbers that make coins and sell net exist at all. */
+  sfFig(t("cp-be"), ["cp-inv", "cp-buy", "cp-sell", "cp-sf"], nn(r.break_even_rate, 2));
+  sfFig(t("cp-gap"), ALL, nn(r.price_gap));
 }
   sfEmpty(sfIsEmpty("crypto-profit-calculator", gv));
 ["cp-inv", "cp-buy", "cp-sell", "cp-bf", "cp-sf", "cp-flat"].forEach((id) => g(id).addEventListener("input", render));

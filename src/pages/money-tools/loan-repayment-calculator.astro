@@ -7,7 +7,7 @@ const seed = loanRepayment(LOAN_SEED.amount, LOAN_SEED.tenor, LOAN_SEED.tenor_un
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
 <ToolShell title="Loan Repayment Calculator, True APR - GWill Finance" description="Loan-app quote in, real cost out: installment, total interest, and the true effective APR behind flat, daily, and reducing-balance loans." slug="loan-repayment-calculator" tool="Loan Repayment Calculator" lede="Lenders quote rates that flatter themselves. Enter the quote exactly as advertised and see the installment, the total, and the real APR." verified="True APR solved from the repayment stream · lender quotes vary, confirm terms" faqs={[
-  { q: "Why is the APR higher than the quoted rate?", a: "Flat-rate loans charge interest on the original balance all through, even as you repay. The APR reflects what you actually pay on money you actually still hold." },
+  { q: "Why is the APR higher than the quoted rate?", a: "Two different reasons, and both are real. A flat rate is charged on the original amount every month, so the APR runs far higher. A reducing rate is charged only on what you still owe, so its APR sits just above the quoted figure — that gap is monthly compounding inside the year, not a hidden fee. Check the unit beside the rate field: the three rate types are not all quoted per year." },
   { q: "Daily vs monthly — which is worse?", a: "A small daily rate compounds brutally: 1% a day is thousands of percent APR. The receipt shows the annualized truth." },
 ]}
 
@@ -22,7 +22,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="ln-amt">Loan amount ₦</label><input id="ln-amt" type="text" max="1000000000000" value={LOAN_SEED.amount} inputmode="decimal"></div>
 <div class="field"><label for="ln-tenor">Tenor</label><input id="ln-tenor" type="number" min="1" max="600" step="1" value={LOAN_SEED.tenor} inputmode="numeric"></div>
 <div class="field"><label for="ln-unit">Tenor unit</label><select id="ln-unit"><option value="days" selected>Days</option><option value="months">Months</option></select></div>
-<div class="field"><label for="ln-rate">Quoted rate %</label><input id="ln-rate" type="text" value={LOAN_SEED.rate} inputmode="decimal"></div>
+<div class="field"><label for="ln-rate">Quoted rate <span id="ln-rate-unit">%/day</span></label><input id="ln-rate" type="text" value={LOAN_SEED.rate} inputmode="decimal"><p class="hint" id="ln-rate-hint">The rate is per day, as loan apps quote it.</p></div>
 <div class="field"><label for="ln-mode">Rate type</label><select id="ln-mode"><option value="daily" selected>Per day (loan apps)</option><option value="flat">Flat per month</option><option value="reducing">Reducing balance</option></select></div>
 </div>
 <div class="receipt" aria-live="polite">
@@ -43,20 +43,59 @@ import { loanRepayment } from "../../lib/loan";
 import { formatGrouped } from "../../lib/format";
 import { pm } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+/* M1. One field, THREE units. "Flat per month" is a per-MONTH rate, "Per day" is
+   a per-DAY rate and "Reducing balance" is a per-YEAR rate — all three under the
+   label "Quoted rate %", which is how one typed 1.5 produced APR 36.8% flat and
+   1.5% reducing: a 24x spread decided by one dropdown, with nothing on screen
+   saying which unit was live. The unit is now stated IN THE LABEL, in the site's
+   own vocabulary (the %/yr label suffix already used by is-rate, is-infl, dv-pg,
+   nv-infl), and it is rewritten whenever the mode changes — no new control, no
+   plugin, no dependency. The hint line names it in words as well, because a
+   suffix alone is easy to skim past on a phone. */
+const RATE_UNITS: Record<string, { unit: string; hint: string }> = {
+  daily: { unit: "%/day", hint: "The rate is per day, as loan apps quote it." },
+  flat: { unit: "%/mo flat", hint: "A flat monthly rate: interest is charged on the ORIGINAL amount every month." },
+  reducing: { unit: "%/yr", hint: "A reducing annual rate: interest is recalculated each month on what you still owe." },
+};
+function paintRateUnit(): void {
+  const m = (document.getElementById("ln-mode") as HTMLSelectElement).value;
+  const u = RATE_UNITS[m] || RATE_UNITS.daily;
+  t("ln-rate-unit").textContent = u.unit;
+  t("ln-rate-hint").textContent = u.hint;
+}
+/* THE ZERO LAW: the three typed inputs are the whole engine. Any one of them
+   blank and the instalment is 1% — a number the visitor never entered. */
+const ALL = ["ln-amt", "ln-tenor", "ln-rate"];
 function render() {
+  /* M2 — THE ZERO LAW. `Math.max(1, pm(v) || 1)` short-circuited a typed 0 to
+     the 1-day/1-month seed, so a 0-day loan was quoted as a 1-day loan — a
+     confident figure about a loan nobody borrowed. Zero tenor is meaningless as
+     a loan and is SAYS so, rather than being answered with the seed. */
+  const tenorStr = g("ln-tenor").value.trim();
+  const tenorZero = /\d/.test(tenorStr) && pm(tenorStr) === 0;
   const r = loanRepayment(
     Math.max(0, pm(g("ln-amt").value) || 0),
-    Math.max(1, Math.trunc(pm(g("ln-tenor").value) || 1)),
+    Math.max(1, Math.trunc(pm(tenorStr) || 1)),
     (document.getElementById("ln-unit") as HTMLSelectElement).value,
     Math.max(0, pm(g("ln-rate").value) || 0),
     (document.getElementById("ln-mode") as HTMLSelectElement).value,
   );
-  t("ln-period").textContent = r.period;
+  sfFig(t("ln-period"), ["ln-tenor"], r.period);
+  if (tenorZero) {
+    /* No tenor means there is no loan to price. Withhold every figure and say
+       why, rather than publishing the seed's 1-day installment. */
+    t("ln-fig").textContent = "No tenor";
+    t("ln-sub").textContent = "Set a tenor above 0 days or months — there is nothing to repay over a 0-term loan.";
+    t("ln-tot").textContent = "—";
+    t("ln-int").textContent = "—";
+    t("ln-apr").textContent = "—";
+    return;
+  }
   if (!Number.isFinite(r.installment) || !Number.isFinite(r.total) || !Number.isFinite(r.interest) || !Number.isFinite(r.apr)) {
     t("ln-fig").textContent = "Out of range";
     t("ln-sub").textContent = "No confident total at this input — lower the amount, tenor, or rate.";
@@ -65,17 +104,20 @@ function render() {
     t("ln-apr").textContent = "—";
     return;
   }
-  t("ln-fig").textContent = nn(r.installment);
-  t("ln-sub").textContent = `Total ${nn(r.total)} · interest ${nn(r.interest)} · true APR ${(r.apr * 100).toFixed(1)}%`;
-  t("ln-tot").textContent = nn(r.total);
-  t("ln-int").textContent = nn(r.interest);
-  t("ln-apr").textContent = (r.apr * 100).toFixed(1) + "%";
+  sfFig(t("ln-fig"), ALL, nn(r.installment));
+  sfFig(t("ln-sub"), ALL, `Total ${nn(r.total)} · interest ${nn(r.interest)} · true APR ${(r.apr * 100).toFixed(1)}%`);
+  sfFig(t("ln-tot"), ALL, nn(r.total));
+  sfFig(t("ln-int"), ALL, nn(r.interest));
+  sfFig(t("ln-apr"), ALL, (r.apr * 100).toFixed(1) + "%");
 }
   sfEmpty(sfIsEmpty("loan-repayment-calculator", gv));
 ["ln-amt", "ln-tenor", "ln-rate"].forEach((id) => g(id).addEventListener("input", render));
 (document.getElementById("ln-unit") as HTMLSelectElement).addEventListener("change", render);
-(document.getElementById("ln-mode") as HTMLSelectElement).addEventListener("change", render);
+/* The unit is part of the FIGURE's meaning, so it repaints with the figure and
+   on every Reset (Reset dispatches change on selects — smart-fields.js). */
+(document.getElementById("ln-mode") as HTMLSelectElement).addEventListener("change", () => { paintRateUnit(); render(); });
 smartFields.register(TOOL_FIELDS["loan-repayment-calculator"]);
 sfBind("loan-repayment-calculator", gv);
+paintRateUnit();
 render();
 </script>

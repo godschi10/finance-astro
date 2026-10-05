@@ -82,11 +82,14 @@ import { payeCalculate, payeCompare, payeBandBreakdown, payeBands2026 } from "..
 import { formatGrouped } from "../../lib/format";
 import { pm } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 const n = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+/* THE ZERO LAW: every figure below declares the ids it is derived from, so a
+   relief the visitor never entered cannot print itself as a gold ₦0 deduction. */
+const ALL = ["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life"];
 function render() {
   const grossRaw = pm(g("st-gross").value);
   const penRaw = pm(g("st-pension").value);
@@ -99,28 +102,39 @@ function render() {
   const nhis = Math.max(0, pm(g("st-nhis").value) || 0);
   const life = Math.max(0, pm(g("st-life").value) || 0);
   const r = payeCalculate(gross, pen, nhf, rent, true, nhis, life, 0);
-  t("st-fig").textContent = n(r.net_monthly);
-  t("st-sub").textContent = `Tax ${n(r.tax_monthly)}/mo · taxable ${n(r.taxable)}/yr${r.exempt ? " · EXEMPT (minimum wage)" : ""}`;
-  t("st-pen").textContent = n(r.pension_annual);
-  t("st-rel").textContent = n(r.relief_annual);
-  t("st-tax").textContent = n(r.tax_annual);
+  sfFig(t("st-fig"), ALL, n(r.net_monthly));
+  sfFig(t("st-sub"), ALL, `Tax ${n(r.tax_monthly)}/mo · taxable ${n(r.taxable)}/yr${r.exempt ? " · EXEMPT (minimum wage)" : ""}`);
+  sfFig(t("st-pen"), ["st-gross", "st-pension"], n(r.pension_annual));
+  sfFig(t("st-rel"), ["st-rent"], n(r.relief_annual));
+  sfFig(t("st-tax"), ALL, n(r.tax_annual));
   const c = payeCompare(gross, pen, nhf, rent, nhis, life, 0);
-  t("st-new-tax").textContent = n(c.new.tax_annual);
-  t("st-new-net").textContent = n(c.new.net_monthly);
-  t("st-old-tax").textContent = n(c.old.tax_annual);
-  t("st-old-net").textContent = n(c.old.net_monthly);
+  sfFig(t("st-new-tax"), ALL, n(c.new.tax_annual));
+  sfFig(t("st-new-net"), ALL, n(c.new.net_monthly));
+  sfFig(t("st-old-tax"), ALL, n(c.old.tax_annual));
+  sfFig(t("st-old-net"), ALL, n(c.old.net_monthly));
   const nw = c.save_annual > 0.5, ow = c.save_annual < -0.5;
   (document.getElementById("st-row-new") as HTMLElement).className = nw ? "win" : "";
   (document.getElementById("st-row-old") as HTMLElement).className = ow ? "win" : "";
   (document.getElementById("st-tag-new") as HTMLElement).style.display = nw ? "" : "none";
   (document.getElementById("st-tag-old") as HTMLElement).style.display = ow ? "" : "none";
-  t("st-save").textContent = (!nw && !ow)
-    ? "Both regimes leave you with the same take-home."
-    : nw
-      ? `You keep ${n(c.save_monthly)}/mo more under the new bands.`
-      : `The old bands save you ${n(-c.save_monthly)}/mo vs the new bands.`;
+  /* BREAK-4. This rail used to assert "Both regimes leave you with the same
+     take-home" whenever the two comparisons tied — INCLUDING while gross was
+     blank, because gross=0 makes them tie at ₦0. That is a conclusion about a
+     comparison the visitor never made, with no user data behind it: the exact
+     HN-3 class this whole leg exists to prevent, sitting in a prose rail the
+     honesty pass deliberately did not touch. It is now honestly conditional:
+     with no gross entered it withholds the claim and says what is missing, and
+     the tie sentence only ever prints on a gross the visitor actually typed. */
+  const grossKnown = /\d/.test(g("st-gross").value.trim());
+  t("st-save").textContent = !grossKnown
+    ? "Old vs new bands compared on your gross — enter it above."
+    : (!nw && !ow)
+      ? "Both regimes leave you with the same take-home."
+      : nw
+        ? `You keep ${n(c.save_monthly)}/mo more under the new bands.`
+        : `The old bands save you ${n(-c.save_monthly)}/mo vs the new bands.`;
   const notes: string[] = [];
-  if (!(grossRaw > 0)) notes.push("Enter a monthly gross above ₦0 — take-home shows ₦0 until you do.");
+  if (!(grossRaw > 0)) notes.push("Enter a monthly gross above ₦0 — take-home waits until you do.");
   if (grossRaw < 0 || penRaw < 0 || rentRaw < 0 || nhfRaw < 0) notes.push("Negative entries are treated as ₦0.");
   if (penRaw > 100) notes.push("Pension capped at 100% — at 100% there is no take-home.");
   if (grossRaw > 100000000) notes.push("That gross looks unusually large — double-check the figure.");

@@ -60,7 +60,7 @@ import { fxNumber, fxFetchLive } from "../../lib/fx";
 import { FX_SNAPSHOT } from "../../data/fx-snapshot";
 import { pm } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 let rates = FX_SNAPSHOT.rates;
 let asOf = FX_SNAPSHOT.as_of;
 const amt = document.getElementById("tc-amt") as HTMLInputElement;
@@ -77,7 +77,7 @@ function render() {
   const osym = q.origin === "NGN" ? "₦" : "$";
   // No winner on a zero transfer: suppress the Best tag instead of crowning a $0 tie.
   const ranked = a > 0;
-  (document.getElementById("tc-sum-amt") as HTMLElement).textContent = `${osym}${fxNumber(a, 0)}`;
+  sfFig(document.getElementById("tc-sum-amt") as HTMLElement, ["tc-amt"], `${osym}${fxNumber(a, 0)}`);
   const top = ranked ? q.rows[0] : undefined;
   const warn = document.getElementById("tc-warn") as HTMLElement;
   warn.hidden = ranked;
