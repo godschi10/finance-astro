@@ -10,7 +10,6 @@
 //   2. The push bell carries data-push-bell instead of the WP id="gwill-bell",
 //      because both footers render one and duplicate ids are invalid HTML.
 import { SITE, FOOTER_GROUPS, FOOTER_NETWORK } from "../data/site";
-import { allArticles } from "../data/content";
 
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 const year = new Date().getFullYear();
@@ -44,68 +43,13 @@ const SOCIALS = [
 const GUID =
   "Tap Share, then “Add to Home Screen”, then open the app from your Home Screen to turn on notifications.";
 
-/* ══ ARCHIVE (v0.7.21 leg D2 — audit Finding B, the sibling's recommendation
-   that this leg inherited) ════════════════════════════════════════════════════
-   src/pages/[year]/** builds a complete, WP-faithful archive tree — the year
-   index, a month index for every month that has posts, and paged years. The
-   audit called it orphaned and the honest half of that claim was re-proven by
-   the sibling leg: sitemap.xml.ts lists all ELEVEN routes, and the year archive
-   is the site's only chronological index. What was true is that NOTHING outside
-   src/pages/[year]/** linked to it — no nav item, no footer link, no card, no
-   pill strip. Rather than delete it, the footer now reaches it.
-
-   Both halves are here because the year index does NOT link down to its months:
-   the month breadcrumb climbs, nothing descends. Years alone would expose two
-   of the eleven (/2026/ and, through its own pagination, /2026/page/2/); the
-   nine /2026/MM/ routes would still be reachable only from the sitemap.
-
-   DERIVED, never typed, and in UTC on purpose: [year]/index.astro builds from
-   getUTCFullYear() and [year]/[month].astro from getUTCMonth()+1, so reading the
-   same pubDates the same way means this block can never name a route that was
-   not built, and a new post silently extends the footer with its own month.
-   Month labels carry their year only once the archive spans more than one year,
-   so the common single-year case reads "2026 · Jan · Feb" rather than repeating
-   the year nine times. */
-const ARCHIVE_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const ARCHIVE_LINKS: { label: string; href: string }[] = await (async () => {
-  const byYear = new Map<number, Set<number>>();
-  for (const p of await allArticles()) {
-    const d = p.data.pubDate;
-    const y = d.getUTCFullYear();
-    if (!byYear.has(y)) byYear.set(y, new Set<number>());
-    byYear.get(y)!.add(d.getUTCMonth() + 1);
-  }
-  const years = Array.from(byYear.keys()).sort((a, b) => b - a);
-  const many = years.length > 1;
-  const out: { label: string; href: string }[] = [];
-  for (const y of years) {
-    out.push({ label: String(y), href: `${y}/` });
-    for (const m of Array.from(byYear.get(y)!).sort((a, b) => a - b)) {
-      out.push({
-        label: many ? `${ARCHIVE_MONTHS[m - 1]} ${y}` : ARCHIVE_MONTHS[m - 1],
-        href: `${y}/${String(m).padStart(2, "0")}/`,
-      });
-    }
-  }
-  return out;
-})();
-/* The Archive group hangs off the EXISTING Articles column rather than becoming
-   a column of its own, and that is forced by the layout, not taste: .ftop is a
-   fixed `2fr 1fr 1fr 1fr` grid (footer.css:11) already filled by the brand cell
-   plus three link columns, and .mfgrid is a fixed 2x2 (footer.css:65) already
-   filled by four. A fifth child wraps to an orphan row in both, at desktop AND
-   at the <=1023px two-column .ftop. Reusing .fct + .fl keeps the new block in
-   the footer's own vocabulary — same 9px uppercase label, same 12px link row,
-   the same warm hover — with no stylesheet change and no gate touched. */
-const ARCHIVE_SUB = { title: "Archive", links: ARCHIVE_LINKS };
-
 const LINK_COLS_DESKTOP = [
-  { title: "Articles", links: FOOTER_GROUPS.articles, sub: ARCHIVE_SUB },
+  { title: "Articles", links: FOOTER_GROUPS.articles },
   { title: "Finance Apps", links: FOOTER_GROUPS.apps },
   { title: "Network", links: FOOTER_NETWORK.desktop },
 ];
 const LINK_COLS_MOBILE = [
-  { title: "Articles", links: FOOTER_GROUPS.articles, sub: ARCHIVE_SUB },
+  { title: "Articles", links: FOOTER_GROUPS.articles },
   { title: "Finance Apps", links: FOOTER_GROUPS.apps },
   { title: "Site", links: FOOTER_GROUPS.site },
   { title: "Network", links: FOOTER_NETWORK.mobile },
@@ -169,16 +113,6 @@ const LEGAL = [
               {l.label}
             </a>
           ))}
-          {col.sub && (
-            <>
-              <div class="fct" style="margin-top:20px">{col.sub.title}</div>
-              {col.sub.links.map((l) => (
-                <a class="fl" href={`${base}${l.href}`}>
-                  {l.label}
-                </a>
-              ))}
-            </>
-          )}
         </div>
       ))
     }
@@ -221,16 +155,6 @@ const LEGAL = [
               {l.label}
             </a>
           ))}
-          {col.sub && (
-            <>
-              <div class="fct" style="margin-top:20px">{col.sub.title}</div>
-              {col.sub.links.map((l) => (
-                <a class="fl" href={`${base}${l.href}`}>
-                  {l.label}
-                </a>
-              ))}
-            </>
-          )}
         </div>
       ))
     }

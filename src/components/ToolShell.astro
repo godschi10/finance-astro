@@ -95,7 +95,7 @@ if (faqs.length) graph.push({
   <slot />
   <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px">
     <button class="btn b-ghost b-sm" type="button" data-sf-clear hidden>Clear examples</button>
-    <button class="btn b-ghost b-sm" type="button" onclick="location.reload()">Reset</button>
+    <button class="btn b-ghost b-sm" type="button" data-sf-reset>Reset</button>
   </div>
   {verified && <p class="fxap-conv-note" style="margin-top:14px"><span style="color:var(--gold-b)" aria-hidden="true">◆</span> {verified}</p>}
   {disclaimer && <p class="fx-disclaimer">{disclaimer}</p>}

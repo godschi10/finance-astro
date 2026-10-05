@@ -43,6 +43,25 @@
  * THE ORDER BELOW IS THE HUB'S PRINT ORDER (page-tools.php template order) and
  * is part of the port contract — do not sort it.
  *
+ * ── TWO ENTRIES ARE DELIBERATELY NOT VERBATIM (King's report, 2026-10-05) ────
+ * `50-30-20-budget-calculator` and `budget-allocator` shipped on the hub with
+ * the SAME emoji (🧮) and the SAME gradient (#fef9c3,#fde047), so on a phone the
+ * pair read as one calculator printed twice. They are not duplicates:
+ *   - 50/30/20  = the SPLITTER. Three buckets (needs/wants/savings) plus a
+ *                 plan-vs-actual check. Its lede: "Half for needs, a third for
+ *                 wants, a fifth for future-you."
+ *   - allocator = the BREAKER-DOWN. Takes the NEEDS HALF and itemises it into
+ *                 real naira lines (rent, food, transport, data, bills). Its
+ *                 lede: "The needs half, itemized for real Nigerian spending."
+ * So the divergence is presentation only, and the fix names the sequence
+ * instead of the overlap: 🧮 + yellow stays with the rule itself; the allocator
+ * takes 📋 + orange (#ffedd5,#fdba74, the same Tailwind 100->300 pair shape as
+ * every other tile) and both blurbs now lead with First: / Second:.
+ * The allocator's `title` still says 50/30/20 and still reads apologetic — but
+ * it is PINNED outside this file: budget-allocator.astro passes the identical
+ * string as its `crumb`, so changing only this row would make the hub card and
+ * the page breadcrumb disagree. Left as-is, reported for a joint change.
+ *
  * NOT here, by design: `amount` and the 79 `[amount].astro` routes. That family
  * has ONE shared share card (tool-amount.png) for every slug and is registered
  * in lib/amount.ts; ogCardFor() returns null for anything not in this table,
@@ -73,8 +92,8 @@ export const TOOL_MANIFEST: ToolEntry[] = [
   { slug: "compound-interest-calculator", tool: "Compound Interest Calculator", title: "Compound Interest Calculator", emoji: "📊", grad: "#e0f2fe,#bae6fd", desc: "See how your savings grow with compound interest, project your balance year by year." },
   { slug: "inflation-savings-calculator", tool: "Inflation-Adjusted Savings Calculator", title: "Inflation Savings Calculator", emoji: "🔥", grad: "#fee2e2,#fecaca", desc: "See what inflation really does to your savings goal, and how much more you must save each month." },
   { slug: "gross-to-net-calculator", tool: "Gross to Net Calculator", title: "Gross to Net Calculator", emoji: "💰", grad: "#ccfbf1,#99f6e4", desc: "Start from the take-home pay you want and find the gross salary you need, under NTA 2025." },
-  { slug: "50-30-20-budget-calculator", tool: "50/30/20 Budget Calculator", title: "50/30/20 Budget Calculator", emoji: "🧮", grad: "#fef9c3,#fde047", desc: "Split your take-home pay into needs, wants and savings with the 50/30/20 rule, exact naira for each." },
-  { slug: "budget-allocator", tool: "Split Bills / Budget Allocator", title: "Budget Allocator (50/30/20 in Naira)", emoji: "🧮", grad: "#fef9c3,#fde047", desc: "Split your pay 50/30/20 and see the needs half broken into real naira buckets, rent, food, transport, data and bills." },
+  { slug: "50-30-20-budget-calculator", tool: "50/30/20 Budget Calculator", title: "50/30/20 Budget Calculator", emoji: "🧮", grad: "#fef9c3,#fde047", desc: "First: split your take-home pay into needs, wants and savings with the 50/30/20 rule, exact naira for each. Next: break the needs half into naira lines." },
+  { slug: "budget-allocator", tool: "Split Bills / Budget Allocator", title: "Budget Allocator (50/30/20 in Naira)", emoji: "📋", grad: "#ffedd5,#fdba74", desc: "Second: break the needs half of the 50/30/20 split into real naira lines — rent, food, transport, data, bills — with every share tunable." },
   { slug: "naira-value-calculator", tool: "Naira Value Calculator", title: "Naira Value Calculator (Inflation / Depreciation)", emoji: "💸", grad: "#fef9c3,#fde047", desc: "What is ₦1M today really worth in 5 years? See how inflation erodes the naira, and what future money is worth today." },
   { slug: "crypto-profit-calculator", tool: "Crypto Profit Calculator", title: "Crypto Profit Calculator (Naira, P2P-aware)", emoji: "🪙", grad: "#fef9c3,#fde047", desc: "Work out the real naira profit on a crypto trade, with the P2P buy/sell spread shown as its own cost." },
   { slug: "dividend-calculator", tool: "Dividend & ROI Estimator", title: "Dividend / ROI Estimator (Nigerian Stocks, NGX)", emoji: "📈", grad: "#fef9c3,#fde047", desc: "Project the total return of a Nigerian dividend stock, with the DRIP reinvestment effect shown year by year, in naira." },

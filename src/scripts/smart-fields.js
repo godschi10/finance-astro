@@ -27,6 +27,14 @@
  *   })
  *   smartFields.markEmpty(receipt, isEmpty)        // withhold figures as "—" (§4)
  *
+ * RESET (v0.7.22) — the button owns no markup of its own; the module binds it.
+ * Reset means "forget me, give me the worked example back" (§2a): it drops this
+ * tool's key, puts every control in the calculator back to the value the SERVER
+ * sent (snapshotted in register(), before restore() can touch anything), re-runs
+ * the page's own render by dispatching the events that page already listens for,
+ * and re-arms SAMPLE / LAST USED / the derive offer. No page reload, because a
+ * reload is precisely what handed the visitor their remembered numbers back.
+ *
  * Contracts honoured: call register() BEFORE your own first render() (memory is
  * restored first, so the receipt already shows it); call markEmpty() from
  * render(), AFTER you write the figures. Rent and gross never restore silently
@@ -47,6 +55,105 @@ const el = (id) => document.getElementById(id);
 const wrap = (id) => { const i = el(id); return i ? i.closest(".field") : null; };
 const dead = new Set(); // §3.4 a dismissed seed never comes back in that session
 let TOOL = "", MEM = {}, OFFERS = [];
+/* ── RESET STATE (v0.7.22) ───────────────────────────────────────────────────
+   SNAP is every control as the SERVER delivered it, taken in register() BEFORE
+   restore() — so it is OUR worked example, never the visitor's remembered number.
+   It is the whole calculator, not just the seeds: Reset must also hand back the
+   ₦0 relief rows a visitor may have typed into (salary-tax's st-rent, gross-to-net's
+   gn-nhf) and the direction selects a page remembers (cc-from, dv-stock). */
+let CFG = {}, SNAP = [], resetting = false;
+
+/* The calculator region. .con is the shell's own content wrapper and the button row
+   lives inside it, so the nearest .con above Reset IS the calculator, and it
+   excludes the header search and the footer forms. Falls back to the document so a
+   button placed outside .con can never leave Reset with nothing to restore. */
+function scope() {
+  const b = $("[data-sf-reset]");
+  return (b && b.closest(".con")) || document;
+}
+
+/* Snapshot the delivered state. `checked` for toggles, `value` for everything else;
+   a control with no id is left alone — nothing could address it. */
+function takeSnapshot() {
+  SNAP = $$("input,select,textarea", scope())
+    .filter((n) => n.id && !/^(hidden|submit|button|reset|image)$/.test(n.type))
+    .map((n) => ({ el: n, checked: /^(checkbox|radio)$/.test(n.type), value: /^(checkbox|radio)$/.test(n.type) ? n.checked : n.value }));
+}
+
+/* ── RESET = "forget me, give me the worked example back" (§2a) ─────────────
+   The button used to be `onclick="location.reload()"`, and that is why it read as
+   dead: the reload handed the page straight back to restore(), which put the
+   visitor's own last-used numbers into the very fields we had just emptied. A reset
+   that goes through the memory layer cannot beat the memory layer — so it must not
+   go through it. In order: drop this tool's key, put every control back to what the
+   server sent, re-run the page's OWN render so the receipt repaints with the worked
+   example, then re-arm the SAMPLE / LAST USED / offer state. */
+function reset() {
+  resetting = true; // save() stands down for this whole pass, so memory cannot
+  try { localStorage.removeItem(KEY(TOOL)); } catch {} // re-persist the seeds we are writing now
+  dead.clear(); // a dismissed seed is welcome again — Reset is the way back to it
+
+  /* Nothing was ever registered here (no calculator called register()), so there is
+     no delivered state to go back to. Forget the key and reload: the button still
+     ends somewhere honest rather than nowhere. */
+  if (!SNAP.length) { resetting = false; location.reload(); return; }
+
+  /* (b) every control back to the delivered value, event-free: the repaint below
+     then fires one coherent burst so each page renders from the restored values. */
+  const restored = SNAP.filter((s) => {
+    if (s.checked) { if (s.el.checked === s.value) return false; s.el.checked = s.value; return true; }
+    if (String(s.el.value) === String(s.value)) return false;
+    s.el.value = s.value;
+    return true;
+  });
+
+  /* (d) state, not storage: SAMPLE comes back gold (it is ours again) and LAST USED
+     goes away entirely — nothing here is the visitor's any more. */
+  $$(".field[data-r]").forEach((f) => mark(f, "", "", ""));
+  (CFG.seeds || []).forEach((id) => mark(wrap(id), "data-sd", "Sample", "Example — ours, not yours. Tap to replace it."));
+  $$(".offer").forEach((o) => o.remove());
+  OFFERS = [];
+  (CFG.derive || []).forEach(offer); // rebuilt, so a previous Clear examples can never leave it held
+
+  /* (c) THE RENDER HOOK — generic, zero page edits. Every one of these pages binds
+     its own render() to `input` on its own fields and to `change` on its selects
+     (verified in all 16), so dispatching the two events the page already listens
+     for re-runs its own maths on the restored values. The page keeps every figure
+     it owns; we only press its own buttons. */
+  restored.forEach((s) => s.el.dispatchEvent(new Event(s.checked || s.el.tagName === "SELECT" ? "change" : "input", { bubbles: true })));
+  if (!restored.length) { // Reset with nothing to put back must still repaint
+    const f = SNAP.find((s) => !s.checked && s.el.tagName === "INPUT");
+    if (f) f.el.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  syncClear();
+  paint();
+  resetting = false;
+
+  /* ── The receipt's own state ──────────────────────────────────────────────
+     Fourteen of the fifteen money pages call sfEmpty() ONCE at load instead of
+     from render(), so once Clear examples withholds the figures those pages can
+     never unpick it: the dashes sit there for good, and the reset receipt would
+     come back dimmed and hollow. The withheld state is the SPINE's own
+     vocabulary — markEmpty() sets data-sfe, and ToolShell styles it — and this
+     page has just re-rendered real figures straight over the dashes, so the
+     spine is the right place to unpick it. Same for the honest lines Clear
+     examples raised: after Reset the page reads exactly as delivered.
+     A figure still showing "—" afterwards means the page's render genuinely did
+     not finish (Clear examples' prose rewrite destroys a nested render target on
+     budget-allocator and 50/30/20), and only a reload brings those back. The key
+     is already gone, so that reload lands on the server's example, never on the
+     visitor's numbers. */
+  let unfinished = false;
+  $$(".receipt[data-sfe]").forEach((r) => {
+    markEmpty(r, false);
+    if ($$(".receipt-fig,.receipt-row b,[data-sf-fig]", r).some((n) => n.textContent.trim() === "—")) unfinished = true;
+  });
+  const card = $("[data-sf-card]"), foot = $("[data-sf-foot]");
+  if (card) card.hidden = true;
+  if (foot) foot.hidden = true;
+  if (unfinished) location.reload();
+}
 
 /* The badge. A falsy attr means plain state: both pills AND the dashed rule go. */
 function mark(f, attr, text, title) {
@@ -69,7 +176,7 @@ function mark(f, attr, text, title) {
    cleared is dropped from the record rather than written as "" — so a cleared
    seed can never come back wearing LAST USED. */
 function save() {
-  if (!TOOL) return;
+  if (!TOOL || resetting) return; // during a reset, silence is the contract
   const v = {};
   Object.keys(MEM).forEach((id) => { const s = MEM[id].value; if (s !== "") v[id] = s; });
   try {
@@ -174,6 +281,8 @@ function clearExamples() {
 
 function register(cfg) {
   TOOL = cfg.tool || "";
+  CFG = cfg;
+  takeSnapshot(); // BEFORE restore(): this must capture the server's example
   MEM = {};
   (cfg.remember || []).forEach((id) => {
     if (NEVER.indexOf(id) < 0 && el(id)) MEM[id] = el(id);
@@ -196,12 +305,17 @@ function boot() {
     const i = e.target;
     if (!i || !i.closest) return;
     const f = i.closest(".field");
-    if (f && f.hasAttribute("data-sd")) { mark(f, "", "", ""); if (i.id) dead.add(i.id); }
+    /* During a reset these input events are OURS, not the visitor's: the badge
+       stripping and the dead-seed marking below are for a human typing, and
+       would otherwise undo the SAMPLE state reset() has just re-armed. */
+    if (!resetting && f && f.hasAttribute("data-sd")) { mark(f, "", "", ""); if (i.id) dead.add(i.id); }
     save();
     paint();
   });
   const b = $("[data-sf-clear]");
   if (b) b.addEventListener("click", clearExamples);
+  const r = $("[data-sf-reset]");
+  if (r) r.addEventListener("click", reset);
 }
 
 const smartFields = { register: register, markEmpty: markEmpty };
