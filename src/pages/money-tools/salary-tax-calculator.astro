@@ -76,11 +76,12 @@ const saveTxt = tie
 ))}
 </tbody>
 </table></div>
+<p class="bar-note" id="st-bands-note" hidden></p>
 </ToolShell>
 <script>
 import { payeCalculate, payeCompare, payeBandBreakdown, payeBands2026 } from "../../lib/salary-tax";
 import { formatGrouped } from "../../lib/format";
-import { pm } from "../../scripts/pm";
+import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 const n = (v: number) => "₦" + formatGrouped(v, 0);
@@ -125,7 +126,10 @@ function render() {
      honesty pass deliberately did not touch. It is now honestly conditional:
      with no gross entered it withholds the claim and says what is missing, and
      the tie sentence only ever prints on a gross the visitor actually typed. */
-  const grossKnown = /\d/.test(g("st-gross").value.trim());
+  /* B4-FIX2 — entered means honest, not merely digit-bearing: "abc123" in
+     gross must read as un-entered (the demand line below), never as ₦123 of
+     comparison prose. pmBlank() is the fleet's one entered-test (pm.js). */
+  const grossKnown = !pmBlank(g("st-gross").value);
   t("st-save").textContent = !grossKnown
     ? "Old vs new bands compared on your gross — enter it above."
     : (!nw && !ow)
@@ -145,15 +149,23 @@ function render() {
   w.textContent = notes.join(" ");
   const tb = document.querySelector("#st-bands tbody") as HTMLElement;
   tb.innerHTML = "";
+  /* B4-FIX3 — the breakdown is exemption-blind: at gross ≤ ₦70,000/mo PAYE is
+     ₦0 EXEMPT while the rows printed real ₦6,000-class charges. Every number
+     stays true (slices are the correct bands maths); the TAX column withholds
+     as "—" under exemption and the line below names why, so the column sums
+     to the PAYE above it instead of to a tax nobody pays. */
+  const bandsNote = t("st-bands-note");
   for (const b of payeBandBreakdown(r.taxable, payeBands2026())) {
     const tr = document.createElement("tr");
     tr.innerHTML = `<td></td><td class="n"></td><td class="n"></td><td class="n"></td>`;
     (tr.children[0] as HTMLElement).textContent = "₦" + formatGrouped(b.low, 0) + (b.high === null ? "+" : ` – ₦${formatGrouped(b.high, 0)}`);
     (tr.children[1] as HTMLElement).textContent = (b.rate * 100).toFixed(0) + "%";
     (tr.children[2] as HTMLElement).textContent = n(b.slice);
-    (tr.children[3] as HTMLElement).textContent = n(b.tax);
+    (tr.children[3] as HTMLElement).textContent = r.exempt ? "—" : n(b.tax);
     tb.appendChild(tr);
   }
+  bandsNote.hidden = !r.exempt;
+  bandsNote.textContent = r.exempt ? "EXEMPT (minimum wage) — no PAYE is due, so band taxes are withheld. Slices show the pre-exemption bands maths." : "";
 }
   sfEmpty(sfIsEmpty("salary-tax-calculator", gv));
 ["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life"].forEach((id) => g(id).addEventListener("input", render));

@@ -23,10 +23,44 @@
  * CONTRACT (unchanged from the commit): it NEVER throws, NEVER returns NaN and
  * NEVER returns Infinity — callers keep their own Math.max(0, …) clamps, so no
  * calculator's maths changes. Only the READ is made tolerant, not the maths.
+ *
+ * B4 HONESTY ADDENDUM (2026-10-06, F2 on 50-30-20 + F2 on salary-tax — same
+ * root, one fix). The strip above is provenance-blind: "abc123" stripped to
+ * 123 and priced confident gold figures, "<svg onload=alert(1)>" repriced a
+ * pension in silence, "0x10" priced 10. The digit-presence test in
+ * tool-fields.ts (isBlank) could not catch any of them either. So pm() now
+ * reads as BLANK anything outside the honest-money alphabet — digits,
+ * whitespace, `,.+-₦$%`, ignorable format marks (ZWSP/LRM/RLM/BOM), and e/E
+ * ONLY in a valid exponent slot (`1e5`→100000 keeps working; `12e`, `e5`,
+ * `0x10` do not). A dishonest read returns 0 — the same number a cleared
+ * field already yields — so every computation lands exactly where the blank
+ * state lands, and isBlank/pmBlank withholds the figures as "—".
+ * Real-world pastes keep working and are pinned by the suite's adversarial
+ * row plus the live proof table: `₦1,234.50`, `1,234.50`, `1 234 500`, NBSP,
+ * `+500`, `-500`, `8.5%`, `007`, `1e5`, `12.5e-3`.
  */
 export const pm = (v) => {
-  const n = Number(String(v).replace(/[^\d.eE-]/g, ""));
+  if (!pmHonest(v)) return 0;
+  const n = Number(String(v).replace(/[\u200B-\u200F\uFEFF]/g, "").replace(/[^\d.eE-]/g, ""));
   return Number.isFinite(n) ? n : 0;
+};
+
+/* The honest-money alphabet, shared by pm() above and every entered-test in
+ * the fleet (tool-fields.ts isBlank, the zero-horizon flags, cover default,
+ * grossKnown, warn demand-lines). One predicate, one meaning of "entered". */
+export const pmHonest = (v) => {
+  const s = String(v).replace(/[\u200B-\u200F\uFEFF]/g, "").trim();
+  if (/[^\d\s,.+\-₦$%eE]/.test(s)) return false;
+  if (!/[eE]/.test(s)) return true;
+  return /^[+-]?(\d[\d\s,.]*|\.\d[\d\s,.]*)[eE][+-]?\d+$/.test(s);
+};
+
+/* Un-entered for the ZERO LAW: no digit at all ("" / "." / "abc"), or digits
+ * wrapped in dishonest characters ("abc123", "<svg…>", "0x10"). A real 0 IS
+ * entered: "0" is all-alphabet with a digit. */
+export const pmBlank = (v) => {
+  const s = String(v).trim();
+  return !/\d/.test(s) || !pmHonest(s);
 };
 
 export default pm;

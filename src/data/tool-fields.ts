@@ -45,7 +45,7 @@
  */
 
 import smartFields from "../scripts/smart-fields.js";
-import { pm } from "../scripts/pm.js";
+import { pm, pmBlank } from "../scripts/pm.js";
 import { budget503020 } from "../lib/budget";
 import { formatGrouped } from "../lib/format";
 
@@ -137,8 +137,11 @@ function holdOffer(hold: boolean): void {
    triple OFFER_HELD uses), so a zero can neither be shown nor be filled in.
    A value with no digit at all counts as blank, because pm() reads "." and
    "abc" as 0 exactly as it reads "". A real 0 IS a real 0: "0" has a digit, so
-   a visitor who genuinely enters zero still gets the honest zero. */
-const isBlank = (id: string): boolean => !/\d/.test(gv(id).trim());
+   a visitor who genuinely enters zero still gets the honest zero.
+   B4 (2026-10-06): digit-presence alone priced "abc123" as 123 gold. Blank
+   now ALSO means dishonest — pmBlank() (pm.js) rejects anything outside the
+   honest-money alphabet, so garbage reads exactly as a cleared field. */
+const isBlank = (id: string): boolean => pmBlank(gv(id));
 
 /* The label the visitor actually reads, so the waiting line names the missing
    input in the page's own words and never leaks a field id.

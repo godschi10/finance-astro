@@ -50,7 +50,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <script>
 import { compoundGrowth, compoundSchedule } from "../../lib/savings";
 import { formatGrouped } from "../../lib/format";
-import { pm } from "../../scripts/pm";
+import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
@@ -75,7 +75,7 @@ function render() {
    deposited, you keep the principal — and it is printed as such. The engine's
    own months >= 1 floor is untouched (faithful port, gate-verified). */
 const yrsRawStr = g("ci-yrs").value.trim();
-const yrsZero = /\d/.test(yrsRawStr) && pm(yrsRawStr) === 0;
+const yrsZero = !pmBlank(yrsRawStr) && pm(yrsRawStr) === 0;
 /* HANG CAP. compoundSchedule() iterates every month with no upper bound, so an
    absurd horizon hung the tab (the suite's adversarial HANG). The engine is
    vectors-pinned against the PHP oracle, so the cap lives HERE: 100 years

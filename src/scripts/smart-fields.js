@@ -228,9 +228,13 @@ function restore() {
   if (Date.now() - s.t > EXPIRES) { try { localStorage.removeItem(KEY(TOOL)); } catch {} return; }
   const d = Math.floor((Date.now() - s.t) / 864e5);
   const when = d <= 0 ? "today" : d === 1 ? "yesterday" : d + " days ago";
+  /* B4-F1 — a valid-t envelope with v:null (or v absent/non-object) passed the
+     guard above and threw on s.v[id], aborting register() so sfBind + the first
+     render() never ran. Read through the honest object or an empty one. */
+  const vv = (s.v && typeof s.v === "object") ? s.v : {};
   Object.keys(MEM).forEach((id) => {
-    if (!s.v[id]) return;
-    MEM[id].value = s.v[id];
+    if (!vv[id]) return;
+    MEM[id].value = vv[id];
     mark(wrap(id), "data-r", "Last used", "Restored from your last visit · " + when);
   });
 }

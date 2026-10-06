@@ -55,7 +55,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <script>
 import { fxConvert, fxParallelNgnUsd, fxParallelSpread, fxNumber, fxFetchLive } from "../../lib/fx";
 import { FX_SNAPSHOT, FX_SNAPSHOT_LABEL } from "../../data/fx-snapshot";
-import { pm } from "../../scripts/pm";
+import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 let rates = FX_SNAPSHOT.rates;
@@ -88,9 +88,10 @@ function render() {
   sfFig(fig, ["cc-amt"], (t === "NGN" ? "₦" : "") + fxNumber(c, t === "NGN" ? 0 : 2));
   const ue = a > 0 ? c / a : u;
   unitEl.textContent = `1 ${f} = ${moneyTrim(ue, t)}`;
-  // Empty/negative is not a quote: say so instead of printing a confident zero.
-  warn.hidden = raw !== "" && pm(raw) >= 0;
-  warn.textContent = raw === "" ? "Enter an amount — an empty field is not ₦0." : "Negative amounts count as 0.";
+  // Empty/unreadable is not a quote: say so instead of printing a confident zero.
+  // B4-FIX2 — garbage ("abc" in the amount) reads as un-entered, like a clear.
+  warn.hidden = !pmBlank(raw) && pm(raw) >= 0;
+  warn.textContent = pmBlank(raw) ? "Enter an amount — an empty field is not ₦0." : "Negative amounts count as 0.";
   if (partoggle.checked && t === "NGN" && f !== t && rates["NGN"] > 0) {
     const p = fxParallelNgnUsd(fxConvert(1, f, "USD", rates) * rates["NGN"], fxParallelSpread());
     /* THE ZERO LAW: a parallel estimate off an un-entered amount is ₦0 with a

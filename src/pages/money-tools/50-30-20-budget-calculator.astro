@@ -59,7 +59,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <script>
 import { budget503020, budget503020Compare } from "../../lib/budget";
 import { formatGrouped } from "../../lib/format";
-import { pm } from "../../scripts/pm";
+import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 /* F1 — fleet-wide negative shape (the crypto tool's winner): a negative prints
@@ -85,7 +85,10 @@ function render() {
      visitor never entered cannot print a gold ₦0 bucket. */
   sfFig(t("bg-fig"), ["bg-inc", "bg-needs", "bg-wants", "bg-save"], `${nn(plan.needs)} · ${nn(plan.wants)} · ${nn(plan.savings)}`);
   sfFig(t("bg-else"), ["bg-inc", "bg-needs", "bg-wants", "bg-save"], nn(plan.else));
-  const anyEmpty = g("bg-needs").value === "" || g("bg-wants").value === "" || g("bg-save").value === "";
+  /* B4-FIX2 — a split the visitor never entered cannot print a gold bucket:
+     garbage ("abc" in a split) reads as un-entered, exactly like a cleared
+     field, so the demand line below matches the blank state. */
+  const anyEmpty = ["bg-needs", "bg-wants", "bg-save"].some((id) => pmBlank(g(id).value));
   const total = Math.round((np + wp + svp) * 100);
   t("bg-sumnote").textContent = anyEmpty
     ? "Set all three splits — an empty split is not a zero"

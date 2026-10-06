@@ -48,7 +48,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <script>
 import { savingsCalculate, savingsSchedule } from "../../lib/savings";
 import { formatGrouped } from "../../lib/format";
-import { pm } from "../../scripts/pm";
+import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 /* F1 — fleet-wide negative shape (the crypto tool's winner): a negative prints
@@ -77,7 +77,7 @@ function render() {
    engine keeps its own months >= 1 floor (a faithful, gate-verified port), so a
    zero-month deadline is answered here in the page's own words. */
 const moRawStr = g("sg-mo").value.trim();
-const moZero = /\d/.test(moRawStr) && pm(moRawStr) === 0;
+const moZero = !pmBlank(moRawStr) && pm(moRawStr) === 0;
 /* HANG CAP. savingsSchedule() iterates every month with no upper bound, so a
    typed 99999999999 built an 8.3-billion-year schedule and killed the tab (the
    suite's adversarial HANG). The engine is vectors-pinned against the PHP

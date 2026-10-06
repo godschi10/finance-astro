@@ -42,7 +42,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <script>
 import { loanRepayment } from "../../lib/loan";
 import { formatGrouped } from "../../lib/format";
-import { pm } from "../../scripts/pm";
+import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
@@ -84,7 +84,7 @@ function render() {
      confident figure about a loan nobody borrowed. Zero tenor is meaningless as
      a loan and is SAYS so, rather than being answered with the seed. */
   const tenorStr = g("ln-tenor").value.trim();
-  const tenorZero = /\d/.test(tenorStr) && pm(tenorStr) === 0;
+  const tenorZero = !pmBlank(tenorStr) && pm(tenorStr) === 0;
   const r = loanRepayment(
     Math.max(0, pm(g("ln-amt").value) || 0),
     Math.max(1, Math.trunc(pm(tenorStr) || 1)),

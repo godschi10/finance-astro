@@ -36,7 +36,19 @@ King: "Do it" — the three defects the Reset fix had exposed.
       partly-filled form (its render, not the empty state); a lost
       `data-al-amt` attribute nothing reads.
 
-## LAW — 2026-10-06 · TEN ROUNDS. King: *"Make sure you do the bug hunt at least 10 rounds."*
+## LAW — 2026-10-06 · FORTY ROUNDS. King: *"Go another 10 rounds, I want the best
+## and smartest of all my calculators. Look for little details that people miss then
+## go 20 rounds of hunting for bugs and another 20 rounds looking for what is missing
+## and what can make it easier using the calculators. That's 40 rounds for each
+## calculator. Get busy"*
+**CORRECTION 2026-10-06: per CALCULATOR, not per fleet.** The King: *"Not 10 rounds
+again, it's 40 rounds per calculator."* My forty-fleet-rounds reading was wrong.
+Truth: 16 calculators × 40 rounds (20 bug B1-B20 + 20 improvement I1-I20) =
+**640 rounds.** Fleet R1/R2/R3 bank B1-B3 for every tool; 592 legs remain.
+Scoreboard: `/home/opc/work/research-notes/forty-rounds-scoreboard.md` — the single
+source of truth for what's done per tool. Emergency-fund HELD (C1 WP-parity call).
+Fixes owed from R3: 3 prose drifts (naira-value + inflation-savings 20%→24% body
+copy, dividend FAQ 9.19% vs 9.38%).
 Standing order. An audit round is a SAMPLE with a distinct primary angle, never a
 re-tread and never a clearance. Fixes ship between rounds; the next round re-proves
 the fixes first (a broken shipped fix is CRITICAL and outranks everything).
@@ -44,10 +56,56 @@ the fixes first (a broken shipped fix is CRITICAL and outranks everything).
       1 CRIT · 2 MAJOR · 6 MINOR. Shipped v0.7.24 (C1 held for WP-parity).
 - [x] **R2** (2026-10-06) — regressions of v0.7.24 + gaps + keyboard/a11y + cross-tool
       + rounding + extremes + storage. 0 · 0 · 8 MINOR. SHIPPABLE WITH FOLLOW-UP.
-- [ ] **FIX-8 + SUITE-PROOF @builder (in flight next)** — finish suite verification
-      (full run table + deliberate-failure proof + 3× flake + hygiene; the file
-      exists but is UNPROVEN — it gates nothing until proven), then fix the 8 R2
-      minors, then re-run the suite to prove green.
+- [x] **FIX-8 + SUITE-PROOF SHIPPED v0.7.26** (`main 05e3aec`): suite proven honest then green (137/0/7, exit 0, 3x identical, failure proof, hygiene clean); 7 minors fixed (F5 tap-targets proposal-only, needs stylesheet); suite-caught tab hang capped at 100y page-level, `src/lib` untouched, vectors 95/95. All served-byte-confirmed by me.
+- [ ] **R3** — FIX-8 verification + seed consistency on all 16 (every worked example
+      recomputed by hand) + mobile touch + prose-vs-numbers consistency.
+- [ ] **R4** — hostile inputs: XSS/malformed payloads, stored values re-rendered
+      unescaped, URL params, what leaves the device (any network call with user data).
+- [ ] **R5** — performance on a thin device: JS weight per tool, render cost per
+      keystroke, suite timing budget.
+- [ ] **R6** — words: every FAQ/claim/citation on all 16 tools re-checked against
+      sources; prose contradicting its numbers is a finding.
+- [ ] **R7** — cross-browser + no-JS: Firefox/Safari where available; scriptless
+      tools must fail honest, never confident-wrong.
+- [ ] **R8** — Nigerian-realism scenarios: real salary structures, informal income,
+      tax edge cases vs FIRS/PwC guidance, Lagos-vs-national defaults.
+- [ ] **R9** — suite-vs-human parity: does the suite catch everything R1-R8 found?
+      Every gap becomes a new suite contract.
+- [ ] **R10** — state & memory deep: expiry, cross-tool keys, multi-tab, Reset edge
+      cases, private mode.
+- [ ] **R11** — formatting micro-details: grouping, decimals, rounding, signs, units,
+      % precision, symbol placement — the little details people miss.
+- [ ] **R12** — blank-states matrix: every field blank × every figure, all 16 tools.
+- [ ] **R13** — boundaries: 0, 1, cap edges, off-by-one months/years, rate edges.
+- [ ] **R14** — staleness: every input × every dependent, rapid typing, paste, autofill.
+- [ ] **R15** — console silence: warnings, rejections, failed fetches, blocked resources.
+- [ ] **R16** — accessibility deep: focus order, aria-live announcements, labels,
+      figure contrast, reduced motion.
+- [ ] **R17** — viewport matrix: 320/360/390/768/834/1024/1440 × both themes × 200% zoom.
+- [ ] **R18** — cross-tool agreement + shared-engine drift (lib vs page copies).
+- [ ] **R19** — data audit: all NGX/DPS, savings rates, transfer models, FX staleness.
+- [ ] **R20** — bug-phase clearance: re-prove every prior fix, suite green, sign-off list.
+- [ ] **R21** — Tier 0 display twin fleet-wide (the researched model).
+- [ ] **R22** — Tier 1 unit toggles (50/30/20 + allocator only).
+- [ ] **R23** — first-run: disclosure lines, worked-example guidance.
+- [ ] **R24** — input ergonomics: steppers/sliders/chips where typing is dumb.
+- [ ] **R25** — results comprehension: plain-language verdicts, "what this means".
+- [ ] **R26** — comparisons: vs goal, vs last input, vs honest averages.
+- [ ] **R27** — export/share: copy results, WhatsApp text, print stylesheet.
+- [ ] **R28** — per-tool local history (not just fx-history).
+- [ ] **R29** — cross-tool goal wiring (salary → budget → savings → emergency).
+- [ ] **R30** — accessibility upgrades from R16.
+- [ ] **R31** — performance upgrades from R5.
+- [ ] **R32** — content upgrades from R6.
+- [ ] **R33** — trust upgrades: methodology notes, last-verified stamps, citations UI.
+- [ ] **R34** — app-feel: PWA install, offline honesty, install prompts.
+- [ ] **R35** — personalization: remembered defaults, household profiles.
+- [ ] **R36** — nudges: review reminders, yearly band updates.
+- [ ] **R37** — error prevention: inline validation, warn-before-clamp, undo.
+- [ ] **R38** — empty-state upgrades: guided first-fill, scenario picker.
+- [ ] **R39** — suite hardening: every improvement gets a contract.
+- [ ] **R40** — finale: King's acceptance pass. He calls done.
+
 - [ ] **R3** — FIX-8 verification + seed consistency on all 16 (every worked example
       recomputed by hand) + mobile touch + prose-vs-numbers consistency.
 - [ ] **R4** — hostile inputs: XSS/malformed payloads in every field, stored values
@@ -107,7 +165,7 @@ Audit of all calculators."**
       clamping on 11 pages. C1 stays HELD (WP-parity call). 5 rate-table rows
       verified exact (DANGCEM ₦45, GTCO ₦11.76, Zenith ₦10, SafeLock 18.5%,
       FairLock 20%); rest UNVERIFIED.
-- [ ] **FIX-8 @builder (queued)** — the 8 round-2 minors. Separate leg after QA-SUITE lands.
+- [x] **FIX-8 folded into the v0.7.26 leg above** — done, shipped.
 - [ ] **AUDIT-2 @qa-inspector** — round 2 bug hunt, all 16 calculators, AFTER
       v0.7.24. Baseline = `calc-BUG-SWEEP-MASTER-2026-10-05.md`; must re-verify
       the 7 shipped fixes did not regress, attack the 6 deferred MINORs, and close

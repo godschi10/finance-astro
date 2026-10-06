@@ -58,7 +58,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 import { transferQuote, transferVerified } from "../../lib/transfer";
 import { fxNumber, fxFetchLive } from "../../lib/fx";
 import { FX_SNAPSHOT } from "../../data/fx-snapshot";
-import { pm } from "../../scripts/pm";
+import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 let rates = FX_SNAPSHOT.rates;
@@ -84,7 +84,7 @@ function render() {
      calling it "zero sends nothing", which describes a 0 the visitor entered. */
   const negHit = pm(amt.value) < 0;
   warn.hidden = ranked && !negHit;
-  warn.textContent = negHit ? "Negative entries are treated as ₦0." : raw === "" ? "Enter an amount — every provider shows 0 until you do." : "Zero sends nothing — no winner on a 0 transfer.";
+  warn.textContent = negHit ? "Negative entries are treated as ₦0." : pmBlank(raw) ? "Enter an amount — every provider shows 0 until you do." : "Zero sends nothing — no winner on a 0 transfer.";
   (document.getElementById("tc-fig") as HTMLElement).textContent = top ? `${sym}${fxNumber(top.received, top.received < 100 ? 2 : 0)}` : "—";
   (document.getElementById("tc-sub") as HTMLElement).textContent = top ? `${top.name} · mid-market ${fxNumber(q.mid, 6)}` : "Enter an amount above zero to rank providers";
   const tb = document.querySelector("#tc-table tbody") as HTMLElement;
