@@ -29,6 +29,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-lbl">You repay <span id="ln-period">{seed.period}</span></p>
 <p class="receipt-fig" id="ln-fig">₦{n(seed.installment)}</p>
 <p class="receipt-sub" id="ln-sub">Total ₦{n(seed.total)} · interest ₦{n(seed.interest)} · true APR {(seed.apr * 100).toFixed(1)}%</p>
+<p class="receipt-note" id="ln-warn" hidden></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Total repaid</span><b id="ln-tot">₦{n(seed.total)}</b></div>
 <div class="receipt-row"><span>Interest</span><b id="ln-int">₦{n(seed.interest)}</b></div>
@@ -72,6 +73,12 @@ function paintRateUnit(): void {
    blank and the instalment is 1% — a number the visitor never entered. */
 const ALL = ["ln-amt", "ln-tenor", "ln-rate"];
 function render() {
+  /* F8 — every clamped negative says so: -x is priced as ₦0 in all three
+     inputs (the engine clamps again inside, so the clamp cannot go — it is
+     disclosed instead, in this rail which nothing else writes to). */
+  const lnNeg = ["ln-amt", "ln-tenor", "ln-rate"].some((id) => pm(g(id).value) < 0);
+  t("ln-warn").hidden = !lnNeg;
+  t("ln-warn").textContent = lnNeg ? "Negative entries are treated as ₦0." : "";
   /* M2 — THE ZERO LAW. `Math.max(1, pm(v) || 1)` short-circuited a typed 0 to
      the 1-day/1-month seed, so a 0-day loan was quoted as a 1-day loan — a
      confident figure about a loan nobody borrowed. Zero tenor is meaningless as

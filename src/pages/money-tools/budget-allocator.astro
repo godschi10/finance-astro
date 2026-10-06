@@ -60,12 +60,16 @@ function render() {
   const warn = document.getElementById("al-warn") as HTMLElement;
   const shareSum = Object.values(shares).reduce((a, b) => a + b, 0);
   const planned = r.needs * shareSum;
+  /* F8 — every clamped negative says so: -x is priced as ₦0 in the income and
+     every share, so the rail names the rewrite instead of staying silent. */
+  const negHit = ["al-inc"].concat(shareIds).some((id) => pm((document.getElementById(id) as HTMLInputElement).value) < 0);
+  const negSfx = negHit ? " Negative entries are treated as ₦0." : "";
   if (r.needs > 0 && planned > r.needs) {
     warn.hidden = false;
-    warn.textContent = `Over by ${nn(planned - r.needs)} — buckets add to ${(shareSum * 100).toFixed(0)}% of needs. Trim shares to 100% or less.`;
+    warn.textContent = `Over by ${nn(planned - r.needs)} — buckets add to ${(shareSum * 100).toFixed(0)}% of needs. Trim shares to 100% or less.` + negSfx;
   } else {
-    warn.hidden = true;
-    warn.textContent = "";
+    warn.hidden = !negHit;
+    warn.textContent = negHit ? "Negative entries are treated as ₦0." : "";
   }
   /* THE ZERO LAW. An uncleared income may still print every bucket in gold —
      that is a real answer to a real input. A cleared share may not: its bucket

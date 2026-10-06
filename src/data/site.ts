@@ -321,7 +321,7 @@ export const TICKER_STATIC = [
   { label: "USD/NGN", value: "₦1,331", src: "fx" },
   { label: "GBP/NGN", value: "₦1,759", src: "fx" },
   { label: "EUR/NGN", value: "₦1,492", src: "fx" },
-  { label: "BTC/USD", value: "$85,608", src: "btc" },
-  { label: "ETH/USD", value: "$2,701", src: "eth" },
-  { label: "XAU/USD", value: "$4,123", src: "gold" },
+  { label: "BTC/USD", value: "$86,281", src: "btc" },
+  { label: "ETH/USD", value: "$2,712", src: "eth" },
+  { label: "XAU/USD", value: "$4,152", src: "gold" },
 ];

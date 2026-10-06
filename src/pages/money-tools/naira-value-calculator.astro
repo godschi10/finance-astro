@@ -104,7 +104,11 @@ import { formatGrouped } from "../../lib/format";
 import { pm } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
-const nn = (v: number) => "₦" + formatGrouped(v, 0);
+/* F2 — toFixed() returns raw exponential notation at |v| >= 1e21, which is
+   finite, so the finiteness guard let ₦2.19…e+23 reach the DOM. The page-local
+   nn() withholds those as "—" (the page's own vocabulary); the Too-large note
+   below names the erosion receipt, sv/pv-only overflow reuses the same note. */
+const nn = (v: number) => (!Number.isFinite(v) || Math.abs(v) >= 1e21 ? "—" : "₦" + formatGrouped(v, 0));
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
@@ -132,10 +136,13 @@ function render() {
   if (rawV === "") notes.push("Enter an amount — an empty field is not ₦0.");
   if (inflPct > 200) { inflPct = 200; notes.push("Inflation capped at 200%/yr for display."); }
   if (yrs > 100) { yrs = 100; notes.push("Horizon capped at 100 years."); }
+  /* F8 — every clamped negative says so: this page reinterprets -x as ₦0 in
+     seven inputs, so the rail names the rewrite instead of staying silent. */
+  if (["nv-val", "nv-infl", "nv-yrs", "nv-pv", "nv-tgt", "nv-cur", "nv-ret"].some((id) => pm(g(id).value) < 0)) notes.push("Negative entries are treated as ₦0.");
   const infl = inflPct / 100;
   const r = nairaValue(v, infl, yrs, 0);
   const w = t("nv-warn");
-  const tooBig = !Number.isFinite(r.future);
+  const tooBig = !Number.isFinite(r.future) || r.future >= 1e21;
   if (tooBig) notes.push("Too large to display — lower the amount or the rate.");
   if (yrsZero) notes.push("0 years — no time passes, so today's naira loses nothing over this horizon.");
   w.hidden = notes.length === 0;
@@ -190,6 +197,18 @@ function render() {
   sfFig(t("nv-sv-sub"), SAVE, `Inflation moves your ${nn(sv.target)} goal to ${nn(sv.real_target)}`);
   sfFig(t("nv-sv-real"), SAVE, Number.isFinite(sv.real_target) ? nn(sv.real_target) : "—");
   sfFig(t("nv-sv-gap"), SAVE, Number.isFinite(sv.gap_monthly) ? nn(sv.gap_monthly) : "—");
+  /* F2 — the stand-still and reverse receipts overflow on their own inputs
+     (a 12-digit goal at 24%/100y, a 22-digit future sum), independently of the
+     erosion receipt above. nn() already withholds those figures as "—"; this
+     reuses the page's own Too-large sentence so a dashed receipt is explained,
+     never bare. Same vocabulary, no new design. */
+  const svLost = sv.real_monthly >= 1e21 || sv.real_target >= 1e21 || sv.gap_monthly >= 1e21;
+  const pvLost = fut >= 1e21 || pv.pv >= 1e21;
+  if (!tooBig && (svLost || pvLost)) {
+    notes.push("Too large to display — lower the amount or the rate.");
+    w.hidden = false;
+    w.textContent = notes.join(" ");
+  }
 }
   sfEmpty(sfIsEmpty("naira-value-calculator", gv));
 ["nv-val", "nv-infl", "nv-yrs", "nv-pv", "nv-tgt", "nv-cur", "nv-ret"].forEach((id) => g(id).addEventListener("input", render));

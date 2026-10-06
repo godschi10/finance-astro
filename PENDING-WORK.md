@@ -36,6 +36,53 @@ King: "Do it" — the three defects the Reset fix had exposed.
       partly-filled form (its render, not the empty state); a lost
       `data-al-amt` attribute nothing reads.
 
+## LAW — 2026-10-06 · TEN ROUNDS. King: *"Make sure you do the bug hunt at least 10 rounds."*
+Standing order. An audit round is a SAMPLE with a distinct primary angle, never a
+re-tread and never a clearance. Fixes ship between rounds; the next round re-proves
+the fixes first (a broken shipped fix is CRITICAL and outranks everything).
+- [x] **R1** (2026-10-05) — arithmetic correctness, input robustness, derived figures.
+      1 CRIT · 2 MAJOR · 6 MINOR. Shipped v0.7.24 (C1 held for WP-parity).
+- [x] **R2** (2026-10-06) — regressions of v0.7.24 + gaps + keyboard/a11y + cross-tool
+      + rounding + extremes + storage. 0 · 0 · 8 MINOR. SHIPPABLE WITH FOLLOW-UP.
+- [ ] **FIX-8 + SUITE-PROOF @builder (in flight next)** — finish suite verification
+      (full run table + deliberate-failure proof + 3× flake + hygiene; the file
+      exists but is UNPROVEN — it gates nothing until proven), then fix the 8 R2
+      minors, then re-run the suite to prove green.
+- [ ] **R3** — FIX-8 verification + seed consistency on all 16 (every worked example
+      recomputed by hand) + mobile touch + prose-vs-numbers consistency.
+- [ ] **R4** — hostile inputs: XSS/malformed payloads in every field, stored values
+      re-rendered unescaped, URL params, what leaves the device (any network call
+      a tool makes with user data).
+- [ ] **R5** — performance on a thin device: JS weight per tool, render cost per
+      keystroke, suite timing budget.
+- [ ] **R6** — words: every FAQ/claim/citation on all 16 tools re-checked against
+      sources; prose that contradicts its own numbers is a finding.
+- [ ] **R7** — cross-browser + no-JS: Firefox/Safari where available, tools with
+      scripting disabled must fail honest, never confident-wrong.
+- [ ] **R8** — Nigerian-realism scenarios: real salary structures, informal income,
+      tax edge cases against FIRS/PwC guidance, Lagos-vs-national defaults.
+- [ ] **R9** — suite-vs-human parity: does the permanent suite catch everything
+      rounds 1-8 found? Every gap becomes a new suite contract.
+- [ ] **R10** — final clearance sweep + sign-off checklist. The King calls clean.
+
+## LAW — 2026-10-06 · CALCULATORS ARE APPS. King: *"all Calculators are apps and
+## apps need massive bug hunts and we have not even come close."*
+Standing order, not a one-off. Two consequences I bind myself to:
+1. **No calculator change ships without a behavioural proof that runs on every
+   build.** Today the contracts (Reset = no reload, Clear examples, empty state,
+   typed zero, stale-figure recompute, no NaN in the DOM) are re-proved BY HAND
+   every leg and the proof evaporates at the next ship. That is why we keep
+   re-finding the same classes of bug. @builder is building the permanent suite
+   (`scripts/calc-regress.mjs`, zero new deps — CDP over the existing `ws`).
+   Once it exists, `npm run check` gates on behaviour, not just markup.
+2. **An audit is a sample, never a clearance.** Passing N sweeps is not "clean".
+   The standard is: the suite is green, the remaining findings are enumerated
+   with severity, and the unverified surfaces (rate tables, live feeds) are
+   named rather than implied safe.
+- [ ] **QA-SUITE @builder** — permanent behavioural regression suite over dist/,
+      CDP-driven, one browser, sequential, deterministic waits. Asserts every
+      contract listed above across all 16 tools. Non-zero exit on failure.
+
 ## ACTIVE — 2026-10-06 · King's two orders
 King: **"Make TOC default closed, after that run another round of bug hunt and
 Audit of all calculators."**
@@ -48,6 +95,19 @@ Audit of all calculators."**
       order OVERRULES the parity pin** — per the gates-are-contracts law I update
       that assertion MYSELF, recording his words, the date and the reason, then
       re-run green. Workers never edit gates.
+- [x] **AUDIT-2 DONE 2026-10-06** — `calc-BUG-SWEEP-ROUND2-2026-10-06.md` (151 lines).
+      **0 CRITICAL · 0 MAJOR · 8 MINOR — SHIPPABLE WITH FOLLOW-UP.** All 7 v0.7.24
+      fixes re-proved live, no wrong-number bug found. New minors: F1 negatives
+      print `₦-X` (sign after symbol) on most pages while crypto prints `−₦X`
+      (I confirmed both patterns in source); F2 naira-value prints a raw
+      `₦2.19…e+23` on one unguarded path (two sibling figures already guard with
+      `tooBig ? "—"`); F3 transfer `0.0008/0.0008` hides the P2P edge; F4 dividend
+      yield vanishes on cleared growth; F5 tap targets sub-24px; F6 converter
+      rounding trivia; F7 expired storage key lingers; F8 silent negative
+      clamping on 11 pages. C1 stays HELD (WP-parity call). 5 rate-table rows
+      verified exact (DANGCEM ₦45, GTCO ₦11.76, Zenith ₦10, SafeLock 18.5%,
+      FairLock 20%); rest UNVERIFIED.
+- [ ] **FIX-8 @builder (queued)** — the 8 round-2 minors. Separate leg after QA-SUITE lands.
 - [ ] **AUDIT-2 @qa-inspector** — round 2 bug hunt, all 16 calculators, AFTER
       v0.7.24. Baseline = `calc-BUG-SWEEP-MASTER-2026-10-05.md`; must re-verify
       the 7 shipped fixes did not regress, attack the 6 deferred MINORs, and close

@@ -65,6 +65,10 @@ function render() {
   const p = Math.max(0, pm(g("ci-prin").value) || 0);
   const d = Math.max(0, pm(g("ci-dep").value) || 0);
   const rate = Math.max(0, pm(g("ci-rate").value) || 0) / 100;
+  /* F8 — every clamped negative says so: -x is priced as ₦0 in all four
+     inputs, so the rail names the rewrite instead of staying silent. */
+  const negHit = ["ci-prin", "ci-dep", "ci-rate", "ci-yrs"].some((id) => pm(g(id).value) < 0);
+  const negSfx = negHit ? " Negative entries are treated as ₦0." : "";
   /* M2 — THE ZERO LAW. A typed 0 used to short-circuit to the 5-year seed, so
    "how much if I save for 0 years" was silently answered with a 5-year plan.
    Zero years is the honest and meaningful answer — nothing compounds, nothing is
@@ -72,13 +76,23 @@ function render() {
    own months >= 1 floor is untouched (faithful port, gate-verified). */
 const yrsRawStr = g("ci-yrs").value.trim();
 const yrsZero = /\d/.test(yrsRawStr) && pm(yrsRawStr) === 0;
-const yrs = yrsZero ? 1 : Math.max(1, Math.trunc(pm(yrsRawStr) || 5));
+/* HANG CAP. compoundSchedule() iterates every month with no upper bound, so an
+   absurd horizon hung the tab (the suite's adversarial HANG). The engine is
+   vectors-pinned against the PHP oracle, so the cap lives HERE: 100 years
+   exceeds every honest use, and every seed plus every pinned vectors case (max
+   60 months — asserted off vectors.json, not assumed) is bit-identical below
+   it. An over-cap entry is priced at the cap and disclosed, never silently
+   rewritten. */
+const yrsRaw = yrsZero ? 1 : Math.max(1, Math.trunc(pm(yrsRawStr) || 5));
+const yrsCapped = yrsRaw > 100;
+const yrs = yrsCapped ? 100 : yrsRaw;
+const capSfx = yrsCapped ? " Horizon capped at 100 years — figures price the cap, not the entry." : "";
   const r = compoundGrowth(p, d, rate, yrs * 12, sel("ci-cmp"), sel("ci-freq"));
   const warn = t("ci-warn");
   const tb = document.querySelector("#ci-table tbody") as HTMLElement;
   if (!Number.isFinite(r.future) || !Number.isFinite(r.interest) || !Number.isFinite(r.deposited)) {
     warn.hidden = false;
-    warn.textContent = "Out of range — that horizon and rate are beyond what this projection can price. Try 50 years or fewer.";
+    warn.textContent = "Out of range — that horizon and rate are beyond what this projection can price. Try 50 years or fewer." + negSfx + capSfx;
     t("ci-fig").textContent = "Out of range";
     t("ci-sub").textContent = "No confident total at this input — shorten the horizon or lower the rate.";
     t("ci-dep2").textContent = "—";
@@ -86,13 +100,13 @@ const yrs = yrsZero ? 1 : Math.max(1, Math.trunc(pm(yrsRawStr) || 5));
     tb.innerHTML = "";
     return;
   }
-  warn.hidden = true;
-  warn.textContent = "";
+  warn.hidden = !negHit && !yrsCapped;
+  warn.textContent = ((negHit ? "Negative entries are treated as ₦0." : "") + capSfx).trim();
   if (yrsZero) {
     /* 0 years: no compounding period has elapsed, so the deposit is the
        principal and interest is a real, earned ₦0 — not a missing figure. */
     warn.hidden = false;
-    warn.textContent = "0 years — no time passes, so nothing compounds. You keep exactly what you put in.";
+    warn.textContent = "0 years — no time passes, so nothing compounds. You keep exactly what you put in." + negSfx + capSfx;
     sfFig(t("ci-fig"), ALL, nn(p));
     sfFig(t("ci-sub"), ALL, `You put in ${nn(p)} · interest earned ${nn(0)}`);
     sfFig(t("ci-dep2"), ALL, nn(p));

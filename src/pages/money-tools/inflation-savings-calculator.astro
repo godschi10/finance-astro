@@ -74,9 +74,13 @@ function render() {
     0, "monthly", "monthly",
   );
   const warn = t("is-warn");
+  /* F8 — every clamped negative says so: -x is priced as ₦0 in all five
+     inputs, so the rail names the rewrite instead of staying silent. */
+  const negHit = ["is-target", "is-cur", "is-rate", "is-infl", "is-yrs"].some((id) => pm(g(id).value) < 0);
+  const negSfx = negHit ? " Negative entries are treated as ₦0." : "";
   if (!Number.isFinite(r.nominal_monthly) || !Number.isFinite(r.real_monthly) || !Number.isFinite(r.gap_monthly) || !Number.isFinite(r.real_target)) {
     warn.hidden = false;
-    warn.textContent = "Out of range — that inflation and horizon are beyond what this plan can price. Try 50 years or less.";
+    warn.textContent = "Out of range — that inflation and horizon are beyond what this plan can price. Try 50 years or less." + negSfx;
     t("is-fig").textContent = "Out of range";
     t("is-sub").textContent = "No confident total at this input — lower the inflation rate or shorten the horizon.";
     t("is-nom").textContent = "—";
@@ -84,14 +88,14 @@ function render() {
     t("is-gap").textContent = "—";
     return;
   }
-  warn.hidden = true;
-  warn.textContent = "";
+  warn.hidden = !negHit;
+  warn.textContent = negHit ? "Negative entries are treated as ₦0." : "";
   if (yrsZero) {
     /* 0 years: no time passes, so inflation lifts the goal by ₦0 and the whole
        gap between the nominal and the adjusted figure is ₦0. Both are the same
        real number — that IS the answer, and it is worth stating plainly. */
     warn.hidden = false;
-    warn.textContent = "0 years — no time passes, so inflation moves your goal by ₦0. The gap below is real and it is ₦0.";
+    warn.textContent = "0 years — no time passes, so inflation moves your goal by ₦0. The gap below is real and it is ₦0." + negSfx;
     const tgt = Math.max(0, pm(g("is-target").value) || 0);
     sfFig(t("is-fig"), ALL, nn(r.nominal_monthly));
     sfFig(t("is-sub"), ALL, `Goal grows ${nn(tgt)} → ${nn(tgt)} · nominal monthly only ${nn(r.nominal_monthly)}`);

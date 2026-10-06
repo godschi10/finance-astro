@@ -51,7 +51,11 @@ import { formatGrouped } from "../../lib/format";
 import { pm } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
-const nn = (v: number) => "₦" + formatGrouped(v, 0);
+/* F1 — fleet-wide negative shape (the crypto tool's winner): a negative prints
+   −₦X (U+2212 minus before the symbol), never ₦-X. format.ts stays
+   PHP-parity-pinned (it mirrors gwill_paye_number), so this is fixed per page
+   on the two pages whose figures can actually go negative. */
+const nn = (v: number) => (v < 0 ? "−" : "") + "₦" + formatGrouped(Math.abs(v), 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
@@ -62,6 +66,10 @@ function render() {
   const target = Math.max(0, pm(g("sg-target").value) || 0);
   const cur = Math.max(0, pm(g("sg-cur").value) || 0);
   const rate = Math.max(0, pm(g("sg-rate").value) || 0) / 100;
+  /* F8 — every clamped negative says so: -x is priced as ₦0 in all four
+     inputs, so the rail names the rewrite instead of staying silent. */
+  const negHit = ["sg-target", "sg-cur", "sg-rate", "sg-mo"].some((id) => pm(g(id).value) < 0);
+  const negSfx = negHit ? " Negative entries are treated as ₦0." : "";
   /* M2 — THE ZERO LAW. `pm("0") || 24` short-circuited a deliberate 0 to the
    seed, so a visitor who typed 0 months to their deadline was shown the 24-month
    plan with the warning row hidden. Zero months is a real, meaningful answer —
@@ -70,13 +78,23 @@ function render() {
    zero-month deadline is answered here in the page's own words. */
 const moRawStr = g("sg-mo").value.trim();
 const moZero = /\d/.test(moRawStr) && pm(moRawStr) === 0;
-const mo = moZero ? 1 : Math.max(1, Math.trunc(pm(moRawStr) || 24));
+/* HANG CAP. savingsSchedule() iterates every month with no upper bound, so a
+   typed 99999999999 built an 8.3-billion-year schedule and killed the tab (the
+   suite's adversarial HANG). The engine is vectors-pinned against the PHP
+   oracle, so the cap lives HERE: 1200 months = 100 years exceeds every honest
+   use, and every seed plus every pinned vectors case (max 60 months — asserted
+   off vectors.json, not assumed) is bit-identical below it. An over-cap entry
+   is priced at the cap and disclosed, never silently rewritten. */
+const moRaw = moZero ? 1 : Math.max(1, Math.trunc(pm(moRawStr) || 24));
+const moCapped = moRaw > 1200;
+const mo = moCapped ? 1200 : moRaw;
+const capSfx = moCapped ? " Horizon capped at 100 years — figures price the cap, not the entry." : "";
   const warn = t("sg-warn");
   const tb = document.querySelector("#sg-table tbody") as HTMLElement;
   const targetRaw = g("sg-target").value.trim();
   if (targetRaw === "" || target <= 0) {
     warn.hidden = false;
-    warn.textContent = "Enter a target greater than ₦0 — a cleared field is not a reached goal.";
+    warn.textContent = "Enter a target greater than ₦0 — a cleared field is not a reached goal." + negSfx + capSfx;
     t("sg-fig").textContent = "Enter a target";
     t("sg-sub").textContent = "No monthly figure until the target is set.";
     t("sg-tot").textContent = "—";
@@ -89,7 +107,7 @@ const mo = moZero ? 1 : Math.max(1, Math.trunc(pm(moRawStr) || 24));
        there is no time to save in. Say exactly that, and do not dress the
        seed's monthly figure up as this visitor's plan. */
     warn.hidden = false;
-    warn.textContent = "0 months to your deadline — there is no time left to save into it. Set a deadline above 0 months.";
+    warn.textContent = "0 months to your deadline — there is no time left to save into it. Set a deadline above 0 months." + negSfx + capSfx;
     t("sg-fig").textContent = "No time left";
     t("sg-sub").textContent = `You hold ${nn(cur)} against a ${nn(target)} goal — ${nn(target - cur)} still to find.`;
     t("sg-tot").textContent = nn(cur);
@@ -98,9 +116,14 @@ const mo = moZero ? 1 : Math.max(1, Math.trunc(pm(moRawStr) || 24));
     return;
   }
   const r = savingsCalculate(target, cur, rate, mo, "monthly");
-  if (!Number.isFinite(r.monthly) || !Number.isFinite(r.total) || !Number.isFinite(r.interest)) {
+  /* The capped schedule is at most 100 rows, so it is cheap to judge it whole:
+     a finite headline over an exploding schedule (goal already reached plus an
+     absurd rate) must take the out-of-range path below, never print ₦Infinity. */
+  const sched = savingsSchedule(target, cur, rate, mo, "monthly");
+  const schedBad = !sched.every((row) => Number.isFinite(row.balance) && Number.isFinite(row.deposited) && Number.isFinite(row.interest));
+  if (!Number.isFinite(r.monthly) || !Number.isFinite(r.total) || !Number.isFinite(r.interest) || schedBad) {
     warn.hidden = false;
-    warn.textContent = "Out of range — that deadline and rate are beyond what this plan can price. Try 600 months or fewer.";
+    warn.textContent = "Out of range — that deadline and rate are beyond what this plan can price. Try 600 months or fewer." + negSfx + capSfx;
     t("sg-fig").textContent = "Out of range";
     t("sg-sub").textContent = "No confident total at this input — shorten the deadline or lower the rate.";
     t("sg-tot").textContent = "—";
@@ -108,14 +131,14 @@ const mo = moZero ? 1 : Math.max(1, Math.trunc(pm(moRawStr) || 24));
     tb.innerHTML = "";
     return;
   }
-  warn.hidden = true;
-  warn.textContent = "";
+  warn.hidden = !negHit && !moCapped;
+  warn.textContent = ((negHit ? "Negative entries are treated as ₦0." : "") + capSfx).trim();
   sfFig(t("sg-fig"), ALL, r.goal_reached ? "₦0 — goal reached" : nn(r.monthly));
   sfFig(t("sg-sub"), ALL, `Total ${nn(r.total)} · interest ${nn(r.interest)}`);
   sfFig(t("sg-tot"), ALL, nn(r.total));
   sfFig(t("sg-int"), ALL, nn(r.interest));
   tb.innerHTML = "";
-  for (const row of savingsSchedule(target, cur, rate, mo, "monthly")) {
+  for (const row of sched) {
     const tr = document.createElement("tr");
     tr.innerHTML = `<td></td><td class="n"></td><td class="n"></td><td class="n"></td>`;
     (tr.children[0] as HTMLElement).textContent = String(row.year);

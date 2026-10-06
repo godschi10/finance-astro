@@ -23,6 +23,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-sub" id="sr-sub">on ₦500,000 ≈ ₦{(500000 * rows[0].rate / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })} a year</p>
 <div class="receipt-div" aria-hidden="true"></div>
 <p class="receipt-note">Indicative marketing rates — confirm before you lock funds.</p>
+<p class="receipt-note" id="sr-warn" hidden></p>
 <p class="receipt-foot">{verified}</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
@@ -58,6 +59,11 @@ const max = Math.max(...rows.map((r) => r.rate));
 const amt = document.getElementById("sr-amt") as HTMLInputElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
 function render() {
+  /* F8 — a typed negative is clamped to a 0 test amount above; say so in this
+     rail (which nothing else writes to) instead of pricing -x as ₦0 silently. */
+  const srNeg = pm(amt.value) < 0;
+  (document.getElementById("sr-warn") as HTMLElement).hidden = !srNeg;
+  (document.getElementById("sr-warn") as HTMLElement).textContent = srNeg ? "Negative entries are treated as ₦0." : "";
   const a = Math.max(0, pm(amt.value) || 0);
   const fmt = (n: number) => "₦" + Math.round(n).toLocaleString("en-US");
   const top = rows[0];

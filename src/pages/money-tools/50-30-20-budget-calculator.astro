@@ -46,6 +46,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-fig" id="bg-fig">₦{n(seed.needs)} · ₦{n(seed.wants)} · ₦{n(seed.savings)}</p>
 <p class="receipt-sub" id="bg-sub">Needs · wants · savings — leftover <span id="bg-else">₦{n(seed.else)}</span></p>
 <p class="receipt-sub" id="bg-sumnote"></p>
+<p class="receipt-note" id="bg-warn" hidden></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Needs left</span><b id="bg-rn">₦{n(chk.needs_remaining)}</b></div>
 <div class="receipt-row"><span>Wants left</span><b id="bg-rw">₦{n(chk.wants_remaining)}</b></div>
@@ -61,11 +62,20 @@ import { formatGrouped } from "../../lib/format";
 import { pm } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
-const nn = (v: number) => "₦" + formatGrouped(v, 0);
+/* F1 — fleet-wide negative shape (the crypto tool's winner): a negative prints
+   −₦X (U+2212 minus before the symbol), never ₦-X. format.ts stays
+   PHP-parity-pinned (it mirrors gwill_paye_number), so this is fixed per page
+   on the two pages whose figures can actually go negative. */
+const nn = (v: number) => (v < 0 ? "−" : "") + "₦" + formatGrouped(Math.abs(v), 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
 function render() {
+  /* F8 — every clamped negative says so: -x is priced as ₦0 in all seven
+     inputs, so the rail names the rewrite instead of staying silent. */
+  const bgNeg = ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"].some((id) => pm(g(id).value) < 0);
+  t("bg-warn").hidden = !bgNeg;
+  t("bg-warn").textContent = bgNeg ? "Negative entries are treated as ₦0." : "";
   const inc = Math.max(0, pm(g("bg-inc").value) || 0);
   const np = Math.max(0, pm(g("bg-needs").value) || 0) / 100;
   const wp = Math.max(0, pm(g("bg-wants").value) || 0) / 100;

@@ -46,7 +46,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <tr data-tc-row={r.id} class={r.id === best ? "win" : ""}>
 <td>{r.name}{r.id === best && <span class="btag">Best</span>}</td>
 <td class="n" data-c="fee">{fxNumber(r.fee, 2)}</td>
-<td class="n" data-c="rate">{fxNumber(r.rate, 4)}</td>
+<td class="n" data-c="rate">{fxNumber(r.rate, 6)}</td>
 <td class="n" data-c="rec">{fxNumber(r.received, 2)}</td>
 </tr>
 ))}
@@ -80,8 +80,11 @@ function render() {
   sfFig(document.getElementById("tc-sum-amt") as HTMLElement, ["tc-amt"], `${osym}${fxNumber(a, 0)}`);
   const top = ranked ? q.rows[0] : undefined;
   const warn = document.getElementById("tc-warn") as HTMLElement;
-  warn.hidden = ranked;
-  warn.textContent = raw === "" ? "Enter an amount — every provider shows 0 until you do." : "Zero sends nothing — no winner on a 0 transfer.";
+  /* F8 — a typed negative is clamped to a 0 transfer above; say so instead of
+     calling it "zero sends nothing", which describes a 0 the visitor entered. */
+  const negHit = pm(amt.value) < 0;
+  warn.hidden = ranked && !negHit;
+  warn.textContent = negHit ? "Negative entries are treated as ₦0." : raw === "" ? "Enter an amount — every provider shows 0 until you do." : "Zero sends nothing — no winner on a 0 transfer.";
   (document.getElementById("tc-fig") as HTMLElement).textContent = top ? `${sym}${fxNumber(top.received, top.received < 100 ? 2 : 0)}` : "—";
   (document.getElementById("tc-sub") as HTMLElement).textContent = top ? `${top.name} · mid-market ${fxNumber(q.mid, 6)}` : "Enter an amount above zero to rank providers";
   const tb = document.querySelector("#tc-table tbody") as HTMLElement;
@@ -93,7 +96,10 @@ function render() {
     (tr.children[0] as HTMLElement).textContent = r.name;
     if (ranked && i === 0) { const b = document.createElement("span"); b.className = "btag"; b.textContent = "Best"; tr.children[0].appendChild(b); }
     (tr.children[1] as HTMLElement).textContent = `${osym}${fxNumber(r.fee, 2)}`;
-    (tr.children[2] as HTMLElement).textContent = fxNumber(r.rate, 4);
+    /* F3 — the RATE APPLIED column hid the P2P spread at 4dp (0.0008 vs
+       0.0008 while the payouts differ by $4). 6dp is this page's own rate
+       precision (the mid-market sub above); the true rates separate there. */
+    (tr.children[2] as HTMLElement).textContent = fxNumber(r.rate, 6);
     (tr.children[3] as HTMLElement).textContent = `${sym}${fxNumber(r.received, r.received < 100 ? 2 : 0)}`;
     tb.appendChild(tr);
   });

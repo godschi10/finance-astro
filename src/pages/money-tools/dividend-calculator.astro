@@ -83,10 +83,14 @@ function render() {
     drip,
   );
   const warn = t("dv-warn");
+  /* F8 — every clamped negative says so: -x is priced as ₦0 in all four
+     inputs, so the rail names the rewrite instead of staying silent. */
+  const negHit = ["dv-inv", "dv-pg", "dv-dg", "dv-yrs"].some((id) => pm(g(id).value) < 0);
+  const negSfx = negHit ? " Negative entries are treated as ₦0." : "";
   const tb = document.querySelector("#dv-table tbody") as HTMLElement;
   if (!Number.isFinite(r.end_value) || !Number.isFinite(r.cash_total) || !Number.isFinite(r.gain)) {
     warn.hidden = false;
-    warn.textContent = "Out of range — that growth is beyond what this projection can price. Try 100% or less.";
+    warn.textContent = "Out of range — that growth is beyond what this projection can price. Try 100% or less." + negSfx;
     t("dv-lbl").textContent = "Portfolio end value";
     t("dv-fig").textContent = "Out of range";
     t("dv-sub").textContent = "No confident total at this input — lower the growth rates.";
@@ -96,14 +100,14 @@ function render() {
     tb.innerHTML = "";
     return;
   }
-  warn.hidden = true;
-  warn.textContent = "";
+  warn.hidden = !negHit;
+  warn.textContent = negHit ? "Negative entries are treated as ₦0." : "";
   if (yrsZero) {
     /* 0 years: the holding period has not started, so there is no growth and
        no dividend yet. The portfolio is worth exactly the investment — a real
        answer, not a missing one. */
     warn.hidden = false;
-    warn.textContent = "0 years — no holding period yet, so no price growth and no dividends. The portfolio is worth what you put in.";
+    warn.textContent = "0 years — no holding period yet, so no price growth and no dividends. The portfolio is worth what you put in." + negSfx;
     const inv = Math.max(0, pm(g("dv-inv").value) || 0);
     t("dv-lbl").textContent = "Portfolio end value";
     sfFig(t("dv-fig"), ALL, nn(inv));
@@ -118,7 +122,11 @@ function render() {
   sfFig(t("dv-fig"), ALL, drip ? nn(r.end_value) : nn(r.end_value + r.cash_total));
   sfFig(t("dv-sub"), ALL, `Cash dividends ${nn(r.cash_total)} · gain ${nn(r.gain)} · CAGR ${(r.cagr * 100).toFixed(1)}%`);
   sfFig(t("dv-sh"), ALL, formatGrouped(r.shares, 2));
-  sfFig(t("dv-yld"), ["dv-inv", "dv-dg"], (r.yield * 100).toFixed(2) + "%");
+  /* F4 — starting yield is dps ÷ price from the stock table: it never reads
+     dividend growth, so clearing dv-dg must not erase it. dv-inv stays as the
+     sole dep so a genuinely empty form still withholds (the suite's empty
+     contract), exactly like the zero-horizon path above which already uses ALL. */
+  sfFig(t("dv-yld"), ["dv-inv"], (r.yield * 100).toFixed(2) + "%");
   sfFig(t("dv-cash"), ALL, nn(r.cash_total));
   tb.innerHTML = "";
   for (const y of r.yearly) {

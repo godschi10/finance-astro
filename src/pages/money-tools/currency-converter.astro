@@ -70,10 +70,14 @@ const partoggle = document.getElementById("cc-partoggle") as HTMLInputElement;
 const fresh = document.getElementById("cc-fresh") as HTMLElement;
 const foot = document.getElementById("cc-foot") as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
-function money(v: number, code: string): string {
+/* F6 — the unit line must reproduce its own conversion: a 0dp unit rounds away
+   the fraction a large conversion keeps (1000 USD → ₦1,330,998 under a "₦1,331"
+   unit, a ₦2 lie). The effective per-unit rate of the shown conversion is exact
+   by construction (the engine is linear); print it trimmed to the precision
+   that matters instead of re-rounding the theoretical rate. */
+function moneyTrim(v: number, code: string): string {
   const sym: Record<string, string> = { NGN: "₦", USD: "$", GBP: "£", EUR: "€" };
-  const dec = code === "NGN" ? 0 : v < 100 ? 2 : 0;
-  return (sym[code] ?? "") + fxNumber(v, dec);
+  return (sym[code] ?? "") + fxNumber(v, 6).replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
 }
 function render() {
   const raw = amt.value.trim();
@@ -82,7 +86,8 @@ function render() {
   const c = fxConvert(a, f, t, rates);
   const u = fxConvert(1, f, t, rates);
   sfFig(fig, ["cc-amt"], (t === "NGN" ? "₦" : "") + fxNumber(c, t === "NGN" ? 0 : 2));
-  unitEl.textContent = `1 ${f} = ${money(u, t)}`;
+  const ue = a > 0 ? c / a : u;
+  unitEl.textContent = `1 ${f} = ${moneyTrim(ue, t)}`;
   // Empty/negative is not a quote: say so instead of printing a confident zero.
   warn.hidden = raw !== "" && pm(raw) >= 0;
   warn.textContent = raw === "" ? "Enter an amount — an empty field is not ₦0." : "Negative amounts count as 0.";

@@ -221,7 +221,11 @@ function save() {
 function restore() {
   let s = null;
   try { s = JSON.parse(localStorage.getItem(KEY(TOOL)) || "null"); } catch {}
-  if (!s || !s.t || Date.now() - s.t > EXPIRES) return;
+  if (!s || !s.t) return;
+  /* F7 — expired state is indistinguishable from never-stored: drop the dead
+     key instead of leaving it to sit until the visitor's next keystroke
+     happens to overwrite it. */
+  if (Date.now() - s.t > EXPIRES) { try { localStorage.removeItem(KEY(TOOL)); } catch {} return; }
   const d = Math.floor((Date.now() - s.t) / 864e5);
   const when = d <= 0 ? "today" : d === 1 ? "yesterday" : d + " days ago";
   Object.keys(MEM).forEach((id) => {
