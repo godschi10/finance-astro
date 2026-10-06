@@ -1,1 +1,0 @@
-const e={ok:!0,rates:{USD:1,NGN:1331.279356,GBP:.755727,EUR:.88889,CAD:1.42482,AED:3.6725,SAR:3.75,GHS:11.617322,XOF:583.030678,XAF:583.030678,CNY:6.710363,JPY:157.730309,INR:96.400634,KES:129.58156,EGP:52.24751,ZAR:16.658578},as_of:"5 Oct 2026, 00:02 UTC",cached:!1},s="live at build — refreshes in your browser";export{e as F,s as a};
