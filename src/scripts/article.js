@@ -20,10 +20,15 @@
  *   assets/js/embeds.js    whole file, enqueued `is_singular() && has_block('core/embed')`
  *                          (enqueue.php:464-487)
  *
- * End state this must produce (04-live-oracle.md measurements, 390/768/1280):
- *   #gwill-toc-mobile      class "toc-dropdown toc-mobile toc-open toc-scrolled-end"
- *   .toc-summary[aria-expanded]="true"      (oracle §B5, at every width)
- *   #gwill-toc-mobile-list display:flex
+ * End state this must produce (390/768/1280):
+ *   #gwill-toc-mobile      class "toc-dropdown toc-mobile toc-scrolled-end"
+ *   .toc-summary[aria-expanded]="false"     — CHANGED from the oracle's
+ *                          "true" by the King's order 2026-10-06,
+ *                          "Make TOC default closed". This is the only
+ *                          intentional parity break on this page; everything
+ *                          else below is still the 04-live-oracle.md
+ *                          measurement (390/768/1280).
+ *   #gwill-toc-mobile-list display:none at rest (display:flex once opened)
  *   .toc-i.cur             ABSENT at scrollY 0 — all five items are plain `.toc-i`
  *                          (oracle §B11 + "Oddities" #6: PHP ships `cur` on the
  *                          first item, the scroll-spy's initial call removes it,
@@ -99,9 +104,10 @@
 	}
 
 	// ── 3. Mobile TOC dropdown (main.js:256-300) ────────────────────
-	// Open by default, remembers the visitor's choice. Visibility is 100% CSS
-	// off the `toc-open` class (style.css:2415-2416) — no `hidden` attribute,
-	// no inline display, no <details>.
+	// Closed by default (King's order 2026-10-06, "Make TOC default closed"),
+	// remembers the visitor's explicit choice. Visibility is 100% CSS off the
+	// `toc-open` class (style.css:2415-2416, ported to article.css:812-813) —
+	// no `hidden` attribute, no inline display, no <details>.
 	const tocDrop = document.getElementById('gwill-toc-mobile');
 
 	// ── QUIRK, reproduced exactly ───────────────────────────────────
@@ -122,20 +128,36 @@
 			if (tocBtn) tocBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
 		};
 
-		// Server-rendered default vs JS default: single.php:126 hard-codes
-		// aria-expanded="true" while the class starts absent, and main.js is
-		// deferred — so between first paint and script execution the panel is
-		// collapsed while announcing expanded (spec 03 §3a FOUC note). The
-		// port reproduces the theme's JS exactly (open unless the visitor
-		// stored 'closed'), which is the state the live oracle measured:
-		// `toc-open` + aria-expanded="true" (04-live-oracle.md §B5).
-		// Astro should therefore render aria-expanded="true" server-side to
-		// kill that mismatch, or add `toc-open` pre-paint.
+		// Server-rendered default vs JS default. THE KING'S ORDER, verbatim:
+		// "Make TOC default closed" (2026-10-06) — this is the ONE deliberate
+		// break from WordPress parity on this page. The theme opens unless the
+		// visitor stored 'closed' (main.js:262-266) and single.php:126
+		// hard-codes aria-expanded="true", so the live oracle measured
+		// `toc-open` + aria-expanded="true" at every width (04-live-oracle.md
+		// §B5 — the end state this file's header used to claim).
+		//
+		// FOUC KILLED, NOT MOVED. The mismatch used to be: the server
+		// announced "expanded" while the `toc-open` class was absent until
+		// this deferred module ran, so between first paint and script
+		// execution the panel was COLLAPSED and announced expanded. Both
+		// sides now agree on closed — [slug].astro renders
+		// aria-expanded="false", and the class starts absent, which is
+		// already what the CSS reads (article.css:813,
+		// `.toc-dropdown:not(.toc-open) .toc-list { display:none }`). First
+		// paint is therefore closed/false/collapsed and this call leaves it
+		// that way unless the visitor explicitly opened it before.
+		//
+		// The remember behaviour is unchanged and deliberately kept: an
+		// explicit open still persists (`TOC_KEY` = 'open', written by the
+		// click handler below) and is honoured on return. A server render
+		// cannot know that preference, so a returning opener gets one closed
+		// frame before this call opens it — inherent to localStorage, and
+		// never announced as expanded while closed.
 		try {
 			const savedToc = localStorage.getItem(TOC_KEY);
-			setToc(savedToc !== 'closed'); // default open
+			setToc(savedToc === 'open'); // default CLOSED (King's order)
 		} catch (e) {
-			setToc(true); // private mode / storage disabled
+			setToc(false); // private mode / storage disabled — closed
 		}
 
 		if (tocBtn) {

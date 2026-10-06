@@ -131,8 +131,16 @@ const checks = [
   // ── mobile TOC dropdown (single.php:125-136) ───────────────────────────
   ["mobile dropdown is .toc-dropdown.toc-mobile#gwill-toc-mobile",
     /class="toc-dropdown toc-mobile" id="gwill-toc-mobile"/.test(t)],
-  ["summary button carries type, aria-expanded, aria-controls in source order (single.php:126)",
-    /<button type="button" class="toc-summary" aria-expanded="true" aria-controls="gwill-toc-mobile-list">/.test(t)],
+  // ── ARIA-EXPANDED DEFAULT, DEVIATION FROM WORDPRESS ────────────────────
+  // single.php:126 hard-codes aria-expanded="true" because the theme opened the
+  // mobile dropdown in main.js. The KING'S EXPLICIT ORDER, 2026-10-06:
+  //   "Make TOC default closed"
+  // overruling that parity. The assertion below was re-pinned by @manager-opencode
+  // to "false" on 2026-10-06, with his words recorded here as the gate law
+  // requires. The source ORDER of type/aria-expanded/aria-controls is still the
+  // contract being tested - only the default's VALUE changed, deliberately.
+  ["summary button carries type, aria-expanded, aria-controls in source order (single.php:126; value re-pinned to false by the King's order \"Make TOC default closed\", 2026-10-06)",
+    /<button type="button" class="toc-summary" aria-expanded="false" aria-controls="gwill-toc-mobile-list">/.test(t)],
   ["summary label is \"In this article\" (lower-case t) and caret is U+25BE",
     /<span>In this article<\/span>/.test(tpl) && /class="toc-caret" aria-hidden="true">▾</.test(t)],
   ["level-3 rows carry .toc-sub (single.php:132)", /class=\{h\.depth === 3 \? "toc-sub" : undefined\}/.test(tpl)],

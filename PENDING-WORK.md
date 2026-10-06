@@ -36,6 +36,28 @@ King: "Do it" — the three defects the Reset fix had exposed.
       partly-filled form (its render, not the empty state); a lost
       `data-al-amt` attribute nothing reads.
 
+## ACTIVE — 2026-10-06 · King's two orders
+King: **"Make TOC default closed, after that run another round of bug hunt and
+Audit of all calculators."**
+- [ ] **TOC-1 @builder** — mobile "In this article" dropdown defaults **OPEN**
+      (`src/scripts/article.js:135` `setToc(savedToc !== 'closed')`). King's
+      order: **default closed.** NOTE: `check-article-fidelity.mjs:135` PINS the
+      server-rendered `aria-expanded="true"` (WP single.php:126 parity) and
+      `article.js` also reproduces a deliberate WP FOUC quirk (server says
+      expanded, class absent until deferred JS runs). **The King's explicit
+      order OVERRULES the parity pin** — per the gates-are-contracts law I update
+      that assertion MYSELF, recording his words, the date and the reason, then
+      re-run green. Workers never edit gates.
+- [ ] **AUDIT-2 @qa-inspector** — round 2 bug hunt, all 16 calculators, AFTER
+      v0.7.24. Baseline = `calc-BUG-SWEEP-MASTER-2026-10-05.md`; must re-verify
+      the 7 shipped fixes did not regress, attack the 6 deferred MINORs, and close
+      the gaps round 1 declared: **UNVERIFIED rate tables** (8 NGX, 10 savings,
+      5 transfer), the **untested live-FX corrupt-feed guard**, and
+      exchange-rate-history's multi-point chart. Also: keyboard/a11y on the tool
+      forms, and cross-tool agreement.
+- **STILL HELD, awaiting the King's word:** C1 Emergency Fund months-to-finish.
+      Inherited from `emergency-fund.php:52`; needs PHP + oracle regeneration.
+
 ## ACTIVE — FIX LEG: 4 QA BREAKS + 3 SWEEP FINDINGS, King's "fix all findings"
 @qa-inspector audited the honesty pass: **SHIPPABLE WITH FOLLOW-UP** — engine
 unbreakable, 4 claims CONFIRMED, typed-zero trap PASSES on 5 cases, HN-4 unbreakable.
