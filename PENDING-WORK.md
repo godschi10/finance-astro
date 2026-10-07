@@ -41,6 +41,23 @@ King: "Do it" — the three defects the Reset fix had exposed.
 ## go 20 rounds of hunting for bugs and another 20 rounds looking for what is missing
 ## and what can make it easier using the calculators. That's 40 rounds for each
 ## calculator. Get busy"*
+## LAW — 2026-10-07 · SERIAL UX PROGRAM (King clarifies).
+## *"One calculator after the other."* + *"How users interact with the calculators is
+## vital. And any friction should be fixed and every missing feature should be added.
+## No shortcuts. 40 audits each. 40 edits each."*
+Execution is SERIAL per tool: one calculator runs its full A→E pairs to completion
+before the next begins. One active leg at a time on the active tool (audit then its
+edit — inherently serial; no parallel legs on the same tool). Every audit is
+interaction-first: full tap/scroll/keystroke order, hesitation points, friction log.
+Every E answers its A completely: each friction fixed, each missing feature added —
+or explicitly HELD only by the King's word, never by convenience. A finding carried
+past its E without a fix or a hold is a broken promise; the next A re-opens it as
+regression. Tool order (King may reorder): 50-30-20 → salary-tax → savings-goal →
+compound-interest → loan-repayment → gross-to-net → emergency-fund (audits run, C1
+fix held) → inflation-savings → naira-value → currency-converter →
+money-transfer → crypto → dividend → savings-rate → exchange-rate-history.
+ACTIVE TOOL: 50-30-20 (A1+E1 done, A2 next).
+
 ## LAW — 2026-10-07 · UX AUDITS: 40 AUDITS + 40 EDITS PER CALCULATOR. King:
 ## *"What about the calculators. I was asking you to audit the UX. How people use
 ## each calculator. 40 audits and 40 edit rounds for each calculator."*

@@ -25,9 +25,10 @@ const chk = budget503020Compare(income, 0.5, 0.3, 0.2, seedActuals.needs, seedAc
    engine's own defaults (rent 40 / food 25 / transport 15 / data 10 / bills 7).
    One income in, both steps out — the page opens on one continuous journey. */
 const al = budgetAllocator(income);
+const seedRent = al.buckets.find((b) => b.id === "rent")?.amount ?? 0;
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
-<ToolShell title="50/30/20 Budget Calculator, Nigeria - GWill Finance" description="Split any income into needs, wants and savings, check real spending against the plan — then break the needs half into rent, food, transport, data and bills, all on one page." slug="50-30-20-budget-calculator" tool="50/30/20 Budget Calculator" lede="Half for needs, a third for wants, a fifth for future-you. Set the income, check your actual spending, then itemise the needs half — two steps, one page." verified="Two steps, one page · plan vs actual checker · needs-half buckets" faqs={[
+<ToolShell title="50/30/20 Budget Calculator, Nigeria - GWill Finance" description="Split any income into needs, wants and savings, check real spending against the plan — then break the needs half into rent, food, transport, data and bills, all on one page." slug="50-30-20-budget-calculator" tool="50/30/20 Budget Calculator" lede="Half for needs, 30% for wants, a fifth for future-you. Set the income, check your actual spending, then itemise the needs half — two steps, one page." verified="Two steps, one page · plan vs actual checker · needs-half buckets" faqs={[
   { q: "Is 50/30/20 realistic on a Nigerian salary?", a: "As a direction, yes; as law, adjust. High rent cities may need 60/20/20 for a season — the tool accepts custom splits." },
   { q: "What counts as savings?", a: "Anything future-you keeps: emergency fund, investments, debt repayment. Not the money sitting in your spending account." },
   { q: "Where exactly does the needs half go?", a: "Step 2 on this same page breaks your plan's needs figure into rent, food, transport, data and bills, with every share tunable. One tool, one journey — no second page." },
@@ -43,7 +44,9 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   disclaimer="This calculator is for informational guidance only and is not financial advice. The 50/30/20 rule is a budgeting framework, not a guarantee of outcomes, adjust it to your circumstances and confirm major decisions with a licensed adviser.">
 <div class="fx-card">
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
-<div class="tgrid c3">
+<p class="receipt-note" id="bg-memdate" hidden></p>
+<p class="receipt-note" id="bg-live" hidden></p>
+<div class="tgrid c3" id="bg-top">
 <div class="field"><label for="bg-inc">Monthly income ₦</label><input id="bg-inc" type="text" value={income} inputmode="decimal"></div>
 <div class="field"><label for="bg-needs">Needs %</label><input id="bg-needs" type="text" max="100" value="50" inputmode="decimal" placeholder="50"></div>
 <div class="field"><label for="bg-wants">Wants %</label><input id="bg-wants" type="text" max="100" value="30" inputmode="decimal" placeholder="30"></div>
@@ -52,24 +55,28 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="bg-spw">Spent on wants ₦</label><input id="bg-spw" type="text" value={String(seedActuals.wants)} inputmode="decimal"></div>
 <div class="field"><label for="bg-sps">Put to savings ₦</label><input id="bg-sps" type="text" value={String(seedActuals.savings)} inputmode="decimal"></div>
 </div>
-<p class="receipt-note" id="bg-live" hidden></p>
+<p class="receipt-note" id="bg-seedwarn" hidden></p>
 <div class="receipt" aria-live="polite">
-<p class="receipt-lbl">Your three buckets</p>
+<p class="receipt-lbl">Plan buckets</p>
 <p class="receipt-fig" id="bg-fig">₦{n(seed.needs)} · ₦{n(seed.wants)} · ₦{n(seed.savings)}</p>
 <p class="receipt-sub" id="bg-sub">Needs · wants · savings — leftover <span id="bg-else">₦{n(seed.else)}</span></p>
 <p class="receipt-sub" id="bg-sumnote"></p>
 <p class="receipt-note" id="bg-warn" hidden></p>
 <div class="receipt-div" aria-hidden="true"></div>
-<div class="receipt-row"><span>Needs left</span><b id="bg-rn">₦{n(chk.needs_remaining)}</b></div>
-<div class="receipt-row"><span>Wants left</span><b id="bg-rw">₦{n(chk.wants_remaining)}</b></div>
-<div class="receipt-row"><span>Savings gap</span><b id="bg-rs">₦{n(chk.savings_remaining)}</b></div>
+<div class="receipt-row" data-goto="bg-spn" style="cursor:pointer" title="See the field behind this figure"><span>Needs left</span><b id="bg-rn">₦{n(chk.needs_remaining)}</b></div>
+<div class="receipt-row" data-goto="bg-spw" style="cursor:pointer" title="See the field behind this figure"><span>Wants left</span><b id="bg-rw">₦{n(chk.wants_remaining)}</b></div>
+<div class="receipt-row" data-goto="bg-sps" style="cursor:pointer" title="See the field behind this figure"><span>Savings left to save</span><b id="bg-rs">₦{n(chk.savings_remaining)}</b></div>
 <p class="receipt-note" id="bg-pasted" hidden></p>
-<p class="receipt-foot">Plan vs actual · unassigned stays visible</p>
+<p class="receipt-note" id="bg-whatnow" hidden></p>
+<p class="receipt-foot">Plan vs actual · leftover = income your splits didn't assign</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
+<p class="receipt-note"><a href="#step2">See where the needs money goes ↓</a> · <button type="button" id="bg-copy" style="text-decoration:underline;background:none;border:none;color:inherit;font:inherit;cursor:pointer;padding:0">Copy plan summary</button><span id="bg-copied" hidden> — copied.</span></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <h3 id="step2">Step 2 — where the needs money goes</h3>
-<p>One tool, one journey. This is the plan's needs figure from step 1 — the same income, the same split — itemised into real Nigerian lines: rent, food, transport, data, bills. Knowing you should spend ₦125,000 on needs is useful; knowing rent takes about ₦50,000 of it is actionable. The shares below are indicative starting points, not laws — tune any bucket and the naira follows instantly, always reconciling back to your income.</p>
+<p>One tool, one journey. This is the plan's needs figure from step 1 — the same income, the same split — itemised into real Nigerian lines: rent, food, transport, data, bills. Knowing you should spend <span id="bg-step2-needs">₦{n(seed.needs)}</span> on needs is useful; knowing rent takes about <span id="bg-step2-rent">₦{n(seedRent)}</span> of it is actionable. The shares below are indicative starting points, not laws — tune any bucket and the naira follows instantly, always reconciling back to your income.</p>
+<p class="receipt-note"><a href="#bg-top">↑ Adjust income &amp; split</a></p>
+<p class="receipt-note" id="bg-mini" hidden></p>
 <div class="tgrid c3" style="margin-top:14px">
 {al.buckets.filter((b) => b.id !== "other").map((b) => (
 <div class="field"><label for={`al-${b.id}`}>{b.label} % of needs</label><input id={`al-${b.id}`} type="text" max="100" value={(b.share * 100).toFixed(0)} inputmode="decimal" data-al-bucket={b.id}></div>
@@ -83,6 +90,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ))}
 </div>
 <p class="receipt-note" id="al-warn" hidden></p>
+<p class="receipt-note" id="al-actuals" hidden></p>
 <p class="receipt-foot">Shares of needs · naira follows instantly</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
@@ -145,15 +153,33 @@ function render() {
   });
   const r2 = budgetAllocator(inc, np, wp, svp, shares);
   sfFig(t("al-needs"), ["bg-inc", "bg-needs"], nn(r2.needs));
+  /* F-A2-1 — the step-2 intro names live figures, never the seed's. sfFig
+     withholds them as "—" while the inputs are blank, exactly like the
+     receipt, so no ₦0 is ever printed in prose. */
+  sfFig(t("bg-step2-needs"), ["bg-inc", "bg-needs"], nn(r2.needs));
+  const rentAmt = r2.buckets.find((b) => b.id === "rent")?.amount ?? 0;
+  sfFig(t("bg-step2-rent"), ["bg-inc", "bg-needs", "al-rent"], nn(rentAmt));
   const shareSum = Object.values(shares).reduce((a, b) => a + b, 0);
   const planned = r2.needs * shareSum;
   /* Every clamped negative says so: -x is priced as ₦0 in income, splits and
      every share, so the rail names the rewrite instead of staying silent. */
   const alNeg = ["bg-inc", "bg-needs"].concat(shareIds).some((id) => pm((document.getElementById(id) as HTMLInputElement).value) < 0);
   const alNegSfx = alNeg ? " Negative entries are treated as ₦0." : "";
+  /* A field still wearing SAMPLE has not been touched; one wearing LAST USED
+     holds the visitor's own remembered number. Both are the spine's own
+     badges, read off the DOM — no new state kept here. */
+  const hasBadge = (id: string, attr: string) => {
+    const fi = document.getElementById(id);
+    const f = fi && (fi as HTMLElement).closest ? (fi as HTMLElement).closest(".field") : null;
+    return !!(f && (f as Element).hasAttribute(attr));
+  };
   if (r2.needs > 0 && planned > r2.needs) {
     t("al-warn").hidden = false;
-    t("al-warn").textContent = `Over by ${nn(planned - r2.needs)} — buckets add to ${(shareSum * 100).toFixed(0)}% of needs. Trim shares to 100% or less.` + alNegSfx;
+    /* F-A2-7 — a remembered tune must not read as a scold: when the overage
+       rides on LAST USED shares, the warn says so instead of greeting the
+       returner with a warning new visitors never see. The maths never moves. */
+    const memSfx = shareIds.some((id) => hasBadge(id, "data-r")) ? " Includes shares from your last visit — trim any bucket to fit." : "";
+    t("al-warn").textContent = `Over by ${nn(planned - r2.needs)} — buckets add to ${(shareSum * 100).toFixed(0)}% of needs. Trim shares to 100% or less.` + memSfx + alNegSfx;
   } else {
     t("al-warn").hidden = !alNeg;
     t("al-warn").textContent = alNeg ? "Negative entries are treated as ₦0." : "";
@@ -171,6 +197,19 @@ function render() {
     sfFig(amt, b.id === "other" ? ["bg-inc", "bg-needs"].concat(shareIds) : ["bg-inc", "bg-needs", "al-" + b.id], nn(b.amount));
     div.appendChild(lab); div.appendChild(amt); box.appendChild(div);
   }
+  /* F-A2-6 — over-100% must not swallow the residual: the engine (rightly,
+     untouched — it lives outside this file) omits "Other needs" at zero, so
+     the page re-states it here as the honest negative step 1 already prints.
+     Exactly-100% stays omitted: ₦0 of other is nothing to show. */
+  if (r2.needs > 0 && planned > r2.needs && !r2.buckets.some((b) => b.id === "other")) {
+    const div = document.createElement("div");
+    div.className = "receipt-row";
+    const lab = document.createElement("span"); lab.textContent = "Other needs";
+    const amt = document.createElement("b");
+    amt.setAttribute("data-al-amt", "other");
+    sfFig(amt, ["bg-inc", "bg-needs"].concat(shareIds), nn(r2.needs - planned));
+    div.appendChild(lab); div.appendChild(amt); box.appendChild(div);
+  }
   const empty = sfIsEmpty("50-30-20-budget-calculator", gv);
   sfEmpty(empty);
   /* F2 — the receipt sits below the fold at 390px, so a split change used to
@@ -185,9 +224,94 @@ function render() {
     live.hidden = false;
     live.textContent = `Plan now: ${nn(plan.needs)} needs · ${nn(plan.wants)} wants · ${nn(plan.savings)} savings`;
   }
+  /* F-A2-3 — the seed-actuals ambush: income or split typed, but the spends
+     still wear SAMPLE (ours, never entered). Name them before they paint the
+     first triple negative as the visitor's month. */
+  const sd = (id: string) => hasBadge(id, "data-sd");
+  const seedWarn = t("bg-seedwarn");
+  const planTouched = ["bg-inc", "bg-needs", "bg-wants", "bg-save"].some((id) => !sd(id));
+  /* Name exactly which spends are still ours: after the visitor types one real
+     figure, "the spends below" would smear their number with our example. */
+  const seedIds = ["bg-spn", "bg-spw", "bg-sps"].filter(sd);
+  if (!empty && planTouched && seedIds.length) {
+    seedWarn.hidden = false;
+    const nm = seedIds.map((id) => id === "bg-spn" ? "needs" : id === "bg-spw" ? "wants" : "savings").join(" and ");
+    seedWarn.textContent = seedIds.length === 3
+      ? "Heads up: the spends below are still our example, not yours — type what you really spent."
+      : `Heads up: the ${nm} ${seedIds.length > 1 ? "spends are" : "spend is"} still our example — type what you really spent.`;
+  } else { seedWarn.hidden = true; seedWarn.textContent = ""; }
+  /* F-A2-4 + MF-1 — a negative must say what now: name the overage and the
+     one honest action (trim the spend, or move the split). Step 2 plans from
+     the plan figure either way, so say that too. */
+  const wn = t("bg-whatnow");
+  const overNW: Array<{ name: string; over: number }> = [];
+  if (c.needs_remaining < 0) overNW.push({ name: "needs", over: -c.needs_remaining });
+  if (c.wants_remaining < 0) overNW.push({ name: "wants", over: -c.wants_remaining });
+  /* Savings reads opposite: remaining>0 is "still to save" (self-explanatory,
+     the seed's own story), remaining<0 is OVER-put — ahead of plan, not short
+     of it. Only the confusing sign gets the gloss, never a scold for saving. */
+  const savOver = c.savings_remaining < 0 ? -c.savings_remaining : 0;
+  if (!empty && (overNW.length || savOver > 0)) {
+    const bits: string[] = [];
+    if (overNW.length) {
+      const nm = overNW.map((o) => o.name).join(" and ");
+      const tot = overNW.reduce((a, o) => a + o.over, 0);
+      bits.push(`${nm} ${nn(tot)} over — spend less there or raise the ${nm} split % above`);
+    }
+    if (savOver > 0) bits.push(`savings ${nn(savOver)} over plan — ahead of it; leave it banked or move the split if needs run tight`);
+    wn.hidden = false;
+    wn.textContent = bits.join("; ") + ". Step 2 still itemises the plan figure, not the overspend.";
+  } else { wn.hidden = true; wn.textContent = ""; }
+  /* MF-6 — the both-steps mini plan: the step-1 figures restated where the
+     buckets are, so the lever and the result share one viewport. Same guard
+     as the live line: no figures on an empty page. */
+  const mini = t("bg-mini");
+  if (empty || !splitsSet) { mini.hidden = true; mini.textContent = ""; }
+  else {
+    mini.hidden = false;
+    const rentTxt = pmBlank(g("al-rent").value) ? "—" : nn(rentAmt);
+    mini.textContent = `Mini plan — needs ${nn(plan.needs)} · wants ${nn(plan.wants)} · savings ${nn(plan.savings)} · rent ${rentTxt} of needs`;
+  }
+  /* MF-4 — the actuals mirror: step 2 never itemises the overspend (it shares
+     out the plan), so it says the comparison aloud where the buckets are. */
+  const am = t("al-actuals");
+  if (!empty && !pmBlank(g("bg-spn").value)) {
+    const spent = Math.max(0, pm(g("bg-spn").value) || 0);
+    am.hidden = false;
+    am.textContent = spent > plan.needs
+      ? `You spent ${nn(spent)} vs ${nn(plan.needs)} plan on needs — ${nn(spent - plan.needs)} over. Tune the buckets below against the plan, then trim the spend above.`
+      : `You spent ${nn(spent)} vs ${nn(plan.needs)} plan on needs — within plan. The buckets below share out the plan figure.`;
+  } else { am.hidden = true; am.textContent = ""; }
+  /* MF-5 + F9 — the memory date, visible: the spine dates LAST USED only in a
+     hover title (no touch path), so the page reads the spine's own key and
+     prints the day. A copied plan goes stale on the next keystroke, so the
+     confirmation hides here too. */
+  t("bg-copied").hidden = true;
+  const md = t("bg-memdate");
+  let memTxt = "";
+  try {
+    const raw = localStorage.getItem("gwill-sf-50-30-20");
+    if (raw) {
+      const s = JSON.parse(raw);
+      if (s && s.t) {
+        const days = Math.floor((Date.now() - s.t) / 864e5);
+        const rel = days <= 0 ? "today" : days === 1 ? "yesterday" : days + " days ago";
+        const dst = new Date(s.t).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+        memTxt = `Last saved ${rel} (${dst}) — only LAST USED pills are yours.`;
+      }
+    }
+  } catch {}
+  if (memTxt && !empty) { md.hidden = false; md.textContent = memTxt; }
+  else { md.hidden = true; md.textContent = ""; }
 }
 ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"].forEach((id) => g(id).addEventListener("input", render));
 document.querySelectorAll("[data-al-bucket]").forEach((el) => el.addEventListener("input", render));
+/* BADGE SETTLE — the spine strips SAMPLE and writes memory on the document
+   bubble, AFTER the target-phase render above has already run. Badge-reading
+   lines (seedwarn, the remembered-warn suffix, the memory date) would sit one
+   keystroke late without this; the re-render is idempotent and writes nothing
+   the first pass did not already own. */
+document.addEventListener("input", () => setTimeout(render, 0));
 /* F3 — "Use this" writes the plan into actuals, collapsing Needs left to ₦0.
    The compare must survive the click: say what happened, and lift the note the
    moment the visitor types their real figure. render() never touches the note,
@@ -209,5 +333,36 @@ g("bg-spn").addEventListener("input", () => {
 });
 smartFields.register(TOOL_FIELDS["50-30-20-budget-calculator"]);
 sfBind("50-30-20-budget-calculator", gv);
+/* MF-7 — tap-a-row to compare: the receipt rows answer with the fields they
+   are derived from (the offer already lives at the Spent-on-needs field, so
+   the row takes the visitor to it). Existing behaviour only: scroll + focus,
+   the same focus that selects a SAMPLE field. */
+document.querySelectorAll(".receipt-row[data-goto]").forEach((row) => {
+  row.addEventListener("click", () => {
+    const id = (row as HTMLElement).dataset.goto as string;
+    const target = document.getElementById(id) as HTMLInputElement | null;
+    if (!target) return;
+    target.scrollIntoView({ behavior: "smooth", block: "center" });
+    target.focus({ preventScroll: true });
+  });
+});
+/* MF-5 — plan save: copy the live plan as one line. The "copied" word hides
+   on the next render (the figures it copied are stale by then). */
+const copyBtn = document.getElementById("bg-copy");
+if (copyBtn) copyBtn.addEventListener("click", async () => {
+  const i2 = Math.max(0, pm(g("bg-inc").value) || 0);
+  const p2 = budget503020(i2,
+    Math.max(0, pm(g("bg-needs").value) || 0) / 100,
+    Math.max(0, pm(g("bg-wants").value) || 0) / 100,
+    Math.max(0, pm(g("bg-save").value) || 0) / 100);
+  const summary = `My 50/30/20 plan (income ${nn(i2)}): needs ${nn(p2.needs)}, wants ${nn(p2.wants)}, savings ${nn(p2.savings)}.`;
+  const done = t("bg-copied");
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(summary);
+    else throw new Error("no clipboard");
+    done.textContent = " — copied.";
+  } catch { done.textContent = " — copy failed here; long-press the plan line above."; }
+  done.hidden = false;
+});
 render();
 </script>
