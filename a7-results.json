@@ -1,0 +1,1029 @@
+{
+  "timestamp": "2026-10-07T22:13:13.895Z",
+  "url": "http://localhost:8765/money-tools/50-30-20-budget-calculator/",
+  "viewport": "390x844",
+  "light": {
+    "theme": "light",
+    "e6": {
+      "trustBadges": {
+        "bg-inc": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "250000"
+        },
+        "bg-needs": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "50"
+        },
+        "bg-wants": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "30"
+        },
+        "bg-save": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "20"
+        },
+        "bg-spn": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "120000"
+        },
+        "bg-spw": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "65000"
+        },
+        "bg-sps": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "40000"
+        },
+        "al-rent": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "40"
+        },
+        "al-food": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "25"
+        },
+        "al-transport": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "15"
+        }
+      },
+      "copyButton": {
+        "text": "Copy example plan",
+        "whyText": " — cold, this copies our example.",
+        "whyDataTrust": "example"
+      },
+      "hintClass": {
+        "count": 4,
+        "texts": [
+          "Plan vs actual: leftover = income your splits didn't assign",
+          "Wants left = plan wants minus spent on wants",
+          "Savings left to save = plan savings minus put to savings",
+          "Other needs is whatever is left after the named shares"
+        ]
+      },
+      "resetLine": {
+        "text": "Reset wipes what you typed and restores our example — it cannot be undone."
+      }
+    },
+    "keystrokes": {
+      "totalFields": 12,
+      "step1Fields": 4,
+      "step1ActualsFields": 3,
+      "step2Fields": 5
+    },
+    "quickFill": {
+      "presetButtonsCount": 0,
+      "incomePresetsCount": 0,
+      "hasQuickFill": false
+    },
+    "thumbFlow": {
+      "inputs": [
+        {
+          "id": "gwill-search-input",
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "left": 0,
+          "hittable": false
+        },
+        {
+          "id": "bg-inc",
+          "width": 308,
+          "height": 51.59375,
+          "top": 497.359375,
+          "left": 41,
+          "labelText": "Monthly income ₦",
+          "hittable": true
+        },
+        {
+          "id": "bg-needs",
+          "width": 308,
+          "height": 51.59375,
+          "top": 586.546875,
+          "left": 41,
+          "labelText": "Needs %",
+          "hittable": true
+        },
+        {
+          "id": "bg-wants",
+          "width": 308,
+          "height": 51.59375,
+          "top": 675.734375,
+          "left": 41,
+          "labelText": "Wants %",
+          "hittable": true
+        },
+        {
+          "id": "bg-save",
+          "width": 308,
+          "height": 51.59375,
+          "top": 764.921875,
+          "left": 41,
+          "labelText": "Savings %",
+          "hittable": true
+        },
+        {
+          "id": "bg-spn",
+          "width": 308,
+          "height": 51.59375,
+          "top": 854.109375,
+          "left": 41,
+          "labelText": "Spent on needs ₦",
+          "hittable": true
+        },
+        {
+          "id": "bg-spw",
+          "width": 308,
+          "height": 51.59375,
+          "top": 943.296875,
+          "left": 41,
+          "labelText": "Spent on wants ₦",
+          "hittable": true
+        },
+        {
+          "id": "bg-sps",
+          "width": 308,
+          "height": 51.59375,
+          "top": 1032.484375,
+          "left": 41,
+          "labelText": "Put to savings ₦",
+          "hittable": true
+        },
+        {
+          "id": "al-rent",
+          "width": 308,
+          "height": 51.59375,
+          "top": 2134.328125,
+          "left": 41,
+          "labelText": "Rent / housing % of needs",
+          "hittable": true
+        },
+        {
+          "id": "al-food",
+          "width": 308,
+          "height": 51.59375,
+          "top": 2223.515625,
+          "left": 41,
+          "labelText": "Food & groceries % of needs",
+          "hittable": true
+        },
+        {
+          "id": "al-transport",
+          "width": 308,
+          "height": 51.59375,
+          "top": 2312.703125,
+          "left": 41,
+          "labelText": "Transport & fuel % of needs",
+          "hittable": true
+        },
+        {
+          "id": "al-data",
+          "width": 308,
+          "height": 51.59375,
+          "top": 2401.890625,
+          "left": 41,
+          "labelText": "Data, airtime & internet % of needs",
+          "hittable": true
+        },
+        {
+          "id": "al-utilities",
+          "width": 308,
+          "height": 51.59375,
+          "top": 2491.078125,
+          "left": 41,
+          "labelText": "Power, water & bills % of needs",
+          "hittable": true
+        }
+      ],
+      "buttons": [
+        {
+          "text": "System",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "System",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Light",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Dark",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "",
+          "width": 36,
+          "height": 36,
+          "hittable": false
+        },
+        {
+          "text": "System",
+          "width": 49,
+          "height": 28,
+          "hittable": false
+        },
+        {
+          "text": "System",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Light",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Dark",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "",
+          "width": 36,
+          "height": 36,
+          "hittable": false
+        },
+        {
+          "text": "✕",
+          "width": 36,
+          "height": 36,
+          "hittable": false
+        },
+        {
+          "text": "⌄",
+          "width": 32,
+          "height": 32,
+          "hittable": false
+        },
+        {
+          "text": "⌄",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "⌄",
+          "width": 32,
+          "height": 32,
+          "hittable": false
+        },
+        {
+          "text": "",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "✕",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Needs left ›₦5,000",
+          "width": 272,
+          "height": 33.75,
+          "hittable": false
+        },
+        {
+          "text": "Wants left ›₦10,000",
+          "width": 272,
+          "height": 33.75,
+          "hittable": false
+        },
+        {
+          "text": "Savings left to save ›₦10,000",
+          "width": 272,
+          "height": 33.75,
+          "hittable": false
+        },
+        {
+          "text": "Copy example plan",
+          "width": 142.203125,
+          "height": 30,
+          "hittable": false
+        },
+        {
+          "text": "Clear examples",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Reset",
+          "width": 63,
+          "height": 30,
+          "hittable": false
+        },
+        {
+          "text": "Notify me of new posts",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Install app",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Add to Home Screen",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Notify me of new posts",
+          "width": 234.46875,
+          "height": 40,
+          "hittable": false
+        },
+        {
+          "text": "Install app",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Add to Home Screen",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        }
+      ],
+      "issues": [
+        "Input gwill-search-input: 0x0px - below 44px",
+        "Button \"System\": 0x0px - below 44px",
+        "Button \"System\": 0x0px - below 44px",
+        "Button \"Light\": 0x0px - below 44px",
+        "Button \"Dark\": 0x0px - below 44px",
+        "Button \"\": 0x0px - below 44px",
+        "Button \"\": 36x36px - below 44px",
+        "Button \"System\": 49x28px - below 44px",
+        "Button \"System\": 0x0px - below 44px",
+        "Button \"Light\": 0x0px - below 44px",
+        "Button \"Dark\": 0x0px - below 44px",
+        "Button \"\": 36x36px - below 44px",
+        "Button \"✕\": 36x36px - below 44px",
+        "Button \"⌄\": 32x32px - below 44px",
+        "Button \"⌄\": 0x0px - below 44px",
+        "Button \"⌄\": 32x32px - below 44px",
+        "Button \"\": 0x0px - below 44px",
+        "Button \"✕\": 0x0px - below 44px",
+        "Button \"Needs left ›₦5,000\": 272x34px - below 44px",
+        "Button \"Wants left ›₦10,000\": 272x34px - below 44px",
+        "Button \"Savings left to save\": 272x34px - below 44px",
+        "Button \"Copy example plan\": 142x30px - below 44px",
+        "Button \"Clear examples\": 0x0px - below 44px",
+        "Button \"Reset\": 63x30px - below 44px",
+        "Button \"Notify me of new pos\": 0x0px - below 44px",
+        "Button \"Install app\": 0x0px - below 44px",
+        "Button \"Add to Home Screen\": 0x0px - below 44px",
+        "Button \"Notify me of new pos\": 234x40px - below 44px",
+        "Button \"Install app\": 0x0px - below 44px",
+        "Button \"Add to Home Screen\": 0x0px - below 44px"
+      ]
+    },
+    "autocomplete": {
+      "fields": [
+        {
+          "id": "gwill-search-input",
+          "type": "text",
+          "inputMode": null,
+          "autocomplete": "off",
+          "optimal": false
+        },
+        {
+          "id": "bg-inc",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "bg-needs",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "bg-wants",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "bg-save",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "bg-spn",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "bg-spw",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "bg-sps",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "al-rent",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "al-food",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "al-transport",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "al-data",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "al-utilities",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        }
+      ],
+      "hasInputModeDecimal": 12,
+      "missingInputMode": [
+        "gwill-search-input"
+      ]
+    }
+  },
+  "dark": {
+    "theme": "dark",
+    "e6": {
+      "trustBadges": {
+        "bg-inc": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "250000"
+        },
+        "bg-needs": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "50"
+        },
+        "bg-wants": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "30"
+        },
+        "bg-save": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "20"
+        },
+        "bg-spn": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "120000"
+        },
+        "bg-spw": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "65000"
+        },
+        "bg-sps": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "40000"
+        },
+        "al-rent": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "40"
+        },
+        "al-food": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "25"
+        },
+        "al-transport": {
+          "hasDataSd": false,
+          "hasDataR": false,
+          "value": "15"
+        }
+      },
+      "copyButton": {
+        "text": "Copy example plan",
+        "whyText": " — cold, this copies our example.",
+        "whyDataTrust": "example"
+      },
+      "hintClass": {
+        "count": 4,
+        "texts": [
+          "Plan vs actual: leftover = income your splits didn't assign",
+          "Wants left = plan wants minus spent on wants",
+          "Savings left to save = plan savings minus put to savings",
+          "Other needs is whatever is left after the named shares"
+        ]
+      },
+      "resetLine": {
+        "text": "Reset wipes what you typed and restores our example — it cannot be undone."
+      }
+    },
+    "keystrokes": {
+      "totalFields": 12,
+      "step1Fields": 4,
+      "step1ActualsFields": 3,
+      "step2Fields": 5
+    },
+    "quickFill": {
+      "presetButtonsCount": 0,
+      "incomePresetsCount": 0,
+      "hasQuickFill": false
+    },
+    "thumbFlow": {
+      "inputs": [
+        {
+          "id": "gwill-search-input",
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "left": 0,
+          "hittable": false
+        },
+        {
+          "id": "bg-inc",
+          "width": 308,
+          "height": 51.59375,
+          "top": 497.359375,
+          "left": 41,
+          "labelText": "Monthly income ₦",
+          "hittable": true
+        },
+        {
+          "id": "bg-needs",
+          "width": 308,
+          "height": 51.59375,
+          "top": 586.546875,
+          "left": 41,
+          "labelText": "Needs %",
+          "hittable": true
+        },
+        {
+          "id": "bg-wants",
+          "width": 308,
+          "height": 51.59375,
+          "top": 675.734375,
+          "left": 41,
+          "labelText": "Wants %",
+          "hittable": true
+        },
+        {
+          "id": "bg-save",
+          "width": 308,
+          "height": 51.59375,
+          "top": 764.921875,
+          "left": 41,
+          "labelText": "Savings %",
+          "hittable": true
+        },
+        {
+          "id": "bg-spn",
+          "width": 308,
+          "height": 51.59375,
+          "top": 854.109375,
+          "left": 41,
+          "labelText": "Spent on needs ₦",
+          "hittable": true
+        },
+        {
+          "id": "bg-spw",
+          "width": 308,
+          "height": 51.59375,
+          "top": 943.296875,
+          "left": 41,
+          "labelText": "Spent on wants ₦",
+          "hittable": true
+        },
+        {
+          "id": "bg-sps",
+          "width": 308,
+          "height": 51.59375,
+          "top": 1032.484375,
+          "left": 41,
+          "labelText": "Put to savings ₦",
+          "hittable": true
+        },
+        {
+          "id": "al-rent",
+          "width": 308,
+          "height": 51.59375,
+          "top": 2136.328125,
+          "left": 41,
+          "labelText": "Rent / housing % of needs",
+          "hittable": true
+        },
+        {
+          "id": "al-food",
+          "width": 308,
+          "height": 51.59375,
+          "top": 2225.515625,
+          "left": 41,
+          "labelText": "Food & groceries % of needs",
+          "hittable": true
+        },
+        {
+          "id": "al-transport",
+          "width": 308,
+          "height": 51.59375,
+          "top": 2314.703125,
+          "left": 41,
+          "labelText": "Transport & fuel % of needs",
+          "hittable": true
+        },
+        {
+          "id": "al-data",
+          "width": 308,
+          "height": 51.59375,
+          "top": 2403.890625,
+          "left": 41,
+          "labelText": "Data, airtime & internet % of needs",
+          "hittable": true
+        },
+        {
+          "id": "al-utilities",
+          "width": 308,
+          "height": 51.59375,
+          "top": 2493.078125,
+          "left": 41,
+          "labelText": "Power, water & bills % of needs",
+          "hittable": true
+        }
+      ],
+      "buttons": [
+        {
+          "text": "System",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "System",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Light",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Dark",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "",
+          "width": 36,
+          "height": 36,
+          "hittable": false
+        },
+        {
+          "text": "System",
+          "width": 49,
+          "height": 28,
+          "hittable": false
+        },
+        {
+          "text": "System",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Light",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Dark",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "",
+          "width": 36,
+          "height": 36,
+          "hittable": false
+        },
+        {
+          "text": "✕",
+          "width": 36,
+          "height": 36,
+          "hittable": false
+        },
+        {
+          "text": "⌄",
+          "width": 32,
+          "height": 32,
+          "hittable": false
+        },
+        {
+          "text": "⌄",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "⌄",
+          "width": 32,
+          "height": 32,
+          "hittable": false
+        },
+        {
+          "text": "",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "✕",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Needs left ›₦5,000",
+          "width": 270,
+          "height": 33.75,
+          "hittable": false
+        },
+        {
+          "text": "Wants left ›₦10,000",
+          "width": 270,
+          "height": 33.75,
+          "hittable": false
+        },
+        {
+          "text": "Savings left to save ›₦10,000",
+          "width": 270,
+          "height": 33.75,
+          "hittable": false
+        },
+        {
+          "text": "Copy example plan",
+          "width": 142.203125,
+          "height": 30,
+          "hittable": false
+        },
+        {
+          "text": "Clear examples",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Reset",
+          "width": 63,
+          "height": 30,
+          "hittable": false
+        },
+        {
+          "text": "Notify me of new posts",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Install app",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Add to Home Screen",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Notify me of new posts",
+          "width": 234.46875,
+          "height": 40,
+          "hittable": false
+        },
+        {
+          "text": "Install app",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        },
+        {
+          "text": "Add to Home Screen",
+          "width": 0,
+          "height": 0,
+          "hittable": false
+        }
+      ],
+      "issues": [
+        "Input gwill-search-input: 0x0px - below 44px",
+        "Button \"System\": 0x0px - below 44px",
+        "Button \"System\": 0x0px - below 44px",
+        "Button \"Light\": 0x0px - below 44px",
+        "Button \"Dark\": 0x0px - below 44px",
+        "Button \"\": 0x0px - below 44px",
+        "Button \"\": 36x36px - below 44px",
+        "Button \"System\": 49x28px - below 44px",
+        "Button \"System\": 0x0px - below 44px",
+        "Button \"Light\": 0x0px - below 44px",
+        "Button \"Dark\": 0x0px - below 44px",
+        "Button \"\": 36x36px - below 44px",
+        "Button \"✕\": 36x36px - below 44px",
+        "Button \"⌄\": 32x32px - below 44px",
+        "Button \"⌄\": 0x0px - below 44px",
+        "Button \"⌄\": 32x32px - below 44px",
+        "Button \"\": 0x0px - below 44px",
+        "Button \"✕\": 0x0px - below 44px",
+        "Button \"Needs left ›₦5,000\": 270x34px - below 44px",
+        "Button \"Wants left ›₦10,000\": 270x34px - below 44px",
+        "Button \"Savings left to save\": 270x34px - below 44px",
+        "Button \"Copy example plan\": 142x30px - below 44px",
+        "Button \"Clear examples\": 0x0px - below 44px",
+        "Button \"Reset\": 63x30px - below 44px",
+        "Button \"Notify me of new pos\": 0x0px - below 44px",
+        "Button \"Install app\": 0x0px - below 44px",
+        "Button \"Add to Home Screen\": 0x0px - below 44px",
+        "Button \"Notify me of new pos\": 234x40px - below 44px",
+        "Button \"Install app\": 0x0px - below 44px",
+        "Button \"Add to Home Screen\": 0x0px - below 44px"
+      ]
+    },
+    "autocomplete": {
+      "fields": [
+        {
+          "id": "gwill-search-input",
+          "type": "text",
+          "inputMode": null,
+          "autocomplete": "off",
+          "optimal": false
+        },
+        {
+          "id": "bg-inc",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "bg-needs",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "bg-wants",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "bg-save",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "bg-spn",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "bg-spw",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "bg-sps",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "al-rent",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "al-food",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "al-transport",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "al-data",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        },
+        {
+          "id": "al-utilities",
+          "type": "text",
+          "inputMode": "decimal",
+          "autocomplete": null,
+          "optimal": true
+        }
+      ],
+      "hasInputModeDecimal": 12,
+      "missingInputMode": [
+        "gwill-search-input"
+      ]
+    }
+  }
+}
