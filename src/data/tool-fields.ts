@@ -216,17 +216,82 @@ export const SF_DASH = "—";
    captured dash on its way out of the empty state; it must not mistake a
    deliberate dash for a stale one and put an old number back under it. */
 const NO = "data-sf-no";
-export function sfFig(el: HTMLElement | null, deps: readonly string[], real: string): void {
+
+/* Trust badge vocabulary — mirrors ToolShell's .sd badge grammar.
+   data-trust="example"   → gold pill "Example"       (cold, server seed)
+   data-trust="computed"  → neutral pill "Computed"   (user-typed deps)
+   data-trust="last-used" → neutral pill "Last used"  (restored from memory)
+   data-trust="user"      → neutral pill "Yours"      (all deps user-typed) */
+export type TrustKind = "example" | "computed" | "last-used" | "user";
+const TRUST_LABEL: Record<TrustKind, string> = {
+  example: "Example",
+  computed: "Computed",
+  "last-used": "Last used",
+  user: "Yours",
+};
+
+/* Injects a trust pill next to the figure. The pill is a sibling span so it
+   never interferes with the figure's own textContent (which render() rewrites
+   on every input). The pill is removed/replaced on each call — no stale badges. */
+function injectTrustBadge(el: HTMLElement, kind: TrustKind): void {
   if (!el) return;
-  if (deps.length && deps.some(isBlank)) {
+  const existing = el.parentElement?.querySelector(".trust-badge[data-trust]");
+  if (existing) existing.remove();
+  if (kind === "example" || kind === "computed" || kind === "last-used" || kind === "user") {
+    const pill = document.createElement("span");
+    pill.className = "trust-badge";
+    pill.setAttribute("data-trust", kind);
+    pill.textContent = TRUST_LABEL[kind];
+    el.parentElement?.appendChild(pill);
+  }
+}
+
+/* Determines trust kind for a figure based on its dependency fields.
+   - If page is empty (sfIsEmpty would be true) → "example"
+   - Else if ANY dep has data-sd (SAMPLE) → "example"
+   - Else if ANY dep has data-r (LAST USED) → "last-used"
+   - Else if ALL deps have values (user-typed) → "user"
+   - Else → "computed" (mixed: some user, some blank but not sample) */
+function computeTrustKind(deps: readonly string[], empty: boolean): TrustKind {
+  if (empty) return "example";
+  let hasSample = false;
+  let hasLastUsed = false;
+  let allUser = true;
+  for (const id of deps) {
+    const field = document.getElementById(id);
+    const wrap = field?.closest(".field");
+    if (!wrap) continue;
+    if (wrap.hasAttribute("data-sd")) { hasSample = true; allUser = false; }
+    else if (wrap.hasAttribute("data-r")) { hasLastUsed = true; allUser = false; }
+    else if (field && field.value.trim() === "") { allUser = false; }
+  }
+  if (hasSample) return "example";
+  if (hasLastUsed) return "last-used";
+  if (allUser && deps.length > 0) return "user";
+  return "computed";
+}
+
+export function sfFig(el: HTMLElement | null, deps: readonly string[], real: string, trust?: TrustKind | false): void {
+  if (!el) return;
+  const empty = deps.length && deps.some(isBlank);
+  if (empty) {
     el.textContent = SF_DASH;
     el.setAttribute(NO, "");
     el.style.color = "var(--text-dim)";
-    return;
+    /* Withheld figures get no trust badge — they show "—" not a value. */
+    const existing = el.parentElement?.querySelector(".trust-badge[data-trust]");
+    if (existing) existing.remove();
+  } else {
+    el.textContent = real;
+    el.removeAttribute(NO);
+    el.style.color = "";
+    /* Trust badge injection — opt-in via fourth arg, or auto-compute when
+       omitted (trust === undefined). Pass trust=false to suppress. */
+    if (trust !== false) {
+      const kind = trust ?? computeTrustKind(deps, empty);
+      injectTrustBadge(el, kind);
+    }
   }
-  el.textContent = real;
-  el.removeAttribute(NO);
-  el.style.color = "";
 }
 
 /* The spine's clearExamples() empties the receipt AFTER it dispatches the

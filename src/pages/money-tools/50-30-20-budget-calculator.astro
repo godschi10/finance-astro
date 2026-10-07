@@ -68,12 +68,12 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row" data-goto="bg-sps" tabindex="0" role="button" style="cursor:pointer" title="See the field behind this figure"><span>Savings left to save <span aria-hidden="true">›</span></span><b id="bg-rs">₦{n(chk.savings_remaining)}</b></div>
 <p class="receipt-note" id="bg-pasted" hidden></p>
 <p class="receipt-note" id="bg-whatnow" hidden></p>
-<p class="receipt-foot">Plan vs actual: leftover = income your splits didn't assign</p>
+<p class="receipt-foot hint">Plan vs actual: leftover = income your splits didn't assign</p>
 <p class="receipt-foot hint">Wants left = plan wants minus spent on wants</p>
 <p class="receipt-foot hint">Savings left to save = plan savings minus put to savings</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
-<p class="receipt-note"><a href="#step2">See where the needs money goes ↓</a> · <button type="button" class="btn b-ghost b-sm" id="bg-copy">Copy plan summary</button><span id="bg-copywhy"> — cold, this copies our example.</span><span id="bg-copied" hidden> — copied.</span></p>
+<p class="receipt-note"><a href="#step2">See where the needs money goes ↓</a> · <button type="button" class="btn b-ghost b-sm" id="bg-copy">Copy example plan</button><span id="bg-copywhy" data-trust="example"> — cold, this copies our example.</span><span id="bg-copied" hidden> — copied.</span></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <h3 id="step2">Step 2 — where the needs money goes</h3>
 <p>One tool, one journey. This is the plan's needs figure from step 1 — the same income, the same split — itemised into real Nigerian lines: rent, food, transport, data, bills. Knowing you should spend <span id="bg-step2-needs">₦{n(seed.needs)}</span> on needs is useful; knowing rent takes about <span id="bg-step2-rent">₦{n(seedRent)}</span> of it is actionable. The shares below are indicative starting points, not laws — tune any bucket and the naira follows instantly, always reconciling back to your income.</p>
@@ -336,9 +336,30 @@ function render() {
      span stands down, so it never mislabels a "My plan" copy. Empty pages
      refuse copies, so the span waits there too. */
   const cwhy = document.getElementById("bg-copywhy");
-  if (cwhy) {
+  const copyBtn = document.getElementById("bg-copy");
+  if (cwhy && copyBtn) {
     const typedFld = (id: string) => !hasBadge(id, "data-sd") && !pmBlank(g(id).value);
-    cwhy.hidden = empty || ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"].every(typedFld);
+    const allTyped = ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"].every(typedFld);
+    const planTyped = ["bg-inc", "bg-needs", "bg-wants", "bg-save"].every(typedFld);
+    if (empty) {
+      cwhy.hidden = false;
+      cwhy.textContent = " — cold, this copies our example.";
+      cwhy.setAttribute("data-trust", "example");
+      copyBtn.textContent = "Copy example plan";
+    } else if (allTyped) {
+      cwhy.hidden = true;
+      copyBtn.textContent = "Copy my plan";
+    } else if (planTyped) {
+      cwhy.hidden = false;
+      cwhy.textContent = " — copies the example plan (your splits, our spends).";
+      cwhy.setAttribute("data-trust", "computed");
+      copyBtn.textContent = "Copy plan summary";
+    } else {
+      cwhy.hidden = false;
+      cwhy.textContent = " — cold, this copies our example.";
+      cwhy.setAttribute("data-trust", "example");
+      copyBtn.textContent = "Copy example plan";
+    }
   }
   /* MF-4 — the actuals mirror: step 2 never itemises the overspend (it shares
      out the plan), so it says the comparison aloud where the buckets are.
@@ -472,7 +493,7 @@ if (copyBtn) copyBtn.addEventListener("click", async () => {
     Math.max(0, pm(g("bg-save").value) || 0) / 100);
   const summary = allTyped
     ? `My 50/30/20 plan (income ${nn(i2)}): needs ${nn(p2.needs)}, wants ${nn(p2.wants)}, savings ${nn(p2.savings)}.`
-    : `Our 50/30/20 example (income ${nn(i2)}): needs ${nn(p2.needs)}, wants ${nn(p2.wants)}, savings ${nn(p2.savings)}. Type your own numbers to make it yours.`;
+    : `EXAMPLE: Our 50/30/20 example (income ${nn(i2)}): needs ${nn(p2.needs)}, wants ${nn(p2.wants)}, savings ${nn(p2.savings)}. Type your own numbers to make it yours.`;
   try {
     if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(summary);
     else throw new Error("no clipboard");

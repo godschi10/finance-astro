@@ -1,6 +1,6 @@
 {
   "name": "finance-astro",
-  "version": "0.7.31",
+  "version": "0.7.32",
   "type": "module",
   "scripts": {
     "build": "node scripts/gen-og.mjs && node scripts/fetch-snapshot.mjs && astro build",
@@ -17,7 +17,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "esbuild": "^0.27.7",
-    "playwright": "^1.63.0",
+    "playwright": "^1.64.0",
     "postcss": "^8.5.28",
     "typescript": "^5.9.3",
     "ws": "^8.22.0"
