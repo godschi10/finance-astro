@@ -1,4 +1,4 @@
-/* tool-manifest.ts — ONE list of the sixteen money tools (v0.7.21 leg D2).
+/* tool-manifest.ts — ONE list of the fifteen money tools (v0.7.21 leg D2; 16→15 on the 2026-10-07 merge below).
  *
  * WHY A SEPARATE FILE AND NOT tool-fields.ts: tool-fields.ts imports
  * ../scripts/smart-fields.js, which touches `document` at MODULE SCOPE and
@@ -16,7 +16,7 @@
  *
  * ── SCOPE: identity + navigation + share-card. NOT the copy. ─────────────────
  * Measured across the sixteen <ToolShell> blocks: 250 lines total. Exactly two
- * of the sixteen props are pure IDENTITY — `slug` (== the page filename) and
+ * of those props are pure IDENTITY — `slug` (== the page filename) and
  * `ogImage` (url `tool-${slug}.png`, 1200x630, alt == the hero `tool`, all 16
  * identical). The other 207 lines are page-level SEO copy ported from the live
  * WordPress template with its citations intact: title, description, lede,
@@ -43,24 +43,17 @@
  * THE ORDER BELOW IS THE HUB'S PRINT ORDER (page-tools.php template order) and
  * is part of the port contract — do not sort it.
  *
- * ── TWO ENTRIES ARE DELIBERATELY NOT VERBATIM (King's report, 2026-10-05) ────
- * `50-30-20-budget-calculator` and `budget-allocator` shipped on the hub with
- * the SAME emoji (🧮) and the SAME gradient (#fef9c3,#fde047), so on a phone the
- * pair read as one calculator printed twice. They are not duplicates:
- *   - 50/30/20  = the SPLITTER. Three buckets (needs/wants/savings) plus a
- *                 plan-vs-actual check. Its lede: "Half for needs, a third for
- *                 wants, a fifth for future-you."
- *   - allocator = the BREAKER-DOWN. Takes the NEEDS HALF and itemises it into
- *                 real naira lines (rent, food, transport, data, bills). Its
- *                 lede: "The needs half, itemized for real Nigerian spending."
- * So the divergence is presentation only, and the fix names the sequence
- * instead of the overlap: 🧮 + yellow stays with the rule itself; the allocator
- * takes 📋 + orange (#ffedd5,#fdba74, the same Tailwind 100->300 pair shape as
- * every other tile) and both blurbs now lead with First: / Second:.
- * The allocator's `title` still says 50/30/20 and still reads apologetic — but
- * it is PINNED outside this file: budget-allocator.astro passes the identical
- * string as its `crumb`, so changing only this row would make the hub card and
- * the page breadcrumb disagree. Left as-is, reported for a joint change.
+ * ── MERGE 2026-10-07 (King's order: "2" MERGE) ─────────────────────────
+ * `50-30-20-budget-calculator` and `budget-allocator` used to ship on the hub
+ * as a pair ("First: split…" / "Second: break the needs half…" — that wording
+ * itself was the 2026-10-05 fix for the pair reading as one calculator printed
+ * twice: 🧮 + yellow stayed with the rule, the allocator took 📋 + orange).
+ * They are one tool now: the allocator's needs-half buckets (rent, food,
+ * transport, data, bills) live as STEP 2 inside the 50/30/20 page, fed by the
+ * plan's needs figure (income × needs%), and the old allocator URL is a
+ * pointer (meta-refresh + canonical + noindex, no duplicate content). So the
+ * allocator row below is GONE and the 50/30/20 row owns both steps — one
+ * journey, not "First / Second" pages.
  *
  * NOT here, by design: `amount` and the 79 `[amount].astro` routes. That family
  * has ONE shared share card (tool-amount.png) for every slug and is registered
@@ -92,8 +85,7 @@ export const TOOL_MANIFEST: ToolEntry[] = [
   { slug: "compound-interest-calculator", tool: "Compound Interest Calculator", title: "Compound Interest Calculator", emoji: "📊", grad: "#e0f2fe,#bae6fd", desc: "See how your savings grow with compound interest, project your balance year by year." },
   { slug: "inflation-savings-calculator", tool: "Inflation-Adjusted Savings Calculator", title: "Inflation Savings Calculator", emoji: "🔥", grad: "#fee2e2,#fecaca", desc: "See what inflation really does to your savings goal, and how much more you must save each month." },
   { slug: "gross-to-net-calculator", tool: "Gross to Net Calculator", title: "Gross to Net Calculator", emoji: "💰", grad: "#ccfbf1,#99f6e4", desc: "Start from the take-home pay you want and find the gross salary you need, under NTA 2025." },
-  { slug: "50-30-20-budget-calculator", tool: "50/30/20 Budget Calculator", title: "50/30/20 Budget Calculator", emoji: "🧮", grad: "#fef9c3,#fde047", desc: "First: split your take-home pay into needs, wants and savings with the 50/30/20 rule, exact naira for each. Next: break the needs half into naira lines." },
-  { slug: "budget-allocator", tool: "Split Bills / Budget Allocator", title: "Budget Allocator (50/30/20 in Naira)", emoji: "📋", grad: "#ffedd5,#fdba74", desc: "Second: break the needs half of the 50/30/20 split into real naira lines — rent, food, transport, data, bills — with every share tunable." },
+  { slug: "50-30-20-budget-calculator", tool: "50/30/20 Budget Calculator", title: "50/30/20 Budget Calculator", emoji: "🧮", grad: "#fef9c3,#fde047", desc: "Split your take-home pay into needs, wants and savings, check real spending against the plan — then break the needs half into rent, food, transport, data and bills. Two steps, one page." },
   { slug: "naira-value-calculator", tool: "Naira Value Calculator", title: "Naira Value Calculator (Inflation / Depreciation)", emoji: "💸", grad: "#fef9c3,#fde047", desc: "What is ₦1M today really worth in 5 years? See how inflation erodes the naira, and what future money is worth today." },
   { slug: "crypto-profit-calculator", tool: "Crypto Profit Calculator", title: "Crypto Profit Calculator (Naira, P2P-aware)", emoji: "🪙", grad: "#fef9c3,#fde047", desc: "Work out the real naira profit on a crypto trade, with the P2P buy/sell spread shown as its own cost." },
   { slug: "dividend-calculator", tool: "Dividend & ROI Estimator", title: "Dividend / ROI Estimator (Nigerian Stocks, NGX)", emoji: "📈", grad: "#fef9c3,#fde047", desc: "Project the total return of a Nigerian dividend stock, with the DRIP reinvestment effect shown year by year, in naira." },
@@ -108,7 +100,7 @@ export const TOOL_BY_SLUG: Record<string, ToolEntry> = Object.fromEntries(
   TOOL_MANIFEST.map((t) => [t.slug, t])
 );
 
-/** The sixteen slugs, hub order. */
+/** The fifteen slugs, hub order. */
 export const TOOL_SLUGS: string[] = TOOL_MANIFEST.map((t) => t.slug);
 
 export interface OgCard {
@@ -121,9 +113,9 @@ export interface OgCard {
 /* The share card, derived. scripts/gen-og.mjs emits one PNG per entry at
    `tool-<slug>.png`, 1200x630 (og-card.mjs), so the URL is a function of the
    slug and never needs to be written by hand again. The alt is the hero H1 —
-   verified equal to the hand-written alt on all sixteen pages, so dropping
+   verified equal to the hand-written alt on every tool page, so dropping
    the prop changes no served byte.
-   Returns null for a slug that is not one of the sixteen (the amount family),
+   Returns null for a slug that is not one of the fifteen (the amount family),
    which is what keeps `[amount].astro` on its own shared card. */
 export function ogCardFor(slug: string): OgCard | null {
   const t = TOOL_BY_SLUG[slug];

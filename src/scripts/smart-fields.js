@@ -208,7 +208,14 @@ function mark(f, attr, text, title) {
 function save() {
   if (!TOOL || resetting) return; // during a reset, silence is the contract
   const v = {};
-  Object.keys(MEM).forEach((id) => { const s = MEM[id].value; if (s !== "" && !DERIVED.has(id)) v[id] = s; });
+  /* A1-F4 — an untouched seed is OURS, never memory. save() used to persist
+     ANY non-empty remembered id, so typing into one field stored all six
+     untouched seeds with it, and the next visit wore them all as LAST USED —
+     the visitor's own numbers indistinguishable from our example. A field that
+     still wears its SAMPLE badge has not been touched, so it is skipped: only
+     what the visitor actually entered (badge gone, value present, not derived)
+     is ever remembered. */
+  Object.keys(MEM).forEach((id) => { const w = wrap(id); if (w && w.hasAttribute("data-sd")) return; const s = MEM[id].value; if (s !== "" && !DERIVED.has(id)) v[id] = s; });
   try {
     if (Object.keys(v).length) localStorage.setItem(KEY(TOOL), JSON.stringify({ t: Date.now(), v }));
     else localStorage.removeItem(KEY(TOOL));

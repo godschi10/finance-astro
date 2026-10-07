@@ -88,7 +88,6 @@ export const TOOLS = [
   { slug: "naira-value-calculator", name: "Naira Value", desc: "What your naira still buys after N years of inflation — and what standing still costs." },
   { slug: "inflation-savings-calculator", name: "Inflation Savings", desc: "Inflate the goal first, then price nominal vs real monthly. The gap is the insight." },
   { slug: "50-30-20-budget-calculator", name: "50/30/20 Budget", desc: "Split any income into needs, wants, savings — then check real spending against plan." },
-  { slug: "budget-allocator", name: "Budget Allocator", desc: "The needs half itemized: rent, food, transport, data, bills — shares you can tune." },
   { slug: "loan-repayment-calculator", name: "Loan Repayment", desc: "Lender quote in, real cost out: installment, total interest, true effective APR." },
   { slug: "emergency-fund-calculator", name: "Emergency Fund", desc: "Runway in months, inflation-adjusted target, and the saving that closes the gap." },
   { slug: "dividend-calculator", name: "Dividend / ROI Estimator", desc: "NGX shares year by year: DRIP vs cash, yield, gain, and CAGR." },

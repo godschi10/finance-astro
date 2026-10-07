@@ -1,6 +1,6 @@
 /* tool-fields.ts — the per-tool smart-fields table (v0.7.20 leg C).
  *
- * ONE table, sixteen tools plus the amount family. Every money page declares
+ * ONE table, fifteen tools plus the amount family. Every money page declares
  * what is OURS (seeds), what we can honestly DERIVE (offers), what is TRUE
  * ABOUT THE WORLD with a live citation (context), and what may be REMEMBERED.
  * The page itself keeps its own maths; this file only describes the fields.
@@ -18,8 +18,8 @@
  * Derive ₦ from %. Never % from ₦. Never auto-solve the 50/30/20 split. The
  * research refuses the split because the three % seeds sum to exactly 100, so a
  * derive-on-load fires before the user touches anything. Everywhere else on
- * these sixteen pages a % input does NOT yield an amount that belongs in a
- * field: the allocator's bucket amounts are already in its receipt, the
+ * these fifteen pages a % input does NOT yield an amount that belongs in a
+ * field: the step-2 bucket amounts are already in the page's own receipt, the
  * inflation tools' inflated goals are not the goal-in-today's-naira the field
  * holds, and the emergency target would claim the visitor has already saved the
  * finish line. Those are echoes or nothing — not offers. Shipping one offer per
@@ -339,16 +339,21 @@ function paintEmpty(isEmpty: boolean): void {
 
 export const TOOL_FIELDS: Record<string, SfTool> = {
 
-  /* 1 — 50/30/20. The flagship: seven worked examples, all marked, all
+  /* 1 — 50/30/20. The flagship: two steps on one page. Seven step-1 worked
+     examples plus the five step-2 needs-share seeds, all marked, all
      removable in one tap. bg-save is the user's own split and is NEVER offered
      a value (research §7.2). */
   "50-30-20-budget-calculator": {
     tool: "50-30-20",
-    seeds: ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"],
+    seeds: ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps", "al-rent", "al-food", "al-transport", "al-data", "al-utilities"],
     derive: [{
       /* The one blessed offer: ₦ from %. Value is budget503020(...).needs —
          already computed by the page's own render(), no new maths. Hidden
-         until income or a split % is touched, so it never fires on load.
+         until income, a split % OR an actuals figure is touched, so it never
+         fires on load — and so a visitor who types their needs budget into
+         `Spent on needs` meets the teaching sentence instead of silence
+         (A1-F1: the hideUntil gate used to exclude the actuals fields, which
+         is exactly the path where R-history says users get lost).
          `needs` names the two ids the OFFERED NUMBER depends on — income ×
          needs% — and nothing else: wants% and savings% do not enter
          plan.needs, so requiring them would withhold a figure that is already
@@ -356,7 +361,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
          is what stops pm("") → 0% from publishing a ₦0 nobody entered. */
       field: "bg-spn",
       needs: ["bg-inc", "bg-needs"],
-      hideUntil: ["bg-inc", "bg-needs", "bg-wants", "bg-save"],
+      hideUntil: ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"],
       text: (): string => {
         const plan = budget503020(
           pm(gv("bg-inc")), pm(gv("bg-needs")) / 100, pm(gv("bg-wants")) / 100, pm(gv("bg-save")) / 100);
@@ -371,29 +376,11 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
       src: "Guardian · May 2026",
       href: "https://guardian.ng/nigerian/what-is-the-average-salary-in-nigeria/",
     }],
-    remember: ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"],
-    required: ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"],
+    remember: ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps", "al-rent", "al-food", "al-transport", "al-data", "al-utilities"],
+    required: ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps", "al-rent", "al-food", "al-transport", "al-data", "al-utilities"],
   },
 
-  /* 2 — budget allocator. The five bucket shares are our indicative Nigerian
-     starting points (the page's own copy says so), so all five are marked;
-     deriving % from the ₦ they imply is exactly what the direction law
-     forbids, so the receipt carries those naira and the fields carry nothing. */
-  "budget-allocator": {
-    tool: "budget-allocator",
-    seeds: ["al-inc", "al-rent", "al-food", "al-transport", "al-data", "al-utilities"],
-    derive: [],
-    context: [{
-      field: "al-inc",
-      text: "Median Nigerian pay is roughly ₦120k–₦150k a month, and this site's worked example sits above it — a scenario, not your salary.",
-      src: "Guardian · May 2026",
-      href: "https://guardian.ng/nigerian/what-is-the-average-salary-in-nigeria/",
-    }],
-    remember: ["al-inc", "al-rent", "al-food", "al-transport", "al-data", "al-utilities"],
-    required: ["al-inc", "al-rent", "al-food", "al-transport", "al-data", "al-utilities"],
-  },
-
-  /* 3 — salary tax. Gross is a seed; the four reliefs are ₦0 blanks and stay
+  /* 2 — salary tax. Gross is a seed; the four reliefs are ₦0 blanks and stay
      plain. Gross NEVER restores (§2g) and neither do the reliefs. */
   "salary-tax-calculator": {
     tool: "salary-tax",
@@ -411,7 +398,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["st-gross", "st-pension"],
   },
 
-  /* 4 — gross to net. Same shape as salary tax, and the same refusals: no
+  /* 3 — gross to net. Same shape as salary tax, and the same refusals: no
      offer (₦70,000 is a GROSS, this field is a take-home) and no pension line
      without a citation. */
   "gross-to-net-calculator": {
@@ -423,7 +410,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["gn-net", "gn-pen"],
   },
 
-  /* 5 — loan repayment. The design wanted the quoted rate left blank so the
+  /* 4 — loan repayment. The design wanted the quoted rate left blank so the
      visitor pastes their own; emptying it would change the seed and therefore
      the receipt, which this leg is forbidden to do. So the rate is marked
      SAMPLE instead — strictly more honest than shipping it unmarked. */
@@ -436,7 +423,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["ln-amt", "ln-tenor", "ln-rate"],
   },
 
-  /* 6 — emergency fund. All five fields carry our worked example, including
+  /* 5 — emergency fund. All five fields carry our worked example, including
      the 6-month cover and the 20% inflation band, which is disclosed below
      rather than left as an unexplained constant. */
   "emergency-fund-calculator": {
@@ -453,7 +440,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["em-ess", "em-saved", "em-mo", "em-cover", "em-infl"],
   },
 
-  /* 7 — savings goal. */
+  /* 6 — savings goal. */
   "savings-goal-calculator": {
     tool: "savings-goal",
     seeds: ["sg-target", "sg-cur", "sg-rate", "sg-mo"],
@@ -463,7 +450,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["sg-target", "sg-cur", "sg-rate", "sg-mo"],
   },
 
-  /* 8 — compound interest. Monthly is the default frequency; principal,
+  /* 7 — compound interest. Monthly is the default frequency; principal,
      deposit, rate and years are all our worked example. */
   "compound-interest-calculator": {
     tool: "compound-interest",
@@ -474,7 +461,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["ci-prin", "ci-dep", "ci-rate", "ci-yrs"],
   },
 
-  /* 9 — inflation savings. Same disclosed 20% band as emergency fund. */
+  /* 8 — inflation savings. Same disclosed 20% band as emergency fund. */
   "inflation-savings-calculator": {
     tool: "inflation-savings",
     seeds: ["is-target", "is-cur", "is-rate", "is-infl", "is-yrs"],
@@ -489,7 +476,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["is-target", "is-cur", "is-rate", "is-infl", "is-yrs"],
   },
 
-  /* 10 — naira value, three sub-tools sharing one inflation rate and horizon. */
+  /* 9 — naira value, three sub-tools sharing one inflation rate and horizon. */
   "naira-value-calculator": {
     tool: "naira-value",
     seeds: ["nv-val", "nv-infl", "nv-yrs", "nv-pv", "nv-tgt", "nv-cur", "nv-ret"],
@@ -504,7 +491,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["nv-val", "nv-infl", "nv-yrs", "nv-pv", "nv-tgt", "nv-cur", "nv-ret"],
   },
 
-  /* 11 — currency converter. The pair is remembered because the currency you
+  /* 10 — currency converter. The pair is remembered because the currency you
      last converted is yours, not ours; the seeded amount is our example. */
   "currency-converter": {
     tool: "currency-converter",
@@ -515,7 +502,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["cc-amt"],
   },
 
-  /* 12 — transfer comparator. Same reasoning as the converter: direction and
+  /* 11 — transfer comparator. Same reasoning as the converter: direction and
      send currency are remembered, the seeded amount is marked as ours. */
   "money-transfer-comparator": {
     tool: "money-transfer-comparator",
@@ -526,7 +513,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["tc-amt"],
   },
 
-  /* 13 — crypto profit. Five seeds; cp-flat renders ₦0 so it stays plain. */
+  /* 12 — crypto profit. Five seeds; cp-flat renders ₦0 so it stays plain. */
   "crypto-profit-calculator": {
     tool: "crypto-profit",
     seeds: ["cp-inv", "cp-buy", "cp-sell", "cp-bf", "cp-sf"],
@@ -536,7 +523,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["cp-inv", "cp-buy", "cp-sell", "cp-bf", "cp-sf"],
   },
 
-  /* 14 — dividend estimator. The growth pair is an illustrative band, not a
+  /* 13 — dividend estimator. The growth pair is an illustrative band, not a
      forecast — the page's own receipt foot already says so, so no sourced
      claim is made here. */
   "dividend-calculator": {
@@ -548,7 +535,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["dv-inv", "dv-pg", "dv-dg", "dv-yrs"],
   },
 
-  /* 15 — savings rate comparator. One field, one worked example. */
+  /* 14 — savings rate comparator. One field, one worked example. */
   "savings-rate-comparator": {
     tool: "savings-rate",
     seeds: ["sr-amt"],
@@ -558,7 +545,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["sr-amt"],
   },
 
-  /* 16 — exchange rate history. NO CHANGE, deliberately (design spec §5, row
+  /* 15 — exchange rate history. NO CHANGE, deliberately (design spec §5, row
      15): it already carries the repo's only tool-scoped localStorage key and
      its only field is an integer day-window select, not a money input. The
      entry exists so the fleet contract stays uniform and auditable. */

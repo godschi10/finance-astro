@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* calc-regress.mjs — permanent behavioural regression suite for the 16 money tools.
+/* calc-regress.mjs — permanent behavioural regression suite for the 15 money tools (16→15 on the 2026-10-07 merge).
  *
  * WHY THIS EXISTS: scripts/check-*.mjs pin static markup and vectors-check.mjs
  * pins the maths engines, but NOTHING asserted how the calculators behave —
@@ -67,13 +67,13 @@ const opt = (k) => {
 const PROBE = opt("--probe");
 const ONLY = opt("--tool");
 
-/* ── the sixteen, in hub print order, from the repo's own manifest ── */
+/* ── the fifteen, in hub print order, from the repo's own manifest (16→15 on the 2026-10-07 merge) ── */
 function toolSlugs() {
   const src = new URL("../src/data/tool-manifest.ts", import.meta.url);
   return import("node:fs").then(({ readFileSync }) => {
     const txt = readFileSync(src, "utf8");
     const slugs = [...txt.matchAll(/slug:\s*"([^"]+)"/g)].map((m) => m[1]);
-    if (slugs.length !== 16) throw new Error(`expected 16 slugs, parsed ${slugs.length}`);
+    if (slugs.length !== 15) throw new Error(`expected 15 slugs, parsed ${slugs.length}`);
     return slugs;
   });
 }

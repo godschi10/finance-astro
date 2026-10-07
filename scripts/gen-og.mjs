@@ -12,7 +12,7 @@
 // sources — nothing is invented:
 //
 //   brand   — SITE.name / SITE.tagline in src/data/site.ts
-//   tool    — the TOOLS catalogue in src/data/content.ts (16 entries): name is
+//   tool    — the TOOLS catalogue in src/data/content.ts (15 entries): name is
 //             the headline, desc is the descriptor. The catalogue is the source
 //             of truth because it is the same copy the search index ships.
 //   hub     — the literal title/description index.astro passes to Layout
@@ -161,18 +161,21 @@ try {
 }
 
 // ── money tools ──────────────────────────────────────────────────────────────
-// 16 catalogue entries -> 16 pages (spec 3.2). Chip copy: EXCHANGE for the two
-// FX tools, MONEY CALCULATOR for the other 14. The right-hand tick is only
+// 15 catalogue entries -> 15 pages (spec 3.2). Chip copy: EXCHANGE for the two
+// FX tools, MONEY CALCULATOR for the other 13. The right-hand tick is only
 // printed where it is literally true — the two FX cards — because the tick is a
 // claim, not decoration.
 const FX_TOOLS = new Set(["currency-converter", "exchange-rate-history"]);
 try {
   const tools = readToolsCatalogue();
-  if (tools.length !== 16) throw new Error(`expected 16 TOOLS entries in content.ts, parsed ${tools.length}`);
+  if (tools.length !== 15) throw new Error(`expected 15 TOOLS entries in content.ts, parsed ${tools.length}`);
+  // budget-allocator is a POINTER (meta-refresh + canonical to the 50/30/20
+  // page, 2026-10-07 merge), not a tool page — it ships no ToolShell, no card,
+  // no catalogue row, so it is excluded from the 1:1 check by name.
   const pageSlugs = readdirSync(TOOLS_DIR)
     .filter((f) => f.endsWith(".astro"))
     .map((f) => f.replace(/\.astro$/, ""))
-    .filter((f) => f !== "index" && f !== "[amount]")
+    .filter((f) => f !== "index" && f !== "[amount]" && f !== "budget-allocator")
     .sort();
   const catSlugs = tools.map((t) => t.slug).sort();
   const orphan = catSlugs.filter((s) => !pageSlugs.includes(s));

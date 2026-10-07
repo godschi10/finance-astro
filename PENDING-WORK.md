@@ -41,6 +41,18 @@ King: "Do it" — the three defects the Reset fix had exposed.
 ## go 20 rounds of hunting for bugs and another 20 rounds looking for what is missing
 ## and what can make it easier using the calculators. That's 40 rounds for each
 ## calculator. Get busy"*
+## LAW — 2026-10-07 · UX AUDITS: 40 AUDITS + 40 EDITS PER CALCULATOR. King:
+## *"What about the calculators. I was asking you to audit the UX. How people use
+## each calculator. 40 audits and 40 edit rounds for each calculator."*
+My second correction. The program is UX-first, not correctness-first: each audit
+studies HOW PEOPLE USE the tool (first-use, comprehension, friction, trust,
+next-action), and each edit round answers the audit. Per calculator: A1-A40 audits
++ E1-E40 edit rounds = 80 rounds × 16 calculators = **1280 rounds.** Executed as
+audit→edit pairs (A1→E1→A2→E2…). The banked correctness work (fleet R1/R2/R3, B4s,
+FIX legs) stands as the correctness base — it is NOT re-counted as UX audits.
+Scoreboard v2: `/home/opc/work/research-notes/forty-rounds-scoreboard.md`.
+Emergency-fund UX audits run (using the tool is auditable); only its C1 *fix* is held.
+
 **CORRECTION 2026-10-06: per CALCULATOR, not per fleet.** The King: *"Not 10 rounds
 again, it's 40 rounds per calculator."* My forty-fleet-rounds reading was wrong.
 Truth: 16 calculators × 40 rounds (20 bug B1-B20 + 20 improvement I1-I20) =
@@ -140,6 +152,24 @@ Standing order, not a one-off. Two consequences I bind myself to:
 - [ ] **QA-SUITE @builder** — permanent behavioural regression suite over dist/,
       CDP-driven, one browser, sequential, deterministic waits. Asserts every
       contract listed above across all 16 tools. Non-zero exit on failure.
+
+## ACTIVE — 2026-10-07 · MERGE (King chose option 2) + E1s
+King on the two 50/30/20s: **"2"** — fold the allocator in as step 2 inside the
+50/30/20 page. One tool, one journey. The old URL becomes a pointer (fixed-income
+precedent: meta-refresh 0 + canonical + noindex,follow + human fallback link).
+Pre-checked by me: NO gate asserts the allocator or a 16-tool count; the allocator
+engine (`src/lib/allocator.ts`) + vectors entries stay UNTOUCHED (step 2 reuses the
+same engine, oracle never moves); references live in content.ts:91, tool-manifest,
+tool-fields, vectors.php (keep), tool-accuracy-audit.mjs (not in gate chain).
+- [ ] **MERGE+E1-50 @builder** — step 2 inside 50-30-20 (needs-half buckets, tunable,
+      same engine) + old URL → pointer + manifest 16→15 + content.ts entry out +
+      tool-fields allocator entry out + accuracy-audit entry fixed + 50-30-20 card
+      copy updated + salary→budget→etc onward links + A1-503020 findings (history
+      trap, invisible moves, Use-this-eats-lesson, Last-used seeds, dead-end links,
+      sliders/below copy). Owns tool-manifest.ts + tool-fields.ts + shared files.
+- [ ] **E1-SALARY @builder-or-qa (PAGE-ONLY)** — salary-tax A1 findings, page file
+      ONLY. If a finding needs tool-fields/shared/ToolShell, report as proposal.
+      Disjoint by construction; may run parallel with MERGE.
 
 ## ACTIVE — 2026-10-06 · King's two orders
 King: **"Make TOC default closed, after that run another round of bug hunt and
