@@ -63,12 +63,12 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-sub" id="bg-sumnote"></p>
 <p class="receipt-note" id="bg-warn" hidden></p>
 <div class="receipt-div" aria-hidden="true"></div>
-<div class="receipt-row" data-goto="bg-spn" style="cursor:pointer" title="See the field behind this figure"><span>Needs left</span><b id="bg-rn">₦{n(chk.needs_remaining)}</b></div>
-<div class="receipt-row" data-goto="bg-spw" style="cursor:pointer" title="See the field behind this figure"><span>Wants left</span><b id="bg-rw">₦{n(chk.wants_remaining)}</b></div>
-<div class="receipt-row" data-goto="bg-sps" style="cursor:pointer" title="See the field behind this figure"><span>Savings left to save</span><b id="bg-rs">₦{n(chk.savings_remaining)}</b></div>
+<div class="receipt-row" data-goto="bg-spn" tabindex="0" role="button" style="cursor:pointer" title="See the field behind this figure"><span>Needs left</span><b id="bg-rn">₦{n(chk.needs_remaining)}</b></div>
+<div class="receipt-row" data-goto="bg-spw" tabindex="0" role="button" style="cursor:pointer" title="See the field behind this figure"><span>Wants left</span><b id="bg-rw">₦{n(chk.wants_remaining)}</b></div>
+<div class="receipt-row" data-goto="bg-sps" tabindex="0" role="button" style="cursor:pointer" title="See the field behind this figure"><span>Savings left to save</span><b id="bg-rs">₦{n(chk.savings_remaining)}</b></div>
 <p class="receipt-note" id="bg-pasted" hidden></p>
 <p class="receipt-note" id="bg-whatnow" hidden></p>
-<p class="receipt-foot">Plan vs actual · leftover = income your splits didn't assign</p>
+<p class="receipt-foot">Plan vs actual · leftover = income your splits didn't assign · Wants left = plan wants minus spent on wants · Savings left to save = plan savings minus put to savings</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 <p class="receipt-note"><a href="#step2">See where the needs money goes ↓</a> · <button type="button" id="bg-copy" style="text-decoration:underline;background:none;border:none;color:inherit;font:inherit;cursor:pointer;padding:0">Copy plan summary</button><span id="bg-copied" hidden> — copied.</span></p>
@@ -83,7 +83,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ))}
 </div>
 <div class="receipt" aria-live="polite">
-<p class="receipt-lbl">Needs half: <span data-sf-fig id="al-needs">₦{n(al.needs)}</span></p>
+<p class="receipt-lbl">Needs budget (<span data-sf-fig id="al-pct">50%</span> of income): <span data-sf-fig id="al-needs">₦{n(al.needs)}</span></p>
 <div id="al-rows">
 {al.buckets.map((b) => (
 <div class="receipt-row"><span>{b.label}</span><b data-al-amt={b.id}>₦{n(b.amount)}</b></div>
@@ -91,7 +91,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </div>
 <p class="receipt-note" id="al-warn" hidden></p>
 <p class="receipt-note" id="al-actuals" hidden></p>
-<p class="receipt-foot">Shares of needs · naira follows instantly</p>
+<p class="receipt-foot">Shares of needs · naira follows instantly · Other needs is whatever is left after the named shares</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
@@ -111,6 +111,13 @@ const nn = (v: number) => (v < 0 ? "−" : "") + "₦" + formatGrouped(Math.abs(
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+/* Badge reads, module scope: render() uses them for the seedwarn gate and the
+   copy handler below uses the same badges, so one definition serves both. */
+const hasBadge = (id: string, attr: string) => {
+  const fi = document.getElementById(id);
+  const f = fi && (fi as HTMLElement).closest ? (fi as HTMLElement).closest(".field") : null;
+  return !!(f && (f as Element).hasAttribute(attr));
+};
 function render() {
   /* F8 — every clamped negative says so: -x is priced as ₦0 in all seven
      inputs, so the rail names the rewrite instead of staying silent. */
@@ -129,10 +136,25 @@ function render() {
   /* B4-FIX2 — a split the visitor never entered cannot print a gold bucket:
      garbage ("abc" in a split) reads as un-entered, exactly like a cleared
      field, so the demand line below matches the blank state. */
-  const anyEmpty = ["bg-needs", "bg-wants", "bg-save"].some((id) => pmBlank(g(id).value));
   const total = Math.round((np + wp + svp) * 100);
-  t("bg-sumnote").textContent = anyEmpty
-    ? "Set all three splits — an empty split is not a zero"
+  /* FATIGUE CUT — the old sentence lived here ("Set all three splits — an
+     empty split is not a zero"), a second teacher for the one "empty ≠ zero"
+     rule. It now speaks in the Nothing-to-compute rail's own voice
+     (guardOffer, tool-fields.ts: "Nothing to compute yet — X is empty, not
+     zero"), naming the exact missing split(s) in the fields' own words
+     (text-nodes-only labels, so SAMPLE/LAST USED badges can never garble it
+     — the BREAK-1 lesson). One voice for the rule instead of two; the error
+     path below is untouched. */
+  const splitLabel = (id: string) => {
+    const l = document.querySelector(`label[for="${id}"]`);
+    if (!l) return id;
+    let s = "";
+    l.childNodes.forEach((n) => { if (n.nodeType === 3) s += n.textContent || ""; });
+    return s.trim() || id;
+  };
+  const missingSplits = ["bg-needs", "bg-wants", "bg-save"].filter((id) => pmBlank(g(id).value));
+  t("bg-sumnote").textContent = missingSplits.length
+    ? `Nothing to compute yet — ${missingSplits.map(splitLabel).join(" and ")} ${missingSplits.length > 1 ? "are" : "is"} empty, not zero.`
     : (total === 100 ? "" : `Splits add to ${total}% — buckets use your exact percentages`);
   const c = budget503020Compare(inc, np, wp, svp,
     Math.max(0, pm(g("bg-spn").value) || 0),
@@ -153,6 +175,10 @@ function render() {
   });
   const r2 = budgetAllocator(inc, np, wp, svp, shares);
   sfFig(t("al-needs"), ["bg-inc", "bg-needs"], nn(r2.needs));
+  /* T3 — the step-2 label names the LIVE split, never a fixed "half": at a
+     60/20/20 split "Needs half: ₦150,000" was a live lie. Same live-span
+     pattern E2 used for the intro (sfFig withholds as "—" while blank). */
+  sfFig(t("al-pct"), ["bg-inc", "bg-needs"], `${Math.round(np * 100)}%`);
   /* F-A2-1 — the step-2 intro names live figures, never the seed's. sfFig
      withholds them as "—" while the inputs are blank, exactly like the
      receipt, so no ₦0 is ever printed in prose. */
@@ -167,12 +193,7 @@ function render() {
   const alNegSfx = alNeg ? " Negative entries are treated as ₦0." : "";
   /* A field still wearing SAMPLE has not been touched; one wearing LAST USED
      holds the visitor's own remembered number. Both are the spine's own
-     badges, read off the DOM — no new state kept here. */
-  const hasBadge = (id: string, attr: string) => {
-    const fi = document.getElementById(id);
-    const f = fi && (fi as HTMLElement).closest ? (fi as HTMLElement).closest(".field") : null;
-    return !!(f && (f as Element).hasAttribute(attr));
-  };
+     badges, read off the DOM — no new state kept here (hasBadge, module scope). */
   if (r2.needs > 0 && planned > r2.needs) {
     t("al-warn").hidden = false;
     /* F-A2-7 — a remembered tune must not read as a scold: when the overage
@@ -262,25 +283,36 @@ function render() {
     wn.hidden = false;
     wn.textContent = bits.join("; ") + ". Step 2 still itemises the plan figure, not the overspend.";
   } else { wn.hidden = true; wn.textContent = ""; }
-  /* MF-6 — the both-steps mini plan: the step-1 figures restated where the
-     buckets are, so the lever and the result share one viewport. Same guard
-     as the live line: no figures on an empty page. */
+  /* MF-6 — the both-steps mini plan: FATIGUE CUT keeps only the pair the
+     tuner cannot see from step 2 (needs + rent). Wants/savings restated the
+     live line two screens up; rent is the actionable one here. Same guard as
+     the live line: no figures on an empty page. */
   const mini = t("bg-mini");
   if (empty || !splitsSet) { mini.hidden = true; mini.textContent = ""; }
   else {
     mini.hidden = false;
     const rentTxt = pmBlank(g("al-rent").value) ? "—" : nn(rentAmt);
-    mini.textContent = `Mini plan — needs ${nn(plan.needs)} · wants ${nn(plan.wants)} · savings ${nn(plan.savings)} · rent ${rentTxt} of needs`;
+    mini.textContent = `Mini plan — needs ${nn(plan.needs)} · rent ${rentTxt} of needs`;
   }
   /* MF-4 — the actuals mirror: step 2 never itemises the overspend (it shares
-     out the plan), so it says the comparison aloud where the buckets are. */
+     out the plan), so it says the comparison aloud where the buckets are.
+     T1 — the same plan-touched gate as seedwarn, in seedwarn's own words:
+     until the visitor touches a plan input AND the spend itself, the figures
+     are our example, so the mirror reads as example, never "You spent". */
   const am = t("al-actuals");
   if (!empty && !pmBlank(g("bg-spn").value)) {
     const spent = Math.max(0, pm(g("bg-spn").value) || 0);
+    const yours = planTouched && !sd("bg-spn");
     am.hidden = false;
-    am.textContent = spent > plan.needs
-      ? `You spent ${nn(spent)} vs ${nn(plan.needs)} plan on needs — ${nn(spent - plan.needs)} over. Tune the buckets below against the plan, then trim the spend above.`
-      : `You spent ${nn(spent)} vs ${nn(plan.needs)} plan on needs — within plan. The buckets below share out the plan figure.`;
+    if (spent > plan.needs) {
+      am.textContent = yours
+        ? `You spent ${nn(spent)} vs ${nn(plan.needs)} plan on needs — ${nn(spent - plan.needs)} over. Tune the buckets below against the plan, then trim the spend above.`
+        : `Example: ${nn(spent)} vs ${nn(plan.needs)} plan on needs — ${nn(spent - plan.needs)} over. Our example, not yours — type what you really spent to score your month.`;
+    } else {
+      am.textContent = yours
+        ? `You spent ${nn(spent)} vs ${nn(plan.needs)} plan on needs — within plan. The buckets below share out the plan figure.`
+        : `Example: ${nn(spent)} vs ${nn(plan.needs)} plan on needs — within plan. Our example, not yours — the buckets below share out the plan figure.`;
+    }
   } else { am.hidden = true; am.textContent = ""; }
   /* MF-5 + F9 — the memory date, visible: the spine dates LAST USED only in a
      hover title (no touch path), so the page reads the spine's own key and
@@ -338,25 +370,53 @@ sfBind("50-30-20-budget-calculator", gv);
    the row takes the visitor to it). Existing behaviour only: scroll + focus,
    the same focus that selects a SAMPLE field. */
 document.querySelectorAll(".receipt-row[data-goto]").forEach((row) => {
-  row.addEventListener("click", () => {
+  const go = () => {
     const id = (row as HTMLElement).dataset.goto as string;
     const target = document.getElementById(id) as HTMLInputElement | null;
     if (!target) return;
     target.scrollIntoView({ behavior: "smooth", block: "center" });
     target.focus({ preventScroll: true });
+  };
+  row.addEventListener("click", go);
+  /* KEYBOARD — the rows are tabbable buttons (tabindex/role in markup), so
+     Enter/Space must do what a tap does. Same go(), no new behaviour. */
+  row.addEventListener("keydown", (e) => {
+    if ((e as KeyboardEvent).key === "Enter" || (e as KeyboardEvent).key === " ") {
+      e.preventDefault();
+      go();
+    }
   });
 });
 /* MF-5 — plan save: copy the live plan as one line. The "copied" word hides
-   on the next render (the figures it copied are stale by then). */
+   on the next render (the figures it copied are stale by then).
+   T2 — "My plan" is TRUE only when all seven step-1 fields are the
+   visitor's own (no SAMPLE badge, real digits entered): cold it would
+   export our example as theirs, empty it would export a ₦0 plan. So
+   all-typed copies "My plan"; a touched-but-partial page copies the same
+   figures labelled as our example; an empty (or plan-incomplete) page
+   refuses with the waiting line and copies nothing — never ₦0. */
 const copyBtn = document.getElementById("bg-copy");
 if (copyBtn) copyBtn.addEventListener("click", async () => {
+  const done = t("bg-copied");
+  const planIds = ["bg-inc", "bg-needs", "bg-wants", "bg-save"];
+  const typed = (id: string) => !hasBadge(id, "data-sd") && !pmBlank(g(id).value);
+  /* Refuse only when the figures would be invented: a blank plan input prices
+     as ₦0, and ₦0 is never copied. Cold (all SAMPLE, all valued) is NOT a
+     refusal — it copies the example, honestly labelled. */
+  if (sfIsEmpty("50-30-20-budget-calculator", gv) || planIds.some((id) => pmBlank(g(id).value))) {
+    done.textContent = " — nothing to copy yet — enter your numbers above.";
+    done.hidden = false;
+    return;
+  }
+  const allTyped = ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"].every(typed);
   const i2 = Math.max(0, pm(g("bg-inc").value) || 0);
   const p2 = budget503020(i2,
     Math.max(0, pm(g("bg-needs").value) || 0) / 100,
     Math.max(0, pm(g("bg-wants").value) || 0) / 100,
     Math.max(0, pm(g("bg-save").value) || 0) / 100);
-  const summary = `My 50/30/20 plan (income ${nn(i2)}): needs ${nn(p2.needs)}, wants ${nn(p2.wants)}, savings ${nn(p2.savings)}.`;
-  const done = t("bg-copied");
+  const summary = allTyped
+    ? `My 50/30/20 plan (income ${nn(i2)}): needs ${nn(p2.needs)}, wants ${nn(p2.wants)}, savings ${nn(p2.savings)}.`
+    : `Our 50/30/20 example (income ${nn(i2)}): needs ${nn(p2.needs)}, wants ${nn(p2.wants)}, savings ${nn(p2.savings)}. Type your own numbers to make it yours.`;
   try {
     if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(summary);
     else throw new Error("no clipboard");

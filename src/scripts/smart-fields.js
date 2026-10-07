@@ -255,6 +255,14 @@ function offer(o) {
   p.className = "offer";
   b.setAttribute("data-use", o.field);
   b.textContent = "Use this";
+  /* KEYBOARD (50/30/20 A3 gap): the pill is a <b>, reachable by mouse/touch
+     only. Tabbable + button-roled, Enter/Space reusing the click path above
+     (which owns the aria-disabled inertness guard), so key users get MF-7. */
+  b.setAttribute("tabindex", "0");
+  b.setAttribute("role", "button");
+  b.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); b.click(); }
+  });
   b.addEventListener("click", () => {
     /* BREAK-3. Inertness used to be CSS-only: `pointer-events:none` stops a real
        tap but a programmatic .click() ignores it, and the handler wrote the
