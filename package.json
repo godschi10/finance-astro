@@ -1,13 +1,14 @@
 {
   "name": "finance-astro",
-  "version": "0.7.30",
+  "version": "0.7.31",
   "type": "module",
   "scripts": {
     "build": "node scripts/gen-og.mjs && node scripts/fetch-snapshot.mjs && astro build",
     "gen:og": "node scripts/gen-og.mjs",
     "check": "node scripts/check.mjs",
     "check:types": "astro check",
-    "test:calc": "node scripts/calc-regress.mjs"
+    "test:calc": "node scripts/calc-regress.mjs",
+    "test": "node --test test/**/*.test.js"
   },
   "dependencies": {
     "astro": "^5.0.0",
@@ -16,6 +17,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "esbuild": "^0.27.7",
+    "playwright": "^1.63.0",
     "postcss": "^8.5.28",
     "typescript": "^5.9.3",
     "ws": "^8.22.0"

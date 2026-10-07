@@ -354,13 +354,20 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
          `Spent on needs` meets the teaching sentence instead of silence
          (A1-F1: the hideUntil gate used to exclude the actuals fields, which
          is exactly the path where R-history says users get lost).
-         `needs` names the two ids the OFFERED NUMBER depends on — income ×
-         needs% — and nothing else: wants% and savings% do not enter
-         plan.needs, so requiring them would withhold a figure that is already
-         correct. While either is blank this offer withholds (guardOffer), which
+         `needs` names every id the OFFERED PAGE STATE depends on — income plus
+         all three splits (E4 F-P2). The offered NUMBER is still income ×
+         needs% only, but the union withholding sentence ("Needs % and Wants %
+         … are empty, not zero") must name every missing split in ONE clause
+         at the offer position, replacing the old double rail (the page's own
+         sumnote saying it ~40px above). So `needs` deliberately over-names:
+         while ANY of the four is blank the offer withholds instead of showing
+         beside a half-entered plan — the same all-four guard the page's own
+         live line and mini already use. wants% and savings% still do not
+         enter plan.needs, so no maths moves; only the waiting voice widens.
+         While any is blank this offer withholds (guardOffer), which
          is what stops pm("") → 0% from publishing a ₦0 nobody entered. */
       field: "bg-spn",
-      needs: ["bg-inc", "bg-needs"],
+      needs: ["bg-inc", "bg-needs", "bg-wants", "bg-save"],
       hideUntil: ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"],
       text: (): string => {
         const plan = budget503020(

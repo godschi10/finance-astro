@@ -63,15 +63,17 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-sub" id="bg-sumnote"></p>
 <p class="receipt-note" id="bg-warn" hidden></p>
 <div class="receipt-div" aria-hidden="true"></div>
-<div class="receipt-row" data-goto="bg-spn" tabindex="0" role="button" style="cursor:pointer" title="See the field behind this figure"><span>Needs left</span><b id="bg-rn">₦{n(chk.needs_remaining)}</b></div>
-<div class="receipt-row" data-goto="bg-spw" tabindex="0" role="button" style="cursor:pointer" title="See the field behind this figure"><span>Wants left</span><b id="bg-rw">₦{n(chk.wants_remaining)}</b></div>
-<div class="receipt-row" data-goto="bg-sps" tabindex="0" role="button" style="cursor:pointer" title="See the field behind this figure"><span>Savings left to save</span><b id="bg-rs">₦{n(chk.savings_remaining)}</b></div>
+<div class="receipt-row" data-goto="bg-spn" tabindex="0" role="button" style="cursor:pointer" title="See the field behind this figure"><span>Needs left <span aria-hidden="true">›</span></span><b id="bg-rn">₦{n(chk.needs_remaining)}</b></div>
+<div class="receipt-row" data-goto="bg-spw" tabindex="0" role="button" style="cursor:pointer" title="See the field behind this figure"><span>Wants left <span aria-hidden="true">›</span></span><b id="bg-rw">₦{n(chk.wants_remaining)}</b></div>
+<div class="receipt-row" data-goto="bg-sps" tabindex="0" role="button" style="cursor:pointer" title="See the field behind this figure"><span>Savings left to save <span aria-hidden="true">›</span></span><b id="bg-rs">₦{n(chk.savings_remaining)}</b></div>
 <p class="receipt-note" id="bg-pasted" hidden></p>
 <p class="receipt-note" id="bg-whatnow" hidden></p>
-<p class="receipt-foot">Plan vs actual · leftover = income your splits didn't assign · Wants left = plan wants minus spent on wants · Savings left to save = plan savings minus put to savings</p>
+<p class="receipt-foot">Plan vs actual: leftover = income your splits didn't assign</p>
+<p class="receipt-foot hint">Wants left = plan wants minus spent on wants</p>
+<p class="receipt-foot hint">Savings left to save = plan savings minus put to savings</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
-<p class="receipt-note"><a href="#step2">See where the needs money goes ↓</a> · <button type="button" id="bg-copy" style="text-decoration:underline;background:none;border:none;color:inherit;font:inherit;cursor:pointer;padding:0">Copy plan summary</button><span id="bg-copied" hidden> — copied.</span></p>
+<p class="receipt-note"><a href="#step2">See where the needs money goes ↓</a> · <button type="button" class="btn b-ghost b-sm" id="bg-copy">Copy plan summary</button><span id="bg-copywhy"> — cold, this copies our example.</span><span id="bg-copied" hidden> — copied.</span></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <h3 id="step2">Step 2 — where the needs money goes</h3>
 <p>One tool, one journey. This is the plan's needs figure from step 1 — the same income, the same split — itemised into real Nigerian lines: rent, food, transport, data, bills. Knowing you should spend <span id="bg-step2-needs">₦{n(seed.needs)}</span> on needs is useful; knowing rent takes about <span id="bg-step2-rent">₦{n(seedRent)}</span> of it is actionable. The shares below are indicative starting points, not laws — tune any bucket and the naira follows instantly, always reconciling back to your income.</p>
@@ -91,9 +93,11 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </div>
 <p class="receipt-note" id="al-warn" hidden></p>
 <p class="receipt-note" id="al-actuals" hidden></p>
-<p class="receipt-foot">Shares of needs · naira follows instantly · Other needs is whatever is left after the named shares</p>
+<p class="receipt-foot">Shares of needs — naira follows instantly</p>
+<p class="receipt-foot hint">Other needs is whatever is left after the named shares</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
+<p class="receipt-note" id="bg-resetnote">Reset wipes what you typed and restores our example — it cannot be undone.</p>
 </div>
 </ToolShell>
 <script>
@@ -122,8 +126,16 @@ function render() {
   /* F8 — every clamped negative says so: -x is priced as ₦0 in all seven
      inputs, so the rail names the rewrite instead of staying silent. */
   const bgNeg = ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"].some((id) => pm(g(id).value) < 0);
-  t("bg-warn").hidden = !bgNeg;
-  t("bg-warn").textContent = bgNeg ? "Negative entries are treated as ₦0." : "";
+  /* Recovery soft spot 1 (A4): 999999999 income printed ₦500,000,000 plan
+     figures with no line saying the number is absurd — figures were the only
+     signal. The honest line reuses the fleet's own too-large vocabulary
+     verbatim (salary-tax "That gross looks unusually large — double-check
+     the figure", same ₦100M threshold), so no new clause family is invented. */
+  const bgHuge = pm(g("bg-inc").value) > 100000000;
+  t("bg-warn").hidden = !(bgNeg || bgHuge);
+  t("bg-warn").textContent = (bgNeg ? "Negative entries are treated as ₦0." : "")
+    + ((bgNeg && bgHuge) ? " " : "")
+    + (bgHuge ? "That income looks unusually large — double-check the figure." : "");
   const inc = Math.max(0, pm(g("bg-inc").value) || 0);
   const np = Math.max(0, pm(g("bg-needs").value) || 0) / 100;
   const wp = Math.max(0, pm(g("bg-wants").value) || 0) / 100;
@@ -153,9 +165,33 @@ function render() {
     return s.trim() || id;
   };
   const missingSplits = ["bg-needs", "bg-wants", "bg-save"].filter((id) => pmBlank(g(id).value));
-  t("bg-sumnote").textContent = missingSplits.length
-    ? `Nothing to compute yet — ${missingSplits.map(splitLabel).join(" and ")} ${missingSplits.length > 1 ? "are" : "is"} empty, not zero.`
-    : (total === 100 ? "" : `Splits add to ${total}% — buckets use your exact percentages`);
+  /* E4 census gate: `empty` is needed above (F-P2) as well as below. It reads
+     VALUES only (sfIsEmpty), never badge state, so judging it here instead of
+     at the foot of render() changes nothing — first paint included. */
+  const empty = sfIsEmpty("50-30-20-budget-calculator", gv);
+  /* F-P2 — the empty/partial state fired TWO rail-voice lines at once: this
+     sumnote ("Needs % and Wants % … are empty, not zero") AND the offer rail
+     ~40px below ("Monthly income ₦ and Needs % …"). The offer now carries the
+     ONE union sentence (its `needs` in tool-fields.ts names income + all three
+     splits, so guardOffer's single clause already says every missing id), so
+     this line stands down whenever the offer rail is active. Same information,
+     one line fewer. F-P3 — a shown-but-empty sumnote is a visible nothing
+     (cold + every 100%-split state painted a blank <p>), so the element hides
+     with its empty text instead of holding whitespace. */
+  const offerRail = !empty && ["bg-inc", "bg-needs", "bg-wants", "bg-save"].some((id) => pmBlank(g(id).value));
+  const sumnote = t("bg-sumnote");
+  if (offerRail) { sumnote.textContent = ""; sumnote.hidden = true; }
+  else if (missingSplits.length) {
+    sumnote.hidden = false;
+    sumnote.textContent = `Nothing to compute yet — ${missingSplits.map(splitLabel).join(" and ")} ${missingSplits.length > 1 ? "are" : "is"} empty, not zero.`;
+  } else if (total === 100) { sumnote.textContent = ""; sumnote.hidden = true; }
+  else {
+    /* Recovery soft spot 2 (A4): the old line stated the FACT ("Splits add to
+       250%") and prescribed nothing — the fix is named in the SAME line, no
+       new line, no new clause family. */
+    sumnote.hidden = false;
+    sumnote.textContent = `Splits add to ${total}% — buckets use your exact percentages, so bring them back to 100%.`;
+  }
   const c = budget503020Compare(inc, np, wp, svp,
     Math.max(0, pm(g("bg-spn").value) || 0),
     Math.max(0, pm(g("bg-spw").value) || 0),
@@ -231,7 +267,6 @@ function render() {
     sfFig(amt, ["bg-inc", "bg-needs"].concat(shareIds), nn(r2.needs - planned));
     div.appendChild(lab); div.appendChild(amt); box.appendChild(div);
   }
-  const empty = sfIsEmpty("50-30-20-budget-calculator", gv);
   sfEmpty(empty);
   /* F2 — the receipt sits below the fold at 390px, so a split change used to
      recompute figures the visitor could not see. This one line lives beside
@@ -294,13 +329,34 @@ function render() {
     const rentTxt = pmBlank(g("al-rent").value) ? "—" : nn(rentAmt);
     mini.textContent = `Mini plan — needs ${nn(plan.needs)} · rent ${rentTxt} of needs`;
   }
+  /* Discovery (A4 bottom-3): the copy button's cold honesty must be visible
+     PRE-tap, not just in the clipboard payload. The static span beside the
+     button says it copies our example; the moment every field is the
+     visitor's own (the same all-typed predicate the copy handler uses) the
+     span stands down, so it never mislabels a "My plan" copy. Empty pages
+     refuse copies, so the span waits there too. */
+  const cwhy = document.getElementById("bg-copywhy");
+  if (cwhy) {
+    const typedFld = (id: string) => !hasBadge(id, "data-sd") && !pmBlank(g(id).value);
+    cwhy.hidden = empty || ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"].every(typedFld);
+  }
   /* MF-4 — the actuals mirror: step 2 never itemises the overspend (it shares
      out the plan), so it says the comparison aloud where the buckets are.
      T1 — the same plan-touched gate as seedwarn, in seedwarn's own words:
      until the visitor touches a plan input AND the spend itself, the figures
      are our example, so the mirror reads as example, never "You spent". */
   const am = t("al-actuals");
-  if (!empty && !pmBlank(g("bg-spn").value)) {
+  /* F-P1 — cold painted the plan THREE times (live + mini + mirror) before a
+     keystroke. While step-1 is untouched seeds the mirror waits; a spend typed
+     alone still raises the Example voice (the history-trap path), so the gate
+     is "nobody touched anything", not "plan untouched".
+     F-P5 — a ₦0 plan is a plan that doesn't exist: the mirror withholds
+     exactly where copy refuses (the same plan-complete guard as the copy
+     handler below), so a kept spend + cleared plan never scolds
+     "₦95,000 over" against a plan nobody entered. */
+  const planComplete = ["bg-inc", "bg-needs", "bg-wants", "bg-save"].every((id) => !pmBlank(g(id).value));
+  const step1Touched = planTouched || !sd("bg-spn");
+  if (!empty && planComplete && !pmBlank(g("bg-spn").value) && step1Touched) {
     const spent = Math.max(0, pm(g("bg-spn").value) || 0);
     const yours = planTouched && !sd("bg-spn");
     am.hidden = false;

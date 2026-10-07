@@ -1,0 +1,11 @@
+=== Verify gates started at 2026-10-07T16:25:44.284Z ===
+
+--- Gate 1/1 ---
+$ node --test "test/**/*.test.js" 2>&1 | grep -q "pass 1"
+
+stdout:
+(empty)
+exit code: 1
+
+=== Verify gates finished at 2026-10-07T16:25:44.468Z ===
+Overall: FAILED
