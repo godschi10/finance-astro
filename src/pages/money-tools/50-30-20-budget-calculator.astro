@@ -46,6 +46,11 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <p class="receipt-note" id="bg-memdate" hidden></p>
 <p class="receipt-note" id="bg-live" hidden></p>
+<!-- Visual stepper -->
+<div class="fx-stepper" id="bg-stepper" aria-label="Budget steps">
+  <button type="button" class="fx-step active" data-step="1" aria-current="step">1. Plan</button>
+  <button type="button" class="fx-step" data-step="2" aria-disabled="true">2. Itemise</button>
+</div>
 <div class="tgrid c3" id="bg-top">
 <div class="field"><label for="bg-inc">Monthly income ₦</label><input id="bg-inc" type="text" value={income} inputmode="decimal" autocomplete="section-income"></div>
 <div class="field"><label for="bg-needs">Needs %</label><input id="bg-needs" type="text" max="100" value="50" inputmode="decimal" placeholder="50" autocomplete="section-budget-splits"></div>
@@ -93,7 +98,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 <p class="receipt-note"><a href="#step2">See where the needs money goes ↓</a> · <button type="button" class="btn b-ghost b-lg" id="bg-copy" style="min-height:44px">Copy example plan</button><span id="bg-copywhy" data-trust="example"> — cold, this copies our example.</span><span id="bg-copied" hidden> — copied.</span></p>
-<div class="receipt-div" aria-hidden="true"></p>
+<div class="receipt-div" aria-hidden="true"></div>
 <h3 id="step2" style="position:sticky;top:0;background:var(--surface);z-index:10;padding-top:12px">Step 2 — where the needs money goes</h3>
 <p>One tool, one journey. This is the plan's needs figure from step 1 — the same income, the same split — itemised into real Nigerian lines: rent, food, transport, data, bills. Knowing you should spend <span id="bg-step2-needs">₦{n(seed.needs)}</span> on needs is useful; knowing rent takes about <span id="bg-step2-rent">₦{n(seedRent)}</span> of it is actionable. The shares below are indicative starting points, not laws — tune any bucket and the naira follows instantly, always reconciling back to your income.</p>
 <p class="receipt-note"><a href="#bg-top">↑ Adjust income &amp; split</a></p>
@@ -102,6 +107,10 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 {al.buckets.filter((b) => b.id !== "other").map((b) => (
 <div class="field"><label for={`al-${b.id}`}>{b.label} % of needs</label><input id={`al-${b.id}`} type="text" max="100" value={(b.share * 100).toFixed(0)} inputmode="decimal" data-al-bucket={b.id}></div>
 ))}
+</div>
+<!-- Apply defaults button -->
+<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+  <button type="button" class="btn b-ghost b-sm" data-apply-defaults aria-label="Apply default needs shares (rent 40%, food 25%, transport 15%, data 10%, bills 7%)">Apply defaults</button>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Needs budget (<span data-sf-fig id="al-pct">50%</span> of income): <span data-sf-fig id="al-needs">₦{n(al.needs)}</span></p>
@@ -431,6 +440,56 @@ function render() {
   } catch {}
   if (memTxt && !empty) { md.hidden = false; md.textContent = memTxt; }
   else { md.hidden = true; md.textContent = ""; }
+
+  /* Visual stepper: update active state based on user interaction with step 2 */
+  const step1 = document.querySelector('.fx-step[data-step="1"]');
+  const step2 = document.querySelector('.fx-step[data-step="2"]');
+  if (step1 && step2) {
+    /* Step 2 is "active" only when user has typed in any bucket (lost SAMPLE badge) */
+    const step2Touched = ["al-rent", "al-food", "al-transport", "al-data", "al-utilities"].some((id) => {
+      const field = document.getElementById(id)?.closest(".field");
+      return field && !field.hasAttribute("data-sd");
+    });
+    if (step2Touched) {
+      step1.classList.remove('active');
+      step1.removeAttribute('aria-current');
+      step2.classList.add('active');
+      step2.setAttribute('aria-current', 'step');
+      step2.removeAttribute('aria-disabled');
+    } else {
+      step1.classList.add('active');
+      step1.setAttribute('aria-current', 'step');
+      step2.classList.remove('active');
+      step2.removeAttribute('aria-current');
+      step2.setAttribute('aria-disabled', 'true');
+    }
+  }
+
+  /* Split preset chips: highlight active preset matching current splits */
+  const currentNeeds = Math.round(Math.max(0, pm(g("bg-needs").value) || 0));
+  const currentWants = Math.round(Math.max(0, pm(g("bg-wants").value) || 0));
+  const currentSave = Math.round(Math.max(0, pm(g("bg-save").value) || 0));
+  const currentPreset = `${currentNeeds},${currentWants},${currentSave}`;
+  document.querySelectorAll('[data-preset]').forEach(btn => {
+    if (btn.dataset.preset === currentPreset) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+
+  /* Fill-from-plan buttons: disable when plan incomplete (reuse smart-fields offer rail pattern) */
+  document.querySelectorAll('[data-fill-from-plan]').forEach(btn => {
+    if (!planComplete) {
+      btn.setAttribute('aria-disabled', 'true');
+      btn.style.opacity = '0.45';
+      btn.style.pointerEvents = 'none';
+    } else {
+      btn.removeAttribute('aria-disabled');
+      btn.style.opacity = '';
+      btn.style.pointerEvents = '';
+    }
+  });
 }
 ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"].forEach((id) => g(id).addEventListener("input", render));
 document.querySelectorAll("[data-al-bucket]").forEach((el) => el.addEventListener("input", render));
@@ -534,9 +593,9 @@ if (copyBtn) copyBtn.addEventListener("click", async () => {
   document.querySelectorAll('[data-preset]').forEach(btn => {
     btn.addEventListener('click', () => {
       const preset = btn.dataset.preset;
-      if (preset === '50-30-20') { g('bg-needs').value='50'; g('bg-wants').value='30'; g('bg-save').value='20'; }
-      else if (preset === '60-20-20') { g('bg-needs').value='60'; g('bg-wants').value='20'; g('bg-save').value='20'; }
-      else if (preset === '70-15-15') { g('bg-needs').value='70'; g('bg-wants').value='15'; g('bg-save').value='15'; }
+      if (preset === '50,30,20') { g('bg-needs').value='50'; g('bg-wants').value='30'; g('bg-save').value='20'; }
+      else if (preset === '60,20,20') { g('bg-needs').value='60'; g('bg-wants').value='20'; g('bg-save').value='20'; }
+      else if (preset === '70,15,15') { g('bg-needs').value='70'; g('bg-wants').value='15'; g('bg-save').value='15'; }
       ['bg-needs','bg-wants','bg-save'].forEach(id => g(id).dispatchEvent(new Event('input', { bubbles: true })));
     });
   });
