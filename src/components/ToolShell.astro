@@ -233,7 +233,7 @@ if (faqs.length) graph.push({
      would still hand over the site's most persuasive typography to a number
      the user never entered. Token-only, same ladder as every rule above. */
 [data-sfe] .receipt-fig,[data-sfe] .receipt-row b{color:var(--text-dim)}
-.receipt{background:#0d0b08;color:#f0ede6;border-radius:16px;padding:18px;margin-top:18px;box-shadow:var(--sh-md)}
+.receipt{--receipt-ink:#f0ede6;background:#0d0b08;color:var(--receipt-ink);border-radius:16px;padding:18px;margin-top:18px;box-shadow:var(--sh-md)}
 .receipt-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#8f8575}
 .receipt-fig{font-size:clamp(1.9rem,6vw,3rem);line-height:1.1;letter-spacing:-.03em;font-weight:800;color:var(--gold-b);margin-top:6px;overflow-wrap:anywhere}
 .receipt-sub{font-size:.85rem;color:#c4b89a;margin-top:6px}
@@ -241,7 +241,7 @@ if (faqs.length) graph.push({
 .receipt-note{font-size:.8rem;color:#c4b89a}
 .receipt-foot{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#8f8575;margin-top:10px}
 .receipt-foot.hint{color:#6d6658}
-.receipt-row{display:flex;justify-content:space-between;gap:12px;font-size:.85rem;padding:6px 0;color:#e8e4dc}
+.receipt-row{display:flex;justify-content:space-between;gap:12px;font-size:.85rem;padding:6px 0;color:var(--receipt-ink)}
 .receipt-row b{font-variant-numeric:tabular-nums;white-space:nowrap}
 .hr{border-top:1px solid var(--border-dim);margin:26px 0 0}
 /* v0.7.0: tool-body section heading ("Year by year", "Full table"). The class
@@ -261,12 +261,39 @@ table.st td.n,table.st th.n{text-align:right}
 table.st tr.win td{background:var(--gold-muted);border-left:3px solid var(--gold-b)}
 .btag{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.12em;background:var(--gold-b);color:#0d0b08;border-radius:100px;padding:2px 8px;margin-left:8px;vertical-align:middle}
 
-  /* — verdict badge: green=good, red=action needed, amber=warning, neutral=info */
+  /* — verdict badge: green=good, red=action needed, amber=warning, neutral=info
+     E10 / A10-C6 — the --action badge was white-on-var(--red) in BOTH themes.
+     Light passes (--red #b91c1c → 6.47:1) but dark flips --red to #f87171,
+     where white text measures 2.77:1 and FAILS WCAG AA for 11px type. The fix
+     is the same red the brand already uses, with the ink swapped to the theme's
+     own dark in dark mode: #0d0b08 on #f87171 = 7.11:1. Same hue, same badge,
+     same border — only the ink that could not be read changes. Both themes now
+     pass (light 6.47:1, dark 7.11:1). */
   .verdict-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:var(--pill);padding:4px 10px;white-space:nowrap}
   .verdict-badge--good{color:var(--green);background:var(--green-muted);border:1px solid var(--green-border)}
   .verdict-badge--action{color:#fff;background:var(--red);border:1px solid var(--red)}
+  [data-theme="dark"] .verdict-badge--action{color:var(--dark)}
   .verdict-badge--warn{color:var(--amber);background:var(--amber-muted);border:1px solid var(--amber-border)}
   .verdict-badge--info{color:var(--text-dim);background:var(--surface-2);border:1px solid var(--border)}
+
+  /* — E10 / A10-C8+C9 — the actuals-mirror rows. They had a hardcoded inline
+     color:#e8e4dc, which read only because the receipt card happens to be dark
+     in BOTH themes; a light receipt card would have silently broken it. The
+     rows now carry their own class and no colour of their own, so they take
+     the receipt's ink (--receipt-ink, the token .receipt already paints itself
+     with) and follow whatever the receipt surface becomes.
+       row label + plan figure  = --receipt-ink  (16.81:1 light / 14.87:1 dark)
+       "you spent N" + "— add yours" = --dark-dim (5.41:1 light / 4.78:1 dark)
+     Both clear AA for this text size in both themes. */
+  .actuals-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;font-size:.85rem;padding:7px 0;border-top:1px solid rgba(245,158,11,.12)}
+  .actuals-row:first-child{border-top:none}
+  .actuals-row>span:first-child{flex:1 1 100%;min-width:0}
+  .actuals-row b{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .actuals-row .actuals-diff,.actuals-row .actuals-none{font-size:.8rem;color:var(--dark-dim)}
+  .actuals-row .actuals-none{font-style:italic}
+  @media(min-width:560px){
+    .actuals-row>span:first-child{flex:1 1 auto}
+  }
 
   /* — verdict banner: plain-language sentences above receipt */
   .verdict-banner{margin:12px 0;padding:12px 16px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border);display:none;flex-direction:column;gap:8px}
