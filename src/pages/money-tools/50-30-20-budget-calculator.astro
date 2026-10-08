@@ -142,7 +142,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for={`al-act-${b.id}`}>{b.label} — you actually spent ₦</label><input id={`al-act-${b.id}`} type="text" inputmode="decimal" placeholder="—" autocomplete="off" data-al-actual={b.id}></div>
 ))}
 </div>
-<p class="receipt-note" id="al-actual-hint">Optional — score just the buckets you know. Leave the rest blank and they print no figure and no badge. Nothing is filled in for you here.</p>
+<p class="receipt-note" id="al-actual-hint">Optional — score just the buckets you know. A bucket you leave blank still shows that bucket's plan amount, but no "you spent" figure and no badge, because we have nothing real to score it against. Nothing is filled in for you here.</p>
 <!-- Verdict banner (plain-language) -->
 <div class="verdict-banner" id="al-verdict" aria-live="polite"></div>
 <div class="receipt" aria-live="polite">
@@ -170,7 +170,10 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-lbl" id="al-mirror-h" hidden>Plan vs what you actually spent, bucket by bucket <span class="trust-badge" data-trust="example" id="al-mirror-badge" hidden>Example</span></p>
 <p class="receipt-note" id="al-mirror-own" hidden></p>
 <div class="actuals-rows" id="al-actuals" hidden></div>
-<p class="receipt-foot hint">Variance = what you actually spent, minus that bucket's plan</p>
+<!-- E11-8: the aggregate-vs-buckets reconciliation line. Hidden until the
+     visitor has scored at least one bucket AND entered a needs total. -->
+<p class="receipt-note" id="al-reconcile" hidden></p>
+<p class="receipt-foot hint">Variance = what you entered, minus that bucket's plan</p>
 <p class="receipt-foot">Shares of needs — naira follows instantly</p>
 <p class="receipt-foot hint">Other needs is whatever is left after the named shares</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
@@ -629,12 +632,12 @@ function render() {
     if (!anyScored) {
       /* No actual anywhere: the panel withholds rather than inventing one, and
          says in words WHY it is empty and how to fill it. */
-      ownEl.textContent = "Our example, not yours — the naira beside each bucket is your plan, not your spending. Type what you actually spent in any bucket above; a bucket you leave blank prints no figure and no badge.";
+      ownEl.textContent = "Our example, not yours — the naira beside each bucket is your plan, not your spending. Type what you actually spent in any bucket above; a bucket you leave blank keeps its plan amount but prints no \"you spent\" figure and no badge, because we have nothing real to score it against.";
       rowsEl.innerHTML = "";
       rowsEl.hidden = true;
     } else {
       const n = scored.filter((s) => s.actual !== null).length;
-      ownEl.textContent = `Variance = your figure minus that bucket's plan. ${n} of 5 buckets scored from what you typed; ${5 - n} still blank, and blank prints no figure and no badge.${planOurs ? " The plan figures are still our worked example — touch income, a split or a share to make them yours." : ""}`;
+      ownEl.textContent = `Variance = what you spent, minus that bucket's plan. ${n} of 5 buckets scored from what you typed; the other ${5 - n} still show their plan only — no "you spent" figure and no badge, because we have nothing real to score them against.${planOurs ? " The plan figures are still our worked example — touch income, a split or a share to make them yours." : ""}`;
       let html = "";
       for (const s of scored) {
         const bucket = r2.buckets.find((x) => x.id === s.b);
@@ -643,7 +646,7 @@ function render() {
           /* Honest unknown state: the plan figure is fine to show (it IS the
              plan), but there is no actual, so there is nothing to compare and no
              badge. No fabricated amount is printed anywhere in this row. */
-          html += `<div class="actuals-row"><span>${bucket.label}</span><b>${nn(s.plan)}</b><span class="actuals-none">— add yours to score it</span></div>`;
+          html += `<div class="actuals-row" tabindex="0"><span>${bucket.label}</span><b>${nn(s.plan)}</b><span class="actuals-none">— add yours to score it</span></div>`;
           continue;
         }
         const variance = s.actual - s.plan;
@@ -651,10 +654,58 @@ function render() {
         let badgeText = "ON PLAN";
         if (variance > 0) { badgeClass = "verdict-badge--action"; badgeText = `OVER ${nn(variance)}`; }
         else if (variance < 0) { badgeClass = "verdict-badge--good"; badgeText = `UNDER ${nn(-variance)}`; }
-        html += `<div class="actuals-row"><span>${bucket.label}</span><b>${nn(s.plan)}</b><span class="actuals-diff">you spent ${nn(s.actual)}</span><span class="verdict-badge ${badgeClass}">${badgeText}</span></div>`;
+        html += `<div class="actuals-row" tabindex="0"><span>${bucket.label}</span><b>${nn(s.plan)}</b><span class="actuals-diff">you entered ${nn(s.actual)}</span><span class="verdict-badge ${badgeClass}">${badgeText}</span></div>`;
       }
       rowsEl.innerHTML = html;
       rowsEl.hidden = false;
+      /* E11-8 — the aggregate never met the buckets. A11 proved a ₦150,000
+         "Spent on needs" sitting beside ₦80,000 of scored buckets with the
+         contradiction never mentioned — two numbers about the same money, on the
+         same screen, silently disagreeing. Say it. When the visitor has scored at
+         least one bucket AND their aggregate needs spend is entered, the buckets
+         must sum to that aggregate or one of the two is wrong; we do not know
+         which, so we do not guess — we print both and name the gap. Uses the
+         scored total, never an estimate, and says so. */
+      const scoredSum = scored.reduce((a, s) => a + (s.actual ?? 0), 0);
+      const aggNeeds = pm(g("bg-spn").value) || 0;
+      /* A11-7, applied here because the reconcile line is where a bad figure
+         becomes a LOUD one: it subtracts and prints the difference, so a single
+         stray keystroke that leaves "₦12500099000" in the field turns into a
+         confident "a ₦12,500,019,000 gap" statement. Comparing two absurd
+         numbers tells the visitor nothing about their month, so we decline to
+         compare and use the page's own existing too-large vocabulary rather than
+         inventing a second one. */
+      const HUGE = 100000000;
+      const rec = t("al-reconcile");
+      const actualsAbsurd = scored.some((s) => s.actual !== null && s.actual > HUGE);
+      if ((aggNeeds > HUGE || actualsAbsurd) && n > 0) {
+        rec.hidden = false;
+        rec.textContent = "One of these figures looks unusually large — double-check the needs total and the bucket amounts before reading a gap into them.";
+      } else if (n > 0 && !pmBlank(g("bg-spn").value) && aggNeeds > 0) {
+        const diff = Math.abs(scoredSum - aggNeeds);
+        /* Below 1% of the aggregate is rounding, not a contradiction. */
+        if (diff > aggNeeds * 0.01) {
+          /* Two bugs here, both caught by calc-regress rather than by eye, which
+             is exactly what the suite is for.
+             1. The first wording said "the buckets are missing X" from
+                aggNeeds - scoredSum, which goes NEGATIVE when the buckets sum to
+                MORE than the total — it printed "missing −₦1,696,968", nonsense on
+                its face. Sign-agnostic now: we never say which side is at fault.
+             2. rails then failed it as a BARE naira assertion: the line named
+                three figures and never asked for anything. That contract is
+                right — a sentence that only reports a difference reads as a
+                verdict. So it now ASKS, which is what the user needs to do next
+                anyway: finish the buckets, or correct the total. */
+          rec.hidden = false;
+          rec.textContent = `Your buckets add to ${nn(scoredSum)} but "Spent on needs" says ${nn(aggNeeds)} — these two disagree, so we cannot score your month yet. Enter the buckets you have not filled in, or correct the needs total above.`;
+        } else {
+          rec.hidden = true;
+          rec.textContent = "";
+        }
+      } else {
+        rec.hidden = true;
+        rec.textContent = "";
+      }
     }
   }
   /* E10 (A10-C10) — print the allocator sum. 40+25+15+10+7 = 97% and the receipt
@@ -863,18 +914,33 @@ syncSeedExit();
    keystroke late without this; the re-render is idempotent and writes nothing
    the first pass did not already own. */
 document.addEventListener("input", () => setTimeout(() => { render(); syncSeedExit(); }, 0));
-/* F3 — "Use this" writes the plan into actuals, collapsing Needs left to ₦0.
+/* F3 + E11-1 — "Use this" writes the plan into actuals, collapsing Needs left to ₦0.
    The compare must survive the click: say what happened, and lift the note the
    moment the visitor types their real figure. render() never touches the note,
-   so it stands until the visitor takes the field over (or Reset/Clear moves it). */
+   so it stands until the visitor takes the field over (or Reset/Clear moves it).
+
+   A11 (2026-10-08) found this note was bound to ONE of the two controls that
+   perform the write. The `.offer [data-use]` rail disclosed; the three
+   `Use my targets — needs/wants/savings` chips (handler near the end of this
+   script) wrote the SAME plan figure into the SAME fields SILENTLY. Manager
+   confirmed live: one tap put ₦125,000 into "Spent on needs", left "Needs left"
+   at ₦0 as if the visitor had simply spent exactly their target, and printed
+   "within plan" for a month nobody lived. Three taps emptied the verdict banner.
+
+   So the disclosure is now a FUNCTION, `disclosePlanWrite()`, and every control
+   that writes a plan into a spend field must call it. Adding a fourth such
+   control without calling this is the bug, so the note below states that. */
 let pasted = false;
-document.addEventListener("click", (e) => {
-  const u = (e.target as HTMLElement).closest?.('.offer b[data-use="bg-spn"]');
-  if (!u || u.getAttribute("aria-disabled")) return;
+const disclosePlanWrite = () => {
   pasted = true;
   const note = t("bg-pasted");
   note.hidden = false;
-  note.textContent = "Pasted the plan into actuals — Needs left matches by construction, not by verdict. Type what you really spent to score your month.";
+  note.textContent = "Put the plan in as your spending — this number came from the plan, not from your month. 'Within plan' below is true by construction, not by verdict. Type what you really spent to score your month.";
+};
+document.addEventListener("click", (e) => {
+  const u = (e.target as HTMLElement).closest?.('.offer b[data-use="bg-spn"]');
+  if (!u || u.getAttribute("aria-disabled")) return;
+  disclosePlanWrite();
 });
 g("bg-spn").addEventListener("input", () => {
   if (!pasted) return;
@@ -963,6 +1029,10 @@ if (copyBtn) copyBtn.addEventListener("click", async () => {
       ['bg-needs','bg-wants','bg-save'].forEach(id => g(id).dispatchEvent(new Event('input', { bubbles: true })));
     });
   });
+  /* E11-1 — the OTHER half of the A11 CRITICAL. These three chips write a PLAN
+     figure into a SPEND field, exactly like the `.offer [data-use]` rail, and
+     they were doing it with no disclosure at all. They now call the same
+     disclosePlanWrite() the rail calls, so there is one voice for one fact. */
   document.querySelectorAll('[data-fill-from-plan]').forEach(btn => {
     btn.addEventListener('click', () => {
       const target = document.getElementById(btn.dataset.fillFromPlan);
@@ -977,6 +1047,11 @@ if (copyBtn) copyBtn.addEventListener("click", async () => {
       else if (target.id === 'bg-spw') target.value = String(Math.round(plan.wants));
       else if (target.id === 'bg-sps') target.value = String(Math.round(plan.savings));
       target.dispatchEvent(new Event('input', { bubbles: true }));
+      /* AFTER the dispatch, deliberately. dispatchEvent('input') is synchronous,
+         and the bg-spn input listener above lifts this note the moment the field
+         changes — so disclosing first would be undone in the same tick and the
+         note would never be seen. Order is load-bearing; do not swap. */
+      disclosePlanWrite();
     });
   });
   document.querySelectorAll('[data-apply-defaults]').forEach(btn => {

@@ -56,7 +56,7 @@ regression. Tool order (King may reorder): 50-30-20 → salary-tax → savings-g
 compound-interest → loan-repayment → gross-to-net → emergency-fund (audits run, C1
 fix held) → inflation-savings → naira-value → currency-converter →
 money-transfer → crypto → dividend → savings-rate → exchange-rate-history.
-ACTIVE TOOL: 50-30-20 (A1–A10 + E1–E10 done, A11 next).
+ACTIVE TOOL: 50-30-20 (A1–A10 + E1–E10 done, A11 in flight).
 
 ## LAW — 2026-10-07 · UX AUDITS: 40 AUDITS + 40 EDITS PER CALCULATOR. King:
 ## *"What about the calculators. I was asking you to audit the UX. How people use

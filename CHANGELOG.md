@@ -3,6 +3,41 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.39] — 2026-10-08 — 50-30-20 E11: honesty sweep after A11 FAIL
+A11 found E10 regression clean (11/11) but 9 dishonest sentences. E10's repair
+opened a fabrication of its own; this round closes it and three false claims.
+
+**The CRITICAL (Manager-confirmed live before ordering).** The disclosure for
+"we just wrote a plan figure into a spend field" existed — but was bound to ONE of
+the two controls that perform the write. The `.offer [data-use]` rail disclosed.
+The three `Use my targets` chips wrote the same plan into the same fields
+SILENTLY: one tap put ₦125,000 into "Spent on needs", left "Needs left" at ₦0 as
+if the visitor had simply spent exactly their target, and printed "within plan"
+for a month nobody lived. Now both paths call one `disclosePlanWrite()`, so there
+is one voice for one fact. The call sits AFTER the `dispatchEvent` on purpose:
+the dispatch is synchronous and the bg-spn input listener lifts the note in the
+same tick, so disclosing first would be undone instantly.
+
+**Three false claims corrected.** "Leave the rest blank and they print no figure"
+was untrue twice — a blank bucket still prints its plan amount. "Variance = your
+figure" and "Variance = what you actually spent" were two definitions of one term
+40px apart; now one. "you spent ₦X" became "you entered ₦X", which is what the
+user did.
+
+**New feature, the one A11 called a real gap.** Nothing reconciled the aggregate
+needs spend against the scored buckets: ₦150,000 sat beside ₦80,000 of buckets
+with the contradiction never mentioned. `#al-reconcile` now names the gap and
+asks which side is wrong. It refuses to compare absurd figures, reusing the
+page's existing too-large vocabulary, because a single stray keystroke otherwise
+became a confident statement about a ₦12.5bn gap.
+
+Two of those bugs were caught by calc-regress and not by eye — the line first
+printed "the buckets are missing −₦1,696,968", and rails then rejected it as a
+bare naira assertion because it never asked for anything. Both fixed; the line
+now asks instead of reporting.
+
+Gates 6/6 (article 147/147, vectors 95/95), 79 pages, suite 128/0/7 green.
+
 ## [0.7.38] — 2026-10-08 — C1: emergency-fund months-to-finish honours `saved`
 King: "do the best recommendation" — fix the bug properly, PHP-first, no shortcuts.
 
