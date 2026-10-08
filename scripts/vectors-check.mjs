@@ -57,7 +57,16 @@ for (let i = 0; i < 100; i++) {
 // already takes a clock argument; pin it to the oracle's generation instant.
 // Bump this in the SAME change whenever scripts/php-harness/vectors.json is
 // regenerated, or the two clocks disagree again by design.
-const HIST_ORACLE_MS = Date.parse("2026-09-18T12:00:00Z");
+//
+// 2026-10-08 — bumped to the C1 regeneration instant. C1 (emergency-fund
+// months_to_reach ignoring `saved`) could not be fixed before this, because
+// regenerating vectors.json required running PHP and the generator pointed at
+// a theme path from another machine. Once the generator ran, it ran against
+// the REAL clock, so the fx-history window counts came out at the new instant
+// (0/60) while this gate still stood at 2026-09-18 (20/80). Bumping the pin
+// to the generation instant is the documented remedy, and it is why the C1
+// change touches this line as well as the oracle.
+const HIST_ORACLE_MS = Date.parse("2026-10-08T08:58:31Z");
 
 const S = E.salaryTax, G = E.grossToNet, SV = E.savings, NV = E.nairaValue,
   IN = E.inflation, B = E.budget, AL = E.allocator, L = E.loan, C = E.crypto,

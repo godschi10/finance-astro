@@ -31,30 +31,40 @@ export function emergencyFund(
 
   const runwayNow = essentials > 0 ? saved / essentials : 0;
   const target = essentials * monthsCover;
-  /* ── C1 — A KNOWN, LIVE DEFECT. DO NOT "FIX" IT WITHOUT THE ORACLE. ──────────
-     `monthsToReach` ignores `saved`, so it is mathematically INDEPENDENT of
-     how much the visitor has already put away. Verified live at 390px: at
-     saved = 900,000 the receipt prints gap ₦0, a 100% bar, and still "11.3
-     months". `gap` is computed eight lines below and then ignored here.
+  /* ── C1 — FIXED 2026-10-08, at the PHP source of truth FIRST. ───────────────
+     This used to read `target / monthlySave`, which divides the WHOLE target by
+     the saving rate and so is mathematically independent of what the visitor has
+     already put away — `gap` was computed eight lines below and then ignored.
+     Proven live at 390px: at saved = 900,000 the receipt printed gap ₦0, a 100%
+     bar, and still "11.3 months to reach". A fully-funded user was told they had
+     11 more months to go.
 
-     The one-line fix is `(target - saved) / monthlySave`, and it is CORRECT:
-     proven on the live DOM, it moves 11.3 -> 5.6 -> 0.0 as saved goes
-     0 -> 450,000 -> 900,000, and it correctly drops years_to_reach,
-     future_essentials and real_target with it, so the "inflated finish line"
-     stops being inflated by money already saved.
+     The blocker was never mathematical, it was procedural: this file is a port
+     of inc/emergency-fund.php and scripts/vectors-check.mjs gates it against a
+     frozen PHP oracle in scripts/php-harness/vectors.json that carried the same
+     bug (emergency_seed pinned to 11.25). Regenerating that oracle was IMPOSSIBLE
+     because scripts/php-harness/vectors.php hardcoded a theme path from another
+     machine ('/home/ubuntu/gwill-finance-theme/inc/') that does not exist here,
+     so the generator died on require_once.
 
-     IT IS NOT APPLIED because this file is a faithful port of the WordPress
-     engine (inc/emergency-fund.php, byte-identical logic including the
-     `max(1.0, $months_cover)` clamp) and scripts/vectors-check.mjs gates it
-     against a FROZEN PHP oracle in scripts/php-harness/vectors.json. That
-     oracle carries the same bug: emergency_seed pins months_to_reach to
-     11.25. Applying the fix turns the vectors gate RED on four fields
-     (months_to_reach, years_to_reach, future_essentials, real_target) —
-     measured, not assumed. The PHP source of truth must be fixed FIRST and
-     vectors.json regenerated, which is a gate/oracle change and therefore
-     @manager's call, not a code-fix leg's. Do not silently diverge this port
-     from PHP to make the numbers look better. */
-  const monthsToReach = monthlySave > 0 ? target / monthlySave : 0;
+     Order actually followed, so the port never diverged from PHP:
+       1. fixed inc/emergency-fund.php (the source of truth),
+       2. made the oracle generator's path overridable + auto-detecting,
+       3. REGENERATED vectors.json by running PHP — never hand-edited,
+       4. applied the same one-line fix here.
+
+     The regenerated oracle moved exactly four fields, all in emergency_seed and
+     all downstream of this line (months_to_reach 11.25 -> 5.625, plus
+     years_to_reach, future_essentials and real_target). No other vector in the
+     suite moved, which is the proof the regeneration was surgical.
+
+     Both clamps matter and both are mirrored in PHP:
+       · max(0, target - saved) — saving PAST the target means the goal is
+         already met; months to reach it is 0, never negative.
+       · monthlySave > 0         — no saving rate means "never", reported as 0,
+         which is this engine's long-standing convention, unchanged. */
+  const remaining = Math.max(0, target - saved);
+  const monthsToReach = monthlySave > 0 ? remaining / monthlySave : 0;
   // Display-sanity cap: (1+inflation)^years overflows to Infinity for
   // dust-sized saving or absurd cover/inflation (receipt printed ₦Infinity).
   // 50y exceeds any emergency build; the pinned seed (0.94y) is untouched.
