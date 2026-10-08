@@ -71,6 +71,21 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="bg-spw">Spent on wants ₦</label><input id="bg-spw" type="text" value={String(seedActuals.wants)} inputmode="decimal" autocomplete="off"></div>
 <div class="field"><label for="bg-sps">Put to savings ₦</label><input id="bg-sps" type="text" value={String(seedActuals.savings)} inputmode="decimal" autocomplete="off"></div>
 </div>
+<!-- E13 — the input-health rails. pm() is deliberately tolerant: it reads
+     "12.5.5" as 0, "abc" as never-entered and "1e9" as a billion naira, so
+     the field and the maths could disagree and the visitor was never told
+     (A13 proved it live: "12.5.5" in the income box still printed "AHEAD —
+     Our example puts ₦40,000 extra to savings"). Each of these owns ONE
+     question, names the fields at fault in the labels' own words, and routes
+     to the first offender. They sit directly under the grid they police, so
+     nobody has to hunt for the box, and they are emptied as well as hidden
+     when they have nothing to say — a hidden rail must never carry stale
+     prose. .receipt-note is carried for the fleet's rail vocabulary; the
+     inline colour is --text-mid because these three sit on --surface, not on
+     the dark receipt slip, where #c4b89a would be unreadable in light. -->
+<p class="receipt-note" id="bg-junk" hidden style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
+<p class="receipt-note" id="bg-range" hidden style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
+<p class="receipt-note" id="bg-big" hidden style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
 <!-- Income quick-fill chips -->
 <div class="fx-chips" style="margin-top:10px" id="income-chips" aria-label="Quick-fill income">
 <button type="button" class="fx-chip" data-fill="bg-inc" data-value="70000" aria-label="Fill ₦70,000">₦70k</button>
@@ -142,6 +157,12 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for={`al-act-${b.id}`}>{b.label} — you actually spent ₦</label><input id={`al-act-${b.id}`} type="text" inputmode="decimal" placeholder="—" autocomplete="off" data-al-actual={b.id}></div>
 ))}
 </div>
+<!-- E13 — step 2's own malformed rail. The five shares decide what "Other
+     needs" IS and the five actuals are scored into badges, so one junk box
+     here prices a bucket at ₦0 and then prints a confident "UNDER ₦48,000"
+     for it — the exact lie step 1 was caught telling, five fields further
+     down the same page. -->
+<p class="receipt-note" id="al-junk" hidden style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
 <p class="receipt-note" id="al-actual-hint">Optional — score just the buckets you know. A bucket you leave blank still shows that bucket's plan amount, but no "you spent" figure and no badge, because we have nothing real to score it against. Nothing is filled in for you here.</p>
 <!-- E12-10 — the five actuals faced a blank naira grid with no affordance.
      Same vocabulary as the income chips above: one tap writes THAT bucket's
@@ -200,7 +221,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 import { budget503020, budget503020Compare } from "../../lib/budget";
 import { budgetAllocator } from "../../lib/allocator";
 import { formatGrouped } from "../../lib/format";
-import { pm, pmBlank } from "../../scripts/pm";
+import { pm, pmBlank, pmHonest } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 /* F1 — fleet-wide negative shape (the crypto tool's winner): a negative prints
@@ -228,13 +249,160 @@ const ACT_ID: Record<string, string> = {
   data: "al-act-data", utilities: "al-act-utilities",
 };
 const ACT_IDS = AL_BUCKETS.map((b) => ACT_ID[b]);
+/* ── E13 — INPUT HEALTH ───────────────────────────────────────────────────
+   A13 found the CRITICAL on this page and the Manager re-proved it on live
+   bytes: the income box accepted "12.5.5" and the page still printed "AHEAD
+   — Our example puts ₦40,000 extra to savings", a verdict computed from a
+   figure nobody entered. "abc" emptied the verdict with no explanation, and
+   "1e9" moved a billion naira through the plan unchallenged. The cause is
+   that pm() is deliberately TOLERANT — that tolerance is what keeps a
+   grouped "₦1,234.50" live-accurate — so the field showed one thing while the
+   maths used another and nothing on the page said so.
+
+   These predicates are the only NEW truth source here, and they are built
+   FROM pm/pmBlank/pmHonest rather than beside them, so they can never
+   disagree with the reader the maths actually uses. */
+/* pm()'s own strip expression (pm.js) — but WITHOUT pm()'s final NaN→0
+   swallow, which is the one thing this test has to see through. pm() returns
+   0 for both "" and "12.5.5"; the only way to tell a real figure from junk is
+   to run its strip yourself and look at the Number it fed to that swallow.
+   Returning NaN is deliberate and safe here: nothing downstream ever uses
+   this as a value, only Number.isFinite() on it. */
+const pmRaw = (v: string): number => Number(String(v).replace(/[\u200B-\u200F\uFEFF]/g, "").replace(/[^\d.eE-]/g, ""));
+/* The field names exactly as the visitor reads them. TEXT NODES ONLY, never
+   textContent: the spine appends its SAMPLE / LAST USED pill INSIDE the
+   label (mark(), smart-fields.js), so textContent is "Needs %Last used" and
+   every sentence below would ship garbled — the BREAK-1 lesson, applied to
+   the new rails rather than rediscovered by them. */
+const fieldName = (id: string): string => {
+  const l = document.querySelector(`label[for="${id}"]`);
+  if (!l) return id;
+  let s = "";
+  l.childNodes.forEach((n) => { if (n.nodeType === 3) s += n.textContent || ""; });
+  return s.trim() || id;
+};
+/* Every one of these rails is innerHTML (it ends on an anchor), and one of
+   them echoes what the visitor typed back at them — so the echo is escaped. */
+const esc = (s: string): string => s.replace(/[&<>"']/g, (c) => (({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" } as Record<string, string>)[c]));
+/* The seven step-1 inputs this page's maths reads, and the three of them
+   that are SHARES of one income rather than amounts. */
+const STEP1_IDS = ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"];
+const SPLIT_IDS = ["bg-needs", "bg-wants", "bg-save"];
+/* What the reader took from a malformed box, in the field's own unit, so the
+   rail can say it instead of leaving the visitor to guess. The three step-1
+   splits and the five step-2 shares are percentages; everything else here is
+   naira. Never re-typed: AL_BUCKETS is the engine's own list (above). */
+const PCT_IDS = SPLIT_IDS.concat(AL_BUCKETS.map((b) => "al-" + b));
+const MONEY_IDS = ["bg-inc", "bg-spn", "bg-spw", "bg-sps"];
+const unitOf = (id: string): string => (PCT_IDS.indexOf(id) >= 0 ? "0%" : "₦0");
+/* MALFORMED — visible text that is not a figure, in the two shapes this page
+   actually produces, because it does two different things with them:
+     "unparseable"  every character is in the honest-money alphabet but the
+                    text is still not a number ("12.5.5"). pm() discards the
+                    whole thing to 0, so the receipt prints a confident ₦0
+                    nobody typed.
+     "unreadable"   characters outside that alphabet ("abc"). pmBlank reads
+                    these as never-entered, so every dependent figure is
+                    held back as "—" and the verdict goes quiet with no
+                    explanation at all.
+   A genuinely EMPTY field is NOT malformed: the offer rail already names it
+   and says "empty, not zero", which is the honest answer. Neither is a value
+   pm() reads exactly as written — "₦1,234.50", "1 234 500", "8.5%", "007",
+   "1e5", "+500" all parse and are left strictly alone. */
+const malformedOf = (id: string): "" | "unreadable" | "unparseable" => {
+  const v = g(id).value;
+  if (v.trim() === "") return "";
+  if (!pmHonest(v)) return "unreadable";
+  return Number.isFinite(pmRaw(v)) ? "" : "unparseable";
+};
+/* Name up to three offending fields in the labels' own words — "A", "B and C"
+   — then count the rest, so seventeen junk boxes cannot become a
+   seventeen-field sentence. */
+const nameList = (ids: readonly string[]): string => {
+  const named = ids.slice(0, 3).map((id) => `"${esc(fieldName(id))}"`);
+  const more = ids.length - named.length;
+  let s = named.length > 1 ? `${named.slice(0, -1).join(", ")} and ${named[named.length - 1]}` : named[0];
+  if (more) s += ` and ${more} more field${more > 1 ? "s" : ""}`;
+  return s;
+};
+/* The tail every input-health rail ends on: the FIRST offender, named, on the
+   same data-goto CTA grammar the reconcile fix already uses — a tap scrolls
+   AND focuses the box instead of only jumping to it. */
+const goTo = (id: string): string => ` <a class="btn b-ghost b-xs" href="#${id}" data-goto="${id}">Go to "${esc(fieldName(id))}"</a>`;
+/* One rail, one voice, shared by the step-1 and step-2 rails so the two can
+   never drift into two sentences for one fact. Per-field clauses, because
+   the two malformed kinds need two DIFFERENT truths: an unparseable box was
+   priced from ₦0, an unreadable one was priced from nothing, and saying "we
+   ignored your input" for both would be false about one of them. */
+const junkRail = (el: HTMLElement | null, ids: readonly string[]): void => {
+  if (!el) return;
+  const bad = ids.filter((id) => malformedOf(id));
+  if (!bad.length) { el.hidden = true; el.innerHTML = ""; return; }
+  const named = bad.slice(0, 3);
+  const more = bad.length - named.length;
+  const clauses = named.map((id) => {
+    const nm = `"${esc(fieldName(id))}"`;
+    return malformedOf(id) === "unparseable"
+      ? `${nm} reads "${esc(g(id).value)}", which is not a figure we can use — so the plan was priced as if it read ${unitOf(id)}, not as what you typed.`
+      : `${nm} reads "${esc(g(id).value)}", and we could not get a figure out of it at all — so every number that depends on it is held back as "—" instead of guessed.`;
+  });
+  el.hidden = false;
+  el.innerHTML = clauses.join(" ")
+    + (more ? ` ${more} more field${more > 1 ? "s" : ""} ${more > 1 ? "are" : "is"} in the same state.` : "")
+    + ` Retype ${bad.length > 1 ? "them" : "it"} as a plain number.`
+    + goTo(bad[0]);
+};
+/* SPLITS OUT OF RANGE. A share is a slice of ONE income, so it runs 0 to 100
+   — the range is the whole fact and no benchmark is invented to support it.
+   The engine prices the value as typed and clamps only the NEGATIVE to 0, so
+   150 really does move 150% of income into needs and −10 really is priced as
+   0%; the rail says which happened rather than letting the figure speak for
+   itself. The generic negative line in #bg-warn still fires as well, because
+   "we priced −10 as ₦0" and "−10 is outside 0–100" are two different
+   statements and a visitor needs both. */
+const rangeRail = (el: HTMLElement | null, ids: readonly string[]): void => {
+  if (!el) return;
+  const bad = ids.filter((id) => { const v = pm(g(id).value); return v < 0 || v > 100; });
+  if (!bad.length) { el.hidden = true; el.innerHTML = ""; return; }
+  el.hidden = false;
+  el.innerHTML = `${nameList(bad)} reads ${bad.map((id) => `${pm(g(id).value)}%`).slice(0, 3).join(", ")}.`
+    + ` A share is a slice of one income, so it runs 0 to 100 — a share above 100 is priced exactly as you typed it, and a share below 0 is priced as 0%.`
+    + goTo(bad[0]);
+};
+/* MAGNITUDE. The page already had ONE too-large convention — the same ₦100M
+   threshold and the same "That looks unusually large — double-check the
+   figure" voice the salary-tax page uses — but it covered the income box only
+   and never said WHICH box. The threshold and the voice now cover the income
+   and the three step-1 actual spends, each named and routed, so a stray
+   keystroke cannot become the confident "₦95,000,000,000 over" the step-2
+   reconcile rail already refuses to print. No average salary is claimed
+   anywhere in it: the honest signal is the size of the number itself. */
+const HUGE_MONEY = 100000000;
+const bigRail = (el: HTMLElement | null, ids: readonly string[]): void => {
+  if (!el) return;
+  const bad = ids.filter((id) => pm(g(id).value) > HUGE_MONEY);
+  if (!bad.length) { el.hidden = true; el.innerHTML = ""; return; }
+  const named = bad.slice(0, 3);
+  const more = bad.length - named.length;
+  el.hidden = false;
+  el.innerHTML = `${named.map((id) => `"${esc(fieldName(id))}" reads ${esc(nn(pm(g(id).value)))}`).join(", ")}.`
+    + ` That looks unusually large — double-check the figure before reading anything into the plan.`
+    + (more ? ` ${more} more figure${more > 1 ? "s" : ""} ${more > 1 ? "are" : "is"} past the same line.` : "")
+    + goTo(bad[0]);
+};
 /* E10 — a bucket the visitor has NOT entered is UNKNOWN, and unknown never
    prices as ₦0. pmBlank (no digit / not the honest-money alphabet) is the same
    predicate the copy handler and the ZERO LAW already use, so "abc" and "" read
    alike and neither becomes a scored bucket. Returns null, never a number. */
 const actualOf = (bucket: string): number | null => {
   const el = document.getElementById(ACT_ID[bucket]) as HTMLInputElement | null;
-  if (!el || pmBlank(el.value)) return null;
+  /* E13 — junk is UNKNOWN, never ₦0. pmBlank already returns null for "abc",
+     but "1.2.3" has digits inside the honest-money alphabet, so it slipped
+     through and was scored as a real ₦0 — printing "you entered ₦0 UNDER
+     ₦50,000", a fabricated verdict about a bucket nobody scored. A malformed
+     bucket now reads exactly like a blank one: no figure, no badge, and the
+     new #al-junk rail names the box instead. */
+  if (!el || pmBlank(el.value) || malformedOf(ACT_ID[bucket])) return null;
   return Math.max(0, pm(el.value) || 0);
 };
 /* E10 — the ONE ownership predicate, reusing the page's existing sd()/badge
@@ -256,6 +424,15 @@ function render() {
   t("bg-warn").textContent = (bgNeg ? "Negative entries are treated as ₦0." : "")
     + ((bgNeg && bgHuge) ? " " : "")
     + (bgHuge ? "That income looks unusually large — double-check the figure." : "");
+  /* ── E13 — the three input-health rails, in the order the orders that asked
+     for them came in. The malformed line is the confirmed CRITICAL: without
+     it a verdict was computed from "12.5.5". Computed once here and then read
+     by the rail, the verdict banner and the step-1 CTAs below, so none of the
+     three can disagree about which field is at fault. */
+  const junkStep1 = STEP1_IDS.filter((id) => malformedOf(id));
+  junkRail(t("bg-junk"), STEP1_IDS);
+  rangeRail(t("bg-range"), SPLIT_IDS);
+  bigRail(t("bg-big"), MONEY_IDS);
   const inc = Math.max(0, pm(g("bg-inc").value) || 0);
   const np = Math.max(0, pm(g("bg-needs").value) || 0) / 100;
   const wp = Math.max(0, pm(g("bg-wants").value) || 0) / 100;
@@ -316,9 +493,17 @@ function render() {
     Math.max(0, pm(g("bg-spn").value) || 0),
     Math.max(0, pm(g("bg-spw").value) || 0),
     Math.max(0, pm(g("bg-sps").value) || 0));
-  sfFig(t("bg-rn"), ["bg-inc", "bg-needs", "bg-spn"], nn(c.needs_remaining));
-  sfFig(t("bg-rw"), ["bg-inc", "bg-wants", "bg-spw"], nn(c.wants_remaining));
-  sfFig(t("bg-rs"), ["bg-inc", "bg-save", "bg-sps"], nn(c.savings_remaining));
+  /* E13 manager follow-up — the SAME dishonesty, one surface up. When income is
+   malformed ("12.5.5"), pm() reads ₦0 but the field still shows "12.5.5", and
+   these three receipt rows printed "Needs left › −₦120,000" — a confident
+   number about the visitor's month, derived from a figure that does not exist.
+   The verdict banner and the what-now line already withhold on this predicate;
+   the rows were the last surface that did not. They show the spine's withheld
+   "—" instead, which is what the page prints for "we cannot price this". */
+  const rowDash = junkStep1.length > 0 ? "—" : null;
+  sfFig(t("bg-rn"), ["bg-inc", "bg-needs", "bg-spn"], rowDash ?? nn(c.needs_remaining));
+  sfFig(t("bg-rw"), ["bg-inc", "bg-wants", "bg-spw"], rowDash ?? nn(c.wants_remaining));
+  sfFig(t("bg-rs"), ["bg-inc", "bg-save", "bg-sps"], rowDash ?? nn(c.savings_remaining));
   /* STEP 2 — the needs half, itemised. Same income, same split: the needs
      figure feeding these buckets IS plan.needs, so step 1 → step 2 is one
      continuous journey — change income or split and both steps move. */
@@ -329,6 +514,12 @@ function render() {
     shares[inp.dataset.alBucket as string] = Math.max(0, pm(inp.value) || 0) / 100;
     shareIds.push(inp.id);
   });
+  /* E13 — step 2's own malformed rail. The five shares decide what "Other
+     needs" IS and the five actuals are scored straight into badges, so one
+     junk box here prices a bucket at ₦0 and then prints a confident
+     "UNDER ₦48,000" for it — the same lie step 1 was caught telling, five
+     fields further down the page. */
+  junkRail(t("al-junk"), shareIds.concat(ACT_IDS));
   const r2 = budgetAllocator(inc, np, wp, svp, shares);
   sfFig(t("al-needs"), ["bg-inc", "bg-needs"], nn(r2.needs));
   /* T3 — the step-2 label names the LIVE split, never a fixed "half": at a
@@ -435,7 +626,19 @@ function render() {
      the seed's own story), remaining<0 is OVER-put — ahead of plan, not short
      of it. Only the confusing sign gets the gloss, never a scold for saving. */
   const savOver = c.savings_remaining < 0 ? -c.savings_remaining : 0;
-  if (!empty && (overNW.length || savOver > 0)) {
+  /* E13 manager follow-up — the boundary the leg logged instead of hiding.
+     With "12.5.5" typed into income, pm() reads ₦0 while the FIELD still shows
+     "12.5.5". The verdict banner was gated on that and prints CANNOT SCORE, but
+     this line was NOT: it still said "needs and wants ₦185,000 over — spend
+     less there", computed from a figure that does not exist and phrased in the
+     visitor's voice. That is the same shape as the mirror E10 removed — a
+     confident number about your month, derived from nothing.
+     So the advice line withholds exactly where the verdict does: no verdict
+     means no advice ABOUT the verdict. The rail above already names the field
+     and how to fix it; this line would only have repeated it in a voice the
+     numbers cannot support. */
+  const step1Junked = junkStep1.length > 0;
+  if (!empty && !step1Junked && (overNW.length || savOver > 0)) {
     const bits: string[] = [];
     if (overNW.length) {
       const nm = overNW.map((o) => o.name).join(" and ");
@@ -800,7 +1003,19 @@ function render() {
   const verdictItems: string[] = [];
   /* "yours" for every id still wearing SAMPLE ⇒ the number belongs to our seed. */
   const yours = (ids: string[]) => ids.every((id) => !isOurs(id) && !pmBlank(g(id).value));
-  if (!empty && planComplete) {
+  /* E13 — the other half of the confirmed CRITICAL. The rail says what the
+     page DID with a malformed box; this stops the banner printing a verdict
+     on top of it. A13 proved "12.5.5" in the income box still printed "AHEAD
+     — Our example puts ₦40,000 extra to savings" (plan ₦0 minus the ₦40,000
+     seed actual), and "abc" left the banner silently empty, which is its own
+     dishonesty. So instead of either, the banner says the month is NOT
+     scored and routes to the box. It never asserts a conclusion built from a
+     number nobody entered — that is the whole point of the rail above. */
+  const junkVerdict = junkStep1.concat(shareIds.filter((id) => malformedOf(id)));
+  if (!empty && junkVerdict.length) {
+    verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">CANNOT SCORE</span>${nameList(junkVerdict)} ${junkVerdict.length > 1 ? "are" : "is"} not a figure we can read, so nothing below is a verdict about your money. Fix the field and this scores itself.${goTo(junkVerdict[0])}</div>`);
+  }
+  else if (!empty && planComplete) {
     const splitsYours = yours(["bg-needs", "bg-wants", "bg-save"]);
     const savYours = yours(["bg-save", "bg-sps"]);
     const needsYours = yours(["bg-needs", "bg-spn"]);
@@ -827,7 +1042,13 @@ function render() {
       const needPctNow = Math.max(0, pm(g("bg-needs").value) || 0);
       const spentNeeds = Math.max(0, pm(g("bg-spn").value) || 0);
       const reqPct = inc > 0 ? Math.ceil((spentNeeds / inc) * 100) : null;
-      const fix = reqPct !== null && reqPct > needPctNow
+      /* E13 — the "raise Needs % to X%" half of this sentence is only a SHARE
+         when X is a share. With an absurd spend it printed "raise Needs % from
+         50% to 100000%" — arithmetically true, practically nonsense, and the
+         exact implausibility order 3 asks this page not to assert. The
+         threshold is the one fact the range rail above already states: a share
+         runs 0 to 100. Above 100 the honest answer is the overage alone. */
+      const fix = reqPct !== null && reqPct > needPctNow && reqPct <= 100
         ? `cut about ${nn(over)} from rent/food/transport, or raise Needs % from ${Math.round(needPctNow)}% to ${reqPct}%`
         : `cut about ${nn(over)} from rent/food/transport`;
       verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">NEEDS OVER</span>${needsYours ? `You're ${nn(over)} over on needs` : `Our example is ${nn(over)} over on needs — that figure is ours, not yours`} — ${fix}.</div>`);
@@ -858,7 +1079,10 @@ function render() {
   /* === NEW: Next-action CTAs after Step 1 === */
   const bgNext = t("bg-next");
   const bgNextItems: string[] = [];
-  if (!empty && planComplete) {
+  /* E13 — a CTA is a conclusion with a button on it. With a malformed step-1
+     field every figure it would conclude from is the reader's ₦0, so the row
+     stands down and the CANNOT SCORE banner routes to the field instead. */
+  if (!empty && planComplete && !junkVerdict.length) {
     if (c.savings_remaining > 0) {
       bgNextItems.push(`<a class="btn b-green" href="#bg-top" style="flex:1;text-align:center;text-decoration:none" data-goto="bg-save">Close the ${nn(c.savings_remaining)} savings gap → Adjust splits</a>`);
     }
@@ -880,7 +1104,10 @@ function render() {
   /* === NEW: Next-action CTAs after Step 2 === */
   const alNext = t("al-next");
   const alNextItems: string[] = [];
-  if (!empty && planComplete) {
+  /* E13 — same gate as the row above: a "Fix rent overage" button computed
+     from a junk share is the dressed-up zero this whole change exists to
+     stop, so the row stands down while any field it reads is malformed. */
+  if (!empty && planComplete && !junkVerdict.length) {
     if (r2.needs > 0 && planned > r2.needs) {
       /* E12-2 — the old CTA named "rent" no matter which bucket overshoots.
          Now name the bucket that deviates most above the engine's own default

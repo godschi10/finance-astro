@@ -3,6 +3,40 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.41] — 2026-10-08 — 50-30-20 E13: malformed input can no longer price a month
+A13 claimed four CRITICALs; the Manager re-proved on live bytes and **three were
+false** (a striking lesson in never shipping an auditor's unverified claim): both
+Clear buttons work, and the seed disclosure fires. The one TRUE critical stood:
+**zero input validation.**
+
+`12.5.5` typed into income sat verbatim in the field while `pm()` read ₦0, and the
+page then printed *"AHEAD — Our example puts ₦40,000 extra to savings"* — a verdict
+about a figure that does not exist. `1e9` and `abc` were equally silent.
+
+New rails, each naming its field and routing the visitor to it:
+- **`#bg-junk` / `#al-junk`** — malformed input, split into two honest shapes
+  because the page does two different things: "12.5.5" is in the money alphabet
+  but not a number (reads ₦0, and the rail says so), "abc" is outside it (reads
+  as never-entered, and the rail says that instead).
+- **`#bg-range`** — a share outside 0–100, the range itself being the only fact.
+- **`#bg-big`** — implausible magnitude, reusing the page's own ₦100M threshold and
+  the salary-tax voice, now over income and the step-1 spends too. No invented
+  salary benchmark; magnitude is the whole signal.
+- **`#al-verdict`** — CANNOT SCORE, replacing every bogus verdict the moment a
+  feeding field is unreadable.
+
+False positives were tested for, not assumed: `₦1,234.50`, `1 234 500`, `8.5%`,
+`007`, `1e5`, `+500`, `12.5e-3`, `.` and blank all stay silent.
+
+**Manager follow-up, closing the boundary the leg logged rather than hid.** With
+"12.5.5" in income the three receipt rows still printed *"Needs left −₦120,000"*
+and the advice line still said *"needs and wants ₦185,000 over — spend less
+there"* — confident numbers in the visitor's voice, derived from nothing. Both now
+withhold on exactly the verdict's own predicate and print "—". Valid input
+restores the real figures; proven false-positive-free on the clean seed.
+
+Gates 6/6 (article 147/147, vectors 95/95), 79 pages, suite 128/0/7 green.
+
 ## [0.7.40] — 2026-10-08 — 50-30-20 E12: every named problem now offers a real action
 A12 (next-action clarity) found the verdict's ownership gating was clean — one
 auditor claim did not reproduce — but nine "problem named, no action offered"
