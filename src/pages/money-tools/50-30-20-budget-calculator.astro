@@ -97,6 +97,8 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-foot hint">Savings left to save = plan savings minus put to savings</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
+<!-- Next-action CTAs after Step 1 -->
+<div class="next-actions" id="bg-next" hidden></div>
 <p class="receipt-note"><a href="#step2">See where the needs money goes ↓</a> · <button type="button" class="btn b-ghost b-lg" id="bg-copy" style="min-height:44px">Copy example plan</button><span id="bg-copywhy" data-trust="example"> — cold, this copies our example.</span><span id="bg-copied" hidden> — copied.</span></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <h3 id="step2" style="position:sticky;top:0;background:var(--surface);z-index:10;padding-top:12px">Step 2 — where the needs money goes</h3>
@@ -112,6 +114,8 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
   <button type="button" class="btn b-ghost b-sm" data-apply-defaults aria-label="Apply default needs shares (rent 40%, food 25%, transport 15%, data 10%, bills 7%)">Apply defaults</button>
 </div>
+<!-- Verdict banner (plain-language) -->
+<div class="verdict-banner" id="al-verdict" aria-live="polite"></div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Needs budget (<span data-sf-fig id="al-pct">50%</span> of income): <span data-sf-fig id="al-needs">₦{n(al.needs)}</span></p>
 <div id="al-rows">
@@ -120,11 +124,13 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ))}
 </div>
 <p class="receipt-note" id="al-warn" hidden></p>
-<p class="receipt-note" id="al-actuals" hidden></p>
+<div class="receipt-note" id="al-actuals" hidden></div>
 <p class="receipt-foot">Shares of needs — naira follows instantly</p>
 <p class="receipt-foot hint">Other needs is whatever is left after the named shares</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
+<!-- Next-action CTAs after Step 2 -->
+<div class="next-actions" id="al-next" hidden></div>
 <p class="receipt-note" id="bg-resetnote">Reset wipes what you typed and restores our example — it cannot be undone.</p>
 </div>
 </ToolShell>
@@ -488,6 +494,147 @@ function render() {
       btn.removeAttribute('aria-disabled');
       btn.style.opacity = '';
       btn.style.pointerEvents = '';
+    }
+  });
+
+  /* === NEW: Actuals mirror for all 5 buckets with variance badges === */
+  const actualsEl = t("al-actuals");
+  const actualsGate = !empty && planComplete && !pmBlank(g("bg-spn").value) && step1Touched;
+  if (actualsGate) {
+    const spent = Math.max(0, pm(g("bg-spn").value) || 0);
+    const yours = planTouched && !sd("bg-spn");
+    const buckets = ["rent", "food", "transport", "data", "utilities"];
+    let html = "";
+    for (const bid of buckets) {
+      const bucket = r2.buckets.find((b) => b.id === bid);
+      if (!bucket) continue;
+      const planAmt = bucket.amount;
+      /* For actuals, we only have total needs spent. Distribute proportionally to plan shares
+         as a reasonable estimate, then let variance badges show the gap. */
+      const actualAmt = planAmt > 0 && plan.needs > 0 ? Math.round((planAmt / plan.needs) * spent) : 0;
+      const variance = actualAmt - planAmt;
+      let badgeClass = "verdict-badge--info";
+      let badgeText = "MATCH";
+      if (variance > 0) { badgeClass = "verdict-badge--action"; badgeText = `OVER ${nn(variance)}`; }
+      else if (variance < 0) { badgeClass = "verdict-badge--good"; badgeText = `UNDER ${nn(-variance)}`; }
+      html += `<div class="actuals-row" style="display:flex;justify-content:space-between;gap:12px;font-size:.85rem;padding:6px 0;color:#e8e4dc;align-items:center"><span>${bucket.label}</span><b>${nn(planAmt)}</b><span class="verdict-badge ${badgeClass}">${badgeText}</span></div>`;
+    }
+    actualsEl.innerHTML = html;
+    actualsEl.hidden = false;
+  } else {
+    actualsEl.hidden = true;
+    actualsEl.innerHTML = "";
+  }
+
+  /* === NEW: Verdict banner - plain language sentences === */
+  const verdictEl = t("al-verdict");
+  const verdictItems: string[] = [];
+  if (!empty && planComplete) {
+    // Check splits add to 100%
+    if (total !== 100) {
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">SPLITS ${total}%</span>Your splits add to ${total}% — trim to 100% so every naira has a job.</div>`);
+    }
+    // Check savings gap
+    if (c.savings_remaining > 0) {
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">SAVE GAP</span>You're ${nn(c.savings_remaining)} short on savings — set up an auto-transfer or raise the savings split.</div>`);
+    } else if (c.savings_remaining < 0) {
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--good">AHEAD</span>You've put ${nn(-c.savings_remaining)} extra to savings — ahead of plan.</div>`);
+    }
+    // Check needs overage
+    if (c.needs_remaining < 0) {
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">NEEDS OVER</span>You're ${nn(-c.needs_remaining)} over on needs — increase Needs % or reduce rent/food/transport.</div>`);
+    }
+    // Check wants overage
+    if (c.wants_remaining < 0) {
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">WANTS OVER</span>You're ${nn(-c.wants_remaining)} over on wants — cut discretionary spend or raise Wants %.</div>`);
+    }
+    // Check individual bucket overages in step 2
+    if (r2.needs > 0 && planned > r2.needs) {
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">BUCKETS OVER</span>Your needs buckets add to ${(shareSum * 100).toFixed(0)}% — trim shares to fit your ${nn(r2.needs)} needs budget.</div>`);
+    }
+  }
+  if (verdictItems.length) {
+    verdictEl.innerHTML = verdictItems.join("");
+    verdictEl.classList.add("active");
+  } else {
+    verdictEl.classList.remove("active");
+    verdictEl.innerHTML = "";
+  }
+
+  /* === NEW: Next-action CTAs after Step 1 === */
+  const bgNext = t("bg-next");
+  const bgNextItems: string[] = [];
+  if (!empty && planComplete) {
+    if (c.savings_remaining > 0) {
+      bgNextItems.push(`<a class="btn b-green" href="#bg-top" style="flex:1;text-align:center;text-decoration:none" data-goto="bg-save">Close the ${nn(c.savings_remaining)} savings gap → Adjust splits</a>`);
+    }
+    if (c.needs_remaining < 0) {
+      bgNextItems.push(`<a class="btn b-ghost" href="#bg-top" style="flex:1;text-align:center;text-decoration:none" data-goto="bg-needs">Fix needs overage → Raise Needs %</a>`);
+    }
+    if (total !== 100) {
+      bgNextItems.push(`<a class="btn b-ghost" href="#bg-top" style="flex:1;text-align:center;text-decoration:none" data-goto="bg-needs">Splits at ${total}% → Rebalance to 100%</a>`);
+    }
+  }
+  if (bgNextItems.length) {
+    bgNext.innerHTML = bgNextItems.join("");
+    bgNext.hidden = false;
+  } else {
+    bgNext.hidden = true;
+    bgNext.innerHTML = "";
+  }
+
+  /* === NEW: Next-action CTAs after Step 2 === */
+  const alNext = t("al-next");
+  const alNextItems: string[] = [];
+  if (!empty && planComplete) {
+    if (r2.needs > 0 && planned > r2.needs) {
+      alNextItems.push(`<a class="btn b-green" href="#al-rent" style="flex:1;text-align:center;text-decoration:none">Fix rent overage → Adjust rent share</a>`);
+    }
+    // Always show savings goal calculator link
+    const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+    alNextItems.push(`<a class="btn b-ghost" href="${base}money-tools/savings-goal-calculator/" style="flex:1;text-align:center;text-decoration:none" target="_blank" rel="noopener">Open Savings Goal Calculator</a>`);
+    if (c.savings_remaining > 0) {
+      alNextItems.push(`<a class="btn b-ghost" href="#bg-top" style="flex:1;text-align:center;text-decoration:none" data-goto="bg-save">Boost savings → Raise savings split</a>`);
+    }
+  }
+  if (alNextItems.length) {
+    alNext.innerHTML = alNextItems.join("");
+    alNext.hidden = false;
+  } else {
+    alNext.hidden = true;
+    alNext.innerHTML = "";
+  }
+
+  /* === NEW: Jargon glossary tooltips === */
+  // Replace jargon terms in receipt-foot hints with tooltip versions
+  const jargonMap: Record<string, string> = {
+    "leftover": "unallocated income — money your splits didn't assign",
+    "needs/wants/savings split": "how you divide your income into three buckets",
+    "itemise": "break down into line items",
+    "plan vs actual": "target vs reality",
+    "plan buckets": "your three target amounts",
+    "fill from plan": "use my targets"
+  };
+  document.querySelectorAll(".receipt-foot.hint").forEach((el) => {
+    let html = el.innerHTML;
+    for (const [term, tip] of Object.entries(jargonMap)) {
+      const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi");
+      html = html.replace(regex, `<span class="jargon" data-tip="${tip}">$1</span>`);
+    }
+    el.innerHTML = html;
+  });
+  // Also annotate "Plan buckets" label
+  const planBucketsLabel = document.querySelector(".receipt-lbl");
+  if (planBucketsLabel && planBucketsLabel.textContent?.includes("Plan buckets")) {
+    planBucketsLabel.innerHTML = planBucketsLabel.innerHTML.replace(
+      /Plan buckets/,
+      '<span class="jargon" data-tip="your three target amounts">Plan buckets</span>'
+    );
+  }
+  // Annotate "fill from plan" buttons
+  document.querySelectorAll('[data-fill-from-plan]').forEach((btn) => {
+    if (btn.title && btn.title.includes("Fill")) {
+      btn.title = btn.title.replace("Fill from plan", "Use my targets");
     }
   });
 }

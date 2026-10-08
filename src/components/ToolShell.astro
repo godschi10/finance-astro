@@ -260,6 +260,31 @@ table.st td{padding:12px 14px;border-bottom:1px solid var(--border-dim);color:va
 table.st td.n,table.st th.n{text-align:right}
 table.st tr.win td{background:var(--gold-muted);border-left:3px solid var(--gold-b)}
 .btag{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.12em;background:var(--gold-b);color:#0d0b08;border-radius:100px;padding:2px 8px;margin-left:8px;vertical-align:middle}
+
+  /* — verdict badge: green=good, red=action needed, amber=warning, neutral=info */
+  .verdict-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:var(--pill);padding:4px 10px;white-space:nowrap}
+  .verdict-badge--good{color:var(--green);background:var(--green-muted);border:1px solid var(--green-border)}
+  .verdict-badge--action{color:#fff;background:var(--red);border:1px solid var(--red)}
+  .verdict-badge--warn{color:var(--amber);background:var(--amber-muted);border:1px solid var(--amber-border)}
+  .verdict-badge--info{color:var(--text-dim);background:var(--surface-2);border:1px solid var(--border)}
+
+  /* — verdict banner: plain-language sentences above receipt */
+  .verdict-banner{margin:12px 0;padding:12px 16px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border);display:none;flex-direction:column;gap:8px}
+  .verdict-banner.active{display:flex}
+  .verdict-banner__item{display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+  .verdict-banner__item .verdict-badge{flex-shrink:0;margin-top:2px}
+
+  /* — next-action CTA section */
+  .next-actions{margin:16px 0;display:flex;flex-wrap:wrap;gap:8px}
+  .next-actions .btn{min-height:44px}
+
+  /* — jargon tooltip glossary */
+  .jargon{position:relative;text-decoration:underline dotted;text-underline-offset:2px;cursor:help}
+  .jargon::after{content:attr(data-tip);position:absolute;bottom:125%;left:50%;transform:translateX(-50%);background:#1a1814;color:#f0ede6;font-size:12px;font-weight:400;letter-spacing:0;text-transform:none;text-decoration:none;padding:8px 12px;border-radius:8px;white-space:nowrap;max-width:280px;opacity:0;visibility:hidden;transition:opacity .15s,visibility .15s;z-index:10;box-shadow:var(--sh-lg);border:1px solid var(--border)}
+  .jargon::before{content:"";position:absolute;bottom:110%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#1a1814;opacity:0;visibility:hidden;transition:opacity .15s,visibility .15s;z-index:10}
+  .jargon:hover::after,.jargon:hover::before,.jargon:focus::after,.jargon:focus::before{opacity:1;visibility:visible}
+  .jargon:focus{outline:2px solid var(--gold-b);outline-offset:2px;border-radius:2px}
+
 .bar-row{display:grid;grid-template-columns:1fr;gap:4px;padding:10px 0;border-bottom:1px solid var(--border-dim);font-size:.8rem}
 .bar-top{display:flex;justify-content:space-between;gap:10px}
 .bar-top b{font-variant-numeric:tabular-nums}
