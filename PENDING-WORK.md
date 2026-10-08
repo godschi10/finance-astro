@@ -1,3 +1,21 @@
+## ACTIVE — 2026-10-08 · MANAGER TRANSITION — King's order
+King: *"Take over the project, make sure you have your own persistent memory
+for work. Just make sure your work is as organized as his."*
+- [x] **Hermes Manager took the throne from the OpenCode twin at v0.7.40
+      (a9d41b9).** The twin's session is superseded — it must not edit this
+      repo anymore.
+- [x] **Persistent program state now lives at
+      `/home/opc/.hermes/memory/finance-astro-program.md`** — position, laws,
+      commands, ship sequence, conventions, carried items. Read at session
+      start; updated after every leg.
+- Ledger discipline unchanged: every order → line here; every ship →
+  CHANGELOG entry + scoreboard round-log line + version bump + served-byte
+  proof + ship notice naming the exact live URL.
+- NOTE: C1 emergency-fund was FIXED in v0.7.38; older "C1 held" lines in this
+  file are historical and superseded.
+- Resume point: **50-30-20 A13** (A1–A12 + E1–E12 done). Serial program
+  continues from here.
+
 ## SHIPPED — 2026-10-05 · THREE CALCULATOR DEFECTS — v0.7.23
 King: "Do it" — the three defects the Reset fix had exposed.
 - [x] **D-A FIXED — the budget allocator's receipt had NEVER updated from any
@@ -56,7 +74,7 @@ regression. Tool order (King may reorder): 50-30-20 → salary-tax → savings-g
 compound-interest → loan-repayment → gross-to-net → emergency-fund (audits run, C1
 fix held) → inflation-savings → naira-value → currency-converter →
 money-transfer → crypto → dividend → savings-rate → exchange-rate-history.
-ACTIVE TOOL: 50-30-20 (A1–A11 + E1–E11 done, A12 next).
+ACTIVE TOOL: 50-30-20 (A1–A12 + E1–E12 done, A13 next).
 
 ## LAW — 2026-10-07 · UX AUDITS: 40 AUDITS + 40 EDITS PER CALCULATOR. King:
 ## *"What about the calculators. I was asking you to audit the UX. How people use
