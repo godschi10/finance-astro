@@ -47,6 +47,9 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="prog" aria-hidden="true"><i id="em-bar" style={`width:${pct}%`}></i></div>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Months to finish</span><b id="em-mtr">{seed.months_to_reach > 0 ? seed.months_to_reach.toFixed(1) : "— (save something monthly)"}</b></div>
+<!-- The SSR fallback above only ever sees the seed, where the gap is open
+     (5.6 months), so the closed-gap wording cannot be reached before hydration.
+     C1's three zero cases are all handled in the client render below. -->
 <div class="receipt-row"><span>Progress</span><b id="em-pct">{pct}%</b></div>
 <p class="bar-note" id="em-warn" hidden></p>
 <p class="receipt-foot">6-month default · inflation-adjusted</p>
@@ -117,13 +120,25 @@ function render() {
   sfFig(t("em-sub"), FIVE, `Target ${fz(target)} · gap ${fz(gap)} · real (inflated) target ${fz(realTarget)}`);
   /* A typed 0 cover is an honest ZERO months and must not borrow the "save
      something monthly" dash — that dash means monthlySave is 0, a different
-     failure entirely. (The third case, a CLOSED gap reading 0 months, is C1 and
-     is not yet reachable: the engine still divides the full target by the
-     monthly saving. See the C1 note in emergency.ts.) */
+     failure entirely.
+
+     C1 made the THIRD case reachable, and this is where it had to be handled:
+     a CLOSED gap (saved >= target) is 0 months not because anything is broken
+     but because the goal is already met. Printing the monthlySave dash there
+     told a fully-funded user to "save something monthly" when their fund is
+     already complete — a false alarm on the one input they had nothing wrong
+     with. The three zero cases are now named separately, because they are three
+     different facts and only one of them is a problem:
+       · gap closed          → "done — target reached"
+       · no cover asked for  → "0.0 (no cover asked for)"
+       · no monthly saving   → the dash (the only case that is advice) */
+  const gapClosed = essRaw > 0 && savedRaw >= essRaw * Math.max(0, cover) && cover > 0;
   const mtrText = !Number.isFinite(monthsToFinish) ? "out of range"
     : monthsToFinish > 0 ? monthsToFinish.toFixed(1)
     : cover === 0 ? "0.0 (no cover asked for)"
-    : "— (save something monthly)";
+    : gapClosed ? "done — target reached"
+    : moRaw <= 0 ? "— (save something monthly)"
+    : "0.0 (already there)";
   sfFig(t("em-mtr"), REACH, mtrText);
   sfFig(t("em-pct"), ["em-ess", "em-saved", "em-cover"], p + "%");
   (document.getElementById("em-bar") as HTMLElement).style.width = p + "%";
