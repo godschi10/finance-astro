@@ -3,6 +3,90 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.38] — 2026-10-08 — C1: emergency-fund months-to-finish honours `saved`
+King: "do the best recommendation" — fix the bug properly, PHP-first, no shortcuts.
+
+**The bug.** `months_to_reach` divided the whole target by the monthly saving
+rate, so it was mathematically independent of what the visitor had already put
+away. `gap` was computed three lines below and ignored. Live proof on the seed
+(essentials ₦150,000 / saved ₦450,000 / ₦80,000 a month): the receipt showed
+**gap ₦0, a 100% bar, and still "11.3 months to reach."** A fully-funded user was
+told they had 11 more months to go.
+
+**Fixed in the required order, so the port never diverged:**
+1. `inc/emergency-fund.php` — the PHP source of truth, first (theme repo `12bf9ea`).
+2. `scripts/php-harness/vectors.php` — the oracle generator pointed at
+   `/home/ubuntu/gwill-finance-theme/inc/`, a path from another machine, so it
+   died on `require_once` and the oracle could not be regenerated AT ALL. That
+   was the real reason C1 sat unfixed. Now `GWILL_INC`-overridable with
+   auto-detection.
+3. **Regenerated `vectors.json` by running PHP — never hand-edited.** Exactly
+   four fields moved, all in `emergency_seed`, all downstream of the fix
+   (months_to_reach 11.25 -> 5.625, plus years_to_reach, future_essentials and
+   real_target). No other vector moved — proof the regeneration was surgical.
+   Regeneration verified idempotent.
+4. `scripts/vectors-check.mjs` — `HIST_ORACLE_MS` re-pinned to the generation
+   instant, as that gate's own comment requires.
+5. `src/lib/emergency.ts` — the port, following PHP.
+
+Clamped twice in both languages: `max(0, target - saved)` so oversaving reads 0
+and never negative; `monthlySave > 0` unchanged. PHP and TS agree to 6dp on five
+cases including both clamp edges.
+
+**Follow-on honesty defect found and fixed in the same round (Manager-caught).**
+Fixing the maths made a THIRD zero case reachable — a closed gap — and the page
+had no honest wording for it, so a fully-funded user was told "— (save something
+monthly)": an instruction to change the one input they had nothing wrong with.
+The three zero cases are three different facts and only one is advice:
+gap closed → "done — target reached"; no cover asked → "0.0 (no cover asked
+for)"; no monthly saving → the dash.
+
+Gates 6/6 (article 147/147, vectors 95/95), 79 pages, suite 128/0/7 green.
+
+## [0.7.37] — 2026-10-08 — 50-30-20 E10: honesty restoration (A10 FAIL fixed)
+A10 milestone audit returned FAIL with two trust CRITICALs. Both fixed.
+
+**The mirror measured nothing.** E9 computed each bucket's "actual" by rescaling
+one aggregate: `actualAmt = planAmt/needs × spent`, so `variance = planAmt ×
+(spent/needs − 1)` and sign(variance) = sign(spent − needs) for every bucket.
+Five badges could never disagree, and the page asserted a ₦48,000 rent the user
+never entered; there were zero per-bucket actual inputs on the page. Now five
+optional `al-act-*` naira inputs ship EMPTY, `variance = actual − plan` per
+bucket, blank = unknown prints no figure and no badge, and the fabricated
+rescaling is deleted with no fallback.
+
+**The page deleted its own safety disclosure.** `#al-actuals` held the honesty
+sentence at `:419` and was overwritten by `innerHTML` at `:522`. The disclosure
+now lives in `#al-mirror-own`, which nothing else writes, with the Example badge
+riding inside the panel so ownership travels with the numbers.
+
+The verdict banner no longer says "You're…" about seed figures on cold load. Also
+repaired: both dead jargon glosses as visible labels; dark `--action` contrast
+2.77:1 → 6.45:1; mirror panel heading; in-card Clear at a 44px target (the shell
+pair untouched); allocator sum printed; theme token replaces hardcoded `#e8e4dc`.
+Manager-caught: `clearExamples()` only walks `.field[data-sd]` so the unseeded
+`al-act-*` fields survived Clear — a silent half-reset. Both exits wipe them now.
+
+Gates 6/6, 79 pages, suite 128/0/7 green.
+
+## [0.7.36] — 2026-10-08 — 50-30-20 E9: actuals mirror, verdicts, next actions, jargon
+Shipped — but later AUDITED AND CORRECTED in 0.7.37: its "actuals mirror" never
+measured anything real, and the correction is recorded there in full. Kept here
+because the round genuinely shipped, and because deleting a shipped round from
+the record would be exactly the kind of tidy history this changelog exists to
+prevent.
+
+## [0.7.35] — 2026-10-08 — 50-30-20 E8: stepper, active chips, gated fill, apply defaults
+Visual stepper ("1. Plan" / "2. Itemise"), split-chip active state, fill-from-plan
+gating with `aria-disabled`, and an "Apply defaults" button restoring the
+allocator 40/25/15/10/7. A10 later rated E8 the second-highest regression risk
+(4/5) for the stepper's second-person claims before badges existed.
+
+## [0.7.34] — 2026-10-08 — 50-30-20 E7: mobile quick-fill + keystroke reduction
+Income quick-fill chips (₦70k–₦500k), split presets (50/30/20, 60/20/20,
+70/15/15), "Fill from plan" for the three actuals, button heights ≥44px, a sticky
+Step 2 anchor, and autocomplete attributes across the calculator fields.
+
 ## [0.7.21] — 2026-10-05 — Architecture close-out: the four parked findings
 King: "Fix all findings before we move on to the next one."
 
