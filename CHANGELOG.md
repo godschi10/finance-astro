@@ -3,6 +3,40 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.40] — 2026-10-08 — 50-30-20 E12: every named problem now offers a real action
+A12 (next-action clarity) found the verdict's ownership gating was clean — one
+auditor claim did not reproduce — but nine "problem named, no action offered"
+spots. All closed.
+
+- **"Splits at 115% → Rebalance to 100%"** overpromised — it only scrolled. Now
+  honestly reads "→ Adjust splits to 100%".
+- **"Fix rent overage"** always named rent regardless of which bucket overshot.
+  Now it names the bucket that actually deviates most and routes to it; when none
+  dominates it says "Adjust shares to fit your needs" and invents no field.
+- **Reconcile mismatch** named the fix but offered no way to reach it. The line
+  now carries a real button to the first empty bucket's actual field.
+- **Absurd-figure rail** said "double-check" but not which field. Now it names
+  the offending field and adds a Fix chip that routes to it.
+- **NEEDS OVER advice was generic.** Now carries size plus a derived fix from
+  their numbers: "cut about ₦75,000…, or raise Needs % from 50% to 80%."
+- **Silence at a clean month** is a dead end. The banner now says so and names
+  Savings Goal Calculator as the next destination; it does not manufacture a problem.
+- **"ON PLAN"** had no closing note; "ON PLAN on all 5" now closes with a real next step.
+- **Two variance definitions** (mirror "what you spent" vs foot "what you entered")
+  settled to one — "what you entered", because the user types a figure, it is not
+  already theirs.
+- **Actuals forgot their data** whilst the page claimed a save. They now persist,
+  restore with a Last Used pill, and are honestly wiped by Reset/Clear/footer.
+- **Actuals had zero affordances.** Five `Use plan — rent/food/transport/data/bills`
+  chips now write that bucket's live plan and raise the same disclosure as the
+  step-1 fill chips; blank income still fires the disclosure, never a fake pill.
+
+The verdict banner's ownership gating was left untouched: the audit's contrary
+claim did not reproduce, and the Manager verified the banner reads "Our example…"
+about seed numbers.
+
+Gates 6/6 (article 147/147, vectors 95/95), 79 pages, suite 128/0/7 green.
+
 ## [0.7.39] — 2026-10-08 — 50-30-20 E11: honesty sweep after A11 FAIL
 A11 found E10 regression clean (11/11) but 9 dishonest sentences. E10's repair
 opened a fabrication of its own; this round closes it and three false claims.
