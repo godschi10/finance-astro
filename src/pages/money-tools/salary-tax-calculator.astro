@@ -36,12 +36,12 @@ const saveTxt = tie
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
 
-<div class="field"><label for="st-gross">Monthly gross ₦</label><input id="st-gross" type="text" value="300000" inputmode="decimal"><p class="hint">The monthly pay the 2026 bands are worked out from — before pension and tax come off.</p></div>
+<div class="field" data-cur="NGN"><label for="st-gross">Monthly gross ₦</label><input id="st-gross" type="text" value="300000" inputmode="decimal"><p class="hint">The monthly pay the 2026 bands are worked out from — before pension and tax come off.</p></div>
 <div class="field"><label for="st-pension">Pension %</label><input id="st-pension" type="text" max="100" value="8" inputmode="decimal"><p class="hint">Figured here as a straight % of the gross you type — if your employer deducts pension on basic salary only, confirm with payroll.</p></div>
-<div class="field"><label for="st-rent">Annual rent ₦</label><input id="st-rent" type="text" value="0" inputmode="decimal"></div>
-<div class="field"><label for="st-nhf">NHF monthly ₦</label><input id="st-nhf" type="text" value="0" inputmode="decimal"></div>
-<div class="field"><label for="st-nhis">NHIS monthly ₦</label><input id="st-nhis" type="text" value="0" inputmode="decimal"><p class="hint">Leave at ₦0 if your payslip doesn't show it — when filled, it comes off taxable income.</p></div>
-<div class="field"><label for="st-life">Life assurance monthly ₦</label><input id="st-life" type="text" value="0" inputmode="decimal"><p class="hint">Leave at ₦0 if your payslip doesn't show it — when filled, it comes off taxable income.</p></div>
+<div class="field" data-cur="NGN"><label for="st-rent">Annual rent ₦</label><input id="st-rent" type="text" value="0" inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="st-nhf">NHF monthly ₦</label><input id="st-nhf" type="text" value="0" inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="st-nhis">NHIS monthly ₦</label><input id="st-nhis" type="text" value="0" inputmode="decimal"><p class="hint">Leave at ₦0 if your payslip doesn't show it — when filled, it comes off taxable income.</p></div>
+<div class="field" data-cur="NGN"><label for="st-life">Life assurance monthly ₦</label><input id="st-life" type="text" value="0" inputmode="decimal"><p class="hint">Leave at ₦0 if your payslip doesn't show it — when filled, it comes off taxable income.</p></div>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Take-home monthly</p>

@@ -19,8 +19,8 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
 
-<div class="field"><label for="ci-prin">Starting principal ₦</label><input id="ci-prin" type="text" value="100000" inputmode="decimal"></div>
-<div class="field"><label for="ci-dep">Deposit per period ₦</label><input id="ci-dep" type="text" value="50000" inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="ci-prin">Starting principal ₦</label><input id="ci-prin" type="text" value="100000" inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="ci-dep">Deposit per period ₦</label><input id="ci-dep" type="text" value="50000" inputmode="decimal"></div>
 <div class="field"><label for="ci-freq">Deposit frequency</label><select id="ci-freq"><option value="monthly" selected>Monthly</option><option value="weekly">Weekly</option><option value="biweekly">Bi-weekly</option><option value="quarterly">Quarterly</option><option value="annual">Annual</option></select></div>
 <div class="field"><label for="ci-rate">Annual rate %</label><input id="ci-rate" type="text" max="100" value="10" inputmode="decimal"></div>
 <div class="field"><label for="ci-yrs">Years</label><input id="ci-yrs" type="number" min="1" max="50" step="1" value="5" inputmode="numeric"></div>

@@ -19,8 +19,8 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
 
-<div class="field"><label for="sg-target">Target ₦</label><input id="sg-target" type="text" value="5000000" inputmode="decimal"></div>
-<div class="field"><label for="sg-cur">Have now ₦</label><input id="sg-cur" type="text" value="500000" inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="sg-target">Target ₦</label><input id="sg-target" type="text" value="5000000" inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="sg-cur">Have now ₦</label><input id="sg-cur" type="text" value="500000" inputmode="decimal"></div>
 <div class="field"><label for="sg-rate">Annual rate %</label><input id="sg-rate" type="text" max="100" value="15" inputmode="decimal"></div>
 <div class="field"><label for="sg-mo">Months</label><input id="sg-mo" type="number" min="1" max="600" step="1" value="24" inputmode="numeric"></div>
 </div>

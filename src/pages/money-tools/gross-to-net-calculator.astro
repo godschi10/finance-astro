@@ -18,13 +18,13 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
 
-<div class="field"><label for="gn-net">Target take-home ₦/mo</label><input id="gn-net" type="text" value="250000" inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="gn-net">Target take-home ₦/mo</label><input id="gn-net" type="text" value="250000" inputmode="decimal"></div>
 <div class="field"><label for="gn-pen">Pension %</label><input id="gn-pen" type="text" max="100" value="8" inputmode="decimal"></div>
-<div class="field"><label for="gn-rent">Annual rent ₦</label><input id="gn-rent" type="text" value="0" inputmode="decimal"></div>
-<div class="field"><label for="gn-nhf">NHF monthly ₦</label><input id="gn-nhf" type="text" value="0" inputmode="decimal"></div>
-<div class="field"><label for="gn-nhis">NHIS monthly ₦</label><input id="gn-nhis" type="text" value="0" inputmode="decimal"></div>
-<div class="field"><label for="gn-life">Life assurance monthly ₦</label><input id="gn-life" type="text" value="0" inputmode="decimal"></div>
-<div class="field"><label for="gn-other">Other reliefs monthly ₦</label><input id="gn-other" type="text" value="0" inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="gn-rent">Annual rent ₦</label><input id="gn-rent" type="text" value="0" inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="gn-nhf">NHF monthly ₦</label><input id="gn-nhf" type="text" value="0" inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="gn-nhis">NHIS monthly ₦</label><input id="gn-nhis" type="text" value="0" inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="gn-life">Life assurance monthly ₦</label><input id="gn-life" type="text" value="0" inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="gn-other">Other reliefs monthly ₦</label><input id="gn-other" type="text" value="0" inputmode="decimal"></div>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Gross to negotiate</p>

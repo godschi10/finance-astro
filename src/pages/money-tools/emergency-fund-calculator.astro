@@ -45,9 +45,9 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
 
-<div class="field"><label for="em-ess">Monthly essentials ₦</label><input id="em-ess" type="text" value={EMERGENCY_SEED.essentials} inputmode="decimal"></div>
-<div class="field"><label for="em-saved">Saved so far ₦</label><input id="em-saved" type="text" value={EMERGENCY_SEED.saved} inputmode="decimal"></div>
-<div class="field"><label for="em-mo">Monthly saving ₦</label><input id="em-mo" type="text" max="100000000" value={EMERGENCY_SEED.monthly} inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="em-ess">Monthly essentials ₦</label><input id="em-ess" type="text" value={EMERGENCY_SEED.essentials} inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="em-saved">Saved so far ₦</label><input id="em-saved" type="text" value={EMERGENCY_SEED.saved} inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="em-mo">Monthly saving ₦</label><input id="em-mo" type="text" max="100000000" value={EMERGENCY_SEED.monthly} inputmode="decimal"></div>
 <div class="field"><label for="em-cover">Cover (months)</label><input id="em-cover" type="text" max="60" value={EMERGENCY_SEED.cover} inputmode="decimal"></div>
 <div class="field"><label for="em-infl">Inflation %/yr</label><input id="em-infl" type="text" max="100" value={INFL_PCT} inputmode="decimal"></div>
 </div>

@@ -24,19 +24,24 @@
    ══════════════════════════════════════════════════════════════════════════ */
 
 /* F3 — currency symbol inside the field. The aria-hidden span.fi-sym is
-   injected by src/scripts/money-controls.js into every .field whose label
-   carries ₦ and whose input is inputmode="decimal". Color = --text-dim per
+   injected by src/scripts/money-controls.js into every .field that DECLARES
+   its currency with data-cur (the semantic gate that replaced the old
+   "does the label happen to contain ₦" substring test — a currency symbol is
+   a claim about the unit, so the field makes the claim). Color = --text-dim per
    N3 (symbol quieter than digits); font:inherit keeps JetBrains Mono so the
    glyph sits on the same baseline grid as the typed figure. The 28px
    padding-left clears the 12px-offset glyph with room for its advance
-   width — digits can never slide under it. */
+   width — digits can never slide under it. --fi-pad is published by the script
+   ONLY for a multi-character symbol (CA$, GH₵, CFA, FCFA, KSh, E£, د.إ), where
+   28px would run the first digit under the glyph; a one-character symbol
+   leaves it unset and keeps exactly the geometry it has always had. */
 .fi { position: relative; }
 .fi .fi-sym {
   position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
   font: inherit; font-weight: 700; color: var(--text-dim);
   pointer-events: none; z-index: 1;
 }
-.fi input { padding-left: 28px; }
+.fi input { padding-left: var(--fi-pad, 28px); }
 
 /* F2 — the tactile "I reformatted your number" cue: on blur the JS adds
    .fx-dip (opacity .7) and removes it ~200ms later. Static pages without

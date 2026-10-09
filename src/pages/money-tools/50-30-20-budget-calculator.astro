@@ -63,13 +63,13 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   <button type="button" class="btn b-ghost b-sm" id="bg-reset-example" style="min-height:44px">Reset to the example</button>
 </div>
 <div class="tgrid c3" id="bg-top">
-<div class="field"><label for="bg-inc">Monthly income ₦</label><input id="bg-inc" type="text" value={income} inputmode="decimal" autocomplete="section-income"></div>
+<div class="field" data-cur="NGN"><label for="bg-inc">Monthly income ₦</label><input id="bg-inc" type="text" value={income} inputmode="decimal" autocomplete="section-income"></div>
 <div class="field"><label for="bg-needs">Needs %</label><input id="bg-needs" type="text" max="100" value="50" inputmode="decimal" placeholder="50" autocomplete="section-budget-splits"></div>
 <div class="field"><label for="bg-wants">Wants %</label><input id="bg-wants" type="text" max="100" value="30" inputmode="decimal" placeholder="30" autocomplete="section-budget-splits"></div>
 <div class="field"><label for="bg-save">Savings %</label><input id="bg-save" type="text" max="100" value="20" inputmode="decimal" placeholder="20" autocomplete="section-budget-splits"></div>
-<div class="field"><label for="bg-spn">Spent on needs ₦</label><input id="bg-spn" type="text" value={String(seedActuals.needs)} inputmode="decimal" autocomplete="off"></div>
-<div class="field"><label for="bg-spw">Spent on wants ₦</label><input id="bg-spw" type="text" value={String(seedActuals.wants)} inputmode="decimal" autocomplete="off"></div>
-<div class="field"><label for="bg-sps">Put to savings ₦</label><input id="bg-sps" type="text" value={String(seedActuals.savings)} inputmode="decimal" autocomplete="off"></div>
+<div class="field" data-cur="NGN"><label for="bg-spn">Spent on needs ₦</label><input id="bg-spn" type="text" value={String(seedActuals.needs)} inputmode="decimal" autocomplete="off"></div>
+<div class="field" data-cur="NGN"><label for="bg-spw">Spent on wants ₦</label><input id="bg-spw" type="text" value={String(seedActuals.wants)} inputmode="decimal" autocomplete="off"></div>
+<div class="field" data-cur="NGN"><label for="bg-sps">Put to savings ₦</label><input id="bg-sps" type="text" value={String(seedActuals.savings)} inputmode="decimal" autocomplete="off"></div>
 </div>
 <!-- E13 — the input-health rails. pm() is deliberately tolerant: it reads
      "12.5.5" as 0, "abc" as never-entered and "1e9" as a billion naira, so
@@ -154,7 +154,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
      UNKNOWN, and an unknown bucket prints no amount and no badge at all. -->
 <div class="tgrid c3" id="al-actual-fields" style="margin-top:14px">
 {al.buckets.filter((b) => b.id !== "other").map((b) => (
-<div class="field"><label for={`al-act-${b.id}`}>{b.label} — you actually spent ₦</label><input id={`al-act-${b.id}`} type="text" inputmode="decimal" placeholder="—" autocomplete="off" data-al-actual={b.id}></div>
+<div class="field" data-cur="NGN"><label for={`al-act-${b.id}`}>{b.label} — you actually spent ₦</label><input id={`al-act-${b.id}`} type="text" inputmode="decimal" placeholder="—" autocomplete="off" data-al-actual={b.id}></div>
 ))}
 </div>
 <!-- E13 — step 2's own malformed rail. The five shares decide what "Other

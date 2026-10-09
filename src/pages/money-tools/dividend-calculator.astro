@@ -22,7 +22,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="tgrid c3">
 
 <div class="field"><label for="dv-stock">NGX stock</label><select id="dv-stock">{stocks.map((s, i) => (<option value={i} selected={s.ticker === "GTCO"}>{s.name} ({s.ticker})</option>))}</select></div>
-<div class="field"><label for="dv-inv">Investment ₦</label><input id="dv-inv" type="text" value={DIVIDEND_SEED.investment} inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="dv-inv">Investment ₦</label><input id="dv-inv" type="text" value={DIVIDEND_SEED.investment} inputmode="decimal"></div>
 <div class="field"><label for="dv-pg">Price growth %/yr</label><input id="dv-pg" type="text" max="100" value="10" inputmode="decimal"></div>
 <div class="field"><label for="dv-dg">Dividend growth %/yr</label><input id="dv-dg" type="text" max="100" value="8" inputmode="decimal"></div>
 <div class="field"><label for="dv-yrs">Years</label><input id="dv-yrs" type="number" min="1" max="40" step="1" value={DIVIDEND_SEED.years} inputmode="numeric"></div>

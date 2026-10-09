@@ -27,7 +27,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
 
-<div class="field"><label for="ln-amt">Loan amount ₦</label><input id="ln-amt" type="text" max="1000000000000" value={LOAN_SEED.amount} inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="ln-amt">Loan amount ₦</label><input id="ln-amt" type="text" max="1000000000000" value={LOAN_SEED.amount} inputmode="decimal"></div>
 <div class="field"><label for="ln-tenor">Tenor</label><input id="ln-tenor" type="number" min="1" max="600" step="1" value={LOAN_SEED.tenor} inputmode="numeric"></div>
 <div class="field"><label for="ln-unit">Tenor unit</label><select id="ln-unit"><option value="days" selected>Days</option><option value="months">Months</option></select></div>
 <div class="field"><label for="ln-rate">Quoted rate <span id="ln-rate-unit">%/day</span></label><input id="ln-rate" type="text" value={LOAN_SEED.rate} inputmode="decimal"><p class="hint" id="ln-rate-hint">The rate is per day, as loan apps quote it.</p></div>

@@ -37,7 +37,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
 
-<div class="field"><label for="nv-val">Amount ₦</label><input id="nv-val" type="text" max="1000000000000" value={s.value} inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="nv-val">Amount ₦</label><input id="nv-val" type="text" max="1000000000000" value={s.value} inputmode="decimal"></div>
 <div class="field"><label for="nv-infl">Inflation %/yr</label><input id="nv-infl" type="text" max="200" value="24" inputmode="decimal"></div>
 <div class="field"><label for="nv-yrs">Years</label><input id="nv-yrs" type="number" min="1" max="100" step="1" value={s.years} inputmode="numeric"></div>
 </div>
@@ -57,7 +57,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <h2 class="tool-h2">What a future sum is worth today</h2>
 <div class="fx-card">
 <div class="tgrid c3">
-<div class="field"><label for="nv-pv">Future amount ₦</label><input id="nv-pv" type="text" max="1000000000000" value="2000000" inputmode="decimal"><p class="hint">Uses the inflation and years above.</p></div>
+<div class="field" data-cur="NGN"><label for="nv-pv">Future amount ₦</label><input id="nv-pv" type="text" max="1000000000000" value="2000000" inputmode="decimal"><p class="hint">Uses the inflation and years above.</p></div>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Worth in today's buying power</p>
@@ -81,8 +81,8 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <h2 class="tool-h2">What you must save to stand still</h2>
 <div class="fx-card">
 <div class="tgrid c3">
-<div class="field"><label for="nv-tgt">Goal in today's ₦</label><input id="nv-tgt" type="text" max="1000000000000" value="10000000" inputmode="decimal"></div>
-<div class="field"><label for="nv-cur">Saved already ₦</label><input id="nv-cur" type="text" max="1000000000000" value="1000000" inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="nv-tgt">Goal in today's ₦</label><input id="nv-tgt" type="text" max="1000000000000" value="10000000" inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="nv-cur">Saved already ₦</label><input id="nv-cur" type="text" max="1000000000000" value="1000000" inputmode="decimal"></div>
 <div class="field"><label for="nv-ret">Return %/yr</label><input id="nv-ret" type="text" max="100" value="15" inputmode="decimal"><p class="hint">Uses the inflation and years above.</p></div>
 </div>
 <div class="receipt" aria-live="polite">

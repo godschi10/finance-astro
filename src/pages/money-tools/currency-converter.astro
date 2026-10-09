@@ -35,7 +35,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
 
-<div class="field"><label for="cc-amt">Amount (₦ $ £ € and 12 more)</label><input id="cc-amt" type="text" value="100" inputmode="decimal"></div>
+<div class="field" data-cur={seed.from}><label for="cc-amt">Amount <span data-cur-unit></span></label><input id="cc-amt" type="text" value="100" inputmode="decimal"></div>
 <div class="field"><label for="cc-from">From</label><select id="cc-from">{codes.map((c) => (<option value={c} selected={c === seed.from}>{c} — {cur[c].name}</option>))}</select></div>
 <div class="field"><label for="cc-to">To</label><select id="cc-to">{codes.map((c) => (<option value={c} selected={c === seed.to}>{c} — {cur[c].name}</option>))}</select></div>
 </div>
@@ -67,6 +67,7 @@ const unitEl = document.getElementById("cc-unit") as HTMLElement;
 const par = document.getElementById("cc-par") as HTMLElement;
 const warn = document.getElementById("cc-warn") as HTMLElement;
 const partoggle = document.getElementById("cc-partoggle") as HTMLInputElement;
+const amtField = amt.closest(".field") as HTMLElement;
 const fresh = document.getElementById("cc-fresh") as HTMLElement;
 const foot = document.getElementById("cc-foot") as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
@@ -83,6 +84,13 @@ function render() {
   const raw = amt.value.trim();
   const a = Math.max(0, pm(amt.value) || 0);
   const f = from.value, t = to.value;
+  /* THE FIELD DECLARES ITS CURRENCY (money-controls.js). The amount is in the
+     FROM currency, so that is what data-cur says — and the in-field glyph, the
+     label's unit and the announced unit all follow it from here. The server
+     seeds data-cur={seed.from} so the very first paint is right too. Declaring
+     it here, in the page that owns the select, is the whole point: the glyph
+     must never be a guess made from a label. */
+  amtField.setAttribute("data-cur", f);
   const c = fxConvert(a, f, t, rates);
   const u = fxConvert(1, f, t, rates);
   sfFig(fig, ["cc-amt"], (t === "NGN" ? "₦" : "") + fxNumber(c, t === "NGN" ? 0 : 2));

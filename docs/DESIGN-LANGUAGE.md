@@ -63,7 +63,7 @@ Receipt panel (plan P0-3) is the vessel for ③④⑧ — the page reads as a ba
 ═══════════════════════════════════════════════════════════
 F1. **Never `type=number`** (steppers + comma rejection break trust). `type="text" inputmode="decimal"` + parse-tolerant (accept typed ₦ and commas), format on blur.
 F2. On-blur format gets a 200ms opacity dip 0.7→1.0 — the tactile "I reformatted your number" cue (uxpatterns currency-input).
-F3. Currency symbol inside the field (prefix, aria-hidden), live currency name in `aria-label`.
+F3. Currency symbol inside the field (prefix, `aria-hidden`). The field **declares** its unit — `data-cur="NGN"`, re-declared by the page when the unit follows a `<select>` — and the symbol is rendered from the site's own currency table, never guessed from the label's text (the old `label.indexOf('₦')` test printed ₦ on a dollar amount; a substring test is not a claim about a unit). The **live currency name goes in the visible `<label>`**, not in `aria-label`: an `aria-label` overrides the `<label>` for the accessible name, which breaks WCAG 2.5.3 Label-in-Name the moment the two drift, so the label itself is kept in step and any field whose unit can change also gets a polite `aria-live` status announcing the switch.
 F4. Touch: all controls ≥44px (inputs 48px phone). Keyboard-covering-results fix: result panel scrolls above viewport center on focus where feasible; sticky result on long forms (DECISION D4 — per-tool during rungs).
 F5. Errors: inline, plain voice, next-step suggested. Empty states carry voice. Never a dead button, never a silent failure.
 

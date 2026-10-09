@@ -4,6 +4,61 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.49] — 2026-10-09 — the currency glyph must follow the currency (King-found)
+The King found it himself, 9 Oct 16:12: on the converter with **From = USD**, the amount field
+showed a **₦** glyph. A naira symbol on a dollar amount mislabels the number you just typed — on a
+finance site a currency symbol is a claim about the unit.
+
+**Root cause.** `src/scripts/money-controls.js` injected the glyph into every `.field` whose **label
+text merely CONTAINED the character ₦** and whose input was `inputmode="decimal"`:
+`if (label.textContent.indexOf('\u20A6') === -1) return;`. The converter's label is
+*"Amount (₦ $ £ € and 12 more)"*, where ₦ is one item in a list of fifteen. A substring test with no
+notion of which currency the field holds. Injected once at boot and **never updated when the select
+changed**, so it was wrong for every currency except the one it happened to assume.
+
+**The substring test is gone from the source entirely.** A field now declares its unit —
+`<div class="field" data-cur="NGN">` — and the script renders that. **42 decimal fields** declare it
+across the fleet; the 36 that were genuinely naira got the attribute, with every label string
+byte-identical and **no hand-edited labels**.
+
+**Symbols come from the site's own table** (`fxCurrencies()`, `lib/fx.ts` — the same object the
+converter's `<select>` is built from), so there is no second symbol map and none invented. A code the
+table does not know prints **itself**, which is still honest.
+
+**Dynamic, and it survives the re-render.** A delegated `change`/`input` listener re-syncs after the
+page's own render, and injection is idempotent. Each conditional page re-declares `data-cur` in the
+render it already had — the converter from `from.value`, the comparator from the origin currency it
+had already computed.
+
+| From | Before | After |
+|---|---|---|
+| USD | ₦ | **$** |
+| NGN | ₦ | ₦ |
+| GBP | ₦ | **£** |
+| JPY | ₦ | **¥** |
+| AED | ₦ | **د.إ** |
+| ZAR / XOF / CAD / … | ₦ | R / CFA / CA$ / … |
+
+**Manager follow-up, the same lie one line lower.** The worker flagged and did NOT touch it: the
+transfer comparator's receipt hardcoded `q.dest === "NGN" ? "₦" : "$"`, so with Send-currency GBP the
+field correctly read **"£ 100,000"** while the receipt on the same page still printed **"$100,000"**.
+That is the identical lie, one line below the one just fixed, so it is fixed here — symbols now come
+from the same table the field uses, and the two cannot disagree.
+
+**Fleet-wide file touched, and it is the one that groups digits on blur.** `money-controls.js` is
+additive here: the removed lines are the defective test and the old hardcoded glyph creation — the
+**blur/comma-grouping logic is not in the removed set at all**. Suite confirms **15/15 tools, 128 pass /
+0 fail / 7 skip**.
+
+**Verified live, 42 fields swept:** 41 show ₦ and the one non-NGN field is the converter's USD seed
+showing $ — correct by design. No field carries a duplicated glyph. 0 page errors.
+
+**Left open and reported, not hidden:** the accessible name reads `AMOUNT IN BRITISH POUND (£) SAMPLE`
+because smart-fields' SAMPLE badge lives inside the `<label>`. Pre-existing, not from this change, and
+fixing it means touching the spine.
+
+Gates 6/6 (article 147/147, vectors 95/95; footer 64, homepage 128), 79 pages, suite 128/0/7.
+
 ## [0.7.48] — 2026-10-09 — SITE-4 + PROC-5: the privacy policy, rewritten from the real flows
 Audit Appendix A step 4. The policy had been describing a site that is not this one.
 

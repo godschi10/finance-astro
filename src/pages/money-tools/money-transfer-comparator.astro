@@ -22,7 +22,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
 
-<div class="field"><label for="tc-amt">Amount to send (₦ out, $ in)</label><input id="tc-amt" type="text" value={TRANSFER_SEED.amount} inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="tc-amt">Amount to send <span data-cur-unit></span></label><input id="tc-amt" type="text" value={TRANSFER_SEED.amount} inputmode="decimal"></div>
 <div class="field"><label for="tc-dir">Direction</label><select id="tc-dir"><option value="to-nigeria">Send to Nigeria (USD→NGN)</option><option value="from-nigeria" selected>Send from Nigeria (NGN→USD)</option></select></div>
 <div class="field"><label for="tc-src">Send currency</label><select id="tc-src"><option>USD</option><option>GBP</option><option>EUR</option><option>CAD</option></select><p class="hint">Foreign leg only; naira side is automatic.</p></div>
 </div>
@@ -56,7 +56,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </ToolShell>
 <script>
 import { transferQuote, transferVerified } from "../../lib/transfer";
-import { fxNumber, fxFetchLive } from "../../lib/fx";
+import { fxNumber, fxFetchLive, fxCurrencies } from "../../lib/fx";
 import { FX_SNAPSHOT } from "../../data/fx-snapshot";
 import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
@@ -66,15 +66,30 @@ let asOf = FX_SNAPSHOT.as_of;
 const amt = document.getElementById("tc-amt") as HTMLInputElement;
 const dir = document.getElementById("tc-dir") as HTMLSelectElement;
 const src = document.getElementById("tc-src") as HTMLSelectElement;
+const amtField = amt.closest(".field") as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
 function render() {
   const raw = amt.value.trim();
   const a = Math.max(0, pm(amt.value) || 0);
   const d = dir.value === "from-nigeria" ? "from-nigeria" : "to-nigeria";
   const s = d === "from-nigeria" ? "NGN" : src.value;
+  /* THE FIELD DECLARES ITS CURRENCY (money-controls.js). The amount is always
+     in the ORIGIN currency: naira when you send from Nigeria, the foreign
+     send-currency when you send to it — `s` is already that currency, read
+     from the real ids above, so the glyph, the label's unit and the announced
+     unit follow the Direction select with no second copy of this logic. */
+  amtField.setAttribute("data-cur", s);
   const q = transferQuote(a, d, s, d === "from-nigeria" ? src.value : "NGN", { rates, as_of: asOf, ok: true });
-  const sym = q.dest === "NGN" ? "₦" : "$";
-  const osym = q.origin === "NGN" ? "₦" : "$";
+  /* E11 follow-up — the receipt hardcoded `"NGN" ? "₦" : "$"`, so with
+     Send-currency GBP the FIELD correctly read "£ 100,000" (the E11 glyph fix)
+     while the RECEIPT still printed "$100,000" on the same page: the identical
+     lie, one line below the one just fixed. Symbols now come from the site's own
+     table (fxCurrencies, the same object the converter's <select> is built from),
+     so the field and the receipt cannot disagree. A code the table does not know
+     prints itself, which is still honest. */
+  const symOf = (code) => (fxCurrencies()[code] || {}).symbol || code;
+  const sym = symOf(q.dest);
+  const osym = symOf(q.origin);
   // No winner on a zero transfer: suppress the Best tag instead of crowning a $0 tie.
   const ranked = a > 0;
   sfFig(document.getElementById("tc-sum-amt") as HTMLElement, ["tc-amt"], `${osym}${fxNumber(a, 0)}`);
