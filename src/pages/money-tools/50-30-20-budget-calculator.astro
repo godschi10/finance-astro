@@ -223,7 +223,7 @@ import { budgetAllocator } from "../../lib/allocator";
 import { formatGrouped } from "../../lib/format";
 import { pm, pmBlank, pmHonest } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig, SF_DASH } from "../../data/tool-fields";
 /* F1 — fleet-wide negative shape (the crypto tool's winner): a negative prints
    −₦X (U+2212 minus before the symbol), never ₦-X. format.ts stays
    PHP-parity-pinned (it mirrors gwill_paye_number), so this is fixed per page
@@ -288,6 +288,12 @@ const esc = (s: string): string => s.replace(/[&<>"']/g, (c) => (({ "&": "&amp;"
    that are SHARES of one income rather than amounts. */
 const STEP1_IDS = ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"];
 const SPLIT_IDS = ["bg-needs", "bg-wants", "bg-save"];
+/* The four ids a PLAN figure is read from: income and the three splits. Step 1's
+   receipt, step 2's buckets, the live line, the mini line and the whole mirror
+   panel are that one figure itemised, so a junk box among the four means no
+   plan figure anywhere on the page is true — not "priced from a number nobody
+   entered". */
+const PLAN_IDS = ["bg-inc", "bg-needs", "bg-wants", "bg-save"];
 /* What the reader took from a malformed box, in the field's own unit, so the
    rail can say it instead of leaving the visitor to guess. The three step-1
    splits and the five step-2 shares are percentages; everything else here is
@@ -295,8 +301,44 @@ const SPLIT_IDS = ["bg-needs", "bg-wants", "bg-save"];
 const PCT_IDS = SPLIT_IDS.concat(AL_BUCKETS.map((b) => "al-" + b));
 const MONEY_IDS = ["bg-inc", "bg-spn", "bg-spw", "bg-sps"];
 const unitOf = (id: string): string => (PCT_IDS.indexOf(id) >= 0 ? "0%" : "₦0");
-/* MALFORMED — visible text that is not a figure, in the two shapes this page
-   actually produces, because it does two different things with them:
+/* What the reader ACTUALLY took from a box, in the field's own unit — so a rail
+   can quote the figure instead of leaving the visitor to work out that "250,"
+   was priced as ₦250. */
+const readAs = (id: string): string => (PCT_IDS.indexOf(id) >= 0 ? `${pm(g(id).value)}%` : nn(pm(g(id).value)));
+/* ── THE COMMA THAT IS NOT A THOUSANDS COMMA ────────────────────────────────
+   pm() is provenance-blind about separators: it strips "," before it reads, so
+   "₦1,500,000" lands on 1500000 — the grouped naira a blurred money field
+   legitimately holds. The SAME strip is why "250," reads 250 and "," reads 0,
+   and both are alphabet-legal, so every predicate built from pmHonest() waves
+   them through as well-formed: malformedOf() said not-malformed, pmBlank() said
+   entered, the reader took 250, and the page priced an entire plan off a
+   near-miss keystroke — ₦125 of needs with the verdict confidently AHEAD, on
+   income that is either ₦250,000 or a typo. The Manager re-proved it on live
+   bytes.
+
+   pm() is off-limits (the fleet's reader, 63 call sites, and its tolerance is
+   what keeps a grouped figure live-accurate), so the page answers the one
+   question the reader cannot. A thousands comma has digits on its left,
+   exactly three digits on its right, and a group boundary after them. Anything
+   else is a separator the visitor reached for while typing a naira amount, and
+   it goes through the same junk rail as "12.5.5" — with the figure the reader
+   took said out loud, never silently repaired to 250000. */
+const misplacedComma = (v: string): boolean => {
+  const s = String(v).trim();
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] !== ",") continue;
+    /* Nothing before it ⇒ a leading comma. Fewer than three digits after it,
+       or digits with no group boundary after them ⇒ trailing, doubled or
+       simply in the wrong place. "1,234.50" keeps its comma: three digits then
+       the decimal point, which is a group boundary. */
+    const before = s[i - 1];
+    if (!(before >= "0" && before <= "9")) return true;
+    if (!/^\d{3}([.,]|$)/.test(s.slice(i + 1))) return true;
+  }
+  return false;
+};
+/* MALFORMED — visible text that is not a figure, in the three shapes this page
+   actually produces, because it does three different things with them:
      "unparseable"  every character is in the honest-money alphabet but the
                     text is still not a number ("12.5.5"). pm() discards the
                     whole thing to 0, so the receipt prints a confident ₦0
@@ -305,14 +347,21 @@ const unitOf = (id: string): string => (PCT_IDS.indexOf(id) >= 0 ? "0%" : "₦0"
                     these as never-entered, so every dependent figure is
                     held back as "—" and the verdict goes quiet with no
                     explanation at all.
+     "separator"    the honest-money alphabet with a comma in it that is not a
+                    grouping comma ("250," / ","). pm() drops it and reads the
+                    rest, so the field shows one figure while the maths uses
+                    another — the near-miss CRITICAL. It is not blank (there
+                    are digits) and it is not NaN (the rest is a real number),
+                    so this test is the only thing on the page that can see it.
    A genuinely EMPTY field is NOT malformed: the offer rail already names it
    and says "empty, not zero", which is the honest answer. Neither is a value
    pm() reads exactly as written — "₦1,234.50", "1 234 500", "8.5%", "007",
    "1e5", "+500" all parse and are left strictly alone. */
-const malformedOf = (id: string): "" | "unreadable" | "unparseable" => {
+const malformedOf = (id: string): "" | "unreadable" | "unparseable" | "separator" => {
   const v = g(id).value;
   if (v.trim() === "") return "";
   if (!pmHonest(v)) return "unreadable";
+  if (misplacedComma(v)) return "separator";
   return Number.isFinite(pmRaw(v)) ? "" : "unparseable";
 };
 /* Name up to three offending fields in the labels' own words — "A", "B and C"
@@ -329,6 +378,22 @@ const nameList = (ids: readonly string[]): string => {
    same data-goto CTA grammar the reconcile fix already uses — a tap scrolls
    AND focuses the box instead of only jumping to it. */
 const goTo = (id: string): string => ` <a class="btn b-ghost b-xs" href="#${id}" data-goto="${id}">Go to "${esc(fieldName(id))}"</a>`;
+/* The junk predicate, per FIGURE: the ids this figure is read from, judged the
+   way the rails above judge them. A figure whose inputs include a malformed
+   field would print the reader's number while the field shows another, so it
+   withholds — the rule sfFig() already applies to a BLANK dep, extended to a
+   junk one. One helper, so no call site can invent its own narrower test. */
+const junkIn = (ids: readonly string[]): boolean => ids.some((id) => !!malformedOf(id));
+/* The same withhold grammar tool-fields.ts uses for a blank dep: the same dim
+   dash, and the same data-sf-no marker. The marker is load-bearing — without
+   it sfEmpty()'s kept-map restore mistakes this deliberate dash for the empty
+   state's and writes a stale figure straight back over it. */
+const NO_FIG = "data-sf-no";
+const sfFigJ = (el: HTMLElement | null, deps: readonly string[], real: string): void => {
+  if (!el) return;
+  if (junkIn(deps)) { sfFig(el, deps, SF_DASH); el.setAttribute(NO_FIG, ""); return; }
+  sfFig(el, deps, real);
+};
 /* One rail, one voice, shared by the step-1 and step-2 rails so the two can
    never drift into two sentences for one fact. Per-field clauses, because
    the two malformed kinds need two DIFFERENT truths: an unparseable box was
@@ -342,7 +407,10 @@ const junkRail = (el: HTMLElement | null, ids: readonly string[]): void => {
   const more = bad.length - named.length;
   const clauses = named.map((id) => {
     const nm = `"${esc(fieldName(id))}"`;
-    return malformedOf(id) === "unparseable"
+    const kind = malformedOf(id);
+    if (kind === "separator")
+      return `${nm} reads "${esc(g(id).value)}" — the comma in there is not a thousands separator (one sits between three-digit groups), so it was dropped and the box was read as ${readAs(id)}.`;
+    return kind === "unparseable"
       ? `${nm} reads "${esc(g(id).value)}", which is not a figure we can use — so the plan was priced as if it read ${unitOf(id)}, not as what you typed.`
       : `${nm} reads "${esc(g(id).value)}", and we could not get a figure out of it at all — so every number that depends on it is held back as "—" instead of guessed.`;
   });
@@ -402,7 +470,13 @@ const actualOf = (bucket: string): number | null => {
      ₦50,000", a fabricated verdict about a bucket nobody scored. A malformed
      bucket now reads exactly like a blank one: no figure, no badge, and the
      new #al-junk rail names the box instead. */
+  /* E14 — a NEGATIVE actual is unknown for the same reason. -1 used to be
+     clamped to ₦0 here and the mirror then asserted "you entered ₦0 UNDER
+     ₦67,500" while the field visibly held -1: a figure nobody entered, scored
+     with total confidence. A spend cannot be negative, so nothing is scored
+     and the rail above names the box. */
   if (!el || pmBlank(el.value) || malformedOf(ACT_ID[bucket])) return null;
+  if (pm(el.value) < 0) return null;
   return Math.max(0, pm(el.value) || 0);
 };
 /* E10 — the ONE ownership predicate, reusing the page's existing sd()/badge
@@ -433,15 +507,22 @@ function render() {
   junkRail(t("bg-junk"), STEP1_IDS);
   rangeRail(t("bg-range"), SPLIT_IDS);
   bigRail(t("bg-big"), MONEY_IDS);
+  /* ONE junk in the four plan ids and there is no plan to itemise. Step 2's
+     buckets, the live line, the mini line and the mirror panel are all this
+     same figure, so they read the same predicate rather than each deciding for
+     itself what counts as readable. */
+  const planJunked = junkIn(PLAN_IDS);
   const inc = Math.max(0, pm(g("bg-inc").value) || 0);
   const np = Math.max(0, pm(g("bg-needs").value) || 0) / 100;
   const wp = Math.max(0, pm(g("bg-wants").value) || 0) / 100;
   const svp = Math.max(0, pm(g("bg-save").value) || 0) / 100;
   const plan = budget503020(inc, np, wp, svp);
   /* THE ZERO LAW: every figure declares the ids it is derived from. A split the
-     visitor never entered cannot print a gold ₦0 bucket. */
-  sfFig(t("bg-fig"), ["bg-inc", "bg-needs", "bg-wants", "bg-save"], `${nn(plan.needs)} · ${nn(plan.wants)} · ${nn(plan.savings)}`);
-  sfFig(t("bg-else"), ["bg-inc", "bg-needs", "bg-wants", "bg-save"], nn(plan.else));
+     visitor never entered cannot print a gold ₦0 bucket. A split the reader
+     mis-read ("250," priced as 250) cannot print a plan at all — that is what
+     sfFigJ adds on top of the blank test. */
+  sfFigJ(t("bg-fig"), PLAN_IDS, `${nn(plan.needs)} · ${nn(plan.wants)} · ${nn(plan.savings)}`);
+  sfFigJ(t("bg-else"), PLAN_IDS, nn(plan.else));
   /* B4-FIX2 — a split the visitor never entered cannot print a gold bucket:
      garbage ("abc" in a split) reads as un-entered, exactly like a cleared
      field, so the demand line below matches the blank state. */
@@ -475,13 +556,18 @@ function render() {
      one line fewer. F-P3 — a shown-but-empty sumnote is a visible nothing
      (cold + every 100%-split state painted a blank <p>), so the element hides
      with its empty text instead of holding whitespace. */
-  const offerRail = !empty && ["bg-inc", "bg-needs", "bg-wants", "bg-save"].some((id) => pmBlank(g(id).value));
+  const offerRail = !empty && PLAN_IDS.some((id) => pmBlank(g(id).value));
   const sumnote = t("bg-sumnote");
   if (offerRail) { sumnote.textContent = ""; sumnote.hidden = true; }
   else if (missingSplits.length) {
     sumnote.hidden = false;
     sumnote.textContent = `Nothing to compute yet — ${missingSplits.map(splitLabel).join(" and ")} ${missingSplits.length > 1 ? "are" : "is"} empty, not zero.`;
-  } else if (total === 100) { sumnote.textContent = ""; sumnote.hidden = true; }
+  }
+  /* E14 — a junk split is priced from the reader's number, so "Splits add to
+     300%" would be a percentage nobody typed. The junk rail already owns that
+     field's voice; this line stands down rather than second-guessing it. */
+  else if (junkIn(SPLIT_IDS)) { sumnote.textContent = ""; sumnote.hidden = true; }
+  else if (total === 100) { sumnote.textContent = ""; sumnote.hidden = true; }
   else {
     /* Recovery soft spot 2 (A4): the old line stated the FACT ("Splits add to
        250%") and prescribed nothing — the fix is named in the SAME line, no
@@ -521,38 +607,62 @@ function render() {
      fields further down the page. */
   junkRail(t("al-junk"), shareIds.concat(ACT_IDS));
   const r2 = budgetAllocator(inc, np, wp, svp, shares);
-  sfFig(t("al-needs"), ["bg-inc", "bg-needs"], nn(r2.needs));
+  /* E14 — every one of these is plan.needs itemised, so a junk income or split
+     leaves the whole itemised step reading from the reader's number instead of
+     the one on screen. They read planJunked through sfFigJ, the same predicate
+     the receipt above does. */
+  sfFigJ(t("al-needs"), ["bg-inc", "bg-needs"], nn(r2.needs));
   /* T3 — the step-2 label names the LIVE split, never a fixed "half": at a
      60/20/20 split "Needs half: ₦150,000" was a live lie. Same live-span
      pattern E2 used for the intro (sfFig withholds as "—" while blank). */
-  sfFig(t("al-pct"), ["bg-inc", "bg-needs"], `${Math.round(np * 100)}%`);
+  sfFigJ(t("al-pct"), ["bg-inc", "bg-needs"], `${Math.round(np * 100)}%`);
   /* F-A2-1 — the step-2 intro names live figures, never the seed's. sfFig
      withholds them as "—" while the inputs are blank, exactly like the
      receipt, so no ₦0 is ever printed in prose. */
-  sfFig(t("bg-step2-needs"), ["bg-inc", "bg-needs"], nn(r2.needs));
+  sfFigJ(t("bg-step2-needs"), ["bg-inc", "bg-needs"], nn(r2.needs));
   const rentAmt = r2.buckets.find((b) => b.id === "rent")?.amount ?? 0;
-  sfFig(t("bg-step2-rent"), ["bg-inc", "bg-needs", "al-rent"], nn(rentAmt));
+  sfFigJ(t("bg-step2-rent"), ["bg-inc", "bg-needs", "al-rent"], nn(rentAmt));
   const shareSum = Object.values(shares).reduce((a, b) => a + b, 0);
   const planned = r2.needs * shareSum;
+  /* A junk share is priced from the reader's number too, so "buckets add to
+     345% of needs" would be a percentage nobody typed — the same standing rule
+     for the overage line as for the sum line above. */
+  const shareJunked = junkIn(shareIds);
   /* Every clamped negative says so: -x is priced as ₦0 in income, splits and
-     every share, so the rail names the rewrite instead of staying silent. */
-  /* E10 — the new per-bucket actual fields are clamped to ₦0 on a negative
-     exactly like every other input here, so they join the disclosure rail. */
-  const alNeg = ["bg-inc", "bg-needs"].concat(shareIds, ACT_IDS).some((id) => pm((document.getElementById(id) as HTMLInputElement).value) < 0);
-  const alNegSfx = alNeg ? " Negative entries are treated as ₦0." : "";
+     every share, so the rail names the rewrite instead of staying silent.
+     #bg-warn already owns the seven step-1 boxes, so this clause names only the
+     five shares it alone covers. */
+  /* E14 — but a negative SPEND is not a spend that was clamped: it is a spend
+     that cannot exist. The old treatment clamped it to ₦0 and the mirror then
+     printed "you entered ₦0 UNDER ₦67,500" over a field visibly holding -1 —
+     an entry nobody made, in the panel whose whole job is to score what was
+     really spent. So the two families get two different truths, each naming its
+     own fields in the labels' own words. */
+  const negClampIds = shareIds.filter((id) => pm((document.getElementById(id) as HTMLInputElement).value) < 0);
+  const negActIds = ACT_IDS.filter((id) => pm(g(id).value) < 0);
+  const negClampClause = negClampIds.length
+    ? ` ${nameList(negClampIds)} ${negClampIds.length > 1 ? "read" : "reads"} ${negClampIds.map((id) => nn(pm(g(id).value))).slice(0, 3).join(", ")} — ${negClampIds.length > 1 ? "a figure there cannot be negative, so they are" : "a figure there cannot be negative, so it is"} treated as ₦0.`
+    : "";
+  const negActClause = negActIds.length
+    ? ` ${nameList(negActIds)} ${negActIds.length > 1 ? "read" : "reads"} ${negActIds.map((id) => nn(pm(g(id).value))).slice(0, 3).join(", ")} — ${negActIds.length > 1 ? "a spend cannot be negative, so those buckets are" : "a spend cannot be negative, so that bucket is"} left unscored rather than read as ₦0.`
+    : "";
+  const alNegSfx = negClampClause + negActClause;
   /* A field still wearing SAMPLE has not been touched; one wearing LAST USED
      holds the visitor's own remembered number. Both are the spine's own
      badges, read off the DOM — no new state kept here (hasBadge, module scope). */
-  if (r2.needs > 0 && planned > r2.needs) {
+  if (r2.needs > 0 && planned > r2.needs && !shareJunked) {
     t("al-warn").hidden = false;
     /* F-A2-7 — a remembered tune must not read as a scold: when the overage
        rides on LAST USED shares, the warn says so instead of greeting the
        returner with a warning new visitors never see. The maths never moves. */
     const memSfx = shareIds.some((id) => hasBadge(id, "data-r")) ? " Includes shares from your last visit — trim any bucket to fit." : "";
     t("al-warn").textContent = `Over by ${nn(planned - r2.needs)} — buckets add to ${(shareSum * 100).toFixed(0)}% of needs. Trim shares to 100% or less.` + memSfx + alNegSfx;
+  } else if (negClampIds.length || negActIds.length) {
+    t("al-warn").hidden = false;
+    t("al-warn").textContent = (negClampClause + negActClause).trim();
   } else {
-    t("al-warn").hidden = !alNeg;
-    t("al-warn").textContent = alNeg ? "Negative entries are treated as ₦0." : "";
+    t("al-warn").hidden = true;
+    t("al-warn").textContent = "";
   }
   const box = t("al-rows");
   box.innerHTML = "";
@@ -564,7 +674,7 @@ function render() {
     amt.setAttribute("data-al-amt", b.id);
     /* The residual "Other needs" row is what is left of needs after every
        named share, so it waits on ALL of them, not on one. */
-    sfFig(amt, b.id === "other" ? ["bg-inc", "bg-needs"].concat(shareIds) : ["bg-inc", "bg-needs", "al-" + b.id], nn(b.amount));
+    sfFigJ(amt, b.id === "other" ? ["bg-inc", "bg-needs"].concat(shareIds) : ["bg-inc", "bg-needs", "al-" + b.id], nn(b.amount));
     div.appendChild(lab); div.appendChild(amt); box.appendChild(div);
   }
   /* E10 — the five needs-share fields decide what "Other needs" IS, so they
@@ -583,18 +693,22 @@ function render() {
     const lab = document.createElement("span"); lab.textContent = "Other needs";
     const amt = document.createElement("b");
     amt.setAttribute("data-al-amt", "other");
-    sfFig(amt, ["bg-inc", "bg-needs"].concat(shareIds), nn(r2.needs - planned));
+    sfFigJ(amt, ["bg-inc", "bg-needs"].concat(shareIds), nn(r2.needs - planned));
     div.appendChild(lab); div.appendChild(amt); box.appendChild(div);
   }
   sfEmpty(empty);
   /* F2 — the receipt sits below the fold at 390px, so a split change used to
      recompute figures the visitor could not see. This one line lives beside
      the fields and mirrors the plan, so every edit is visibly answered. */
-  const splitsSet = ["bg-inc", "bg-needs", "bg-wants", "bg-save"].every((id) => !pmBlank(g(id).value));
+  const splitsSet = PLAN_IDS.every((id) => !pmBlank(g(id).value));
   const live = t("bg-live");
   /* A hidden line carries no text: the rails contract reads note prose
     verbatim, so a stale "Plan now: ₦…" must not sit in the DOM behind hidden. */
-  if (empty || !splitsSet) { live.hidden = true; live.textContent = ""; }
+  /* E14 — the same for a junk plan id. "250," priced the whole line at ₦125
+     somewhere a visitor could see it and the page never said a word; the what-
+     now, the verdict and the three receipt rows already stood down on this
+     predicate, and this was the last one that did not. */
+  if (empty || !splitsSet || planJunked) { live.hidden = true; live.textContent = ""; }
   else {
     live.hidden = false;
     live.textContent = `Plan now: ${nn(plan.needs)} needs · ${nn(plan.wants)} wants · ${nn(plan.savings)} savings`;
@@ -654,10 +768,13 @@ function render() {
      live line two screens up; rent is the actionable one here. Same guard as
      the live line: no figures on an empty page. */
   const mini = t("bg-mini");
-  if (empty || !splitsSet) { mini.hidden = true; mini.textContent = ""; }
+  if (empty || !splitsSet || planJunked) { mini.hidden = true; mini.textContent = ""; }
   else {
     mini.hidden = false;
-    const rentTxt = pmBlank(g("al-rent").value) ? "—" : nn(rentAmt);
+    /* E14: a junk share is priced from the reader's number, so "rent of needs"
+       here would come from a share nobody typed. Same predicate the bucket rows
+       below use, so the two cannot disagree about one share. */
+    const rentTxt = pmBlank(g("al-rent").value) || malformedOf("al-rent") ? "—" : nn(rentAmt);
     mini.textContent = `Mini plan — needs ${nn(plan.needs)} · rent ${rentTxt} of needs`;
   }
   /* Discovery (A4 bottom-3): the copy button's cold honesty must be visible
@@ -711,9 +828,13 @@ function render() {
      a plan nobody entered. */
   const am = t("al-needsline");
   /* F-P1/F-P5 gates, verbatim as before — the plan is what both halves read. */
-  const planComplete = ["bg-inc", "bg-needs", "bg-wants", "bg-save"].every((id) => !pmBlank(g(id).value));
+  const planComplete = PLAN_IDS.every((id) => !pmBlank(g(id).value));
   const step1Touched = planTouched || !sd("bg-spn");
-  if (!empty && planComplete && !pmBlank(g("bg-spn").value) && step1Touched) {
+  /* E14 — "12.5.5" in "Spent on needs" read as ₦0 and the line printed "You
+     spent ₦0 vs ₦150,000 plan on needs — within plan" while the verdict above
+     said CANNOT SCORE for the very same field. One screen, two owners. */
+  const spendJunked = junkIn(["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn"]);
+  if (!empty && planComplete && !pmBlank(g("bg-spn").value) && !spendJunked && step1Touched) {
     const spent = Math.max(0, pm(g("bg-spn").value) || 0);
     const mineSpent = planTouched && !sd("bg-spn");
     am.hidden = false;
@@ -836,7 +957,10 @@ function render() {
   const badgeEl = t("al-mirror-badge");
   const ownEl = t("al-mirror-own");
   const rowsEl = t("al-actuals");
-  if (empty || !planComplete) {
+  /* E14 — with a junk plan id there is no plan column to score against, so the
+     whole panel withholds instead of pricing "Rent / housing ₦56" off a figure
+     the visitor never typed. Same predicate, same empty-state treatment. */
+  if (empty || !planComplete || planJunked) {
     headEl.hidden = true; badgeEl.hidden = true; ownEl.hidden = true;
     rowsEl.hidden = true; rowsEl.innerHTML = "";
     t("al-reconcile").hidden = true; t("al-reconcile").textContent = "";
@@ -861,6 +985,11 @@ function render() {
       const n = scored.filter((s) => s.actual !== null).length;
       ownEl.textContent = `Variance = what you entered, minus that bucket's plan. ${n} of 5 buckets scored from what you typed; the other ${5 - n} still show their plan only — no "you spent" figure and no badge, because we have nothing real to score them against.${planOurs ? " The plan figures are still our worked example — touch income, a split or a share to make them yours." : ""}`;
       let html = "";
+      /* E14: the plan column of a bucket is that bucket's share of needs, so a
+         junk share means this column is the reader's number, not the one typed.
+         It withholds exactly like the #al-rows figure above it, per bucket, so
+         a "250," in rent dashes rent and leaves food priced honestly. */
+      const planTxt = (b: string): string => (planJunked || malformedOf("al-" + b) ? "—" : nn(scored.find((x) => x.b === b)?.plan ?? 0));
       for (const s of scored) {
         const bucket = r2.buckets.find((x) => x.id === s.b);
         if (!bucket) continue;
@@ -868,7 +997,16 @@ function render() {
           /* Honest unknown state: the plan figure is fine to show (it IS the
              plan), but there is no actual, so there is nothing to compare and no
              badge. No fabricated amount is printed anywhere in this row. */
-          html += `<div class="actuals-row" tabindex="0" data-goto="${ACT_ID[s.b]}"><span>${bucket.label}</span><b>${nn(s.plan)}</b><span class="actuals-none">— add yours to score it</span></div>`;
+          html += `<div class="actuals-row" tabindex="0" data-goto="${ACT_ID[s.b]}"><span>${bucket.label}</span><b>${planTxt(s.b)}</b><span class="actuals-none">— add yours to score it</span></div>`;
+          continue;
+        }
+        /* E14: with the plan figure unreadable there is nothing to compare this
+           actual against, so the badge withholds with it rather than printing
+           "OVER ₦99,944" computed from a share nobody typed. What the visitor
+           entered still prints — that part is true. */
+        const planBad = planJunked || malformedOf("al-" + s.b);
+        if (planBad) {
+          html += `<div class="actuals-row" tabindex="0" data-goto="${ACT_ID[s.b]}"><span>${bucket.label}</span><b>—</b><span class="actuals-diff">you entered ${nn(s.actual)}</span></div>`;
           continue;
         }
         const variance = s.actual - s.plan;
@@ -876,7 +1014,7 @@ function render() {
         let badgeText = "ON PLAN";
         if (variance > 0) { badgeClass = "verdict-badge--action"; badgeText = `OVER ${nn(variance)}`; }
         else if (variance < 0) { badgeClass = "verdict-badge--good"; badgeText = `UNDER ${nn(-variance)}`; }
-        html += `<div class="actuals-row" tabindex="0" data-goto="${ACT_ID[s.b]}"><span>${bucket.label}</span><b>${nn(s.plan)}</b><span class="actuals-diff">you entered ${nn(s.actual)}</span><span class="verdict-badge ${badgeClass}">${badgeText}</span></div>`;
+        html += `<div class="actuals-row" tabindex="0" data-goto="${ACT_ID[s.b]}"><span>${bucket.label}</span><b>${planTxt(s.b)}</b><span class="actuals-diff">you entered ${nn(s.actual)}</span><span class="verdict-badge ${badgeClass}">${badgeText}</span></div>`;
       }
       rowsEl.innerHTML = html;
       rowsEl.hidden = false;
@@ -977,7 +1115,7 @@ function render() {
   const sumPct = Math.round(shareSum * 100);
   const remainderPct = Math.round((1 - shareSum) * 100);
   const sumEl = t("al-sharesum");
-  if (empty || !planComplete || !sharesSet) {
+  if (empty || !planComplete || !sharesSet || planJunked || shareJunked) {
     sumEl.hidden = true; sumEl.textContent = "";
   } else if (planned > r2.needs) {
     sumEl.hidden = false;
@@ -1349,12 +1487,17 @@ document.addEventListener("click", (e) => {
 const copyBtn = document.getElementById("bg-copy");
 if (copyBtn) copyBtn.addEventListener("click", async () => {
   const done = t("bg-copied");
-  const planIds = ["bg-inc", "bg-needs", "bg-wants", "bg-save"];
+  const planIds = PLAN_IDS;
   const typed = (id: string) => !hasBadge(id, "data-sd") && !pmBlank(g(id).value);
   /* Refuse only when the figures would be invented: a blank plan input prices
      as ₦0, and ₦0 is never copied. Cold (all SAMPLE, all valued) is NOT a
      refusal — it copies the example, honestly labelled. */
-  if (sfIsEmpty("50-30-20-budget-calculator", gv) || planIds.some((id) => pmBlank(g(id).value))) {
+  /* E14 — and refuse when the plan on screen is not the plan the reader took.
+     With "250," in income the page will not print ₦125/₦75/₦50 anywhere (the
+     verdict is CANNOT SCORE), so the clipboard must not be the one place those
+     exact figures still travel. Same refusal voice, same reason: nothing to
+     copy yet. */
+  if (sfIsEmpty("50-30-20-budget-calculator", gv) || planIds.some((id) => pmBlank(g(id).value)) || junkIn(planIds)) {
     done.textContent = " — nothing to copy yet — enter your numbers above.";
     done.hidden = false;
     return;

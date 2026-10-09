@@ -3,6 +3,46 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.42] — 2026-10-09 — 50-30-20 E14: a near-miss number no longer prices your month
+A14 audited the crash path and found a defect nobody had looked for: the junk rail
+was blind to the most plausible typo on the page.
+
+**A trailing comma.** Typing `250,` into monthly income — a fat-finger, since comma
+is the thousands separator — was read as **₦250**, and the page then printed
+*"Plan now: ₦125 needs · ₦75 wants · ₦50 savings"* and *"AHEAD — Our example puts
+₦39,950 extra to savings"*. A 1000× wrong plan, delivered with total confidence,
+with **no rail**, because `,` is legal in the money alphabet so the input looked
+well-formed by the page's own test.
+
+Fixed at the page level, since `pm()` is the fleet's shared reader and off-limits:
+`malformedOf()` gains a `separator` kind from a new `misplacedComma()` predicate,
+routed through the same `#bg-junk` rail with the same voice — *"the comma in there
+is not a thousands separator (one sits between three-digit groups), so it was
+dropped and the box was read as ₦250."* The plan, the three "left" rows, the live
+and mini lines, step-2 buckets, mirror panel, verdict, CTAs and clipboard all
+withhold together, and the verdict reads CANNOT SCORE.
+
+**A bare comma** — `,` — withholds every figure correctly but left
+`#bg-whatnow` printing *"needs and wants ₦185,000 over"*: invented figures on a
+page where the plan is officially absent. Same predicate now closes it.
+
+**Actuals.** Negatives were silently clamped to ₦0 and shown as "you entered ₦0";
+they now leave the bucket **unscored** — a different truth, in the labels' own
+words, naming the field. Spending and shares no longer share one blanket sentence
+either: shares clamp and say so, spends stay unscored.
+
+**No false positives**, which is the part that could have gone wrong: `250000`,
+`₦1,500,000`, `1 234`, `1,234.50`, `007`, `1e5`, `+500`, `8.5%`, `0` are all
+accepted as they parse today, and `1,500,000` prices ₦750,000/₦450,000/₦300,000.
+`250,000` is accepted; `1,2,3`, `250,,000`, `,500`, `1,5000`, `12,34` are caught.
+
+Two honest corrections to the audit, recorded rather than smoothed over: its
+"actuals swallow all junk" claim was wrong for `abc`, `.` and `12.5.5`, which
+already fired under E13; and the multi-tab lost write is plain last-write-wins
+localStorage, accepted as browser semantics with no storage locking added.
+
+Gates 6/6 (article 147/147, vectors 95/95), 79 pages, suite 128/0/7 green.
+
 ## [0.7.41] — 2026-10-08 — 50-30-20 E13: malformed input can no longer price a month
 A13 claimed four CRITICALs; the Manager re-proved on live bytes and **three were
 false** (a striking lesson in never shipping an auditor's unverified claim): both
