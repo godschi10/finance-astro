@@ -16,7 +16,18 @@ const n = (v: number) => formatGrouped(v, 0);
    concern from the WP-parity seed, so it is stated here — which keeps the SSR
    receipt, the field and the client render all agreeing at 24%.
    Do not "tidy" this back to EMERGENCY_SEED.inflation. */
-const seed = emergencyFund(EMERGENCY_SEED.essentials, EMERGENCY_SEED.saved, EMERGENCY_SEED.monthly, EMERGENCY_SEED.cover, 0.24);
+const INFL_PCT = 24;
+const seed = emergencyFund(EMERGENCY_SEED.essentials, EMERGENCY_SEED.saved, EMERGENCY_SEED.monthly, EMERGENCY_SEED.cover, INFL_PCT / 100);
+/* CALC-1 — the row below shows BOTH figures and says which is which, because
+   the page's own copy promises to measure against the inflation-adjusted finish
+   line and that finish line moves while you save. `months_to_reach` is now the
+   moving-target answer (the audit's monthsToMovingTarget); the flat-price figure
+   is gap ÷ monthly saving, kept on screen because hiding it would be its own
+   dishonesty. ONE source for both wordings — the same two expressions the
+   client render uses — so the server-rendered seed and the hydrated render
+   cannot drift apart. */
+const seedMoving = seed.months_to_reach;
+const seedNominal = seed.gap / EMERGENCY_SEED.monthly;
 const pct = Math.min(100, Math.round(seed.progress_pct));
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
@@ -38,7 +49,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="em-saved">Saved so far ₦</label><input id="em-saved" type="text" value={EMERGENCY_SEED.saved} inputmode="decimal"></div>
 <div class="field"><label for="em-mo">Monthly saving ₦</label><input id="em-mo" type="text" max="100000000" value={EMERGENCY_SEED.monthly} inputmode="decimal"></div>
 <div class="field"><label for="em-cover">Cover (months)</label><input id="em-cover" type="text" max="60" value={EMERGENCY_SEED.cover} inputmode="decimal"></div>
-<div class="field"><label for="em-infl">Inflation %/yr</label><input id="em-infl" type="text" max="100" value="24" inputmode="decimal"></div>
+<div class="field"><label for="em-infl">Inflation %/yr</label><input id="em-infl" type="text" max="100" value={INFL_PCT} inputmode="decimal"></div>
 </div>
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">Your runway today</p>
@@ -46,10 +57,16 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-sub" id="em-sub">Target ₦{n(seed.target)} · gap ₦{n(seed.gap)} · real (inflated) target ₦{n(seed.real_target)}</p>
 <div class="prog" aria-hidden="true"><i id="em-bar" style={`width:${pct}%`}></i></div>
 <div class="receipt-div" aria-hidden="true"></div>
-<div class="receipt-row"><span>Months to finish</span><b id="em-mtr">{seed.months_to_reach > 0 ? seed.months_to_reach.toFixed(1) : "— (save something monthly)"}</b></div>
+<div class="receipt-row"><span>Months to finish</span><b id="em-mtr">about {seedMoving.toFixed(1)}</b></div>
+<!-- CALC-1. What the row answers, and the flat-price figure beside it. The
+     `<b>` above is the real answer (the inflation-adjusted finish line, which
+     moves while you save); this line names the rate it assumes and keeps the
+     "if prices stood still" number visible, so nobody can read the nominal
+     figure and believe the work finishes sooner than it does. -->
+<p class="receipt-sub" id="em-mtr-note">at {INFL_PCT}% inflation · {seedNominal.toFixed(1)} months if prices stood still</p>
 <!-- The SSR fallback above only ever sees the seed, where the gap is open
-     (5.6 months), so the closed-gap wording cannot be reached before hydration.
-     C1's three zero cases are all handled in the client render below. -->
+     (about 7.2 months), so the closed-gap wording cannot be reached before
+     hydration. C1's zero cases are all named in the client render below. -->
 <div class="receipt-row"><span>Progress</span><b id="em-pct">{pct}%</b></div>
 <p class="bar-note" id="em-warn" hidden></p>
 <p class="receipt-foot">6-month default · inflation-adjusted</p>
@@ -65,13 +82,22 @@ import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
+/* The rate the visitor typed, as they typed it — rounded for display, never
+   rounded to zero (a 0.004% entry would otherwise read "at 0% inflation"). */
+const fmtPct = (v: number) => {
+  const r = Math.round(v * 100) / 100;
+  if (r !== 0) return String(r);
+  return v > 0 ? "<0.01" : "0";
+};
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
-/* THE ZERO LAW. Months-to-finish is target ÷ monthly saving, so it waits on
-   essentials, cover AND the monthly saving; the inflated finish line waits on
-   inflation too. A cleared field withholds its figure rather than printing the
-   ₦0 that a 0% assumption would produce. */
+/* THE ZERO LAW. Months-to-finish answers for the inflation-ADJUSTED finish line
+   (CALC-1: the page's own copy promises that is the one to measure against, and
+   that line moves while you save), so it waits on essentials, cover, the monthly
+   saving AND inflation. The flat-price figure — gap ÷ monthly saving — is still
+   shown beside it, named for what it is. A cleared field withholds its figure
+   rather than printing the ₦0 that a 0% assumption would produce. */
 const FIVE = ["em-ess", "em-saved", "em-mo", "em-cover", "em-infl"];
 const REACH = ["em-ess", "em-mo", "em-cover"];
 /* M2 — THE ZERO LAW, THE OTHER HALF. `pm("0") || 6` is a real 0 short-circuited
@@ -109,6 +135,9 @@ function render() {
   const gap = cover === 0 ? 0 : r.gap;
   const realTarget = cover === 0 ? 0 : r.real_target;
   const monthsToFinish = cover === 0 ? 0 : r.months_to_reach;
+  /* CALC-1, the flat-price figure: gap ÷ monthly saving. Informative, and no
+     longer what `months_to_reach` means — the row shows both, each named. */
+  const nominal = moRaw > 0 ? gap / moRaw : 0;
   const progress = cover === 0 ? 0 : r.progress_pct;
   // Finite-result guard: absurd cover/inflation/saving used to compound into
   // ₦Infinity. Never print it — say the plan is out of range instead.
@@ -127,19 +156,44 @@ function render() {
      but because the goal is already met. Printing the monthlySave dash there
      told a fully-funded user to "save something monthly" when their fund is
      already complete — a false alarm on the one input they had nothing wrong
-     with. The three zero cases are now named separately, because they are three
-     different facts and only one of them is a problem:
+     with. The zero cases are named separately, because they are different
+     facts and only one of them is a problem:
        · gap closed          → "done — target reached"
        · no cover asked for  → "0.0 (no cover asked for)"
-       · no monthly saving   → the dash (the only case that is advice) */
+       · no monthly saving   → the dash (the only case that is advice)
+
+     CALC-1 (2026-10-09) adds the fourth, and it is the one this page used to
+     break its own promise on: the fund can NEVER reach the inflated finish
+     line, because inflation takes more each month than the visitor puts in.
+     That is a fact about their numbers, not an error, and it gets real words —
+     never "Infinity", never a blank, never the nominal figure dressed up as an
+     answer. */
   const gapClosed = essRaw > 0 && savedRaw >= essRaw * Math.max(0, cover) && cover > 0;
-  const mtrText = !Number.isFinite(monthsToFinish) ? "out of range"
-    : monthsToFinish > 0 ? monthsToFinish.toFixed(1)
-    : cover === 0 ? "0.0 (no cover asked for)"
-    : gapClosed ? "done — target reached"
-    : moRaw <= 0 ? "— (save something monthly)"
-    : "0.0 (already there)";
+  let mtrText: string;
+  let mtrNote = "";
+  if (!Number.isFinite(monthsToFinish) || monthsToFinish > 12000) {
+    mtrText = "out of range";
+    mtrNote = "lower the target, the inflation rate, or raise the monthly saving";
+  } else if (moRaw <= 0) {
+    mtrText = "— (save something monthly)";
+  } else if (r.never && cover > 0) {
+    mtrText = "never";
+    mtrNote = "your saving doesn't catch up with inflation at this rate";
+  } else if (monthsToFinish > 0) {
+    /* The real answer is an estimate — it is a projection over the inflation
+       you typed — so it says "about". The flat-price figure is exact division
+       and does not. */
+    mtrText = inflRaw > 0 ? `about ${monthsToFinish.toFixed(1)}` : monthsToFinish.toFixed(1);
+    mtrNote = inflRaw > 0
+      ? `at ${fmtPct(inflRaw)}% inflation · ${nominal.toFixed(1)} months if prices stood still`
+      : "prices held flat — no inflation entered";
+  } else {
+    mtrText = cover === 0 ? "0.0 (no cover asked for)"
+      : gapClosed ? "done — target reached"
+      : "0.0 (already there)";
+  }
   sfFig(t("em-mtr"), REACH, mtrText);
+  sfFig(t("em-mtr-note"), REACH, mtrNote);
   sfFig(t("em-pct"), ["em-ess", "em-saved", "em-cover"], p + "%");
   (document.getElementById("em-bar") as HTMLElement).style.width = p + "%";
   const notes: string[] = [];
