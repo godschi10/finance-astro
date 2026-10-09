@@ -33,3 +33,60 @@ export function savingsRateData(): SavingsRateRow[] {
 export function savingsRateVerified(): string {
   return maintainedVerified();
 }
+
+/* ── PER-ROW PROVENANCE (CALC-7, 2026-10-09) ────────────────────────────────
+ * The comparator shipped ONE page-level month ("verified September 2026")
+ * across ten rows that were not all checked on the same day. Provenance now
+ * hangs off each row, keyed `${provider}|${product}`.
+ *
+ * WHY A MAP AND NOT FIELDS ON THE ROW: `savings_rate_data` is a vector in
+ * scripts/php-harness/vectors.json — the PHP truth oracle — and
+ * vectors-check.mjs compares it key-for-key. Putting `verifiedOn` on the row
+ * objects would fail the parity gate on a pure metadata change, and hand-
+ * editing the oracle to match TypeScript would invert the gate (PROC-1: the
+ * oracle is supposed to be PHP's answer, not ours). The map keeps
+ * `savingsRateData()` byte-identical to what PHP produces while the
+ * provenance still lives in this one file, the single-edit source.
+ *
+ * DATES ARE NOT INVENTED. Every row carries "2026-09" — the month this table
+ * already claimed (MAINTAINED_VERIFIED, "September 2026"; CHANGELOG 0.6.7
+ * records the ruling: "Savings-rate 'verified September 2026' STAYS — it is a
+ * human-maintained marketing table, the stamp is honest and not
+ * build-fetchable"). The repo carries no finer date, so no finer date is
+ * printed. When a row is genuinely re-checked, tighten THAT row's value to
+ * "YYYY-MM-DD"; the page formatter already renders day precision.
+ *
+ * `sourceUrl` is deliberately EMPTY for every row. PENDING-WORK R19 records
+ * these rates as UNVERIFIED (only SafeLock 18.5% and FairLock 20% were ever
+ * checked exact), and a provider deep link nobody opened is an invented
+ * citation. Add the URL in the same edit that re-checks the rate. */
+export interface SavingsRateProvenance {
+  /** ISO date, or ISO year-month where only the month is known. */
+  verifiedOn: string;
+  /** The page the figure was read from. Omitted when none is recorded. */
+  sourceUrl?: string;
+}
+
+export const SAVINGS_RATE_PROVENANCE: Record<string, SavingsRateProvenance> = {
+  "Renmoney|Fixed Savings": { verifiedOn: "2026-09" },
+  "Coronation Money Market Fund|Money market fund": { verifiedOn: "2026-09" },
+  "FairMoney|FairLock": { verifiedOn: "2026-09" },
+  "Carbon|Cash Vault": { verifiedOn: "2026-09" },
+  "PiggyVest|SafeLock": { verifiedOn: "2026-09" },
+  "Cowrywise|Locked savings": { verifiedOn: "2026-09" },
+  "Kuda|Fixed savings": { verifiedOn: "2026-09" },
+  "PiggyVest|Flex Naira": { verifiedOn: "2026-09" },
+  "Bank fixed deposit|FD (30-365 days)": { verifiedOn: "2026-09" },
+  "Traditional bank savings|Regular savings": { verifiedOn: "2026-09" },
+};
+
+/** Provenance for one row. THROWS rather than serve a row with no date — a
+ *  silently undated row is the exact defect this map exists to end, and a
+ *  static build is where it should fail, not on a visitor's screen. */
+export function savingsRateProvenance(row: SavingsRateRow): SavingsRateProvenance {
+  const p = SAVINGS_RATE_PROVENANCE[`${row.provider}|${row.product}`];
+  if (!p) {
+    throw new Error(`savings-rate: no verifiedOn recorded for "${row.provider} — ${row.product}". Add it to SAVINGS_RATE_PROVENANCE.`);
+  }
+  return p;
+}

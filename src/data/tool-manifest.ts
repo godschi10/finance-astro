@@ -81,7 +81,11 @@ export const TOOL_MANIFEST: ToolEntry[] = [
   { slug: "currency-converter", tool: "Dollar to Naira & Every Currency", title: "Currency Converter", emoji: "💱", grad: "#fef3c7,#fcd34d", desc: "Convert Naira to Dollar, Pound and Euro at today’s live rate, any amount, instantly." },
   { slug: "salary-tax-calculator", tool: "Nigeria Tax Calculator 2026", title: "Nigeria Tax Calculator", emoji: "🧾", grad: "#dcfce7,#86efac", desc: "Work out your take-home pay under the Nigeria Tax Act 2025, the new 0% band, rent relief and an old-vs-new comparison." },
   { slug: "savings-goal-calculator", tool: "Savings Goal Calculator", title: "Savings Goal Calculator", emoji: "🎯", grad: "#ede9fe,#c4b5fd", desc: "See exactly how much to save each month to hit your target, with compound interest built in." },
-  { slug: "exchange-rate-history", tool: "$ USD to Naira Rate History", title: "Rate History Chart", emoji: "📈", grad: "#fce7f3,#fbcfe8", desc: "See the dollar to naira trend over 30 and 90 days, the real recorded rates, updated daily." },
+  /* CALC-6 (2026-10-09): the card copy promised "30 and 90 days, the real
+     recorded rates, updated daily". There is no server-side history — the
+     chart is device-local accumulation from the first visit, so a 12-month
+     window needs a year of daily visits. The desc now says that. */
+  { slug: "exchange-rate-history", tool: "$ USD to Naira Rate History", title: "Rate History Chart", emoji: "📈", grad: "#fce7f3,#fbcfe8", desc: "See the dollar to naira trend build day by day on this device — the chart starts empty and earns its shape as you visit." },
   { slug: "compound-interest-calculator", tool: "Compound Interest Calculator", title: "Compound Interest Calculator", emoji: "📊", grad: "#e0f2fe,#bae6fd", desc: "See how your savings grow with compound interest, project your balance year by year." },
   { slug: "inflation-savings-calculator", tool: "Inflation-Adjusted Savings Calculator", title: "Inflation Savings Calculator", emoji: "🔥", grad: "#fee2e2,#fecaca", desc: "See what inflation really does to your savings goal, and how much more you must save each month." },
   { slug: "gross-to-net-calculator", tool: "Gross to Net Calculator", title: "Gross to Net Calculator", emoji: "💰", grad: "#ccfbf1,#99f6e4", desc: "Start from the take-home pay you want and find the gross salary you need, under NTA 2025." },

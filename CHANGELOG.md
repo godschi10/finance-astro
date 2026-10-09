@@ -4,6 +4,59 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.46] — 2026-10-09 — CALC-6/7/8: stop promising automation the site does not have
+King's audit, Appendix A step 3. Honesty only: every claim now matches what the code does today.
+The real data infrastructure (a daily FX-history append and CI) is PROC-2, a later leg.
+
+**CALC-6 — the rate-history page described three different systems, one of them fiction.**
+It promised *"30 and 90 days, the real recorded rates, updated daily"* and a
+*"30/90-Day & 1-Year History"* title, offered a *"6-month"* window that does not exist, and carried
+two FAQ answers describing a **server-side dataset that does not exist** — while its own receipt read
+**"0 points on this device"**. The mechanism is genuinely device-local: the browser fetches the rate
+on each visit and stores dated points in `localStorage`. A 12-month window therefore takes about a
+year of daily visits from the same device.
+Both server-dataset FAQs are **deleted**, not softened. The honest one now states the consequence
+plainly instead of hiding it: the chart starts empty, fills one point per day as you visit, and
+**lives on this device — it does not follow you to a new phone, another browser or a private window.**
+The title, the badge, the disclaimer and the hub card copy all say the same thing now.
+
+**CALC-7 — the tools hub claimed *"updated automatically so it never goes stale"*.**
+False for the comparison tables, which are hand-kept snapshots. It now says the exchange rates
+refresh on every build and again in your browser, while the comparison tables are checked by hand and
+each row shows the date it was verified. Counted on the served hub: `never goes stale` = 0,
+`always updated` = 0, `updated automatically` = 0.
+
+**CALC-7 — per-row provenance.** The comparator showed one page-level month ("verified September
+2026"). It now shows **`verified Sep 2026` on every row**, in the bar note and a new table column.
+`sourceUrl` is deliberately left empty on all ten rows: `PENDING-WORK` R19 records 8 of the 10 rates
+as UNVERIFIED, so naming a provider deep link would have been an invented citation. Every row carries
+the month the data already claimed; no date was invented. The provenance rides a map beside the data
+rather than new fields on the rows, because `savings_rate_data` is a vectors-oracle vector and
+mutating the row objects would have failed the parity gate on a pure-metadata change — and
+hand-editing the oracle to match would have inverted the gate's purpose.
+
+**CALC-8 partial — the converter's automation FAQ invented a cache.** It claimed the rate was
+*"cached for thirty minutes"*. **There is no cache anywhere in the code.** The real mechanism is both
+stages, verified by reading `scripts/fetch-snapshot.mjs` and the compiled bundle: the page is built
+from a snapshot taken at build time and stamped with the feed's own update time, and on every visit
+the browser re-fetches the same feed and swaps the live rate in with an 8s abort. A failed fetch
+leaves the snapshot in place and labels it, never pretending stale is live. The FAQ now describes
+exactly that.
+
+**A second false claim on the same page, caught and fixed by the Manager after hand-off.** The
+converter's other FAQ asserted *"Static pages cannot call the rate feed at build time and stay
+fresh"* — which is false in this very repo: `fetch-snapshot.mjs` is step 1 of `npm run build`. A
+worker left it as "outside scope", but a false claim I have personally verified is not something to
+ship past. Rewritten to describe what actually happens.
+
+**HELD, and deliberately not "tidied":** CALC-7's inconsistent headline basis (Kuda 12% against its
+own note "up to 16%, flex ~8%"; bank FD 12% against "Zenith 7–11%, Access 7–10%"; PiggyVest 18.5% as
+a maximum) and the NDIC ₦5m wording — both unverified, and picking a rule would give unverified
+numbers a confident frame. All three contradictions are quoted in the audit; **zero rate figures were
+changed.**
+
+Gates 6/6 (article 147/147, vectors 95/95; footer 64, homepage 128), 79 pages, suite 128/0/7.
+
 ## [0.7.45] — 2026-10-09 — copy truth pass (audit Appendix A step 1)
 King's audit, six copy/data items. Every legal fact independently verified by me against the
 **official Nigeria Revenue Service Act PDF** and PwC before any copy was touched — a YMYL site does

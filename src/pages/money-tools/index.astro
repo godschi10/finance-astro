@@ -15,6 +15,12 @@
 //   + rect .ad-bg + 5. .fx-copy art-body hub intro ("Why use these
 //     calculators?", 2 paras).
 // Card copy (title/emoji/gradient/desc) is the live template's verbatim.
+// CALC-7 (2026-10-09): the hub promised "updated automatically so it never
+// goes stale" above comparators that are hand-kept snapshots, and the badge
+// said "always updated". The FX rate genuinely refreshes (build snapshot +
+// per-load client refresh); the comparison tables do not. The three strings
+// below now say exactly that, and each comparator row carries its own
+// verified date (src/lib/savings-rate.ts).
 import Layout from "../../layouts/Layout.astro";
 import { amountSlugs } from "../../lib/amount";
 import { TOOL_MANIFEST } from "../../data/tool-manifest";
@@ -57,9 +63,9 @@ const breadcrumb = { "@context": "https://schema.org", "@type": "BreadcrumbList"
         <li class="gwill-breadcrumbs__item gwill-breadcrumbs__item--current"><span aria-current="page">Money Calculators</span></li>
       </ol>
     </nav>
-    <div style="display:inline-flex;align-items:center;gap:8px;font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold-b);background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);padding:4px 12px;border-radius:var(--pill);margin-bottom:16px">Free · no sign-up · always updated</div>
+    <div style="display:inline-flex;align-items:center;gap:8px;font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold-b);background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);padding:4px 12px;border-radius:var(--pill);margin-bottom:16px">Free · no sign-up · rates live, tables dated</div>
     <h1 style="font-size:34px;font-weight:800;letter-spacing:-0.04em;color:#f0ede6;line-height:1.1;margin-bottom:10px">Money Calculators</h1>
-    <p style="font-size:14px;font-weight:300;color:var(--dark-dim);line-height:1.75">Free tools to work out your money — live exchange rates, taxes, savings goals and more. Every one is built for Nigerians and updated automatically.</p>
+    <p style="font-size:14px;font-weight:300;color:var(--dark-dim);line-height:1.75">Free tools to work out your money — live exchange rates, taxes, savings goals and more. Every one is built for Nigerians. Exchange rates refresh on every build and again in your browser; the comparison tables are checked by hand and show the date they were verified.</p>
   </div>
 </div>
 <div class="con" style="margin-top:32px;padding-bottom:48px">
@@ -99,7 +105,7 @@ const breadcrumb = { "@context": "https://schema.org", "@type": "BreadcrumbList"
   <div class="fx-copy art-body" style="margin-top:28px">
     <h2>Why use these calculators?</h2>
     <p>Money decisions are hard when you’re guessing the numbers. These tools give you the real figure, the live exchange rate, your true take-home pay, the monthly amount you actually need to save, so you can plan with real numbers.</p>
-    <p>Every tool is free, works on any phone, and is updated automatically so it never goes stale. New calculators are added as we build them.</p>
+    <p>Every tool is free and works on any phone. The exchange rates refresh on every build and again in your browser, while the comparison tables are checked by hand and each row carries the date it was verified. New calculators are added as we build them.</p>
   </div>
 </div>
 </Layout>
