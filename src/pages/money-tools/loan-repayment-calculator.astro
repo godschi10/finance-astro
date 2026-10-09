@@ -4,6 +4,14 @@ import { loanRepayment, LOAN_SEED } from "../../lib/loan";
 import { formatGrouped } from "../../lib/format";
 const n = (v: number, d = 0) => formatGrouped(v, d);
 const seed = loanRepayment(LOAN_SEED.amount, LOAN_SEED.tenor, LOAN_SEED.tenor_unit, LOAN_SEED.rate, LOAN_SEED.mode);
+/* CALC-10 (v0.7.47): the receipt printed `true APR 2333.9%` from a bare
+   toFixed(1) while this page's own FAQ said "2,333.9%". One APR, two shapes, on
+   one page. Intl.NumberFormat("en-NG") is the same grouping every money figure
+   on the site already wears (and the shape the FAQ uses); src/lib/format.ts is
+   PHP-parity-pinned so the fix is page-local. Client render() uses the identical
+   helper — a fix that only dressed the server-rendered copy would leave the live
+   figure, the one a visitor actually watches change, still unformatted. */
+const aprFmt = (v: number) => new Intl.NumberFormat("en-NG", { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(v * 100) + "%";
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
 <ToolShell title="Loan Repayment Calculator, True APR - GWill Finance" description="Loan-app quote in, real cost out: installment, total interest, and the true effective APR behind flat, daily, and reducing-balance loans." slug="loan-repayment-calculator" tool="Loan Repayment Calculator" lede="Lenders quote rates that flatter themselves. Enter the quote exactly as advertised and see the installment, the total, and the real APR." verified="True APR solved from the repayment stream · lender quotes vary, confirm terms" faqs={[
@@ -28,13 +36,24 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt" aria-live="polite">
 <p class="receipt-lbl">You repay <span id="ln-period">{seed.period}</span></p>
 <p class="receipt-fig" id="ln-fig">₦{n(seed.installment)}</p>
-<p class="receipt-sub" id="ln-sub">Total ₦{n(seed.total)} · interest ₦{n(seed.interest)} · true APR {(seed.apr * 100).toFixed(1)}%</p>
+<p class="receipt-sub" id="ln-sub">Total ₦{n(seed.total)} · interest ₦{n(seed.interest)} · true APR {aprFmt(seed.apr)}</p>
 <p class="receipt-note" id="ln-warn" hidden></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Total repaid</span><b id="ln-tot">₦{n(seed.total)}</b></div>
 <div class="receipt-row"><span>Interest</span><b id="ln-int">₦{n(seed.interest)}</b></div>
-<div class="receipt-row"><span>True APR</span><b id="ln-apr">{(seed.apr * 100).toFixed(1)}%</b></div>
-<p class="receipt-foot">APR solved from the repayment stream · day tenors round up to whole months · lender fees excluded</p>
+<div class="receipt-row"><span>True APR</span><b id="ln-apr">{aprFmt(seed.apr)}</b></div>
+<!-- CALC-10 (v0.7.47): the old foot asserted the month-rounding as though it
+     governed all three rate types. Measured on the engine at ₦100,000:
+     daily 1%/day runs on the EXACT day count and is smooth (29d 2,365.5% · 30d
+     2,333.9% · 31d 2,303.1% · 45d 1,936.5% · 60d 1,644.7%), while flat 1.5%/mo
+     steps at the boundary (29d and 30d 19.6% · 31d, 45d and 60d 26.7% — one extra
+     day buys a whole extra month of flat interest) and reducing 30%/yr holds 34.5%
+     at every tenor while the total still steps ₦102,500 → ₦103,765.43. So the
+     rounding is real for flat and reducing instalments and irrelevant to the daily
+     APR; the foot now says so, and names the step instead of hiding it. Numbers
+     are reproduced by src/lib/loan.ts as shipped — no engine change. -->
+<p class="receipt-foot">APR solved from the repayment stream · lender fees excluded</p>
+<p class="receipt-foot">Day tenors round up to whole months for flat and reducing rates — 31 or 45 days is a 2-month loan, and one extra day can step a flat rate's APR. Daily rates use the exact day count.</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
@@ -46,6 +65,11 @@ import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
+/* CALC-10 (v0.7.47): the SAME Intl grouping the server-rendered receipt uses, so
+   the figure a visitor watches repaint while typing is shaped exactly like the one
+   that arrived in the HTML. See the frontmatter comment for why the grouping is
+   page-local rather than a change to the PHP-parity-pinned src/lib/format.ts. */
+const aprFmt = (v: number) => new Intl.NumberFormat("en-NG", { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(v * 100) + "%";
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
@@ -112,10 +136,10 @@ function render() {
     return;
   }
   sfFig(t("ln-fig"), ALL, nn(r.installment));
-  sfFig(t("ln-sub"), ALL, `Total ${nn(r.total)} · interest ${nn(r.interest)} · true APR ${(r.apr * 100).toFixed(1)}%`);
+  sfFig(t("ln-sub"), ALL, `Total ${nn(r.total)} · interest ${nn(r.interest)} · true APR ${aprFmt(r.apr)}`);
   sfFig(t("ln-tot"), ALL, nn(r.total));
   sfFig(t("ln-int"), ALL, nn(r.interest));
-  sfFig(t("ln-apr"), ALL, (r.apr * 100).toFixed(1) + "%");
+  sfFig(t("ln-apr"), ALL, aprFmt(r.apr));
 }
   sfEmpty(sfIsEmpty("loan-repayment-calculator", gv));
 ["ln-amt", "ln-tenor", "ln-rate"].forEach((id) => g(id).addEventListener("input", render));

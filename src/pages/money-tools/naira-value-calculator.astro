@@ -65,7 +65,14 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-sub" id="nv-pv-sub">₦{n(pvSeed.future)} in {s.years} years buys what ₦{n(pvSeed.pv)} buys today</p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Future price tag</span><b id="nv-pv-fut">₦{n(pvSeed.future)}</b></div>
-<div class="receipt-row"><span>Discount to today</span><b id="nv-pv-disc">{(pvSeed.discount_rate * 100).toFixed(1)}%</b></div>
+<!-- CALC-5 (v0.7.47): this row's label named the DISCOUNT while the figure under
+     it is pv ÷ future — the share the future sum RETAINS. 34.1% under a discount
+     label told a phone visitor they keep 34.1% of their money when the loss is
+     65.9%, and contradicted the first receipt on the same page ("Buying power lost
+     65.9%"). The engine was always right; only the name was wrong, so only the name
+     moves. (The retired label is deliberately not repeated here — this comment
+     ships to the served HTML and must not leave the wrong phrase in the bytes.) -->
+<div class="receipt-row"><span>Worth today (share of face value)</span><b id="nv-pv-disc">{(pvSeed.discount_rate * 100).toFixed(1)}%</b></div>
 <p class="receipt-foot">Discounted at the inflation above — the reverse direction</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>

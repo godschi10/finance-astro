@@ -35,6 +35,15 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Interest</span><b id="ci-int">₦{n(seed.interest)}</b></div>
 <p class="receipt-note" id="ci-warn" hidden></p>
 <p class="receipt-foot">Compounding does the heavy lifting</p>
+<!-- CALC-9 (v0.7.47): compoundGrowth() runs the same ordinary annuity as the
+     savings-goal tool — principal grows, THEN the deposit lands, so every
+     deposit is priced at the END of its period. A salary-day deposit lands at
+     the START and the answer differs materially (on the audit's own figures
+     ₦100,000 + ₦50,000 a month at 10% for 5 years: ₦4,036,385 end vs
+     ₦4,068,650 start, a gap of ₦32,265). A start/end toggle is a separate leg —
+     this line removes the misunderstanding now, in ordinary receipt type, once
+     per page, reachable on a phone. -->
+<p class="receipt-foot">Deposits land at the end of each period</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>

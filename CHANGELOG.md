@@ -4,6 +4,53 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.47] — 2026-10-09 — CALC-5/9/10: the label, the prose, the assumption, the separator
+Audit Appendix A step 1, remainder. Four pages, copy and formatting only — **no maths changed.**
+
+**CALC-5 — the label named the wrong quantity.** The tile read *"Discount to today 34.1%"*, but
+682,215 ÷ 2,000,000 = 34.1% is the share you **keep**; the discount is 65.9%, which the same page
+already printed correctly as "Buying power lost". The page contradicted itself inside one card. Now
+**"Worth today (share of face value) 34.1%"** — the word "Discount" appears nowhere in the served
+bytes. The raw `e+23` print the audit flagged is already fixed; confirmed, nothing to do.
+
+**CALC-9 — the prose described controls that do not exist.** Savings-goal claimed it *"converts any
+of the four frequencies, monthly, quarterly, daily or annual"* and an FAQ told you to *"set the
+number of years"*. The page has **four inputs and no frequency selector, and the unit is months**.
+Three statements about controls that were never there. Both retired. The replacement says what is
+true and useful: one compounding mode, monthly, converted from the annual rate you type, with the
+rate field and the months field as the two controls that move the answer. No selector was invented to
+rescue the prose — inventing a control to justify a sentence is how a calculator grows a lie.
+
+**CALC-9 — deposit timing was undisclosed. This was the real harm.** Both savings-goal and
+compound-interest assume deposits land at the **end** of each period. A salary-day deposit lands at
+the **start**, and the difference is material: on the audit's own figures ₦100,000 + ₦50,000/month at
+10% for 5 years is **₦4,036,385** end-of-month against **₦4,068,650** start-of-month — ₦32,265 of
+difference between an assumption the page never stated. Each page now says so in a plain visible line
+under the figure: **"Deposits land at the end of each month"** / **"...of each period"**.
+
+**CALC-10 — `true APR 2333.9%` in the receipt while the FAQ said `2,333.9%`,** on the same page.
+Both now use `Intl.NumberFormat("en-NG")`, defined in the frontmatter **and** in the client script,
+because a fix that formats only the server-rendered copy leaves the live figure wrong the moment a
+visitor types. Verified by driving the page: 2,333.9% → 1,250.5% → 2,303.1% across recalculations,
+comma present every time.
+
+**CALC-10 — the rounding footnote was measured, not reasoned about, and it was wrong.** It claimed
+*"day tenors round up to whole months"* as though it governed every rate type. Measured across
+29/30/31/45/60 days under all three rate types:
+- **daily** runs on the exact day count and is perfectly smooth — month rounding has no effect at all;
+- **flat** steps **discontinuously at 31 days** (19.6% → 26.7%, +7.1 points for one extra day, because
+  a whole extra month of flat interest is charged: ₦101,500 → ₦103,000);
+- **reducing** holds 34.5% at every tenor while its total still steps.
+The footnote now says exactly that: month rounding applies to flat and reducing, 31 or 45 days is a
+2-month loan, one extra day can step a flat APR, and daily uses the exact day count.
+
+**HELD, as ordered:** the deposit-timing **toggle** (the full feature — new inputs, two engines, and
+an oracle regeneration on PHP-first terms — is its own leg, deliberately deferred rather than
+forgotten; the disclosure removes the misunderstanding today), and CALC-9's rate-guidance
+disagreement across three pages, left quoted and unsourced rather than unified on a guess.
+
+Gates 6/6 (article 147/147, vectors 95/95; footer 64, homepage 128), 79 pages, suite 128/0/7.
+
 ## [0.7.46] — 2026-10-09 — CALC-6/7/8: stop promising automation the site does not have
 King's audit, Appendix A step 3. Honesty only: every claim now matches what the code does today.
 The real data infrastructure (a daily FX-history append and CI) is PROC-2, a later leg.
