@@ -10,8 +10,12 @@ Audit Appendix A step 1, remainder. Four pages, copy and formatting only — **n
 **CALC-5 — the label named the wrong quantity.** The tile read *"Discount to today 34.1%"*, but
 682,215 ÷ 2,000,000 = 34.1% is the share you **keep**; the discount is 65.9%, which the same page
 already printed correctly as "Buying power lost". The page contradicted itself inside one card. Now
-**"Worth today (share of face value) 34.1%"** — the word "Discount" appears nowhere in the served
-bytes. The raw `e+23` print the audit flagged is already fixed; confirmed, nothing to do.
+**"Worth today (share of face value) 34.1%"**, with the number bound to it. The false *label* is gone;
+the word "Discount" still appears three times on the page in correct uses — the element id
+`nv-pv-disc`, the foot "Discounted at the inflation above — the reverse direction", and prose about
+*discounting* future naira — none of which claim 34.1% is a discount. (An earlier draft of this entry
+claimed the word appeared nowhere in the served bytes; that was wrong and is corrected here.)
+The raw `e+23` print the audit flagged is already fixed; confirmed, nothing to do.
 
 **CALC-9 — the prose described controls that do not exist.** Savings-goal claimed it *"converts any
 of the four frequencies, monthly, quarterly, daily or annual"* and an FAQ told you to *"set the
