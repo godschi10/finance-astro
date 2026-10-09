@@ -1,0 +1,1 @@
+function i(o,t=0){const f=c(o,t).toFixed(t),[a,n]=f.split("."),e=a.replace(/\B(?=(\d{3})+(?!\d))/g,",");return n!==void 0?`${e}.${n}`:e}function c(o,t=0){const r=10**t;return o>=0?Math.floor(o*r+.5+1e-9)/r:-Math.floor(-o*r+.5+1e-9)/r}export{i as f};
