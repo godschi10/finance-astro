@@ -4,6 +4,50 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.45] — 2026-10-09 — copy truth pass (audit Appendix A step 1)
+King's audit, six copy/data items. Every legal fact independently verified by me against the
+**official Nigeria Revenue Service Act PDF** and PwC before any copy was touched — a YMYL site does
+not get its tax law from a secondhand claim.
+
+**SITE-1 — the footer put a URL after a copyright symbol.** Live it read
+`© 2026 https://godschi10.github.io, Gwill Chijioke`, and at launch it would have read
+`© 2026 https://gwillchijioke.com`. The port deliberately reproduces WP's `home_url()` so a migrated
+site shows its new domain — sensible for a *link*, wrong for a *copyright holder*. Now
+`© 2026 GWill Finance, Gwill Chijioke`; the "Designed & built by G-will Chijioke" credit is untouched.
+**The gate that pinned this was fixed with it**: `check-footer-fidelity.mjs` asserted
+"copyright line is the site host, like WP home_url()", so the bug was protected. Both the assertion
+and its reason now recorded in the gate file — and it was negatively proven (re-pinning the old
+string turns the gate red).
+
+**CALC-2 — the tax FAQ claimed the old bands win "from around ₦400k/mo".** They don't. The winner
+flips four times: new below ~₦150k, old ~₦150.5k–₦215k, new ~₦215k–₦324.5k, **old ~₦325k–₦535k**,
+new up to ~₦1.285m, and old again above. The audit's replacement copy is shipped verbatim — it names
+the ₦325k–₦535k window, the ~₦1,000 peak and the high-earner reversal.
+
+**CALC-3a — "Is this the official FIRS figure?"** FIRS was replaced by the **Nigeria Revenue Service**
+on 1 January 2026 under the NRS (Establishment) Act 2025. Confirmed on nrs.gov.ng and in the Act
+itself. Heading now names the NRS; the answer is unchanged.
+
+**CALC-3b — "NTA 2026" does not exist.** The Act's own text: *"This Act may be cited as the Nigeria
+Tax Act, 2025 and shall come into effect on the first day of January, 2026."* All three real
+occurrences fixed (`grep -rn "NTA 2026" src/` is now empty).
+
+**SITE-2 — the home stat advertised 16 calculators for 15.** The count came from a directory scan
+that still includes `budget-allocator`, which the King merged into 50-30-20 and whose URL is now only
+a pointer. It now comes from the same `TOOL_MANIFEST` the tool hub renders, so the number and the
+listing can't drift apart again — with the reason recorded, because the directory scan *looked* right.
+
+**SITE-2 — "In-depth guides"** became **"Guides"**. A derived count was considered and rejected: the
+only length field is a hand-authored `readMins` that disagrees with the posts' own word counts
+(7 min on 316 words, 11 min on 355, 2 min on 482), so any threshold would have been invented. Better
+an honest plain word than a confident false number.
+
+**HELD, not touched — CALC-3c/d/e (pension base, NHF cap, minimum-wage exemption).** The audit's own
+confidence is `[Likely]`/`[Guessing]` and it records that the sources conflict. Rewriting legal claims
+on a YMYL site from a guess is worse than leaving them. Awaiting the King's word.
+
+Gates 6/6 (article 147/147, vectors 95/95; footer 64 checks, homepage 128), 79 pages, suite 128/0/7.
+
 ## [0.7.44] — 2026-10-09 — CALC-1: "Months to finish" now measures against the finish line the page promised
 
 **The definition changed.** `months_to_reach` in the emergency-fund engine no

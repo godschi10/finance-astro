@@ -19,8 +19,7 @@ import ArticleCard from "../components/ArticleCard.astro";
 import "../styles/r7.css";
 import { SITE, CATEGORIES, catBySlug, FEATURED_SLUG } from "../data/site";
 import { allArticles, fmtMonthYear, APPS } from "../data/content";
-import { readdirSync } from "node:fs";
-import { resolve } from "node:path";
+import { TOOL_MANIFEST } from "../data/tool-manifest";
 
 // Faithful port of front-page.php (gwill-finance-theme 1.13.39), sections 2-8.
 // Section 1 (template bootstrap) has no markup; the stray unmatched </div> at
@@ -39,10 +38,19 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 // 2026-09-30 King order: the stats strip must print REAL current counts, not
 // invented ones ("2+ All data current" was fabricated). Counts are computed
 // from the actual site content at BUILD time — articles from the content
-// collection, apps from APPS data, calculators from the money-tools pages
-// that exist on disk — so they can never drift out of date again.
-const importedTools = readdirSync(resolve("src/pages/money-tools")).filter(
-  (f) => f.endsWith(".astro") && f !== "index.astro" && f !== "[amount].astro");
+// collection, apps from APPS data, calculators from the tool manifest — so they
+// can never drift out of date again.
+//
+// SITE-2 (copy-truth leg, 2026-10-09): the calculator count used to come from a
+// readdirSync() of src/pages/money-tools, which returned 16 while /money-tools/
+// listed 15 cards. The extra file was budget-allocator.astro — merged into
+// 50-30-20 on 2026-10-07 (the King's "2" MERGE order), so its URL is now only a
+// pointer page, not a listed tool. Counting the directory therefore advertised
+// a tool the hub does not show. The count now comes from TOOL_MANIFEST, the ONE
+// list the hub renders in its print order, which already excludes the merged
+// allocator — so the stat and the cards cannot disagree again without this
+// same list changing on both.
+const importedTools = TOOL_MANIFEST;
 const furl = `${base}articles/${featured.slug}/`;
 // WP prints the featured excerpt through wp_trim_words( get_the_excerpt(), 32 ).
 const trim32 = (s: string) => {
@@ -69,9 +77,18 @@ const trim32 = (s: string) => {
 </div>
 </section>
 
+<!-- SITE-2 (copy-truth leg, 2026-10-09): the guides label used to read "In-depth
+     guides". Six of the ten posts on page 1 of /articles/ are 2–3 minute reads,
+     so "In-depth" overstated what the number counts. Reworded to the plain
+     "Guides" rather than deriving an "in-depth" subset: the only length field
+     the posts carry is hand-authored readMins, and it does not agree with their
+     own word counts (a 7-minute post of 316 words, an 11-minute post of 355
+     words, a 2-minute post of 482 words), so any threshold would be invented
+     rather than derived. The count is unchanged and still computed from the
+     collection. -->
 <!-- ══════ 3. stats strip ══════ -->
 <div class="stat-strip">
-<div class="si"><div class="si-n">{posts.length}</div><div class="si-l">In-depth guides</div></div>
+<div class="si"><div class="si-n">{posts.length}</div><div class="si-l">Guides</div></div>
 <div class="si"><div class="si-n">{APPS.length}</div><div class="si-l">Finance apps reviewed</div></div>
 <div class="si"><div class="si-n">{importedTools.length}</div><div class="si-l">Money calculators</div></div>
 <div class="si"><div class="si-n">₦ 0</div><div class="si-l">Free to read</div></div>

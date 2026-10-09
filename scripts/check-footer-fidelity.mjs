@@ -69,7 +69,15 @@ const checks = [
   ["credit: 'Designed & built by' + linked name in both footers", count(footer, "Designed &amp; built by") === 2 && count(footer, 'class="fcredit-link"') === 2 && has(footer, ">G-will Chijioke</a>")],
   ["legal row: Privacy · Disclaimer · Affiliates", ["Privacy", "Disclaimer", "Affiliates"].every((t) => has(footerRaw, t)) && has(footer, 'class="fdot"')],
   ["back-to-top link x2 (mobile keeps WP inline colour)", count(footer, "Back to top ↑") === 2 && has(footer, 'style="color:var(--dark-dim)"')],
-  ["copyright line is the site host, like WP home_url()", has(footer, "&copy; {year} {copyrightHost}")],
+  // SITE-1 (copy-truth leg, 2026-10-09): the assertion below used to demand
+  // `&copy; {year} {copyrightHost}` — the WP `home_url()` origin pasted after a
+  // copyright symbol. That is what made the footer print its own URL as the
+  // rights holder ("© 2026 https://godschi10.github.io", and at launch
+  // "© 2026 https://gwillchijioke.com"). The holder is the brand (SITE.name),
+  // so the pin now guards the corrected string. Do NOT "restore" the origin:
+  // a hostname is not a copyright holder, and this string is what the served
+  // footers are proofed against.
+  ["copyright holder is the brand (SITE.name), not the URL", has(footer, "&copy; {year} {copyrightHolder}")],
   ["mobile bottom bar .mfbot + .mfcredit", count(footer, 'class="mfbot"') === 1 && count(footer, 'class="mfcredit"') === 1],
 
   // ── data module ───────────────────────────────────────────────────────────

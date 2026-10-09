@@ -113,7 +113,20 @@ const checks = [
   // build-computed counts (articles, apps, calculators) instead of the
   // invented "10+/12+/2+ All data current" trio.
   ["stat numbers are computed, not frozen literals", /\{posts\.length\}/.test(indexTpl) && /\{APPS\.length\}/.test(indexTpl) && /\{importedTools\.length\}/.test(indexTpl) && has(indexTpl, '<div class="si-n">₦ 0</div>') && !has(indexTpl, "All data current") && !/si-n">1[02]\+/.test(indexTpl)],
-  ["stat labels", has(indexTpl, "In-depth guides") && has(indexTpl, "Finance apps reviewed") && has(indexTpl, "Money calculators") && has(indexTpl, "Free to read")],
+  // SITE-2 (copy-truth leg, 2026-10-09): the calculator count's SOURCE moved.
+  // It used to be a readdirSync() of src/pages/money-tools, which returned 16
+  // while /money-tools/ listed 15 cards — the extra file was budget-allocator,
+  // merged into 50/30/20 on 2026-10-07, so its URL is only a pointer and it is
+  // not a listed tool. The count now comes from TOOL_MANIFEST, the same list the
+  // hub renders, so the stat and the cards cannot drift apart again without this
+  // list changing on both. Asserted on indexRaw because the assignment lives in
+  // the frontmatter, which indexTpl deliberately excludes.
+  ["calculator stat is the hub's own list (TOOL_MANIFEST), not a directory scan", has(indexRaw, "const importedTools = TOOL_MANIFEST;") && !has(indexRaw, 'import { readdirSync }')],
+  // SITE-2 (copy-truth leg, 2026-10-09): the guides label used to be pinned as
+  // "In-depth guides". Six of the ten posts on page 1 of /articles/ are 2–3
+  // minute reads, so the word "In-depth" was a claim the posts did not back.
+  // The label is now the plain "Guides" and the pin guards that.
+  ["stat labels", has(indexTpl, ">Guides</div>") && has(indexTpl, "Finance apps reviewed") && has(indexTpl, "Money calculators") && has(indexTpl, "Free to read")],
   ["no counter animation (WP has none)", !has(indexTpl, "data-count") && !has(indexJs, "requestAnimationFrame")],
 
   // ── 4. featured ───────────────────────────────────────────────────────────

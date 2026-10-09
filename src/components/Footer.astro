@@ -13,9 +13,14 @@ import { SITE, FOOTER_GROUPS, FOOTER_NETWORK } from "../data/site";
 
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 const year = new Date().getFullYear();
-// WP: $gwill_copyright_host = home_url() — the theme deliberately prints the
-// site's own host so a migrated site shows its new domain automatically.
-const copyrightHost = SITE.origin;
+// SITE-1 (copy-truth leg, 2026-10-09): this used to be SITE.origin — a faithful
+// copy of WP's `home_url()`, which prints the site's own host so a migrated
+// site shows its new domain. Served, that read "© 2026 https://godschi10.github.io,
+// Gwill Chijioke", and at launch it would have read "© 2026 https://gwillchijioke.com".
+// A hostname is not a person and not a rights holder, so the holder is the
+// brand, SITE.name. The "Designed & built by G-will Chijioke" credit below is
+// untouched and stays exactly as WP prints it.
+const copyrightHolder = SITE.name;
 
 // Icons copied verbatim from the theme's gwill_finance_social_svg() output and
 // the footer's inline SVGs (extracted from the live render).
@@ -119,7 +124,7 @@ const LEGAL = [
   </div>
   <div class="ad-bg ad-bg--footer"></div>
   <div class="fbot">
-    <span>&copy; {year} {copyrightHost}, Gwill Chijioke</span>
+    <span>&copy; {year} {copyrightHolder}, Gwill Chijioke</span>
     <span class="fcredit">
       Designed &amp; built by <a class="fcredit-link" href="https://gwillchijioke.com" target="_blank" rel="noopener noreferrer">G-will Chijioke</a>
     </span>
@@ -195,7 +200,7 @@ const LEGAL = [
     >
   </div>
   <div class="mfbot">
-    <span>&copy; {year} {copyrightHost}</span>
+    <span>&copy; {year} {copyrightHolder}</span>
     <span class="mfcredit">
       Designed &amp; built by <a class="fcredit-link" href="https://gwillchijioke.com" target="_blank" rel="noopener noreferrer">G-will Chijioke</a>
     </span>

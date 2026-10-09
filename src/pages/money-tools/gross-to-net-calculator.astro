@@ -6,7 +6,7 @@ const n = (v: number) => formatGrouped(v, 0);
 const seed = reverseGross(250000, 0.08);
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
-<ToolShell title="Gross to Net Salary Calculator, Nigeria - GWill Finance" description="What gross salary do you need for your target take-home? Reverse-solved through NTA 2026 PAYE with pension and reliefs." slug="gross-to-net-calculator" tool="Gross to Net Calculator" lede="Start from the take-home you want, work backwards to the gross you must negotiate — pension, NHF, and rent relief accounted for." verified="Reverse-solved over NTA 2026 PAYE · 8% pension default" faqs={[
+<ToolShell title="Gross to Net Salary Calculator, Nigeria - GWill Finance" description="What gross salary do you need for your target take-home? Reverse-solved through NTA 2025 PAYE with pension and reliefs." slug="gross-to-net-calculator" tool="Gross to Net Calculator" lede="Start from the take-home you want, work backwards to the gross you must negotiate — pension, NHF, and rent relief accounted for." verified="Reverse-solved over NTA 2025 PAYE · 8% pension default" faqs={[
   { q: "Why is the gross so much higher than my target?", a: "Pension (8%) comes off even in the minimum-wage exempt zone, then PAYE stacks on top. The gap is real — negotiate to the gross, not the net." },
   { q: "Does rent lower the gross I need?", a: "Yes — 20% of annual rent (capped ₦500k) cuts taxable income, so slightly less gross reaches the same net." },
 ]}
@@ -39,7 +39,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Rent relief /mo</span><b id="gn-rel">₦{n(seed.relief_monthly)}</b></div>
 <div class="receipt-row"><span>Deductions /mo</span><b id="gn-ded">₦{n(seed.deductions_monthly)}</b></div>
 <p class="bar-note" id="gn-warn" hidden></p>
-<p class="receipt-foot">NTA 2026 bands · binary-solved · pension figured on gross as basic</p>
+<p class="receipt-foot">NTA 2025 bands · binary-solved · pension figured on gross as basic</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>

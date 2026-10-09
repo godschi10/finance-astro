@@ -81,7 +81,7 @@ export const TOOLS = [
   { slug: "currency-converter", name: "Currency Converter", desc: "16 currencies to naira at the live mid-market rate, plus an honest parallel-market estimate." },
   { slug: "money-transfer-comparator", name: "Money-Transfer Comparator", desc: "Wise, Remitly, WU, WorldRemit, LemFi — ranked by what actually lands after fee and rate." },
   { slug: "exchange-rate-history", name: "Exchange-Rate History", desc: "USD→NGN trend over 30 or 90 days, built from real fetched points on your device." },
-  { slug: "salary-tax-calculator", name: "Salary Tax (NTA 2026)", desc: "PAYE under the 2026 bands vs the old bands — rent relief, minimum-wage exemption, band table." },
+  { slug: "salary-tax-calculator", name: "Salary Tax (NTA 2025)", desc: "PAYE under the 2026 bands vs the old bands — rent relief, minimum-wage exemption, band table." },
   { slug: "gross-to-net-calculator", name: "Gross → Net", desc: "Start from the take-home you want; reverse-solve the gross you must negotiate." },
   { slug: "compound-interest-calculator", name: "Compound Interest", desc: "Principal plus top-ups, compounding your way to the future value, year by year." },
   { slug: "savings-goal-calculator", name: "Savings Goal", desc: "Name the target and deadline — get the exact monthly price, plus the path." },
