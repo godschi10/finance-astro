@@ -2,29 +2,132 @@
 // Port of page-legal.php (Template Name: Legal) for the Privacy Policy page,
 // imported from the live https://finance.fitnesslova.qzz.io/privacy-policy/
 // capture 2026-09-30. Anatomy mirrored: .legal-hero (hero-grain, breadcrumb,
-// "Legal" label, hero title, .legal-updated stamp = date_i18n('F Y') at build
-// time like live) → .legal-section > .legal-layout (banner ad first spanning
-// the grid, .legal-toc sticky "On this page" with the live anchor ids,
-// .legal-body carrying the page's post_content VERBATIM — heading ids match
-// the live wp-block ids so the TOC anchors resolve identically.
-// The live copy describes the WordPress site's data handling (comments,
-// newsletter, anonymous analytics, preference cookies). In this static port
-// comments + newsletter post to the comments-api Worker (name/email/comment
-// or email stored as hashed/deduped rows) and no analytics runs — the legal
-// text still states the honest superset, and the port never collects more
-// than what is listed here.
+// "Legal" label, hero title, .legal-updated stamp) → .legal-section >
+// .legal-layout (banner ad first spanning the grid, .legal-toc sticky "On this
+// page", .legal-body) — all unchanged.
+//
+// ── REWRITTEN FROM THE VERIFIED FLOWS (SITE-4, 2026-10-09) ────────────────────
+// The inherited copy described the WORDPRESS site's handling and claimed things
+// this build does not do. Every row below is written from the site's own source
+// and built output, not from the old text:
+//
+//   · comments      → COMMENTS_API (src/data/site.ts) via vibe-comments.js
+//   · newsletter    → the SAME Worker, via gwill-forms.js ("replaces admin-ajax")
+//   · contact form  → the SAME Worker, same FormData post
+//   · calculator fx → open.er-api.com/v6/latest/USD, a bare GET
+//   · live ticker   → coinbase (default) / coingecko / binance / gold-api,
+//                     all bare GETs with no user input (ticker-live.js:252-306)
+//   · avatars       → secure.gravatar.com
+//   · on-device     → localStorage (smart-fields `gwill-sf-*`, theme key,
+//                     ticker cache, saved comment name)
+//   · analytics     → NONE. No analytics or tracking script exists on this
+//                     build, so the page now says so instead of describing a
+//                     processor that is not there.
+//
+// LEGAL POSTURE — what is deliberately NOT in this text: a lawful basis, a
+// named data controller, a regulator, a response deadline, or a retention
+// period for anything the Worker holds. None of those are established anywhere
+// in this repository, and inventing them in copy is the exact failure this
+// rewrite exists to remove. The rows that would need them say "not published"
+// and point at the contact page. Settling them is a pre-launch legal step.
 import Layout from "../layouts/Layout.astro";
+import { PRIVACY_LAST_UPDATED } from "../data/policy";
+
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
-const updated = new Date().toLocaleString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+// Rendered ONCE, from the ONE constant in src/data/policy.ts. The old page
+// carried a second hand-typed "August 2026" in the last paragraph; that one is
+// gone, so the page can no longer disagree with itself about its own date.
+const updated = PRIVACY_LAST_UPDATED;
+const href = (p: string) => `${base}${p}`;
+
 const toc = [
-  ["what-this-site-collects", "What this site collects"],
-  ["what-this-site-never-collects", "What this site never collects"],
-  ["third-party-services", "Third-party services"],
+  ["never-collects", "What this site never collects"],
+  ["every-data-flow", "Every data flow on this site"],
+  ["calculator-numbers", "Calculator numbers and shared computers"],
   ["your-rights", "Your rights"],
   ["changes-to-this-policy", "Changes to this policy"],
 ];
+
+/* THE TABLE. Five columns, as ordered: what / why / who receives it / where /
+   how long. Rows that stay on the device are IN the table rather than split out
+   elsewhere, because "your salary does not leave your browser" is only
+   believable next to the rows that DO leave. Where a fact is not established in
+   this repository the cell says so — a blank honest cell beats a confident
+   invented one. */
+const rows: { what: string; why: string; who: string; where: string; how: string }[] = [
+  {
+    what: "The numbers you type into a calculator — salary, rent, income, savings, amounts",
+    why: "So the calculator can fill itself back in the next time you open it",
+    who: "Nobody. They are never sent anywhere, and no calculator has a button that would send them.",
+    where: "Your own browser's local storage, under a key like <code>gwill-sf-50-30-20</code>",
+    how: "Until you press <strong>Reset</strong> or <strong>Clear my saved numbers</strong>, or 30 days pass without you using that calculator — whichever comes first.",
+  },
+  {
+    what: "A comment: the name and email you type, and the comment text",
+    why: "To show your comment on the page and to moderate it",
+    who: "<code>comments-api.gwill.workers.dev</code>, a Cloudflare Worker run by this site's owner",
+    where: "Cloudflare's servers",
+    how: "<strong>Not published.</strong> No deletion period is set for submitted comments. Ask on the contact page and we will tell you what we hold.",
+  },
+  {
+    what: "Your email address, when you sign up for the newsletter",
+    why: "To send the weekly digest you asked for",
+    who: "The same Cloudflare Worker, <code>comments-api.gwill.workers.dev</code> — comments and the newsletter go to one place",
+    where: "Cloudflare's servers",
+    how: "<strong>Not published.</strong> Same answer as comments. Every newsletter email carries a one-click unsubscribe.",
+  },
+  {
+    what: "Your contact form message: your name, email, message, and the topic you picked",
+    why: "To reply to you",
+    who: "The same Cloudflare Worker, <code>comments-api.gwill.workers.dev</code>",
+    where: "Cloudflare's servers",
+    how: "<strong>Not published.</strong> Same answer as comments.",
+  },
+  {
+    what: "Your Gravatar avatar",
+    why: "Gravatar builds a profile picture from an email address and shows it beside your comment",
+    who: "<code>secure.gravatar.com</code>, run by Automattic",
+    where: "Gravatar's own servers",
+    how: "Kept for as long as Gravatar keeps the address — that is Gravatar's decision, under Gravatar's own privacy policy, not this site's.",
+  },
+  {
+    what: "The fact that you opened a currency converter",
+    why: "Live exchange rates, fetched by your own browser rather than baked into the page",
+    who: "<code>open.er-api.com</code> (ExchangeRate-API)",
+    where: "Its own servers",
+    how: "Its own policy. <strong>The amount you typed is not part of this request</strong> — but your IP address is, because your browser's address has to reach whoever it calls. That is true of every website.",
+  },
+  {
+    what: "The fact that you loaded a page with the rate ticker on it",
+    why: "The Bitcoin, Ethereum and gold prices in the bar at the top of the page",
+    who: "Coinbase by default, with CoinGecko and Binance as fallbacks, plus <code>gold-api.com</code>",
+    where: "Their own servers",
+    how: "Their own policies. Same caveat: the request carries your IP address, and nothing you typed.",
+  },
+  {
+    what: "Whether you chose the light or the dark theme",
+    why: "To keep the theme you picked instead of guessing from your operating system",
+    who: "Nobody",
+    where: "Your browser's local storage, key <code>gwill-finance-theme-v3</code>",
+    how: "Until you change it, or clear your browser's storage for this site.",
+  },
+  {
+    what: "The name you typed into the comment form",
+    why: "So the form is already filled in the next time you comment",
+    who: "Nobody",
+    where: "Your browser's local storage, key <code>vibe_guest_name</code>",
+    how: "Until you clear your browser's storage for this site. <strong>Your email address is deliberately not saved here</strong> — it is held only until you close that browser tab.",
+  },
+  {
+    what: "A short cache of the rate ticker",
+    why: "To avoid re-fetching the same prices on every page you open",
+    who: "Nobody",
+    where: "Your browser's local storage, key <code>gwill-ticker-v1</code>",
+    how: "60 seconds, then it is overwritten.",
+  },
+];
 ---
-<Layout title="Privacy Policy - GWill Finance" description="How GWill Finance collects, uses, and protects your information, in plain language." crumb="Privacy Policy">
+<Layout title="Privacy Policy - GWill Finance" description="Every data flow on GWill Finance: what stays in your browser, what leaves it, who receives it, and how to clear it." crumb="Privacy Policy">
 <section class="legal-hero">
   <div class="hero-grain" aria-hidden="true"></div>
   <div class="con legal-hero-inner">
@@ -49,31 +152,116 @@ const toc = [
       </ol>
     </nav>
     <div class="legal-body">
-      <p>Your privacy matters. This page explains what this site collects, why, and how you stay in control. It is written in plain language — no legal fog.</p>
-      <h2 id="what-this-site-collects">What this site collects</h2>
-      <p>This site collects the minimum needed to work:</p>
+      <p>Your privacy matters. This page lists every single thing this site stores and every service it talks to, and tells you how to clear each one. It is written in plain language — no legal fog, and nothing hidden in a list three pages long.</p>
+
+      <h2 id="never-collects">What this site never collects</h2>
+      <p>This is the short, honest version, and it is worth reading on its own:</p>
       <ul>
-        <li><strong>Comments</strong> — the name and email you enter when commenting, plus the comment text. Used only to display and manage comments.</li>
-        <li><strong>Newsletter sign-ups</strong> — your email address, used only to send the weekly digest you asked for. Unsubscribe anytime with one click.</li>
-        <li><strong>Anonymous analytics</strong> — page views and approximate location (country level) to understand what readers find useful. No personal identifiers.</li>
-        <li><strong>Cookies</strong> — a small storage flag for your dark/light mode choice and comment preferences. Nothing tracks you across sites.</li>
+        <li><strong>No analytics.</strong> No analytics script and no tracking script runs anywhere on this site. Nothing here measures which pages you read or how long you stay, because there is no analytics tool installed to do it.</li>
+        <li><strong>No advertising code.</strong> No ad network, no retargeting pixel, no data broker.</li>
+        <li><strong>No cookies.</strong> Nothing on this site sets a cookie. Your dark-or-light choice and your comment details are kept in your browser's own storage instead, which never travels to us — see the table below for the exact keys.</li>
+        <li><strong>No passwords, bank details or card numbers.</strong> No calculator here ever asks for one, and there is nowhere on this site to type one in.</li>
+        <li><strong>No selling or renting.</strong> Your data is never sold, rented or swapped to anyone.</li>
+        <li><strong>No selling you anything either.</strong> The calculators are free and there is nothing to buy here.</li>
       </ul>
-      <h2 id="what-this-site-never-collects">What this site never collects</h2>
+
+      <h2 id="every-data-flow">Every data flow on this site</h2>
+      <p>Here is the complete list. If something on this site sends data anywhere, it is in this table — and if it is not in this table, it is not sent.</p>
+      <div class="dp-wrap">
+        <table class="dp">
+          <thead>
+            <tr>
+              <th scope="col">What</th>
+              <th scope="col">Why</th>
+              <th scope="col">Who receives it</th>
+              <th scope="col">Where</th>
+              <th scope="col">How long</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr>
+                <th scope="row" data-l="What">{r.what}</th>
+                <td data-l="Why">{r.why}</td>
+                <td data-l="Who receives it">{r.who}</td>
+                <td data-l="Where">{r.where}</td>
+                <td data-l="How long">{r.how}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p>Two things are worth saying plainly about that table. First, the rows that begin "Nobody" are not a trick: those values are written to your browser's storage by your own browser and are never sent to us or to anyone else — you can confirm it by opening your browser's developer tools and watching the network tab while you type. Second, where a cell says <strong>not published</strong>, that is the honest answer rather than a missing one: this site has not set a retention period for the data the Worker holds, so it will not invent one here.</p>
+
+      <h2 id="calculator-numbers">Calculator numbers and shared computers</h2>
+      <p>Every calculator on this site remembers what you type — a salary, a rent figure, an income, an amount you are saving — so you do not have to type it all again next time. <strong>Those numbers stay in your browser.</strong> They are not transmitted, not logged, and not visible to us. That is a property of how the calculators work, not a promise: no calculator has a send button, and the numbers never enter a network request.</p>
+      <p>The catch is the one that matters on a shared computer. If you used a calculator on a laptop or desktop that someone else can use — a library machine, a shared office PC, a family computer — the next person to open that calculator will see <em>your</em> figures, because they are still sitting in that browser's storage.</p>
+      <p>So every calculator carries its own controls for this:</p>
       <ul>
-        <li>No passwords or financial account details.</li>
-        <li>No bank card numbers.</li>
-        <li>No contact list scanning.</li>
-        <li>No selling or renting of any data to anyone.</li>
+        <li><strong>Clear my saved numbers</strong> — on every calculator page, beside the Reset button. It removes every calculator number this site has saved in this browser, and puts the worked examples back.</li>
+        <li><strong>Reset</strong> — clears that one calculator and returns it to its example figures.</li>
+        <li>Or clear it yourself: in Chrome or Edge, the padlock or the ⓘ icon beside the address, then <em>Cookies and site data → Delete data</em>. In Firefox, the padlock, then <em>Clear cookies and site data → Cookies and site data</em>. In Safari, <em>Safari → Settings → Privacy → Manage Website Data</em>, then search for this site and remove it.</li>
       </ul>
-      <h2 id="third-party-services">Third-party services</h2>
-      <p>Some parts of the site use trusted third-party services: the email platform that delivers the newsletter, and a privacy-respecting analytics service. Each processes only the data needed for its job and has its own privacy policy.</p>
+      <p>If you typed an email address into a comment form here, that address is deliberately <em>not</em> saved to disk — it goes away when you close the tab. The name you typed is saved, so the form is filled in next time, and the first item above removes it.</p>
+
       <h2 id="your-rights">Your rights</h2>
-      <p>You can ask for a copy of any personal data this site holds about you, ask for it to be corrected, or ask for it to be deleted entirely. Just use the contact page and it will be done.</p>
+      <p>This site is for Nigerians, about Nigerian money. The regime that applies is the <strong>Nigeria Data Protection Act 2023</strong>. The GDPR and UK GDPR are not claimed here: this site is not directed at people in the European Union or the United Kingdom, so we are not offering GDPR rights handling we would not honour.</p>
+      <p>Under the Act you can ask us for a copy of the personal data this site holds about you, ask for it to be corrected, or ask for it to be deleted. In practice the routes are:</p>
+      <ul>
+        <li><strong>For a comment or a message you sent:</strong> the <a href={href("contact/")}>contact page</a>. Tell us which one and we will deal with it.</li>
+        <li><strong>For your newsletter email:</strong> the unsubscribe link in any digest, or the contact page. Both stop the emails.</li>
+        <li><strong>For anything sitting in your own browser</strong> — calculator numbers, theme choice, saved comment name — you do not need to ask us at all. <strong>Clear my saved numbers</strong> on any calculator, or clear the site's data in your browser as described above, and it is gone immediately.</li>
+      </ul>
+      <p>We would rather tell you what this site does not yet have settled than dress it up. This page does not name a data controller, a lawful basis, a regulator or a response deadline, and it does not give a retention period for the data held by the comment Worker. Those are decisions to be made and recorded properly before launch, not copy to be filled in on a quiet afternoon.</p>
+
       <h2 id="changes-to-this-policy">Changes to this policy</h2>
-      <p>If this policy changes, the updated version is posted here with a new date.</p>
-      <p><em>Last updated: August 2026.</em></p>
+      <p>If this policy changes, the updated version is posted here with a new date at the top. Nothing in it is written to flatter the site: if a change makes this site collect more, the table above changes with it.</p>
       <div class="ad-bg" style="margin-top:32px"></div>
     </div>
   </div>
 </section>
+<style>
+/* The data-flow table. Page-local (not a theme class name), so it lives here
+   rather than in styles/pages.css — the legal page is the only consumer.
+   PHONE-FIRST: five columns cannot be read at 390px, so below 720px each row
+   becomes a stacked block and every cell is prefixed with its own column name
+   from data-l. The <thead> is NOT display:none there — it is visually hidden
+   but left in the accessibility tree, so a screen reader still hears the
+   column names in order instead of an unlabelled wall of cells. */
+.dp-wrap { margin: 0 0 18px; overflow-x: auto; }
+.dp { width: 100%; border-collapse: collapse; font-size: 13.5px; line-height: 1.7; }
+.dp th, .dp td { text-align: left; vertical-align: top; padding: 11px 13px; border: 1px solid var(--border); }
+.dp thead th {
+  background: var(--surface-2); color: var(--text-dim);
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.13em; text-transform: uppercase; white-space: nowrap;
+}
+.dp tbody th { font-weight: 700; color: var(--text); }
+.dp td { color: var(--text-mid); }
+.dp code {
+  font-family: var(--font-mono); font-size: 0.92em;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 5px; padding: 1px 5px; overflow-wrap: anywhere;
+}
+@media (max-width: 719px) {
+  .dp-wrap { overflow-x: visible; }
+  .dp, .dp tbody, .dp tr, .dp td, .dp th { display: block; width: 100%; }
+  .dp thead {
+    position: absolute; width: 1px; height: 1px;
+    margin: -1px; padding: 0; border: 0; overflow: hidden;
+    clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+  }
+  .dp tr { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+  .dp tbody th, .dp td { border: 0; border-bottom: 1px solid var(--border); padding: 9px 13px; }
+  .dp td:last-child { border-bottom: 0; }
+  .dp tbody th { background: var(--surface-2); font-size: 13px; }
+  .dp td { display: grid; grid-template-columns: 96px 1fr; gap: 10px; align-items: start; }
+  .dp td::before {
+    content: attr(data-l);
+    font-family: var(--font-mono); font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gold); opacity: 0.85; padding-top: 3px;
+  }
+}
+</style>
 </Layout>

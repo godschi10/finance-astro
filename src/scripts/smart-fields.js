@@ -46,6 +46,14 @@
  * (§2g exclusion list) and a value the user cleared is never persisted. Storage
  * is read AND written inside try/catch for private mode, copying the only
  * tool-scoped precedent in the repo (exchange-rate-history.astro:43-49).
+ *
+ * CLEAR MY SAVED NUMBERS (PROC-5) — one more markup-free control, bound the
+ * same way: `<button data-sf-clear-saved>`. Reset clears ONE tool; this sweeps
+ * every `gwill-sf-*` key and then calls reset(), so the field-restoring logic
+ * still exists exactly once. It exists because a shared-computer visitor's
+ * question is "get my salary off this machine", and one tool's Reset cannot
+ * answer a question about sixteen calculators. See clearSaved() for the scope
+ * it deliberately does and does not claim.
  */
 
 /* The §2g exclusion list is a LAW, not a preference: a remembered ₦90,000 annual
@@ -53,7 +61,11 @@
    whole brand is "we don't fudge numbers". A wrong number is worse than none. */
 const NEVER = ["st-rent", "gn-rent", "st-gross"];
 const EXPIRES = 30 * 864e5; // §2g — past 30 days a LAST USED value is dropped, not offered
-const KEY = (tool) => "gwill-sf-" + tool;
+/* PREFIX is the only place in the repo that says what a remembered number is
+   called, so clearSaved() can enumerate every tool's memory WITHOUT hardcoding
+   the prefix a second time. KEY stays the one way a key is ever built. */
+const PREFIX = "gwill-sf-";
+const KEY = (tool) => PREFIX + tool;
 /* ── A DERIVED VALUE IS NEVER THE VISITOR'S (HN-4) ───────────────────────────
    save() persisted ANY non-empty value in MEM, and restore() hands it back
    wearing data-r "Last used". So a figure the TOOL computed — the §2(b) offer's
@@ -183,6 +195,39 @@ function reset() {
   if (card) card.hidden = true;
   if (foot) foot.hidden = true;
   if (unfinished) location.reload();
+}
+
+/* ── CLEAR MY SAVED NUMBERS (PROC-5) ──────────────────────────────────────────
+ * Reset clears ONE tool. A visitor on a shared computer does not think in tools
+ * — they think "get my salary off this machine" — and Reset alone cannot answer
+ * that, because the numbers they want gone are spread across every calculator
+ * they ever opened (one key each). So this sweeps every key THIS MODULE mints
+ * and then hands the current page back to reset().
+
+ * IT REUSES THE MACHINERY, it does not reimplement it: reset() is the single
+ * implementation of "drop the key, put the delivered values back, re-render, "
+ * and it stands down through the same `resetting` flag, so no listener can
+ * re-persist the seeds mid-sweep. There is deliberately no second copy of the
+ * field-restoring logic here.
+
+ * SCOPE IS HONEST AND DELIBERATE: it removes `gwill-sf-*` — calculator numbers,
+ * which is what this button is named for and what the privacy policy promises
+ * it does. It does NOT touch the theme choice (`gwill-finance-theme-v3`), the
+ * ticker cache, or a saved comment name: those are not calculator numbers, and
+ * silently widening a button's stated scope would make it describe something
+ * other than what it does. The privacy policy names exactly this scope. */
+function clearSaved() {
+  let dropped = 0;
+  try {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.indexOf(PREFIX) === 0) keys.push(k);
+    }
+    keys.forEach((k) => { localStorage.removeItem(k); dropped += 1; });
+  } catch {}
+  reset(); // this page's own key, snapshot restore and repaint — the real thing
+  return dropped;
 }
 
 /* The badge. A falsy attr means plain state: both pills AND the dashed rule go. */
@@ -378,6 +423,23 @@ function boot() {
   if (b) b.addEventListener("click", clearExamples);
   const r = $("[data-sf-reset]");
   if (r) r.addEventListener("click", reset);
+  /* Clear my saved numbers — the shared-computer control. Bound here, like
+     every other control: the module owns the markup-free button, the shell
+     ships the one button, and no calculator page knows either exists. */
+  const s = $("[data-sf-clear-saved]");
+  if (s) s.addEventListener("click", () => {
+    clearSaved();
+    /* A silent button reads as a dead one — and this is the one control on the
+       page that is aimed at someone who is already slightly worried. So it says
+       what it did, in its own label, and says it to assistive tech as well: the
+       label swap is the confirmation, and aria-live (set on the shell's button)
+       makes it announced rather than merely seen. Restored after 2.5s so the
+       control never permanently misreports itself as "cleared". */
+    const was = s.textContent;
+    s.textContent = "Saved numbers cleared";
+    clearTimeout(s._sfBack);
+    s._sfBack = setTimeout(() => { s.textContent = was; }, 2500);
+  });
 }
 
 const smartFields = { register: register, markEmpty: markEmpty };

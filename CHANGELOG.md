@@ -4,6 +4,72 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.48] — 2026-10-09 — SITE-4 + PROC-5: the privacy policy, rewritten from the real flows
+Audit Appendix A step 4. The policy had been describing a site that is not this one.
+
+**The first thing found was worse than a wrong sentence.** The old "Last updated" date was derived
+from `new Date()` — so **every single build silently re-dated a legal document.** The page carried two
+different dates (October at the top, August at the bottom) because nothing tied them. The date is now
+a human-edited literal in `src/data/policy.ts`, deliberately kept out of `site.ts` because that file
+re-dirties on every build. One date, one place, and it can only move when someone means it to.
+
+**It claimed an analytics service that does not exist.** "Anonymous analytics… a privacy-respecting
+analytics service." Verified across the whole build: plausible, gtag, googletagmanager, analytics.js,
+umami, goatcounter, counter.dev — **zero files**, the privacy page itself being the only mention. The
+claim is gone, replaced by the honest and far more favourable truth: **"No analytics. No analytics
+script and no tracking script runs anywhere on this site."** Replacing it with a different vendor
+would have reintroduced the exact error being fixed.
+
+**It named no processor for the newsletter.** Now established from source rather than guessed: the
+newsletter and contact forms post to **the same Cloudflare Worker the comments use**
+(`comments-api.gwill.workers.dev`) — `gwill-forms.js` reads `data-forms-api` off `<html>` and attaches
+to every `.gwill-form`. There is no separate email platform. The audit had this as `[Guessing]`.
+
+**It said "Cookies — a small storage flag".** The site uses `localStorage`, not cookies, and the
+calculators remember far more than a preference. Corrected. The FX request to `open.er-api.com` and
+the Gravatar requests to `secure.gravatar.com` are now disclosed at all — neither was mentioned.
+
+**The policy is now a real data-flow table**: what / why / who receives it / where / how long, ten rows,
+every one sourced from the built output. Where the answer is not knowable — chiefly how long the Worker
+keeps a name, email or comment — the cell says **"Not published"** rather than inventing a period. No
+lawful basis, controller identity, regulator or response deadline is asserted anywhere; those are legal
+positions, not copy, and the audit itself says it is not a lawyer.
+
+**Regime:** the **Nigeria Data Protection Act 2023** is named as what applies. GDPR/UK GDPR is
+explicitly *not* claimed, because the site is not directed at those audiences and offering rights
+handling we would not honour is worse than saying nothing.
+
+**PROC-5 — the calculators remember salary, rent and income, and nobody said so.** On a finance site
+that data sits in `localStorage` including on a shared or public computer, which is the most likely
+way this policy could actually hurt someone.
+- **Transmission audit, driven live, not assumed:** typing `487500` into income fired **0 requests,
+  0 non-GET, 0 bodies containing the number** — while the number *was* written to
+  `gwill-sf-50-30-20` and returned on reload wearing LAST USED. Nothing you type leaves the device.
+  (A first attempt typed into a field the site deliberately excludes from memory and proved nothing;
+  it was discarded and re-run against a genuinely remembered id.)
+- **A visible "Clear my saved numbers" control at 44px**, sweeping every `gwill-sf-*` key while
+  preserving the theme key and ticker cache. Verified: 1 key -> 0, label confirms, page returns to
+  the worked example.
+- **One sentence under every calculator** saying the numbers stay in that browser and Reset clears
+  them — shared through `ToolShell`, so **no calculator page was hand-edited**.
+
+**A fleet-wide file was touched, and it is the one that broke nine contracts once before.**
+`src/scripts/smart-fields.js` is additive: 63 insertions, 1 deletion, and that deletion is only the
+literal `"gwill-sf-" + tool` being replaced by the shared `PREFIX` constant. `clearExamples()`,
+`takeSnapshot()`, `register()` and `sfFig()` have **zero removed lines** — the functions that caused
+the earlier failure are untouched. Suite confirms: **15/15 tools, 128 pass / 0 fail / 7 skip.**
+
+**Two corrections the leg made to itself, kept rather than hidden:** it first wrote the ticker row
+naming CoinGecko while the browser showed the default call is **Coinbase**, and rewrote it — naming an
+uncontacted vendor while omitting the contacted one is the same error under repair. And `vibe_guest_email`
+goes to `sessionStorage`, not `localStorage` as the audit's note assumed; the policy says so precisely.
+
+**⏸ OPEN — and it is a pre-launch blocker, not a finished policy:** the "Not published" retention
+cells are honest, but retention, a named controller and a response deadline for the Worker's data have
+to be settled properly before this goes live. The audit's own closing line stands: have it reviewed.
+
+Gates 6/6 (article 147/147, vectors 95/95; footer 64, homepage 128), 79 pages, suite 128/0/7.
+
 ## [0.7.47] — 2026-10-09 — CALC-5/9/10: the label, the prose, the assumption, the separator
 Audit Appendix A step 1, remainder. Four pages, copy and formatting only — **no maths changed.**
 

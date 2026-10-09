@@ -93,10 +93,28 @@ if (faqs.length) graph.push({
 <div class="con" style="margin-top:32px;padding-bottom:48px">
   <div class="ad-bg"></div>
   <slot />
-  <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px">
+  <div class="sf-ctrls" style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px">
     <button class="btn b-ghost b-sm" type="button" data-sf-clear hidden>Clear examples</button>
     <button class="btn b-ghost b-sm" type="button" data-sf-reset>Reset</button>
+    <button class="btn b-ghost b-sm sf-forge" type="button" data-sf-clear-saved aria-live="polite">Clear my saved numbers</button>
   </div>
+  {/* ── ON-DEVICE STORAGE NOTICE (PROC-5) ──────────────────────────────────
+      THIS is the fleet-wide change: ONE block in the shared shell, and every
+      money-tools page that renders ToolShell inherits it. No calculator page
+      was hand-edited, and smart-fields.js was not forked for it.
+
+      WHY IT SITS HERE AND NOT IN THE FOOTER: these numbers are the
+      calculator's own memory, so the sentence belongs with the calculator — and
+      directly below the two buttons that actually clear it. A reader told about
+      storage by text nowhere near its control is not really told at all.
+
+      WHY IT NAMES Reset SPECIFICALLY: clearSaved() sweeps EVERY gwill-sf-* key
+      across the site, but Reset alone clears only THIS calculator. "Reset
+      clears them" would be the safe half-truth; naming the button that clears
+      all of them is the whole truth — and both buttons are right here. */}
+  <p class="sf-mem">
+    <strong>Your numbers stay in this browser.</strong> Nothing you type here is sent to us — no salary, rent, income or savings figure is transmitted, logged or visible to anyone. This calculator remembers your figures for next time, and on a shared or public computer the next person could see them. <strong>Reset</strong> clears this calculator; <strong>Clear my saved numbers</strong> clears every calculator on this site.
+  </p>
   {verified && <p class="fxap-conv-note" style="margin-top:14px"><span style="color:var(--gold-b)" aria-hidden="true">◆</span> {verified}</p>}
   {disclaimer && <p class="fx-disclaimer">{disclaimer}</p>}
   {copy.length > 0 && (
@@ -190,6 +208,19 @@ if (faqs.length) graph.push({
 .trust-badge[data-trust="user"]{
   color:var(--text-dim);background:var(--surface-2);border:1px solid var(--border);
 }
+
+/* — §3 the honest control row (PROC-5). The three buttons ship as .btn .b-sm,
+   which computes to ~27px tall: below the 44px touch minimum the rest of the
+   site keeps (details.faq summary, .tgl, .offer b all sit at 44). Lifting the
+   WHOLE row rather than only the new button is deliberate — a 44px button
+   beside two 27px ones in the same row reads as a styling accident, and these
+   three do the same job with the same reach. */
+.sf-ctrls .btn{min-height:44px;align-items:center}
+/* — the on-device storage notice. Same texture as .fx-disclaimer above (11px,
+   1.7 line, --text-dim, hairline rule over it) so it reads as the calculator's
+   own footnote rather than as an interjection. max-width 720px matches it. */
+.sf-mem{font-size:11px;line-height:1.7;color:var(--text-dim);max-width:720px;margin-top:14px;padding-top:16px;border-top:1px solid var(--border-dim)}
+.sf-mem strong{color:var(--text-mid);font-weight:700}
 
 /* — the derived-value offer. One action per line, and it is unambiguous. */
 .offer{font-size:12px;color:var(--text-mid);margin-top:8px;display:flex;
