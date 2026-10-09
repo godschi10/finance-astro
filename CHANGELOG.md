@@ -3,6 +3,12 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+
+**Follow-up, same round.** `.foreman/` reappeared as an untracked empty directory after the
+removal — nothing in `src/` or `scripts/` references it, so the build did not create it; a fresh
+empty parent was left behind when the last foreman invocation ran. Either way it is a runtime
+artifact, so it is now gitignored (`.foreman/`) rather than deleted and left to reappear.
+
 ## [0.7.43] — 2026-10-09 — housekeeping: remove committed scratch (foreman + tautology test)
 King: "make a list of everything left to do then attack this first". First item on that list.
 
