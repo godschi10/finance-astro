@@ -3,6 +3,26 @@
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+## [0.7.43] — 2026-10-09 — housekeeping: remove committed scratch (foreman + tautology test)
+King: "make a list of everything left to do then attack this first". First item on that list.
+
+The repo carried scratch committed into `d582a25` (v0.7.31) that was never ours to keep:
+- `.foreman/` — 21 files of foreman scratch: `PROTOCOL.md`, `events.jsonl`, `foreman.json`,
+  `state.json`, and four `runs/T00{1,2}/run-*/` transcripts plus their tickets. Nothing in
+  `src/` or `scripts/` reads `.foreman/`, and it was never gitignored, so it sat tracked
+  in the working tree of every clone.
+- `test/hello.test.js` — `assert.strictEqual('hello', 'hello')`. A tautology. Passing.
+- the `"test": "node --test test/**/*.test.js"` script, whose only test was that tautology,
+  so `npm test` could show green while asserting nothing at all.
+
+`npm run test:calc` (the real suite) never read `test/`, so this changes no behaviour. It
+removes 22 tracked files and two package.json entries.
+
+The foreman integration itself is verified working and stays installed separately at
+`~/.config/opencode/skills/gwill/foreman-integration/`; only the per-run scratch goes.
+
+Gates 6/6 (article 147/147, vectors 95/95), 79 pages, suite 128/0/7 green — unchanged.
+
 ## [0.7.42] — 2026-10-09 — 50-30-20 E14: a near-miss number no longer prices your month
 A14 audited the crash path and found a defect nobody had looked for: the junk rail
 was blind to the most plausible typo on the page.

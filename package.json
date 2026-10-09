@@ -7,8 +7,7 @@
     "gen:og": "node scripts/gen-og.mjs",
     "check": "node scripts/check.mjs",
     "check:types": "astro check",
-    "test:calc": "node scripts/calc-regress.mjs",
-    "test": "node --test test/**/*.test.js"
+    "test:calc": "node scripts/calc-regress.mjs"
   },
   "dependencies": {
     "astro": "^5.0.0",
