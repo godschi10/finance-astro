@@ -9,10 +9,10 @@ contract, same calculator engines — served as a static bundle instead of PHP.
 
 ## Source of truth
 
-The WordPress theme lives at `gwill-finance-theme/` (production:
-`/var/www/finance/wp-content/themes/gwill-finance-theme/`). This repo is a **port**,
-not a redesign: where the two disagree, the WP theme wins unless the CHANGELOG
-records a deliberate, reasoned divergence.
+The WordPress theme is maintained in its own repository, `gwill-finance-theme` —
+it is not part of this repo. This repo is a **static port** of it, not a redesign:
+where the two disagree, the WP theme wins unless the CHANGELOG records a
+deliberate, reasoned divergence.
 
 ## Commands
 

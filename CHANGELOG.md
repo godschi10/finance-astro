@@ -4,6 +4,44 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.50] — 2026-10-09 — repo hygiene: the public portfolio repo was publishing our internals (PROC-3)
+
+`gh api repos/godschi10/finance-astro` → `"private": false, "visibility": "public"`. Everything tracked here is
+world-readable, and this is the repository a reviewer opens. Audit item PROC-3.
+
+**Measured first, so this is not inflated:** a credentials scan across every tracked file found **no secrets**.
+Every `token`/`key`/`secret` hit is prose about design tokens or the moderation token's *behaviour* — no
+credential, no private-key block. This is a hygiene and judgement matter, not a security incident.
+
+**Untracked (still on disk, still working):** `PENDING-WORK.md` — the team's live working ledger, kept at the
+repo root where daily work and the Manager's notes reference it — plus one round's scratch: six
+`a7-503020-*.png`, `a7-results.json`, `a7-test.mjs`, `test-budget.mjs`. Each ignore rule carries a comment
+saying why it exists.
+
+**Sanitized:** `README.md` published the production theme path `/var/www/finance/wp-content/themes/…`. It now
+states that the WordPress theme is maintained in its own repository, `gwill-finance-theme` — which is true, and
+was verified to exist before the sentence was written. That repository is private; the wording claims nothing a
+reader cannot check.
+
+Tracked files **277 → 267**. Files leaking an infrastructure path **27 → 24**. `docs/` untouched at 63. `src/`
+untouched at 123. **No served byte changes** — the version is not surfaced in `dist/`, `README.md` is not
+published, and none of the ten files reach the build. `main` only; no `pages-dist` deploy for this one.
+
+**A near-miss worth recording.** The obvious ignore glob for the scratch files is `*budget*`, which would have
+silently unpublished `src/lib/budget.ts`, `50-30-20-budget-calculator.astro` and `budget-allocator.astro` — two
+live money tools and their engine, gone from the repo with no error and no failing gate. The exact filename
+`test-budget.mjs` was used instead, and all three were confirmed still tracked. **Any future `.gitignore` work
+in this repo should be pattern-checked against `git ls-files` before committing.**
+
+**Open, and not closed by this commit.** Untracking a file does not remove it from history:
+`PENDING-WORK.md` (386 lines), the six screenshots (~12 MB) and the scratch scripts **remain retrievable from
+every earlier commit** in a public repository. Closing that needs `filter-repo`/BFG, a force-push and a
+re-clone by every collaborator — **not authorised, not done, and the King's call.** The remaining 24 files
+(`src/` comments ×4, `scripts/` ×7, `docs/` ×11, `CHANGELOG.md` ×2) are itemised in the OUTSTANDING-LIST.
+
+Gates 6/6 (article 147/147, vectors 95/95; footer 64, homepage 128), suite 128/0/7 — both re-run by the Manager,
+not taken on the worker's transcript.
+
 ## [0.7.49] — 2026-10-09 — the currency glyph must follow the currency (King-found)
 The King found it himself, 9 Oct 16:12: on the converter with **From = USD**, the amount field
 showed a **₦** glyph. A naira symbol on a dollar amount mislabels the number you just typed — on a
