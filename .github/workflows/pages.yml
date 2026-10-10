@@ -44,6 +44,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # gen-og rasterises the 33 OG share cards from SVG via rsvg-convert
+      # (scripts/og-card.mjs, font DejaVu Sans Mono — fonts-dejavu-core is
+      # preinstalled). The runner image does not ship librsvg, so install it.
+      - name: Install rsvg-convert
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq librsvg2-bin
+
       # `npm run build` = gen-og + fetch-snapshot + astro build.
       # fetch-snapshot.mjs degrades honestly: a failed feed leaves the previous
       # snapshot in place and the build still exits 0, so a flaky third-party
