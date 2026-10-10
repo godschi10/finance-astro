@@ -4,6 +4,36 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.51] — 2026-10-10 — the green build now deploys itself (PROC-2)
+
+The King's decision, 2026-10-10: **deploy enabled**. The PROC-2 workflow ran the gates + build only and
+left `dist/` as a downloadable artifact; it now publishes to GitHub Pages when the tree is green.
+
+**Two changes made together, because either alone breaks:**
+- The Pages source is flipped to **"GitHub Actions"** — until that is set, a `deploy-pages` run has no
+  Pages site to publish to and fails.
+- The workflow gained a `deploy` job (`actions/deploy-pages@v5`, environment `github-pages`) and the
+  upload step switched to `actions/upload-pages-artifact@v5` — `upload-artifact@v7` produces a different
+  (zip) artifact shape that deploy-pages does not consume.
+
+**Least privilege kept.** The top-level floor stays `contents: read`; `pages: write` + `id-token: write`
+ride the `deploy` job alone, so nothing in this workflow can rewrite `main`, and it publishes only
+through the deploy step.
+
+**`include-hidden-files: true` is load-bearing.** `dist/.nojekyll` exists, and upload-pages-artifact's
+tar drops dot-files by default; without the flag Pages would run Jekyll processing and lose the
+underscore-prefixed `_astro/` assets.
+
+**Auto-deploy is safe on a dead feed.** `scripts/fetch-snapshot.mjs` exits 0 and keeps the previous
+snapshot when a feed fails, so a broken third-party API cannot ship broken data — the build degrades
+honestly and the previously published bytes stand.
+
+**Also in this version.** `scripts/calc-regress.mjs` resolves Chrome portably — `CHROME_BIN` verbatim,
+then the browser this repo's Playwright pins, then system Chrome/Chromium candidates, every candidate
+`existsSync`-checked — with no machine-specific path baked in; the suite was re-verified green with
+`CHROME_BIN` unset. The FX snapshot + ticker static were regenerated (10 Oct 2026, 00:02 UTC;
+NGN 1331.267014; ticker ₦1,331 / ₦1,761 / ₦1,492 / $82,759 / $2,492 / $4,196).
+
 ## [0.7.50] — 2026-10-09 — repo hygiene: the public portfolio repo was publishing our internals (PROC-3)
 
 `gh api repos/godschi10/finance-astro` → `"private": false, "visibility": "public"`. Everything tracked here is

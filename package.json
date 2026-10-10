@@ -1,6 +1,6 @@
 {
   "name": "finance-astro",
-  "version": "0.7.50",
+  "version": "0.7.51",
   "type": "module",
   "scripts": {
     "build": "node scripts/gen-og.mjs && node scripts/fetch-snapshot.mjs && astro build",

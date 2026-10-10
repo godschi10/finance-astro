@@ -1,0 +1,96 @@
+name: Check, build
+
+# PROC-2: the gates used to run only when a human remembered to run them
+# ("a green push is not a live fix"). This makes them run on every push to main
+# plus a daily refresh of the FX snapshot baked at build time, then deploys the
+# green build to GitHub Pages. Deploy is enabled by the King's decision
+# 2026-10-10; least privilege is kept — the write scopes ride the deploy job
+# alone and the build job stays read-only.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # 03:07 UTC, deliberately off :00 so we do not pile onto the top-of-hour
+    # GitHub cron rush.
+    - cron: "7 3 * * *"
+  workflow_dispatch:
+
+# Least privilege. The top-level floor stays `contents: read` (checkout); the
+# deploy job alone carries `pages: write` + `id-token: write`, so the workflow
+# can publish only through the deploy step and can never rewrite main.
+permissions:
+  contents: read
+
+# A new push cancels an in-flight run for the same ref, so the queue cannot
+# build stale commits. Scheduled runs share the group too, which stops a
+# manual run and a cron run racing for the same Pages deploy.
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # `npm run build` = gen-og + fetch-snapshot + astro build.
+      # fetch-snapshot.mjs degrades honestly: a failed feed leaves the previous
+      # snapshot in place and the build still exits 0, so a flaky third-party
+      # API cannot red the build — nor ship broken data to Pages.
+      - name: Build
+        run: npm run build
+
+      - name: Release gates
+        run: npm run check
+
+      # The behavioural suite. It needs dist/ (it serves the built bytes itself
+      # over loopback and never builds for you) — hence it runs after Build.
+      # ubuntu-latest installs Google Chrome to /usr/bin/google-chrome and
+      # exports CHROME_BIN to exactly that path; scripts/calc-regress.mjs also
+      # falls back to that path itself. playwright has no postinstall, so
+      # `npm ci` downloads no browser — CHROME_BIN is set here rather than
+      # assumed, and the script spawns with --no-sandbox as runners require.
+      - name: Behavioural suite
+        env:
+          CHROME_BIN: /usr/bin/google-chrome
+        run: npm run test:calc
+
+      # upload-pages-artifact@v5 is what deploy-pages consumes —
+      # upload-artifact@v7 produces a different (zip) artifact shape and is NOT
+      # interchangeable. Default artifact name (github-pages); retention is
+      # governed by the Pages environment policy, not this step.
+      # include-hidden-files keeps dist/.nojekyll in the artifact — v5's tar
+      # drops dot-files by default, and without .nojekyll Pages would run
+      # Jekyll processing and lose the underscore-prefixed _astro/ assets.
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist/
+          include-hidden-files: true
+
+  # Deploy: enabled by the King's decision 2026-10-10. Least privilege kept —
+  # the write scopes (pages + id-token for the Pages OIDC API) live on this
+  # job alone; the build job above stays read-only.
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

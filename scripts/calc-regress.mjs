@@ -169,6 +169,34 @@ function serve(root) {
   return new Promise((resolve) => srv.listen(0, "127.0.0.1", () => resolve(srv)));
 }
 
+/* ── chrome binary resolution (portable: no machine-specific path baked in) ── */
+// Order: explicit CHROME_BIN → the browser this repo's Playwright pins →
+// the system Chrome/Chromium a CI runner image ships (/usr/bin/google-chrome).
+// Every candidate is existsSync-checked: `npm ci` runs no Playwright
+// postinstall, so a clean checkout has playwright-core but no downloaded
+// browser, and executablePath() alone would hand back a path that isn't there.
+const SYSTEM_CHROME = [
+  "/usr/bin/google-chrome",
+  "/usr/bin/google-chrome-stable",
+  "/usr/bin/chromium",
+  "/usr/bin/chromium-browser",
+  "/snap/bin/chromium",
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  "/Applications/Chromium.app/Contents/MacOS/Chromium",
+];
+async function resolveChrome() {
+  // An explicit CHROME_BIN is honoured verbatim — if it is wrong we fail loud
+  // rather than silently driving some other browser than the one asked for.
+  if (process.env.CHROME_BIN) return { path: process.env.CHROME_BIN, tried: [] };
+  const tried = [];
+  try {
+    const p = (await import("playwright")).chromium.executablePath();
+    if (p) { tried.push(p); if (existsSync(p)) return { path: p, tried }; }
+  } catch { /* playwright not importable here — fall through to system */ }
+  for (const p of SYSTEM_CHROME) { tried.push(p); if (existsSync(p)) return { path: p, tried }; }
+  return { path: null, tried };
+}
+
 /* ── minimal CDP client over ws ── */
 function connect(url) {
   return new Promise((resolve, reject) => {
@@ -685,9 +713,11 @@ async function main() {
 
   browser.cdpPort = await freeCdpPort();
   browser.profile = join(tmpdir(), `calc-regress-${process.pid}`);
-  browser.chrome = process.env.CHROME_BIN
-    || "/home/opc/.cache/ms-playwright/chromium-1243/chrome-linux/chrome";
-  if (!existsSync(browser.chrome)) throw new Error(`chrome not found at ${browser.chrome} (set CHROME_BIN)`);
+  const chrome = await resolveChrome();
+  browser.chrome = chrome.path;
+  if (!chrome.path || !existsSync(chrome.path)) {
+    throw new Error(`chrome not found at ${chrome.path || chrome.tried.join(", ")} (set CHROME_BIN)`);
+  }
   if (browser.cdpPort === 9222 || browser.cdpPort === 9333) throw new Error("refusing shared CDP port");
 
   const results = { root, startedAt: new Date().toISOString(), tools: {} };
