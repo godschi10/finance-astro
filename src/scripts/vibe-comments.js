@@ -868,12 +868,56 @@
         // feature-detect discipline the push checkbox already uses for
         // 'PushManager' in window.
         if (typeof AbortController === 'undefined') {
-            return fetch(url, options || {});
+            return fetch(url, withGuestHeader(options || {})).then(captureGuestHeader);
         }
         var ctrl = new AbortController();
         var tid  = setTimeout(function() { ctrl.abort(); }, ms || 15000);
-        var opts = Object.assign({}, options || {}, { signal: ctrl.signal });
-        return fetch(url, opts).finally(function() { clearTimeout(tid); });
+        var opts = withGuestHeader(Object.assign({}, options || {}, { signal: ctrl.signal }));
+        return fetch(url, opts).then(captureGuestHeader).finally(function() { clearTimeout(tid); });
+    }
+
+    /* ── v0.7.56 · the Worker-minted guest identity (X-Vibe-Guest) ────────────
+       The Worker binds an identity on FIRST USE (a write) and returns it in
+       the X-Vibe-Guest response header; on reads it validates but never
+       mints. The client's side of that contract is store-and-echo:
+
+         captureGuestHeader(res) - after every response, if the Worker sent
+           X-Vibe-Guest, keep it in sessionStorage (vibe_guest_identity).
+           Session-scoped like vibe_guest_email (2026-10-03 audit pattern):
+           it dies with the tab, never persisted forever.
+         withGuestHeader(opts)   - before every request, echo the stored
+           identity as the X-Vibe-Guest request header when one is held.
+           Writes MUST carry it (identity continuity across IP/UA churn);
+           reads MAY carry it - the Worker validates and never mints on
+           reads, so echoing on reads is inert.
+
+       No API semantics change: an absent header means the Worker simply
+       mints on the next write, exactly as today. NOTE (deploy pairing): for
+       a cross-origin Worker the header must also appear in the response's
+       Access-Control-Expose-Headers, or browsers hide it from
+       response.headers.get() - server-side concern, outside this file. */
+    var GUEST_HEADER_KEY = 'vibe_guest_identity';
+
+    function captureGuestHeader(res) {
+        try {
+            if (res && res.headers && typeof res.headers.get === 'function') {
+                var minted = res.headers.get('X-Vibe-Guest');
+                if (minted) sessionStorage.setItem(GUEST_HEADER_KEY, minted);
+            }
+        } catch (e) { /* storage unavailable (private browsing) - echo degrades to off */ }
+        return res;
+    }
+
+    function withGuestHeader(opts) {
+        try {
+            var held = sessionStorage.getItem(GUEST_HEADER_KEY);
+            if (held) {
+                var headers = Object.assign({}, opts.headers || {});
+                if (!headers['X-Vibe-Guest']) headers['X-Vibe-Guest'] = held;
+                return Object.assign({}, opts, { headers: headers });
+            }
+        } catch (e) { /* storage unavailable */ }
+        return opts;
     }
 
     /**
@@ -2508,6 +2552,10 @@
                 localStorage.removeItem('vibe_guest_name');
                 localStorage.removeItem('vibe_guest_email'); // legacy (pre-2026-10-03)
                 sessionStorage.removeItem('vibe_guest_email');
+                /* v0.7.56: "Not you?" ends this browser's claim to the
+                   Worker-minted identity too - the next write mints a fresh
+                   one instead of the new speaker inheriting the old guest's. */
+                sessionStorage.removeItem(GUEST_HEADER_KEY);
             } catch (e) {}
             if (author) author.value = '';
             if (email)  email.value  = '';
@@ -2981,7 +3029,10 @@
             btn.disabled = true;
 
             var next = btn.dataset.on === '1' ? '0' : '1';
-            fetch(apiUrl('/comments/' + parseInt(btn.dataset.commentId, 10) + '/notify'), {
+            // v0.7.56: routed through the transport seam so the notify toggle
+            // (a write) echoes the Worker-minted X-Vibe-Guest identity like
+            // every other write. Previously a bare fetch() bypassed it.
+            fetchWithTimeout(apiUrl('/comments/' + parseInt(btn.dataset.commentId, 10) + '/notify'), {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -2990,7 +3041,7 @@
                     notify:        next,
                     vibe_guest_id: getGuestId()
                 })
-            })
+            }, 15000)
             .then(function(r) { return r.json(); })
             .then(function(res) {
                 btn.disabled = false;
@@ -3030,7 +3081,8 @@
 
             // PORT SEAM: no v1 Worker route for Q&A accept - retained,
             // unreachable (config.qa is false on the static site).
-            fetch(apiUrl('/comments/' + parseInt(commentId, 10) + '/accept'), {
+            // v0.7.56: through the transport seam like every other write.
+            fetchWithTimeout(apiUrl('/comments/' + parseInt(commentId, 10) + '/accept'), {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -3038,7 +3090,7 @@
                     comment_id: commentId,
                     post_id:    config.postSlug || ''
                 })
-            })
+            }, 15000)
             .then(function(r) { return r.json(); })
             .then(function(res) {
                 btn.disabled = false;

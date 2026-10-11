@@ -26,11 +26,11 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="tc-dir">Direction</label><select id="tc-dir"><option value="to-nigeria">Send to Nigeria (USD→NGN)</option><option value="from-nigeria" selected>Send from Nigeria (NGN→USD)</option></select></div>
 <div class="field"><label for="tc-src">Send currency</label><select id="tc-src"><option>USD</option><option>GBP</option><option>EUR</option><option>CAD</option></select><p class="hint">Foreign leg only; naira side is automatic.</p></div>
 </div>
-<div class="receipt" aria-live="polite">
+<div class="receipt">
 <p class="receipt-lbl">Best payout for <span data-sf-fig id="tc-sum-amt">₦100,000</span></p>
-<p class="receipt-fig" id="tc-fig">{seed.rows[0] ? fxNumber(seed.rows[0].received, 2) : "—"}</p>
+<p class="receipt-fig" id="tc-fig" aria-live="polite">{seed.rows[0] ? fxNumber(seed.rows[0].received, 2) : "—"}</p>
 <p class="receipt-sub" id="tc-sub">{seed.rows[0]?.name ?? ""} · mid-market {fxNumber(seed.mid, 6)}</p>
-<p class="receipt-note" id="tc-warn" hidden></p>
+<p class="receipt-note" id="tc-warn" hidden aria-live="polite"></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <p class="receipt-note">Fee model verified {transferVerified()} · FX base refreshes live when the feed answers.</p>
 <p class="receipt-foot">Estimates — confirm with your provider</p>

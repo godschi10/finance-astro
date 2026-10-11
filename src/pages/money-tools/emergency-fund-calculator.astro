@@ -51,9 +51,9 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="em-cover">Cover (months)</label><input id="em-cover" type="text" max="60" value={EMERGENCY_SEED.cover} inputmode="decimal"></div>
 <div class="field"><label for="em-infl">Inflation %/yr</label><input id="em-infl" type="text" max="100" value={INFL_PCT} inputmode="decimal"></div>
 </div>
-<div class="receipt" aria-live="polite">
+<div class="receipt">
 <p class="receipt-lbl">Your runway today</p>
-<p class="receipt-fig" id="em-fig">{seed.runway_now.toFixed(1)} months</p>
+<p class="receipt-fig" id="em-fig" aria-live="polite">{seed.runway_now.toFixed(1)} months</p>
 <p class="receipt-sub" id="em-sub">Target ₦{n(seed.target)} · gap ₦{n(seed.gap)} · real (inflated) target ₦{n(seed.real_target)}</p>
 <div class="prog" aria-hidden="true"><i id="em-bar" style={`width:${pct}%`}></i></div>
 <div class="receipt-div" aria-hidden="true"></div>

@@ -4,6 +4,102 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.56] — 2026-10-11 — the receipt speaks only what changed, and the APR label carries the fee truth
+
+Batch S2a (@builder leg): the fresh audit's single highest-impact UX fix (U1),
+the P0 APR honesty relabel (F01/F10), the day→month dual reading (#2), the
+client half of the Worker's minted guest identity, and two verify-tails closed
+with evidence. Local commit only — the Manager ships.
+
+**ITEM 1 — U1, aria-live scoped to what matters.** Every tool receipt wrapped
+its ENTIRE region (figure, sub, rows, notes, foots) in `aria-live="polite"` —
+a screen-reader user typing a 6-digit salary heard the whole receipt re-read
+per keystroke. The receipt container no longer carries aria-live on any of the
+15 tool pages (17 receipts). The live regions are now only the elements whose
+change is worth speaking: each receipt's primary figure (`.receipt-fig`; on
+the 50/30/20 allocator receipt, which has no `.receipt-fig`, the
+`data-sf-fig` label line that carries its figures), and the warn rails
+(`*-warn` receipt-notes — the honesty rail; a state change there speaks).
+Deliberately NOT live: the receipt-notes rewritten per keystroke with
+interpolated amounts (50/30/20's #al-sharesum, #al-needsline, the converter's
+#cc-par) — scoping those would have reintroduced the exact chatter this fix
+removes. No ids moved, no timing added (scoping over debounce, so the
+behavioural suite's settle waits are untouched), and calc-regress reads only
+`.receipt-fig/.receipt-row b/[data-sf-fig]` and
+`.receipt-note/.bar-note/.receipt-sub` text — no vector asserted aria — so all
+130 vectors pass unchanged.
+
+**ITEM 2 — F01/F10, the loan APR honesty relabel (the audit's P0).** The loan
+page called its result "True APR" while lender fees are excluded. Every
+user-facing instance now puts the exclusion IN the label: `<title>` ("Loan
+Repayment Calculator, Effective Annual Rate (Fees Excluded) — GWill Finance"),
+meta description ("the effective annual rate (excluding fees) behind flat,
+daily, and reducing-balance loans"), the gold badge ("Loan cost · effective
+annual rate (fees excluded)"), the verified line, the receipt sub line, the
+receipt row ("Effective annual rate (fees excluded)"), and the client render's
+sub line. The maths did not change — CALC-10's Intl.NumberFormat grouping
+stays. The frontmatter's historical CALC-10 comment still quotes `true APR
+2333.9%`: it documents the v0.7.47 bug verbatim and serves no bytes.
+
+**ITEM 3 — #2, the day→month dual reading on the loan page.** Day tenors round
+UP to whole months for flat and reducing rates (a 31-day flat loan is billed
+as 2 months — one extra day, a whole extra month of interest). The receipt now
+shows BOTH readings side by side when the unit is days AND the mode is flat or
+reducing: the rounded-month figure (current behaviour, labelled "Rounded to
+whole months (N mo) — the headline above") and the exact-day equivalent
+(labelled "Exact days (N d)"), plus a one-line disclosure ("The headline
+figures above use the rounded-month reading."). Both readings come from the
+EXISTING engine functions run at page level — the exact-days reading is the
+same loan through `loanRepayment()`'s daily mode with the quoted rate
+converted by the engine's own month convention (flat %/mo ÷ 30, reducing
+%/yr ÷ 365), disclosed on the block itself. The engine is untouched (the
+loanApr oracle vectors pin its behaviour), the block runs only after the
+zero-tenor and range guards so it can never show a figure the headline
+refused, and it ships hidden (the seed is a daily-mode loan).
+
+**ITEM 4 — the client X-Vibe-Guest echo (pairs with the Worker's server-minted
+identity deployed today).** The comments client now stores and echoes the
+Worker-minted guest identity: `captureGuestHeader()` keeps the X-Vibe-Guest
+response header in sessionStorage (`vibe_guest_identity` — session-scoped,
+matching the vibe_guest_email PII pattern) after every response, and
+`withGuestHeader()` echoes it as an X-Vibe-Guest request header on every
+subsequent request through the `fetchWithTimeout()` transport seam — writes
+must carry it (identity continuity across IP/UA churn), reads may (the Worker
+validates but never mints on reads). The notify toggle and the (unreachable)
+Q&A accept call were bare `fetch()`s bypassing the seam; both now route
+through it, so every write carries the header. "Not you?" also clears the
+stored identity so the next speaker mints a fresh one. No API semantics
+change. Server-side note: for a cross-origin Worker the header must be in
+Access-Control-Expose-Headers or browsers hide it from
+`response.headers.get()` — Worker-side concern, outside this repo.
+
+**ITEM 5 — two verify-tails.** F04 (salary seeded receipt): verified
+works-as-designed in the built dist — the seed renders as the page's example
+(wearing SAMPLE badges), `data-sf-foot` ("Nothing entered · no figures
+invented") ships `hidden` and takes over only when every required field is
+cleared; evidence quoted in the leg report. CALC-8 (converter empty
+sections): the audit guessed right — "How to get the best rate, every time"
+was an h2 with no body, and "You can convert naira to and from:" promised a
+list then delivered a paragraph. Fixed minimally: the "single most useful
+habit" paragraph moved under the empty h2 (it is that section's body), and
+the list paragraph now names the fifteen currencies the snapshot actually
+converts.
+
+**Attribution.** The hard-coded 4.5% parallel premium: verified absent since
+≤0.7.46; attributed 2026-10-11. (The estimate spread that replaced it is
+disclosed at every served use — "Parallel estimate ≈ … (estimated, not a
+quote)" on the receipt, "roughly 4.5% above official. It is an estimate,
+always labeled as one." in the FAQ.)
+
+**Gates (all observed, not claimed):** `npm run build` exit 0, 79 pages ·
+`npm run check` 6/6 suites, parity pass=94 fail=0, independent pass=113
+fail=0 · calc-regress in the systemd shelter 130 pass / 0 fail / 7 skip ·
+served-bytes greps: relabelled APR string present + "True APR" absent,
+aria-live on the figure element and absent from the receipt container,
+X-Vibe-Guest echo in the built VibeComments chunk. Engine maths untouched:
+no oracle count moved.
+
+
 ## [0.7.55] — 2026-10-11 — the oracle's finding is fixed, and the tax copy now carries the law
 
 Batch S1 (@builder leg): the PROC-1 oracle's CRA finding, the B2 bonus-on-exempt

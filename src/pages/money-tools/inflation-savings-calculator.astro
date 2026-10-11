@@ -30,15 +30,15 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="is-infl">Inflation %/yr</label><input id="is-infl" type="text" max="100" value="24" inputmode="decimal"></div>
 <div class="field"><label for="is-yrs">Years</label><input id="is-yrs" type="number" min="1" max="50" step="1" value="5" inputmode="numeric"></div>
 </div>
-<div class="receipt" aria-live="polite">
+<div class="receipt">
 <p class="receipt-lbl">Real monthly (inflation-proof)</p>
-<p class="receipt-fig" id="is-fig">₦{n(seed.real_monthly)}</p>
+<p class="receipt-fig" id="is-fig" aria-live="polite">₦{n(seed.real_monthly)}</p>
 <p class="receipt-sub" id="is-sub">Goal grows ₦{n(seed.target)} → ₦{n(seed.real_target)} · nominal monthly only ₦{n(seed.nominal_monthly)}</p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Nominal monthly</span><b id="is-nom">₦{n(seed.nominal_monthly)}</b></div>
 <div class="receipt-row"><span>Real monthly</span><b id="is-real">₦{n(seed.real_monthly)}</b></div>
 <div class="receipt-row"><span>Monthly gap</span><b id="is-gap">₦{n(seed.gap_monthly)}</b></div>
-<p class="receipt-note" id="is-warn" hidden></p>
+<p class="receipt-note" id="is-warn" hidden aria-live="polite"></p>
 <p class="receipt-foot">The gap is the monthly truth</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>

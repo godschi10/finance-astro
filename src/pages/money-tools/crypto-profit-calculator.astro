@@ -26,11 +26,11 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="cp-sf">Sell fee %</label><input id="cp-sf" type="text" value="1" inputmode="decimal"></div>
 <div class="field" data-cur="NGN"><label for="cp-flat">Flat charges ₦</label><input id="cp-flat" type="text" value="0" inputmode="decimal"></div>
 </div>
-<div class="receipt" aria-live="polite">
+<div class="receipt">
 <p class="receipt-lbl">Profit</p>
-<p class="receipt-fig" id="cp-fig">₦{n(seed.profit)}</p>
+<p class="receipt-fig" id="cp-fig" aria-live="polite">₦{n(seed.profit)}</p>
 <p class="receipt-sub" id="cp-sub">ROI {(seed.roi * 100).toFixed(2)}% · {n(seed.coins, 4)} coins · sell nets ₦{n(seed.sell_net)}</p>
-<p class="receipt-note" id="cp-warn" hidden></p>
+<p class="receipt-note" id="cp-warn" hidden aria-live="polite"></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Total fees</span><b id="cp-fees">₦{n(seed.fees_ngn)}</b></div>
 <div class="receipt-row"><span>Break-even sell rate</span><b id="cp-be">₦{n(seed.break_even_rate, 2)}</b></div>

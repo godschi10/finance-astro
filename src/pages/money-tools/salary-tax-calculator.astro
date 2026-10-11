@@ -44,9 +44,9 @@ const saveTxt = tie
 <div class="field" data-cur="NGN"><label for="st-life">Life assurance monthly ₦</label><input id="st-life" type="text" value="0" inputmode="decimal"><p class="hint">Leave at ₦0 if your payslip doesn't show it — when filled, it comes off taxable income.</p></div>
 </div>
 <p class="hint" id="st-dedwarn" hidden></p>
-<div class="receipt" aria-live="polite">
+<div class="receipt">
 <p class="receipt-lbl">Take-home monthly</p>
-<p class="receipt-fig" id="st-fig">₦{n(seed.net_monthly)}</p>
+<p class="receipt-fig" id="st-fig" aria-live="polite">₦{n(seed.net_monthly)}</p>
 <p class="receipt-sub" id="st-sub">Tax ₦{n(seed.tax_monthly)}/mo · taxable ₦{n(seed.taxable)}/yr{seed.exempt ? " · EXEMPT (minimum wage)" : ""}</p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div id="st-rows">

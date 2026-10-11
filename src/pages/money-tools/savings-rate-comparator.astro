@@ -30,13 +30,13 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   disclaimer="This comparator is for informational guidance only and is not financial advice. Rates are indicative maintained figures that change; verify with each provider before committing. Nothing here is a guarantee of returns or deposit insurance.">
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="field" data-cur="NGN" style="max-width:320px;margin-top:18px"><label for="sr-amt">Test an amount (₦)</label><input id="sr-amt" type="text" value="500000" inputmode="decimal"><p class="hint">Yearly interest each plan would pay on it.</p></div>
-<div class="receipt" aria-live="polite">
+<div class="receipt">
 <p class="receipt-lbl">Top payer · <span id="sr-top">{rows[0].provider} {rows[0].product}</span></p>
-<p class="receipt-fig" id="sr-fig">{rows[0].rate.toFixed(1)}%</p>
+<p class="receipt-fig" id="sr-fig" aria-live="polite">{rows[0].rate.toFixed(1)}%</p>
 <p class="receipt-sub" id="sr-sub">on ₦500,000 ≈ ₦{(500000 * rows[0].rate / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })} a year</p>
 <div class="receipt-div" aria-hidden="true"></div>
 <p class="receipt-note">Indicative marketing rates — confirm before you lock funds.</p>
-<p class="receipt-note" id="sr-warn" hidden></p>
+<p class="receipt-note" id="sr-warn" hidden aria-live="polite"></p>
 <p class="receipt-foot">{verified}</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>

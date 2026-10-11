@@ -111,12 +111,12 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   <button type="button" class="btn b-ghost b-xs" data-fill-from-plan="bg-sps" title="Use my targets — put what you saved straight from the plan's savings target">Use my targets — savings</button>
 </div>
 <p class="receipt-note" id="bg-seedwarn" hidden></p>
-<div class="receipt" aria-live="polite">
+<div class="receipt">
 <p class="receipt-lbl">Plan buckets</p>
-<p class="receipt-fig" id="bg-fig">₦{n(seed.needs)} · ₦{n(seed.wants)} · ₦{n(seed.savings)}</p>
+<p class="receipt-fig" id="bg-fig" aria-live="polite">₦{n(seed.needs)} · ₦{n(seed.wants)} · ₦{n(seed.savings)}</p>
 <p class="receipt-sub" id="bg-sub">Needs · wants · savings — leftover <span id="bg-else">₦{n(seed.else)}</span></p>
 <p class="receipt-sub" id="bg-sumnote"></p>
-<p class="receipt-note" id="bg-warn" hidden></p>
+<p class="receipt-note" id="bg-warn" hidden aria-live="polite"></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row" data-goto="bg-spn" tabindex="0" role="button" style="cursor:pointer;min-height:44px;display:flex;align-items:center" title="See the field behind this figure"><span>Needs left <span aria-hidden="true">›</span></span><b id="bg-rn">₦{n(chk.needs_remaining)}</b></div>
 <div class="receipt-row" data-goto="bg-spw" tabindex="0" role="button" style="cursor:pointer;min-height:44px;display:flex;align-items:center" title="See the field behind this figure"><span>Wants left <span aria-hidden="true">›</span></span><b id="bg-rw">₦{n(chk.wants_remaining)}</b></div>
@@ -177,14 +177,14 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </div>
 <!-- Verdict banner (plain-language) -->
 <div class="verdict-banner" id="al-verdict" aria-live="polite"></div>
-<div class="receipt" aria-live="polite">
-<p class="receipt-lbl">Needs budget (<span data-sf-fig id="al-pct">50%</span> of income): <span data-sf-fig id="al-needs">₦{n(al.needs)}</span></p>
+<div class="receipt">
+<p class="receipt-lbl" aria-live="polite">Needs budget (<span data-sf-fig id="al-pct">50%</span> of income): <span data-sf-fig id="al-needs">₦{n(al.needs)}</span></p>
 <div id="al-rows">
 {al.buckets.map((b) => (
 <div class="receipt-row"><span>{b.label}</span><b data-al-amt={b.id}>₦{n(b.amount)}</b></div>
 ))}
 </div>
-<p class="receipt-note" id="al-warn" hidden></p>
+<p class="receipt-note" id="al-warn" hidden aria-live="polite"></p>
 <p class="receipt-note" id="al-sharesum" hidden></p>
 <!-- The aggregate needs-vs-plan line keeps MF-4's own element (id al-needsline).
      It was merged into al-actuals in E9 and destroyed by the same innerHTML

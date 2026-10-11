@@ -24,14 +24,14 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="sg-rate">Annual rate %</label><input id="sg-rate" type="text" max="100" value="15" inputmode="decimal"></div>
 <div class="field"><label for="sg-mo">Months</label><input id="sg-mo" type="number" min="1" max="600" step="1" value="24" inputmode="numeric"></div>
 </div>
-<div class="receipt" aria-live="polite">
+<div class="receipt">
 <p class="receipt-lbl">Save monthly</p>
-<p class="receipt-fig" id="sg-fig">{seed.goal_reached ? "₦0 — goal reached" : `₦${n(seed.monthly)}`}</p>
+<p class="receipt-fig" id="sg-fig" aria-live="polite">{seed.goal_reached ? "₦0 — goal reached" : `₦${n(seed.monthly)}`}</p>
 <p class="receipt-sub" id="sg-sub">Total ₦{n(seed.total)} · interest ₦{n(seed.interest)}</p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Total at deadline</span><b id="sg-tot">₦{n(seed.total)}</b></div>
 <div class="receipt-row"><span>Interest earned</span><b id="sg-int">₦{n(seed.interest)}</b></div>
-<p class="receipt-note" id="sg-warn" hidden></p>
+<p class="receipt-note" id="sg-warn" hidden aria-live="polite"></p>
 <p class="receipt-foot">Annuity-solved · monthly compounding</p>
 <!-- CALC-9 (v0.7.47): savingsCalculate() is an ordinary annuity, so every deposit
      is priced at the END of its month. A salary-day deposit lands at the START and

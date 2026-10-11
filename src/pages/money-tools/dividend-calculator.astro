@@ -28,15 +28,15 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="dv-yrs">Years</label><input id="dv-yrs" type="number" min="1" max="40" step="1" value={DIVIDEND_SEED.years} inputmode="numeric"></div>
 <div class="field"><label for="dv-drip">Dividends</label><select id="dv-drip"><option value="1" selected>Reinvest (DRIP)</option><option value="0">Take cash</option></select></div>
 </div>
-<div class="receipt" aria-live="polite">
+<div class="receipt">
 <p class="receipt-lbl" id="dv-lbl">Portfolio end value</p>
-<p class="receipt-fig" id="dv-fig">₦{n(seed.end_value)}</p>
+<p class="receipt-fig" id="dv-fig" aria-live="polite">₦{n(seed.end_value)}</p>
 <p class="receipt-sub" id="dv-sub">Cash dividends ₦{n(seed.cash_total)} · gain ₦{n(seed.gain)} · CAGR {(seed.cagr * 100).toFixed(1)}%</p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Shares held</span><b id="dv-sh">{n(seed.shares, 2)}</b></div>
 <div class="receipt-row"><span>Starting yield</span><b id="dv-yld">{(seed.yield * 100).toFixed(2)}%</b></div>
 <div class="receipt-row"><span>Cash dividends total</span><b id="dv-cash">₦{n(seed.cash_total)}</b></div>
-<p class="receipt-note" id="dv-warn" hidden></p>
+<p class="receipt-note" id="dv-warn" hidden aria-live="polite"></p>
 <p class="receipt-foot">Indicative projection · not investment advice</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>

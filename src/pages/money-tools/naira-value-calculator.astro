@@ -41,11 +41,11 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="nv-infl">Inflation %/yr</label><input id="nv-infl" type="text" max="200" value="24" inputmode="decimal"></div>
 <div class="field"><label for="nv-yrs">Years</label><input id="nv-yrs" type="number" min="1" max="100" step="1" value={s.years} inputmode="numeric"></div>
 </div>
-<div class="receipt" aria-live="polite">
+<div class="receipt">
 <p class="receipt-lbl">To buy the same in <span id="nv-yr">5</span> years you need</p>
-<p class="receipt-fig" id="nv-fig">₦{n(seed.future)}</p>
+<p class="receipt-fig" id="nv-fig" aria-live="polite">₦{n(seed.future)}</p>
 <p class="receipt-sub" id="nv-sub">₦{n(seed.value)} today loses {(seed.lost_fraction * 100).toFixed(1)}% of its buying power</p>
-<p class="receipt-note" id="nv-warn" hidden></p>
+<p class="receipt-note" id="nv-warn" hidden aria-live="polite"></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Future price tag</span><b id="nv-fut">₦{n(seed.future)}</b></div>
 <div class="receipt-row"><span>Buying power lost</span><b id="nv-lost">{(seed.lost_fraction * 100).toFixed(1)}%</b></div>
@@ -59,9 +59,9 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="tgrid c3">
 <div class="field" data-cur="NGN"><label for="nv-pv">Future amount ₦</label><input id="nv-pv" type="text" max="1000000000000" value="2000000" inputmode="decimal"><p class="hint">Uses the inflation and years above.</p></div>
 </div>
-<div class="receipt" aria-live="polite">
+<div class="receipt">
 <p class="receipt-lbl">Worth in today's buying power</p>
-<p class="receipt-fig" id="nv-pv-fig">₦{n(pvSeed.pv)}</p>
+<p class="receipt-fig" id="nv-pv-fig" aria-live="polite">₦{n(pvSeed.pv)}</p>
 <p class="receipt-sub" id="nv-pv-sub">₦{n(pvSeed.future)} in {s.years} years buys what ₦{n(pvSeed.pv)} buys today</p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Future price tag</span><b id="nv-pv-fut">₦{n(pvSeed.future)}</b></div>
@@ -85,9 +85,9 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field" data-cur="NGN"><label for="nv-cur">Saved already ₦</label><input id="nv-cur" type="text" max="1000000000000" value="1000000" inputmode="decimal"></div>
 <div class="field"><label for="nv-ret">Return %/yr</label><input id="nv-ret" type="text" max="100" value="15" inputmode="decimal"><p class="hint">Uses the inflation and years above.</p></div>
 </div>
-<div class="receipt" aria-live="polite">
+<div class="receipt">
 <p class="receipt-lbl">Save monthly to stand still</p>
-<p class="receipt-fig" id="nv-sv-fig">₦{n(svSeed.real_monthly)}</p>
+<p class="receipt-fig" id="nv-sv-fig" aria-live="polite">₦{n(svSeed.real_monthly)}</p>
 <p class="receipt-sub" id="nv-sv-sub">Inflation moves your ₦{n(svSeed.target)} goal to ₦{n(svSeed.real_target)}</p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Goal at future prices</span><b id="nv-sv-real">₦{n(svSeed.real_target)}</b></div>

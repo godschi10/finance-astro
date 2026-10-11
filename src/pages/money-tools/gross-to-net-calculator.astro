@@ -27,9 +27,9 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field" data-cur="NGN"><label for="gn-other">Other reliefs monthly ₦</label><input id="gn-other" type="text" value="0" inputmode="decimal"></div>
 </div>
 <p class="hint" id="gn-dedwarn" hidden></p>
-<div class="receipt" aria-live="polite">
+<div class="receipt">
 <p class="receipt-lbl">Gross to negotiate</p>
-<p class="receipt-fig" id="gn-fig">₦{n(seed.gross_monthly)}</p>
+<p class="receipt-fig" id="gn-fig" aria-live="polite">₦{n(seed.gross_monthly)}</p>
 <p class="receipt-sub" id="gn-sub">Nets ₦{n(seed.net_monthly)}/mo after ₦{n(seed.tax_monthly)} tax{seed.exempt ? " · EXEMPT (minimum wage)" : ""}</p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Pension /mo</span><b id="gn-pen2">₦{n(seed.pension_monthly)}</b></div>
