@@ -60,18 +60,10 @@ export function cryptoProfit(
   };
 }
 
-export interface CryptoUsdt {
-  usdt: number;
-  rate: number;
-  ngn: number;
-  ok: boolean;
-}
-
-/** USDT → naira helper (PHP reads the live FX engine; TS takes the rate). */
-export function cryptoUsdt(usdtPrice: number, ngnPerUsd: number, ok = true): CryptoUsdt {
-  usdtPrice = Math.max(0, usdtPrice);
-  return { usdt: usdtPrice, rate: ngnPerUsd, ngn: usdtPrice * ngnPerUsd, ok };
-}
+/* D2 (v0.7.55): cryptoUsdt() removed — dead code in the Astro port (no page
+   imported it; the P2P framing copy on the money-transfer pages covers the
+   need). The PHP parity oracle still carries a crypto_usdt vector;
+   vectors-check.mjs records that as a declared removal, never silently. */
 
 /** Seeded worked example (mirrors gwill_crypto_profit_seed()). */
 export const CRYPTO_SEED = { invest: 200000, buy_rate: 1500, sell_rate: 1800, buy_fee: 0.01, sell_fee: 0.01, flat_ngn: 0 };

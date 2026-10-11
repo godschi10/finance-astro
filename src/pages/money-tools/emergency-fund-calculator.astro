@@ -135,6 +135,13 @@ function render() {
   const gap = cover === 0 ? 0 : r.gap;
   const realTarget = cover === 0 ? 0 : r.real_target;
   const monthsToFinish = cover === 0 ? 0 : r.months_to_reach;
+  /* B6 (v0.7.55) — the engine's years_to_reach is display-capped at 50 years
+     while months_to_reach stays exact, so on a centuries-long plan the real
+     target is priced AT 50 YEARS, not at the true horizon — and nothing said
+     so. When the cap binds, the figure now carries its own label instead of
+     letting the two horizons disagree silently (the smaller-diff option: the
+     engine's exact months_to_reach is untouched, so no oracle vector moves). */
+  const capBinds = cover !== 0 && monthsToFinish / 12 > 50;
   /* CALC-1, the flat-price figure: gap ÷ monthly saving. Informative, and no
      longer what `months_to_reach` means — the row shows both, each named. */
   const nominal = moRaw > 0 ? gap / moRaw : 0;
@@ -146,7 +153,7 @@ function render() {
   const tgtBad = !Number.isFinite(target) || !Number.isFinite(gap) || !Number.isFinite(realTarget) || realTarget > 1e15;
   const p = Math.min(100, Math.round(progress));
   sfFig(t("em-fig"), ["em-ess", "em-saved"], r.runway_now.toFixed(1) + " months");
-  sfFig(t("em-sub"), FIVE, `Target ${fz(target)} · gap ${fz(gap)} · real (inflated) target ${fz(realTarget)}`);
+  sfFig(t("em-sub"), FIVE, `Target ${fz(target)} · gap ${fz(gap)} · real (inflated) target ${fz(realTarget)}${capBinds ? " at the 50-year planning cap" : ""}`);
   /* A typed 0 cover is an honest ZERO months and must not borrow the "save
      something monthly" dash — that dash means monthlySave is 0, a different
      failure entirely.

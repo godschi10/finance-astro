@@ -74,6 +74,16 @@ function render() {
      horizon is priced here rather than smuggled past it. */
   const yrsRawStr = g("dv-yrs").value.trim();
   const yrsZero = !pmBlank(yrsRawStr) && pm(yrsRawStr) === 0;
+  /* B4 (v0.7.55) — garbage in Years used to fall through `|| 5` and silently
+     price the 5-year seed. pmBlank() names the garbage; nothing is priced
+     until Years holds a number. */
+  const yrsGarbage = pmBlank(yrsRawStr) && yrsRawStr !== "";
+  /* B8 (v0.7.55) — a TYPED ₦0 investment is entered (the zero law: "0" is a
+     real answer), but with no shares there is nothing to project; the full
+     zero table it used to render was dressed-up noise. The receipt keeps its
+     real ₦0 figures; the table waits for an investment. */
+  const invRawStr = g("dv-inv").value.trim();
+  const invZero = !pmBlank(invRawStr) && pm(invRawStr) === 0;
   const r = dividendProject(
     Math.max(0, pm(g("dv-inv").value) || 0),
     s.price, s.dps,
@@ -114,6 +124,35 @@ function render() {
     sfFig(t("dv-sub"), ALL, `Cash dividends ${nn(0)} · gain ${nn(0)} · CAGR ${(0).toFixed(1)}%`);
     sfFig(t("dv-sh"), ALL, formatGrouped(s.price > 0 ? inv / s.price : 0, 2));
     sfFig(t("dv-yld"), ALL, (r.yield * 100).toFixed(2) + "%");
+    sfFig(t("dv-cash"), ALL, nn(0));
+    tb.innerHTML = "";
+    return;
+  }
+  if (yrsGarbage) {
+    /* B4 — the honest read: Years holds no readable number, so nothing is
+       priced and the demand-line names it (the amount fields' blank pattern). */
+    warn.hidden = false;
+    warn.textContent = "Years doesn't hold a number we can read — enter a number of years, like 5." + negSfx;
+    t("dv-lbl").textContent = drip ? "Portfolio end value" : "Total value incl. cash dividends";
+    sfFig(t("dv-fig"), ALL, drip ? nn(r.end_value) : nn(r.end_value + r.cash_total));
+    sfFig(t("dv-sub"), ALL, `Cash dividends ${nn(r.cash_total)} · gain ${nn(r.gain)} · CAGR ${(r.cagr * 100).toFixed(1)}%`);
+    sfFig(t("dv-sh"), ALL, formatGrouped(r.shares, 2));
+    sfFig(t("dv-yld"), ["dv-inv"], (r.yield * 100).toFixed(2) + "%");
+    sfFig(t("dv-cash"), ALL, nn(r.cash_total));
+    tb.innerHTML = "";
+    return;
+  }
+  if (invZero) {
+    /* B8 — a typed ₦0 investment: the receipt keeps its REAL ₦0 figures (the
+       zero law — never dashed), and the zero table is gated off like the
+       empty state instead of printing five rows of dressed-up nothing. */
+    warn.hidden = false;
+    warn.textContent = "₦0 invested — no shares are bought, so no dividends and no growth. The projection starts when an investment is entered." + negSfx;
+    t("dv-lbl").textContent = drip ? "Portfolio end value" : "Total value incl. cash dividends";
+    sfFig(t("dv-fig"), ALL, nn(0));
+    sfFig(t("dv-sub"), ALL, `Cash dividends ${nn(0)} · gain ${nn(0)} · CAGR ${(0).toFixed(1)}%`);
+    sfFig(t("dv-sh"), ALL, formatGrouped(0, 2));
+    sfFig(t("dv-yld"), ["dv-inv"], (r.yield * 100).toFixed(2) + "%");
     sfFig(t("dv-cash"), ALL, nn(0));
     tb.innerHTML = "";
     return;

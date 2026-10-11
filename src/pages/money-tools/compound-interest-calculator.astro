@@ -85,6 +85,12 @@ function render() {
    own months >= 1 floor is untouched (faithful port, gate-verified). */
 const yrsRawStr = g("ci-yrs").value.trim();
 const yrsZero = !pmBlank(yrsRawStr) && pm(yrsRawStr) === 0;
+/* B4 (v0.7.55) — garbage in Years used to fall through `|| 5` and silently
+   price the 5-year seed: "abc" reads as 0, `0 || 5` picks 5, and a five-year
+   table rendered under a dashed receipt. pmBlank() — the fleet's one
+   entered-test — now names the garbage, and nothing is priced until Years
+   holds a number. */
+const yrsGarbage = pmBlank(yrsRawStr) && yrsRawStr !== "";
 /* HANG CAP. compoundSchedule() iterates every month with no upper bound, so an
    absurd horizon hung the tab (the suite's adversarial HANG). The engine is
    vectors-pinned against the PHP oracle, so the cap lives HERE: 100 years
@@ -120,6 +126,19 @@ const capSfx = yrsCapped ? " Horizon capped at 100 years — figures price the c
     sfFig(t("ci-sub"), ALL, `You put in ${nn(p)} · interest earned ${nn(0)}`);
     sfFig(t("ci-dep2"), ALL, nn(p));
     sfFig(t("ci-int"), ALL, nn(0));
+    tb.innerHTML = "";
+    return;
+  }
+  if (yrsGarbage) {
+    /* B4 — the honest read: Years holds no readable number, so nothing is
+       priced and the demand-line names it (the amount fields' blank pattern:
+       figures withhold as "—", the rail says what is missing). */
+    warn.hidden = false;
+    warn.textContent = "Years doesn't hold a number we can read — enter a number of years, like 5." + negSfx + capSfx;
+    sfFig(t("ci-fig"), ALL, nn(r.future));
+    sfFig(t("ci-sub"), ALL, `You put in ${nn(r.deposited)} · interest earned ${nn(r.interest)}`);
+    sfFig(t("ci-dep2"), ALL, nn(r.deposited));
+    sfFig(t("ci-int"), ALL, nn(r.interest));
     tb.innerHTML = "";
     return;
   }

@@ -87,7 +87,13 @@ export function payeCalculate(
     reliefAnnual = Math.min(annualRent * RENT_RELIEF_RATE, RENT_RELIEF_CAP);
     exempt = monthlyGross <= MINIMUM_WAGE_MONTHLY;
   } else {
-    reliefAnnual = OLD_CRA_BASE + grossAnnual * OLD_CRA_RATE;
+    /* PITA CRA (old regime): the higher of ₦200,000 or 1% of gross, PLUS 20%
+       of gross (PITA CRA definition). The missing max() floor understated
+       old-regime relief above ₦1,666,666.67/mo gross — the divergence the
+       PROC-1 independent oracle caught on its first run (tax[10]: ₦5M/mo was
+       priced ₦96,000/yr heavy). Fixed 11 Oct 2026 per the manager's order;
+       see CHANGELOG 0.7.55 Divergences for the deliberate TS-vs-PHP split. */
+    reliefAnnual = Math.max(OLD_CRA_BASE, grossAnnual * 0.01) + grossAnnual * OLD_CRA_RATE;
     exempt = false;
   }
 
@@ -217,11 +223,17 @@ export function payeBonusTax(
   // Bonus is pure additional income: NOT pensioned. Tax at the marginal rate
   // by adding the full bonus to base taxable and taking the tax difference.
   const base = payeCalculate(monthlyGross, pensionRate, nhfMonthly, annualRent, true, nhisMonthly, lifeMonthly, otherMonthly);
-  let bonusTax = 0;
-  if (!base.exempt) {
-    const withBonus = payeBandBreakdown(base.taxable + bonus, payeBands2026());
-    const taxWithBonus = withBonus.reduce((s, b) => s + b.tax, 0);
-    bonusTax = Math.max(0, taxWithBonus - base.tax_annual);
-  }
+  /* B2 (fixed 11 Oct 2026) — the old `!base.exempt` gate returned an
+     unconditional ₦0 for a minimum-wage earner's bonus. NTA ss.4(2)(a) (a
+     bonus is employment income), 26(2) (a one-off bonus is income of the day
+     it is paid) and 163(1)(t) (the exemption tests GROSS income): a bonus
+     lifting gross above the national minimum wage defeats the exemption, and
+     the amount flows through the band table — the first ₦800,000 of
+     chargeable income is still 0% (research deliverable claim 4, verified
+     11 Oct 2026). The marginal-rate machinery already prices exactly that:
+     tax on base.taxable + bonus, minus the (₦0) base tax. */
+  const withBonus = payeBandBreakdown(base.taxable + bonus, payeBands2026());
+  const taxWithBonus = withBonus.reduce((s, b) => s + b.tax, 0);
+  const bonusTax = Math.max(0, taxWithBonus - base.tax_annual);
   return { bonus, tax: bonusTax, net: bonus - bonusTax, rate: bonusTax / bonus };
 }

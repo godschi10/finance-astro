@@ -4,6 +4,126 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.55] — 2026-10-11 — the oracle's finding is fixed, and the tax copy now carries the law
+
+Batch S1 (@builder leg): the PROC-1 oracle's CRA finding, the B2 bonus-on-exempt
+law fix, all six tax copy blocks from the researcher's verified deliverable
+(`/home/opc/work/research-notes/tax-law-verification-2026-10-11.md`, used
+verbatim with its "Last verified 11 Oct 2026" stamps), and the master list's
+small bug cluster.
+
+**ITEM 1 — the CRA floor (the oracle's finding).** `payeCalculate`'s old-regime
+relief was `₦200,000 + 20% of gross`, missing the PITA floor
+`max(₦200,000, 1% of gross)`. It is now
+`Math.max(OLD_CRA_BASE, grossAnnual * 0.01) + grossAnnual * OLD_CRA_RATE`.
+The oracle's tax[10] row (₦5M gross monthly, old regime) reads exactly the
+oracle's numbers: old tax **₦10,016,000/yr** (was ₦10,112,000, Δ +96,000) and
+old take-home **₦3,765,333/mo** (was ₦3,757,333). Every other independent row
+and all 6 winner-flip points sit below the ₦1,666,666.67/mo threshold where the
+floor stops binding, and are bit-identical before and after.
+
+**ITEM 2 — B2, bonus on an exempt earner (research claim 4, wrong in law).**
+`payeBonusTax` gated on `!base.exempt` and returned an unconditional ₦0 for a
+minimum-wage earner's bonus. NTA ss.4(2)(a), 26(2), 163(1)(t): a bonus is
+employment income, it is income of the day it is paid, and the exemption tests
+GROSS income — a bonus lifting gross above the national minimum wage defeats
+the exemption, and the amount runs the band table with the first ₦800,000 of
+chargeable income still 0%. The `!base.exempt` gate is gone; the marginal-rate
+machinery (tax on `base.taxable + bonus`, minus the ₦0 base tax) already prices
+exactly that. New gated case in the checker's independent section (hardcoded —
+the JSON is the audit's verbatim set, never hand-edited):
+`payeBonusTax(70000, 500000)` must return tax > 0; the pre-fix engine
+returned 0 (post-fix: ₦70,920 — ₦472,800 of chargeable income above the
+0% band at 15%).
+
+**ITEM 3 — the six tax copy blocks, verbatim with stamps.** Block 1 replaced
+the salary page's "straight % of the gross you type" pension hint (base is
+monthly emoluments, 8%/10%, per PRA 2014 + PenCom); block 2 replaced the
+"8% of your basic salary" pension answer; block 3 deleted the false
+"capped at ₦15,000 a month" NHF claim — both the FAQ answer and the live warn
+rail's cap disclosure now carry the uncapped 2.5%-of-basic wording; block 4
+replaced the exemption wording on the salary FAQ, the salary copy's "fully
+exempt" sentence and the gross-to-net page's "completely exempt" line with the
+gross-vs-chargeable distinction (s.163(1)(t) tests GROSS income; the ₦800k
+0% band is a chargeable-income concept); block 5 replaced the bonus receipt
+note, whose "the minimum-wage exemption covers salary only" was precisely
+backwards; block 6 replaced the NRS FAQ line — retitled "Did the NRS replace
+the FIRS — and when do the new tax rules start?" — with the split dates:
+NRSEA commenced 26 June 2025, the NTA rules take effect 1 January 2026. F11
+rode along: "to get your exact figure" is now "to get an estimate" in the tax
+copy.
+
+**ITEM 4 — the small bug cluster.**
+- **B3** — `ReverseGross` now carries `unreachable: boolean`, true when the
+  capped search's net at the ₦100M/mo ceiling still sits below the target; the
+  gross-to-net page prints "Out of range — that take-home is beyond this
+  solver's ₦100M/month ceiling" off the engine's word instead of re-deriving
+  it.
+- **B4** — garbage in Years no longer falls through `|| 5` into the 5-year
+  seed on compound-interest and dividend pages: pmBlank() catches it, figures
+  withhold as "—", the table empties, and the rail says "Years doesn't hold a
+  number we can read — enter a number of years, like 5."
+- **B6** — smaller-diff option taken: the emergency page labels the real
+  target " at the 50-year planning cap" when the display cap binds, instead of
+  letting capped years disagree with exact months; the engine's exact
+  `months_to_reach` is untouched, so no oracle vector moves.
+- **B7** — money-controls blur grouping strips leading zeros before grouping
+  ("007500" grouped as "07,750"; the maths always read 7, the display
+  didn't); a bare "0" and "0.50" keep their zero.
+- **B8** — a typed ₦0 investment on the dividend page keeps its REAL ₦0
+  receipt figures (the zero law — never dashed) but no longer renders a full
+  five-row zero table; the rail says the projection starts when an investment
+  is entered.
+- **#3** — the 50/30/20 page states it outright: "Buckets are % of Needs
+  (50%), not of total income. Defaults leave ~3% in Other."
+- **#5** — input-side inline nudge on salary + gross-to-net: when the
+  deduction fields outrun the gross (salary) or the targeted take-home
+  (gross-to-net), a hint beside the fields names the totals; the v0.7.52
+  Out-of-range guard stays untouched on the receipt.
+- **D2** — `cryptoUsdt()` deleted from `src/lib/crypto.ts` (dead code; no page
+  imported it; the P2P framing copy covers the need).
+- **D4** — the `FX_PARALLEL_SPREAD` comment now tells the truth: a build-time
+  constant; the WP admin tunability did not port.
+
+**Honest gate status.** `npm run build` green (79 pages, exit 0);
+`npm run check` green, 6/6 gates — parity `pass=94 fail=0 cases=93
+vectors=95` plus 1 corrected declared-divergence assertion (see Divergences:
+one vector less than 0.7.54's 95 because cryptoUsdt left WITH its vector), and
+independent `pass=113 fail=0 informational=4 rows=37` — the brief's 106 plus 7
+further assertions this leg itself ordered into existence (1 mandated B2 bonus
+case + 6 B3 unreachable assertions over the oracle's 5 grossToNet rows and one
+₦200M/mo beyond-ceiling proof); both tax[10] fails are green. calc-regress in
+the systemd shelter: 130 pass / 0 fail / 7 skip — unchanged, as ordered to
+verify (any change would have been a finding and a STOP).
+
+### Divergences
+
+Convention from 0.7.54 carries on: every DELIBERATE engine-vs-oracle
+difference carries its source and the date it was verified, right here.
+
+- **The TS engine now deviates from the PHP ENGINE's formula in the divergence
+  zone** (gross above ₦1,666,666.67/mo): old-regime CRA relief is
+  `max(₦200,000, 1% of gross) + 20% of gross` per the PITA CRA definition, and
+  the retiring WP theme's PHP engine still carries `₦200,000 + 20%` — the same
+  defect the audit's independent oracle caught in the port. Source: PITA CRA
+  definition + the audit's independent oracle (PROC-1). Verified 11 Oct 2026.
+  The PHP engine is OUT OF SCOPE this mission — flagged to the King.
+- **B2 bonus-on-exempt** — the TS engine now applies NTA ss.4(2)(a)/26(2)/
+  163(1)(t) (verified 11 Oct 2026): a bonus lifting gross above the minimum
+  wage defeats the exemption. The PHP parity oracle's `paye_bonus_exempt_base`
+  vector records tax 0 — the PHP engine's own B2 defect — so that ONE vector is
+  re-anchored in `vectors-check.mjs` as a DECLARED DIVERGENCE: the stale PHP
+  expectation is not asserted, the corrected value (₦9,360 on the
+  60k+200k vector) is, with the citation in code. The PHP engine carries the
+  same defect — flagged to the King, out of scope this mission.
+- **crypto_usdt (D2)** — `cryptoUsdt()` was deleted from the TS port as dead
+  code; the PHP oracle still carries its vector, recorded in the checker as a
+  DECLARED REMOVAL, never silently. Verified 11 Oct 2026.
+- Unchanged from 0.7.54: the three informational alternative-convention rows
+  (compound start-of-period, dividend year-1-at-today's, dividend +10% WHT)
+  stay carried, informational, not gated.
+
+
 ## [0.7.54] — 2026-10-11 — a second oracle takes the stand, and immediately catches one
 
 The big audit's §0 made an uncomfortable point about `npm run check`: it proves

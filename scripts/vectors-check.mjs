@@ -85,7 +85,6 @@ const cases = [
   ["paye_compare_300k", S.payeCompare(300000.0, 0.08, 0.0, 0.0)],
   ["paye_bonus", S.payeBonusTax(300000.0, 500000.0, 0.08)],
   ["paye_bonus_zero", S.payeBonusTax(300000.0, 0.0, 0.08)],
-  ["paye_bonus_exempt_base", S.payeBonusTax(60000.0, 200000.0, 0.08)],
   ["paye_band_breakdown_new", S.payeBandBreakdown(3312000.0, S.payeBands2026())],
   ["paye_band_compare", S.payeBandCompare(3312000.0)],
   ["paye_bands_old", S.payeBandsOld()],
@@ -131,7 +130,6 @@ const cases = [
   ["crypto_seed", C.cryptoProfit(200000.0, 1500.0, 1800.0, 0.01, 0.01, 0.0)],
   ["crypto_loss", C.cryptoProfit(500000.0, 1700.0, 1500.0, 0.005, 0.005, 1000.0)],
   ["crypto_zero", C.cryptoProfit(0.0, 1500.0, 1800.0)],
-  ["crypto_usdt", C.cryptoUsdt(100.0, LIVE.NGN, true)],
   ["dividend_seed", D.dividendProject(500000.0, 128.0, 11.76, 0.10, 0.08, 5, true)],
   ["dividend_cash", D.dividendProject(500000.0, 128.0, 11.76, 0.10, 0.08, 5, false)],
   ["dividend_stocks", D.ngxDividendStocks()],
@@ -212,13 +210,51 @@ function cmp(a, b, path) {
 
 let fail = 0, pass = 0;
 const missing = [];
+// DECLARED ADDITIVE FIELDS (v0.7.55, B3) — the TS ReverseGross now carries
+// `unreachable` (the capped ₦100M/mo search must SAY when it cannot reach the
+// target), a field the PHP oracle's snapshot predates. For these vectors the
+// shared fields still compare against the oracle verbatim; the new field is
+// asserted explicitly in the independent section below. This is comparison
+// plumbing only — the engine object keeps the field.
+const DECLARED_ADDITIVE = new Set(["gross_full_250k", "gross_full_60k_exemptzone"]);
 for (const [name, actual] of cases) {
   if (!(name in byName)) { missing.push(name); continue; }
-  const r = cmp(actual, byName[name], name);
+  const probe = DECLARED_ADDITIVE.has(name) && actual && typeof actual === "object"
+    ? Object.fromEntries(Object.entries(actual).filter(([k]) => k !== "unreachable"))
+    : actual;
+  const r = cmp(probe, byName[name], name);
   if (r) { fail++; console.log(`FAIL ${r}`); }
   else pass++;
 }
-const extra = Object.keys(byName).filter((n) => !cases.some(([c]) => c === n));
+// DECLARED REMOVALS / RE-ANCHORS — oracle vectors that left the direct
+// comparison above, each loudly, never silently:
+//   · crypto_usdt (D2, v0.7.55): cryptoUsdt() deleted from src/lib/crypto.ts —
+//     dead code in the Astro port, no page imported it; the P2P framing copy
+//     covers the need. The vector has no TS counterpart to assert.
+//   · paye_bonus_exempt_base (B2, v0.7.55): not compared against the STALE PHP
+//     value (the PHP engine carries the same B2 defect); the corrected value
+//     is asserted in the declared-divergence block below.
+// See CHANGELOG 0.7.55 Divergences.
+const DECLARED_REMOVALS = new Set(["crypto_usdt", "paye_bonus_exempt_base"]);
+const extra = Object.keys(byName).filter((n) => !cases.some(([c]) => c === n) && !DECLARED_REMOVALS.has(n));
+// ── DECLARED DIVERGENCE (v0.7.55, B2) ────────────────────────────────────────
+// paye_bonus_exempt_base: the PHP oracle records tax 0 / net 200000 / rate 0
+// for a bonus on an exempt base — the PHP engine carries the same B2 defect
+// (unconditional zero) that the research deliverable confirmed wrong in law
+// (NTA ss.4(2)(a)/26(2)/163(1)(t); verified 11 Oct 2026). The TS engine now
+// applies the law, so the STALE PHP expectation is not asserted; the corrected
+// behaviour is: taxable 662,400 + bonus 200,000 = 862,400 → first ₦800,000 at
+// 0%, ₦62,400 at 15% = ₦9,360. The PHP engine in the retiring WP theme carries
+// the same defect — flagged to the King, out of scope this mission. Documented
+// in CHANGELOG 0.7.55 Divergences.
+{
+  const b = S.payeBonusTax(60000.0, 200000.0, 0.08);
+  const r = cmp({ bonus: 200000.0, tax: 9360.0, net: 190640.0, rate: 0.0468 }, b, "paye_bonus_exempt_base[corrected]");
+  if (r) { fail++; console.log(`FAIL ${r}`); }
+  else pass++;
+  console.log("DECLARED DIVERGENCE paye_bonus_exempt_base: PHP oracle tax=0 carries the B2 defect; TS applies NTA ss.4(2)(a)/26(2)/163(1)(t) (verified 11 Oct 2026), corrected value asserted. See CHANGELOG 0.7.55 Divergences.");
+  console.log("DECLARED REMOVAL crypto_usdt: cryptoUsdt() deleted from src/lib/crypto.ts (D2, v0.7.55) — dead code; the P2P framing copy covers the need. See CHANGELOG 0.7.55 Divergences.");
+}
 console.log(`\npass=${pass} fail=${fail} cases=${cases.length} vectors=${vectors.length}`);
 if (missing.length) console.log("MISSING (no oracle):", missing.join(", "));
 if (extra.length) console.log("UNTESTED (no case):", extra.join(", "));
@@ -269,6 +305,27 @@ IV.tax.forEach((r, i) => {
   naira(ol.net_monthly, r.takeHomeOldMonth, `${p}.takeHomeOldMonth`);
   if (r.rentRelief !== undefined) naira(nw.relief_annual, r.rentRelief, `${p}.rentRelief`);
 });
+
+// B2 bonus-on-exempt (v0.7.55) — a bonus lifting gross above the national
+// minimum wage defeats the s.163(1)(t) exemption and the amount runs the band
+// table (the first ₦800,000 of chargeable income is still 0%). NTA
+// ss.4(2)(a)/26(2)/163(1)(t); verified 11 Oct 2026; the pre-fix engine
+// returned 0. Hardcoded here — independent-vectors.json is the audit's
+// verbatim set and is never hand-edited.
+{
+  const b = S.payeBonusTax(70000.0, 500000.0, 0.08);
+  expect(b.tax > 0, true, "bonusOnExempt payeBonusTax(70000, 500000).tax (must be > 0; the pre-fix engine returned 0)");
+}
+
+// B3 unreachable (v0.7.55) — the reverse solver must SAY when the capped
+// ₦100M/mo search cannot reach the target, never dress the ceiling up as an
+// answer. The oracle's two rows sit inside the ceiling; a ₦200M/mo target
+// cannot be reached and must flag.
+IV.grossToNet.forEach((r, i) => {
+  const g = G.reverseGross(r.targetNetMonth, 0.08);
+  expect(g.unreachable, false, `grossToNet[${i}].unreachable (target inside the ceiling)`);
+});
+expect(G.reverseGross(200000000.0, 0.08).unreachable, true, "grossToNet beyondCeiling ₦200M/mo.unreachable (must flag)");
 
 // taxWinnerNoRent8pct — the compare engine must name the right winner at each
 // boundary (save_annual = new net − old net; a tie at gross 0, where both

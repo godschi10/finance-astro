@@ -36,6 +36,11 @@ export interface ReverseGross {
   taxable_monthly: number;
   exempt: number;
   deductions_monthly: number;
+  /* B3 (v0.7.55): true when the capped search's net at the ₦100M/mo ceiling
+     still sits below the target — the ceiling is reported as itself, never
+     dressed up as the answer. The page prints an honest out-of-range message
+     on this instead of a solved gross that cannot deliver the target. */
+  unreachable: boolean;
 }
 
 export function reverseGross(
@@ -49,6 +54,12 @@ export function reverseGross(
 ): ReverseGross {
   const gross = reverseGrossFind(targetNet, pensionRate, nhfMonthly, annualRent, nhisMonthly, lifeMonthly, otherMonthly);
   const calc = payeCalculate(gross, pensionRate, nhfMonthly, annualRent, true, nhisMonthly, lifeMonthly, otherMonthly);
+  /* B3 — the search caps hi at ₦100M/mo; when even that net undershoots the
+     target the solver is saturated and `gross` is the ceiling, not an answer.
+     Same tolerance shape the page's former derived heuristic used, so no
+     reachable vector moves. */
+  const clamped = Math.max(0, targetNet);
+  const unreachable = calc.net_monthly < clamped * (1 - 1e-6);
   return {
     gross_monthly: gross,
     net_monthly: calc.net_monthly,
@@ -62,5 +73,6 @@ export function reverseGross(
     taxable_monthly: calc.taxable / 12,
     exempt: calc.exempt ? 1 : 0,
     deductions_monthly: calc.deductions / 12,
+    unreachable,
   };
 }

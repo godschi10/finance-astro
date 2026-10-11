@@ -184,11 +184,16 @@ import { fxCurrencies } from "../lib/fx";
       /* F2 — blur: group ONLY the integer part, dip to signal the reformat.
          The regex whitelists plain digit strings with an optional fractional
          tail, so already-grouped values (second blur), empty fields and
-         partially-typed input pass through untouched. */
+         partially-typed input pass through untouched.
+         B7 (v0.7.55) — leading zeros are stripped before grouping (a pasted
+         "007500" grouped as "07,750"; the maths always read 7, the display
+         didn't). A bare "0" — and "0.50" — keep their zero: the strip only
+         removes zeros that have another digit behind them. */
       input.addEventListener('blur', function () {
         var m = input.value.match(/^(\s*)(\d+)(\.\d*)?(\s*)$/);
         if (!m) return;
-        var grouped = m[2].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        var digits = m[2].replace(/^0+(?=\d)/, '');
+        var grouped = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         input.value = m[1] + grouped + (m[3] || '') + m[4];
         input.classList.add('fx-dip');
         requestAnimationFrame(function () {

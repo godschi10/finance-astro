@@ -31,7 +31,10 @@ export function fxCurrencies(): Record<string, FxCurrency> {
 /** Acceptable safety fallback (NGN per 1 USD) when the feed is unreachable. */
 export const FX_DEFAULT_NGN_USD = 1340.0;
 
-/** Parallel-market spread multiplier (official × this). Admin-tunable in WP. */
+/** Parallel-market spread multiplier (official × this). D4 (v0.7.55): the old
+ * comment promised WP admin-tunability that does not exist in the Astro port —
+ * this is a BUILD-TIME constant; changing it means editing this file and
+ * rebuilding, nothing else reads it. */
 export const FX_PARALLEL_SPREAD = 1.045;
 
 export function fxParallelSpread(): number {
