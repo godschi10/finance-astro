@@ -180,6 +180,19 @@ const cases = [
   }],
 ];
 
+// DECLARED COPY DIVERGENCES (fifth audit P0-4, King ruling) — oracle leaf
+// paths the Astro port deliberately no longer mirrors, each loudly declared
+// below. amount_1mngn.cfg.content.sections[3].body[1]: "splitting a large
+// transfer into a few smaller ones over separate days" is threshold-dodging
+// advice (fifth audit P0-4); the King ruled it replaced with the documentation
+// sentence on the amount pages. The PHP truth theme still carries the old
+// paragraph, so this ONE leaf is excluded from the deep comparison and the
+// corrected TS copy is fail-guarded in the declared-divergence block below.
+// See the next ship's CHANGELOG (companion leg rides the manager's fold).
+const DECLARED_COPY_DIVERGENCES = new Set([
+  "amount_1mngn.cfg.content.sections[3].body[1]",
+]);
+
 function cmp(a, b, path) {
   if (typeof a === "number" && typeof b === "number") {
     if (Object.is(a, b)) return null;
@@ -190,7 +203,10 @@ function cmp(a, b, path) {
   }
   if (typeof a !== typeof b) return `${path}: type ${typeof a} !== ${typeof b}`;
   if (a === null || b === null) return a === b ? null : `${path}: null mismatch`;
-  if (typeof a !== "object") return Object.is(a, b) ? null : `${path}: ${JSON.stringify(a)} !== ${JSON.stringify(b)}`;
+  if (typeof a !== "object") {
+    if (Object.is(a, b) || DECLARED_COPY_DIVERGENCES.has(path)) return null;
+    return `${path}: ${JSON.stringify(a)} !== ${JSON.stringify(b)}`;
+  }
   if (Array.isArray(a) !== Array.isArray(b)) return `${path}: array/object mismatch`;
   if (Array.isArray(a)) {
     if (a.length !== b.length) return `${path}: length ${a.length} !== ${b.length}`;
@@ -255,6 +271,24 @@ const extra = Object.keys(byName).filter((n) => !cases.some(([c]) => c === n) &&
   else pass++;
   console.log("DECLARED DIVERGENCE paye_bonus_exempt_base: PHP oracle tax=0 carries the B2 defect; TS applies NTA ss.4(2)(a)/26(2)/163(1)(t) (verified 11 Oct 2026), corrected value asserted. See CHANGELOG 0.7.55 Divergences.");
   console.log("DECLARED REMOVAL crypto_usdt: cryptoUsdt() deleted from src/lib/crypto.ts (D2, v0.7.55) — dead code; the P2P framing copy covers the need. See CHANGELOG 0.7.55 Divergences.");
+}
+// ── DECLARED COPY DIVERGENCE (fifth audit P0-4, King order) ──────────────────
+// amount_1mngn.cfg.content.sections[3].body[1]: the parity oracle carries the
+// PHP truth theme's transfer-splitting paragraph; the Astro port replaced it
+// with the documentation sentence — declared divergence, the King's P0-4
+// order (fifth audit, 2026-10-11): the threshold-dodging copy the PHP theme
+// pinned is replaced by the documentation sentence. The leaf is excluded from
+// the deep compare above; this guard fails loudly if the corrected copy ever
+// regresses. Adds no pass row — the parity count stays 94/0.
+// See the next ship's CHANGELOG.
+{
+  const d = A.amountPageData("1-million-naira-to-dollars", { ...liveFx, cached: true });
+  const para = d && d.cfg.content.sections[3].body[1];
+  if (!para || !para.includes("Larger transfers may need documentation — ask your bank what it requires.") || para.includes("splitting a large transfer")) {
+    fail++;
+    console.log("FAIL amount_1mngn[P0-4]: documentation sentence missing / splitting copy reverted (declared divergence guard)");
+  }
+  console.log("DECLARED DIVERGENCE amount_1mngn.cfg.content.sections[3].body[1]: declared divergence — the King's P0-4 order (fifth audit, 2026-10-11): the threshold-dodging copy the PHP theme pinned is replaced by the documentation sentence. See the next ship's CHANGELOG.");
 }
 console.log(`\npass=${pass} fail=${fail} cases=${cases.length} vectors=${vectors.length}`);
 if (missing.length) console.log("MISSING (no oracle):", missing.join(", "));

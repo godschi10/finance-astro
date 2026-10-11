@@ -146,6 +146,21 @@ export function amountFmt(value: number, cur: string): string {
   return symbol + formatGrouped(value, dec);
 }
 
+/** Unit-RATE rendering — the same significant-digit treatment the converter's
+ *  moneyTrim got in v0.7.53 (F6 small-rate half): below 1 the decimals widen
+ *  to hold 10 significant digits (trailing zeros trimmed), so 1 NGN prints
+ *  $0.000751, never "$0.0008" (P1-4 #6) or "$0.00" (P1-4 #7); rates ≥ 1 keep
+ *  the exact 6-decimal look. Mirrors the converter's moneyTrim semantics; not
+ *  imported from it (the converter page owns its inline copy). */
+export function amountRate(value: number, cur: string): string {
+  value = Number(value);
+  const a = Math.abs(value);
+  const dp = a !== 0 && a < 1 ? Math.min(20, 9 - Math.floor(Math.log10(a))) : 6;
+  const currencies = fxCurrencies();
+  const symbol = currencies[cur]?.symbol ?? "$";
+  return symbol + formatGrouped(value, dp).replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
+}
+
 /** Same-direction neighbours, amount-ascending (slugs). */
 export function amountSiblings(slug: string): string[] {
   const c = CFG[slug];
@@ -174,7 +189,7 @@ export function amountTokens(
 ): Record<string, string> {
   const live =
     `${amountFmt(d.amount, d.from)} converts to ${amountFmt(d.converted, d.to)}` +
-    ` at the current mid-market rate (1 ${d.from} = ${amountFmt(d.unit_rate, d.to)}).`;
+    ` at the current mid-market rate (1 ${d.from} = ${amountRate(d.unit_rate, d.to)}).`;
   const note = "the figure is computed live from the same engine as the main converter";
 
   const sibLinks = amountSiblings(slug).map(

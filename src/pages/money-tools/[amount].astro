@@ -2,16 +2,17 @@
 import ToolShell from "../../components/ToolShell.astro";
 import {
   amountSlugs, amountPageData, amountTokens, amountRenderText,
-  amountSiblings, amountOpposite, amountSeo, amountConfig, amountFmt,
+  amountSiblings, amountOpposite, amountSeo, amountConfig, amountFmt, amountRate,
 } from "../../lib/amount";
 import { FX_SNAPSHOT, FX_SNAPSHOT_LABEL } from "../../data/fx-snapshot";
-import { fxNumber, fxCurrencies } from "../../lib/fx";
-// The live template (page-amount-converter.php:118-125) prints the unit line
-// with gwill_fx_number($rate, 4) — 4dp on both directions, so a ₦→$ of
-// 0.0008 never truncates to "$0.00". Mirror that exactly (King accuracy order).
-const fxSym = (c: string) => fxCurrencies()[c]?.symbol ?? "$";
+// Unit line via amountRate() — the converter's moneyTrim treatment (v0.7.53,
+// F6 small-rate half) raised to lib level for this template: below 1 a rate
+// prints 10 significant digits (1 NGN = $0.000751, the true value — the old
+// 4dp mirror of page-amount-converter.php:118-125 printed $0.0008, and the
+// {LIVE} token truncated to "$0.00"; fifth audit P1-4 #6/#7). Rates ≥ 1 keep
+// the exact 6-decimal look.
 const unitLineOf = (u: number, r: number, from: string, to: string) =>
-  `1 ${from} = ${fxSym(to)}${fxNumber(u, 4)} · 1 ${to} = ${fxSym(from)}${fxNumber(r, 4)}`;
+  `1 ${from} = ${amountRate(u, to)} · 1 ${to} = ${amountRate(r, from)}`;
 export function getStaticPaths() {
   return amountSlugs().map((slug) => ({ params: { amount: slug } }));
 }
@@ -29,6 +30,15 @@ const sibs = amountSiblings(slug).map((s) => ({ slug: s, h1: amountSeo(s, amount
 const opps = amountOpposite(slug).map((s) => ({ slug: s, h1: amountSeo(s, amountConfig(s)!).h1 }));
 const equation = `${amountFmt(d.amount, d.from)} = ${amountFmt(d.converted, d.to)}`;
 const unitLine = unitLineOf(d.unit_rate, d.rev_rate, d.from, d.to);
+// Uniqueness pass (fifth audit P2-7 + Oct-8 audit P2): each page derives its
+// own neighbouring-amount ladder from the snapshot rate it already renders —
+// half, the page amount, double, five-fold, ten-fold. Pure arithmetic on the
+// existing unit_rate (amt × unit_rate === fxConvert(amt, from, to)); no new
+// fetches, no new engine calls, snapshot-stamped in the caption.
+const ladder = [0.5, 1, 2, 5, 10].map((m) => {
+  const amt = d.amount * m;
+  return { amt, out: d.unit_rate * amt };
+});
 ---
 <ToolShell title={`${d.seo.title} - GWill Finance`} description={d.seo.meta_desc} slug={slug} tool={d.seo.h1} lede={lede} verified={`Mid-market ${FX_SNAPSHOT.as_of} (${FX_SNAPSHOT_LABEL}) · receipt refreshes live`} badge={`Live rate · updated ${FX_SNAPSHOT.as_of}`} faqs={faqs} rawFaq ogImage={{ url: `${base}images/og/tool-amount.png`, width: 1200, height: 630, alt: "Amount Converter" }}>
 <div class="fx-card">
@@ -47,6 +57,20 @@ const unitLine = unitLineOf(d.unit_rate, d.rev_rate, d.from, d.to);
 {sections.map((s) => (
 <div><h2>{s.h2}</h2>{s.body.map((p) => (<p set:html={p}></p>))}</div>
 ))}
+<div>
+<h2>Nearby amounts at this snapshot rate</h2>
+<p>The brackets around {amountFmt(d.amount, d.from)}, all converted at this page's own snapshot rate ({FX_SNAPSHOT.as_of}):</p>
+<div class="st-table-wrap"><table class="st-table">
+<thead><tr><th scope="col">Amount</th><th scope="col">You would get</th></tr></thead>
+<tbody>
+{ladder.map((r) => (r.amt === d.amount ? (
+<tr><td><strong>{amountFmt(r.amt, d.from)}</strong></td><td><strong>{amountFmt(r.out, d.to)}</strong></td></tr>
+) : (
+<tr><td>{amountFmt(r.amt, d.from)}</td><td>{amountFmt(r.out, d.to)}</td></tr>
+)))}
+</tbody>
+</table></div>
+</div>
 <div class="hr"></div>
 {sibs.length > 0 && <h2>Neighbouring conversions</h2>}
 {sibs.length > 0 && <p>{sibs.map((s, i) => (<span><a class="slink" href={pageUrl(s.slug)}>{s.h1}</a>{i < sibs.length - 1 ? " · " : ""}</span>))}</p>}
@@ -56,8 +80,8 @@ const unitLine = unitLineOf(d.unit_rate, d.rev_rate, d.from, d.to);
 </ToolShell>
 <div data-amount-slug={slug} hidden></div>
 <script>
-import { amountPageData, amountFmt } from "../../lib/amount";
-import { fxFetchLive, fxNumber, fxCurrencies } from "../../lib/fx";
+import { amountPageData, amountFmt, amountRate } from "../../lib/amount";
+import { fxFetchLive } from "../../lib/fx";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS } from "../../data/tool-fields";
 /* The amount family has no inputs of its own — the figure lives in the URL —
@@ -81,8 +105,7 @@ const slug = holder && (holder as HTMLElement).dataset.amountSlug || "";
     const unit = document.getElementById("am-unit");
     const foot = document.getElementById("am-foot");
     if (fig) fig.textContent = amountFmt(d.converted, d.to);
-    const sym = (c: string) => fxCurrencies()[c]?.symbol ?? "$";
-    if (unit) unit.textContent = `1 ${d.from} = ${sym(d.to)}${fxNumber(d.unit_rate, 4)} · 1 ${d.to} = ${sym(d.from)}${fxNumber(d.rev_rate, 4)} · live · mid-market, before provider fees`;
+    if (unit) unit.textContent = `1 ${d.from} = ${amountRate(d.unit_rate, d.to)} · 1 ${d.to} = ${amountRate(d.rev_rate, d.from)} · live · mid-market, before provider fees`;
     if (foot) foot.textContent = "Live · " + (live.as_of || "just now");
   } catch { /* snapshot stands, honestly labeled */ }
 })();
