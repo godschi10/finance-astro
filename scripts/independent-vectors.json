@@ -1,0 +1,67 @@
+{
+  "_meta": {
+    "generated": "2026-10-08",
+    "tolerance": "±1 naira",
+    "assumptions": "8% pension on gross; deposits at end of period; day-count APR uses 365/days"
+  },
+  "tax": [
+    { "grossMonthly": 70000,   "rentAnnual": 0,       "newTaxYear": 0,        "oldTaxYear": 32528,    "takeHomeNewMonth": 64400,   "takeHomeOldMonth": 61689 },
+    { "grossMonthly": 100000,  "rentAnnual": 0,       "newTaxYear": 45600,    "oldTaxYear": 63600,    "takeHomeNewMonth": 88200,   "takeHomeOldMonth": 86700 },
+    { "grossMonthly": 150000,  "rentAnnual": 0,       "newTaxYear": 128400,   "oldTaxYear": 128400,   "takeHomeNewMonth": 127300,  "takeHomeOldMonth": 127300 },
+    { "grossMonthly": 200000,  "rentAnnual": 0,       "newTaxYear": 211200,   "oldTaxYear": 210320,   "takeHomeNewMonth": 166400,  "takeHomeOldMonth": 166473 },
+    { "grossMonthly": 300000,  "rentAnnual": 0,       "newTaxYear": 386160,   "oldTaxYear": 390320,   "takeHomeNewMonth": 243820,  "takeHomeOldMonth": 243473 },
+    { "grossMonthly": 300000,  "rentAnnual": 2400000, "newTaxYear": 304800,   "oldTaxYear": 390320,   "takeHomeNewMonth": 250600,  "takeHomeOldMonth": 243473, "rentRelief": 480000 },
+    { "grossMonthly": 400000,  "rentAnnual": 0,       "newTaxYear": 584880,   "oldTaxYear": 573440,   "takeHomeNewMonth": 319260,  "takeHomeOldMonth": 320213 },
+    { "grossMonthly": 500000,  "rentAnnual": 0,       "newTaxYear": 783600,   "oldTaxYear": 780800,   "takeHomeNewMonth": 394700,  "takeHomeOldMonth": 394933 },
+    { "grossMonthly": 500000,  "rentAnnual": 3000000, "newTaxYear": 693600,   "oldTaxYear": 780800,   "takeHomeNewMonth": 402200,  "takeHomeOldMonth": 394933, "rentRelief": 500000 },
+    { "grossMonthly": 1000000, "rentAnnual": 0,       "newTaxYear": 1777200,  "oldTaxYear": 1817600,  "takeHomeNewMonth": 771900,  "takeHomeOldMonth": 768533 },
+    { "grossMonthly": 5000000, "rentAnnual": 0,       "newTaxYear": 11730000, "oldTaxYear": 10016000, "takeHomeNewMonth": 3622500, "takeHomeOldMonth": 3765333 }
+  ],
+  "taxWinnerNoRent8pct": [
+    { "fromGrossMonthly": 0,       "winner": "new" },
+    { "fromGrossMonthly": 150500,  "winner": "old" },
+    { "fromGrossMonthly": 215000,  "winner": "new" },
+    { "fromGrossMonthly": 324500,  "winner": "old" },
+    { "fromGrossMonthly": 535000,  "winner": "new" },
+    { "fromGrossMonthly": 1285000, "winner": "old" }
+  ],
+  "grossToNet": [
+    { "targetNetMonth": 60000,   "grossMonth": 65217,   "taxMonth": 0,      "pensionMonth": 5217 },
+    { "targetNetMonth": 250000,  "grossMonth": 308192,  "taxMonth": 33537,  "pensionMonth": 24655 },
+    { "targetNetMonth": 300000,  "grossMonth": 374470,  "taxMonth": 44512,  "pensionMonth": 29958 },
+    { "targetNetMonth": 500000,  "grossMonth": 639581,  "taxMonth": 88415,  "pensionMonth": 51166 },
+    { "targetNetMonth": 1000000, "grossMonth": 1310539, "taxMonth": 205696, "pensionMonth": 104843 }
+  ],
+  "loanApr": [
+    { "type": "perDay",        "principal": 100000, "ratePctPerDay": 1,   "days": 30,   "total": 130000,   "effectiveAprPct": 2333.9 },
+    { "type": "flatMonthly",   "principal": 100000, "ratePctPerMonth": 1.5, "months": 12, "installment": 9833.33, "effectiveAprPct": 36.76 },
+    { "type": "flatMonthly",   "principal": 100000, "ratePctPerMonth": 5,   "months": 3,  "effectiveAprPct": 133.63 },
+    { "type": "reducing",      "principal": 100000, "ratePctPerYear": 30,   "months": 12, "installment": 9748.71, "total": 116984.55, "effectiveAprPct": 34.49 }
+  ],
+  "compound": [
+    { "principal": 100000, "deposit": 50000, "depositFreq": "monthly", "ratePctPerYear": 10, "years": 5, "compounding": "monthly", "depositTiming": "end",   "yearEnd": [738750, 1444385, 2223909, 3085060, 4036385] },
+    { "principal": 100000, "deposit": 50000, "depositFreq": "monthly", "ratePctPerYear": 10, "years": 5, "compounding": "monthly", "depositTiming": "start", "fv": 4068650 }
+  ],
+  "savingsGoal": [
+    { "target": 5000000, "haveNow": 500000, "ratePctPerYear": 15, "months": 24, "monthly": 155690 }
+  ],
+  "nairaValue": [
+    { "amount": 1000000, "inflationPct": 24, "years": 5, "futurePrice": 2931625, "lostPct": 65.9 },
+    { "futureAmount": 2000000, "inflationPct": 24, "years": 5, "worthToday": 682215, "retainedPct": 34.1, "discountPct": 65.9 },
+    { "goalToday": 10000000, "saved": 1000000, "returnPct": 15, "months": 60, "inflationPct": 24, "monthly": 307188, "extraVsNominal": 218079 }
+  ],
+  "dividend": [
+    { "price": 128, "dps": 11.76, "investment": 500000, "priceGrowthPct": 10, "dividendGrowthPct": 8, "years": 5, "mode": "drip", "convention": "growth before first payment", "endValue": 1221922, "totalDividends": 351823, "cagrPct": 19.57 },
+    { "price": 128, "dps": 11.76, "investment": 500000, "priceGrowthPct": 10, "dividendGrowthPct": 8, "years": 5, "mode": "drip", "convention": "year 1 at today's dividend", "endValue": 1186135, "totalDividends": 321245 },
+    { "price": 128, "dps": 11.76, "investment": 500000, "priceGrowthPct": 10, "dividendGrowthPct": 8, "years": 5, "mode": "drip", "convention": "growth before first payment, 10% WHT", "endValue": 1173810, "totalNetDividends": 310727, "cagrPct": 18.61 }
+  ],
+  "emergencyFund": [
+    { "essentials": 150000, "saved": 450000, "monthly": 80000, "coverMonths": 6, "inflationPct": 24,
+      "target": 900000, "gap": 450000, "runwayMonths": 3.0, "monthsNominal": 5.625,
+      "realTargetAtNominalHorizon": 995483, "monthsToMovingTarget": 7.17, "wholeMonthsToMovingTarget": 8 }
+  ],
+  "budget503020": [
+    { "income": 250000, "needs": 125000, "wants": 75000, "savings": 50000,
+      "needsShares": { "rent": 50000, "food": 31250, "transport": 18750, "data": 12500, "bills": 8750, "other": 3750 } }
+  ]
+}

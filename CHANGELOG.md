@@ -4,6 +4,69 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.54] — 2026-10-11 — a second oracle takes the stand, and immediately catches one
+
+The big audit's §0 made an uncomfortable point about `npm run check`: it proves
+the TS engines are FAITHFUL to the ported PHP, not that they are CORRECT. If
+the PHP carries a wrong assumption, the port reproduces it and the parity gate
+stays green forever. PROC-1 is the fix: `scripts/independent-vectors.json`, a
+from-scratch vector set generated 2026-10-08 by an independent implementation
+(NTA 2025 Fourth Schedule bands and rent relief; old PITA with
+CRA = max(₦200k, 1% of gross) + 20% of gross; standard annuity/IRR maths),
+copied VERBATIM from the audit's Appendix B — not one value regenerated,
+recomputed or hand-edited. `scripts/vectors-check.mjs` now runs every engine
+against BOTH oracles in the same `npm run check` gate; failure on either
+reddens the gate, and the independent one outranks parity. Naira fields carry
+the oracle's own ±₦1 tolerance; percentages and fractional months are held to
+half the oracle's last printed digit. Three oracle rows describe conventions
+the engines deliberately do not implement and are carried as clearly-labelled
+informational entries, excluded from pass/fail (see Divergences below); they
+are candidates for promotion by their own future legs (CALC-4, start/end
+toggle), not by editing this file.
+
+**HONEST GATE STATUS — the second oracle is red on its first run, and that is
+it working, not it failing.** Parity side: `pass=95 fail=0 cases=95
+vectors=95` — unchanged, still green. Independent side: `pass=104 fail=2
+informational=4 rows=37` — the two failures are one finding on one row:
+
+    tax[10] grossMonthly=5000000
+      oldTaxYear:      engine 10,112,000    vs oracle 10,016,000  (Δ +96,000/yr)
+      takeHomeOldMonth: engine 3,757,333.33  vs oracle  3,765,333  (Δ −8,000/mo)
+
+The new-regime figures on the same row match exactly (₦11,730,000 /
+₦3,622,500), as do all 10 lower tax rows and all 6 winner-flip points. The
+divergence is surgical: the old-regime (PITA) relief in `salary-tax.ts` is
+`₦200,000 + 20% of gross`, missing the `max(₦200,000, 1% of gross)` floor the
+law and the independent oracle both carry. The floor only binds when 1% of
+ANNUAL gross exceeds ₦200,000 — above ₦1,666,666.67 gross monthly — so every
+row the PHP parity oracle owns (highest old-regime row: ₦300k/month) sits
+below the threshold and parity never had the chance to catch it. This is the
+audit's thesis demonstrated live: a wrong assumption ported faithfully, green
+gate and all. Per the finding protocol, NOTHING was "fixed" this leg — not the
+vector, not the engine. The gate stays red by design until the correction
+lands at the PHP source of truth first and is ported, per the C1 procedure
+(fix PHP → regenerate the parity oracle by running PHP → port the same one-line
+change → bump the fx-history clock pin only if the regeneration moves it).
+
+### Divergences
+
+Convention from here on: every DELIBERATE engine-vs-oracle difference carries
+its source and the date it was verified, right here. Deliberate differences
+are decisions; anything else is a finding, and findings get reported, not
+listed.
+
+- (none added this leg — no deliberate difference was introduced or discovered)
+- UNRESOLVED FINDING, not a divergence: `tax[10]` (₦5M gross monthly,
+  old regime) — engine missing the `max(₦200k, 1% of gross)` CRA floor, above;
+  found 2026-10-11 by the independent oracle's first run. Gate red by design
+  pending the fix order.
+- Informational (alternative conventions, carried in the oracle, excluded from
+  pass/fail; verified 2026-10-11 against `compoundSchedule`/`dividendProject`):
+  compound start-of-period fv ₦4,068,650 (engine is end-of-period per CALC-9,
+  v0.7.47); dividend year-1-at-today's-dividend endValue ₦1,186,135; dividend
+  +10% WHT endValue ₦1,173,810 (`dividendProject` has no WHT parameter).
+
+
 ## [0.7.53] — 2026-10-11 — the swap bug the King caught on his phone: the glyph now follows the currency
 
 The King himself reported this one from his phone: "when I swap currency with

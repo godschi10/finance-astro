@@ -1,6 +1,8 @@
-// Vector check: runs every TS engine against scripts/php-harness/vectors.json
-// (the PHP truth oracle). Usage: node scripts/vectors-check.mjs
-// Exit 0 = all match, 1 = mismatches (printed with paths).
+// Vector check: runs every TS engine against BOTH oracles —
+//   1. scripts/php-harness/vectors.json  (the PHP truth oracle — parity)
+//   2. scripts/independent-vectors.json  (the independent oracle — PROC-1)
+// Usage: node scripts/vectors-check.mjs
+// Exit 0 = both oracles match, 1 = any mismatch (printed with paths).
 import { buildSync } from "esbuild";
 import { readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -220,4 +222,167 @@ const extra = Object.keys(byName).filter((n) => !cases.some(([c]) => c === n));
 console.log(`\npass=${pass} fail=${fail} cases=${cases.length} vectors=${vectors.length}`);
 if (missing.length) console.log("MISSING (no oracle):", missing.join(", "));
 if (extra.length) console.log("UNTESTED (no case):", extra.join(", "));
-process.exit(fail || missing.length || extra.length ? 1 : 0);
+const phpRed = Boolean(fail || missing.length || extra.length);
+
+// ── Second oracle: scripts/independent-vectors.json (PROC-1, v0.7.54) ──────
+//
+// The PHP parity set above proves the TS engines are FAITHFUL to the ported
+// PHP. It cannot prove them CORRECT: when the PHP carries a wrong assumption,
+// the port reproduces it and this gate stays green. The independent oracle is
+// a from-scratch vector set (audit 2026-10-08, Appendix B: NTA 2025 bands and
+// rent relief; old PITA with CRA = max(₦200k, 1% of gross) + 20% of gross;
+// standard annuity/IRR maths) computed WITHOUT the PHP sources, and it
+// outranks parity: failure on EITHER oracle reddens the gate. The file is
+// copied verbatim from the audit — never regenerate or hand-edit a value;
+// divergences are findings, reported, not smoothed over.
+const IV = JSON.parse(readFileSync(join(root, "scripts/independent-vectors.json"), "utf8"));
+
+let indPass = 0;
+const indFails = [];
+const indInfo = [];
+// Naira fields: the oracle's own tolerance (±₦1, its _meta).
+function naira(actual, expected, label) {
+  if (Math.abs(actual - expected) <= 1) { indPass++; return; }
+  indFails.push(`${label}: engine ${actual} !== oracle ${expected} (Δ ${actual - expected})`);
+}
+// Percent / fractional fields: half of the oracle's last PRINTED digit, so a
+// 2dp oracle value cannot hide a 1dp-sized drift (and 1dp cannot hide 0.1+).
+function precise(actual, expected, label) {
+  const s = String(expected), dot = s.indexOf(".");
+  const tol = 0.5 * Math.pow(10, dot < 0 ? 0 : -(s.length - dot - 1));
+  if (Math.abs(actual - expected) <= tol) { indPass++; return; }
+  indFails.push(`${label}: engine ${actual} !== oracle ${expected} (Δ ${actual - expected})`);
+}
+function expect(actual, expected, label) {
+  if (actual === expected) { indPass++; return; }
+  indFails.push(`${label}: engine ${JSON.stringify(actual)} !== oracle ${JSON.stringify(expected)}`);
+}
+
+// tax — new/old annual tax + monthly take-home (+ rent relief where present).
+IV.tax.forEach((r, i) => {
+  const nw = S.payeCalculate(r.grossMonthly, 0.08, 0, r.rentAnnual, true);
+  const ol = S.payeCalculate(r.grossMonthly, 0.08, 0, r.rentAnnual, false);
+  const p = `tax[${i}] grossMonthly=${r.grossMonthly}`;
+  naira(nw.tax_annual, r.newTaxYear, `${p}.newTaxYear`);
+  naira(ol.tax_annual, r.oldTaxYear, `${p}.oldTaxYear`);
+  naira(nw.net_monthly, r.takeHomeNewMonth, `${p}.takeHomeNewMonth`);
+  naira(ol.net_monthly, r.takeHomeOldMonth, `${p}.takeHomeOldMonth`);
+  if (r.rentRelief !== undefined) naira(nw.relief_annual, r.rentRelief, `${p}.rentRelief`);
+});
+
+// taxWinnerNoRent8pct — the compare engine must name the right winner at each
+// boundary (save_annual = new net − old net; a tie at gross 0, where both
+// regimes levy zero, resolves to "new" exactly as the oracle lists it).
+IV.taxWinnerNoRent8pct.forEach((r, i) => {
+  const c = S.payeCompare(r.fromGrossMonthly, 0.08, 0, 0);
+  expect(c.save_annual >= 0 ? "new" : "old", r.winner, `taxWinnerNoRent8pct[${i}] fromGrossMonthly=${r.fromGrossMonthly}.winner`);
+});
+
+// grossToNet — reverse solver gross/tax/pension per month.
+IV.grossToNet.forEach((r, i) => {
+  const g = G.reverseGross(r.targetNetMonth, 0.08);
+  naira(g.gross_monthly, r.grossMonth, `grossToNet[${i}].grossMonth`);
+  naira(g.tax_monthly, r.taxMonth, `grossToNet[${i}].taxMonth`);
+  naira(g.pension_monthly, r.pensionMonth, `grossToNet[${i}].pensionMonth`);
+});
+
+// loanApr — the REAL effective APR behind the quoted rate.
+IV.loanApr.forEach((r, i) => {
+  const rep = r.type === "perDay"
+    ? L.loanRepayment(r.principal, r.days, "days", r.ratePctPerDay, "daily")
+    : r.type === "flatMonthly"
+      ? L.loanRepayment(r.principal, r.months, "months", r.ratePctPerMonth, "flat")
+      : L.loanRepayment(r.principal, r.months, "months", r.ratePctPerYear, "reducing");
+  const p = `loanApr[${i}] ${r.type}`;
+  if (r.installment !== undefined) naira(rep.installment, r.installment, `${p}.installment`);
+  if (r.total !== undefined) naira(rep.total, r.total, `${p}.total`);
+  precise(rep.apr * 100, r.effectiveAprPct, `${p}.effectiveAprPct`);
+});
+
+// compound — the year-end series under the engine's end-of-period convention.
+IV.compound.forEach((r, i) => {
+  if (r.depositTiming !== "end") {
+    // Start-of-period deposits are an ALTERNATIVE convention this engine does
+    // not implement (CALC-9, v0.7.47: "Deposits land at the end of each
+    // period"; a start/end toggle is a separate leg). Informational.
+    indInfo.push(`compound[${i}] depositTiming=${r.depositTiming}: fv ${r.fv} — start-of-period convention, engine is end-of-period (CALC-9); informational, not gated`);
+    return;
+  }
+  const rows = SV.compoundSchedule(r.principal, r.deposit, r.ratePctPerYear / 100, r.years * 12, r.compounding, r.depositFreq);
+  r.yearEnd.forEach((exp, y) => naira(rows[y].balance, exp, `compound[${i}].yearEnd[${y}]`));
+});
+
+// savingsGoal — required monthly deposit.
+IV.savingsGoal.forEach((r, i) => {
+  const plan = SV.savingsCalculate(r.target, r.haveNow, r.ratePctPerYear / 100, r.months, "monthly");
+  naira(plan.monthly, r.monthly, `savingsGoal[${i}].monthly`);
+});
+
+// nairaValue — future price / worth-today / inflation-adjusted saving.
+IV.nairaValue.forEach((r, i) => {
+  if (r.amount !== undefined) {
+    const nv = NV.nairaValue(r.amount, r.inflationPct / 100, r.years);
+    naira(nv.future, r.futurePrice, `nairaValue[${i}].futurePrice`);
+    precise(nv.lost_fraction * 100, r.lostPct, `nairaValue[${i}].lostPct`);
+  } else if (r.futureAmount !== undefined) {
+    const pv = NV.nairaValuePv(r.futureAmount, r.inflationPct / 100, r.years);
+    naira(pv.pv, r.worthToday, `nairaValue[${i}].worthToday`);
+    precise(pv.discount_rate * 100, r.retainedPct, `nairaValue[${i}].retainedPct`);
+    precise(100 - pv.discount_rate * 100, r.discountPct, `nairaValue[${i}].discountPct`);
+  } else {
+    const save = NV.nairaValueSave(r.goalToday, r.saved, r.returnPct / 100, r.inflationPct / 100, r.months / 12);
+    naira(save.real_monthly, r.monthly, `nairaValue[${i}].monthly`);
+    naira(save.gap_monthly, r.extraVsNominal, `nairaValue[${i}].extraVsNominal`);
+  }
+});
+
+// dividend — only the engine's CURRENT convention is gated ("growth before
+// first payment"). The other two oracle rows (year 1 at today's dividend; 10%
+// WHT — dividendProject has no WHT parameter) are ALTERNATIVE conventions,
+// carried for the record; the CALC-4 fix may promote them later.
+IV.dividend.forEach((r, i) => {
+  if (r.convention !== "growth before first payment") {
+    indInfo.push(`dividend[${i}] "${r.convention}": endValue ${r.endValue} — alternative convention, not implemented by dividendProject(); informational, not gated`);
+    return;
+  }
+  const d = D.dividendProject(r.investment, r.price, r.dps, r.priceGrowthPct / 100, r.dividendGrowthPct / 100, r.years, r.mode === "drip");
+  naira(d.end_value, r.endValue, `dividend[${i}].endValue`);
+  naira(d.cash_total, r.totalDividends, `dividend[${i}].totalDividends`);
+  precise(d.cagr * 100, r.cagrPct, `dividend[${i}].cagrPct`);
+});
+
+// emergencyFund — incl. the moving-target finish line (v0.7.44 bisection).
+IV.emergencyFund.forEach((r, i) => {
+  const em = EM.emergencyFund(r.essentials, r.saved, r.monthly, r.coverMonths, r.inflationPct / 100);
+  const p = `emergencyFund[${i}]`;
+  naira(em.target, r.target, `${p}.target`);
+  naira(em.gap, r.gap, `${p}.gap`);
+  precise(em.runway_now, r.runwayMonths, `${p}.runwayMonths`);
+  // monthsNominal is what the page prints beside the real answer, derived from
+  // engine outputs exactly as the page does (gap ÷ monthly saving).
+  precise(em.gap / r.monthly, r.monthsNominal, `${p}.monthsNominal (page-derived gap/monthly)`);
+  precise(em.months_to_reach, r.monthsToMovingTarget, `${p}.monthsToMovingTarget`);
+  expect(Math.ceil(em.months_to_reach), r.wholeMonthsToMovingTarget, `${p}.wholeMonthsToMovingTarget`);
+  // realTargetAtNominalHorizon is NOT an engine output (engine real_target sits
+  // at the moving-target horizon), so there is nothing to gate it against.
+  indInfo.push(`${p}.realTargetAtNominalHorizon ${r.realTargetAtNominalHorizon} — not an engine output (engine real_target is at the moving-target horizon); informational, not gated`);
+});
+
+// budget503020 — the split plus the needs slice in exact naira. The oracle
+// names the allocator's "utilities" bucket "bills".
+IV.budget503020.forEach((r, i) => {
+  const b = B.budget503020(r.income);
+  naira(b.needs, r.needs, `budget503020[${i}].needs`);
+  naira(b.wants, r.wants, `budget503020[${i}].wants`);
+  naira(b.savings, r.savings, `budget503020[${i}].savings`);
+  const buckets = Object.fromEntries(AL.budgetAllocator(r.income).buckets.map((x) => [x.id, x.amount]));
+  for (const [k, exp] of Object.entries(r.needsShares)) {
+    naira(buckets[k === "bills" ? "utilities" : k] ?? NaN, exp, `budget503020[${i}].needsShares.${k}`);
+  }
+});
+
+console.log(`\nindependent: pass=${indPass} fail=${indFails.length} informational=${indInfo.length} rows=${IV.tax.length + IV.taxWinnerNoRent8pct.length + IV.grossToNet.length + IV.loanApr.length + IV.compound.length + IV.savingsGoal.length + IV.nairaValue.length + IV.dividend.length + IV.emergencyFund.length + IV.budget503020.length} (scripts/independent-vectors.json, generated ${IV._meta.generated})`);
+for (const line of indInfo) console.log(`INFO ${line}`);
+for (const f of indFails) console.log(`FAIL ${f}`);
+if (indFails.length) console.log("\nindependent oracle: DIVERGENCE — a finding, not a defect to smooth over. Do not edit the vector or the engine to clear it; report it.");
+process.exit(phpRed || indFails.length ? 1 : 0);
