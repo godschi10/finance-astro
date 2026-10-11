@@ -1,0 +1,105 @@
+{
+  "_meta": {
+    "generated": "2026-10-11",
+    "source": "fifth audit Appendix A, statute-derived",
+    "provenance": "From the statute and first principles, not from the PHP engine (finance-astro-calculator-audit-1.md, Appendix A). Transcribed verbatim - never regenerate or hand-edit a value; a divergence is a finding, reported, not smoothed over.",
+    "tolerance": "naira fields +-1; percentages/fractions to half the printed digit",
+    "assumptions": "A1/A2: NTA 2025 bands, 8% pension on gross, no NHF/NHIS, rent relief 20% of annual rent capped at N500k; A3: day-count APR 365/days, the engine's seed convention",
+    "gating": {
+      "tax": "gated",
+      "taxRent": "gated",
+      "taxOldRegime": "gated - the CRA floor is fixed as of v0.7.55",
+      "grossToNet": "gated - including the rent variant: reverseGross() accepts annualRent (verified in src/lib/gross-to-net.ts)",
+      "loanApr": "gated - current engine convention",
+      "loanFeeApr": "informational - the engine has no fee parameter; the S3 feature will promote these",
+      "dividendGross": "cross-note - already gated in v1 (independent-vectors.json dividend[0]); not duplicated as gated",
+      "dividendWht": "informational - no WHT parameter on dividendProject() until the S3 feature",
+      "transfer": "informational until the P0-1 fix lands - the next batch fixes the direction, then these promote (the page shows $78.51 for P2P today; these rows would FAIL by design)",
+      "savingsEffective": "informational - the P2-1 disclosure finding (15% nominal monthly != effective); promotes when the disclosure lands",
+      "stepUpDeposits": "informational - the P2-2 feature will promote these",
+      "emergencyMonths": "gated (cross-note: already gated in v1 as emergencyFund[0].monthsToMovingTarget)",
+      "emergencyPageDerivations": "informational - page derivations, not engine outputs",
+      "inflationDefault": "informational - the P1-3/D1 default-change context rows; promote when the default-change decision lands"
+    }
+  },
+  "tax": [
+    { "grossMonthly": 70000,    "newTaxYear": 0,        "takeHomeNewMonth": 64400 },
+    { "grossMonthly": 72464,    "newTaxYear": 0,        "takeHomeNewMonth": 66667,  "note": "the N800k zero-band boundary after 8% pension (0.92 x 869,568 = 800,002.56); NMW-adjacent new coverage" },
+    { "grossMonthly": 100000,   "newTaxYear": 45600,    "takeHomeNewMonth": 88200 },
+    { "grossMonthly": 150000,   "newTaxYear": 128400,   "takeHomeNewMonth": 127300 },
+    { "grossMonthly": 200000,   "newTaxYear": 211200,   "takeHomeNewMonth": 166400 },
+    { "grossMonthly": 300000,   "newTaxYear": 386160,   "takeHomeNewMonth": 243820 },
+    { "grossMonthly": 400000,   "newTaxYear": 584880,   "takeHomeNewMonth": 319260 },
+    { "grossMonthly": 600000,   "newTaxYear": 982320,   "takeHomeNewMonth": 470140, "note": "new coverage the first oracle lacked" },
+    { "grossMonthly": 1000000,  "newTaxYear": 1777200,  "takeHomeNewMonth": 771900 },
+    { "grossMonthly": 2000000,  "newTaxYear": 4066800,  "takeHomeNewMonth": 1501100, "note": "new coverage the first oracle lacked" },
+    { "grossMonthly": 5000000,  "newTaxYear": 11730000, "takeHomeNewMonth": 3622500 },
+    { "grossMonthly": 10000000, "newTaxYear": 25530000, "takeHomeNewMonth": 7072500, "note": "new coverage the first oracle lacked; guards the CRA-floor class forever" }
+  ],
+  "taxRent": [
+    { "grossMonthly": 300000, "rentAnnual": 1200000, "newTaxYear": 342960, "takeHomeNewMonth": 247420 },
+    { "grossMonthly": 300000, "rentAnnual": 3000000, "newTaxYear": 301800, "takeHomeNewMonth": 250850, "note": "relief capped at N500k" },
+    { "grossMonthly": 500000, "rentAnnual": 2400000, "newTaxYear": 697200, "takeHomeNewMonth": 401900 }
+  ],
+  "taxOldRegime": [
+    { "grossMonthly": 300000, "oldTaxYear": 390320, "takeHomeOldMonth": 243473, "note": "the CRA floor is fixed as of v0.7.55" }
+  ],
+  "grossToNet": [
+    { "targetNetMonth": 60000,   "grossMonth": 65217 },
+    { "targetNetMonth": 100000,  "grossMonth": 115090 },
+    { "targetNetMonth": 250000,  "grossMonth": 308192 },
+    { "targetNetMonth": 300000,  "grossMonth": 374470 },
+    { "targetNetMonth": 500000,  "grossMonth": 639581 },
+    { "targetNetMonth": 1000000, "grossMonth": 1310539 },
+    { "targetNetMonth": 250000,  "rentAnnual": 2400000, "grossMonth": 299233, "note": "rent variant - reverseGross() accepts annualRent" }
+  ],
+  "loanApr": [
+    { "type": "perDay",      "principal": 100000, "ratePctPerDay": 1,   "days": 30,    "installmentNote": "one payment", "total": 130000,  "effectiveAprPct": 2333.95 },
+    { "type": "flatMonthly", "principal": 100000, "ratePctPerMonth": 1.5, "months": 12, "installment": 9833.33,  "total": 118000,  "effectiveAprPct": 36.76 },
+    { "type": "flatMonthly", "principal": 100000, "ratePctPerMonth": 5,   "months": 3,  "installment": 38333.33, "total": 115000,  "effectiveAprPct": 133.63 },
+    { "type": "flatMonthly", "principal": 100000, "ratePctPerMonth": 5,   "months": 12, "installment": 13333.33, "total": 160000,  "effectiveAprPct": 154.42, "note": "new - not in the first oracle" },
+    { "type": "reducing",    "principal": 100000, "ratePctPerYear": 30,   "months": 12, "installment": 9748.71,  "total": 116985,  "effectiveAprPct": 34.49 }
+  ],
+  "loanFeeApr": [
+    { "principal": 100000, "days": 30,   "ratePctPerDay": 1, "upfrontFeePct": 5, "label": "30 days, 1%/day, 5% upfront fee",      "effectiveAprPct": 4443,  "approx": true },
+    { "principal": 100000, "months": 3,  "ratePctPerMonth": 5, "upfrontFeePct": 5, "label": "flat 5%/month x 3, 5% upfront fee", "effectiveAprPct": 220.6, "approx": true }
+  ],
+  "dividendGross": [
+    { "label": "GTCO DRIP gross", "price": 128, "dps": 11.76, "investment": 500000, "priceGrowthPct": 10, "dividendGrowthPct": 8, "years": 5, "mode": "drip", "endValue": 1221922, "totalDividends": 351823, "cagrPct": 19.57, "note": "already gated in v1 - cross-note, not duplicated as gated" }
+  ],
+  "dividendWht": [
+    { "label": "GTCO DRIP with 10% WHT", "price": 128, "dps": 11.76, "investment": 500000, "priceGrowthPct": 10, "dividendGrowthPct": 8, "years": 5, "mode": "drip", "whtPct": 10, "endValue": 1173810, "totalNetDividends": 310727, "cagrPct": 18.61, "netStartingYieldPct": 8.27, "note": "informational - no WHT parameter on dividendProject() until the S3 feature" }
+  ],
+  "transfer": [
+    { "amountNgn": 100000, "rate": "mid-market (1/1331)", "usd": 75.13 },
+    { "amountNgn": 100000, "rate": "street N1,362/$", "rateNgnPerUsd": 1362, "usd": 73.42 },
+    { "amountNgn": 100000, "rate": "street N1,370/$", "rateNgnPerUsd": 1370, "usd": 72.99 },
+    { "amountNgn": 100000, "rate": "street N1,390/$", "rateNgnPerUsd": 1390, "usd": 71.94 }
+  ],
+  "transferNote": "The page currently shows $78.51 for P2P - these rows would FAIL today BY DESIGN (the known P0-1 finding); informational until the direction fix lands, then they promote.",
+  "savingsEffective": {
+    "target": 5000000, "haveNow": 500000, "months": 24, "ratePctPerYear": 15,
+    "nominalMonthly": 155689.90, "effectiveAnnualMonthly": 157606.51, "effectiveYieldPct": 16.08,
+    "note": "15% nominal monthly != effective - the P2-1 disclosure finding; the seed's nominal figure is already gated in v1 (savingsGoal monthly 155690)"
+  },
+  "stepUpDeposits": {
+    "context": "starting monthly deposit for the seed target (N10M goal, N1M saved, 15% return, 60 months, 24% inflation), by yearly deposit growth",
+    "rows": [
+      { "growthPct": 0,  "monthly": 307188, "note": "the 0% baseline is already gated in v1 (nairaValue[2].monthly 307188)" },
+      { "growthPct": 10, "monthly": 258803 },
+      { "growthPct": 15, "monthly": 237452 },
+      { "growthPct": 20, "monthly": 217855 },
+      { "growthPct": 24, "monthly": 203364 }
+    ]
+  },
+  "emergency": {
+    "essentials": 150000, "saved": 450000, "monthly": 80000, "coverMonths": 6, "inflationPct": 24,
+    "monthsToMovingTarget": 7.17, "inflatedTarget": 1023391, "progressVsInflatedPct": 44.0,
+    "note": "7.17 months is gated (also gated in v1 - cross-note); inflated target and progress vs it are page derivations, not engine outputs"
+  },
+  "inflationDefault": [
+    { "amount": 1000000, "years": 5, "inflationPct": 24,    "futurePrice": 2931625, "note": "already gated in v1 (nairaValue[0])" },
+    { "amount": 1000000, "years": 5, "inflationPct": 19.57, "futurePrice": 2444056, "note": "food inflation" },
+    { "amount": 1000000, "years": 5, "inflationPct": 15.39, "futurePrice": 2045695, "note": "national inflation" }
+  ]
+}

@@ -1,8 +1,9 @@
-// Vector check: runs every TS engine against BOTH oracles —
+// Vector check: runs every TS engine against THREE oracles —
 //   1. scripts/php-harness/vectors.json  (the PHP truth oracle — parity)
 //   2. scripts/independent-vectors.json  (the independent oracle — PROC-1)
+//   3. scripts/appendix-a-vectors.json   (the fifth audit's Appendix A — statute-derived)
 // Usage: node scripts/vectors-check.mjs
-// Exit 0 = both oracles match, 1 = any mismatch (printed with paths).
+// Exit 0 = all three oracles match, 1 = any mismatch (printed with paths).
 import { buildSync } from "esbuild";
 import { readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -442,4 +443,123 @@ console.log(`\nindependent: pass=${indPass} fail=${indFails.length} informationa
 for (const line of indInfo) console.log(`INFO ${line}`);
 for (const f of indFails) console.log(`FAIL ${f}`);
 if (indFails.length) console.log("\nindependent oracle: DIVERGENCE — a finding, not a defect to smooth over. Do not edit the vector or the engine to clear it; report it.");
-process.exit(phpRed || indFails.length ? 1 : 0);
+// ── Third oracle: scripts/appendix-a-vectors.json (fifth audit Appendix A, 2026-10-11) ──
+//
+// The independent oracle above is law-derived but was seeded from the same
+// audit pass that found the CRA-floor bug. The fifth audit's Appendix A
+// derives its vectors from the STATUTE and first principles — independently of
+// both earlier oracles — and extends coverage where set #2 was thin (the NMW
+// boundary at ₦72,464/mo, ₦600k/₦2M/₦10M gross rows, the ₦100k net→gross row,
+// the rent variant of the reverse solver, and flat 5%/mo × 12 APR). Same
+// tolerances as the independent oracle: naira ±₦1 (the audit's own), percent /
+// fractional fields to half the printed digit. Gated vs informational EXACTLY
+// as the file's _meta.gating map records; every informational row prints an
+// INFO line naming its promote condition. Failure on ANY gated row reddens the
+// gate — and is a FINDING, reported verbatim, never smoothed over.
+const AV = JSON.parse(readFileSync(join(root, "scripts/appendix-a-vectors.json"), "utf8"));
+
+let aPass = 0;
+const aFails = [];
+const aInfo = [];
+function aNaira(actual, expected, label) {
+  if (Math.abs(actual - expected) <= 1) { aPass++; return; }
+  aFails.push(`${label}: engine ${actual} !== oracle ${expected} (Δ ${actual - expected})`);
+}
+function aPrecise(actual, expected, label) {
+  const s = String(expected), dot = s.indexOf(".");
+  const tol = 0.5 * Math.pow(10, dot < 0 ? 0 : -(s.length - dot - 1));
+  if (Math.abs(actual - expected) <= tol) { aPass++; return; }
+  aFails.push(`${label}: engine ${actual} !== oracle ${expected} (Δ ${actual - expected})`);
+}
+
+// A1 · tax — new regime, 8% pension on gross, no NHF/NHIS (rent rows separate),
+// plus the old-regime row (the CRA floor is fixed as of v0.7.55, so it gates).
+AV.tax.forEach((r, i) => {
+  const nw = S.payeCalculate(r.grossMonthly, 0.08, 0, 0, true);
+  const p = `tax[${i}] grossMonthly=${r.grossMonthly}`;
+  aNaira(nw.tax_annual, r.newTaxYear, `${p}.newTaxYear`);
+  aNaira(nw.net_monthly, r.takeHomeNewMonth, `${p}.takeHomeNewMonth`);
+});
+AV.taxRent.forEach((r, i) => {
+  const nw = S.payeCalculate(r.grossMonthly, 0.08, 0, r.rentAnnual, true);
+  const p = `taxRent[${i}] grossMonthly=${r.grossMonthly} rentAnnual=${r.rentAnnual}`;
+  aNaira(nw.tax_annual, r.newTaxYear, `${p}.newTaxYear`);
+  aNaira(nw.net_monthly, r.takeHomeNewMonth, `${p}.takeHomeNewMonth`);
+});
+AV.taxOldRegime.forEach((r, i) => {
+  const ol = S.payeCalculate(r.grossMonthly, 0.08, 0, 0, false);
+  const p = `taxOldRegime[${i}] grossMonthly=${r.grossMonthly}`;
+  aNaira(ol.tax_annual, r.oldTaxYear, `${p}.oldTaxYear`);
+  aNaira(ol.net_monthly, r.takeHomeOldMonth, `${p}.takeHomeOldMonth`);
+});
+
+// A2 · net→gross — reverseGross() accepts annualRent (4th param, verified in
+// src/lib/gross-to-net.ts), so the rent variant gates with the rest.
+AV.grossToNet.forEach((r, i) => {
+  const g = G.reverseGross(r.targetNetMonth, 0.08, 0, r.rentAnnual ?? 0);
+  aNaira(g.gross_monthly, r.grossMonth,
+    `grossToNet[${i}] targetNetMonth=${r.targetNetMonth}${r.rentAnnual ? ` rentAnnual=${r.rentAnnual}` : ""}.grossMonth`);
+});
+
+// A3 · loan — effective APR under the engine's seed convention. The perDay row
+// has no numeric installment in the audit ("one payment"), so total + APR gate.
+AV.loanApr.forEach((r, i) => {
+  const rep = r.type === "perDay"
+    ? L.loanRepayment(r.principal, r.days, "days", r.ratePctPerDay, "daily")
+    : r.type === "flatMonthly"
+      ? L.loanRepayment(r.principal, r.months, "months", r.ratePctPerMonth, "flat")
+      : L.loanRepayment(r.principal, r.months, "months", r.ratePctPerYear, "reducing");
+  const p = `loanApr[${i}] ${r.type}${r.months ? ` ×${r.months}` : ` ${r.days}d`}`;
+  if (r.installment !== undefined) aNaira(rep.installment, r.installment, `${p}.installment`);
+  if (r.total !== undefined) aNaira(rep.total, r.total, `${p}.total`);
+  aPrecise(rep.apr * 100, r.effectiveAprPct, `${p}.effectiveAprPct`);
+});
+AV.loanFeeApr.forEach((r, i) => {
+  aInfo.push(`loanFeeApr[${i}] ${r.label}: APR ≈ ${r.effectiveAprPct}% — loanRepayment()/loanEffectiveApr() carry no fee parameter; informational, promotes when the S3 fee feature lands`);
+});
+
+// A4 · dividend — the gross DRIP row is already gated in v1 (cross-note, not
+// re-gated); the 10% WHT row waits on a WHT parameter (the S3 feature).
+aInfo.push(`dividendGross "${AV.dividendGross[0].label}": end ${AV.dividendGross[0].endValue} · dividends ${AV.dividendGross[0].totalDividends} · CAGR ${AV.dividendGross[0].cagrPct}% — already gated in v1 (independent-vectors.json dividend[0]); cross-note, not re-gated`);
+aInfo.push(`dividendWht "${AV.dividendWht[0].label}": end ${AV.dividendWht[0].endValue} · net dividends ${AV.dividendWht[0].totalNetDividends} · CAGR ${AV.dividendWht[0].cagrPct}% — dividendProject() has no WHT parameter; informational, promotes when the S3 WHT feature lands`);
+
+// A5 · transfer — would FAIL today BY DESIGN (P0-1: the page shows $78.51 for
+// P2P); informational until the direction fix lands, then they promote.
+AV.transfer.forEach((r, i) => {
+  aInfo.push(`transfer[${i}] ₦${r.amountNgn} → $${r.usd} (${r.rate}) — P0-1 pending (page shows $78.51 for P2P); informational, promotes when the P0-1 direction fix lands`);
+});
+
+// A6 · savings effective-annual — the engine computes nominal-periodic only.
+aInfo.push(`savingsEffective effectiveAnnualMonthly ₦${AV.savingsEffective.effectiveAnnualMonthly}/mo vs the seed's nominal ₦${AV.savingsEffective.nominalMonthly}/mo (already gated in v1 as savingsGoal monthly 155690) — engine computes nominal-periodic only; informational, promotes when the P2-1 disclosure fix lands`);
+aInfo.push(`savingsEffective effectiveYieldPct ${AV.savingsEffective.effectiveYieldPct}% of 15% nominal monthly — P2-1 disclosure finding; informational, same promote condition`);
+
+// A7 · step-up deposits — inflationAdjustedGoal() has no yearly deposit-growth
+// parameter (the P2-2 feature); the 0% baseline is v1's gated nairaValue row.
+AV.stepUpDeposits.rows.forEach((r, i) => {
+  aInfo.push(`stepUpDeposits[${i}] yearly growth ${r.growthPct}%: starting deposit ₦${r.monthly}/mo${r.growthPct === 0 ? " (0% baseline already gated in v1 as nairaValue[2].monthly 307188)" : ""} — inflationAdjustedGoal() has no yearly deposit-growth parameter; informational, promotes when the P2-2 feature lands`);
+});
+
+// A8 · emergency — the moving-target finish line gates (it is an engine
+// output, and v1 gates it too — cross-note); the inflated target and the
+// progress-vs-inflated reading are page derivations, informational.
+{
+  const em = EM.emergencyFund(AV.emergency.essentials, AV.emergency.saved, AV.emergency.monthly,
+    AV.emergency.coverMonths, AV.emergency.inflationPct / 100);
+  aPrecise(em.months_to_reach, AV.emergency.monthsToMovingTarget,
+    "emergency.monthsToMovingTarget (also gated in v1 — cross-note)");
+  aInfo.push(`emergency.inflatedTarget ${AV.emergency.inflatedTarget} — page-derivation row per the wiring map (the engine's progress_pct measures the NOMINAL target: 50% on this seed, not the inflated 44.0%); informational, promotes when the emergency-page derivation contract is next gated`);
+  aInfo.push(`emergency.progressVsInflatedPct ${AV.emergency.progressVsInflatedPct}% = saved ÷ inflated target — page derivation, not an engine output; informational, same promote condition`);
+}
+
+// A9 · inflation-default — P1-3/D1 default-change context rows.
+AV.inflationDefault.forEach((r, i) => {
+  aInfo.push(`inflationDefault[${i}] ₦1M after 5y at ${r.inflationPct}%: ₦${r.futurePrice}${r.inflationPct === 24 ? " (already gated in v1 as nairaValue[0])" : ""} — P1-3/D1 default-change context row; informational, promotes when the D1 default-change decision lands`);
+});
+
+const aGatedRows = AV.tax.length + AV.taxRent.length + AV.taxOldRegime.length
+  + AV.grossToNet.length + AV.loanApr.length + 1; // + the emergency 7.17 gate
+console.log(`\nappendix-a: pass=${aPass} fail=${aFails.length} informational=${aInfo.length} gated rows=${aGatedRows} (scripts/appendix-a-vectors.json, generated ${AV._meta.generated}, ${AV._meta.source})`);
+for (const line of aInfo) console.log(`INFO ${line}`);
+for (const f of aFails) console.log(`FAIL ${f}`);
+if (aFails.length) console.log("\nappendix-a oracle: DIVERGENCE — a finding, not a defect to smooth over. Do not edit the vector or the engine to clear it; report it.");
+process.exit(phpRed || indFails.length || aFails.length ? 1 : 0);
