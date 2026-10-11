@@ -31,6 +31,16 @@
  *                ₦500k must answer "Out of range", never a negative
  *                take-home; no "₦-" figure anywhere in the rendered DOM.
  *                Other tools run no such case and print no cell for it.
+ *   swap       — currency-converter only (the King's phone-reported bug):
+ *                one tap on #cc-swap must swap from/to AND carry the
+ *                amount field with them — data-cur, in-field glyph, label
+ *                unit words and the hero all follow to the swapped pair
+ *                with ZERO further interaction (a programmatic value write
+ *                fires no event, so the swap handler dispatches user-shaped
+ *                change events for money-controls to hear; the expected
+ *                hero is derived from the page's own printed unit rate,
+ *                never a hardcoded number). Other tools run no such case
+ *                and print no cell for it.
  *
  * APPLICABILITY (read off the repo's own table, never invented): seeds/required
  * per tool are parsed from src/data/tool-fields.ts TOOL_FIELDS. A tool with no
@@ -715,6 +725,53 @@ async function runTool(slug, base, fields) {
     } catch (e) { R.negnet = rec("fail", `harness: ${e.message}`); }
   }
 
+  /* SWAP (currency-converter only) — the King's own phone report: "when I
+     swap currency with the swap icon below it doesn't change the currency
+     instantly." The swap handler writes select values PROGRAMMATICALLY,
+     which fires no event — and money-controls.js (owner of the in-field
+     glyph, the label's [data-cur-unit] words and the announced switch)
+     re-syncs only at boot and on delegated change/input on document, so
+     before the fix the figures moved while the field stayed on the OLD
+     currency. One tap must move everything with ZERO further interaction.
+     The expected hero is derived from the page's OWN printed unit rate —
+     the engine is linear, so the swapped pair's conversion is the
+     reciprocal of the printed pair-rate — never from a hardcoded rate. */
+  if (slug === "currency-converter") {
+    try {
+      await ev(`document.querySelector("[data-sf-reset]").click()`);
+      await waitStable(JS_SETTLE_KEY, 800, 20000, "swap base");
+      await ev(setCtlExpr({ id: "cc-amt", kind: "text" }, "50000"));
+      const SWAP_STATE = `(() => { const f = document.getElementById("cc-from"), t = document.getElementById("cc-to");
+        const fld = document.getElementById("cc-amt").closest(".field");
+        const opt = Array.prototype.find.call(t.options, (o) => o.value === t.value);
+        return { from: f.value, to: t.value, cur: fld.getAttribute("data-cur"),
+          glyph: (fld.querySelector(".fi-sym") || { textContent: null }).textContent,
+          unit: (fld.querySelector("[data-cur-unit]") || { textContent: null }).textContent,
+          unitLine: document.getElementById("cc-unit").textContent,
+          hero: document.getElementById("cc-fig").textContent,
+          toName: opt ? opt.text.split("—").pop().trim() : "" }; })()`;
+      const pre = await waitStable(SWAP_STATE, 800, 20000, "swap pre-state");
+      await ev(`document.getElementById("cc-swap").click()`);
+      const post = await waitStable(SWAP_STATE, 800, 20000, "swap settle");
+      /* The page's own printed pair-rate — "1 USD = ₦1,330.995081" →
+         1330.995081 — and the symbol it prints for the TO currency, which
+         is the NEW from-currency after the swap. */
+      const rate = Number(pre.unitLine.replace(/^[^=]*=\s*/, "").replace(/[^\d.]/g, ""));
+      const preSym = (pre.unitLine.match(/=\s*([^\d.,-]+)/) || [])[1] || "";
+      const want = 50000 / rate; /* linear engine: NGN→USD is the reciprocal */
+      const heroNum = Number(String(post.hero).replace(/[^\d.]/g, ""));
+      const bad = [];
+      if (!(post.from === pre.to && post.to === pre.from)) bad.push(`values not swapped: from=${post.from} to=${post.to}`);
+      if (post.cur !== pre.to) bad.push(`data-cur=${JSON.stringify(post.cur)} wanted ${pre.to}`);
+      if (!(post.glyph === preSym && post.glyph !== pre.glyph)) bad.push(`glyph=${JSON.stringify(post.glyph)} wanted ${JSON.stringify(preSym)}`);
+      if (post.unit !== `in ${pre.toName} (${preSym})`) bad.push(`unit=${JSON.stringify(post.unit)} wanted "in ${pre.toName} (${preSym})"`);
+      if (!(Number.isFinite(want) && Math.abs(heroNum - want) < 0.0051)) bad.push(`hero=${JSON.stringify(post.hero)} wanted ${want.toFixed(2)} at the hero's own 2dp`);
+      R.swap = bad.length === 0
+        ? rec("pass", `one tap: ${pre.from}→${pre.to} flipped to ${post.from}→${post.to}, glyph ${JSON.stringify(pre.glyph)}→${JSON.stringify(post.glyph)}, hero ${JSON.stringify(post.hero)} = 50000/${rate} (page-printed rate)`)
+        : rec("fail", bad.join(" | "));
+    } catch (e) { R.swap = rec("fail", `harness: ${e.message}`); }
+  }
+
   /* CONSOLE — any error/rejection captured while driving this tool fails it. */
   const errs = cap.filter((m) => m.type === "error" || m.type === "exception");
   R.console = errs.length === 0
@@ -814,7 +871,7 @@ async function main() {
   }
 
   /* table + result file; non-zero exit on any failure. */
-  const ORDER = ["reset", "clear", "empty", "zero", "derived", "adversarial", "stale", "negnet", "rails", "console"];
+  const ORDER = ["reset", "clear", "empty", "zero", "derived", "adversarial", "stale", "negnet", "swap", "rails", "console"];
   let tp = 0, tf = 0, ts = 0;
   console.log("\n" + ["tool", ...ORDER].join(" | "));
   for (const slug of slugs) {

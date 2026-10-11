@@ -78,7 +78,16 @@ const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).val
    that matters instead of re-rounding the theoretical rate. */
 function moneyTrim(v: number, code: string): string {
   const sym: Record<string, string> = { NGN: "₦", USD: "$", GBP: "£", EUR: "€" };
-  return (sym[code] ?? "") + fxNumber(v, 6).replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
+  /* F6, small-rate half — a fixed 6-decimal cap is a SIGNIFICANT-figure cap
+     in disguise once the rate dips below 1: NGN→USD printed "0.000751"
+     while the hero printed 37.57 for 50,000, and 0.000751 × 50000 = 37.55 —
+     the unit line stopped reproducing the conversion it sits under. Below 1
+     the fraction span widens to hold 10 SIGNIFICANT digits instead
+     (trailing zeros still trimmed); rates ≥ 1 keep the exact 6-decimal look
+     they have always had. */
+  const a = Math.abs(v);
+  const dp = a !== 0 && a < 1 ? Math.min(20, 9 - Math.floor(Math.log10(a))) : 6;
+  return (sym[code] ?? "") + fxNumber(v, dp).replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
 }
 function render() {
   const raw = amt.value.trim();
@@ -114,7 +123,19 @@ partoggle.addEventListener("change", render);
 from.addEventListener("change", render);
 to.addEventListener("change", render);
 document.getElementById("cc-swap")?.addEventListener("click", () => {
-  const v = from.value; from.value = to.value; to.value = v; render();
+  const v = from.value; from.value = to.value; to.value = v;
+  /* A programmatic .value write fires NO event — and money-controls.js, the
+     owner of the in-field glyph, the label's [data-cur-unit] words and the
+     announced unit switch, re-syncs only at boot and on delegated
+     change/input events on document. Without these dispatches the swap
+     moves the figures but leaves the amount field on the OLD currency (the
+     King's phone-reported bug). Dispatch user-shaped bubbling change events
+     so every delegated listener hears the swap exactly as if both selects
+     were flipped by hand; render() stays (idempotent — the selects' own
+     change listeners re-run it too). */
+  from.dispatchEvent(new Event("change", { bubbles: true }));
+  to.dispatchEvent(new Event("change", { bubbles: true }));
+  render();
 });
 smartFields.register(TOOL_FIELDS["currency-converter"]);
 sfBind("currency-converter", gv);

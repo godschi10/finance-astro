@@ -4,6 +4,67 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.53] — 2026-10-11 — the swap bug the King caught on his phone: the glyph now follows the currency
+
+The King himself reported this one from his phone: "when I swap currency with
+the swap icon below it doesn't change the currency instantly." His screenshot
+showed the exact split state — FROM read NGN, TO read USD, "YOU GET 37.57" had
+recomputed for the swapped pair — but the amount field still read "$ 50000"
+under the label "AMOUNT IN US DOLLAR ($)", the OLD currency, until the next
+real interaction happened to move it.
+
+**THE SWAP — a programmatic write nobody heard.** What was wrong: the swap
+handler set both select values programmatically and called render() directly.
+render() re-declares `data-cur` and recomputes the receipt, so the figures
+were right — but money-controls.js owns the in-field glyph, the label's
+`[data-cur-unit]` words and the announced unit switch, and it re-syncs only at
+boot and on delegated change/input events on `document`. A programmatic
+`.value` write fires NO event, so the glyph, the label words and the
+live-region voice all stayed on the old currency. What changed: after
+swapping the values the handler dispatches user-shaped bubbling change events
+on BOTH selects (`new Event("change", { bubbles: true })`), so every delegated
+listener hears the swap exactly as if both selects were flipped by hand — the
+glyph and label follow instantly, the polite live region announces
+"Amount is now in Nigerian Naira (₦)", and the direct render() call stays
+(idempotent; the selects' own change listeners re-run it too). Observed proof:
+the new `swap` vector in scripts/calc-regress.mjs drives the exact phone case
+— reset, type 50000, ONE tap on #cc-swap, zero further interaction — and
+asserts from/to swapped, `data-cur` = the new from-currency, the in-field
+glyph = the page's own symbol for it, the label words switched, and the hero
+recomputed for the swapped pair (expected hero derived from the page's own
+printed unit rate — the engine is linear — never a hardcoded number). Green
+record: `one tap: USD→NGN flipped to NGN→USD, glyph "$"→"₦", hero "37.57" =
+50000/1330.995081 (page-printed rate)`. Served-bytes proof: the dist module
+greps `r.dispatchEvent(new Event("change",{bubbles:!0})),m.dispatchEvent(new
+Event("change",{bubbles:!0}))` inside the #cc-swap handler.
+
+**F6, small-rate half — the unit line must reproduce its own conversion.**
+What was wrong: moneyTrim trimmed the effective unit rate with a fixed
+6-decimal cap; on NGN→USD that printed "1 NGN = $0.000751" while the hero
+printed 37.57 for 50,000 — and 0.000751 × 50000 = 37.55, breaking the F6
+comment's own promise that the unit rate reproduces the shown conversion.
+What changed: below 1 the fraction span widens to hold 10 SIGNIFICANT digits
+(`9 − floor(log10|v|)`, capped at 20) instead of a fixed 6 decimal places;
+rates ≥ 1 keep the exact 6-decimal look they have always had, and
+trailing-zero trimming is unchanged for both. Observed proof (page's own
+engine, snapshot NGN 1330.995081): NGN→USD now prints "$0.0007513175776" and
+× 50000 = 37.5659 → the hero's own "37.57"; USD→NGN still prints
+"₦1,330.995081" and × 50000 = ₦66,549,754.05 → the hero's "₦66,549,754".
+Served-bytes proof: the dist module greps the sig-digit branch
+`n!==0&&n<1?Math.min(20,9-Math.floor(Math.log10(n))):6`.
+
+**Honest gate status.** `npm run build` green (79 pages, exit 0, 52.85s);
+`npm run check` green (6/6 gates, article gate 147/147, engine vectors
+95/95); `scripts/calc-regress.mjs` run in a systemd-run shelter per BOX LAW —
+**130 pass / 0 fail / 7 skip in 218.2s, PASS** (was 129; the new `swap` vector
+is the +1, currency-converter only, other 14 tools print no cell). All gates
+observed this leg, none blocked.
+
+**Also in this version.** The build regenerated the ticker statics (BTC/USD
+$82,972 → $82,959; ETH/USD $2,505 → $2,498; the FX snapshot itself unchanged —
+same daily feed value) — committed as its own `chore(data)` commit per
+convention.
+
 ## [0.7.52] — 2026-10-11 — the audit quick wins: a named search, valid navs, no negative take-home
 
 Three OPEN findings from the 2026-10-10 reconciliation closed in one small batch
