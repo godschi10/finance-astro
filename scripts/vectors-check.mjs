@@ -144,7 +144,8 @@ const cases = [
   ["fx_parallel", F.fxParallelNgnUsd(1482.0)],
   ["fx_parallel_custom", F.fxParallelNgnUsd(1482.0, 1.10)],
   ["transfer_to_ng", T.transferQuote(500.0, "to-nigeria", "USD", "NGN", transferFx)],
-  ["transfer_from_ng", T.transferQuote(100000.0, "from-nigeria", "NGN", "USD", transferFx)],
+  // transfer_from_ng moved to the declared-divergence block below (P0-1, v0.7.57):
+  // the PHP oracle snapshot pins the INVERTED street-rate direction.
   ["transfer_gbp", T.transferQuote(200.0, "to-nigeria", "GBP", "NGN", transferFx)],
   ["transfer_zero", T.transferQuote(0.0, "to-nigeria", "USD", "NGN", transferFx)],
   ["transfer_providers_to", T.transferProviders("to-nigeria")],
@@ -252,7 +253,7 @@ for (const [name, actual] of cases) {
 //     value (the PHP engine carries the same B2 defect); the corrected value
 //     is asserted in the declared-divergence block below.
 // See CHANGELOG 0.7.55 Divergences.
-const DECLARED_REMOVALS = new Set(["crypto_usdt", "paye_bonus_exempt_base"]);
+const DECLARED_REMOVALS = new Set(["crypto_usdt", "paye_bonus_exempt_base", "transfer_from_ng"]);
 const extra = Object.keys(byName).filter((n) => !cases.some(([c]) => c === n) && !DECLARED_REMOVALS.has(n));
 // ── DECLARED DIVERGENCE (v0.7.55, B2) ────────────────────────────────────────
 // paye_bonus_exempt_base: the PHP oracle records tax 0 / net 200000 / rate 0
@@ -289,6 +290,36 @@ const extra = Object.keys(byName).filter((n) => !cases.some(([c]) => c === n) &&
     console.log("FAIL amount_1mngn[P0-4]: documentation sentence missing / splitting copy reverted (declared divergence guard)");
   }
   console.log("DECLARED DIVERGENCE amount_1mngn.cfg.content.sections[3].body[1]: declared divergence — the King's P0-4 order (fifth audit, 2026-10-11): the threshold-dodging copy the PHP theme pinned is replaced by the documentation sentence. See the next ship's CHANGELOG.");
+}
+// ── DECLARED DIVERGENCE (fifth audit P0-1, King order, v0.7.57) ──────────────
+// transfer_from_ng: the PHP oracle snapshot records the P2P street premium
+// MULTIPLIED into the payout (p2p rate = mid × 1.045, received 70.51 > Wise
+// 67.07) — the exact $78.51-class defect the fifth audit's A5 marks [Certain]:
+// selling naira on the street means the payout DIVIDES by the HIGHER ₦/$ street
+// rate (₦100,000 ÷ (₦1,482 × 1.045) ≈ $64.57 at the oracle's own inputs), so
+// P2P lands BELOW the official-rate payout, never above. The King's P0-1 order
+// (fifth audit, 2026-10-11) overrules the stale PHP expectation; the TS engine
+// applies the corrected direction and this guard fails loudly if the direction
+// ever re-inverts. Adds one pass row in the B2 pattern — the parity count
+// stays 94/0. See CHANGELOG 0.7.57 Divergences.
+{
+  const q = T.transferQuote(100000.0, "from-nigeria", "NGN", "USD", transferFx);
+  const rowOf = (id) => q.rows.find((x) => x.id === id);
+  const mid = 1.0 / 1482.0; // the oracle's own NGN/USD input, unchanged
+  const p2p = rowOf("p2p"), wise = rowOf("wise"), bank = rowOf("bank");
+  const problems = [];
+  const r1 = cmp(p2p.rate, mid / 1.045, "transfer_from_ng[corrected].p2p.rate (street premium DIVIDES, never multiplies)");
+  if (r1) problems.push(r1);
+  const r2 = cmp(p2p.received, (100000.0 / 1482.0) / 1.045, "transfer_from_ng[corrected].p2p.received (₦100,000 ÷ (₦1,482 × 1.045))");
+  if (r2) problems.push(r2);
+  const r3 = cmp(wise.received, 67.0715249662618, "transfer_from_ng[corrected].wise.received (official-rate rows must not move)");
+  if (r3) problems.push(r3);
+  const r4 = cmp(bank.received, 65.13157894736842, "transfer_from_ng[corrected].bank.received (official-rate rows must not move)");
+  if (r4) problems.push(r4);
+  if (!(p2p.received < wise.received)) problems.push(`transfer_from_ng[corrected]: direction — P2P payout ${p2p.received} must sit BELOW the official-rate payout ${wise.received} (A5 acceptance)`);
+  if (problems.length) { fail++; console.log(`FAIL ${problems.join("; ")}`); }
+  else pass++;
+  console.log("DECLARED DIVERGENCE transfer_from_ng: the PHP oracle snapshot multiplies the street premium INTO the P2P payout (the $78.51-class defect, fifth audit A5 [Certain]); the King's P0-1 order (2026-10-11) corrects the direction — the naira divides by the higher ₦/$ street rate, P2P below the official-rate payout. Stale PHP expectation not asserted; corrected values + direction fail-guarded. See CHANGELOG 0.7.57 Divergences.");
 }
 console.log(`\npass=${pass} fail=${fail} cases=${cases.length} vectors=${vectors.length}`);
 if (missing.length) console.log("MISSING (no oracle):", missing.join(", "));
