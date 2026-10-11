@@ -88,6 +88,10 @@ const hasKids = (n: NavItem) => !!n.children && n.children.length > 0;
 // Desktop .snav-list (top-level parent rows get menu-item-has-children +
 // a server-rendered .nav-caret-desktop ⌄ like the WP nav; children render
 // as .sub-menu dropdowns, nested one level deep exactly like the WP menu).
+// COSMETIC-1: these strings are the <li> ROWS ONLY — the <ul class="snav-list">
+// itself is the static element in the markup below (set:html). A generated
+// <ul> here used to nest <ul> directly inside <ul> on every page, which
+// browsers silently reparent; the outer list owns the rows, one <li> level.
 const desktopNavItem = (n: NavItem): string => {
   const kids = hasKids(n);
   const cls = `menu-item menu-item-type-custom menu-item-object-custom${kids ? " menu-item-has-children" : ""}`;
@@ -97,12 +101,14 @@ const desktopNavItem = (n: NavItem): string => {
     : "";
   return `<li class="${cls}"><a href="${linkFor(n.href)}">${n.label}${caret}</a>${sub}</li>`;
 };
-const desktopNavHtml = `<ul class="snav-list">${NAV.map(desktopNavItem).join("")}</ul>`;
+const desktopNavHtml = NAV.map(desktopNavItem).join("");
 
 // Mobile drawer .mno-list: same nested tree as an accordion. The gold
 // .nav-caret handle buttons are injected by JS exactly like WP main.js
 // (split-tap accordion: tap ⌄ toggles the sibling .sub-menu, tap the row
 // text navigates). Sub-menu ul.sub-menu markup is server-rendered.
+// COSMETIC-1: rows only — the <ul class="mno-list"> is the static element
+// below, so no second <ul> nests inside it (same fix as the desktop nav).
 const mobileNavItem = (n: NavItem): string => {
   const kids = hasKids(n);
   const cls = `menu-item menu-item-type-custom menu-item-object-custom${kids ? " menu-item-has-children" : ""}`;
@@ -111,7 +117,7 @@ const mobileNavItem = (n: NavItem): string => {
     : "";
   return `<li class="${cls}"><a href="${linkFor(n.href)}">${n.label}</a>${sub}</li>`;
 };
-const mobileNavHtml = `<ul class="mno-list">${NAV.map(mobileNavItem).join("")}</ul>`;
+const mobileNavHtml = NAV.map(mobileNavItem).join("");
 
 const newsletterHref = `${base}#newsletter`;
 

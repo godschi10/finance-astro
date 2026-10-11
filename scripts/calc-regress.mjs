@@ -27,6 +27,10 @@
  *   rails      — with inputs blank, .receipt-note/.bar-note prose asserts no
  *                naira conclusion (no ₦<digit>, no "you keep/you save" claim).
  *   console    — zero console errors / unhandled rejections while we drive.
+ *   negnet     — salary-tax only (the MINOR-5 vector): gross ₦500k + NHF
+ *                ₦500k must answer "Out of range", never a negative
+ *                take-home; no "₦-" figure anywhere in the rendered DOM.
+ *                Other tools run no such case and print no cell for it.
  *
  * APPLICABILITY (read off the repo's own table, never invented): seeds/required
  * per tool are parsed from src/data/tool-fields.ts TOOL_FIELDS. A tool with no
@@ -686,6 +690,31 @@ async function runTool(slug, base, fields) {
     }
   } catch (e) { R.stale = rec("fail", `harness: ${e.message}`); }
 
+  /* NEGNET (salary-tax only) — the MINOR-5 vector: NHF at/above gross. The
+     engine computes net = gross − deductions unfloored, and before the guard
+     the receipt printed the negative straight (₦500k gross + ₦500k NHF →
+     "₦-40,030/mo" in the hero and both comparison cells). The fleet guard
+     must answer instead: hero reads "Out of range", the warn rail names it,
+     and zero "₦-" text renders anywhere on the page. Tool-specific by
+     design — the sibling engines floor their own outputs, so no other tool
+     gets a cell here (the table prints "?" and counts nothing). */
+  if (slug === "salary-tax-calculator") {
+    try {
+      await ev(`document.querySelector("[data-sf-reset]").click()`);
+      await waitStable(JS_SETTLE_KEY, 800, 20000, "negnet base");
+      await ev(setCtlExpr({ id: "st-gross", kind: "text" }, "500000"));
+      await ev(setCtlExpr({ id: "st-nhf", kind: "text" }, "500000"));
+      await waitStable(JS_SETTLE_KEY, 800, 20000, "negnet settle");
+      const full = await ev(JS_STATE);
+      const fig = (await ev(`document.getElementById("st-fig").textContent`)).trim();
+      const warn = (await ev(`document.getElementById("st-warn").textContent`)).trim();
+      const negNaira = (full.body.match(/₦-/g) || []).length;
+      R.negnet = (fig === "Out of range" && warn.includes("Out of range") && negNaira === 0 && !BAD_RE.test(full.body))
+        ? rec("pass", `gross 500000 + NHF 500000 → hero "Out of range", ${negNaira} "₦-" in DOM`)
+        : rec("fail", `fig=${JSON.stringify(fig)} warn=${JSON.stringify(warn.slice(0, 120))} negNaira=${negNaira} domClean=${!BAD_RE.test(full.body)}`);
+    } catch (e) { R.negnet = rec("fail", `harness: ${e.message}`); }
+  }
+
   /* CONSOLE — any error/rejection captured while driving this tool fails it. */
   const errs = cap.filter((m) => m.type === "error" || m.type === "exception");
   R.console = errs.length === 0
@@ -785,7 +814,7 @@ async function main() {
   }
 
   /* table + result file; non-zero exit on any failure. */
-  const ORDER = ["reset", "clear", "empty", "zero", "derived", "adversarial", "stale", "rails", "console"];
+  const ORDER = ["reset", "clear", "empty", "zero", "derived", "adversarial", "stale", "negnet", "rails", "console"];
   let tp = 0, tf = 0, ts = 0;
   console.log("\n" + ["tool", ...ORDER].join(" | "));
   for (const slug of slugs) {

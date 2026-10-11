@@ -107,16 +107,23 @@ function render() {
   const nhis = Math.max(0, pm(g("st-nhis").value) || 0);
   const life = Math.max(0, pm(g("st-life").value) || 0);
   const r = payeCalculate(gross, pen, nhf, rent, true, nhis, life, 0);
-  sfFig(t("st-fig"), ALL, n(r.net_monthly));
+  /* MINOR-5 — the engine's net is deliberately unfloored and the NHF field has
+     no max: ₦500k gross + ₦500k NHF used to print a −₦40,000/mo take-home, a
+     number no payslip can show. Mirrors the emergency-fund guard (v0.7.16):
+     the take-home figures answer "Out of range" rather than a negative, and
+     the rail below names the fields to check — never a silent clamp. */
+  const netBad = (v: number) => !Number.isFinite(v) || v < 0;
+  const netTxt = (v: number) => netBad(v) ? "Out of range" : n(v);
+  sfFig(t("st-fig"), ALL, netTxt(r.net_monthly));
   sfFig(t("st-sub"), ALL, `Tax ${n(r.tax_monthly)}/mo · taxable ${n(r.taxable)}/yr${r.exempt ? " · EXEMPT (minimum wage)" : ""}`);
   sfFig(t("st-pen"), ["st-gross", "st-pension"], n(r.pension_annual));
   sfFig(t("st-rel"), ["st-rent"], n(r.relief_annual));
   sfFig(t("st-tax"), ALL, n(r.tax_annual));
   const c = payeCompare(gross, pen, nhf, rent, nhis, life, 0);
   sfFig(t("st-new-tax"), ALL, n(c.new.tax_annual));
-  sfFig(t("st-new-net"), ALL, n(c.new.net_monthly));
+  sfFig(t("st-new-net"), ALL, netTxt(c.new.net_monthly));
   sfFig(t("st-old-tax"), ALL, n(c.old.tax_annual));
-  sfFig(t("st-old-net"), ALL, n(c.old.net_monthly));
+  sfFig(t("st-old-net"), ALL, netTxt(c.old.net_monthly));
   const nw = c.save_annual > 0.5, ow = c.save_annual < -0.5;
   (document.getElementById("st-row-new") as HTMLElement).className = nw ? "win" : "";
   (document.getElementById("st-row-old") as HTMLElement).className = ow ? "win" : "";
@@ -134,9 +141,15 @@ function render() {
      gross must read as un-entered (the demand line below), never as ₦123 of
      comparison prose. pmBlank() is the fleet's one entered-test (pm.js). */
   const grossKnown = !pmBlank(g("st-gross").value);
+  /* MINOR-5 — with deductions above gross there is no take-home for either
+     regime, so the tie/winner prose withholds rather than concluding over
+     the "Out of range" cells beside it. */
+  const cmpBad = netBad(c.new.net_monthly) || netBad(c.old.net_monthly);
   t("st-save").textContent = !grossKnown
     ? "Old vs new bands compared on your gross — enter it above."
-    : (!nw && !ow)
+    : cmpBad
+      ? "Out of range — deductions exceed the gross you entered, so neither regime has a take-home to compare."
+      : (!nw && !ow)
       ? "Both regimes leave you with the same take-home."
       : nw
         ? `You keep ${n(c.save_monthly)}/mo more under the new bands.`
@@ -147,6 +160,7 @@ function render() {
   if (penRaw > 100) notes.push("Pension capped at 100% — at 100% there is no take-home.");
   if (grossRaw > 100000000) notes.push("That gross looks unusually large — double-check the figure.");
   if (nhfRaw > 15000) notes.push("NHF above the ₦15,000/mo cap is deducted in full here — confirm with payroll.");
+  if (netBad(r.net_monthly)) notes.push("Out of range — pension, NHF, NHIS and life assurance add up to more than your gross, so no take-home can print. Check the monthly deduction fields against your payslip.");
   if (rentRaw * 0.2 > 500000) notes.push("Rent relief capped at ₦500,000/yr — the excess changes nothing.");
   const w = t("st-warn");
   w.hidden = notes.length === 0;
