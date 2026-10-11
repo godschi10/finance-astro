@@ -19,7 +19,7 @@ If you earn in dollars, receive freelance payments, or want to protect your savi
 
 ## Full comparison table
 
-<figure class="wp-block-table"><table><thead><tr><th>App</th><th>USD Account</th><th>Free Withdrawals</th><th>Virtual Card</th><th>My Rating</th></tr></thead><tbody><tr><td>Grey</td><td>✓ Yes</td><td>3/month</td><td>✓ Included</td><td>★ 4.5 / 5</td></tr><tr><td>Geegpay</td><td>✓ Yes</td><td>Unlimited</td><td>✓ Included</td><td>★ 4.3 / 5</td></tr><tr><td>Vance</td><td>✓ Yes</td><td>Paid only</td><td>✓ Included</td><td>★ 4.0 / 5</td></tr><tr><td>Chipper Cash</td><td>✓ Yes</td><td>1/month</td><td>✗ No</td><td>★ 3.5 / 5</td></tr></tbody></table></figure>
+<figure class="wp-block-table"><table><thead><tr><th>App</th><th>USD Account</th><th>Free Withdrawals</th><th>Virtual Card</th><th>My Rating</th></tr></thead><tbody><tr><td>Grey</td><td>✓ Yes</td><td>3/month</td><td>✓ Included</td><td>★ 4.5 / 5</td></tr><tr><td>Geegpay</td><td>✓ Yes</td><td>Unlimited</td><td>✓ Included</td><td>★ 4.3 / 5</td></tr><tr><td>Vance</td><td>✓ Yes</td><td>1/month</td><td>✓ Included</td><td>★ 4.0 / 5</td></tr><tr><td>Chipper Cash</td><td>✓ Yes</td><td>1/month</td><td>✗ No</td><td>★ 3.5 / 5</td></tr></tbody></table></figure>
 
 ## Grey — best overall
 

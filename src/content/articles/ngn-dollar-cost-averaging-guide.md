@@ -7,7 +7,7 @@ authorSlug: "gwill-chijioke"
 pubDate: 2026-09-02
 readMins: 11
 image: "/wp-content/uploads/2026/04/investing.png"
-imageAlt: "Kuda vs Moniepoint: Which Is Better for Daily Use?"
+imageAlt: "Dollar-Cost Averaging Into NGX Stocks on a ₦50k Salary"
 imageSrcset: "/wp-content/uploads/2026/04/investing.png 1200w, /wp-content/uploads/2026/04/investing-300x169.png 300w, /wp-content/uploads/2026/04/investing-1024x576.png 1024w, /wp-content/uploads/2026/04/investing-768x432.png 768w"
 ---
 

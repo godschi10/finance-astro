@@ -30,20 +30,18 @@
  */
 import Layout from "../layouts/Layout.astro";
 import { COMMENTS_API } from "../data/site";
+import { allArticles } from "../data/content";
 
 const DESK_VERSION = "desk v2 · 2026-09-26";
 
-/** slug -> post title (the site's own inventory, never invented). */
-const POST_NAMES = {
-  "grey-vs-geegpay-dollar-account": "Grey vs Geegpay: Which Dollar Account Should You Open?",
-  "piggyvest-vs-cowrywise-2026": "PiggyVest vs Cowrywise in 2026: Which Saves You More?",
-  "cheapest-way-receive-dollars-nigeria": "Cheapest Way to Receive Dollars in Nigeria (2026 Compared)",
-  "ngn-dollar-cost-averaging-guide": "Dollar-Cost Averaging Into NGX Stocks on a ₦50k Salary",
-  "kuda-vs-traditional-banks-charges": "Kuda vs Traditional Banks: The Real Cost of Free Transfers",
-  "p2p-crypto-nigeria-safely": "How to Buy Crypto P2P in Nigeria Without Getting Scammed",
-  "emergency-fund-naira-inflation": "How Much Emergency Fund Do You Need With Naira Inflation?",
-  "gutenberg-elements-showcase": "Gutenberg Elements Showcase",
-};
+/** slug -> post title — DERIVED from the article collection (SITE-3, 2026-10-11).
+ *  The hand-listed map this replaces had drifted from three articles' canonical
+ *  titles (a desk row advertising a title its article does not carry). The
+ *  collection IS the site's own inventory — never invented — and now covers
+ *  every post, so a row can never be labelled from a stale second list again. */
+const POST_NAMES = Object.fromEntries(
+  (await allArticles()).map((p) => [p.slug, p.data.title] as const)
+);
 ---
 
 <Layout title="Comments desk — GWill Finance" description="Moderation desk." noCanonical={true}>

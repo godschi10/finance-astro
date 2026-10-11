@@ -73,6 +73,29 @@ export function relatedTo(all: Article[], current: Article, n = 3): Article[] {
   return others.slice(0, 2);
 }
 
+/**
+ * SITE-3 (2026-10-11): the money-tools "Related guides" cards used to hand-list
+ * their article titles inline, and three had drifted from the articles' own
+ * canonical titles — a card advertising a title the linked page does not carry.
+ * The slug stays hand-listed in the page (it is the pointer); the title is
+ * looked up from the collection at build time, so a card and its article H1
+ * can never disagree again. An unknown slug THROWS: a related card pointing at
+ * a slug the collection does not know is a build-breaking bug, not a silently
+ * stale label.
+ */
+export async function articleTitleOf(): Promise<(slug: string) => string> {
+  const titles = new Map(
+    (await allArticles()).map((p) => [p.slug, p.data.title] as const)
+  );
+  return (slug: string) => {
+    const title = titles.get(slug);
+    if (title === undefined) {
+      throw new Error(`[articleTitleOf] no article for slug "${slug}"`);
+    }
+    return title;
+  };
+}
+
 export { CATEGORIES, catBySlug };
 
 // Tools catalogue for search + sitemap (mirrors tools/index.astro — keep in

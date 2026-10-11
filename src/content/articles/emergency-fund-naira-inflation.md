@@ -7,7 +7,7 @@ authorSlug: "gwill-chijioke"
 pubDate: 2026-07-18
 readMins: 6
 image: "/wp-content/uploads/2026/05/savings.png"
-imageAlt: "PiggyVest vs Cowrywise: Which Savings App Is Better?"
+imageAlt: "How Much Emergency Fund Do You Need With Naira Inflation?"
 imageSrcset: "/wp-content/uploads/2026/05/savings.png 1200w, /wp-content/uploads/2026/05/savings-300x169.png 300w, /wp-content/uploads/2026/05/savings-1024x576.png 1024w, /wp-content/uploads/2026/05/savings-768x432.png 768w"
 
 ---
