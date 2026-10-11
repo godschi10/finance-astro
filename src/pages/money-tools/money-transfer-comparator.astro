@@ -1,21 +1,32 @@
 ---
 import ToolShell from "../../components/ToolShell.astro";
 import { transferQuote, transferVerified, TRANSFER_SEED } from "../../lib/transfer";
-import { fxNumber } from "../../lib/fx";
+import { fxNumber, fxCurrencies } from "../../lib/fx";
 import { FX_SNAPSHOT } from "../../data/fx-snapshot";
 const fx = { rates: FX_SNAPSHOT.rates, as_of: FX_SNAPSHOT.as_of, ok: true };
 const seed = transferQuote(TRANSFER_SEED.amount, "from-nigeria", TRANSFER_SEED.source, TRANSFER_SEED.dest, fx);
 const best = seed.rows[0]?.id ?? "";
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+/* P0-1 (v0.7.57) display law: exactly one side of every quote is NGN, so every
+   rate renders naira-FACE — ₦ per 1 unit of the foreign side (the street
+   convention, "₦1,390.89 / $") — never the 6-decimal USD-per-₦ the old seed
+   printed. Symbols come from the site's own table (fxCurrencies). */
+const symOf = (code) => (fxCurrencies()[code] || {}).symbol || code;
+const foreignOf = (q) => (q.direction === "from-nigeria" ? q.dest : q.origin);
+const ngnFace = (rate, dir) => (dir === "from-nigeria" ? 1 / rate : rate);
+const osym = symOf(seed.origin);
+const dsym = symOf(seed.dest);
+const fsym = symOf(foreignOf(seed));
+const seedP2pWin = best === "p2p";
 ---
-<ToolShell title="Send Money to Nigeria, Best Rate Comparator - GWill Finance" description="Compare Wise, Western Union, Remitly, WorldRemit and LemFi on fee and real exchange rate. See who gets you the most naira, live." slug="money-transfer-comparator" tool="Send Money to Nigeria, Best Rate" crumb="Money Transfer Comparator" lede="Fees lie, rates lie — the received amount does not. Every provider below is scored on what actually lands after both fee and rate markup." verified={`Fee model verified ${transferVerified()} · FX base: indicative snapshot`} faqs={[
+<ToolShell title="Money Transfer Comparator, Send To or From Nigeria - GWill Finance" description="Compare Wise, Western Union, Remitly, WorldRemit, LemFi, the bank channel and parallel-market P2P on fee and real exchange rate — sending to Nigeria and sending naira out. See who actually pays out the most." slug="money-transfer-comparator" tool="Money Transfer Comparator, Send To or From Nigeria" crumb="Money Transfer Comparator" lede="Fees lie, rates lie — the received amount does not. Every provider below is scored on what actually lands after both fee and rate markup." verified={`Fee model verified ${transferVerified()} · FX base: indicative snapshot`} faqs={[
   { q: "Should I compare the fee or the exchange rate?", a: "Neither alone. Compare the total the recipient receives — exactly what this table sorts by." },
-  { q: "Which service is cheapest for sending to Nigeria?", a: "It depends on the amount. Enter yours above; the BEST tag moves with it." },
-  { q: "Are these exact live quotes?", a: "The base exchange rate refreshes live; the fee and markup figures are maintained estimates. Confirm the final quote with your provider before sending." },
+  { q: "Which service is cheapest for sending to Nigeria — or out of it?", a: "It depends on the amount and the direction. Pick the direction above, enter yours; the BEST tag moves with it." },
+  { q: "Are these exact live quotes?", a: "No. The base rate is the build's daily reference snapshot, stamped with the feed's own update time; the fee and markup figures are maintained estimates. Confirm the final quote with your provider before sending." },
 ]}
 
   badge="Fee + real rate · Nigeria-first",
-  copy={[["p", "Every money-transfer provider charges in two ways, and looking at only one will mislead you. The explicit transfer fee is the flat or percentage charge on the amount you send. The exchange-rate markup is the hidden second cost, the difference between the true mid-market rate and the rate the provider actually uses. A service with a headline \"zero fee\" can still cost you plenty if its rate is far from the market, and a service that quotes the mid-market rate can still be expensive if its fixed fee is high. Add them together and you get the only number that matters: the amount that actually lands with the recipient."],["p", "Wise is the honest benchmark because it uses the true mid-market rate with no markup, then charges a small percentage fee shown upfront. Remitly, Western Union and WorldRemit quote lower flat fees but apply a markup to the rate, which at some transfer sizes costs more than the fee you saved. LemFi advertises \"zero transfer fee\" but prices its margin into the rate instead. For small amounts the flat fee dominates and a zero-fee service can win; for large amounts the rate markup dominates and Wise typically pulls ahead. The winner genuinely depends on the amount, which is why you compare the total received, not the fee."],["p", "Say you send ₦100,000 out of Nigeria. The bank channel applies a markup of roughly 2.5% off the mid-market rate plus a spread, so the recipient gets fewer dollars than the headline rate suggests. Wise charges a small percentage fee but delivers the true mid-market rate, so its dollar amount lands closer to what the market actually says the naira is worth. The parallel or peer-to-peer route usually returns the best naira value but carries platform risk. When you change the amount, the calculator re-sorts the table, because the cheapest service genuinely flips with size, a fixed fee disappears for large transfers while a rate markup multiplies."],["p", "Moving money out of Nigeria is harder than getting it in, because the formal rails are fewer and the official rate trades at a discount to what naira genuinely buys on the street. The options are essentially: a bank domiciliary account (official rate, documentation required), Wise&#039;s dollar wallet (mid-market rate, a fee), or the parallel/peer-to-peer market (the best naira value, but only on licensed platforms with escrow discipline). This calculator models all three so you can see the real gap between the official and street outcomes, the same gap our currency converter&#039;s \"Parallel market\" toggle shows for the rate."],["p", "Remittance pricing is not one-size-fits-all. Every provider varies fees by delivery speed (instant vs 1-3 days), payment method (bank transfer vs card vs cash pickup), destination and even your exact amount. The figures here are maintained estimates based on the providers&#039; published pricing, shown to give you a close comparison, the rate is live, but always confirm the exact final quote with the provider before you send."],["p", "The comparator gives you the amount received after the fee and rate. To see the base rate itself, our currency converter shows the live mid-market and parallel rates for any pair, and our rate history chart shows how the rate has moved. To judge the real value of whatever arrives, the naira value calculator and inflation-adjusted calculator show what that amount is worth over time."],["h2", "Money transfer questions"],["h3", "Should I compare the fee or the exchange rate?"],["p", "Neither alone, a low fee with a big rate markup, or a mid-market rate with a high fixed fee, can both be expensive. Compare the total the recipient actually receives, which is exactly what this calculator does."],["h3", "Which service is cheapest for sending to Nigeria?"],["p", "It depends on the amount. Wise uses the fair mid-market rate with a small fee, which wins for larger transfers. Zero-fee services like LemFi can win on small amounts. This calculator shows the winner for whatever amount you enter."],["h3", "Is the best rate always the best deal?"],["p", "No. A great rate with a high flat fee can lose to an average rate with a low fee. The amount received after both the fee and the rate is the real comparison."],["h3", "Are these exact live quotes?"],["p", "The base exchange rate is live; the fee and markup figures are maintained estimates. Confirm the exact final quote with your provider before sending."]]},
+  copy={[["p", "Every money-transfer provider charges in two ways, and looking at only one will mislead you. The explicit transfer fee is the flat or percentage charge on the amount you send. The exchange-rate markup is the hidden second cost, the difference between the true mid-market rate and the rate the provider actually uses. A service with a headline \"zero fee\" can still cost you plenty if its rate is far from the market, and a service that quotes the mid-market rate can still be expensive if its fixed fee is high. Add them together and you get the only number that matters: the amount that actually lands with the recipient."],["p", "Wise is the honest benchmark because it uses the true mid-market rate with no markup, then charges a small percentage fee shown upfront. Remitly, Western Union and WorldRemit quote lower flat fees but apply a markup to the rate, which at some transfer sizes costs more than the fee you saved. LemFi advertises \"zero transfer fee\" but prices its margin into the rate instead. For small amounts the flat fee dominates and a zero-fee service can win; for large amounts the rate markup dominates and Wise typically pulls ahead. The winner genuinely depends on the amount, which is why you compare the total received, not the fee."],["p", "Say you send ₦100,000 out of Nigeria. The bank channel applies a markup of roughly 2.5% off the mid-market rate plus a spread, so the recipient gets fewer dollars than the headline rate suggests. Wise charges a small percentage fee but delivers the true mid-market rate, so its dollar amount lands closer to what the market actually says the naira is worth. The parallel or peer-to-peer route prices the dollar at the street rate — a higher naira price per dollar than the official figure — so a naira seller's payout lands below the official-rate number, and it carries platform risk on top. When you change the amount, the calculator re-sorts the table, because the cheapest service genuinely flips with size, a fixed fee disappears for large transfers while a rate markup multiplies."],["p", "Moving money out of Nigeria is harder than getting it in, because the formal rails are fewer and the official rate trades at a discount to what naira genuinely buys on the street. The options are essentially: a bank domiciliary account (official rate, documentation required), Wise&#039;s dollar wallet (mid-market rate, a fee), or the parallel/peer-to-peer market (the street rate — fewer dollars for your naira than the official figure implies, and only on licensed platforms with escrow discipline). This calculator models all three so you can see the real gap between the official and street outcomes, the same gap our currency converter&#039;s \"Parallel market\" toggle shows for the rate."],["p", "Remittance pricing is not one-size-fits-all. Every provider varies fees by delivery speed (instant vs 1-3 days), payment method (bank transfer vs card vs cash pickup), destination and even your exact amount. The figures here are maintained estimates based on the providers&#039; published pricing, shown to give you a close comparison, the rate is live, but always confirm the exact final quote with the provider before you send."],["p", "The comparator gives you the amount received after the fee and rate. To see the base rate itself, our currency converter shows the mid-market and parallel reference rates for any pair, and our rate history chart shows how the rate has moved. To judge the real value of whatever arrives, the naira value calculator and inflation-adjusted calculator show what that amount is worth over time."],["h2", "Money transfer questions"],["h3", "Should I compare the fee or the exchange rate?"],["p", "Neither alone, a low fee with a big rate markup, or a mid-market rate with a high fixed fee, can both be expensive. Compare the total the recipient actually receives, which is exactly what this calculator does."],["h3", "Which service is cheapest for sending to Nigeria?"],["p", "It depends on the amount. Wise uses the fair mid-market rate with a small fee, which wins for larger transfers. Zero-fee services like LemFi can win on small amounts. This calculator shows the winner for whatever amount you enter."],["h3", "Is the best rate always the best deal?"],["p", "No. A great rate with a high flat fee can lose to an average rate with a low fee. The amount received after both the fee and the rate is the real comparison."],["h3", "Are these exact live quotes?"],["p", "The base exchange rate is live; the fee and markup figures are maintained estimates. Confirm the exact final quote with your provider before sending."]]},
   related={[{ href: `${base}articles/cheapest-way-receive-dollars-nigeria/`, title: "Cheapest Way to Receive Dollars in Nigeria (2026 Compared)", excerpt: "Wise, Grey, Geegpay, and domiciliary accounts compared on fees, speed, and exchange margins." }, { href: `${base}articles/grey-vs-geegpay-dollar-account/`, title: "Grey vs Geegpay: Which Dollar Account Should You Open?", excerpt: "Account opening, conversion spreads, card support, and payout speed — tested with real transfers." }, { href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers", excerpt: "Card fees, failed-transfer reversals, and support tested — what digital banks actually save you." }]},
   disclaimer="This comparator is for informational guidance only and is not financial advice. Fee and rate-markup figures are estimates that vary by delivery method, speed, amount and payment channel. Always confirm the final quote with the provider before sending.">
 <div class="fx-card">
@@ -28,11 +39,12 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </div>
 <div class="receipt">
 <p class="receipt-lbl">Best payout for <span data-sf-fig id="tc-sum-amt">₦100,000</span></p>
-<p class="receipt-fig" id="tc-fig" aria-live="polite">{seed.rows[0] ? fxNumber(seed.rows[0].received, 2) : "—"}</p>
-<p class="receipt-sub" id="tc-sub">{seed.rows[0]?.name ?? ""} · mid-market {fxNumber(seed.mid, 6)}</p>
+<p class="receipt-fig" id="tc-fig" aria-live="polite">{seed.rows[0] ? `${dsym}${fxNumber(seed.rows[0].received, 2)}` : "—"}</p>
+<p class="receipt-sub" id="tc-sub">{seed.rows[0]?.name ?? ""} · mid-market ₦{fxNumber(ngnFace(seed.mid, seed.direction), 2)} / {fsym}</p>
+<p class="receipt-note" id="tc-p2p" hidden={!seedP2pWin}>Parallel-market rate — platform risk applies</p>
 <p class="receipt-note" id="tc-warn" hidden aria-live="polite"></p>
 <div class="receipt-div" aria-hidden="true"></div>
-<p class="receipt-note">Fee model verified {transferVerified()} · FX base refreshes live when the feed answers.</p>
+<p class="receipt-note">Fee model verified {transferVerified()} · FX base: daily reference snapshot, {FX_SNAPSHOT.as_of}.</p>
 <p class="receipt-foot">Estimates — confirm with your provider</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
@@ -45,9 +57,9 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 {seed.rows.map((r) => (
 <tr data-tc-row={r.id} class={r.id === best ? "win" : ""}>
 <td>{r.name}{r.id === best && <span class="btag">Best</span>}</td>
-<td class="n" data-c="fee">{fxNumber(r.fee, 2)}</td>
-<td class="n" data-c="rate">{fxNumber(r.rate, 6)}</td>
-<td class="n" data-c="rec">{fxNumber(r.received, 2)}</td>
+<td class="n" data-c="fee">{osym}{fxNumber(r.fee, 2)}</td>
+<td class="n" data-c="rate">₦{fxNumber(ngnFace(r.rate, seed.direction), 2)} / {fsym}</td>
+<td class="n" data-c="rec">{dsym}{fxNumber(r.received, 2)}</td>
 </tr>
 ))}
 </tbody>
@@ -56,13 +68,13 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </ToolShell>
 <script>
 import { transferQuote, transferVerified } from "../../lib/transfer";
-import { fxNumber, fxFetchLive, fxCurrencies } from "../../lib/fx";
+import { fxNumber, fxCurrencies } from "../../lib/fx";
 import { FX_SNAPSHOT } from "../../data/fx-snapshot";
 import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
-let rates = FX_SNAPSHOT.rates;
-let asOf = FX_SNAPSHOT.as_of;
+const rates = FX_SNAPSHOT.rates;
+const asOf = FX_SNAPSHOT.as_of;
 const amt = document.getElementById("tc-amt") as HTMLInputElement;
 const dir = document.getElementById("tc-dir") as HTMLSelectElement;
 const src = document.getElementById("tc-src") as HTMLSelectElement;
@@ -90,6 +102,11 @@ function render() {
   const symOf = (code) => (fxCurrencies()[code] || {}).symbol || code;
   const sym = symOf(q.dest);
   const osym = symOf(q.origin);
+  /* P0-1 (v0.7.57) — the rate renders naira-FACE, matching the served seed:
+     ₦ per 1 unit of the foreign side, whichever side is foreign. The old
+     6-decimal USD-per-₦ cell hid the street premium in a unit nobody quotes. */
+  const fsym = symOf(q.direction === "from-nigeria" ? q.dest : q.origin);
+  const ngnFace = (rate) => (q.direction === "from-nigeria" ? 1 / rate : rate);
   // No winner on a zero transfer: suppress the Best tag instead of crowning a $0 tie.
   const ranked = a > 0;
   sfFig(document.getElementById("tc-sum-amt") as HTMLElement, ["tc-amt"], `${osym}${fxNumber(a, 0)}`);
@@ -101,7 +118,11 @@ function render() {
   warn.hidden = ranked && !negHit;
   warn.textContent = negHit ? "Negative entries are treated as ₦0." : pmBlank(raw) ? "Enter an amount — every provider shows 0 until you do." : "Zero sends nothing — no winner on a 0 transfer.";
   (document.getElementById("tc-fig") as HTMLElement).textContent = top ? `${sym}${fxNumber(top.received, top.received < 100 ? 2 : 0)}` : "—";
-  (document.getElementById("tc-sub") as HTMLElement).textContent = top ? `${top.name} · mid-market ${fxNumber(q.mid, 6)}` : "Enter an amount above zero to rank providers";
+  (document.getElementById("tc-sub") as HTMLElement).textContent = top ? `${top.name} · mid-market ₦${fxNumber(ngnFace(q.mid), 2)} / ${fsym}` : "Enter an amount above zero to rank providers";
+  /* P0-1 (v0.7.57) — the disclosure rides any P2P win, server and client alike:
+     the street rate is a parallel-market figure, so a P2P Best tag never stands
+     alone. */
+  (document.getElementById("tc-p2p") as HTMLElement).hidden = !(ranked && top && top.id === "p2p");
   const tb = document.querySelector("#tc-table tbody") as HTMLElement;
   tb.innerHTML = "";
   q.rows.forEach((r, i) => {
@@ -111,10 +132,10 @@ function render() {
     (tr.children[0] as HTMLElement).textContent = r.name;
     if (ranked && i === 0) { const b = document.createElement("span"); b.className = "btag"; b.textContent = "Best"; tr.children[0].appendChild(b); }
     (tr.children[1] as HTMLElement).textContent = `${osym}${fxNumber(r.fee, 2)}`;
-    /* F3 — the RATE APPLIED column hid the P2P spread at 4dp (0.0008 vs
-       0.0008 while the payouts differ by $4). 6dp is this page's own rate
-       precision (the mid-market sub above); the true rates separate there. */
-    (tr.children[2] as HTMLElement).textContent = fxNumber(r.rate, 6);
+    /* P0-1 (v0.7.57) — rate cell now naira-face (₦1,390.89 / $), which is the
+       unit the street actually quotes; the old F3 6-decimal fix existed because
+       USD-per-₦ hid the spread — the unit change dissolves that problem. */
+    (tr.children[2] as HTMLElement).textContent = `₦${fxNumber(ngnFace(r.rate), 2)} / ${fsym}`;
     (tr.children[3] as HTMLElement).textContent = `${sym}${fxNumber(r.received, r.received < 100 ? 2 : 0)}`;
     tb.appendChild(tr);
   });
@@ -126,19 +147,10 @@ src.addEventListener("change", render);
 smartFields.register(TOOL_FIELDS["money-transfer-comparator"]);
 sfBind("money-transfer-comparator", gv);
 render();
-(async () => {
-  try {
-    const ctl = new AbortController();
-    const t = setTimeout(() => ctl.abort(), 8000);
-    const live = await fxFetchLive(ctl.signal);
-    clearTimeout(t);
-    // Same snapshot-path rule as the converter: a partial feed never swaps in.
-    const keys = Object.keys(FX_SNAPSHOT.rates);
-    if (live.rates && keys.every((k) => (live.rates[k] ?? 0) > 0)) {
-      rates = live.rates; asOf = live.as_of || "just now";
-      (document.getElementById("tc-fresh") as HTMLElement).textContent = "live · " + asOf;
-      render();
-    }
-  } catch { /* snapshot stands, honestly labeled */ }
-})();
+/* P0-2 (fifth audit, v0.7.57): the per-visit fxFetchLive() call was REMOVED
+   here. The free feed updates once per 24h, so a per-visit client refetch
+   bought nothing and added throttle exposure on every page view; the page now
+   serves the build snapshot honestly — labelled "indicative snapshot" with the
+   feed's own stamp (tc-fresh below), and the receipt carries the same daily
+   reference wording. The fetch path itself stays in src/lib/fx.ts, unwired. */
 </script>

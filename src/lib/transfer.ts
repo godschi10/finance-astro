@@ -115,7 +115,16 @@ export function transferQuote(
     const flat = ("to-nigeria" === direction && "USD" !== source) ? p.flat * sourceUsd : p.flat;
     const fee = flat + p.pct * amount;
     const applied = Math.max(0, amount - fee);
-    const effRate = mid * (1 - p.markup);
+    /* P0-1 (fifth audit A5, [Certain], v0.7.57): a NEGATIVE markup is the
+       parallel-market street premium. The street quotes a HIGHER ₦-per-$ rate
+       than the official mid, so selling naira means the payout DIVIDES by
+       (mid-rate × (1 + premium)) and lands BELOW the official-rate payout —
+       ₦100,000 ÷ (₦1,331 × 1.045) ≈ $71.90, never $78.51. The old
+       `mid * (1 - p.markup)` multiplied the premium INTO the payout,
+       overstating P2P by ~6.9–9.1% and inverting the ranking. A positive
+       markup stays a multiplier (provider rate markup on the payout side —
+       all to-nigeria rows). */
+    const effRate = p.markup < 0 ? mid / (1 - p.markup) : mid * (1 - p.markup);
     return {
       id: p.id, name: p.name, fee, applied,
       rate: effRate, markup: p.markup, received: applied * effRate, note: p.note,

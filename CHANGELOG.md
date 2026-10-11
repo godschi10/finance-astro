@@ -4,6 +4,99 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.57] — 2026-10-11 — the street rate points the right way, and nothing says LIVE on a once-a-day feed
+
+Batch S2b (@builder leg): the fifth audit's P0 cluster — the Transfer
+Comparator's inverted street-rate direction (P0-1) and the dishonest LIVE
+claims on a once-daily feed (P0-2). Local commit only — the Manager ships.
+
+**ITEM 1 — P0-1, the street premium now DIVIDES, never multiplies.** The
+comparator's from-nigeria P2P row applied the parallel-market premium as
+`mid × (1 + 4.5%)`, i.e. the visitor was told ₦100,000 on the street buys
+$78.51 — MORE dollars than the official rate gives ($75.13). Selling naira on
+the street must DIVIDE by the HIGHER ₦/$ street rate: `src/lib/transfer.ts`
+now computes a negative markup (the street premium) as `mid ÷ (1 + premium)`,
+so the payout lands BELOW the official-rate figure — at the build snapshot
+(₦1,330.995/$) the served seed reads: official mid-market $75.13 · Wise
+$74.68 (Best) · bank $72.53 · P2P $71.90 (₦100,000 ÷ (₦1,331 × 1.045)). Wise
+(as modelled) now outranks P2P, and the seed table's Rate column renders
+naira-face ("₦1,390.89 / $") instead of 6-decimal USD-per-₦, with currency
+symbols on every fee and payout figure (server seed AND client render — no
+bare "78.51"/"600.00"). P2P stays rankable; any P2P win now carries the
+disclosure "Parallel-market rate — platform risk applies" beside the receipt
+(server and client alike; hidden while another provider wins). The default
+view stays NGN→USD (₦100,000) — the manager approved proving the direction fix
+from the served seed; the fifth audit's "default to Send to Nigeria" rides the
+S4/launch checklist, and the PROMISE was reworded to match the view instead
+(H1/title/meta + index card now say "to or from Nigeria" and name the bank
+channel and street-rate P2P alongside the inbound providers).
+
+**ITEM 2 — P0-2, a once-daily feed stops being sold as live.**
+- Every LIVE badge relabelled: the site-wide ticker badge
+  (`Layout.astro`) is now "Daily reference rate · updated {feed time}"
+  (the green pulse dot stays — chrome signature), and the converter's gold
+  badge reads "Daily reference rate · updated {time}". Honest strings that
+  described the feed's own stamp ("live · {time}" setters) went with the
+  removed fetch (below).
+- Attribution added (the free feed's terms): "Rates by
+  [Exchange Rate API](https://www.exchangerate-api.com)" in BOTH footers
+  (desktop `.fbot` + mobile `.mfbot` — the CSS swaps these blocks by
+  viewport), inheriting the footer's own 10px dim style.
+- The per-visit client refetch is GONE: `fxFetchLive()` calls removed from
+  currency-converter.astro, money-transfer-comparator.astro, and the ticker's
+  live-price section removed from ticker-live.js (marquee interaction kept).
+  The pages now serve the build snapshot honestly — the fetch path itself
+  stays in src/lib/fx.ts, unwired, per the brief's minimal-diff option.
+- The two false sentences rewritten: the converter FAQ ("re-fetches that feed
+  on every visit and swaps in the live rate") and the copy paragraph ("so the
+  figure you are looking at is the current market rate") now state the
+  snapshot model — the page carries the rate the build fetched, the build runs
+  twice a day, the stamp is the exact freshness. The comparator's FAQ and
+  receipt note got the same treatment. The conversion pages' "30-minute
+  cache" line is the SIBLING leg's file — NOT touched here (noted for the
+  manager). "Nothing on this page is typed in by hand" is scoped honestly:
+  "No conversion figure on this page is typed in by hand … the one maintained
+  input on the page is the parallel-market spread estimate — a model constant,
+  not a market number" (the premium's dated-range fix is S2c).
+- `.github/workflows/pages.yml`: schedule cron `7 3 * * *` → `7 3,15 * * *`
+  (twice-daily snapshot rebuilds; one workflow line + its comment).
+
+**ITEM 3 — ticker sources (brief note, not a blocker):** BTC/ETH ride a
+Coinbase spot → CoinGecko → Binance fallback chain; XAU uses api.gold-api.com
+(all free, keyless, CORS-open; documented in the removed section's header).
+Their public market-data endpoints are offered for public display use within
+rate limits; with the client fetch removed this leg, visitor-side exposure is
+now zero and the build's once-daily snapshot pulls sit comfortably inside
+every source's fair-use terms.
+
+**Gates (all observed, not claimed):** `npm run build` exit 0, 79 pages ·
+`npm run check` 6/6 green — parity `pass=94 fail=0` (transfer_from_ng moved
+to a declared divergence, see below), independent `pass=113 fail=0`,
+appendix-a `pass=54 fail=0` (A5 transfer rows STAY informational; promotion
+is the manager's post-ship re-gate) · calc-regress in the systemd shelter:
+130 pass / 0 fail / 7 skip — the comparator has no behavioural vector row, as
+the brief expected · served-bytes: relabelled ticker badge + attribution link
++ the corrected seed direction (P2P $71.90 < official $75.13) verified in
+dist, and the old $78.51-class figure absent.
+
+### Divergences (this batch)
+
+- **transfer_from_ng (P0-1, fifth audit [Certain], King's order 2026-10-11)**
+  — the PHP truth oracle snapshot PINS the inverted direction (p2p rate =
+  mid × 1.045, received 70.51 > Wise 67.07): the defect itself, parity-pinned.
+  The TS engine now applies the corrected street-rate direction, that ONE
+  oracle row is excluded from the strict deep-compare, and the corrected
+  values + direction (P2P below the official-rate payout) are fail-guarded in
+  vectors-check.mjs's declared-divergence block — third divergence this
+  mission, each a place the parity gate pinned something the law or the
+  King's order has moved. NOTE: scripts/vectors-check.mjs intentionally rides
+  the Manager's fold UNCOMMITTED — it carries BOTH legs' declared-divergence
+  blocks (this one + the sibling P0-4 copy block).
+- The A5 appendix-a transfer rows (₦100,000 → $75.13 / $73.42 / $72.99 /
+  $71.94 at street ₦1,362–1,390/$) stay informational this leg by order — the
+  engine's corrected direction matches them at page level; their promotion to
+  gated is the Manager's post-ship re-gate.
+
 ## [0.7.56] — 2026-10-11 — the receipt speaks only what changed, and the APR label carries the fee truth
 
 Batch S2a (@builder leg): the fresh audit's single highest-impact UX fix (U1),

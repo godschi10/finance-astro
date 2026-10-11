@@ -1,6 +1,6 @@
 ---
 import { NAV, TICKER_STATIC, catBySlug, COMMENTS_API, type NavItem } from "../data/site";
-import { FX_SNAPSHOT_TS } from "../data/fx-snapshot";
+import { FX_SNAPSHOT, FX_SNAPSHOT_TS } from "../data/fx-snapshot";
 import { TOOLS, allArticles as allPosts, fmtMonthYear } from "../data/content";
 import "../styles/base.css"; // WP stylesheet section 2 (RESET/BASE) — the anchor reset
 import "../styles/header.css";
@@ -559,7 +559,7 @@ main{display:block;min-width:0}
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <div id="top"></div>
-<nav class="ticker" data-ts={FX_SNAPSHOT_TS} aria-label="Market ticker"><span class="tl"><span class="tl-dot" aria-hidden="true"></span><span class="tl-tx">LIVE</span></span><div class="ticker-drag"><div class="ticker-inner">
+<nav class="ticker" data-ts={FX_SNAPSHOT_TS} aria-label="Market ticker"><span class="tl"><span class="tl-dot" aria-hidden="true"></span><span class="tl-tx">Daily reference rate · updated {FX_SNAPSHOT.as_of}</span></span><div class="ticker-drag"><div class="ticker-inner">
 {TICKER_STATIC.map((t) => (<div class="ti" data-src={t.src} data-pair={t.label}><span class="t-pair">{t.label}</span><span class="t-rate">{t.value}</span></div>))}
 {TICKER_STATIC.map((t) => (<div class="ti" aria-hidden="true" data-src={t.src} data-pair={t.label}><span class="t-pair">{t.label}</span><span class="t-rate">{t.value}</span></div>))}
 </div></div></nav>

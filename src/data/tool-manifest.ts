@@ -95,7 +95,7 @@ export const TOOL_MANIFEST: ToolEntry[] = [
   { slug: "dividend-calculator", tool: "Dividend & ROI Estimator", title: "Dividend / ROI Estimator (Nigerian Stocks, NGX)", emoji: "📈", grad: "#fef9c3,#fde047", desc: "Project the total return of a Nigerian dividend stock, with the DRIP reinvestment effect shown year by year, in naira." },
   { slug: "emergency-fund-calculator", tool: "Emergency Fund Calculator", title: "Emergency Fund Calculator (Naira, Inflation-adjusted)", emoji: "🛟", grad: "#fef9c3,#fde047", desc: "How many months of runway does your savings cover? Get the naira target, time to reach it, and the inflation-adjusted amount." },
   { slug: "loan-repayment-calculator", tool: "Loan Repayment Calculator", title: "Loan Repayment Calculator", emoji: "💰", grad: "#fee2e2,#fca5a5", desc: "See the true cost of a Nigerian loan, enter the rate as the lender quotes it and get the real APR." },
-  { slug: "money-transfer-comparator", tool: "Send Money to Nigeria, Best Rate", title: "Money-Transfer Comparator", emoji: "🔁", grad: "#cffafe,#67e8f9", desc: "Compare Wise, Remitly, Western Union, WorldRemit & LemFi on fee + real rate, who actually gets you the most." },
+  { slug: "money-transfer-comparator", tool: "Money Transfer Comparator, Send To or From Nigeria", title: "Money-Transfer Comparator", emoji: "🔁", grad: "#cffafe,#67e8f9", desc: "Compare Wise, Remitly, Western Union, WorldRemit, LemFi, the bank channel and street-rate P2P on fee + real rate, into and out of Nigeria." },
   { slug: "savings-rate-comparator", tool: "Best Savings Rate in Nigeria", title: "Savings Rate Comparator", emoji: "🏦", grad: "#ecfccb,#bef264", desc: "Who pays the most on your savings right now, PiggyVest, Cowrywise, Kuda, Renmoney, FairMoney + FD rates." },
 ];
 
