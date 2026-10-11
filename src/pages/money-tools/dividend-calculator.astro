@@ -11,7 +11,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 // unknown slug throws at build rather than shipping a stale card.
 const artTitle = await articleTitleOf();
 ---
-<ToolShell title="Dividend Estimator, NGX DRIP Projection - GWill Finance" description="Project NGX dividend shares year by year: DRIP vs cash, price and dividend growth, yield, gain, and CAGR." slug="dividend-calculator" tool="Dividend & ROI Estimator" crumb="Dividend & ROI Estimator (Nigerian Stocks)" lede="Pick an NGX payer, set growth, choose DRIP or cash — the projection shows every year's shares, dividends, and portfolio value." verified={`NGX table verified ${dividendVerified()} · indicative prices, not live quotes`} faqs={[
+<ToolShell title="Dividend & ROI Estimator, NGX DRIP Projection - GWill Finance" description="Project NGX dividend shares year by year: DRIP vs cash, price and dividend growth, yield, gain, and CAGR." slug="dividend-calculator" tool="Dividend & ROI Estimator" crumb="Dividend & ROI Estimator (Nigerian Stocks)" lede="Pick an NGX payer, set growth, choose DRIP or cash — the projection shows every year's shares, dividends, and portfolio value." verified={`NGX table verified ${dividendVerified()} · indicative prices, not live quotes`} faqs={[
   { q: "DRIP or cash — which wins?", a: "DRIP almost always, over years. Toggle above on the same inputs and compare the end values — compounding shares beats pocketing dividends." },
   { q: "Are these live NGX prices?", a: "No. The stock table is a maintained snapshot for estimation. Check your broker for tradable prices before buying." },
   { q: "What does CAGR tell me?", a: "Your true annual return with everything reinvested — the one number that lets you compare this stock against a savings plan." },

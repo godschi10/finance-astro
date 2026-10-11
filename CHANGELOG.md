@@ -4,6 +4,65 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.58] — 2026-10-11 — BATCH S2c: reversed calculator says what it does, repealed regime labelled, street premium dated
+
+The fifth audit's S2c queue, run after the DSH twin stopped. Every item verified against source or statute,
+none taken on trust.
+
+**P1-8 — the reversed calculator now says so.** The page titled "Gross to Net" solves **net → gross**: its own
+description said "what gross salary do you need for your target take-home". Renamed to
+**"Net to Gross (Take-Home to Salary)"** across H1, card, title and manifest. **Slug frozen** at
+`gross-to-net-calculator/` — renaming it would break inbound links, and a wrong title on a right URL is a far
+cheaper defect than a dead URL.
+
+**P1-6 — the old regime is labelled repealed, and cited.** "Old (Finance Act)" → **"Old (PITA, for comparison
+only — repealed 1 Jan 2026)"**. The repeal was **not** taken on the audit's word: NTA 2025 s.196(g) repeals
+PITA Cap LFN 2004, commencement 1 Jan 2026, read in the primary text (`nta2025.txt:5342,5355`). The comparison
+itself is legitimate and is kept — only the framing was wrong.
+
+**P1-6 — "Other reliefs" parity: the audit's direction was right.** Measured, not assumed: `grep -c other` = **11
+on gross-to-net, 0 on salary-tax**. The engine was never the gap — both pages call the same `payeCalculate()`;
+salary-tax simply passed a hardcoded `0`. Wired the real input; live proof moves the taxable base from
+₦3,312,000/yr to ₦2,712,000/yr.
+
+**P1-6 — bonus input wired** to the engine already fixed in v0.7.55 (B2). No rate restated: the effective rate
+is read back off `bt.tax / bt.bonus`. Citations are the pre-existing verified ss.4(2)(a), 26(2), 163(1)(t), each
+re-read before reuse. A cleared bonus withholds the house "—" rather than printing a gold ₦0.
+
+**P1-7 — the street premium stops being a bare constant.** `FX_PARALLEL_SPREAD = 1.045` (undated, no source)
+became a **dated observed range 2.2%–4.4% (Jul–Oct 2026, checked 11 Oct 2026)** with a 3.3% point estimate.
+`transfer.ts` held a **second private copy** (`markup: -0.045`) that nothing kept in step — it now reads the
+shared constant, so drift is structurally impossible. **No source URL was invented**: the range follows the
+repo's existing `savings-rate.ts` precedent, where observations carry dates and `sourceUrl` is deliberately
+empty. This **moves real figures** — $100 parallel ₦139,090 → ₦137,492. The audit's own "≈₦139,089" reproduces
+exactly at the old constant, which confirms its observation.
+
+**P2-1 — the convention is disclosed where it is typed.** A reader entering 15% on savings-goal is planning on
+15% while the engine pays 16.08%. The receipt now states the effective yield: nominal ÷12 = 1.25%/mo,
+(1.0125)^12 − 1 = 16.0755% → **16.08%** (arithmetic re-derived, not copied). Withheld as "—" when the field is
+cleared. Placed on savings-goal, where the rate is typed and compounded monthly — not on the savings-rate
+comparator, which only lists providers' headline rates and never divides by 12.
+
+**P2-12 and P2-9 were already done** — reported rather than manufactured into work. The ticker duplicate already
+carried `aria-hidden`; a gate assertion was added so it cannot regress. P2-9's debug files are gitignored and
+absent from `origin/main` (closed v0.7.50).
+
+**P3-6 — a staleness gate was added, not a gate loosened.** `check-maintained-staleness.mjs` fails every
+maintained table that stops carrying a resolvable date, and was **proven to go red on a stale table before being
+restored**. Gates are now **7/7** (an addition, not a weakening): article 147/147, vectors 95/95, footer 64,
+homepage 128, independent 113/0, appendix-a 54/0, staleness 7 assertions. Suite **130/0/7**.
+
+**Two self-caught defects, disclosed not hidden.** An introduced TDZ `ReferenceError` (the bonus block read
+`grossKnown` before its `const`) — caught by the suite's rails/console checks, fixed. Then an `aria-hidden`
+wrapper that leaked a stale `0.0%` through `.receipt-row b` — caught by the reset/clear checks, fixed to the
+house withhold. Both verified at 130/0/7 before shipping.
+
+**OPEN, for the King — P1-3.** The master list records "default → National 15.39% (D1 adopted)". **The CHANGELOG
+does not record it**, and the code still opens at 24% (Lagos) behind an explicit HN-2 comment defending it. The
+ruling was either never applied or deliberately reversed. **Left at 24%** — changing a default the King may have
+overruled is not an agent's call. Presets (National/Food/Lagos + dated NBS source) were added without touching
+the default. Quantified: national 15.39% gives real monthly ₦207,168 vs ₦307,188 at 24% — a **33% swing**.
+
 ## [0.7.57] — 2026-10-11 — the street rate points the right way, and nothing says LIVE on a once-a-day feed
 
 Batch S2b (@builder leg): the fifth audit's P0 cluster — the Transfer

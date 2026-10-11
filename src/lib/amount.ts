@@ -2,7 +2,7 @@
 // cluster: one template + engine serving every amount slug). Copy lives in
 // src/data/amount-pages.json (dumped read-only from the truth theme via
 // scripts/php-harness/dump_amount.php); all math here. Tested vs PHP vectors.
-import { fxConvert, fxCurrencies, fxParallelSpread, fxParallelNgnUsd } from "./fx";
+import { fxConvert, fxCurrencies, fxParallelSpread, fxParallelNgnUsd, fxParallelRangeLabel, FX_PARALLEL_SPREAD_POINT } from "./fx";
 import { formatGrouped } from "./format";
 import amountCfg from "../data/amount-pages.json";
 
@@ -208,22 +208,27 @@ export function amountTokens(
   const spread = fxParallelSpread();
   const ngnPer = d.rates["NGN"] && d.rates["NGN"] > 0 ? Number(d.rates["NGN"]) : 0;
   const parNgn = ngnPer > 0 ? fxParallelNgnUsd(ngnPer, spread) : 0;
-  const spreadPct = formatGrouped((spread - 1) * 100, 1);
+  /* P1-7 (v0.7.58): this is the sentence the amount pages shipped as "about 4.5%
+     above the official figure" — a bare premium with no date and no range. It
+     now carries the point estimate AND the dated range it was drawn from, from
+     the same constant the converter reads. */
+  const spreadPct = formatGrouped(FX_PARALLEL_SPREAD_POINT * 100, 1);
+  const spreadRange = fxParallelRangeLabel();
   let parallel = "";
   if (d.from === "USD" && parNgn > 0) {
     parallel =
-      `${amountFmt(d.amount * parNgn, "NGN")} at the parallel (street) rate, about ${spreadPct}% above the official figure, ` +
+      `${amountFmt(d.amount * parNgn, "NGN")} at the parallel (street) rate, modelled about ${spreadPct}% above the official figure (observed range ${spreadRange}), ` +
       "because peer-to-peer and street trades price the difficulty of getting dollars.";
   } else if (d.to === "USD" && parNgn > 0) {
     const pv = d.amount / parNgn;
     parallel =
-      `$${formatGrouped(pv, pv < 100 ? 2 : 0)} at the parallel (street) rate, naira buys a little fewer dollars on the informal market ` +
+      `$${formatGrouped(pv, pv < 100 ? 2 : 0)} at the parallel (street) rate, modelled about ${spreadPct}% above the official figure (observed range ${spreadRange}) — naira buys a few fewer dollars on the informal market ` +
       "than the official figure implies, because P2P and street rates sit above the official price of a dollar.";
   } else if (parNgn > 0) {
     // Non-USD pairs (GBP/EUR→NGN): no parallel cross exists, so never leave
     // {PARALLEL} blank mid-sentence — the street premium applies regardless.
     parallel =
-      "Street and P2P trades usually price a few percent above the official figure, " +
+      `Street and P2P trades usually price a few percent above the official figure — we model about ${spreadPct}%, from an observed range of ${spreadRange} — ` +
       "so confirm the provider's final payout before sending.";
   }
 

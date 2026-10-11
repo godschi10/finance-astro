@@ -36,6 +36,20 @@
  *     says "Currency Converter"; the tax page says "Nigeria Tax Calculator
  *     2026" where the hub card says "Nigeria Tax Calculator".
  *   - `title` — the hub card title, verbatim from page-tools.php.
+ *
+ * ── P3-3 UNIFICATION (fifth audit, v0.7.58) ────────────────────────────────
+ * The rule above keeps a DELIBERATE difference: a search-facing short name on
+ * the card ("Currency Converter") beside a keyword H1 on the page. Two rows were
+ * not that — they were near-duplicate NAMES FOR THE SAME TOOL, which is the
+ * confusion the fifth audit's P3-3 [Certain] names, and no reader can tell
+ * "Inflation Savings" and "Inflation-Adjusted Savings" apart as two products:
+ *   - inflation-savings-calculator: card "Inflation Savings Calculator" vs H1
+ *     "Inflation-Adjusted Savings Calculator"
+ *   - dividend-calculator: card "Dividend / ROI Estimator (Nigerian Stocks,
+ *     NGX)" vs H1 "Dividend & ROI Estimator"
+ * Both cards now carry the page's own H1 verbatim, and both page <title> tags
+ * were aligned to match. The DELIBERATE pairs (converter, tax) are untouched —
+ * this is not a rule change, it is the two exceptions to it, closed.
  * There is deliberately NO chip/badge field: measured, `badge` is 16 DIFFERENT
  * strings (one even built from the FX snapshot at build time), so a shared
  * chip label would be an invention, not a de-duplication.
@@ -87,12 +101,12 @@ export const TOOL_MANIFEST: ToolEntry[] = [
      window needs a year of daily visits. The desc now says that. */
   { slug: "exchange-rate-history", tool: "$ USD to Naira Rate History", title: "Rate History Chart", emoji: "📈", grad: "#fce7f3,#fbcfe8", desc: "See the dollar to naira trend build day by day on this device — the chart starts empty and earns its shape as you visit." },
   { slug: "compound-interest-calculator", tool: "Compound Interest Calculator", title: "Compound Interest Calculator", emoji: "📊", grad: "#e0f2fe,#bae6fd", desc: "See how your savings grow with compound interest, project your balance year by year." },
-  { slug: "inflation-savings-calculator", tool: "Inflation-Adjusted Savings Calculator", title: "Inflation Savings Calculator", emoji: "🔥", grad: "#fee2e2,#fecaca", desc: "See what inflation really does to your savings goal, and how much more you must save each month." },
-  { slug: "gross-to-net-calculator", tool: "Gross to Net Calculator", title: "Gross to Net Calculator", emoji: "💰", grad: "#ccfbf1,#99f6e4", desc: "Start from the take-home pay you want and find the gross salary you need, under NTA 2025." },
+  { slug: "inflation-savings-calculator", tool: "Inflation-Adjusted Savings Calculator", title: "Inflation-Adjusted Savings Calculator", emoji: "🔥", grad: "#fee2e2,#fecaca", desc: "See what inflation really does to your savings goal, and how much more you must save each month." },
+  { slug: "gross-to-net-calculator", tool: "Net to Gross (Take-Home to Salary)", title: "Net to Gross (Take-Home to Salary)", emoji: "💰", grad: "#ccfbf1,#99f6e4", desc: "Start from the take-home pay you want and find the gross salary you need, under NTA 2025." },
   { slug: "50-30-20-budget-calculator", tool: "50/30/20 Budget Calculator", title: "50/30/20 Budget Calculator", emoji: "🧮", grad: "#fef9c3,#fde047", desc: "Split your take-home pay into needs, wants and savings, check real spending against the plan — then break the needs half into rent, food, transport, data and bills. Two steps, one page." },
   { slug: "naira-value-calculator", tool: "Naira Value Calculator", title: "Naira Value Calculator (Inflation / Depreciation)", emoji: "💸", grad: "#fef9c3,#fde047", desc: "What is ₦1M today really worth in 5 years? See how inflation erodes the naira, and what future money is worth today." },
   { slug: "crypto-profit-calculator", tool: "Crypto Profit Calculator", title: "Crypto Profit Calculator (Naira, P2P-aware)", emoji: "🪙", grad: "#fef9c3,#fde047", desc: "Work out the real naira profit on a crypto trade, with the P2P buy/sell spread shown as its own cost." },
-  { slug: "dividend-calculator", tool: "Dividend & ROI Estimator", title: "Dividend / ROI Estimator (Nigerian Stocks, NGX)", emoji: "📈", grad: "#fef9c3,#fde047", desc: "Project the total return of a Nigerian dividend stock, with the DRIP reinvestment effect shown year by year, in naira." },
+  { slug: "dividend-calculator", tool: "Dividend & ROI Estimator", title: "Dividend & ROI Estimator", emoji: "📈", grad: "#fef9c3,#fde047", desc: "Project the total return of a Nigerian dividend stock, with the DRIP reinvestment effect shown year by year, in naira." },
   { slug: "emergency-fund-calculator", tool: "Emergency Fund Calculator", title: "Emergency Fund Calculator (Naira, Inflation-adjusted)", emoji: "🛟", grad: "#fef9c3,#fde047", desc: "How many months of runway does your savings cover? Get the naira target, time to reach it, and the inflation-adjusted amount." },
   { slug: "loan-repayment-calculator", tool: "Loan Repayment Calculator", title: "Loan Repayment Calculator", emoji: "💰", grad: "#fee2e2,#fca5a5", desc: "See the true cost of a Nigerian loan, enter the rate as the lender quotes it and get the real APR." },
   { slug: "money-transfer-comparator", tool: "Money Transfer Comparator, Send To or From Nigeria", title: "Money-Transfer Comparator", emoji: "🔁", grad: "#cffafe,#67e8f9", desc: "Compare Wise, Remitly, Western Union, WorldRemit, LemFi, the bank channel and street-rate P2P on fee + real rate, into and out of Nigeria." },

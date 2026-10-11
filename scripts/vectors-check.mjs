@@ -235,8 +235,15 @@ const missing = [];
 // asserted explicitly in the independent section below. This is comparison
 // plumbing only — the engine object keeps the field.
 const DECLARED_ADDITIVE = new Set(["gross_full_250k", "gross_full_60k_exemptzone"]);
+// DECLARED RE-ANCHORS (fifth audit P1-7, v0.7.58) — declared here, above the
+// comparison loop, because the loop reads them. Each vector named here stopped
+// comparing against the PHP oracle snapshot (which pins the bare 1.045 street
+// premium) and is asserted explicitly, against the maintained constant, in the
+// re-anchor block at the foot of this file. See CHANGELOG 0.7.58 Divergences.
+const DECLARED_REANCHORS = new Set(["fx_parallel", "transfer_providers_from", "amount_tokens_100"]);
 for (const [name, actual] of cases) {
   if (!(name in byName)) { missing.push(name); continue; }
+  if (DECLARED_REANCHORS.has(name)) continue; // asserted explicitly below
   const probe = DECLARED_ADDITIVE.has(name) && actual && typeof actual === "object"
     ? Object.fromEntries(Object.entries(actual).filter(([k]) => k !== "unreachable"))
     : actual;
@@ -252,7 +259,8 @@ for (const [name, actual] of cases) {
 //   · paye_bonus_exempt_base (B2, v0.7.55): not compared against the STALE PHP
 //     value (the PHP engine carries the same B2 defect); the corrected value
 //     is asserted in the declared-divergence block below.
-// See CHANGELOG 0.7.55 Divergences.
+//   · fx_parallel, transfer_providers_from, amount_tokens_100 (P1-7, v0.7.58):
+//     re-anchored (declared above the loop), asserted in the block at the foot.
 const DECLARED_REMOVALS = new Set(["crypto_usdt", "paye_bonus_exempt_base", "transfer_from_ng"]);
 const extra = Object.keys(byName).filter((n) => !cases.some(([c]) => c === n) && !DECLARED_REMOVALS.has(n));
 // ── DECLARED DIVERGENCE (v0.7.55, B2) ────────────────────────────────────────
@@ -307,10 +315,19 @@ const extra = Object.keys(byName).filter((n) => !cases.some(([c]) => c === n) &&
   const rowOf = (id) => q.rows.find((x) => x.id === id);
   const mid = 1.0 / 1482.0; // the oracle's own NGN/USD input, unchanged
   const p2p = rowOf("p2p"), wise = rowOf("wise"), bank = rowOf("bank");
+  /* P1-7 (v0.7.58): this guard used to freeze the literal 1.045 in three
+     places, so moving the maintained premium would have failed the gate for a
+     reason that had nothing to do with the DIRECTION this guard exists to
+     protect. It now reads the maintained constant: the assertions below are
+     about direction and about the two official-rate rows being untouched, and
+     they hold whatever the premium is set to. The direction assertion (p2p <
+     wise) is the actual P0-1 contract and is unchanged. */
+  const prem = F.FX_PARALLEL_SPREAD;
   const problems = [];
-  const r1 = cmp(p2p.rate, mid / 1.045, "transfer_from_ng[corrected].p2p.rate (street premium DIVIDES, never multiplies)");
+  if (prem <= 1) problems.push(`transfer_from_ng[corrected]: maintained street premium ${prem} must be ABOVE 1 (a premium, not a discount) — fix src/lib/fx.ts`);
+  const r1 = cmp(p2p.rate, mid / prem, "transfer_from_ng[corrected].p2p.rate (street premium DIVIDES, never multiplies)");
   if (r1) problems.push(r1);
-  const r2 = cmp(p2p.received, (100000.0 / 1482.0) / 1.045, "transfer_from_ng[corrected].p2p.received (₦100,000 ÷ (₦1,482 × 1.045))");
+  const r2 = cmp(p2p.received, (100000.0 / 1482.0) / prem, `transfer_from_ng[corrected].p2p.received (₦100,000 ÷ (₦1,482 × ${prem}))`);
   if (r2) problems.push(r2);
   const r3 = cmp(wise.received, 67.0715249662618, "transfer_from_ng[corrected].wise.received (official-rate rows must not move)");
   if (r3) problems.push(r3);
@@ -320,6 +337,47 @@ const extra = Object.keys(byName).filter((n) => !cases.some(([c]) => c === n) &&
   if (problems.length) { fail++; console.log(`FAIL ${problems.join("; ")}`); }
   else pass++;
   console.log("DECLARED DIVERGENCE transfer_from_ng: the PHP oracle snapshot multiplies the street premium INTO the P2P payout (the $78.51-class defect, fifth audit A5 [Certain]); the King's P0-1 order (2026-10-11) corrects the direction — the naira divides by the higher ₦/$ street rate, P2P below the official-rate payout. Stale PHP expectation not asserted; corrected values + direction fail-guarded. See CHANGELOG 0.7.57 Divergences.");
+}
+// ── DECLARED RE-ANCHORS (fifth audit P1-7, v0.7.58) ─────────────────────────
+// The three vectors above stopped comparing against the PHP oracle because the
+// oracle snapshot pins the bare 1.045 street premium. They are NOT dropped —
+// each is asserted here against the maintained range's point estimate, so a
+// future edit to FX_PARALLEL_SPREAD_RANGE that is not reflected in the engines
+// still fails loudly. The invariant being protected is "one maintained number,
+// read by every consumer": fx.ts's multiplier, transfer.ts's P2P markup and the
+// amount pages' {PARALLEL} sentence all come from the same constant.
+{
+  const prem = F.FX_PARALLEL_SPREAD;
+  const point = F.FX_PARALLEL_SPREAD_POINT;
+  const rng = F.FX_PARALLEL_SPREAD_RANGE;
+  const problems = [];
+  // The point estimate must actually BE the midpoint of the recorded range.
+  const mid = (rng.low + rng.high) / 2;
+  if (Math.abs(point - mid) > 1e-9) problems.push(`fx_parallel[re-anchored]: point estimate ${point} is not the midpoint ${mid} of the observed range ${rng.low}-${rng.high}`);
+  if (Math.abs(prem - (1 + point)) > 1e-9) problems.push(`fx_parallel[re-anchored]: multiplier ${prem} !== 1 + point ${1 + point}`);
+  if (!(rng.low > 0 && rng.high >= rng.low)) problems.push(`fx_parallel[re-anchored]: observed range is not a positive ascending range (${JSON.stringify(rng)})`);
+  // Every recorded observation must fall inside the range it is claimed to span.
+  for (const o of F.FX_PARALLEL_OBSERVATIONS) {
+    if (o.premium < rng.low || o.premium > rng.high) problems.push(`fx_parallel[re-anchored]: observation ${o.date} (${o.premium}) falls outside the claimed range ${rng.low}-${rng.high}`);
+  }
+  const r1 = cmp(F.fxParallelNgnUsd(1482.0), 1482.0 * prem, "fx_parallel[re-anchored] (official × the maintained spread)");
+  if (r1) problems.push(r1);
+  const r2 = cmp(F.fxParallelNgnUsd(1482.0, 1.10), 1482.0 * 1.10, "fx_parallel_custom (an explicit caller-supplied spread still overrides the maintained point estimate)");
+  if (r2) problems.push(r2);
+  // transfer.ts must read the SAME constant, not a second copy of it.
+  const p2pRow = T.transferProviders("from-nigeria").find((p) => p.id === "p2p");
+  const r3 = cmp(p2pRow && p2pRow.markup, -point, "transfer_providers_from[re-anchored].p2p.markup (transfer.ts reads FX_PARALLEL_SPREAD_POINT, never a private literal)");
+  if (r3) problems.push(r3);
+  // amount.ts must print the same figure AND carry the dated range beside it.
+  const tok = A.amountTokens("100-dollars-to-naira", A.amountPageData("100-dollars-to-naira", { ...liveFx, cached: true }));
+  const par = (tok || {})["{PARALLEL}"] || "";
+  const pctTxt = (point * 100).toFixed(1);
+  if (!par.includes(pctTxt)) problems.push(`amount_tokens_100[re-anchored]: {PARALLEL} does not name the point estimate ${pctTxt}% — got: ${par.slice(0, 120)}`);
+  if (!par.includes(`${(rng.low * 100).toFixed(1)}%–${(rng.high * 100).toFixed(1)}%`)) problems.push(`amount_tokens_100[re-anchored]: {PARALLEL} does not carry the observed RANGE — got: ${par.slice(0, 160)}`);
+  if (!par.includes(F.FX_PARALLEL_VERIFIED_ON.slice(0, 4))) problems.push(`amount_tokens_100[re-anchored]: {PARALLEL} carries no verification year`);
+  if (problems.length) { fail++; console.log(`FAIL ${problems.join("; ")}`); }
+  else pass++;
+  console.log(`DECLARED RE-ANCHOR fx_parallel/transfer_providers_from/amount_tokens_100: the PHP oracle snapshot pins the bare 1.045 street premium (fifth audit P1-7 [Certain]); the King's order replaces it with a dated maintained range (${(rng.low * 100).toFixed(1)}%–${(rng.high * 100).toFixed(1)}%, checked ${F.FX_PARALLEL_VERIFIED_ON}) and a ${pctTxt}% midpoint point-estimate. Stale PHP expectations not asserted; the new behaviour is asserted here — midpoint invariant, range containment of every observation, transfer.ts and amount.ts reading the SAME constant, and an explicit caller spread still overriding. See CHANGELOG 0.7.58 Divergences.`);
 }
 console.log(`\npass=${pass} fail=${fail} cases=${cases.length} vectors=${vectors.length}`);
 if (missing.length) console.log("MISSING (no oracle):", missing.join(", "));

@@ -3,6 +3,17 @@ import ToolShell from "../../components/ToolShell.astro";
 import { savingsCalculate, savingsSchedule } from "../../lib/savings";
 import { formatGrouped } from "../../lib/format";
 const n = (v: number) => formatGrouped(v, 0);
+/* P2-1 (fifth audit): the rate field was an "Annual rate %" with no convention
+   stated, while the engine divides it by 12 and compounds monthly. A reader who
+   assumed 15% EFFECTIVE is planning on 15% and the engine pays them 16.08% —
+   they get a better answer than they budgeted for, and cannot see it. The
+   effective yield is therefore stated on the receipt, not buried in a footer.
+
+   The conversion is the standard one and it is exact, not a fudge:
+     nominal %/yr ÷ 12 = monthly rate; effective = (1 + m)^12 − 1.
+   15% nominal → m = 1.25%/mo → (1.0125)^12 − 1 = 16.0755% → 16.08%.
+   Every conversion page that compounds monthly carries the same convention. */
+const effFrom = (nominalPct: number) => (Math.pow(1 + nominalPct / 100 / 12, 12) - 1) * 100;
 const seed = savingsCalculate(5000000, 500000, 0.15, 24, "monthly");
 const rows = savingsSchedule(5000000, 500000, 0.15, 24, "monthly");
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
@@ -10,6 +21,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <ToolShell title="Savings Goal Calculator, Monthly Target - GWill Finance" description="What must you save monthly to hit your target? Exact monthly figure plus a year-by-year path from where you stand." slug="savings-goal-calculator" tool="Savings Goal Calculator" lede="Name the target and the deadline — the calculator names the monthly price. Already there? It tells you straight." verified="Annuity-solved monthly · monthly compounding default" faqs={[
   { q: "What if I already passed the target?", a: "Monthly drops to zero and the receipt says the goal is reached. Protect the win — move the surplus to the next goal." },
   { q: "Does a higher rate really change the monthly?", a: "Dramatically over long deadlines. Compare 0% vs 15% above — the interest pays part of your goal for you." },
+  { q: "Is the rate I type nominal or effective?", a: "Nominal, compounded monthly — the receipt states both. We divide the annual rate by 12 and compound monthly, so a typed 15% actually returns 16.08% over a full year once compounding is counted. The effective annual yield row shows that figure, and it is the one to compare against what a provider advertises." },
 ]}
 
   badge="Compound interest · Monthly compounding",
@@ -21,7 +33,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 
 <div class="field" data-cur="NGN"><label for="sg-target">Target ₦</label><input id="sg-target" type="text" value="5000000" inputmode="decimal"></div>
 <div class="field" data-cur="NGN"><label for="sg-cur">Have now ₦</label><input id="sg-cur" type="text" value="500000" inputmode="decimal"></div>
-<div class="field"><label for="sg-rate">Annual rate %</label><input id="sg-rate" type="text" max="100" value="15" inputmode="decimal"></div>
+<div class="field"><label for="sg-rate">Annual rate % (nominal)</label><input id="sg-rate" type="text" max="100" value="15" inputmode="decimal"><p class="hint">A nominal annual rate, compounded monthly — so 15% nominal earns more than 15% over a year once compounding is counted. The receipt shows both figures.</p></div>
 <div class="field"><label for="sg-mo">Months</label><input id="sg-mo" type="number" min="1" max="600" step="1" value="24" inputmode="numeric"></div>
 </div>
 <div class="receipt">
@@ -31,6 +43,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Total at deadline</span><b id="sg-tot">₦{n(seed.total)}</b></div>
 <div class="receipt-row"><span>Interest earned</span><b id="sg-int">₦{n(seed.interest)}</b></div>
+<div class="receipt-row"><span>Effective annual yield</span><b id="sg-eff">{effFrom(15).toFixed(2)}%</b></div>
 <p class="receipt-note" id="sg-warn" hidden aria-live="polite"></p>
 <p class="receipt-foot">Annuity-solved · monthly compounding</p>
 <!-- CALC-9 (v0.7.47): savingsCalculate() is an ordinary annuity, so every deposit
@@ -40,6 +53,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
      A start/end toggle is a separate leg — this line removes the misunderstanding
      now, in ordinary receipt type, once per page, reachable on a phone. -->
 <p class="receipt-foot">Deposits land at the end of each month</p>
+<p class="receipt-foot" id="sg-effnote">Your rate is a <strong>nominal</strong> annual figure compounded monthly, so it earns slightly more than the number you typed once a year of compounding is counted. The effective annual yield above is what one full year actually returns at that rate — the honest figure to compare against a provider's advertised yield.</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
@@ -69,7 +83,23 @@ const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).val
 /* THE ZERO LAW. The engine reads all four, so every figure waits on all four:
    "have now" cleared must not silently pay the plan as if nothing were saved. */
 const ALL = ["sg-target", "sg-cur", "sg-rate", "sg-mo"];
+/* P2-1: the effective yield depends ONLY on the rate, so it is set first and is
+   deliberately NOT gated on the goal — unlike every figure below it, it is not
+   derived from what the visitor can clear, so withholding it would be the
+   ZERO LAW over-applied (it reads nothing but sg-rate). It is also not in ALL,
+   because it cannot move when the target, balance or deadline change. */
+const effFrom = (nominalPct: number) => (Math.pow(1 + nominalPct / 100 / 12, 12) - 1) * 100;
 function render() {
+  /* P2-1 — effective yield first: a pure function of the rate field, so it is
+     never withheld by a missing TARGET or DEADLINE (only by a missing rate,
+     which is the honest dependency). Going through sfFig rather than a bare
+     textContent buys two things the rest of the receipt already has: the "—"
+     withhold when the rate is cleared (printing "0.00%" for a rate nobody
+     typed is a claim about nothing), and the auto-computed trust badge, so this
+     row carries the same Example/Yours grammar as Total and Interest instead of
+     being the one bare number on the panel. */
+  const ratePct = Math.max(0, pm(g("sg-rate").value) || 0);
+  sfFig(t("sg-eff"), ["sg-rate"], effFrom(ratePct).toFixed(2) + "%");
   const target = Math.max(0, pm(g("sg-target").value) || 0);
   const cur = Math.max(0, pm(g("sg-cur").value) || 0);
   const rate = Math.max(0, pm(g("sg-rate").value) || 0) / 100;

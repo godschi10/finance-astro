@@ -18,6 +18,7 @@ const GATES = [
   "check-footer-fidelity.mjs", // WP→Astro footer port contract (source assertions)
   "check-homepage-fidelity.mjs", // WP→Astro homepage port contract (source assertions)
   "check-article-fidelity.mjs", // WP→Astro article page contract incl. the net-new subtitle
+  "check-maintained-staleness.mjs", // P3-6: maintained tables (NGX, savings, fees, street premium) must be re-checked inside 45 days
   "vectors-check.mjs", // every TS engine vs the PHP truth oracle AND the independent oracle (PROC-1)
 ];
 

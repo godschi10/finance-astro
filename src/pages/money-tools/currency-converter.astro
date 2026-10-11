@@ -1,7 +1,7 @@
 ---
 import ToolShell from "../../components/ToolShell.astro";
 import { articleTitleOf } from "../../data/content";
-import { fxConvert, fxCurrencies, fxParallelNgnUsd, fxParallelSpread, fxNumber } from "../../lib/fx";
+import { fxConvert, fxCurrencies, fxParallelNgnUsd, fxParallelSpread, fxParallelRangeLabel, FX_PARALLEL_SPREAD_POINT, fxNumber } from "../../lib/fx";
 import { FX_SNAPSHOT, FX_SNAPSHOT_LABEL } from "../../data/fx-snapshot";
 const cur = fxCurrencies();
 const codes = Object.keys(cur);
@@ -10,6 +10,13 @@ const seed = { amount: 100, from: "USD", to: "NGN" };
 const converted = fxConvert(seed.amount, seed.from, seed.to, FX_SNAPSHOT.rates);
 const unit = fxConvert(1, seed.from, seed.to, FX_SNAPSHOT.rates);
 const parallel = fxParallelNgnUsd(FX_SNAPSHOT.rates.NGN, fxParallelSpread());
+/* P1-7 (v0.7.58): every surface that prints the street premium now prints the
+   DATED RANGE beside it. A single undated "4.5%" is gone from the site — the
+   arithmetic still uses one point estimate (the midpoint, FX_PARALLEL_SPREAD_
+   POINT) but the reader is told what it is: an estimate, and over what range it
+   was observed. */
+const parPct = (FX_PARALLEL_SPREAD_POINT * 100).toFixed(1);
+const parRange = fxParallelRangeLabel();
 // Prose figures are DERIVED from the build-time snapshot (King order
 // 2026-09-30: nothing stale-in-amber; every number recomputes each build):
 // $100 -> naira, ₦1,000 -> dollars, £50 -> naira, USD/NGN spot.
@@ -23,7 +30,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
 <ToolShell title="Currency Converter, Daily NGN Reference Rate - GWill Finance" description="Convert USD, GBP, EUR and 13 more currencies to naira at the mid-market reference rate, plus an honest parallel-market estimate." slug="currency-converter" tool="Dollar to Naira & Every Currency" crumb="Currency Converter" lede="Sixteen currencies, one honest mid-market number. The figure below is baked from the build's daily reference snapshot and stamped with the feed's own update time." verified={`Rates: daily reference snapshot — ${FX_SNAPSHOT.as_of}`} faqs={[
   { q: "Is this the rate my bank will give me?", a: "No. This is the mid-market rate before fees or margins. Banks and apps add their own spread — compare the final naira that lands, not headline rates." },
-  { q: "What is the parallel-market estimate?", a: "What dollars trade for between individuals outside official channels, roughly 4.5% above official. It is an estimate, always labeled as one." },
+  { q: "What is the parallel-market estimate?", a: `What dollars trade for between individuals outside official channels. We model it at about ${parPct}% above the official rate — the midpoint of an observed range of ${parRange}. The premium moves day to day, so treat the figure as an estimate, never as a quote.` },
   { q: "Why does the page show a snapshot?", a: "The page carries the rate the build fetched from the FX feed, stamped with the feed's own update time — the build runs twice a day, so the figure is a daily reference rather than a per-visit refresh. There is always a correct figure even before any JavaScript runs, and the stamp tells you exactly how fresh it is." },
 ]}
 
@@ -48,14 +55,14 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-sub" id="cc-unit">1 {seed.from} = {fxNumber(unit, 2)} {seed.to}</p>
 <p class="receipt-note" id="cc-warn" hidden aria-live="polite"></p>
 <div class="receipt-div" aria-hidden="true"></div>
-<p class="receipt-note" data-sf-fig id="cc-par">Parallel estimate ≈ ₦{fxNumber(seed.amount * parallel, 0)} (estimated, not a quote)</p>
+<p class="receipt-note" data-sf-fig id="cc-par">Parallel estimate ≈ ₦{fxNumber(seed.amount * parallel, 0)} (estimated, not a quote · street premium modelled at {parPct}%, range {parRange})</p>
 <p class="receipt-foot" id="cc-foot">Snapshot · {FX_SNAPSHOT.as_of}</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
 </ToolShell>
 <script>
-import { fxConvert, fxParallelNgnUsd, fxParallelSpread, fxNumber } from "../../lib/fx";
+import { fxConvert, fxParallelNgnUsd, fxParallelSpread, fxParallelRangeLabel, FX_PARALLEL_SPREAD_POINT, fxNumber } from "../../lib/fx";
 import { FX_SNAPSHOT } from "../../data/fx-snapshot";
 import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
@@ -113,7 +120,7 @@ function render() {
     const p = fxParallelNgnUsd(fxConvert(1, f, "USD", rates) * rates["NGN"], fxParallelSpread());
     /* THE ZERO LAW: a parallel estimate off an un-entered amount is ₦0 with a
        confident "estimate" in front of it. Same withholding as the hero. */
-    sfFig(par, ["cc-amt"], `Parallel estimate ≈ ₦${fxNumber(a * p, 0)} (estimated, not a quote)`);
+    sfFig(par, ["cc-amt"], `Parallel estimate ≈ ₦${fxNumber(a * p, 0)} (estimated, not a quote · street premium modelled at ${(FX_PARALLEL_SPREAD_POINT * 100).toFixed(1)}%, range ${fxParallelRangeLabel()})`);
     par.hidden = false;
   } else par.hidden = true;
 }

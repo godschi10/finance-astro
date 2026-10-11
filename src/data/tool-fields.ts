@@ -452,8 +452,9 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps", "al-rent", "al-food", "al-transport", "al-data", "al-utilities"],
   },
 
-  /* 2 — salary tax. Gross is a seed; the four reliefs are ₦0 blanks and stay
-     plain. Gross NEVER restores (§2g) and neither do the reliefs. */
+  /* 2 — salary tax. Gross is a seed; the reliefs (rent, NHF, NHIS, life, other)
+     and the bonus are ₦0 blanks and stay plain. Gross NEVER restores (§2g) and
+     neither do the reliefs or the bonus. */
   "salary-tax-calculator": {
     tool: "salary-tax",
     seeds: ["st-gross", "st-pension"],

@@ -1,5 +1,7 @@
 // PAYE salary-tax engine — TS port of inc/salary-tax.php.
-// Nigeria Tax Act 2025 (in force 1 Jan 2026) vs Finance Act 2023 (old).
+// Nigeria Tax Act 2025 (in force 1 Jan 2026) vs the old PITA bands (the
+// Personal Income Tax Act, Cap. P8 LFN 2004, REPEALED from that commencement by
+// NTA 2025 s.196(g) — priced for comparison only, never as live PAYE).
 // Numerically tested against the PHP originals (docs/PHASE2-TEST-VECTORS.md).
 
 export interface PayeBand {

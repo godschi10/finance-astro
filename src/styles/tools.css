@@ -56,6 +56,17 @@
   transition: background var(--t), color var(--t), border-color var(--t);
 }
 .fx-chip:hover { background: var(--gold-b); color: #0d0b08; border-color: var(--gold-b); }
+/* P1-3 (fifth audit, v0.7.58): the inflation presets on the inflation-savings
+   page are a STATEFUL chip group, not a row of quick-fills — the chip matching
+   the figure in the field is aria-pressed, and a visitor who types their own
+   rate releases all of them. `.tp-seg[aria-pressed=true]` in header.css is the
+   same grammar for the theme picker; without a pressed state here the chips
+   would look identical whether or not one was active, which makes the
+   accessibility state invisible. Additive only — the .fx-chip rules above are
+   untouched, so the budget page's quick-fill chips (which never set
+   aria-pressed) are unaffected. */
+.fx-chip[aria-pressed="true"] { background: var(--gold-b); color: #0d0b08; border-color: var(--gold-b); }
+.fx-chip[aria-pressed="true"]:hover { background: var(--gold-b); color: #0d0b08; }
 .fx-copy { font-size: 15px; line-height: 1.8; color: var(--art-copy); max-width: 720px; }
 .fx-copy h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; color: var(--text); margin: 28px 0 10px; }
 .fx-copy h3 { font-size: 17px; font-weight: 800; color: var(--text); margin: 22px 0 8px; }

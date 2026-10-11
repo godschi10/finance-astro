@@ -23,10 +23,11 @@ const saveTxt = tie
     ? `You keep ₦${n(cmp.save_monthly)}/mo more under the new bands.`
     : `The old bands save you ₦${n(-cmp.save_monthly)}/mo vs the new bands.`;
 ---
-<ToolShell title="Nigeria Tax Calculator 2026, NTA 2025 vs Old Bands - GWill Finance" description="Nigerian PAYE under the NTA 2025 bands (in force 1 Jan 2026) vs the old Finance Act bands: rent relief, minimum-wage exemption, old-vs-new comparison." slug="salary-tax-calculator" tool="Nigeria Tax Calculator 2026" crumb="Nigeria Tax Calculator" lede="2026 bands (0% under ₦800k, then 15–25%) against the old 7–24% — with 20% rent relief and the ₦70k minimum-wage exemption." verified="NTA 2025 bands · rent relief capped ₦500k · exemption ≤ ₦70,000/mo" faqs={[
+<ToolShell title="Nigeria Tax Calculator 2026, NTA 2025 vs Old Bands - GWill Finance" description="Nigerian PAYE under the NTA 2025 bands (in force 1 Jan 2026) vs the old PITA bands, for comparison only (repealed 1 Jan 2026): rent relief, minimum-wage exemption, old-vs-new comparison." slug="salary-tax-calculator" tool="Nigeria Tax Calculator 2026" crumb="Nigeria Tax Calculator" lede="2026 bands (0% under ₦800k, then 15–25%) against the repealed 7–24% PITA bands, for comparison — with 20% rent relief and the ₦70k minimum-wage exemption." verified="NTA 2025 bands · rent relief capped ₦500k · exemption ≤ ₦70,000/mo" faqs={[
   { q: "Who pays zero PAYE?", a: "You pay no income tax on an employment if your gross income from that employment is at or below the national minimum wage (Nigeria Tax Act 2025, s.163(1)(t)). This is a different thing from the ₦800,000 zero-rate band, which applies to your chargeable income once you are taxable. Last verified 11 Oct 2026 · NTA s.163(1)(t) (nta2025.txt:4407-4408) · s.58(1) (nta2025.txt:1877-1880)" },
   { q: "How does rent relief work?", a: "20% of annual rent reduces taxable income, capped at ₦500,000 a year. Keep rent receipts." },
-  { q: "Old vs new — who wins?", a: "The new bands win for most salaries, especially with rent relief. Without rent, the old bands come out slightly ahead for gross pay of roughly ₦325k–₦535k a month (by at most about ₦1,000 a month), and again for very high earners. Enter your salary and the comparison card shows your actual winner." },
+  { q: "How is a bonus taxed?", a: "A bonus is employment income, taxed on the day it is paid (NTA 2025 ss.4(2)(a), 26(2)). Enter it in the bonus field and we add it to your regular chargeable income and charge only the extra tax, so a bonus pays at your marginal band rate rather than the top one. If the bonus lifts your gross above the national minimum wage, the minimum-wage exemption falls away (s.163(1)(t)) — the first ₦800,000 of chargeable income is still taxed at 0%." },
+  { q: "Old vs new — who wins?", a: "The new bands win for most salaries, especially with rent relief. Without rent, the old bands come out slightly ahead for gross pay of roughly ₦325k–₦535k a month (by at most about ₦1,000 a month), and again for very high earners. Note the old row is for comparison only — the Personal Income Tax Act it came from was repealed on 1 Jan 2026 (NTA 2025 s.196(g)), so no one is actually paid on it. Enter your salary and the comparison card shows your actual winner." },
 ]}
 
   badge="NTA 2025 · In force since 1 Jan 2026",
@@ -46,6 +47,8 @@ const saveTxt = tie
 <div class="field" data-cur="NGN"><label for="st-nhf">NHF monthly ₦</label><input id="st-nhf" type="text" value="0" inputmode="decimal"></div>
 <div class="field" data-cur="NGN"><label for="st-nhis">NHIS monthly ₦</label><input id="st-nhis" type="text" value="0" inputmode="decimal"><p class="hint">Leave at ₦0 if your payslip doesn't show it — when filled, it comes off taxable income.</p></div>
 <div class="field" data-cur="NGN"><label for="st-life">Life assurance monthly ₦</label><input id="st-life" type="text" value="0" inputmode="decimal"><p class="hint">Leave at ₦0 if your payslip doesn't show it — when filled, it comes off taxable income.</p></div>
+<div class="field" data-cur="NGN"><label for="st-other">Other reliefs monthly ₦</label><input id="st-other" type="text" value="0" inputmode="decimal"><p class="hint">Anything else your payroll deducts that reduces taxable income under the Nigeria Tax Act 2025 s.30(2)(a). Same field as our Net to Gross calculator, so both tools answer identically. Leave at ₦0 if none. <em>Last verified 11 Oct 2026 · NTA s.30(2)(a) (nta2025.txt:1307-1318)</em></p></div>
+<div class="field" data-cur="NGN"><label for="st-bonus">Bonus / 13th month ₦</label><input id="st-bonus" type="text" value="0" inputmode="decimal"><p class="hint">A one-off bonus or 13th-month payment, taxed on the day it is paid. It is added on top of your regular chargeable income and only the extra tax is charged, so it is taxed at your marginal band rate — not at the top rate. <em>Last verified 11 Oct 2026 · NTA ss.4(2)(a), 26(2), 163(1)(t) (nta2025.txt:377-381, 1174-1180, 4407-4408)</em></p></div>
 </div>
 <p class="hint" id="st-dedwarn" hidden></p>
 <div class="receipt">
@@ -60,6 +63,12 @@ const saveTxt = tie
 </div>
 <p class="receipt-foot">NTA 2025 bands · rent relief cap ₦500k · pension figured on the gross you type</p>
 <p class="receipt-foot">A bonus counts as employment income and is taxed on the day it is paid. <strong>If a bonus takes your gross pay above the national minimum wage, the minimum-wage exemption falls away</strong> and the bonus runs through the normal band table — the first ₦800,000 of chargeable income is still taxed at 0%. <em>Last verified 11 Oct 2026 · NTA ss.4(2)(a), 26(2), 163(1)(t) (nta2025.txt:377-381, 1174-1180, 4407-4408)</em></p>
+<div class="receipt-foot" id="st-bonus-block">
+<p class="receipt-row"><span>Bonus PAYE (one-off)</span><b id="st-bonus-tax">—</b></p>
+<p class="receipt-row"><span>Bonus take-home</span><b id="st-bonus-net">—</b></p>
+<p class="receipt-row"><span>Effective rate on the bonus</span><b id="st-bonus-rate">—</b></p>
+<p class="receipt-foot" style="font-weight:400">Taxed at the marginal band rate on top of your regular pay — the bonus is added to your chargeable income and only the difference in tax is charged. These three cells wait on your bonus figure and print "—" until you enter one, rather than a gold ₦0 for a bonus you never claimed.</p>
+</div>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
@@ -69,11 +78,12 @@ const saveTxt = tie
 <thead><tr><th>Regime</th><th class="n">Tax /yr</th><th class="n">Take-home /mo</th></tr></thead>
 <tbody>
 <tr id="st-row-new" class={newWins ? "win" : ""}><td>New (2026)<span class="btag" id="st-tag-new" style={newWins ? "" : "display:none"}>Best</span></td><td class="n" id="st-new-tax">₦{n(cmp.new.tax_annual)}</td><td class="n" id="st-new-net">₦{n(cmp.new.net_monthly)}</td></tr>
-<tr id="st-row-old" class={oldWins ? "win" : ""}><td>Old (Finance Act)<span class="btag" id="st-tag-old" style={oldWins ? "" : "display:none"}>Best</span></td><td class="n" id="st-old-tax">₦{n(cmp.old.tax_annual)}</td><td class="n" id="st-old-net">₦{n(cmp.old.net_monthly)}</td></tr>
+<tr id="st-row-old" class={oldWins ? "win" : ""}><td>Old (PITA, for comparison only — repealed 1 Jan 2026)<span class="btag" id="st-tag-old" style={oldWins ? "" : "display:none"}>Best</span></td><td class="n" id="st-old-tax">₦{n(cmp.old.tax_annual)}</td><td class="n" id="st-old-net">₦{n(cmp.old.net_monthly)}</td></tr>
 </tbody>
 </table></div>
 <p class="bar-note" id="st-save">{saveTxt}</p>
 <p class="bar-note" id="st-warn" hidden></p>
+<p class="receipt-foot">The old row is shown <strong>for comparison only</strong>. The Personal Income Tax Act, Cap. P8 LFN 2004 (PITA) was repealed from the commencement of the Nigeria Tax Act 2025 on 1 Jan 2026 — it no longer applies to anyone's PAYE. It is priced here so you can see what the change is worth on your own salary. <em>Verified 11 Oct 2026 · NTA 2025 s.196(g) (nta2025.txt:5342, 5355) · commencement 1 Jan 2026 (nta-nrs.txt:256)</em></p>
 <div class="hr"></div>
 <h2 class="tool-h2">2026 band breakdown</h2>
 <div class="st-table-wrap"><table class="st-table" id="st-bands">
@@ -88,7 +98,7 @@ const saveTxt = tie
 <p class="bar-note">Clear examples empties every field so you can start blank; Reset brings back the worked example.</p>
 </ToolShell>
 <script>
-import { payeCalculate, payeCompare, payeBandBreakdown, payeBands2026 } from "../../lib/salary-tax";
+import { payeCalculate, payeCompare, payeBandBreakdown, payeBands2026, payeBonusTax } from "../../lib/salary-tax";
 import { formatGrouped } from "../../lib/format";
 import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
@@ -99,7 +109,7 @@ const t = (id: string) => document.getElementById(id) as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
 /* THE ZERO LAW: every figure below declares the ids it is derived from, so a
    relief the visitor never entered cannot print itself as a gold ₦0 deduction. */
-const ALL = ["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life"];
+const ALL = ["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life", "st-other"];
 function render() {
   const grossRaw = pm(g("st-gross").value);
   const penRaw = pm(g("st-pension").value);
@@ -111,7 +121,14 @@ function render() {
   const nhf = Math.max(0, nhfRaw || 0);
   const nhis = Math.max(0, pm(g("st-nhis").value) || 0);
   const life = Math.max(0, pm(g("st-life").value) || 0);
-  const r = payeCalculate(gross, pen, nhf, rent, true, nhis, life, 0);
+  const other = Math.max(0, pm(g("st-other").value) || 0);
+  /* THE BONUS IS NOT IN `ALL` ON PURPOSE. A bonus is a separate one-off payment,
+     not part of the monthly salary: it does not change the regular take-home, the
+     taxable figure or the band breakdown, so adding st-bonus to ALL would make a
+     bonus redraw figures it cannot move. Its block gates on its OWN field (the
+     ZERO LAW), so an uncleared bonus prints no bonus figures at all. */
+  const bonus = Math.max(0, pm(g("st-bonus").value) || 0);
+  const r = payeCalculate(gross, pen, nhf, rent, true, nhis, life, other);
   /* MINOR-5 — the engine's net is deliberately unfloored and the NHF field has
      no max: ₦500k gross + ₦500k NHF used to print a −₦40,000/mo take-home, a
      number no payslip can show. Mirrors the emergency-fund guard (v0.7.16):
@@ -124,7 +141,37 @@ function render() {
   sfFig(t("st-pen"), ["st-gross", "st-pension"], n(r.pension_annual));
   sfFig(t("st-rel"), ["st-rent"], n(r.relief_annual));
   sfFig(t("st-tax"), ALL, n(r.tax_annual));
-  const c = payeCompare(gross, pen, nhf, rent, nhis, life, 0);
+  /* BONUS BLOCK (P1-6 tail). The engine is payeBonusTax(gross, bonus, pen, nhf,
+     rent, nhis, life, other) — the same marginal-band machinery the vector gate
+     already asserts (paye_bonus, paye_bonus_exempt_base). Nothing here restates a
+     rate: the effective rate is READ BACK off the engine's own tax/bonus, never
+     computed from a band I typed. A ₦0 bonus hides the whole block rather than
+     printing three gold zeros (THE ZERO LAW), and the gross is required because a
+     bonus's tax is a function of the pay it stacks on. */
+  /* The gross test reads the FIELD directly rather than the `grossKnown`
+     const below: `grossKnown` is declared later in this function, so touching
+     it here is a temporal-dead-zone ReferenceError that aborts render() and
+     leaves every figure below it stale. (The behavioural suite caught exactly
+     that on the first run of this block — rails + console, both salary-tax.)
+
+     These cells WITHHOLD as "—" via sfFig instead of hiding a wrapper: an
+     `hidden` ancestor does not stop a `.receipt-row b` from carrying text, and
+     the behavioural suite scrapes exactly those (the first run shipped a stale
+     "0.0%" through a hidden div and failed reset + clear). The house ZERO LAW
+     is "—", not "hidden" — the row is always there, the figure is not. */
+  const BONUS_DEPS = ["st-gross", "st-bonus", "st-pension", "st-nhf", "st-rent", "st-nhis", "st-life", "st-other"];
+  const bonusOn = bonus > 0 && !pmBlank(g("st-gross").value);
+  if (bonusOn) {
+    const bt = payeBonusTax(gross, bonus, pen, nhf, rent, nhis, life, other);
+    sfFig(t("st-bonus-tax"), BONUS_DEPS, n(bt.tax));
+    sfFig(t("st-bonus-net"), BONUS_DEPS, n(bt.net));
+    sfFig(t("st-bonus-rate"), BONUS_DEPS, (bt.rate * 100).toFixed(1) + "%");
+  } else {
+    sfFig(t("st-bonus-tax"), BONUS_DEPS, "—");
+    sfFig(t("st-bonus-net"), BONUS_DEPS, "—");
+    sfFig(t("st-bonus-rate"), BONUS_DEPS, "—");
+  }
+  const c = payeCompare(gross, pen, nhf, rent, nhis, life, other);
   sfFig(t("st-new-tax"), ALL, n(c.new.tax_annual));
   sfFig(t("st-new-net"), ALL, netTxt(c.new.net_monthly));
   sfFig(t("st-old-tax"), ALL, n(c.old.tax_annual));
@@ -165,7 +212,7 @@ function render() {
   if (penRaw > 100) notes.push("Pension capped at 100% — at 100% there is no take-home.");
   if (grossRaw > 100000000) notes.push("That gross looks unusually large — double-check the figure.");
   if (nhfRaw > 15000) notes.push("The National Housing Fund contribution is 2.5% of your basic monthly salary, uncapped — the NHF Act sets no ceiling on the amount (confirm the figure your payroll applies). Last verified 11 Oct 2026 · NHF Act ss.4(a), 9(1) (nhfact.txt:94-96, 144-146) · NTA s.30(2)(a)(i) (nta2025.txt:1309)");
-  if (netBad(r.net_monthly)) notes.push("Out of range — pension, NHF, NHIS and life assurance add up to more than your gross, so no take-home can print. Check the monthly deduction fields against your payslip.");
+  if (netBad(r.net_monthly)) notes.push("Out of range — pension, NHF, NHIS, life assurance and other reliefs add up to more than your gross, so no take-home can print. Check the monthly deduction fields against your payslip.");
   if (rentRaw * 0.2 > 500000) notes.push("Rent relief capped at ₦500,000/yr — the excess changes nothing.");
   const w = t("st-warn");
   w.hidden = notes.length === 0;
@@ -175,11 +222,11 @@ function render() {
      above stays untouched on the receipt rail; this fires earlier, at the
      moment pension + NHF + NHIS + life assurance outrun the gross they come
      off, so the visitor fixes the inputs instead of reading a broken receipt. */
-  const dedTotal = gross * pen + nhf + nhis + life;
+  const dedTotal = gross * pen + nhf + nhis + life + other;
   const dedWarn = t("st-dedwarn");
   if (grossKnown && dedTotal > gross) {
     dedWarn.hidden = false;
-    dedWarn.textContent = `Heads-up — pension + NHF + NHIS + life assurance add up to ${n(dedTotal)}/mo, above the ${n(gross)}/mo gross you entered. At this level there is no take-home; check the deduction fields.`;
+    dedWarn.textContent = `Heads-up — pension + NHF + NHIS + life assurance + other reliefs add up to ${n(dedTotal)}/mo, above the ${n(gross)}/mo gross you entered. At this level there is no take-home; check the deduction fields.`;
   } else {
     dedWarn.hidden = true;
     dedWarn.textContent = "";
@@ -205,7 +252,7 @@ function render() {
   bandsNote.textContent = r.exempt ? "EXEMPT (minimum wage) — no PAYE is due, so band taxes are withheld. Slices show the pre-exemption bands maths." : "";
 }
   sfEmpty(sfIsEmpty("salary-tax-calculator", gv));
-["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life"].forEach((id) => g(id).addEventListener("input", render));
+["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life", "st-other", "st-bonus"].forEach((id) => g(id).addEventListener("input", render));
 smartFields.register(TOOL_FIELDS["salary-tax-calculator"]);
 sfBind("salary-tax-calculator", gv);
 render();

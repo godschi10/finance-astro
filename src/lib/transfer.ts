@@ -3,7 +3,7 @@
 // markup combined per provider, sorted best-first. The fee table is
 // MAINTAINED (verified September 2026); the FX base is injected by the
 // caller (live rates client-side, snapshot at build time). Tested vs PHP vectors.
-import { fxCurrencies, FX_DEFAULT_NGN_USD } from "./fx";
+import { fxCurrencies, FX_DEFAULT_NGN_USD, FX_PARALLEL_SPREAD_POINT } from "./fx";
 import { maintainedVerified } from "./maintained";
 
 export interface TransferProvider {
@@ -29,7 +29,13 @@ export function transferProviders(direction: string): TransferProvider[] {
   return [
     { id: "wise", name: "Wise", flat: 0.0, pct: 0.006, markup: 0.0, note: "Mid-market rate on the dollar you receive" },
     { id: "bank", name: "Bank (domiciliary)", flat: 0.0, pct: 0.01, markup: 0.025, note: "Official channel; documentation needed" },
-    { id: "p2p", name: "Peer-to-peer (parallel)", flat: 0.0, pct: 0.0, markup: -0.045, note: "Best naira value, but platform discipline required" },
+    /* P1-7 (v0.7.58): the street premium used to be a hardcoded -0.045 HERE,
+       duplicated from fx.ts's 1.045 with nothing keeping the two in step — two
+       copies of one maintained figure, which is exactly how they drift. It now
+       reads FX_PARALLEL_SPREAD_POINT, so the comparator's P2P row and the
+       converter's parallel estimate are arithmetically the same number by
+       construction, and updating the range updates both. */
+    { id: "p2p", name: "Peer-to-peer (parallel)", flat: 0.0, pct: 0.0, markup: -FX_PARALLEL_SPREAD_POINT, note: "Best naira value, but platform discipline required" },
   ];
 }
 

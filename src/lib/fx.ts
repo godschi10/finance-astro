@@ -31,14 +31,74 @@ export function fxCurrencies(): Record<string, FxCurrency> {
 /** Acceptable safety fallback (NGN per 1 USD) when the feed is unreachable. */
 export const FX_DEFAULT_NGN_USD = 1340.0;
 
+/* ── PARALLEL-MARKET SPREAD (P1-7, fifth audit) ─────────────────────────────
+ * Until v0.7.58 this was a bare `1.045` — an undated constant with no source,
+ * sitting at/above the TOP of the observed range and described in page copy as
+ * "roughly 4.5% above official". The audit's finding was that the figure is a
+ * RANGE that moves, and a site that prints one undated number for it is
+ * asserting a precision it does not have.
+ *
+ * WHAT IS RECORDED HERE, EXACTLY:
+ *   · the OBSERVED RANGE — 2.2% to 4.4% — and the observations behind it, as
+ *     dated points (see FX_PARALLEL_OBSERVATIONS). These are the figures the
+ *     audit recorded from published street quotes, Jul–Oct 2026.
+ *   · a POINT ESTIMATE used for arithmetic only — the midpoint of that range,
+ *     3.3%. It is OUR estimate, not a quoted rate, and nothing on the site
+ *     presents it as one: every surface that prints it also prints the range
+ *     and the date.
+ *
+ * DATES AND SOURCES ARE NOT INVENTED. This follows the savings-rate
+ * provenance precedent (src/lib/savings-rate.ts): the observations carry the
+ * dates the audit recorded and NO deep-link `sourceUrl`, because a street-quote
+ * page nobody opened is an invented citation. Re-check the range, update
+ * FX_PARALLEL_OBSERVATIONS and FX_PARALLEL_SPREAD_RANGE in the same edit, and
+ * the date printed on every page moves with it.
+ *
+ * The point estimate MOVED 4.5% → 3.3% because the old value sat above every
+ * observation on record. Every page that consumes this constant was swept in
+ * the same batch; see CHANGELOG 0.7.58. */
+export interface FxParallelObservation {
+  /** ISO date the premium was observed. */
+  date: string;
+  /** Observed premium over the official rate, as a fraction (0.023 = 2.3%). */
+  premium: number;
+}
+
+/** Observed street premium over the official rate, as recorded Jul–Oct 2026. */
+export const FX_PARALLEL_OBSERVATIONS: FxParallelObservation[] = [
+  { date: "2026-10-07", premium: 0.023 },
+  { date: "2026-10-08", premium: 0.044 },
+  { date: "2026-10-11", premium: 0.029 },
+];
+
+/** The observed range the premium moved across, Jul–Oct 2026. */
+export const FX_PARALLEL_SPREAD_RANGE = { low: 0.022, high: 0.044 };
+
+/** Date the range above was last re-checked — printed on every consumer. */
+export const FX_PARALLEL_VERIFIED_ON = "2026-10-11";
+
+/** Point estimate for arithmetic ONLY: the midpoint of the observed range. */
+export const FX_PARALLEL_SPREAD_POINT = 0.033;
+
 /** Parallel-market spread multiplier (official × this). D4 (v0.7.55): the old
  * comment promised WP admin-tunability that does not exist in the Astro port —
  * this is a BUILD-TIME constant; changing it means editing this file and
  * rebuilding, nothing else reads it. */
-export const FX_PARALLEL_SPREAD = 1.045;
+export const FX_PARALLEL_SPREAD = 1 + FX_PARALLEL_SPREAD_POINT;
 
 export function fxParallelSpread(): number {
   return FX_PARALLEL_SPREAD;
+}
+
+/** Human-readable range for copy: "2.2%–4.4%, observed Jul–Oct 2026 (checked
+ *  11 Oct 2026)". Every surface that prints the point estimate calls this, so a
+ *  bare undated premium can never be printed again. */
+export function fxParallelRangeLabel(): string {
+  const pct = (v: number) => (v * 100).toFixed(1);
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const [y, m, d] = FX_PARALLEL_VERIFIED_ON.split("-");
+  const stamp = `${Number(d)} ${months[Number(m) - 1]} ${y}`;
+  return `${pct(FX_PARALLEL_SPREAD_RANGE.low)}%–${pct(FX_PARALLEL_SPREAD_RANGE.high)}%, observed Jul–Oct 2026 (checked ${stamp})`;
 }
 
 /** Honest parallel-market estimate: official NGN/USD × spread. Always "estimated". */

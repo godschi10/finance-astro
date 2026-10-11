@@ -70,6 +70,15 @@ const checks = [
   ["gs-foot keyboard hints (↑↓/Enter/Esc)", /gs-foot/.test(layout) && layout.includes("<kbd>↑</kbd><kbd>↓</kbd>") && layout.includes("<kbd>Enter</kbd>") && layout.includes("<kbd>Esc</kbd>")],
   ["ticker .ticker-drag>.ticker-inner + .ti", /class="ticker-drag"/.test(layout) && /class="ticker-inner"/.test(layout) && /class="ti"/.test(layout)],
   ["ticker has .t-pair/.t-rate", layout.includes("class=\"t-pair\"") && layout.includes("class=\"t-rate\"")],
+  // WCAG 2.2.2 / the marquee seam: the ticker's SIX items are rendered TWICE so
+  // the loop has no visible edge. Only the first set may reach a screen reader —
+  // without aria-hidden on the duplicate, assistive tech announces all twelve,
+  // which reads as a broken table of nonsense numbers. This was already correct
+  // in the source when the fifth audit's P2-12 raised it (the audit predates the
+  // check); the gate now pins it so a future edit to the seam cannot regress it.
+  ["ticker duplicate set is aria-hidden (six announced, not twelve)",
+    (layout.match(/class="ti" aria-hidden="true"/g) || []).length >= 1
+    && (layout.match(/class="ti"(?! aria-hidden)/g) || []).length >= 1],
   ["ticker NAV nested children (site.ts)", site.includes("children:")],
   ["ticker all 6 pairs in TICKER_STATIC", tickerVals.every((p) => site.includes(p))],
   ["ticker all 6 rates well-formed (generated per build)", ["USD/NGN","GBP/NGN","EUR/NGN","BTC/USD","ETH/USD","XAU/USD"].every((p) => pairRx(p).test(site))],

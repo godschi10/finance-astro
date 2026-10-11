@@ -1,7 +1,7 @@
 ---
 import ToolShell from "../../components/ToolShell.astro";
 import { transferQuote, transferVerified, TRANSFER_SEED } from "../../lib/transfer";
-import { fxNumber, fxCurrencies } from "../../lib/fx";
+import { fxNumber, fxCurrencies, fxParallelRangeLabel, FX_PARALLEL_SPREAD_POINT } from "../../lib/fx";
 import { FX_SNAPSHOT } from "../../data/fx-snapshot";
 import { articleTitleOf } from "../../data/content";
 const artTitle = await articleTitleOf();
@@ -21,10 +21,10 @@ const dsym = symOf(seed.dest);
 const fsym = symOf(foreignOf(seed));
 const seedP2pWin = best === "p2p";
 ---
-<ToolShell title="Money Transfer Comparator, Send To or From Nigeria - GWill Finance" description="Compare Wise, Western Union, Remitly, WorldRemit, LemFi, the bank channel and parallel-market P2P on fee and real exchange rate — sending to Nigeria and sending naira out. See who actually pays out the most." slug="money-transfer-comparator" tool="Money Transfer Comparator, Send To or From Nigeria" crumb="Money Transfer Comparator" lede="Fees lie, rates lie — the received amount does not. Every provider below is scored on what actually lands after both fee and rate markup." verified={`Fee model verified ${transferVerified()} · FX base: indicative snapshot`} faqs={[
+<ToolShell title="Money Transfer Comparator, Send To or From Nigeria - GWill Finance" description="Compare Wise, Western Union, Remitly, WorldRemit, LemFi, the bank channel and parallel-market P2P on fee and real exchange rate — sending to Nigeria and sending naira out. See who actually pays out the most." slug="money-transfer-comparator" tool="Money Transfer Comparator, Send To or From Nigeria" crumb="Money Transfer Comparator" lede="Fees lie, rates lie — the received amount does not. Every provider below is scored on what actually lands after both fee and rate markup." verified={`Fee model verified ${transferVerified()} · FX base: indicative snapshot · street premium range ${fxParallelRangeLabel()}`}} faqs={[
   { q: "Should I compare the fee or the exchange rate?", a: "Neither alone. Compare the total the recipient receives — exactly what this table sorts by." },
   { q: "Which service is cheapest for sending to Nigeria — or out of it?", a: "It depends on the amount and the direction. Pick the direction above, enter yours; the BEST tag moves with it." },
-  { q: "Are these exact live quotes?", a: "No. The base rate is the build's daily reference snapshot, stamped with the feed's own update time; the fee and markup figures are maintained estimates. Confirm the final quote with your provider before sending." },
+  { q: "Are these exact live quotes?", a: `No. The base rate is the build's daily reference snapshot, stamped with the feed's own update time; the fee and markup figures are maintained estimates. The peer-to-peer row models the street premium at about ${(FX_PARALLEL_SPREAD_POINT * 100).toFixed(1)}% — the midpoint of an observed range of ${fxParallelRangeLabel()} — and it moves day to day. Confirm the final quote with your provider before sending.` },
 ]}
 
   badge="Fee + real rate · Nigeria-first",
@@ -46,7 +46,7 @@ const seedP2pWin = best === "p2p";
 <p class="receipt-note" id="tc-p2p" hidden={!seedP2pWin}>Parallel-market rate — platform risk applies</p>
 <p class="receipt-note" id="tc-warn" hidden aria-live="polite"></p>
 <div class="receipt-div" aria-hidden="true"></div>
-<p class="receipt-note">Fee model verified {transferVerified()} · FX base: daily reference snapshot, {FX_SNAPSHOT.as_of}.</p>
+<p class="receipt-note">Fee model verified {transferVerified()} · FX base: daily reference snapshot, {FX_SNAPSHOT.as_of} · P2P street premium modelled at {(FX_PARALLEL_SPREAD_POINT * 100).toFixed(1)}%, observed range {fxParallelRangeLabel()}.</p>
 <p class="receipt-foot">Estimates — confirm with your provider</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
