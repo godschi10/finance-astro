@@ -66,6 +66,43 @@ const EXPIRES = 30 * 864e5; // §2g — past 30 days a LAST USED value is droppe
    the prefix a second time. KEY stays the one way a key is ever built. */
 const PREFIX = "gwill-sf-";
 const KEY = (tool) => PREFIX + tool;
+/* ── P2-8/D5 — THE PERSISTENCE OPT-IN (adopted) ──────────────────────────────
+   "Remember my numbers on this device" (ToolShell's .tgl, DEFAULT OFF) now
+   gates BOTH storage directions: off = nothing is written and nothing is
+   restored across reloads (the numbers live only in the page session);
+   on = the existing localStorage behaviour, unchanged.
+
+   THREE DELIBERATE SCOPE DECISIONS:
+   1. The consent flag lives OUTSIDE the PREFIX, on purpose. clearSaved()
+      sweeps every gwill-sf-* key — if consent sat there, "Clear my saved
+      numbers" would silently flip the visitor's own privacy choice off, and
+      a shared-computer visitor who opted IN would come back to find their
+      preference reset. Consent is a preference, not a calculator number —
+      the same class as the theme key, and the sweep does not touch that
+      either.
+   2. Opting OUT does not wipe stored numbers. The adopted decision says
+      "existing stored data remains until cleared" — the sweep button is the
+      honest way to remove them. Opt-out only stops reading and writing.
+   3. Flipping ON persists the CURRENT fields immediately (save()), so "on"
+      means "these numbers are now remembered", not "from your next
+      keystroke". */
+const CONSENT = "gwill-remember-consent";
+function rememberOn() {
+  const t = el("sf-remember");
+  return !!(t && t.checked);
+}
+function bindRemember() {
+  const t = el("sf-remember");
+  if (!t) return;
+  try { t.checked = localStorage.getItem(CONSENT) === "1"; } catch {}
+  t.addEventListener("change", () => {
+    try {
+      if (t.checked) localStorage.setItem(CONSENT, "1");
+      else localStorage.removeItem(CONSENT);
+    } catch {}
+    if (t.checked) save();
+  });
+}
 /* ── A DERIVED VALUE IS NEVER THE VISITOR'S (HN-4) ───────────────────────────
    save() persisted ANY non-empty value in MEM, and restore() hands it back
    wearing data-r "Last used". So a figure the TOOL computed — the §2(b) offer's
@@ -251,7 +288,9 @@ function mark(f, attr, text, title) {
    cleared is dropped from the record rather than written as "" — so a cleared
    seed can never come back wearing LAST USED. */
 function save() {
-  if (!TOOL || resetting) return; // during a reset, silence is the contract
+  /* P2-8/D5: the opt-in is OFF by default — no write at all while it is off.
+     `resetting` stays first: during a reset, silence is the contract. */
+  if (!TOOL || resetting || !rememberOn()) return;
   const v = {};
   /* A1-F4 — an untouched seed is OURS, never memory. save() used to persist
      ANY non-empty remembered id, so typing into one field stored all six
@@ -271,6 +310,10 @@ function save() {
    remembered number from reading as data we invented. Expired past EXPIRES, so
    stale rent/gross cannot linger even where they are allowed at all. */
 function restore() {
+  /* P2-8/D5: OFF means session-only — nothing is handed back across a
+     reload. The stored record (if any) is left in place, unread until the
+     visitor opts in or clears it. */
+  if (!rememberOn()) return;
   let s = null;
   try { s = JSON.parse(localStorage.getItem(KEY(TOOL)) || "null"); } catch {}
   if (!s || !s.t) return;
@@ -404,6 +447,104 @@ function register(cfg) {
   syncClear();
 }
 
+/* ── F5/P2-10 — THE SHARE SURFACE: Copy result + WhatsApp (items a/b/d) ──────
+ * ONE implementation in the spine, so every ToolShell receipt inherits it.
+ * The bar is injected AFTER the receipt (never inside it): the page's own
+ * DOM is untouched, and the print stylesheet drops the bar with one class.
+ *
+ * (d) THE ZERO LAW EXTENDS TO SHARED TEXT: a receipt whose figures are
+ * withheld ("—" or a demand line like "Enter a target") shares "no figures
+ * yet" — never a confident ₦0. Every figure is read from the receipt AT
+ * CLICK TIME, so the shared text agrees with what is on screen; the page
+ * URL is read at click time too, which is how the converter's URL-state
+ * (F6) rides along in the shared link. */
+function shareText(receipt) {
+  const h1 = $(".apps-hero h1");
+  const title = (h1 ? h1.textContent : document.title).trim();
+  const lines = [];
+  const fig = $(".receipt-fig", receipt);
+  const figTxt = fig ? (fig.textContent || "").trim() : "";
+  if (/\d/.test(figTxt)) {
+    const lbl = $(".receipt-lbl", receipt);
+    lines.push(lbl && (lbl.textContent || "").trim() ? (lbl.textContent || "").trim() + ": " + figTxt : figTxt);
+  }
+  const sub = $(".receipt-sub", receipt);
+  if (sub && !sub.hidden && /\d/.test(sub.textContent || "")) lines.push((sub.textContent || "").trim());
+  $$(".receipt-row", receipt).forEach((row) => {
+    if (row.hidden) return;
+    const s = $("span", row), b = $("b", row);
+    if (!s || !b) return;
+    const v = (b.textContent || "").trim();
+    if (v && v !== "—" && /\d/.test(v)) lines.push((s.textContent || "").trim() + ": " + v);
+  });
+  $$("[data-sf-fig]", receipt).forEach((n) => {
+    if (n.hidden || n.closest("[hidden]")) return;
+    const v = (n.textContent || "").trim();
+    if (v && v !== "—" && /\d/.test(v)) lines.push(v);
+  });
+  const url = location.href;
+  if (!lines.some((l) => /\d/.test(l))) {
+    return title + " — no figures yet; enter your numbers and this tool works them out.\n" + url;
+  }
+  return title + "\n" + lines.join("\n") + "\n" + url;
+}
+
+function initShare() {
+  $$(".receipt").forEach((r) => {
+    /* Idempotent: a bar is never injected twice over the same receipt. */
+    if (r.nextElementSibling && r.nextElementSibling.classList.contains("sf-share")) return;
+    const bar = document.createElement("div");
+    bar.className = "sf-share";
+    const copy = document.createElement("button");
+    copy.type = "button";
+    copy.className = "btn b-ghost b-sm";
+    copy.setAttribute("aria-live", "polite");
+    copy.textContent = "Copy result";
+    copy.addEventListener("click", async () => {
+      const text = shareText(r);
+      let ok = false;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+          ok = true;
+        }
+      } catch {}
+      if (!ok) {
+        /* Non-secure contexts have no navigator.clipboard — the same copy,
+           through the legacy path, still never alert()s. */
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.setAttribute("readonly", "");
+          ta.style.cssText = "position:fixed;top:-9999px;opacity:0";
+          document.body.appendChild(ta);
+          ta.select();
+          ok = document.execCommand("copy");
+          ta.remove();
+        } catch {}
+      }
+      copy.textContent = ok ? "Copied" : "Copy failed";
+      clearTimeout(copy._sfShareBack);
+      copy._sfShareBack = setTimeout(() => { copy.textContent = "Copy result"; }, 2500);
+    });
+    const wa = document.createElement("a");
+    wa.className = "btn b-ghost b-sm";
+    wa.href = "https://wa.me/";
+    wa.target = "_blank";
+    wa.rel = "noopener";
+    wa.textContent = "Share on WhatsApp";
+    wa.addEventListener("click", () => {
+      /* Setting the href in the handler is enough: the default action reads
+         it AFTER the handler, so the link the browser opens carries the
+         CURRENT summary — the URL-encoded receipt, exactly the wa.me form. */
+      wa.href = "https://wa.me/?text=" + encodeURIComponent(shareText(r));
+    });
+    bar.appendChild(copy);
+    bar.appendChild(wa);
+    r.insertAdjacentElement("afterend", bar);
+  });
+}
+
 function boot() {
   document.addEventListener("input", (e) => {
     const i = e.target;
@@ -440,6 +581,13 @@ function boot() {
     clearTimeout(s._sfBack);
     s._sfBack = setTimeout(() => { s.textContent = was; }, 2500);
   });
+  /* P2-8/D5 — the persistence opt-in: bind BEFORE any page's register()
+     (this module evaluates before the page scripts import it), so the toggle
+     already carries its stored consent state when restore() first reads it. */
+  bindRemember();
+  /* F5/P2-10 — the share bar, once per receipt, after every listener above:
+     the receipts are in the initial HTML, so module-eval time is soon enough. */
+  initShare();
 }
 
 const smartFields = { register: register, markEmpty: markEmpty };

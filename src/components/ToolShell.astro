@@ -94,10 +94,21 @@ if (faqs.length) graph.push({
 <div class="con" style="margin-top:32px;padding-bottom:48px">
   <div class="ad-bg"></div>
   <slot />
-  <div class="sf-ctrls" style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px">
+  <div class="sf-ctrls" style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center">
     <button class="btn b-ghost b-sm" type="button" data-sf-clear hidden>Clear examples</button>
     <button class="btn b-ghost b-sm" type="button" data-sf-reset>Reset</button>
     <button class="btn b-ghost b-sm sf-forge" type="button" data-sf-clear-saved aria-live="polite">Clear my saved numbers</button>
+    {/* ── P2-8/D5 (adopted) — the persistence opt-in. DEFAULT OFF: no number
+        is written to or read from storage until the visitor says so. The
+        spine (smart-fields.js) binds it and gates BOTH storage directions on
+        it; the consent flag itself is a preference key outside the
+        gwill-sf-* sweep, so Clear my saved numbers cannot flip the privacy
+        choice. Opting out leaves stored numbers in place until cleared. */}
+    <label class="tgl" data-sf-remember title="Off by default — nothing is kept between visits unless you switch this on">
+      <input type="checkbox" id="sf-remember">
+      <span class="tgl-track" aria-hidden="true"><span class="tgl-thumb"></span></span>
+      <span class="tgl-lbl">Remember my numbers on this device</span>
+    </label>
   </div>
   {/* ── ON-DEVICE STORAGE NOTICE (PROC-5) ──────────────────────────────────
       THIS is the fleet-wide change: ONE block in the shared shell, and every
@@ -112,9 +123,14 @@ if (faqs.length) graph.push({
       WHY IT NAMES Reset SPECIFICALLY: clearSaved() sweeps EVERY gwill-sf-* key
       across the site, but Reset alone clears only THIS calculator. "Reset
       clears them" would be the safe half-truth; naming the button that clears
-      all of them is the whole truth — and both buttons are right here. */}
+      all of them is the whole truth — and both buttons are right here.
+
+      P2-8/D5: the middle sentence is now CONDITIONAL, because the opt-in
+      above is OFF by default — a notice that says "this calculator remembers
+      your figures" over a toggle that says otherwise would be the exact
+      half-truth the notice exists to prevent. */}
   <p class="sf-mem">
-    <strong>Your numbers stay in this browser.</strong> Nothing you type here is sent to us — no salary, rent, income or savings figure is transmitted, logged or visible to anyone. This calculator remembers your figures for next time, and on a shared or public computer the next person could see them. <strong>Reset</strong> clears this calculator; <strong>Clear my saved numbers</strong> clears every calculator on this site.
+    <strong>Your numbers stay in this browser.</strong> Nothing you type here is sent to us — no salary, rent, income or savings figure is transmitted, logged or visible to anyone. Your numbers are not kept between visits unless you switch on <strong>Remember my numbers on this device</strong> above; with it on, this calculator remembers your figures for next time, and on a shared or public computer the next person could see them. <strong>Reset</strong> clears this calculator; <strong>Clear my saved numbers</strong> clears every calculator on this site.
   </p>
   {verified && <p class="fxap-conv-note" style="margin-top:14px"><span style="color:var(--gold-b)" aria-hidden="true">◆</span> {verified}</p>}
   {disclaimer && <p class="fx-disclaimer">{disclaimer}</p>}
@@ -244,6 +260,46 @@ if (faqs.length) graph.push({
   border-radius:var(--pill);padding:6px 14px;min-height:44px;display:inline-flex;align-items:center;gap:6px}
 .fx-step.active{color:#0d0b08;background:var(--gold-b);border-color:var(--gold-b)}
 .fx-step[data-step="2"]:not(.active){opacity:0.45;pointer-events:none}
+
+/* — the share bar (F5/P2-10). Injected by the spine after every .receipt;
+   same 44px touch minimum as the control row it sits under, same ghost-button
+   grammar. Shown on screen, dropped by the print block below. */
+.sf-share{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sf-share .btn{min-height:44px;align-items:center}
+
+/* ── F5/P2-10(c) THE PRINT STYLESHEET ─────────────────────────────────────
+   Printing the receipt CLEAN means two jobs, and both are precise:
+   1. STRIP THE CHROME — by the class names Layout actually renders:
+      nav.ticker (market ticker), header.sh (desktop nav), header.mh (mobile
+      nav), div#mobile-nav.mno, div.gs (the search panel), footer.footer,
+      footer.mfooter, plus this shell's own web furniture: the .ad-bg boxes,
+      the .sf-ctrls button row (and the opt-in toggle inside it), the .sf-share
+      bar, the .fx-aff CTA row, the .g3 related-guides grid and the .slink
+      back-link. The breadcrumb goes too — the receipt says what it is.
+   2. REPAPER THE RECEIPT — the slip is dark (#0d0b08) with light ink in BOTH
+      themes, and browsers strip backgrounds when printing, so the shipped
+      light-on-dark ink would print INVISIBLE on white paper. The receipt is
+      repainted ink-on-paper: same rows, same labels, real borders, no shadow.
+      !important because the hero's colors are inline (inline styles beat
+      stylesheet rules) and the dark-theme receipt lift must not win on paper.
+   Scope: these rules ship inside ToolShell, so they fire on /money-tools/*
+   only — the one place the receipt vocabulary exists. */
+@media print{
+  .ticker,.sh,.mh,.mno,.gs,.footer,.mfooter{display:none!important}
+  .ad-bg,.sf-ctrls,.sf-share,.fx-aff,.g3,.slink,.gwill-breadcrumbs{display:none!important}
+  .apps-hero{background:none!important;border-bottom:none}
+  .apps-hero h1{color:#111!important}
+  .apps-hero p{color:#333!important}
+  .apps-hero .gwill-breadcrumbs__item,.apps-hero .gwill-breadcrumbs__item a{color:#555!important}
+  .fx-card{box-shadow:none;border-color:#bbb}
+  .receipt{background:#fff!important;color:#111!important;border:1px solid #bbb;box-shadow:none}
+  .receipt .receipt-fig{color:#111!important}
+  .receipt .receipt-lbl,.receipt .receipt-foot{color:#555!important}
+  .receipt .receipt-sub,.receipt .receipt-note{color:#333!important}
+  .receipt .receipt-row{color:#111!important}
+  .receipt-div{border-top-color:#bbb!important}
+  [data-sfe] .receipt-fig,[data-sfe] .receipt-row b{color:#555!important}
+}
 
 /* — the echo. A number the tool ALREADY computes, surfaced at the field.
      Non-interactive by design: if it needs an action it is an .offer. */

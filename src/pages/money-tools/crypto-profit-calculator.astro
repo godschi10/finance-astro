@@ -33,12 +33,14 @@ const artTitle = await articleTitleOf();
 <div class="receipt">
 <p class="receipt-lbl">Profit</p>
 <p class="receipt-fig" id="cp-fig" aria-live="polite">₦{n(seed.profit)}</p>
-<p class="receipt-sub" id="cp-sub">ROI {(seed.roi * 100).toFixed(2)}% · {n(seed.coins, 4)} coins · sell nets ₦{n(seed.sell_net)}</p>
+<p class="receipt-sub" id="cp-sub">ROI {(seed.roi * 100).toFixed(2)}% · {n(seed.coins, 8).replace(/\.?0+$/, "")} coins · sell nets ₦{n(seed.sell_net)}</p>
 <p class="receipt-note" id="cp-warn" hidden aria-live="polite"></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Total fees</span><b id="cp-fees">₦{n(seed.fees_ngn)}</b></div>
 <div class="receipt-row"><span>Break-even sell rate</span><b id="cp-be">₦{n(seed.break_even_rate, 2)}</b></div>
-<div class="receipt-row"><span>Price gap value</span><b id="cp-gap">₦{n(seed.price_gap)}</b></div>
+<div class="receipt-row"><span>P2P spread</span><b id="cp-gap">₦{n(seed.price_gap)} · 20.0% on buy</b></div>
+{/* P2-4(c) — the tax note, one receipt-note line, true in every state. */}
+<p class="receipt-note">Digital-asset gains are taxable under the Nigeria Tax Act 2025 — this tool does not model the tax.</p>
 <p class="receipt-foot">P2P-aware · not financial advice</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
@@ -58,6 +60,23 @@ const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).val
    invest/buy/sell is missing, so without this the receipt printed a confident
    gold ₦0 profit, ₦0 fees and a ₦0 break-even for a visitor who entered nothing. */
 const ALL = ["cp-inv", "cp-buy", "cp-sell", "cp-bf", "cp-sf", "cp-flat"];
+/* P2-4(b) — COIN-QUANTITY FORMATTING AT ₦110,000,000/BTC. The old fixed
+   4dp hid real money: ₦200,000 at ₦110M/BTC buys 0.00181818 BTC, and a
+   "0.0018" display rounds away ₦360 of it. Coins now print to 8dp (the
+   asset's own precision — the satoshi), trailing zeros trimmed, so a whole
+   quantity still reads clean ("132", the seed) while a fractional one keeps
+   every digit that is money. Grouped integer part; F1 minus shape. Verified
+   in the built page (see the batch report). */
+function coinsFmt(v: number): string {
+  if (!Number.isFinite(v)) return "—";
+  if (Math.abs(v) >= 1e15) return formatGrouped(v, 4);
+  let str = v.toFixed(8).replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
+  const neg = str.startsWith("-");
+  if (neg) str = str.slice(1);
+  const dot = str.indexOf(".");
+  const int = (dot < 0 ? str : str.slice(0, dot)).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return (neg ? "−" : "") + int + (dot < 0 ? "" : str.slice(dot));
+}
 function render() {
   /* F8 — every clamped negative says so: -x is priced as ₦0 in all six
      inputs (the engine clamps again inside, so the clamp cannot go — it is
@@ -74,12 +93,22 @@ function render() {
     Math.max(0, pm(g("cp-flat").value) || 0),
   );
   sfFig(t("cp-fig"), ALL, (r.profit < 0 ? "−" : "") + nn(Math.abs(r.profit)));
-  sfFig(t("cp-sub"), ALL, `ROI ${(r.roi * 100).toFixed(2)}% · ${formatGrouped(r.coins, 4)} coins · sell nets ${nn(r.sell_net)}`);
+  sfFig(t("cp-sub"), ALL, `ROI ${(r.roi * 100).toFixed(2)}% · ${coinsFmt(r.coins)} coins · sell nets ${nn(r.sell_net)}`);
   sfFig(t("cp-fees"), ALL, nn(r.fees_ngn));
   /* Break-even is invest ÷ (coins × (1 − sell fee)), so it needs the three
      numbers that make coins and sell net exist at all. */
   sfFig(t("cp-be"), ["cp-inv", "cp-buy", "cp-sell", "cp-sf"], nn(r.break_even_rate, 2));
-  sfFig(t("cp-gap"), ALL, nn(r.price_gap));
+  /* P2-4(a) — THE LABELLED P2P SPREAD ROW, keeping the card's promise
+     ("the spread is the fee nobody quotes"): the ₦ value of the buy→sell
+     gap on the coins you actually hold, plus the spread as a signed % of
+     the buy rate. The F1 negative shape (−₦X, never ₦-X) because a
+     P2P sell below buy is the common Nigerian case this row exists for. */
+  const buyC = Math.max(0, pm(g("cp-buy").value) || 0);
+  const sellC = Math.max(0, pm(g("cp-sell").value) || 0);
+  const spreadPct = buyC > 0 ? (sellC / buyC - 1) * 100 : null;
+  sfFig(t("cp-gap"), ALL,
+    (r.price_gap < 0 ? "−" : "") + nn(Math.abs(r.price_gap)) +
+    (spreadPct === null ? "" : ` · ${(spreadPct < 0 ? "−" : "") + Math.abs(spreadPct).toFixed(1)}% on buy`));
 }
   sfEmpty(sfIsEmpty("crypto-profit-calculator", gv));
 ["cp-inv", "cp-buy", "cp-sell", "cp-bf", "cp-sf", "cp-flat"].forEach((id) => g(id).addEventListener("input", render));

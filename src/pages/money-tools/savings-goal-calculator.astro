@@ -29,15 +29,24 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   disclaimer="This calculator is for informational guidance only and is not financial or investment advice. Rates are not guaranteed, confirm your plan with a licensed financial adviser.">
 <div class="fx-card">
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
+{/* P2-5 — THE MODE TOGGLE, phone-first segmented control: target-driven
+    ("name the deadline, we name the monthly") vs time-driven ("name the
+    monthly, we name the time"). Buttons, not radios: the mode is a VIEW of
+    the same goal, not a number — see the script for why Reset leaves it. */}
+<div class="fx-stepper" role="group" aria-label="Planning mode">
+  <button type="button" class="fx-step active" data-sg-mode="target" aria-pressed="true">Monthly needed</button>
+  <button type="button" class="fx-step" data-sg-mode="time" aria-pressed="false">Time to goal</button>
+</div>
 <div class="tgrid c3">
 
 <div class="field" data-cur="NGN"><label for="sg-target">Target ₦</label><input id="sg-target" type="text" value="5000000" inputmode="decimal"></div>
 <div class="field" data-cur="NGN"><label for="sg-cur">Have now ₦</label><input id="sg-cur" type="text" value="500000" inputmode="decimal"></div>
 <div class="field"><label for="sg-rate">Annual rate % (nominal)</label><input id="sg-rate" type="text" max="100" value="15" inputmode="decimal"><p class="hint">A nominal annual rate, compounded monthly — so 15% nominal earns more than 15% over a year once compounding is counted. The receipt shows both figures.</p></div>
 <div class="field"><label for="sg-mo">Months</label><input id="sg-mo" type="number" min="1" max="600" step="1" value="24" inputmode="numeric"></div>
+<div class="field" data-cur="NGN" hidden><label for="sg-sav">I can save ₦/month</label><input id="sg-sav" type="text" value="" inputmode="decimal"><p class="hint">The monthly amount you can actually commit — the calculator answers how long it takes.</p></div>
 </div>
 <div class="receipt">
-<p class="receipt-lbl">Save monthly</p>
+<p class="receipt-lbl" id="sg-lbl">Save monthly</p>
 <p class="receipt-fig" id="sg-fig" aria-live="polite">{seed.goal_reached ? "₦0 — goal reached" : `₦${n(seed.monthly)}`}</p>
 <p class="receipt-sub" id="sg-sub">Total ₦{n(seed.total)} · interest ₦{n(seed.interest)}</p>
 <div class="receipt-div" aria-hidden="true"></div>
@@ -67,7 +76,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </table></div>
 </ToolShell>
 <script>
-import { savingsCalculate, savingsSchedule } from "../../lib/savings";
+import { savingsCalculate, savingsSchedule, savingsMonthsToGoal } from "../../lib/savings";
 import { formatGrouped } from "../../lib/format";
 import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
@@ -89,6 +98,17 @@ const ALL = ["sg-target", "sg-cur", "sg-rate", "sg-mo"];
    ZERO LAW over-applied (it reads nothing but sg-rate). It is also not in ALL,
    because it cannot move when the target, balance or deadline change. */
 const effFrom = (nominalPct: number) => (Math.pow(1 + nominalPct / 100 / 12, 12) - 1) * 100;
+/* P2-5 — the mode state. "target" = the shipped calculator (solve the
+   monthly); "time" = the reverse (solve the horizon). Declared module-scope
+   because render() reads it; the buttons below own every write. */
+let sgMode: "target" | "time" = "target";
+/* years+months phrasing for the reverse hero: "3 years 10 months". */
+const ym = (m: number): string => {
+  const y = Math.floor(m / 12), r = m % 12;
+  const ys = `${y} year${y === 1 ? "" : "s"}`;
+  const ms = `${r} month${r === 1 ? "" : "s"}`;
+  return y === 0 ? ms : r === 0 ? ys : `${ys} ${ms}`;
+};
 function render() {
   /* P2-1 — effective yield first: a pure function of the rate field, so it is
      never withheld by a missing TARGET or DEADLINE (only by a missing rate,
@@ -105,7 +125,7 @@ function render() {
   const rate = Math.max(0, pm(g("sg-rate").value) || 0) / 100;
   /* F8 — every clamped negative says so: -x is priced as ₦0 in all four
      inputs, so the rail names the rewrite instead of staying silent. */
-  const negHit = ["sg-target", "sg-cur", "sg-rate", "sg-mo"].some((id) => pm(g(id).value) < 0);
+  const negHit = ["sg-target", "sg-cur", "sg-rate", "sg-mo", "sg-sav"].some((id) => pm(g(id).value) < 0);
   const negSfx = negHit ? " Negative entries are treated as ₦0." : "";
   /* M2 — THE ZERO LAW. `pm("0") || 24` short-circuited a deliberate 0 to the
    seed, so a visitor who typed 0 months to their deadline was shown the 24-month
@@ -133,10 +153,89 @@ const capSfx = moCapped ? " Horizon capped at 100 years — figures price the ca
     warn.hidden = false;
     warn.textContent = "Enter a target greater than ₦0 — a cleared field is not a reached goal." + negSfx + capSfx;
     t("sg-fig").textContent = "Enter a target";
-    t("sg-sub").textContent = "No monthly figure until the target is set.";
+    t("sg-sub").textContent = sgMode === "time" ? "No time figure until the target is set." : "No monthly figure until the target is set.";
     t("sg-tot").textContent = "—";
     t("sg-int").textContent = "—";
     tb.innerHTML = "";
+    return;
+  }
+  /* ── P2-5 — THE REVERSE MODE: "how long if I save ₦X/month?" ────
+     The time-driven half of the mode toggle. savingsMonthsToGoal() returns
+     the exact fractional crossing; deposits land at month END (the same
+     convention the target mode prices), so the first whole month that
+     clears the goal is ceil(n). The HANG CAP mirrors the target mode: a
+     horizon past 1200 months (100 years) is priced at the cap and DISCLOSED,
+     never silently rewritten — and it keeps savingsSchedule() cheap. The
+     S2c disclosure (effective annual yield row + the nominal-vs-effective
+     foot) is shared with the target mode: both modes price the same rate,
+     so both must carry the same convention statement. */
+  if (sgMode === "time") {
+    const savRawStr = g("sg-sav").value.trim();
+    if (pmBlank(savRawStr)) {
+      warn.hidden = false;
+      warn.textContent = "Enter what you can save each month — an empty field is not ₦0/month." + negSfx;
+      t("sg-fig").textContent = "Enter what you can save";
+      t("sg-sub").textContent = "No time figure until the monthly saving is set.";
+      t("sg-tot").textContent = "—";
+      t("sg-int").textContent = "—";
+      tb.innerHTML = "";
+      return;
+    }
+    const sav = Math.max(0, pm(savRawStr) || 0);
+    const nRaw = savingsMonthsToGoal(target, cur, rate, sav, "monthly");
+    if (!Number.isFinite(nRaw)) {
+      warn.hidden = false;
+      warn.textContent = `At ${nn(sav)}/month this goal is never reached — the balance never crosses the target at these figures.` + negSfx;
+      t("sg-fig").textContent = "Never at this rate";
+      t("sg-sub").textContent = `You hold ${nn(cur)} against a ${nn(target)} goal — ${nn(target - cur)} still to find.`;
+      t("sg-tot").textContent = "—";
+      t("sg-int").textContent = "—";
+      tb.innerHTML = "";
+      return;
+    }
+    let moR = Math.ceil(nRaw);
+    if (moR <= 0) {
+      warn.hidden = !negHit;
+      warn.textContent = negSfx.trim();
+      t("sg-fig").textContent = "0 months — goal reached";
+      t("sg-sub").textContent = `You hold ${nn(cur)} against a ${nn(target)} goal — nothing left to save into it.`;
+      t("sg-tot").textContent = nn(cur);
+      t("sg-int").textContent = nn(0);
+      tb.innerHTML = "";
+      return;
+    }
+    const moRcapped = moR > 1200;
+    if (moRcapped) moR = 1200;
+    const rCapSfx = moRcapped ? " Horizon capped at 100 years — figures price the cap, not the entry." : "";
+    const sched = savingsSchedule(target, cur, rate, moR, "monthly");
+    const schedBad = !sched.every((row) => Number.isFinite(row.balance) && Number.isFinite(row.deposited) && Number.isFinite(row.interest));
+    if (!sched.length || schedBad) {
+      warn.hidden = false;
+      warn.textContent = "Out of range — that goal and rate are beyond what this plan can price." + negSfx + rCapSfx;
+      t("sg-fig").textContent = "Out of range";
+      t("sg-sub").textContent = "No confident total at this input — lower the goal or raise the monthly.";
+      t("sg-tot").textContent = "—";
+      t("sg-int").textContent = "—";
+      tb.innerHTML = "";
+      return;
+    }
+    const last = sched[sched.length - 1];
+    warn.hidden = !negHit && !moRcapped;
+    warn.textContent = ((negHit ? "Negative entries are treated as ₦0." : "") + rCapSfx).trim();
+    sfFig(t("sg-fig"), ["sg-target", "sg-cur", "sg-rate", "sg-sav"], `${moR} months`);
+    sfFig(t("sg-sub"), ["sg-target", "sg-cur", "sg-rate", "sg-sav"], `${ym(moR)} · total ${nn(last.balance)} · interest ${nn(last.interest)}`);
+    sfFig(t("sg-tot"), ["sg-target", "sg-cur", "sg-rate", "sg-sav"], nn(last.balance));
+    sfFig(t("sg-int"), ["sg-target", "sg-cur", "sg-rate", "sg-sav"], nn(last.interest));
+    tb.innerHTML = "";
+    for (const row of sched) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td></td><td class="n"></td><td class="n"></td><td class="n"></td>`;
+      (tr.children[0] as HTMLElement).textContent = String(row.year);
+      (tr.children[1] as HTMLElement).textContent = nn(row.balance);
+      (tr.children[2] as HTMLElement).textContent = nn(row.deposited);
+      (tr.children[3] as HTMLElement).textContent = nn(row.interest);
+      tb.appendChild(tr);
+    }
     return;
   }
   if (moZero) {
@@ -186,7 +285,33 @@ const capSfx = moCapped ? " Horizon capped at 100 years — figures price the ca
   }
 }
   sfEmpty(sfIsEmpty("savings-goal-calculator", gv));
-["sg-target", "sg-cur", "sg-rate", "sg-mo"].forEach((id) => g(id).addEventListener("input", render));
+["sg-target", "sg-cur", "sg-rate", "sg-mo", "sg-sav"].forEach((id) => g(id).addEventListener("input", render));
+/* ── P2-5 — THE SEGMENTED CONTROL ─────────────────────────────────────────
+   Buttons, not radio inputs, deliberately: the mode is a VIEW of the same
+   goal, not a number. Reset restores the calculator's delivered NUMBERS
+   (the snapshot covers inputs only) and leaves the chosen mode standing,
+   which is the honest reading of "give me the worked example back" — the
+   example renders in YOUR mode. The Months field and the I-can-save field
+   swap visibility with the mode, so exactly one horizon driver is visible
+   at a time; both keep their values across the swap (nothing the visitor
+   typed is destroyed by changing the question). */
+const sgModeBtns = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-sg-mode]"));
+const moField = g("sg-mo").closest(".field") as HTMLElement;
+const savField = g("sg-sav").closest(".field") as HTMLElement;
+function setSgMode(m: "target" | "time"): void {
+  if (m === sgMode) return;
+  sgMode = m;
+  sgModeBtns.forEach((b) => {
+    const on = b.dataset.sgMode === m;
+    b.classList.toggle("active", on);
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+  t("sg-lbl").textContent = m === "time" ? "Time to goal" : "Save monthly";
+  moField.hidden = m === "time";
+  savField.hidden = m === "target";
+  render();
+}
+sgModeBtns.forEach((b) => b.addEventListener("click", () => setSgMode(b.dataset.sgMode as "target" | "time")));
 smartFields.register(TOOL_FIELDS["savings-goal-calculator"]);
 sfBind("savings-goal-calculator", gv);
 render();

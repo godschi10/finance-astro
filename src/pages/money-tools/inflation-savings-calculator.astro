@@ -41,6 +41,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="is-rate">Return %/yr</label><input id="is-rate" type="text" max="100" value="15" inputmode="decimal"><p class="hint">The rate you type is a nominal annual rate applied monthly — the effective annual yield of 15% nominal is 16.08%.</p></div>
 <div class="field"><label for="is-infl">Inflation %/yr</label><input id="is-infl" type="text" max="100" value="24" inputmode="decimal"><p class="hint">Opens at 24% — the Lagos reading, the highest state. The preset buttons below set the NBS national, food and Lagos figures in one tap.</p></div>
 <div class="field"><label for="is-yrs">Years</label><input id="is-yrs" type="number" min="1" max="50" step="1" value="5" inputmode="numeric"></div>
+<div class="field"><label for="is-step">Deposit grows %/yr</label><input id="is-step" type="text" value="" inputmode="decimal"><p class="hint">Optional — you raise your deposit by this % each year, so the STARTING monthly is lower. Leave empty for a level deposit.</p></div>
 </div>
 <div class="fx-chips" style="margin-top:0" role="group" aria-label="Inflation rate presets, NBS August 2026">
 <span class="hint">Inflation presets (NBS, Aug 2026):</span>
@@ -56,6 +57,10 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Nominal monthly</span><b id="is-nom">₦{n(seed.nominal_monthly)}</b></div>
 <div class="receipt-row"><span>Real monthly</span><b id="is-real">₦{n(seed.real_monthly)}</b></div>
 <div class="receipt-row"><span>Monthly gap</span><b id="is-gap">₦{n(seed.gap_monthly)}</b></div>
+{/* P2-2 — the step-up reading. Hidden until the growth field is filled
+    (empty = level deposit = the rows above already say it); the <b> starts
+    "—" so the hidden row never carries a borrowed figure. */}
+<div class="receipt-row" id="is-steprow" hidden><span id="is-steplbl">Starting monthly (deposit grows)</span><b id="is-stepfig">—</b></div>
 <p class="receipt-note" id="is-warn" hidden aria-live="polite"></p>
 <p class="receipt-foot">The gap is the monthly truth</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
@@ -64,6 +69,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </ToolShell>
 <script>
 import { inflationAdjustedGoal } from "../../lib/inflation";
+import { savingsStepUpStart } from "../../lib/savings";
 import { formatGrouped } from "../../lib/format";
 import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
@@ -83,20 +89,35 @@ function render() {
    is priced here. */
   const yrsRawStr = g("is-yrs").value.trim();
   const yrsZero = !pmBlank(yrsRawStr) && pm(yrsRawStr) === 0;
+  const yrsEff = yrsZero ? 1 : Math.max(1, Math.trunc(pm(yrsRawStr) || 5));
   const r = inflationAdjustedGoal(
     Math.max(0, pm(g("is-target").value) || 0),
     Math.max(0, pm(g("is-cur").value) || 0),
     Math.max(0, pm(g("is-rate").value) || 0) / 100,
     Math.max(0, pm(g("is-infl").value) || 0) / 100,
-    yrsZero ? 1 : Math.max(1, Math.trunc(pm(yrsRawStr) || 5)),
+    yrsEff,
     0, "monthly", "monthly",
   );
+  /* ── P2-2 — STEP-UP DEPOSITS, the A7-verified solve ────────────────
+     The "deposit grows %/yr" field. savingsStepUpStart() (src/lib/savings.ts)
+     prices the STARTING monthly against the same inflated target the rows
+     above use (r.real_target), at the same end-of-month convention. Its maths
+     was derived and verified against ALL FIVE appendix-a stepUpDeposits rows
+     BEFORE the engine code was written — 0% reproduces the gated 307188
+     baseline exactly, 10/15/20/24% reproduce 258803/237452/217855/203364.
+     Empty field = null = the row hides (a level deposit is the rows above,
+     stated once). Absurd growth returns NaN and takes the out-of-range
+     voice with everything else — never a confident number. */
+  const stepRawStr = g("is-step").value.trim();
+  const stepBlank = pmBlank(stepRawStr);
+  const stepG = stepBlank ? 0 : Math.max(0, pm(stepRawStr) || 0); // %/yr, negatives priced at 0 (F8 rail below)
+  const stepX = stepBlank ? null : savingsStepUpStart(r.real_target, Math.max(0, pm(g("is-cur").value) || 0), Math.max(0, pm(g("is-rate").value) || 0) / 100, yrsEff * 12, stepG / 100, "monthly");
   const warn = t("is-warn");
   /* F8 — every clamped negative says so: -x is priced as ₦0 in all five
      inputs, so the rail names the rewrite instead of staying silent. */
-  const negHit = ["is-target", "is-cur", "is-rate", "is-infl", "is-yrs"].some((id) => pm(g(id).value) < 0);
+  const negHit = ["is-target", "is-cur", "is-rate", "is-infl", "is-yrs", "is-step"].some((id) => pm(g(id).value) < 0);
   const negSfx = negHit ? " Negative entries are treated as ₦0." : "";
-  if (!Number.isFinite(r.nominal_monthly) || !Number.isFinite(r.real_monthly) || !Number.isFinite(r.gap_monthly) || !Number.isFinite(r.real_target)) {
+  if (!Number.isFinite(r.nominal_monthly) || !Number.isFinite(r.real_monthly) || !Number.isFinite(r.gap_monthly) || !Number.isFinite(r.real_target) || (stepX !== null && !Number.isFinite(stepX))) {
     warn.hidden = false;
     warn.textContent = "Out of range — that inflation and horizon are beyond what this plan can price. Try 50 years or less." + negSfx;
     t("is-fig").textContent = "Out of range";
@@ -104,6 +125,7 @@ function render() {
     t("is-nom").textContent = "—";
     t("is-real").textContent = "—";
     t("is-gap").textContent = "—";
+    paintStep(null, 0);
     return;
   }
   warn.hidden = !negHit;
@@ -120,6 +142,9 @@ function render() {
     sfFig(t("is-nom"), ALL, nn(r.nominal_monthly));
     sfFig(t("is-real"), ALL, nn(r.nominal_monthly));
     sfFig(t("is-gap"), ALL, nn(0));
+    /* 0 years: the horizon is one year, so a step-up never steps inside it
+       — the starting monthly IS the level figure. Honest, so it shows. */
+    paintStep(stepX, stepG);
     return;
   }
   sfFig(t("is-fig"), ALL, nn(r.real_monthly));
@@ -127,7 +152,29 @@ function render() {
   sfFig(t("is-nom"), ALL, nn(r.nominal_monthly));
   sfFig(t("is-real"), ALL, nn(r.real_monthly));
   sfFig(t("is-gap"), ALL, nn(r.gap_monthly));
+  paintStep(stepX, stepG);
   syncPresets();
+}
+/* P2-2 — the step-up row's one painter. null = no reading (empty field, or
+   an out-of-range input): the row hides and its <b> returns to "—", the
+   same withheld grammar the empty state uses — never a borrowed figure.
+   A real solve shows the starting monthly, gated on every figure it reads
+   (all five plan fields + the growth field itself) and labelled with the
+   growth it was priced at. */
+function paintStep(stepX: number | null, gDisp: number): void {
+  const row = t("is-steprow"), b = t("is-stepfig");
+  if (stepX === null || !Number.isFinite(stepX)) {
+    row.hidden = true;
+    b.textContent = "—";
+    b.style.color = "";
+    b.removeAttribute("data-sf-no");
+    const badge = row.querySelector(".trust-badge[data-trust]");
+    if (badge) badge.remove();
+    return;
+  }
+  row.hidden = false;
+  t("is-steplbl").textContent = `Starting monthly (deposit grows ${gDisp}%/yr)`;
+  sfFig(b, ["is-target", "is-cur", "is-rate", "is-infl", "is-yrs", "is-step"], nn(stepX));
 }
 /* ── INFLATION PRESETS (fifth audit P1-3, v0.7.58) ──────────────────────────
  * The audit found the page carrying stale "20-30%" copy against an NBS Aug 2026
@@ -157,7 +204,7 @@ for (const b of PRESETS) {
   });
 }
   sfEmpty(sfIsEmpty("inflation-savings-calculator", gv));
-["is-target", "is-cur", "is-rate", "is-infl", "is-yrs"].forEach((id) => g(id).addEventListener("input", render));
+["is-target", "is-cur", "is-rate", "is-infl", "is-yrs", "is-step"].forEach((id) => g(id).addEventListener("input", render));
 smartFields.register(TOOL_FIELDS["inflation-savings-calculator"]);
 sfBind("inflation-savings-calculator", gv);
 render();

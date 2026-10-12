@@ -48,6 +48,9 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="cc-from">From</label><select id="cc-from">{codes.map((c) => (<option value={c} selected={c === seed.from}>{c} — {cur[c].name}</option>))}</select></div>
 <div class="field"><label for="cc-to">To</label><select id="cc-to">{codes.map((c) => (<option value={c} selected={c === seed.to}>{c} — {cur[c].name}</option>))}</select></div>
 </div>
+<div class="tgrid c3" style="margin-top:14px">
+<div class="field"><label for="cc-margin">Provider margin %</label><input id="cc-margin" type="text" value="" inputmode="decimal"><p class="hint">Optional — the spread your bank or app adds on top of this rate. Leave empty and no margin line shows.</p></div>
+</div>
 <div style="margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px"><button class="swapbtn" id="cc-swap" type="button" aria-label="Swap currencies">⇄</button> <span class="hint" id="cc-fresh" style="font-size:12px;color:var(--text-dim)">{FX_SNAPSHOT.as_of} (daily reference snapshot)</span> <label class="hint tgl"><input type="checkbox" id="cc-partoggle" checked> <span class="tgl-track" aria-hidden="true"><span class="tgl-thumb"></span></span> <span class="tgl-lbl">Parallel-market estimate</span></label></div>
 <div class="receipt">
 <p class="receipt-lbl">You get</p>
@@ -56,13 +59,18 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-note" id="cc-warn" hidden aria-live="polite"></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <p class="receipt-note" data-sf-fig id="cc-par">Parallel estimate ≈ ₦{fxNumber(seed.amount * parallel, 0)} (estimated, not a quote · street premium modelled at {parPct}%, range {parRange})</p>
+  {/* P2-13 — the optional provider-margin reading. Hidden by default: an
+      empty field is no reading at all (Zero Law), never a ₦-same-as-hero
+      line pretending the margin was 0%. The <b> starts "—" so the un-opened
+      state never carries a borrowed figure. */}
+  <div class="receipt-row" id="cc-margrow" hidden><span>After your provider's margin</span><b id="cc-marg">—</b></div>
 <p class="receipt-foot" id="cc-foot">Snapshot · {FX_SNAPSHOT.as_of}</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
 </ToolShell>
 <script>
-import { fxConvert, fxParallelNgnUsd, fxParallelSpread, fxParallelRangeLabel, FX_PARALLEL_SPREAD_POINT, fxNumber } from "../../lib/fx";
+import { fxConvert, fxParallelNgnUsd, fxParallelSpread, fxParallelRangeLabel, FX_PARALLEL_SPREAD_POINT, fxNumber, fxCurrencies } from "../../lib/fx";
 import { FX_SNAPSHOT } from "../../data/fx-snapshot";
 import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
@@ -74,6 +82,8 @@ const to = document.getElementById("cc-to") as HTMLSelectElement;
 const fig = document.getElementById("cc-fig") as HTMLElement;
 const unitEl = document.getElementById("cc-unit") as HTMLElement;
 const par = document.getElementById("cc-par") as HTMLElement;
+const margRow = document.getElementById("cc-margrow") as HTMLElement;
+const marg = document.getElementById("cc-marg") as HTMLElement;
 const warn = document.getElementById("cc-warn") as HTMLElement;
 const partoggle = document.getElementById("cc-partoggle") as HTMLInputElement;
 const amtField = amt.closest(".field") as HTMLElement;
@@ -114,8 +124,12 @@ function render() {
   unitEl.textContent = `1 ${f} = ${moneyTrim(ue, t)}`;
   // Empty/unreadable is not a quote: say so instead of printing a confident zero.
   // B4-FIX2 — garbage ("abc" in the amount) reads as un-entered, like a clear.
-  warn.hidden = !pmBlank(raw) && pm(raw) >= 0;
-  warn.textContent = pmBlank(raw) ? "Enter an amount — an empty field is not ₦0." : "Negative amounts count as 0.";
+  /* P2-13 — the warn rail is COMPOSED of parts now, because the amount and
+     the margin field each own their own disclosure; a single overwritten
+     string would let one disclosure erase the other. */
+  const warnParts: string[] = [];
+  if (pmBlank(raw)) warnParts.push("Enter an amount — an empty field is not ₦0.");
+  else if (pm(raw) < 0) warnParts.push("Negative amounts count as 0.");
   if (partoggle.checked && t === "NGN" && f !== t && rates["NGN"] > 0) {
     const p = fxParallelNgnUsd(fxConvert(1, f, "USD", rates) * rates["NGN"], fxParallelSpread());
     /* THE ZERO LAW: a parallel estimate off an un-entered amount is ₦0 with a
@@ -123,12 +137,39 @@ function render() {
     sfFig(par, ["cc-amt"], `Parallel estimate ≈ ₦${fxNumber(a * p, 0)} (estimated, not a quote · street premium modelled at ${(FX_PARALLEL_SPREAD_POINT * 100).toFixed(1)}%, range ${fxParallelRangeLabel()})`);
     par.hidden = false;
   } else par.hidden = true;
+  /* P2-13 — the optional provider-margin reading. Empty field = NO reading
+     (Zero Law), so the row hides entirely and its <b> goes back to "—" —
+     never a ₦-same-as-hero line pretending the margin was 0%. Filled = the
+     honest after-margin figure at the provider's cut, clamped to 0–100%,
+     with the clamp disclosed in the rail when it rewrote what was typed
+     (the F8 grammar: a rewrite is said, never silent). */
+  const margRaw = gv("cc-margin").trim();
+  if (pmBlank(margRaw)) {
+    margRow.hidden = true;
+    marg.textContent = "—";
+    marg.style.color = "";
+    marg.removeAttribute("data-sf-no");
+    const badge = margRow.querySelector(".trust-badge[data-trust]");
+    if (badge) badge.remove();
+  } else {
+    const margNum = pm(margRaw);
+    if (margNum < 0 || margNum > 100) warnParts.push("Provider margin is treated as 0–100%.");
+    const m = Math.min(100, Math.max(0, margNum));
+    margRow.hidden = false;
+    sfFig(marg, ["cc-amt", "cc-margin"], (t === "NGN" ? "₦" : "") + fxNumber(c * (1 - m / 100), t === "NGN" ? 0 : 2));
+  }
+  warn.hidden = warnParts.length === 0;
+  warn.textContent = warnParts.join(" ");
 }
   sfEmpty(sfIsEmpty("currency-converter", gv));
 amt.addEventListener("input", render);
 partoggle.addEventListener("change", render);
 from.addEventListener("change", render);
 to.addEventListener("change", render);
+/* P2-13 — the margin field owns its own re-render: the after-margin reading
+   must repaint when the margin alone changes (the built-page probe caught its
+   absence: the row only moved when another field happened to fire render). */
+document.getElementById("cc-margin")?.addEventListener("input", render);
 document.getElementById("cc-swap")?.addEventListener("click", () => {
   const v = from.value; from.value = to.value; to.value = v;
   /* A programmatic .value write fires NO event — and money-controls.js, the
@@ -147,6 +188,53 @@ document.getElementById("cc-swap")?.addEventListener("click", () => {
 smartFields.register(TOOL_FIELDS["currency-converter"]);
 sfBind("currency-converter", gv);
 render();
+/* ── F6 — URL STATE: ?amt=&from=&to= ─────────────────────────────────────────────
+   Read on load, AFTER the seed paint above (the SSR figure is never wrong
+   on the wire), then written back debounced on every change. Guards, per the
+   Zero Law's quiet sibling: an unrecognised code or a non-numeric amount
+   falls back to the SEED value for that parameter, silently — no warning,
+   no invented figure, the visitor simply lands on the worked example.
+   Length caps keep a hostile ?amt= ten-kilobyte paste from ever reaching the
+   field or the URL (40 chars amount, 8 chars a code — generous over any
+   honest use, small over any abuse).
+
+   THE SHARE LINK RIDES THIS (F5): the spine's WhatsApp/copy surface reads
+   location.href at click time, so a converter shared mid-conversion carries
+   the exact ?amt=&from=&to= state, and the recipient's load applies it back. */
+const CODES = Object.keys(fxCurrencies());
+const validAmt = (v: string) => v !== "" && v.length <= 40 && !pmBlank(v) && Number.isFinite(pm(v));
+const validCode = (v: string) => v !== "" && v.length <= 8 && CODES.includes(v);
+let urlTimer: ReturnType<typeof setTimeout> | undefined;
+function syncUrlNow(): void {
+  const q = new URLSearchParams();
+  q.set("amt", amt.value.trim().slice(0, 40));
+  q.set("from", from.value);
+  q.set("to", to.value);
+  history.replaceState(null, "", `${location.pathname}?${q.toString()}`);
+}
+function syncUrl(): void {
+  clearTimeout(urlTimer);
+  urlTimer = setTimeout(syncUrlNow, 600);
+}
+(function applyUrlState(): void {
+  if (!location.search) return;
+  const u = new URLSearchParams(location.search);
+  let touched = false;
+  const a = (u.get("amt") || "").trim();
+  if (validAmt(a)) { amt.value = a; amt.dispatchEvent(new Event("input", { bubbles: true })); touched = true; }
+  const f = (u.get("from") || "").trim().toUpperCase();
+  if (validCode(f)) { from.value = f; from.dispatchEvent(new Event("change", { bubbles: true })); touched = true; }
+  const t2 = (u.get("to") || "").trim().toUpperCase();
+  if (validCode(t2)) { to.value = t2; to.dispatchEvent(new Event("change", { bubbles: true })); touched = true; }
+  /* Canonicalise: whatever applied is written back so the URL says the TRUE
+     state; pure garbage strips its query entirely — the seed stands and no
+     share link is ever minted from an unparsed query. */
+  if (touched) syncUrlNow();
+  else history.replaceState(null, "", location.pathname);
+})();
+amt.addEventListener("input", syncUrl);
+from.addEventListener("change", syncUrl);
+to.addEventListener("change", syncUrl);
 /* P0-2 (fifth audit, v0.7.57): the per-visit fxFetchLive() call was REMOVED.
    The free feed updates once per 24h, so a per-visit browser refetch bought
    nothing and added throttle exposure on every page view. The page now serves
