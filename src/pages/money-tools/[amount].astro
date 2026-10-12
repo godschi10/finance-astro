@@ -40,12 +40,12 @@ const ladder = [0.5, 1, 2, 5, 10].map((m) => {
   return { amt, out: d.unit_rate * amt };
 });
 ---
-<ToolShell title={`${d.seo.title} - GWill Finance`} description={d.seo.meta_desc} slug={slug} tool={d.seo.h1} lede={lede} verified={`Mid-market ${FX_SNAPSHOT.as_of} (${FX_SNAPSHOT_LABEL}) · receipt refreshes live`} badge={`Live rate · updated ${FX_SNAPSHOT.as_of}`} faqs={faqs} rawFaq ogImage={{ url: `${base}images/og/tool-amount.png`, width: 1200, height: 630, alt: "Amount Converter" }}>
+<ToolShell title={`${d.seo.title} - GWill Finance`} description={d.seo.meta_desc} slug={slug} tool={d.seo.h1} lede={lede} verified={`Mid-market ${FX_SNAPSHOT.as_of} (${FX_SNAPSHOT_LABEL}) · daily reference rate, twice-daily builds`} badge={`Daily reference rate · updated ${FX_SNAPSHOT.as_of}`} faqs={faqs} rawFaq ogImage={{ url: `${base}images/og/tool-amount.png`, width: 1200, height: 630, alt: "Amount Converter" }}>
 <div class="fx-card">
 <div class="fxap-hero">
 <p class="fxap-figure" id="am-fig"><span class="fxap-side">{amountFmt(d.amount, d.from)}</span><span class="fxap-eq">=</span><span class="fxap-side fxap-result" id="am-fig-r">{amountFmt(d.converted, d.to)}</span></p>
 <p class="fx-result-note" id="am-unit">{unitLine} · {FX_SNAPSHOT.as_of} · mid-market, before provider fees</p>
-<p class="fx-result-note" id="am-foot" style="opacity:.72">Snapshot · {FX_SNAPSHOT.as_of} · swaps to live timestamp when the feed answers</p>
+<p class="fx-result-note" id="am-foot" style="opacity:.72">Daily reference rate · updated {FX_SNAPSHOT.as_of}</p>
 </div>
 </div>
 <!-- v0.6.8 (King: cramp on the conversion landing pages): the LIVE amount
@@ -81,7 +81,6 @@ const ladder = [0.5, 1, 2, 5, 10].map((m) => {
 <div data-amount-slug={slug} hidden></div>
 <script>
 import { amountPageData, amountFmt, amountRate } from "../../lib/amount";
-import { fxFetchLive } from "../../lib/fx";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS } from "../../data/tool-fields";
 /* The amount family has no inputs of its own — the figure lives in the URL —
@@ -91,22 +90,14 @@ import { TOOL_FIELDS } from "../../data/tool-fields";
 smartFields.register(TOOL_FIELDS["amount"]);
 const holder = document.querySelector("[data-amount-slug]");
 const slug = holder && (holder as HTMLElement).dataset.amountSlug || "";
-(async () => {
-  try {
-    if (!slug) return;
-    const ctl = new AbortController();
-    const t = setTimeout(() => ctl.abort(), 8000);
-    const live = await fxFetchLive(ctl.signal);
-    clearTimeout(t);
-    if (!live.rates) return;
-    const d = amountPageData(slug, { rates: live.rates, as_of: live.as_of || "just now", cached: false, ok: true });
-    if (!d || d.unit_rate <= 0) return;
-    const fig = document.getElementById("am-fig-r");
-    const unit = document.getElementById("am-unit");
-    const foot = document.getElementById("am-foot");
-    if (fig) fig.textContent = amountFmt(d.converted, d.to);
-    if (unit) unit.textContent = `1 ${d.from} = ${amountRate(d.unit_rate, d.to)} · 1 ${d.to} = ${amountRate(d.rev_rate, d.from)} · live · mid-market, before provider fees`;
-    if (foot) foot.textContent = "Live · " + (live.as_of || "just now");
-  } catch { /* snapshot stands, honestly labeled */ }
+/* P0-2 (fifth audit, v0.7.57 family): the free FX feed updates once per 24h,
+   so a per-visit browser fetch added third-party calls and throttle exposure
+   for zero freshness — removed everywhere else in 4c651ff; removed here too.
+   The page carries the build's daily reference rate, honestly stamped. */
+(() => {
+  const foot = document.getElementById("am-foot");
+  if (foot && foot.textContent.startsWith("Live")) {
+    foot.textContent = "Daily reference rate · " + foot.textContent.replace(/^Live · /, "updated ");
+  }
 })();
 </script>

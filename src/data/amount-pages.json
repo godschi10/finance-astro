@@ -4,9 +4,9 @@
         "from": "USD",
         "to": "NGN",
         "title": "100 Dollars to Naira, Live Rate",
-        "meta_desc": "How much is 100 dollars in naira today? The live mid-market figure, what $100 actually buys in Nigeria, and why you never get the Google rate.",
+        "meta_desc": "How much is 100 dollars in naira today? The daily-reference mid-market figure, what $100 actually buys in Nigeria, and why you never get the Google rate.",
         "content": {
-            "lede": "One hundred dollars is the benchmark conversion in Nigeria, the amount people quote when they want to know what the naira is really worth, the amount new remittance apps get tested with, and the size of a first freelance invoice. The figure above is computed live from the same rate engine that powers our main converter, so what you see is the current mid-market rate, not a stale placeholder.",
+            "lede": "One hundred dollars is the benchmark conversion in Nigeria, the amount people quote when they want to know what the naira is really worth, the amount new remittance apps get tested with, and the size of a first freelance invoice. The figure above is computed from the same daily reference rate that powers our main converter, stamped with the exact time the build fetched it, never a hardcoded \"about\" number.",
             "sections": [
                 {
                     "h2": "What 100 dollars buys in Nigeria right now",
@@ -40,7 +40,7 @@
                 {
                     "h2": "How often the rate moves, and how to use this page",
                     "body": [
-                        "The dollar-naira rate is not a line that drifts gently; it steps. Policy decisions, dollar scarcity and demand surges can move it materially in a week, which is why any page that shows you a fixed \"about\" figure is quietly lying to you. This page recomputes from the live engine on every load, and the timestamp beside the figure tells you how fresh the underlying rate is.",
+                        "The dollar-naira rate is not a line that drifts gently; it steps. Policy decisions, dollar scarcity and demand surges can move it materially in a week, which is why any page that shows you a fixed \"about\" figure is quietly lying to you. This page recomputes from the daily reference rate at build time (twice a day), and the timestamp beside the figure tells you exactly how fresh it is.",
                         "Use the converter above to test other amounts at the same rate, or jump straight to the neighbours: {SIBLINGS}. Working in the other direction? {OPPOSITE} shows what naira amounts become in dollars."
                     ]
                 }
@@ -64,7 +64,7 @@
                 },
                 {
                     "q": "How often does this page update?",
-                    "a": "The figure is computed on every page load from our converter's live rate engine and its 30-minute cache. The \"updated\" note beside the number shows how fresh the underlying rate is, if the market feed is paused, you will see exactly that rather than a stale figure pretending to be live."
+                    "a": "The figure is computed from the daily reference rate our build fetches — the build runs twice a day, so the rate is at most about twelve hours old. The \"updated\" note beside the number shows exactly how fresh it is, and if the market feed is unreachable at build time you see the last good snapshot, honestly labelled rather than a stale figure pretending to be live."
                 }
             ]
         }
@@ -74,9 +74,9 @@
         "from": "NGN",
         "to": "USD",
         "title": "1 Million Naira to Dollars, Live Rate",
-        "meta_desc": "What is 1 million naira in dollars today? The live answer, what ₦1,000,000 buys in Nigeria, and why saving naira for dollar goals is a treadmill.",
+        "meta_desc": "What is 1 million naira in dollars today? The daily-reference answer, what ₦1,000,000 buys in Nigeria, and why saving naira for dollar goals is a treadmill.",
         "content": {
-            "lede": "A million naira is the psychological round number of Nigerian money, the rent you save toward, the used car you price, the wedding contribution, the school fees lump. It is also one of the most searched currency conversions in the country, because converting it into dollars delivers an uncomfortable gut-check on what naira savings are actually worth. The figure above is computed live from the same engine as our main converter, never a hardcoded \"about\" number.",
+            "lede": "A million naira is the psychological round number of Nigerian money, the rent you save toward, the used car you price, the wedding contribution, the school fees lump. It is also one of the most searched currency conversions in the country, because converting it into dollars delivers an uncomfortable gut-check on what naira savings are actually worth. The figure above is computed from the same daily reference rate as our main converter, stamped with its build time, never a hardcoded \"about\" number.",
             "sections": [
                 {
                     "h2": "What one million naira is in real life",
@@ -431,7 +431,7 @@
         "from": "GBP",
         "to": "NGN",
         "content": {
-            "lede": "A hundred pounds is the classic UK-to-Nigeria remittance bracket: the monthly support many British-based Nigerians send home, or the first invoice from a UK client. The figure above is computed live from the same engine as our main converter, never a hardcoded \"about\" number.",
+            "lede": "A hundred pounds is the classic UK-to-Nigeria remittance bracket: the monthly support many British-based Nigerians send home, or the first invoice from a UK client. The figure above is computed from the same daily reference rate as our main converter, stamped with its build time, never a hardcoded \"about\" number.",
             "sections": [
                 {
                     "h2": "What £100 covers in Nigeria",
