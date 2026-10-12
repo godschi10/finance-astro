@@ -42,7 +42,11 @@ const checks = [
   ["desktop footer <footer class=footer>", count(footer, '<footer class="footer">') === 1],
   ["mobile footer <footer class=mfooter>", count(footer, '<footer class="mfooter">') === 1],
   ["desktop grid .ftop + brand column", count(footer, 'class="ftop"') === 1 && count(footer, 'class="fcol fcol--brand"') === 1],
-  ["brand lockup .flogo .n + .nm (both footers)", count(footer, 'class="flogo"') === 2 && count(footer, '<span class="n">₦</span><span class="nm">gwillchijioke</span>') === 2],
+  // SITE-6 (the King's brand order, 2026-10-12): the lockup pin guards the
+  // corrected brand string (the SITE-1 precedent below). The .fnet network
+  // line is NOT part of this change — it names the gwillchijioke.com DOMAIN
+  // family, not the brand, and stays verbatim.
+  ["brand lockup .flogo .n + .nm (both footers)", count(footer, 'class="flogo"') === 2 && count(footer, '<span class="n">₦</span><span class="nm">GWill Finance</span>') === 2],
   ["blurb .ftag in both footers (mobile keeps WP inline size)", count(footer, 'class="ftag"') === 2 && has(footer, 'style="margin-top:4px;font-size:11px"')],
   ["network line .fnet", count(footer, 'class="fnet"') === 1 && has(footer, "Part of the gwillchijioke.com network")],
   ["social nav .fsoc x2 (desktop + mobile, mobile keeps WP inline margin)", count(footer, 'class="fsoc"') === 2 && has(footer, 'style="margin:16px 0"')],
@@ -65,7 +69,10 @@ const checks = [
   ["column titles: Articles / Finance Apps / Network (desktop)", ["Articles", "Finance Apps", "Network"].every((t) => has(footerRaw, t))],
   ["mobile grid .mfgrid adds the Site column", count(footer, 'class="mfgrid"') === 1 && has(footerRaw, "Site")],
   ["empty footer ad wrapper collapses (WP v1.12.10)", count(footer, 'class="ad-bg ad-bg--footer"') === 1 && css.includes(".ad-bg--footer:empty")],
-  ["desktop bottom bar .fbot", count(footer, 'class="fbot"') === 1 && has(footer, "Gwill Chijioke")],
+  // SITE-6 (2026-10-12): one author form everywhere — the hyphenated byline
+  // form "G-will Chijioke" (already pinned on the credit link below). The
+  // copyright's unhyphenated "Gwill Chijioke" was the audit's variance finding.
+  ["desktop bottom bar .fbot", count(footer, 'class="fbot"') === 1 && has(footer, "G-will Chijioke")],
   ["credit: 'Designed & built by' + linked name in both footers", count(footer, "Designed &amp; built by") === 2 && count(footer, 'class="fcredit-link"') === 2 && has(footer, ">G-will Chijioke</a>")],
   ["legal row: Privacy · Disclaimer · Affiliates", ["Privacy", "Disclaimer", "Affiliates"].every((t) => has(footerRaw, t)) && has(footer, 'class="fdot"')],
   ["back-to-top link x2 (mobile keeps WP inline colour)", count(footer, "Back to top ↑") === 2 && has(footer, 'style="color:var(--dark-dim)"')],
@@ -85,7 +92,11 @@ const checks = [
   ["articles group = WP set", ["All Articles", "Savings", "Investing", "Crypto"].every((t) => has(site, t))],
   ["apps group = WP set", ["Dollar Accounts", "Finance Apps", "Banking", "Remittance"].every((t) => has(site, t))],
   ["site group = WP set", ["Money Calculators", "About", "Contact"].every((t) => has(site, t))],
-  ["network column differs per footer (WP footer.php 72-80 vs 137-143)", has(site, "FOOTER_NETWORK") && has(site, "desktop:") && has(site, "mobile:") && has(site, "tech.gwillchijioke.com")],
+  // SITE-6 (2026-10-12): tech.gwillchijioke.com is RETIRED — the King's
+  // portfolio CHANGELOG moved every such link to androidscroll.com; the
+  // network column pin moved with it. The gwillchijioke.com family itself
+  // (the .fnet line) stays — that is the launching domain, not a stale link.
+  ["network column differs per footer (WP footer.php 72-80 vs 137-143)", has(site, "FOOTER_NETWORK") && has(site, "desktop:") && has(site, "mobile:") && has(site, "androidscroll.com")],
   ["no dead /all-articles/ link anywhere", !has(site, 'href: "/all-articles/"')],
 
   // ── CSS: verbatim WP values ───────────────────────────────────────────────

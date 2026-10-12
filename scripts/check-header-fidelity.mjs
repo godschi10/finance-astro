@@ -16,7 +16,11 @@ const layout = readFileSync(LAYOUT, "utf8");
 const site = readFileSync(SITES, "utf8");
 const css = readFileSync(HEADERCSS, "utf8");
 
-const brand = '<span class="n">₦</span><span class="nm">gwillchijioke</span>';
+// SITE-6 (the King's brand order, held-calls bundle 2026-10-11): the on-page
+// brand unifies to "GWill Finance". The lockup pin moved with it — the SITE-1
+// precedent (check-footer-fidelity.mjs, copyright holder): the pin guards the
+// King's corrected string, never the stale one. Do NOT "restore" ₦gwillchijioke.
+const brand = '<span class="n">₦</span><span class="nm">GWill Finance</span>';
 const newsletterDesktop = '>Newsletter →<';
 const newsletterMobile = 'Subscribe to Newsletter →';
 const placeholder = "Search savings, investing, cards";
@@ -42,8 +46,9 @@ const checks = [
   ["<div id=\"top\"></div> present", layout.includes('<div id="top"></div>')],
   ["desktop header .sh", /class="sh"/.test(layout)],
   ["mobile header .mh", /class="mh"/.test(layout)],
-  ["brand ₦gwillchijioke (desktop .logo)", layout.includes('<a class="logo"') && layout.includes(brand)],
+  ["brand ₦GWill Finance (desktop .logo)", layout.includes('<a class="logo"') && layout.includes(brand)],
   ["brand in drawer/logo present", layout.includes(brand)],
+  ["old ₦gwillchijioke lockup is gone (SITE-6, 2026-10-12)", !layout.includes('class="nm">gwillchijioke<')],
   ["NOT gwillfinance", !layout.includes("gwillfinance") && !site.includes("gwillfinance")],
   ["NOT id=\"theme-toggle\"", !layout.includes('id="theme-toggle"')],
   ["NOT id=\"nav-mobile\"", !layout.includes('id="nav-mobile"')],
