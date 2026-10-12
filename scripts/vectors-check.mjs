@@ -480,6 +480,27 @@ IV.loanApr.forEach((r, i) => {
   precise(rep.apr * 100, r.effectiveAprPct, `${p}.effectiveAprPct`);
 });
 
+// ── CITED CHECKER CASE (S3a, v0.7.60 — fifth audit P1-2) ─────────────────────
+// 31 days at flat 5%/mo = ₦5,000 interest — days÷30.4; the old rule charged
+// ₦10,000; verified 11 Oct 2026. The old engine rounded day tenors UP to
+// whole months (ceil(31/30) = 2), so an ordinary 31-day calendar-month loan
+// billed two months of flat interest — the fifth audit's worked example
+// (finance-astro-calculator-audit-1.md, P1-2: "A 31-day loan is an ordinary
+// calendar month. At flat 5%/month on ₦100,000 the tool charges ₦10,000 of
+// interest instead of ₦5,000"). The engine now rounds days ÷ 30.4 to the
+// NEAREST month (minimum 1). Hardcoded here in the B2 bonus pattern —
+// independent-vectors.json is the audit's verbatim set and is never
+// hand-edited. Oracle safety, enumerated: every existing gated loanApr row is
+// a 30-day or month tenor (30/30.4 → 1; 90d → 3 either way), so none moved.
+{
+  const rep31 = L.loanRepayment(100000.0, 31, "days", 5.0, "flat");
+  naira(rep31.interest, 5000.0, "loanFlat31d.interest (31 days ÷ 30.4 → 1 month; the pre-fix ceil rule charged ₦10,000)");
+  naira(rep31.total, 105000.0, "loanFlat31d.total (one month of flat 5% — not two)");
+  // The boundary the fix must NOT cross: 30 days was, and stays, one month.
+  const rep30 = L.loanRepayment(100000.0, 30, "days", 5.0, "flat");
+  naira(rep30.interest, 5000.0, "loanFlat30d.interest (30/30.4 → 1, unchanged by the fix)");
+}
+
 // compound — the year-end series under the engine's end-of-period convention.
 IV.compound.forEach((r, i) => {
   if (r.depositTiming !== "end") {
@@ -518,12 +539,15 @@ IV.nairaValue.forEach((r, i) => {
 });
 
 // dividend — only the engine's CURRENT convention is gated ("growth before
-// first payment"). The other two oracle rows (year 1 at today's dividend; 10%
-// WHT — dividendProject has no WHT parameter) are ALTERNATIVE conventions,
-// carried for the record; the CALC-4 fix may promote them later.
+// first payment"). The other two oracle rows are carried for the record:
+// "year 1 at today's dividend" is the King-held convention FLIP (CALC-4a —
+// not this leg), and the 10% WHT row is the SAME case appendix-a's A4 row now
+// GATES (v0.7.60, S3a — dividendProject gained whtPct, checker calls with
+// whtPct=10), so it stays informational HERE as a cross-note, exactly like
+// dividendGross runs the other direction (gated in v1, cross-note in A).
 IV.dividend.forEach((r, i) => {
   if (r.convention !== "growth before first payment") {
-    indInfo.push(`dividend[${i}] "${r.convention}": endValue ${r.endValue} — alternative convention, not implemented by dividendProject(); informational, not gated`);
+    indInfo.push(`dividend[${i}] "${r.convention}": endValue ${r.endValue} — ${r.convention.includes("WHT") ? "same case as the gated appendix-a dividendWht row (v0.7.60)" : "alternative convention (the King-held CALC-4a flip)"}, not implemented by dividendProject(); informational, not gated`);
     return;
   }
   const d = D.dividendProject(r.investment, r.price, r.dps, r.priceGrowthPct / 100, r.dividendGrowthPct / 100, r.years, r.mode === "drip");
@@ -637,14 +661,37 @@ AV.loanApr.forEach((r, i) => {
   if (r.total !== undefined) aNaira(rep.total, r.total, `${p}.total`);
   aPrecise(rep.apr * 100, r.effectiveAprPct, `${p}.effectiveAprPct`);
 });
+// A3 · loan fee rows — PROMOTED informational→gated (v0.7.60, S3a): the engine
+// gained the optional 6th parameter upfrontFeePct (default 0), and the APR now
+// solves on the net disbursement while the repayment stream stays
+// contract-sized. Both audit rows gate on the APR alone (the JSON marks them
+// "approx": the audit's own rounding — 4442.97→4443, 220.6476→220.6 — both
+// inside the house half-printed-digit tolerance). The JSON file is NEVER
+// edited; the promotion lives here.
 AV.loanFeeApr.forEach((r, i) => {
-  aInfo.push(`loanFeeApr[${i}] ${r.label}: APR ≈ ${r.effectiveAprPct}% — loanRepayment()/loanEffectiveApr() carry no fee parameter; informational, promotes when the S3 fee feature lands`);
+  const rep = r.days !== undefined
+    ? L.loanRepayment(r.principal, r.days, "days", r.ratePctPerDay, "daily", r.upfrontFeePct)
+    : L.loanRepayment(r.principal, r.months, "months", r.ratePctPerMonth, "flat", r.upfrontFeePct);
+  const p = `loanFeeApr[${i}] ${r.label}`;
+  aPrecise(rep.apr * 100, r.effectiveAprPct, `${p}.effectiveAprPct (APR solved on the NET disbursement; the repayment stream itself is unchanged and already gated by the no-fee loanApr rows)`);
 });
 
 // A4 · dividend — the gross DRIP row is already gated in v1 (cross-note, not
-// re-gated); the 10% WHT row waits on a WHT parameter (the S3 feature).
+// re-gated); the 10% WHT row PROMOTED informational→gated (v0.7.60, S3a):
+// dividendProject() gained whtPct (PERCENT, default 0 — so every pre-S3a
+// call, including the v1 gross row and the PHP parity vectors, is
+// byte-identical). The checker calls with whtPct=10; dividends are taxed
+// before reinvestment, so end value, dividends and CAGR are all NET.
 aInfo.push(`dividendGross "${AV.dividendGross[0].label}": end ${AV.dividendGross[0].endValue} · dividends ${AV.dividendGross[0].totalDividends} · CAGR ${AV.dividendGross[0].cagrPct}% — already gated in v1 (independent-vectors.json dividend[0]); cross-note, not re-gated`);
-aInfo.push(`dividendWht "${AV.dividendWht[0].label}": end ${AV.dividendWht[0].endValue} · net dividends ${AV.dividendWht[0].totalNetDividends} · CAGR ${AV.dividendWht[0].cagrPct}% — dividendProject() has no WHT parameter; informational, promotes when the S3 WHT feature lands`);
+{
+  const w = AV.dividendWht[0];
+  const d = D.dividendProject(w.investment, w.price, w.dps, w.priceGrowthPct / 100, w.dividendGrowthPct / 100, w.years, w.mode === "drip", w.whtPct);
+  const p = `dividendWht "${w.label}" (whtPct=${w.whtPct})`;
+  aNaira(d.end_value, w.endValue, `${p}.endValue (net of WHT)`);
+  aNaira(d.cash_total, w.totalNetDividends, `${p}.totalNetDividends (net received/reinvested)`);
+  aPrecise(d.cagr * 100, w.cagrPct, `${p}.cagrPct`);
+  aPrecise(d.yield * (1 - w.whtPct / 100) * 100, w.netStartingYieldPct, `${p}.netStartingYieldPct (page-derived gross × (1 − WHT))`);
+}
 
 // A5 · transfer — would FAIL today BY DESIGN (P0-1: the page shows $78.51 for
 // P2P); informational until the direction fix lands, then they promote.
@@ -680,7 +727,9 @@ AV.inflationDefault.forEach((r, i) => {
 });
 
 const aGatedRows = AV.tax.length + AV.taxRent.length + AV.taxOldRegime.length
-  + AV.grossToNet.length + AV.loanApr.length + 1; // + the emergency 7.17 gate
+  + AV.grossToNet.length + AV.loanApr.length
+  + AV.loanFeeApr.length + AV.dividendWht.length // S3a (v0.7.60): the two A3 fee rows + the A4 WHT row, promoted informational→gated
+  + 1; // + the emergency 7.17 gate
 console.log(`\nappendix-a: pass=${aPass} fail=${aFails.length} informational=${aInfo.length} gated rows=${aGatedRows} (scripts/appendix-a-vectors.json, generated ${AV._meta.generated}, ${AV._meta.source})`);
 for (const line of aInfo) console.log(`INFO ${line}`);
 for (const f of aFails) console.log(`FAIL ${f}`);

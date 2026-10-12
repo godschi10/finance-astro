@@ -18,15 +18,16 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 // unknown slug throws at build rather than shipping a stale card.
 const artTitle = await articleTitleOf();
 ---
-<ToolShell title="Loan Repayment Calculator, Effective Annual Rate (Fees Excluded) - GWill Finance" description="Loan-app quote in, real cost out: installment, total interest, and the effective annual rate (excluding fees) behind flat, daily, and reducing-balance loans." slug="loan-repayment-calculator" tool="Loan Repayment Calculator" lede="Lenders quote rates that flatter themselves. Enter the quote exactly as advertised and see the installment, the total, and the real APR." verified="Effective annual rate (fees excluded), solved from the repayment stream · lender quotes vary, confirm terms" faqs={[
+<ToolShell title="Loan Repayment Calculator, Effective Annual Rate (Upfront Fee When Entered) - GWill Finance" description="Loan-app quote in, real cost out: installment, total interest, and the effective annual rate behind flat, daily, and reducing-balance loans, including the upfront fee when you enter one." slug="loan-repayment-calculator" tool="Loan Repayment Calculator" lede="Lenders quote rates that flatter themselves. Enter the quote exactly as advertised — and any upfront fee — and see the installment, the total, and the real APR." verified="Effective annual rate, solved from the repayment stream · the upfront fee is included when you enter one · lender quotes vary, confirm terms" faqs={[
   { q: "Why is the APR higher than the quoted rate?", a: "Two different reasons, and both are real. A flat rate is charged on the original amount every month, so the APR runs far higher. A reducing rate is charged only on what you still owe, so its APR sits just above the quoted figure — that gap is monthly compounding inside the year, not a hidden fee. Check the unit beside the rate field: the three rate types are not all quoted per year." },
   { q: "Daily vs monthly — which is worse?", a: "A small daily rate compounds brutally: 1% a day is thousands of percent APR. The receipt shows the annualized truth." },
+  { q: "How do I include the upfront fee?", a: "Type it into the upfront-fee field: 5 reads as 5% (a plain number is a percentage), or ₦5,000 for a naira fee. Nigerian lenders often deduct 3–5% of the amount upfront before you receive the money, and the APR then solves on what you actually received — on ₦100,000 over 30 days at 1% per day, a 5% fee moves the honest APR from about 2,334% to about 4,443%." },
 ]}
 
   badge="Loan cost · effective annual rate (fees excluded)",
-  copy={[["p", "The single most misleading number in Nigerian lending is the quoted rate. Banks use a reducing (amortizing) annual rate, which is honest, the interest is recalculated each month on the balance you still owe. But most loan apps do not. They quote a \"flat\" rate: interest charged on the ORIGINAL amount every single month, even as you pay the balance down. A 1.5% flat monthly rate is not 18% a year; because you are paying interest on money you have already repaid, it works out closer to 35% a year. Some apps skip the pretense and quote a daily rate, 0.5% per day sounds small but annualizes to over 400%."],["p", "Take the default: ₦100,000 borrowed for 30 days at 1% per day. The interest is 1% of the original amount for each of 30 days, ₦1,000 a day, ₦30,000 in total. So you repay ₦130,000 on a ₦100,000 loan, a 30% interest charge in a single month. To compare that with a bank quote, the calculator converts it to an effective APR of well over 2,000%, that is not the rate a bank would quote you, but it is the honest annualized cost of what you just agreed to. That is precisely the gap this tool exists to expose."],["p", "Every lender can phrase its rate differently: \"1.5% flat\", \"0.5% per day\", \"30% per annum reducing\". These three can look similar on paper yet cost wildly different amounts. The effective APR strips away the phrasing by solving for the single annual rate at which the present value of your repayments exactly equals the loan. That one figure lets you line up a bank, a loan app and a POS advance side by side. If a lender will not tell you the effective APR, that is usually a sign the real cost is higher than the headline suggests."],["p", "Interest is only part of the cost. Many Nigerian lenders also deduct an upfront processing fee, a mandatory insurance or technology charge, or a \"commitment\" fee, often 3-5% of the amount, taken before you even receive the money. Those are additional cost on top of the rates this calculator models, and a true all-in APR should include them. When a lender quotes you a figure, always ask for the full schedule: amount you receive, every charge, and the total you repay."],["p", "Before you sign, get three things in writing. First, the effective APR, the single number this tool computes, and the one that lets you compare a bank to an app to a POS advance fairly. Second, the full repayment schedule: the exact installment, when it is due, and the total you will pay back including every charge. Third, what happens if you are late or fail to pay, the penalty rate, whether the lender reports to a credit bureau, and whether they can seize collateral or deduct directly from your account. A lender that is vague about any of these is usually the one to walk away from. A loan that looks cheap because of a small daily rate can be the most expensive money you ever borrow."],["p", "A loan is one side of your balance sheet. To build the emergency fund that keeps you from borrowing in the first place, use our emergency fund calculator. To see how much of your take-home a repayment really eats, our 50/30/20 budget calculator shows where the money goes, down to the needs-half lines in its step 2. And to plan how fast you can free up cash to clear the debt, our savings goal calculator charts the monthly amount you need."],["h2", "Loan repayment questions"],["h3", "What is a flat interest rate on a Nigerian loan?"],["p", "A flat rate charges interest on the original loan amount every month, even as you repay the balance. So \"1.5% flat per month\" costs far more than 18% a year, the effective APR is usually close to double the simple rate-times-twelve figure."],["h3", "Is a 5% monthly loan app rate expensive?"],["p", "Yes. A 5% flat monthly rate on a short tenor typically annualizes to well over 100%. Even at a longer tenor it is far above the 25-35% a formal bank loan costs. Use the effective APR on this calculator to judge it honestly."],["h3", "Does this calculator include loan fees?"],["p", "It models the interest in the rate you enter. Upfront processing, insurance or commitment fees are separate and add to the true cost, include them when comparing a total."],["h3", "How is the effective APR calculated?"],["p", "The calculator finds the interest rate at which the present value of your repayments exactly equals the amount borrowed, then annualizes it. For example, ₦100,000 borrowed for 30 days at 1% per day costs about ₦130,000 to repay, an effective APR of about 2,333.9%. That is the honest way to compare loans with different quoted rates and terms."]]},
+  copy={[["p", "The single most misleading number in Nigerian lending is the quoted rate. Banks use a reducing (amortizing) annual rate, which is honest, the interest is recalculated each month on the balance you still owe. But most loan apps do not. They quote a \"flat\" rate: interest charged on the ORIGINAL amount every single month, even as you pay the balance down. A 1.5% flat monthly rate is not 18% a year; because you are paying interest on money you have already repaid, it works out closer to 35% a year. Some apps skip the pretense and quote a daily rate, 0.5% per day sounds small but annualizes to over 400%."],["p", "Take the default: ₦100,000 borrowed for 30 days at 1% per day. The interest is 1% of the original amount for each of 30 days, ₦1,000 a day, ₦30,000 in total. So you repay ₦130,000 on a ₦100,000 loan, a 30% interest charge in a single month. To compare that with a bank quote, the calculator converts it to an effective APR of well over 2,000%, that is not the rate a bank would quote you, but it is the honest annualized cost of what you just agreed to. That is precisely the gap this tool exists to expose."],["p", "Every lender can phrase its rate differently: \"1.5% flat\", \"0.5% per day\", \"30% per annum reducing\". These three can look similar on paper yet cost wildly different amounts. The effective APR strips away the phrasing by solving for the single annual rate at which the present value of your repayments exactly equals the loan. That one figure lets you line up a bank, a loan app and a POS advance side by side. If a lender will not tell you the effective APR, that is usually a sign the real cost is higher than the headline suggests."],["p", "Interest is only part of the cost. Many Nigerian lenders also deduct an upfront processing fee, a mandatory insurance or technology charge, or a \"commitment\" fee, often 3-5% of the amount, taken before you even receive the money. The upfront-fee field above prices exactly that: enter it and the effective APR solves on the amount you actually received, so a ₦100,000 loan with a 5% fee is compared on the ₦95,000 that landed in your account. When a lender quotes you a figure, always ask for the full schedule: amount you receive, every charge, and the total you repay."],["p", "Before you sign, get three things in writing. First, the effective APR, the single number this tool computes, and the one that lets you compare a bank to an app to a POS advance fairly. Second, the full repayment schedule: the exact installment, when it is due, and the total you will pay back including every charge. Third, what happens if you are late or fail to pay, the penalty rate, whether the lender reports to a credit bureau, and whether they can seize collateral or deduct directly from your account. A lender that is vague about any of these is usually the one to walk away from. A loan that looks cheap because of a small daily rate can be the most expensive money you ever borrow."],["p", "A loan is one side of your balance sheet. To build the emergency fund that keeps you from borrowing in the first place, use our emergency fund calculator. To see how much of your take-home a repayment really eats, our 50/30/20 budget calculator shows where the money goes, down to the needs-half lines in its step 2. And to plan how fast you can free up cash to clear the debt, our savings goal calculator charts the monthly amount you need."],["h2", "Loan repayment questions"],["h3", "What is a flat interest rate on a Nigerian loan?"],["p", "A flat rate charges interest on the original loan amount every month, even as you repay the balance. So \"1.5% flat per month\" costs far more than 18% a year, the effective APR is usually close to double the simple rate-times-twelve figure."],["h3", "Is a 5% monthly loan app rate expensive?"],["p", "Yes. A 5% flat monthly rate on a short tenor typically annualizes to well over 100%. Even at a longer tenor it is far above the 25-35% a formal bank loan costs. Use the effective APR on this calculator to judge it honestly."],["h3", "Does this calculator include loan fees?"],["p", "The interest follows the rate you enter, and the upfront-fee field includes the deduction most Nigerian lenders make before disbursement (often 3-5%) in the effective APR. Other running charges, late penalties and insurance premia are still yours to add when comparing a total."],["h3", "How is the effective APR calculated?"],["p", "The calculator finds the interest rate at which the present value of your repayments exactly equals the amount borrowed, then annualizes it. For example, ₦100,000 borrowed for 30 days at 1% per day costs about ₦130,000 to repay, an effective APR of about 2,333.9%. That is the honest way to compare loans with different quoted rates and terms."]]},
   related={[{ href: `${base}articles/cheapest-way-receive-dollars-nigeria/`, title: artTitle("cheapest-way-receive-dollars-nigeria"), excerpt: "Wise, Grey, Geegpay, and domiciliary accounts compared on fees, speed, and exchange margins." }, { href: `${base}articles/grey-vs-geegpay-dollar-account/`, title: artTitle("grey-vs-geegpay-dollar-account"), excerpt: "Account opening, conversion spreads, card support, and payout speed — tested with real transfers." }, { href: `${base}articles/piggyvest-vs-cowrywise-2026/`, title: artTitle("piggyvest-vs-cowrywise-2026"), excerpt: "Interest rates, withdrawal rules, fees, and app experience compared side by side." }, { href: `${base}articles/ngn-dollar-cost-averaging-guide/`, title: artTitle("ngn-dollar-cost-averaging-guide"), excerpt: "A step-by-step plan for buying Nigerian stocks every month without timing the market." }]},
-  disclaimer="This calculator is for informational guidance only and is not financial or lending advice. Figures reflect the interest rate you enter; lenders may add fees, and actual terms vary. Confirm the full repayment schedule with your lender before signing.">
+  disclaimer="This calculator is for informational guidance only and is not financial or lending advice. Figures reflect the interest rate and any upfront fee you enter; lenders may add other charges, and actual terms vary. Confirm the full repayment schedule with your lender before signing.">
 <div class="fx-card">
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
@@ -36,30 +37,41 @@ const artTitle = await articleTitleOf();
 <div class="field"><label for="ln-unit">Tenor unit</label><select id="ln-unit"><option value="days" selected>Days</option><option value="months">Months</option></select></div>
 <div class="field"><label for="ln-rate">Quoted rate <span id="ln-rate-unit">%/day</span></label><input id="ln-rate" type="text" value={LOAN_SEED.rate} inputmode="decimal"><p class="hint" id="ln-rate-hint">The rate is per day, as loan apps quote it.</p></div>
 <div class="field"><label for="ln-mode">Rate type</label><select id="ln-mode"><option value="daily" selected>Per day (loan apps)</option><option value="flat">Flat per month</option><option value="reducing">Reducing balance</option></select></div>
+<!-- S3a item 1 (v0.7.60, fifth audit P1-2): the upfront fee. No data-cur on
+     purpose — the value is a percentage OR a naira amount, so a forced ₦
+     glyph would lie half the time. A plain number reads as % (the way
+     lenders quote fees); ₦5,000 is a naira fee. Empty = no fee = the exact
+     pre-S3a maths, so the seeded receipt does not move and Reset restores
+     the honest blank. The hint carries the page's own FAQ's 3–5% figure. -->
+<div class="field"><label for="ln-fee">Upfront fee (% or ₦)</label><input id="ln-fee" type="text" inputmode="decimal" placeholder="e.g. 5 or ₦5,000"><p class="hint">Deducted before you receive the loan. Type 5 for 5%, or ₦5,000 for a naira fee — lenders often charge 3–5% upfront.</p></div>
 </div>
 <div class="receipt">
 <p class="receipt-lbl">You repay <span id="ln-period">{seed.period}</span></p>
 <p class="receipt-fig" id="ln-fig" aria-live="polite">₦{n(seed.installment)}</p>
-<p class="receipt-sub" id="ln-sub">Total ₦{n(seed.total)} · interest ₦{n(seed.interest)} · effective annual rate (fees excluded) {aprFmt(seed.apr)}</p>
+<p class="receipt-sub" id="ln-sub">Total ₦{n(seed.total)} · interest ₦{n(seed.interest)} · effective annual rate (including the upfront fee when entered) {aprFmt(seed.apr)}</p>
 <p class="receipt-note" id="ln-warn" hidden aria-live="polite"></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Total repaid</span><b id="ln-tot">₦{n(seed.total)}</b></div>
 <div class="receipt-row"><span>Interest</span><b id="ln-int">₦{n(seed.interest)}</b></div>
-<div class="receipt-row"><span>Effective annual rate (fees excluded)</span><b id="ln-apr">{aprFmt(seed.apr)}</b></div>
-<!-- v0.7.56 (audit #2): day tenors round UP to whole months for flat and
-     reducing rates, so a 31-day flat loan is billed as 2 months — one extra
-     day, a whole extra month of interest, a stepped APR. The headline keeps
-     the engine's rounded-month reading (the loanApr oracle vectors pin that
-     behaviour; the engine is untouched), and this block adds the SAME loan
-     priced over the exact days beside it. Both readings come from the
-     existing engine functions, run at page level: the exact-days run passes
-     the quoted rate through daily mode (flat %/mo ÷ 30, reducing %/yr ÷ 365 —
-     the engine's own 30-day month convention). Pure display; no maths changed. -->
+<!-- S3a item 1: the net disbursement the APR solves on — the fee feature's
+     whole point made visible ("receive ₦95,000" in the audit's acceptance).
+     Hidden until a fee is entered; the value is the page's own arithmetic
+     (amount − fee), the engine keeps its object shape PHP-parity-pinned. -->
+<div class="receipt-row" id="ln-fee-row" hidden><span>You receive (after the upfront fee)</span><b id="ln-net">—</b></div>
+<div class="receipt-row"><span>Effective annual rate (including the upfront fee when entered)</span><b id="ln-apr">{aprFmt(seed.apr)}</b></div>
+<!-- v0.7.56 (audit #2): day tenors on flat/reducing rates bill in WHOLE
+     MONTHS, so the month-rounded headline and the exact-days price genuinely
+     differ — the block shows both readings. v0.7.60 (S3a, fifth audit P1-2):
+     the rounding itself changed, ceil(days/30) → days ÷ 30.4 to the NEAREST
+     month (minimum 1), so 31 days is ONE month where it billed two; both
+     readings still come from the existing engine functions, run at page
+     level, and the exact-days run passes the upfront fee through so the two
+     readings stay comparable. Pure display; no maths added. -->
 <div id="ln-dual" hidden>
 <p class="receipt-lbl">The same loan, two readings</p>
-<div class="receipt-row"><span>Rounded to whole months (<span id="ln-dual-mo">2</span> mo) — the headline above</span><b id="ln-dual-rm">₦{n(seed.total)} total · {aprFmt(seed.apr)} APR</b></div>
+<div class="receipt-row"><span>Nearest whole month (<span id="ln-dual-mo">2</span> mo) — the headline above</span><b id="ln-dual-rm">₦{n(seed.total)} total · {aprFmt(seed.apr)} APR</b></div>
 <div class="receipt-row"><span>Exact days (<span id="ln-dual-d">30</span> d)</span><b id="ln-dual-ex">₦{n(seed.total)} total · {aprFmt(seed.apr)} APR</b></div>
-<p class="receipt-foot">The headline figures above use the rounded-month reading.</p>
+<p class="receipt-foot">The headline figures above use the nearest-whole-month reading.</p>
 <p class="receipt-foot hint">The exact-days reading prices the same quoted rate per day (flat %/mo ÷ 30, reducing %/yr ÷ 365) over the exact tenor — no month rounding.</p>
 </div>
 <!-- CALC-10 (v0.7.47): the old foot asserted the month-rounding as though it
@@ -71,11 +83,35 @@ const artTitle = await articleTitleOf();
      at every tenor while the total still steps ₦102,500 → ₦103,765.43. So the
      rounding is real for flat and reducing instalments and irrelevant to the daily
      APR; the foot now says so, and names the step instead of hiding it. Numbers
-     are reproduced by src/lib/loan.ts as shipped — no engine change. -->
-<p class="receipt-foot">APR solved from the repayment stream · lender fees excluded</p>
-<p class="receipt-foot">Day tenors round up to whole months for flat and reducing rates — 31 or 45 days is a 2-month loan, and one extra day can step a flat rate's APR. Daily rates use the exact day count.</p>
+     are reproduced by src/lib/loan.ts as shipped — no engine change.
+     v0.7.60 (S3a, P1-2): the step the audit measured at 31d was the DEFECT,
+     not the disclosure — the engine now rounds days ÷ 30.4 to the NEAREST
+     month (31d = 1 month, so flat 5%/mo on ₦100k charges ₦5,000, not ₦10,000;
+     a cited checker case pins it in vectors-check.mjs), and the foot below
+     states the new rule. Daily stays exact. -->
+<p class="receipt-foot">APR solved from the repayment stream · upfront fee included when entered</p>
+<p class="receipt-foot">Day tenors on flat and reducing rates are billed to the nearest whole month (days ÷ 30.4, minimum 1) — a 31-day loan is one month, not two. Daily rates use the exact day count.</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
+</div>
+<!-- S3a item 7 (v0.7.60, fifth audit P1-2 "No repayment schedule for
+     reducing-balance loans"): the month-by-month amortisation behind the
+     headline installment — balance, interest, principal — behind a
+     "Show schedule" toggle (phone-first: one tap before a possibly long
+     table). DERIVED DISPLAY ONLY: every number comes from the engine's own
+     annuity (r.installment) and the quoted rate's monthly fraction, with the
+     final principal closing the floating-point residue exactly. The whole
+     section is hidden unless the rate type is "reducing" — a flat or daily
+     loan has no amortisation schedule to show. -->
+<div id="ln-sched" hidden>
+<div class="hr"></div>
+<h2 class="tool-h2">Repayment schedule</h2>
+<button type="button" id="ln-sched-btn" aria-expanded="false" aria-controls="ln-sched-wrap">Show schedule</button>
+<div class="st-table-wrap" id="ln-sched-wrap" hidden><table class="st-table" id="ln-sched-table">
+<thead><tr><th>Month</th><th class="n">Interest ₦</th><th class="n">Principal ₦</th><th class="n">Balance ₦</th></tr></thead>
+<tbody></tbody>
+</table></div>
+<p class="receipt-foot">Each month's interest is charged on the balance you still owe · reducing-balance loans only</p>
 </div>
 </ToolShell>
 <script>
@@ -116,11 +152,27 @@ function paintRateUnit(): void {
 /* THE ZERO LAW: the three typed inputs are the whole engine. Any one of them
    blank and the instalment is 1% — a number the visitor never entered. */
 const ALL = ["ln-amt", "ln-tenor", "ln-rate"];
+/* S3a item 1 (v0.7.60) — the upfront fee, read as % or ₦. A plain number is
+   a PERCENT (the way lenders quote fees; the hint and the FAQ both say so);
+   a ₦-prefixed value is a naira amount converted against the loan amount.
+   Blank or dishonest input is NO fee, so the seeded receipt never moves and
+   Reset's snapshot restores the honest blank. A fee at/above the loan
+   leaves the engine nothing to solve on (apr NaN → the "Out of range"
+   receipt names the fee as the cause below). */
+function feePctOf(): number {
+  const raw = g("ln-fee").value.trim();
+  if (pmBlank(raw)) return 0;
+  if (raw.indexOf("₦") >= 0) {
+    const amt = Math.max(0, pm(g("ln-amt").value) || 0);
+    return amt > 0 ? (Math.max(0, pm(raw)) / amt) * 100 : 0;
+  }
+  return Math.max(0, pm(raw));
+}
 function render() {
-  /* F8 — every clamped negative says so: -x is priced as ₦0 in all three
+  /* F8 — every clamped negative says so: -x is priced as ₦0 in all four
      inputs (the engine clamps again inside, so the clamp cannot go — it is
      disclosed instead, in this rail which nothing else writes to). */
-  const lnNeg = ["ln-amt", "ln-tenor", "ln-rate"].some((id) => pm(g(id).value) < 0);
+  const lnNeg = ["ln-amt", "ln-tenor", "ln-rate", "ln-fee"].some((id) => pm(g(id).value) < 0);
   t("ln-warn").hidden = !lnNeg;
   t("ln-warn").textContent = lnNeg ? "Negative entries are treated as ₦0." : "";
   /* M2 — THE ZERO LAW. `Math.max(1, pm(v) || 1)` short-circuited a typed 0 to
@@ -129,12 +181,14 @@ function render() {
      a loan and is SAYS so, rather than being answered with the seed. */
   const tenorStr = g("ln-tenor").value.trim();
   const tenorZero = !pmBlank(tenorStr) && pm(tenorStr) === 0;
+  const feePct = feePctOf();
   const r = loanRepayment(
     Math.max(0, pm(g("ln-amt").value) || 0),
     Math.max(1, Math.trunc(pm(tenorStr) || 1)),
     (document.getElementById("ln-unit") as HTMLSelectElement).value,
     Math.max(0, pm(g("ln-rate").value) || 0),
     (document.getElementById("ln-mode") as HTMLSelectElement).value,
+    feePct,
   );
   sfFig(t("ln-period"), ["ln-tenor"], r.period);
   if (tenorZero) {
@@ -145,29 +199,50 @@ function render() {
     t("ln-tot").textContent = "—";
     t("ln-int").textContent = "—";
     t("ln-apr").textContent = "—";
+    (document.getElementById("ln-fee-row") as HTMLElement).hidden = true;
     return;
   }
   if (!Number.isFinite(r.installment) || !Number.isFinite(r.total) || !Number.isFinite(r.interest) || !Number.isFinite(r.apr)) {
     t("ln-fig").textContent = "Out of range";
-    t("ln-sub").textContent = "No confident total at this input — lower the amount, tenor, or rate.";
+    /* S3a: the one new way to land here is an upfront fee at/above the loan —
+       the engine returns apr NaN because nothing was received to solve
+       against. Name the cause; never show a confident 0% APR for a loan the
+       fee ate whole. */
+    t("ln-sub").textContent = feePct >= 100
+      ? "The upfront fee is at least the loan amount — nothing is received to solve an APR against. Lower the fee."
+      : "No confident total at this input — lower the amount, tenor, or rate.";
     t("ln-tot").textContent = "—";
     t("ln-int").textContent = "—";
     t("ln-apr").textContent = "—";
+    (document.getElementById("ln-fee-row") as HTMLElement).hidden = true;
     return;
   }
   sfFig(t("ln-fig"), ALL, nn(r.installment));
-  sfFig(t("ln-sub"), ALL, `Total ${nn(r.total)} · interest ${nn(r.interest)} · effective annual rate (fees excluded) ${aprFmt(r.apr)}`);
+  sfFig(t("ln-sub"), ALL, `Total ${nn(r.total)} · interest ${nn(r.interest)} · effective annual rate (including the upfront fee when entered) ${aprFmt(r.apr)}`);
   sfFig(t("ln-tot"), ALL, nn(r.total));
   sfFig(t("ln-int"), ALL, nn(r.interest));
   sfFig(t("ln-apr"), ALL, aprFmt(r.apr));
+  /* S3a item 1 — the net disbursement the APR just solved on, shown only
+     while a fee is entered. It is the page's own arithmetic (amount − fee);
+     blank amount with a fee entered still withholds as "—". */
+  const feeRow = document.getElementById("ln-fee-row") as HTMLElement;
+  if (feePct > 0) {
+    const amt = Math.max(0, pm(g("ln-amt").value) || 0);
+    feeRow.hidden = false;
+    sfFig(t("ln-net"), ["ln-amt", "ln-fee"], nn(Math.max(0, amt * (1 - feePct / 100))));
+  } else {
+    feeRow.hidden = true;
+  }
   /* v0.7.56 (audit #2) — the day→month dual reading. For day tenors on flat
-     and reducing rates the engine rounds UP to whole months; the headline
-     keeps that reading (loanApr oracle parity — the engine is untouched) and
-     the block below shows the SAME loan priced over the exact days, computed
-     by running the existing loanRepayment() a second way: the quoted rate
-     converted to the engine's daily mode (flat %/mo ÷ 30, reducing %/yr ÷
-     365). Runs only after the zero-tenor and range guards, so the block can
-     never show a figure the headline refused. */
+     and reducing rates the engine bills in whole months; the headline keeps
+     that reading and the block below shows the SAME loan priced over the
+     exact days, computed by running the existing loanRepayment() a second
+     way: the quoted rate converted to the engine's daily mode (flat %/mo ÷
+     30, reducing %/yr ÷ 365). v0.7.60 (S3a): the whole-month count is now
+     days ÷ 30.4 to the NEAREST month (mirroring the engine), and the
+     exact-days run passes the upfront fee through so the two readings stay
+     comparable. Runs only after the zero-tenor and range guards, so the
+     block can never show a figure the headline refused. */
   const lnUnit = (document.getElementById("ln-unit") as HTMLSelectElement).value;
   const lnMode = (document.getElementById("ln-mode") as HTMLSelectElement).value;
   t("ln-dual").hidden = true;
@@ -175,19 +250,70 @@ function render() {
     const lnTenor = Math.max(1, Math.trunc(pm(tenorStr) || 1));
     const lnRate = Math.max(0, pm(g("ln-rate").value) || 0);
     const perDay = lnMode === "flat" ? lnRate / 30 : lnRate / 365;
-    const ex = loanRepayment(Math.max(0, pm(g("ln-amt").value) || 0), lnTenor, "days", perDay, "daily");
+    const ex = loanRepayment(Math.max(0, pm(g("ln-amt").value) || 0), lnTenor, "days", perDay, "daily", feePct);
     if (Number.isFinite(ex.total) && Number.isFinite(ex.apr)) {
-      t("ln-dual-mo").textContent = String(Math.ceil(lnTenor / 30));
+      t("ln-dual-mo").textContent = String(Math.max(1, Math.round(lnTenor / 30.4)));
       t("ln-dual-d").textContent = String(lnTenor);
       t("ln-dual-rm").textContent = `${nn(r.total)} total · ${aprFmt(r.apr)} APR`;
       t("ln-dual-ex").textContent = `${nn(ex.total)} total · ${aprFmt(ex.apr)} APR`;
       t("ln-dual").hidden = false;
     }
   }
+  /* S3a item 7 — the reducing-balance schedule: derived display from the
+     engine's own annuity (r.installment). The month count mirrors the
+     engine's convention exactly (months pass through; days divide by 30.4
+     and round to the nearest month); the final principal closes the
+     floating-point residue. Withheld entirely while any input the headline
+     depends on is blank — the schedule never prints figures the receipt
+     refused (the spine's empty state dashes .receipt-fig, not table cells). */
+  const sched = document.getElementById("ln-sched") as HTMLElement;
+  const schedBody = document.querySelector("#ln-sched-table tbody") as HTMLElement;
+  const schedReady = ALL.every((id) => !pmBlank(g(id).value));
+  if (lnMode === "reducing" && schedReady) {
+    sched.hidden = false;
+    const lnTenor = Math.max(1, Math.trunc(pm(tenorStr) || 1));
+    const schedMonths = lnUnit === "months" ? lnTenor : Math.max(1, Math.round(lnTenor / 30.4));
+    const amt = Math.max(0, pm(g("ln-amt").value) || 0);
+    const mr = Math.max(0, pm(g("ln-rate").value) || 0) / 100 / 12;
+    schedBody.replaceChildren();
+    let bal = amt;
+    for (let m = 1; m <= schedMonths; m++) {
+      const intM = bal * mr;
+      const prin = m === schedMonths ? bal : r.installment - intM;
+      bal = Math.max(0, bal - prin);
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td></td><td class="n"></td><td class="n"></td><td class="n"></td>`;
+      (tr.children[0] as HTMLElement).textContent = String(m);
+      (tr.children[1] as HTMLElement).textContent = nn(intM);
+      (tr.children[2] as HTMLElement).textContent = nn(prin);
+      (tr.children[3] as HTMLElement).textContent = nn(bal);
+      schedBody.appendChild(tr);
+    }
+  } else {
+    sched.hidden = true;
+    collapseSchedule();
+  }
+}
+function collapseSchedule(): void {
+  (document.getElementById("ln-sched-wrap") as HTMLElement).hidden = true;
+  const btn = document.getElementById("ln-sched-btn") as HTMLButtonElement;
+  btn.setAttribute("aria-expanded", "false");
+  btn.textContent = "Show schedule";
 }
   sfEmpty(sfIsEmpty("loan-repayment-calculator", gv));
-["ln-amt", "ln-tenor", "ln-rate"].forEach((id) => g(id).addEventListener("input", render));
+["ln-amt", "ln-tenor", "ln-rate", "ln-fee"].forEach((id) => g(id).addEventListener("input", render));
 (document.getElementById("ln-unit") as HTMLSelectElement).addEventListener("change", render);
+/* S3a item 7 — one tap before a possibly long table (phone-first). The table
+   is rebuilt by render() on every input; the toggle only decides whether it
+   is on screen. */
+(document.getElementById("ln-sched-btn") as HTMLButtonElement).addEventListener("click", () => {
+  const wrap = document.getElementById("ln-sched-wrap") as HTMLElement;
+  const show = wrap.hidden;
+  wrap.hidden = !show;
+  const btn = document.getElementById("ln-sched-btn") as HTMLButtonElement;
+  btn.setAttribute("aria-expanded", show ? "true" : "false");
+  btn.textContent = show ? "Hide schedule" : "Show schedule";
+});
 /* The unit is part of the FIGURE's meaning, so it repaints with the figure and
    on every Reset (Reset dispatches change on selects — smart-fields.js). */
 (document.getElementById("ln-mode") as HTMLSelectElement).addEventListener("change", () => { paintRateUnit(); render(); });

@@ -4,6 +4,98 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.60] — 2026-10-12 — BATCH S3a (engine features): the loan upfront fee, the 31-day rounding fix, the dividend WHT toggle, custom stock
+
+The S3a leg — the fifth audit's P1-1/P1-2 feature cluster (finance-astro-calculator-audit-1.md,
+2026-10-11), plus CALC-4a/4c and the reducing-balance schedule. Every engine value verified
+against the audit's own Appendix A figures before a line of page copy was written; every gate
+re-run and observed (outputs pasted in the leg report). The S3b UX leg rides the same ship as a
+no-bump companion; nothing in its file set is touched here.
+
+**P1-2 — the loan upfront-fee input (the P0 trust feature).** `loanRepayment()` gains an optional
+6th parameter `upfrontFeePct` (default 0), and the effective APR now solves on the amount actually
+RECEIVED (net disbursement = amount × (1 − fee%)) while the repayment stream stays contract-sized
+— the fee is a fee, not interest. A fee at/above the loan leaves nothing to solve against, so the
+engine returns `apr: NaN` and the page's finite-guard answers "Out of range" naming the fee,
+never a confident 0%. The page field is labelled "Upfront fee (% or ₦)": a plain number reads as
+a percent (the way lenders quote; the hint and the page's own FAQ say fees are "often 3–5%
+upfront"), a ₦-prefixed value is a naira fee converted against the amount. A "You receive (after
+the upfront fee)" receipt row shows the net the APR solved on, only while a fee is entered.
+Receipt label per the audit: "Effective annual rate (including the upfront fee when entered)"
+— title, badge, verified-line, copy and the fees FAQ updated to match (the page no longer claims
+fees are excluded). **Proof:** the fifth audit's A3 fee rows, both PROMOTED informational→gated
+in `vectors-check.mjs` (the JSON stays frozen): ₦100k/30d/1%-day + 5% fee → engine APR
+4442.97% vs the audit's ≈4,443 (receive ₦95,000) · flat 5%/mo ×3 + 5% fee → 220.65% vs ≈220.6.
+Both inside the house half-printed-digit tolerance. No PHP parity vector passes a fee — the
+parameter defaults to 0 and the parity calls are untouched.
+
+**P1-2 — the 31-day rounding fix.** `ceil(days/30)` charged a 31-day flat loan as TWO months —
+₦10,000 interest where the calendar month is ₦5,000 (the audit's worked example). Replaced with
+days ÷ 30.4 rounded to the NEAREST month (minimum 1); daily mode stays exact. **Proof — oracle
+safety, enumerated before the change:** every gated loanApr row is a 30-day or month tenor
+(30/30.4 → 1; the PHP parity `loan_flat_days` 90d → 3 either way; month tenors never round), so
+no oracle count moved and no divergence entry is required — checked: no PHP parity vector covers
+a 31-day flat loan. The corrected case is pinned in `vectors-check.mjs` as a CITED checker case
+(the B2 bonus pattern, hardcoded — the vector files are never hand-edited): "31 days at flat
+5%/mo = ₦5,000 interest — days÷30.4; the old rule charged ₦10,000; verified 11 Oct 2026", with
+a 30-day boundary guard beside it. The receipt foot and the dual-reading block now state the new
+rule ("a 31-day loan is one month, not two").
+
+**P1-1/CALC-4b — the dividend WHT toggle, default ON at the page.** Nigerian dividends carry 10%
+withholding tax, final for most resident individuals (fifth audit P1-1 [Certain]).
+`dividendProject()` gains `whtPct` — in PERCENT, defaulting to 0 at the function level, so every
+pre-S3a call (the PHP parity vectors, the v1 oracle's gated gross row 1221922/351823/19.57) is
+byte-identical; the page passes 10 explicitly from a "Dividend tax (WHT) 10%" checkbox. Each
+year's dividend is taxed before it lands: DRIP reinvests the net, the cash total is the net
+received, and gain/CAGR follow. The receipt's starting-yield row shows the NET yield while the
+toggle is on (8.27% on the seed — the audit's own figure; 9.19% gross when unchecked). **Proof:**
+the A4 WHT row PROMOTED informational→gated (checker calls with whtPct=10): end 1,173,810 · net
+dividends 310,727 · CAGR 18.61% — the engine lands 1,173,809.61 / 310,726.66 / 18.6112, inside
+the audit's ±₦1 / half-printed-digit tolerances. The v1 oracle's own 10%-WHT row stays
+informational as a cross-note (same numbers, gated once, in the dividendGross pattern).
+
+**P1-1 — the custom stock input.** The dropdown blocked custom figures; a "Custom — enter your
+own figures" option now reveals Share price ₦ and Dividend per share ₦ fields (the engine already
+took both — pure UI). While Custom is selected, the two fields join the figure-dependency set,
+so a blank price withholds as "—" instead of publishing a confident ₦0 projection (the zero law).
+
+**CALC-4c — the DRIP label honesty.** "Cash dividends ₦351,823" no longer prints while Reinvest
+is selected: the label follows the mode — "Dividends (reinvested)" in DRIP, "Cash dividends" in
+cash mode, server and client.
+
+**CALC-4a — the convention disclosure (minimal, no flip).** One line beside "Starting yield":
+"Year-1 dividend applies the growth rate (year 1 pays dividend × 1.08)." — restated live from
+the dividend-growth field so it never goes stale. The convention FLIP (year-1 at today's
+dividend) is King-held, deliberately not this leg.
+
+**P1-2/file-C — the reducing-balance repayment schedule.** For reducing-balance loans, a
+month-by-month schedule (interest, principal, running balance) behind a "Show schedule" toggle,
+phone-first. Derived display only: every number comes from the engine's own annuity
+(`r.installment`) with the final principal closing the floating-point residue; the month count
+mirrors the engine's day-convention exactly. Hidden for flat/daily (no amortisation to show) and
+withheld while any headline input is blank.
+
+**P1-1 tail — the CGT note.** One line in the dividend receipt's notes: "Share gains are taxed
+at personal income-tax rates from 1 Jan 2026 — this projection does not model capital gains
+tax." Source: the fifth audit's P1-1 finding (finance-astro-calculator-audit-1.md, 2026-10-11,
+marked [Likely] there; gains on shares taxed at the shareholder's personal income-tax rates,
+0–25%, from the NTA 2025 commencement date) — cited rather than restated as statute-verified.
+
+**Gates (observed, pasted verbatim in the leg report).** build: exit 0, 79 pages · check: 6/7 —
+the 7th (vectors-check) reddened ONLY by the two manager-DECLARED amount-family copy leaves
+(`amount_100usd.cfg.content.faqs[4].a`, `amount_1mngn.cfg.content.lede` — the King's P0-2
+daily-reference relabel, manager-fold commit 634373a; the checker extension for those two leaves
+is the manager's fold at ship, per the B2/S2b precedent). Inside that gate: parity 90 pass / 2
+fail (exactly those two, no other movement) · independent 116/0, informational 4 (the 113
+unchanged rows + the cited 31-day case's three assertions: 31-day interest, 31-day total, and
+the 30-day boundary guard) · appendix-a gated rows 29 → 32, pass 54 → 60, informational 20 → 17
+(the two A3 fee APRs, and the A4 end / net dividends / CAGR / net starting yield) · maintained
+staleness 7/0. No parity vector covers a changed case; no divergence entry required on my side.
+
+**Version note.** 0.7.59 → 0.7.60 (npm version patch, package.json + package-lock.json). The S3b
+UX leg rides this ship as a no-bump companion.
+
+
 ## [0.7.59] — 2026-10-11 — S2c completion (DSH twin): ticker scope, rate-convention disclosures, last name unification, progress basis
 
 The DSH twin's S2c leg, run AFTER the sibling's 0.7.58 had already landed on origin/main. The sibling's entry

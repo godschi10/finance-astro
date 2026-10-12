@@ -4,7 +4,14 @@ import { dividendProject, ngxDividendStocks, dividendVerified, DIVIDEND_SEED } f
 import { formatGrouped } from "../../lib/format";
 import { articleTitleOf } from "../../data/content";
 const n = (v: number) => formatGrouped(v, 0);
-const seed = dividendProject(DIVIDEND_SEED.investment, DIVIDEND_SEED.price, DIVIDEND_SEED.dps, DIVIDEND_SEED.price_growth, DIVIDEND_SEED.div_growth, DIVIDEND_SEED.years, DIVIDEND_SEED.drip);
+/* S3a item 3 (v0.7.60, fifth audit P1-1 [Certain]): dividends on Nigerian
+   shares carry 10% WHT, final for most resident individuals — the PAGE
+   defaults the toggle ON, so the server-rendered receipt is the NET (A4)
+   reading: end ₦1,173,810 · dividends ₦310,727 · CAGR 18.61%. The ENGINE
+   still defaults whtPct to 0, which is what keeps the v1 oracle's gated
+   gross row (1221922/351823/19.57) and the PHP parity vectors green — the
+   page passes 10 explicitly. */
+const seed = dividendProject(DIVIDEND_SEED.investment, DIVIDEND_SEED.price, DIVIDEND_SEED.dps, DIVIDEND_SEED.price_growth, DIVIDEND_SEED.div_growth, DIVIDEND_SEED.years, DIVIDEND_SEED.drip, 10);
 const stocks = ngxDividendStocks();
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 // Related-guide card titles derive from the article records (SITE-3) — an
@@ -25,23 +32,54 @@ const artTitle = await articleTitleOf();
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
 
-<div class="field"><label for="dv-stock">NGX stock</label><select id="dv-stock">{stocks.map((s, i) => (<option value={i} selected={s.ticker === "GTCO"}>{s.name} ({s.ticker})</option>))}</select></div>
+<div class="field"><label for="dv-stock">NGX stock</label><select id="dv-stock">{stocks.map((s, i) => (<option value={i} selected={s.ticker === "GTCO"}>{s.name} ({s.ticker})</option>))}<option value="custom">Custom — enter your own figures</option></select></div>
 <div class="field" data-cur="NGN"><label for="dv-inv">Investment ₦</label><input id="dv-inv" type="text" value={DIVIDEND_SEED.investment} inputmode="decimal"></div>
 <div class="field"><label for="dv-pg">Price growth %/yr</label><input id="dv-pg" type="text" max="100" value="10" inputmode="decimal"></div>
 <div class="field"><label for="dv-dg">Dividend growth %/yr</label><input id="dv-dg" type="text" max="100" value="8" inputmode="decimal"></div>
 <div class="field"><label for="dv-yrs">Years</label><input id="dv-yrs" type="number" min="1" max="40" step="1" value={DIVIDEND_SEED.years} inputmode="numeric"></div>
 <div class="field"><label for="dv-drip">Dividends</label><select id="dv-drip"><option value="1" selected>Reinvest (DRIP)</option><option value="0">Take cash</option></select></div>
+<!-- S3a item 3 — the WHT toggle, DEFAULT ON (the audit's fix scope verbatim:
+     'add a "Dividend tax 10%" toggle (default on)'). With it on, every
+     dividend figure on the receipt is NET of the 10% withholding; unchecking
+     returns the gross reading the v1 oracle pins. -->
+<div class="field"><label for="dv-wht">Dividend tax (WHT) 10%</label><input id="dv-wht" type="checkbox" checked><p class="hint">10% withholding tax on dividends, final for most resident individuals. Uncheck for gross figures.</p></div>
+<!-- S3a item 4 (v0.7.60, fifth audit P1-1): the dropdown blocked custom
+     figures; the engine already took price and dps — pure UI. Hidden until
+     "Custom" is selected (Reset's snapshot restores exactly this state).
+     DOM ORDER MATTERS: these two sit at the END of the grid because they are
+     the page's only CONDITIONAL inputs — while a named stock is selected
+     they are inert, and the behavioural suite drives the first two text
+     fields on the page as live dependencies (calc-regress derived/stale). A
+     live field must hold those slots. -->
+<div class="field" data-cur="NGN" id="dv-cp-f" hidden><label for="dv-cprice">Share price ₦</label><input id="dv-cprice" type="text" inputmode="decimal" placeholder="e.g. 128"></div>
+<div class="field" data-cur="NGN" id="dv-cd-f" hidden><label for="dv-cdps">Dividend per share ₦</label><input id="dv-cdps" type="text" inputmode="decimal" placeholder="e.g. 11.76"></div>
 </div>
 <div class="receipt">
 <p class="receipt-lbl" id="dv-lbl">Portfolio end value</p>
 <p class="receipt-fig" id="dv-fig" aria-live="polite">₦{n(seed.end_value)}</p>
-<p class="receipt-sub" id="dv-sub">Cash dividends ₦{n(seed.cash_total)} · gain ₦{n(seed.gain)} · CAGR {(seed.cagr * 100).toFixed(1)}%</p>
+<!-- S3a item 5 (CALC-4c): the label follows the mode — the seed is DRIP, so
+     the server renders "Dividends (reinvested)"; the client swaps it when
+     "Take cash" is chosen. Item 3: the figures are NET of the 10% WHT the
+     page's toggle defaults to. -->
+<p class="receipt-sub" id="dv-sub">Dividends (reinvested) ₦{n(seed.cash_total)} · gain ₦{n(seed.gain)} · CAGR {(seed.cagr * 100).toFixed(1)}%</p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Shares held</span><b id="dv-sh">{n(seed.shares, 2)}</b></div>
-<div class="receipt-row"><span>Starting yield</span><b id="dv-yld">{(seed.yield * 100).toFixed(2)}%</b></div>
-<div class="receipt-row"><span>Cash dividends total</span><b id="dv-cash">₦{n(seed.cash_total)}</b></div>
+<!-- S3a item 6 (CALC-4a, minimal): the year-1 convention disclosed in one
+     line — the engine grows the dividend BEFORE the first payment, so "year 1
+     pays dividend × 1.08" at the seed's 8% growth. The convention FLIP is
+     King-held, not this leg. Item 3: with WHT on, the starting yield shown is
+     the NET yield (gross × 0.90 — the audit's 8.27% on the seed). The client
+     rewrites both per the toggle and the growth field. -->
+<div class="receipt-row"><span>Starting yield</span><b id="dv-yld">{(seed.yield * 0.9 * 100).toFixed(2)}%</b></div>
+<p class="receipt-foot" id="dv-conv">Year-1 dividend applies the growth rate (year 1 pays dividend × 1.08).</p>
+<div class="receipt-row"><span id="dv-cash-lbl">Dividends (reinvested)</span><b id="dv-cash">₦{n(seed.cash_total)}</b></div>
 <p class="receipt-note" id="dv-warn" hidden aria-live="polite"></p>
 <p class="receipt-foot">Indicative projection · not investment advice</p>
+<!-- S3a item 8 (P1-1 tail, fifth audit [Likely]): share gains are taxed at
+     personal income-tax rates from 1 Jan 2026 — the projection above models
+     dividends only. Source: the fifth audit's P1-1 finding
+     (finance-astro-calculator-audit-1.md, 2026-10-11). -->
+<p class="receipt-foot">Share gains are taxed at personal income-tax rates from 1 Jan 2026 — this projection does not model capital gains tax.</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
@@ -68,8 +106,34 @@ const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).val
 /* THE ZERO LAW: the four typed inputs are the whole projection. */
 const ALL = ["dv-inv", "dv-pg", "dv-dg", "dv-yrs"];
 function render() {
-  const s = stocks[Number((document.getElementById("dv-stock") as HTMLSelectElement).value) || 0] ?? stocks[0];
+  /* S3a item 4 — "Custom" reveals the price/dps fields (the engine already
+     took them; pure UI). S3a item 3 — the WHT toggle (default ON at the page)
+     passes 10 to the engine; unchecked returns the gross reading the v1
+     oracle pins. */
+  const stockSel = document.getElementById("dv-stock") as HTMLSelectElement;
+  const custom = stockSel.value === "custom";
+  const s = custom
+    ? { name: "Custom", ticker: "—", price: Math.max(0, pm(g("dv-cprice").value) || 0), dps: Math.max(0, pm(g("dv-cdps").value) || 0), freq: 1 }
+    : stocks[Number(stockSel.value) || 0] ?? stocks[0];
+  t("dv-cp-f").hidden = !custom;
+  t("dv-cd-f").hidden = !custom;
   const drip = (document.getElementById("dv-drip") as HTMLSelectElement).value === "1";
+  const whtOn = (document.getElementById("dv-wht") as HTMLInputElement).checked;
+  const wht = whtOn ? 10 : 0;
+  /* S3a item 5 (CALC-4c) — the dividend label follows the mode: reinvested
+     dividends are not cash. */
+  const divLbl = drip ? "Dividends (reinvested)" : "Cash dividends";
+  t("dv-cash-lbl").textContent = divLbl;
+  /* S3a item 6 (CALC-4a) — the year-1 convention, restated per the live
+     dividend-growth field (× 1.08 at the seed's 8%) so the line never goes
+     stale when the visitor changes growth. */
+  const dgPct = Math.max(0, pm(g("dv-dg").value) || 0);
+  t("dv-conv").textContent = `Year-1 dividend applies the growth rate (year 1 pays dividend × ${(1 + dgPct / 100).toFixed(2)}).`;
+  /* Custom figures are real inputs: while Custom is selected they join the
+     dependency set, so a blank price withholds the figures instead of
+     publishing a confident ₦0 projection on nothing. */
+  const deps = custom ? ALL.concat(["dv-cprice", "dv-cdps"]) : ALL;
+  const yldDeps = custom ? ["dv-inv", "dv-cprice", "dv-cdps"] : ["dv-inv"];
   /* M2 — THE ZERO LAW. A typed 0 horizon short-circuited to the 5-year seed, so
      "what if I hold for 0 years" was answered with a 5-year projection. Zero
      years is honest and meaningful: no holding period, no price growth, no
@@ -95,11 +159,12 @@ function render() {
     Math.max(0, pm(g("dv-dg").value) || 0) / 100,
     yrsZero ? 1 : Math.max(1, Math.trunc(pm(yrsRawStr) || 5)),
     drip,
+    wht,
   );
   const warn = t("dv-warn");
-  /* F8 — every clamped negative says so: -x is priced as ₦0 in all four
+  /* F8 — every clamped negative says so: -x is priced as ₦0 in all six
      inputs, so the rail names the rewrite instead of staying silent. */
-  const negHit = ["dv-inv", "dv-pg", "dv-dg", "dv-yrs"].some((id) => pm(g(id).value) < 0);
+  const negHit = ["dv-inv", "dv-pg", "dv-dg", "dv-yrs", "dv-cprice", "dv-cdps"].some((id) => pm(g(id).value) < 0);
   const negSfx = negHit ? " Negative entries are treated as ₦0." : "";
   const tb = document.querySelector("#dv-table tbody") as HTMLElement;
   if (!Number.isFinite(r.end_value) || !Number.isFinite(r.cash_total) || !Number.isFinite(r.gain)) {
@@ -124,11 +189,11 @@ function render() {
     warn.textContent = "0 years — no holding period yet, so no price growth and no dividends. The portfolio is worth what you put in." + negSfx;
     const inv = Math.max(0, pm(g("dv-inv").value) || 0);
     t("dv-lbl").textContent = "Portfolio end value";
-    sfFig(t("dv-fig"), ALL, nn(inv));
-    sfFig(t("dv-sub"), ALL, `Cash dividends ${nn(0)} · gain ${nn(0)} · CAGR ${(0).toFixed(1)}%`);
-    sfFig(t("dv-sh"), ALL, formatGrouped(s.price > 0 ? inv / s.price : 0, 2));
-    sfFig(t("dv-yld"), ALL, (r.yield * 100).toFixed(2) + "%");
-    sfFig(t("dv-cash"), ALL, nn(0));
+    sfFig(t("dv-fig"), deps, nn(inv));
+    sfFig(t("dv-sub"), deps, `${divLbl} ${nn(0)} · gain ${nn(0)} · CAGR ${(0).toFixed(1)}%`);
+    sfFig(t("dv-sh"), deps, formatGrouped(s.price > 0 ? inv / s.price : 0, 2));
+    sfFig(t("dv-yld"), yldDeps, (r.yield * (1 - wht / 100) * 100).toFixed(2) + "%");
+    sfFig(t("dv-cash"), deps, nn(0));
     tb.innerHTML = "";
     return;
   }
@@ -138,11 +203,11 @@ function render() {
     warn.hidden = false;
     warn.textContent = "Years doesn't hold a number we can read — enter a number of years, like 5." + negSfx;
     t("dv-lbl").textContent = drip ? "Portfolio end value" : "Total value incl. cash dividends";
-    sfFig(t("dv-fig"), ALL, drip ? nn(r.end_value) : nn(r.end_value + r.cash_total));
-    sfFig(t("dv-sub"), ALL, `Cash dividends ${nn(r.cash_total)} · gain ${nn(r.gain)} · CAGR ${(r.cagr * 100).toFixed(1)}%`);
-    sfFig(t("dv-sh"), ALL, formatGrouped(r.shares, 2));
-    sfFig(t("dv-yld"), ["dv-inv"], (r.yield * 100).toFixed(2) + "%");
-    sfFig(t("dv-cash"), ALL, nn(r.cash_total));
+    sfFig(t("dv-fig"), deps, drip ? nn(r.end_value) : nn(r.end_value + r.cash_total));
+    sfFig(t("dv-sub"), deps, `${divLbl} ${nn(r.cash_total)} · gain ${nn(r.gain)} · CAGR ${(r.cagr * 100).toFixed(1)}%`);
+    sfFig(t("dv-sh"), deps, formatGrouped(r.shares, 2));
+    sfFig(t("dv-yld"), yldDeps, (r.yield * (1 - wht / 100) * 100).toFixed(2) + "%");
+    sfFig(t("dv-cash"), deps, nn(r.cash_total));
     tb.innerHTML = "";
     return;
   }
@@ -153,24 +218,26 @@ function render() {
     warn.hidden = false;
     warn.textContent = "₦0 invested — no shares are bought, so no dividends and no growth. The projection starts when an investment is entered." + negSfx;
     t("dv-lbl").textContent = drip ? "Portfolio end value" : "Total value incl. cash dividends";
-    sfFig(t("dv-fig"), ALL, nn(0));
-    sfFig(t("dv-sub"), ALL, `Cash dividends ${nn(0)} · gain ${nn(0)} · CAGR ${(0).toFixed(1)}%`);
-    sfFig(t("dv-sh"), ALL, formatGrouped(0, 2));
-    sfFig(t("dv-yld"), ["dv-inv"], (r.yield * 100).toFixed(2) + "%");
-    sfFig(t("dv-cash"), ALL, nn(0));
+    sfFig(t("dv-fig"), deps, nn(0));
+    sfFig(t("dv-sub"), deps, `${divLbl} ${nn(0)} · gain ${nn(0)} · CAGR ${(0).toFixed(1)}%`);
+    sfFig(t("dv-sh"), deps, formatGrouped(0, 2));
+    sfFig(t("dv-yld"), yldDeps, (r.yield * (1 - wht / 100) * 100).toFixed(2) + "%");
+    sfFig(t("dv-cash"), deps, nn(0));
     tb.innerHTML = "";
     return;
   }
   t("dv-lbl").textContent = drip ? "Portfolio end value" : "Total value incl. cash dividends";
-  sfFig(t("dv-fig"), ALL, drip ? nn(r.end_value) : nn(r.end_value + r.cash_total));
-  sfFig(t("dv-sub"), ALL, `Cash dividends ${nn(r.cash_total)} · gain ${nn(r.gain)} · CAGR ${(r.cagr * 100).toFixed(1)}%`);
-  sfFig(t("dv-sh"), ALL, formatGrouped(r.shares, 2));
-  /* F4 — starting yield is dps ÷ price from the stock table: it never reads
-     dividend growth, so clearing dv-dg must not erase it. dv-inv stays as the
-     sole dep so a genuinely empty form still withholds (the suite's empty
-     contract), exactly like the zero-horizon path above which already uses ALL. */
-  sfFig(t("dv-yld"), ["dv-inv"], (r.yield * 100).toFixed(2) + "%");
-  sfFig(t("dv-cash"), ALL, nn(r.cash_total));
+  sfFig(t("dv-fig"), deps, drip ? nn(r.end_value) : nn(r.end_value + r.cash_total));
+  sfFig(t("dv-sub"), deps, `${divLbl} ${nn(r.cash_total)} · gain ${nn(r.gain)} · CAGR ${(r.cagr * 100).toFixed(1)}%`);
+  sfFig(t("dv-sh"), deps, formatGrouped(r.shares, 2));
+  /* F4 — starting yield is dps ÷ price from the stock table (custom stock:
+     the entered figures): it never reads dividend growth, so clearing dv-dg
+     must not erase it. dv-inv stays the base dep so a genuinely empty form
+     still withholds (the suite's empty contract); S3a adds the custom fields
+     while Custom is selected, and nets the yield by the WHT toggle (the
+     audit's 8.27% net starting yield at 10% WHT, 9.19% gross). */
+  sfFig(t("dv-yld"), yldDeps, (r.yield * (1 - wht / 100) * 100).toFixed(2) + "%");
+  sfFig(t("dv-cash"), deps, nn(r.cash_total));
   tb.innerHTML = "";
   for (const y of r.yearly) {
     const tr = document.createElement("tr");
@@ -184,8 +251,11 @@ function render() {
   }
 }
   sfEmpty(sfIsEmpty("dividend-calculator", gv));
-["dv-inv", "dv-pg", "dv-dg", "dv-yrs"].forEach((id) => g(id).addEventListener("input", render));
+["dv-inv", "dv-pg", "dv-dg", "dv-yrs", "dv-cprice", "dv-cdps"].forEach((id) => g(id).addEventListener("input", render));
 ["dv-stock", "dv-drip"].forEach((id) => (document.getElementById(id) as HTMLSelectElement).addEventListener("change", render));
+/* S3a item 3 — the WHT toggle rides the same change event the selects use;
+   Reset's snapshot restores it checked (the page's default state). */
+(document.getElementById("dv-wht") as HTMLInputElement).addEventListener("change", render);
 smartFields.register(TOOL_FIELDS["dividend-calculator"]);
 sfBind("dividend-calculator", gv);
 render();

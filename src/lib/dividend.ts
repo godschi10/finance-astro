@@ -57,6 +57,20 @@ export interface DividendProjection {
   yearly: DividendYear[];
 }
 
+/* S3a (v0.7.60) — the WHT parameter (fifth audit P1-1 [Certain]): dividends on
+   Nigerian shares carry 10% withholding tax, final for most resident
+   individuals. `whtPct` is in PERCENT (10 = 10%), defaults to 0 at the
+   function level — so every pre-S3a call site (the PHP parity vectors, the
+   v1 independent oracle's gated gross row, the appendix-a cross-note) calls
+   without the parameter and stays green byte-for-byte. With a WHT set, each
+   year's dividend is taxed BEFORE it is received: the net is what the
+   shareholder pockets in cash mode and what DRIP actually reinvests, so
+   cash_total (and every downstream gain/CAGR) is NET of WHT. `yield` stays
+   the GROSS starting yield on the entered dps — the page nets it for display
+   when its WHT toggle is on. Acceptance (fifth audit Appendix A, A4
+   dividendWht): GTCO seed, 10% WHT → end 1,173,810 · net dividends 310,727 ·
+   CAGR 18.61% — now GATED in vectors-check.mjs (the checker calls with
+   whtPct=10). */
 export function dividendProject(
   investment: number,
   price: number,
@@ -65,6 +79,7 @@ export function dividendProject(
   divGrowth = 0.08,
   years = 5,
   drip = true,
+  whtPct = 0,
 ): DividendProjection {
   investment = Math.max(0, investment);
   price = Math.max(0, price);
@@ -72,6 +87,7 @@ export function dividendProject(
   priceGrowth = Math.max(0, priceGrowth);
   divGrowth = Math.max(0, divGrowth);
   years = Math.max(1, Math.min(40, Math.trunc(years)));
+  const wht = Math.min(Math.max(0, whtPct), 100) / 100;
 
   const shares = price > 0 ? investment / price : 0;
   const initialYield = price > 0 ? dps / price : 0;
@@ -86,14 +102,17 @@ export function dividendProject(
   for (let n = 1; n <= years; n++) {
     curPrice = curPrice * (1 + priceGrowth);
     curDps = curDps * (1 + divGrowth);
-    const divPaid = endShares * curDps;
-    cashTotal += divPaid;
+    const divGross = endShares * curDps;
+    /* WHT comes off before the dividend lands: what reinvests (DRIP) and
+       what accumulates as received cash is the NET figure. */
+    const divNet = divGross * (1 - wht);
+    cashTotal += divNet;
     if (drip && curPrice > 0) {
-      endShares += divPaid / curPrice;
+      endShares += divNet / curPrice;
     }
     yearly.push({
       year: n, price: curPrice, dps: curDps,
-      shares: endShares, dividend: divPaid,
+      shares: endShares, dividend: divNet,
       value: endShares * curPrice, cash: cashTotal,
     });
     endPrice = curPrice;
