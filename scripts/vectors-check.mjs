@@ -192,6 +192,23 @@ const cases = [
 // See the next ship's CHANGELOG (companion leg rides the manager's fold).
 const DECLARED_COPY_DIVERGENCES = new Set([
   "amount_1mngn.cfg.content.sections[3].body[1]",
+  // P0-2 (fifth audit, manager fold 634373a, 2026-10-12): the once-daily-feed
+  // honesty relabel — the PHP truth theme's freshness copy ("live rate engine
+  // and its 30-minute cache" / "computed live") is superseded by the King's
+  // P0-2 order; guards assert the corrected daily-reference wording below.
+  "amount_100usd.cfg.content.faqs[4].a",
+  "amount_1mngn.cfg.content.lede",
+  // The same fold's P0-2 relabel touched seven further leaves across the two
+  // pages — ledes, meta_descs (cfg AND seo twins) and the "rate steps" section
+  // body. Same corrected daily-reference wording throughout, guarded below
+  // (and the {LIVE_NOTE} token in the re-anchored amount_tokens_100 vector is
+  // asserted in the re-anchor block at the foot of this file).
+  "amount_100usd.cfg.content.lede",
+  "amount_1mngn.cfg.meta_desc",
+  "amount_100usd.cfg.content.sections[4].body[0]",
+  "amount_100usd.cfg.meta_desc",
+  "amount_100usd.seo.meta_desc",
+  "amount_1mngn.seo.meta_desc",
 ]);
 
 function cmp(a, b, path) {
@@ -299,6 +316,55 @@ const extra = Object.keys(byName).filter((n) => !cases.some(([c]) => c === n) &&
   }
   console.log("DECLARED DIVERGENCE amount_1mngn.cfg.content.sections[3].body[1]: declared divergence — the King's P0-4 order (fifth audit, 2026-10-11): the threshold-dodging copy the PHP theme pinned is replaced by the documentation sentence. See the next ship's CHANGELOG.");
 }
+// ── DECLARED COPY DIVERGENCE (fifth audit P0-2, King order, manager fold 634373a) ──
+{
+  const d = A.amountPageData("100-dollars-to-naira", { ...liveFx, cached: true });
+  const faq = d && d.cfg.content.faqs[4] && d.cfg.content.faqs[4].a;
+  const lede = d && d.cfg.content.lede;
+  const steps = d && d.cfg.content.sections[4] && d.cfg.content.sections[4].body[0];
+  const metaCfg = d && d.cfg.meta_desc;
+  const metaSeo = d && d.seo && d.seo.meta_desc;
+  const problems = [];
+  if (!faq || !faq.includes("daily reference rate our build fetches") || faq.includes("30-minute cache")) {
+    problems.push("freshness FAQ regressed");
+  }
+  if (!lede || !lede.includes("same daily reference rate") || lede.includes("computed live")) {
+    problems.push("freshness lede regressed");
+  }
+  if (!steps || !steps.includes("recomputes from the daily reference rate at build time") || steps.includes("recomputes from the live engine on every load")) {
+    problems.push("freshness rate-steps section regressed");
+  }
+  for (const [label, m] of [["cfg.meta_desc", metaCfg], ["seo.meta_desc", metaSeo]]) {
+    if (!m || !m.includes("daily-reference mid-market figure") || m.includes("The live mid-market figure")) {
+      problems.push(`freshness ${label} regressed`);
+    }
+  }
+  if (problems.length) {
+    fail++;
+    console.log(`FAIL amount_100usd[P0-2]: ${problems.join("; ")} (declared divergence guard)`);
+  } else pass++;
+  console.log("DECLARED DIVERGENCE amount_100usd (faqs[4].a, content.lede, sections[4].body[0], cfg.meta_desc, seo.meta_desc): the King's P0-2 order (fifth audit, 2026-10-12) — the once-daily feed is sold as a daily reference rate, never 'live'/'live engine on every load' with a '30-minute cache'. Corrected copy fail-guarded.");
+}
+{
+  const d = A.amountPageData("1-million-naira-to-dollars", { ...liveFx, cached: true });
+  const lede = d && d.cfg.content.lede;
+  const metaCfg = d && d.cfg.meta_desc;
+  const metaSeo = d && d.seo && d.seo.meta_desc;
+  const problems = [];
+  if (!lede || !lede.includes("same daily reference rate") || lede.includes("computed live")) {
+    problems.push("freshness lede regressed");
+  }
+  for (const [label, m] of [["cfg.meta_desc", metaCfg], ["seo.meta_desc", metaSeo]]) {
+    if (!m || !m.includes("daily-reference answer") || m.includes("The live answer")) {
+      problems.push(`freshness ${label} regressed`);
+    }
+  }
+  if (problems.length) {
+    fail++;
+    console.log(`FAIL amount_1mngn[P0-2]: ${problems.join("; ")} (declared divergence guard)`);
+  } else pass++;
+  console.log("DECLARED DIVERGENCE amount_1mngn (content.lede, cfg.meta_desc, seo.meta_desc): the King's P0-2 order (fifth audit, 2026-10-12) — 'computed live' / 'The live answer' become the daily-reference wording, stamped with its build time. Corrected copy fail-guarded.");
+}
 // ── DECLARED DIVERGENCE (fifth audit P0-1, King order, v0.7.57) ──────────────
 // transfer_from_ng: the PHP oracle snapshot records the P2P street premium
 // MULTIPLIED into the payout (p2p rate = mid × 1.045, received 70.51 > Wise
@@ -375,6 +441,14 @@ const extra = Object.keys(byName).filter((n) => !cases.some(([c]) => c === n) &&
   if (!par.includes(pctTxt)) problems.push(`amount_tokens_100[re-anchored]: {PARALLEL} does not name the point estimate ${pctTxt}% — got: ${par.slice(0, 120)}`);
   if (!par.includes(`${(rng.low * 100).toFixed(1)}%–${(rng.high * 100).toFixed(1)}%`)) problems.push(`amount_tokens_100[re-anchored]: {PARALLEL} does not carry the observed RANGE — got: ${par.slice(0, 160)}`);
   if (!par.includes(F.FX_PARALLEL_VERIFIED_ON.slice(0, 4))) problems.push(`amount_tokens_100[re-anchored]: {PARALLEL} carries no verification year`);
+  // P0-2 (v0.7.60 manager fold 634373a): the freshness token too. The oracle
+  // snapshot pins the old "computed live from the same engine" sentence; the
+  // vector skips the deep compare above (re-anchor), so the corrected
+  // daily-reference wording is fail-guarded HERE or it would regress silently.
+  const liveNote = (tok || {})["{LIVE_NOTE}"] || "";
+  if (!liveNote.includes("daily reference rate") || liveNote.includes("computed live")) {
+    problems.push(`amount_tokens_100[re-anchored]: {LIVE_NOTE} does not carry the corrected daily-reference wording (P0-2) — got: ${liveNote.slice(0, 120)}`);
+  }
   if (problems.length) { fail++; console.log(`FAIL ${problems.join("; ")}`); }
   else pass++;
   console.log(`DECLARED RE-ANCHOR fx_parallel/transfer_providers_from/amount_tokens_100: the PHP oracle snapshot pins the bare 1.045 street premium (fifth audit P1-7 [Certain]); the King's order replaces it with a dated maintained range (${(rng.low * 100).toFixed(1)}%–${(rng.high * 100).toFixed(1)}%, checked ${F.FX_PARALLEL_VERIFIED_ON}) and a ${pctTxt}% midpoint point-estimate. Stale PHP expectations not asserted; the new behaviour is asserted here — midpoint invariant, range containment of every observation, transfer.ts and amount.ts reading the SAME constant, and an explicit caller spread still overriding. See CHANGELOG 0.7.58 Divergences.`);
@@ -705,9 +779,22 @@ aInfo.push(`savingsEffective effectiveYieldPct ${AV.savingsEffective.effectiveYi
 
 // A7 · step-up deposits — inflationAdjustedGoal() has no yearly deposit-growth
 // parameter (the P2-2 feature); the 0% baseline is v1's gated nairaValue row.
-AV.stepUpDeposits.rows.forEach((r, i) => {
-  aInfo.push(`stepUpDeposits[${i}] yearly growth ${r.growthPct}%: starting deposit ₦${r.monthly}/mo${r.growthPct === 0 ? " (0% baseline already gated in v1 as nairaValue[2].monthly 307188)" : ""} — inflationAdjustedGoal() has no yearly deposit-growth parameter; informational, promotes when the P2-2 feature lands`);
-});
+// A7 · step-up deposits — PROMOTED (P2-2 landed, BATCH S3b 200095e):
+// savingsStepUpStart reproduces all five rows ±₦0 (derivation in src/lib/savings.ts).
+// Context: ₦10M goal inflated at 24% over 60 months → target' = ₦29,316,250.62.
+{
+  const targetInflated = 10000000 * Math.pow(1.24, 5);
+  AV.stepUpDeposits.rows.forEach((r, i) => {
+    if (r.growthPct === 0) {
+      aInfo.push("stepUpDeposits[0] 0% baseline: cross-note — already gated in v1 as nairaValue[2].monthly 307188; savingsStepUpStart at g=0 agrees to float noise");
+      return;
+    }
+    const got = SV.savingsStepUpStart(targetInflated, 1000000, 0.15, 60, r.growthPct / 100);
+    const label = `stepUpDeposits[${i}] growth ${r.growthPct}%: starting deposit`;
+    if (typeof got === "number" && Number.isFinite(got) && Math.abs(got - r.monthly) <= 1) aPass++;
+    else aFails.push(`${label}: engine ${got} !== oracle ${r.monthly}`);
+  });
+}
 
 // A8 · emergency — the moving-target finish line gates (it is an engine
 // output, and v1 gates it too — cross-note); the inflated target and the
