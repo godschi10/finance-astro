@@ -109,11 +109,11 @@ export const TOOLS = [
   { slug: "compound-interest-calculator", name: "Compound Interest", desc: "Principal plus top-ups, compounding your way to the future value, year by year." },
   { slug: "savings-goal-calculator", name: "Savings Goal", desc: "Name the target and deadline — get the exact monthly price, plus the path." },
   { slug: "naira-value-calculator", name: "Naira Value", desc: "What your naira still buys after N years of inflation — and what standing still costs." },
-  { slug: "inflation-savings-calculator", name: "Inflation Savings", desc: "Inflate the goal first, then price nominal vs real monthly. The gap is the insight." },
+  { slug: "inflation-savings-calculator", name: "Inflation-Adjusted Savings Calculator", desc: "Inflate the goal first, then price nominal vs real monthly. The gap is the insight." },
   { slug: "50-30-20-budget-calculator", name: "50/30/20 Budget", desc: "Split any income into needs, wants, savings — then check real spending against plan." },
   { slug: "loan-repayment-calculator", name: "Loan Repayment", desc: "Lender quote in, real cost out: installment, total interest, true effective APR." },
   { slug: "emergency-fund-calculator", name: "Emergency Fund", desc: "Runway in months, inflation-adjusted target, and the saving that closes the gap." },
-  { slug: "dividend-calculator", name: "Dividend / ROI Estimator", desc: "NGX shares year by year: DRIP vs cash, yield, gain, and CAGR." },
+  { slug: "dividend-calculator", name: "Dividend & ROI Estimator", desc: "NGX shares year by year: DRIP vs cash, yield, gain, and CAGR." },
   { slug: "crypto-profit-calculator", name: "Crypto Profit", desc: "P2P profit in naira: spread, both-side fees, break-even rate, true ROI." },
   { slug: "savings-rate-comparator", name: "Savings-Rate Comparator", desc: "Who pays the most right now: fintech plans vs bank benchmarks, best first." },
 ];

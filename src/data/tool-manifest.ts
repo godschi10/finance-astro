@@ -50,6 +50,9 @@
  * Both cards now carry the page's own H1 verbatim, and both page <title> tags
  * were aligned to match. The DELIBERATE pairs (converter, tax) are untouched —
  * this is not a rule change, it is the two exceptions to it, closed.
+ * v0.7.59 swept the LAST display surfaces still carrying the old names: the
+ * inflation page's breadcrumb, the budget page's related-guides card, and the
+ * search-index names in data/content.ts — all now read the manifest name.
  * There is deliberately NO chip/badge field: measured, `badge` is 16 DIFFERENT
  * strings (one even built from the FX snapshot at build time), so a shared
  * chip label would be an invention, not a de-duplication.

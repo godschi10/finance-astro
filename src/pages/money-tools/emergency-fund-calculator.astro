@@ -71,7 +71,12 @@ const artTitle = await articleTitleOf();
 <!-- The SSR fallback above only ever sees the seed, where the gap is open
      (about 7.2 months), so the closed-gap wording cannot be reached before
      hydration. C1's zero cases are all named in the client render below. -->
-<div class="receipt-row"><span>Progress</span><b id="em-pct">{pct}%</b></div>
+<!-- P2-6 (fifth audit): the percentage is measured against TODAY's target
+     (essentials × months cover, engine line `progress_pct`), not the inflated
+     finish line printed in em-sub — on the seed that is 50% vs 44%. The foot
+     below already says so; the row label now carries the basis on the number
+     itself so the receipt cannot be read against the wrong denominator. -->
+<div class="receipt-row"><span>Progress (of today's target)</span><b id="em-pct">{pct}%</b></div>
 <p class="bar-note" id="em-warn" hidden></p>
 <p class="receipt-foot">6-month default · inflation-adjusted</p>
 <p class="receipt-foot">Gap + progress vs today's naira target — the real target is the inflated finish line</p>

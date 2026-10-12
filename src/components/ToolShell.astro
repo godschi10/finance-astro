@@ -38,12 +38,13 @@ interface Props {
   relatedTitle?: string;     // live: "Related guides"
   disclaimer?: string;       // .fx-disclaimer (live: rate-source honesty note)
   ogImage?: { url: string; width: number; height: number; alt?: string } | null; // per-tool share card (passed straight to Layout). OMIT it and the card is derived from the one manifest — see ogCardFor() below. Pass `null` to force NO card.
+  fxTicker?: boolean;      // P2-12 ticker scope, forwarded to Layout: FX tools pass true for the full crypto+metals set.
 }
 const {
   title, description, slug, tool, lede, verified, badge = "Free · No sign-up · Always updated",
   crumb = tool,
   faqs = [], rawFaq = false, copy = [], ctas = [], ctaNote = "", ctaTitle = "Get the best rate",
-  related = [], relatedTitle = "Related guides", disclaimer = "", ogImage,
+  related = [], relatedTitle = "Related guides", disclaimer = "", ogImage, fxTicker = false,
 } = Astro.props;
 /* The share card, from ONE source (v0.7.21 leg D2). All sixteen tool pages used
    to hand-write the same shape — url images/og/tool-<slug>.png, 1200x630, alt =
@@ -72,7 +73,7 @@ if (faqs.length) graph.push({
   mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
 });
 ---
-<Layout title={title} description={description} crumb={tool} ogImage={og}>
+<Layout title={title} description={description} crumb={tool} ogImage={og} fxTicker={fxTicker}>
 <script type="application/ld+json" set:html={ld({ "@context": "https://schema.org", "@graph": graph })}></script>
 <div class="apps-hero">
   <div style="position:absolute;top:0;right:0;bottom:0;left:0;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:28px 28px;pointer-events:none"></div>

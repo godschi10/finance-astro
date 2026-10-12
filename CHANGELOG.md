@@ -4,6 +4,52 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.59] — 2026-10-11 — S2c completion (DSH twin): ticker scope, rate-convention disclosures, last name unification, progress basis
+
+The DSH twin's S2c leg, run AFTER the sibling's 0.7.58 had already landed on origin/main. The sibling's entry
+below stands unmodified; this entry closes the items that leg did not reach, plus one receipt row it omitted.
+No oracle count moved; every gate re-run and observed by this leg (outputs in the leg report).
+
+**P2-12 — ticker scope.** BTC/ETH/XAU showed on every page, including tax and budget pages where they help
+nobody. `Layout` gains an `fxTicker` prop (`ToolShell` forwards it): the three FX pages — converter, rate
+history, transfer comparator — render the full six-pair set; every other page renders the USD/GBP/EUR→NGN
+reference pairs only. `TICKER_STATIC` itself keeps all six (the header-fidelity gate reads it;
+`ticker-live.js` refreshes per `data-src`), and the aria-hidden marquee-duplicate rule is untouched.
+
+**P2-1 — rate-convention disclosure on the two pages that still lacked it.** Savings Goal carried the receipt
+line from 0.7.58; Compound Interest and Inflation-Adjusted Savings did not. Both engines were re-read before
+writing a word: `savingsPeriodicRate(annualRate, "monthly")` divides by 12 and compounds monthly, and the
+inflation page hardcodes `"monthly"` in its render call. Added one honest hint beside each rate field, with
+each page's own default re-derived: Compound "…10% nominal is 10.47%" ((1+0.10/12)^12−1 = 10.4713%),
+Inflation "…15% nominal is 16.08%" ((1.0125)^12−1 = 16.0755%).
+
+**P1-6 — the "Other reliefs" receipt row the 0.7.58 pass omitted.** The input field, engine wiring and
+deduction warnings landed in 0.7.58, but the receipt still showed Pension/Rent relief/PAYE only. Added
+"Other reliefs (annual)" riding `st-other` via `sfFig`, mirroring the Net to Gross page's `gn-other2` row and
+the engine's own `otherMonthly × 12` annualisation.
+
+**P3-3 — the last name unification surfaces.** 0.7.58 aligned the hub cards and `<title>` tags; three display
+surfaces still carried the old names: the inflation page's breadcrumb, the budget page's related-guides card,
+and the search-index names in `data/content.ts` ("Inflation Savings", "Dividend / ROI Estimator"). All now
+read the manifest names ("Inflation-Adjusted Savings Calculator", "Dividend & ROI Estimator").
+
+**P2-6 — the emergency progress basis, on the number.** "Progress 50%" is measured against TODAY's target
+(`progress_pct = saved / (essentials × monthsCover)`), not the inflated finish line shown one row up — on the
+seed that is 50% vs 44%. The receipt foot already said so; the row label now carries the basis itself:
+"Progress (of today's target)".
+
+**P3-4 — "Nigeria Tax Calculator ." — closed NOT-FIXABLE-HERE.** Grep of `src` AND the built `dist` finds no
+"Nigeria Tax Calculator" followed by a stray space and period on any surface (hub card, page title, hero H1,
+manifest). Not reproducible on the current tree; recorded rather than manufactured.
+
+**P3-5 / P3-2 — verified, no change needed.** (a) Both controls exist and are labelled in the shared shell:
+`data-sf-clear` → "Clear examples", `data-sf-reset` → "Reset", and the salary page's bar-note names both.
+(b) The "Best" badge is server-rendered only on the winner: `st-tag-old` ships `display:none` in the static
+HTML (the seed's winner is the new regime); quoted from the built page in the leg report.
+
+**Version note.** 0.7.58 was taken by the sibling's already-pushed commit; this completion therefore bumps to
+**0.7.59** (npm version patch, package.json + package-lock.json). Nothing in 0.7.58's entry below was edited.
+
 ## [0.7.58] — 2026-10-11 — BATCH S2c: reversed calculator says what it does, repealed regime labelled, street premium dated
 
 The fifth audit's S2c queue, run after the DSH twin stopped. Every item verified against source or statute,

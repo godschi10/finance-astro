@@ -24,7 +24,7 @@ const n = (v: number) => formatGrouped(v, 0);
 const seed = inflationAdjustedGoal(10000000, 1000000, 0.15, 0.24, 5, 0, "monthly", "monthly");
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
-<ToolShell title="Inflation-Adjusted Savings Calculator, Real Goal Top-Up - GWill Finance" description="Saving ₦10m in 5 years? Inflation moves the goalpost. See the nominal monthly, the real monthly, and the gap." slug="inflation-savings-calculator" tool="Inflation-Adjusted Savings Calculator" crumb="Inflation Savings Calculator" lede="A fixed goal is a shrinking goal. This inflates your target first, then prices both monthlies — the gap is the insight." verified="Target inflated at your rate · gap is the monthly truth" faqs={[
+<ToolShell title="Inflation-Adjusted Savings Calculator, Real Goal Top-Up - GWill Finance" description="Saving ₦10m in 5 years? Inflation moves the goalpost. See the nominal monthly, the real monthly, and the gap." slug="inflation-savings-calculator" tool="Inflation-Adjusted Savings Calculator" crumb="Inflation-Adjusted Savings Calculator" lede="A fixed goal is a shrinking goal. This inflates your target first, then prices both monthlies — the gap is the insight." verified="Target inflated at your rate · gap is the monthly truth" faqs={[
   { q: "Why save for an inflated target?", a: "Because the house, fees, or capital you are saving toward inflates too. Saving the nominal figure guarantees arriving short." },
   { q: "How is this different from the naira-value tool?", a: "That shows what money loses. This solves what you must save monthly so inflation does not win." },
 ]}
@@ -38,7 +38,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 
 <div class="field" data-cur="NGN"><label for="is-target">Goal today ₦</label><input id="is-target" type="text" value="10000000" inputmode="decimal"></div>
 <div class="field" data-cur="NGN"><label for="is-cur">Have now ₦</label><input id="is-cur" type="text" value="1000000" inputmode="decimal"></div>
-<div class="field"><label for="is-rate">Return %/yr</label><input id="is-rate" type="text" max="100" value="15" inputmode="decimal"></div>
+<div class="field"><label for="is-rate">Return %/yr</label><input id="is-rate" type="text" max="100" value="15" inputmode="decimal"><p class="hint">The rate you type is a nominal annual rate applied monthly — the effective annual yield of 15% nominal is 16.08%.</p></div>
 <div class="field"><label for="is-infl">Inflation %/yr</label><input id="is-infl" type="text" max="100" value="24" inputmode="decimal"><p class="hint">Opens at 24% — the Lagos reading, the highest state. The preset buttons below set the NBS national, food and Lagos figures in one tap.</p></div>
 <div class="field"><label for="is-yrs">Years</label><input id="is-yrs" type="number" min="1" max="50" step="1" value="5" inputmode="numeric"></div>
 </div>

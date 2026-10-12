@@ -49,8 +49,14 @@ interface Props {
   articleAuthor?: string;
   /** Route renders a .gwill-form (newsletter/contact) — ships gwill-forms.js. */
   forms?: boolean;
+  /** P2-12 ticker scope (fifth audit): BTC/ETH/XAU only help on FX pages. FX
+      pages (converter, rate history, transfer comparator) pass true and get
+      the full crypto+metals set; every other page shows the USD/GBP/EUR→NGN
+      reference pairs only. TICKER_STATIC itself keeps all six — the header
+      fidelity gate reads it and ticker-live.js refreshes per data-src. */
+  fxTicker?: boolean;
 }
-const { title, description, noCanonical = false, crumb = "", ogImage = null, isArticle = false, publishedTime, modifiedTime, articleAuthor, forms = false } = Astro.props;
+const { title, description, noCanonical = false, crumb = "", ogImage = null, isArticle = false, publishedTime, modifiedTime, articleAuthor, forms = false, fxTicker = false } = Astro.props;
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 const origin = (Astro.site?.toString() ?? "https://godschi10.github.io").replace(/\/$/, "");
 const homeUrl = `${origin}${base}`;
@@ -560,8 +566,11 @@ main{display:block;min-width:0}
 <a class="skip" href="#main">Skip to content</a>
 <div id="top"></div>
 <nav class="ticker" data-ts={FX_SNAPSHOT_TS} aria-label="Market ticker"><span class="tl"><span class="tl-dot" aria-hidden="true"></span><span class="tl-tx">Daily reference rate · updated {FX_SNAPSHOT.as_of}</span></span><div class="ticker-drag"><div class="ticker-inner">
-{TICKER_STATIC.map((t) => (<div class="ti" data-src={t.src} data-pair={t.label}><span class="t-pair">{t.label}</span><span class="t-rate">{t.value}</span></div>))}
-{TICKER_STATIC.map((t) => (<div class="ti" aria-hidden="true" data-src={t.src} data-pair={t.label}><span class="t-pair">{t.label}</span><span class="t-rate">{t.value}</span></div>))}
+{/* P2-12 scope: FX pages (fxTicker) render all six pairs; every other page
+    renders the USD/GBP/EUR→NGN reference pairs only. Both sets are duplicated
+    for the marquee seam, and only the first set reaches screen readers. */}
+{TICKER_STATIC.filter((t) => fxTicker || t.src === "fx").map((t) => (<div class="ti" data-src={t.src} data-pair={t.label}><span class="t-pair">{t.label}</span><span class="t-rate">{t.value}</span></div>))}
+{TICKER_STATIC.filter((t) => fxTicker || t.src === "fx").map((t) => (<div class="ti" aria-hidden="true" data-src={t.src} data-pair={t.label}><span class="t-pair">{t.label}</span><span class="t-rate">{t.value}</span></div>))}
 </div></div></nav>
 <header class="sh">
 <a class="logo" href={homeUrl}><span class="n">₦</span><span class="nm">gwillchijioke</span></a>

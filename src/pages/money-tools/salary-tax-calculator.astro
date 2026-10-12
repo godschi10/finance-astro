@@ -58,6 +58,7 @@ const saveTxt = tie
 <div class="receipt-div" aria-hidden="true"></div>
 <div id="st-rows">
 <div class="receipt-row"><span>Pension (annual)</span><b id="st-pen">₦{n(seed.pension_annual)}</b></div>
+<div class="receipt-row"><span>Other reliefs (annual)</span><b id="st-other2">₦{n(seed.other_annual)}</b></div>
 <div class="receipt-row"><span>Rent relief (annual)</span><b id="st-rel">₦{n(seed.relief_annual)}</b></div>
 <div class="receipt-row"><span>PAYE tax (annual)</span><b id="st-tax">₦{n(seed.tax_annual)}</b></div>
 </div>
@@ -139,6 +140,10 @@ function render() {
   sfFig(t("st-fig"), ALL, netTxt(r.net_monthly));
   sfFig(t("st-sub"), ALL, `Tax ${n(r.tax_monthly)}/mo · taxable ${n(r.taxable)}/yr${r.exempt ? " · EXEMPT (minimum wage)" : ""}`);
   sfFig(t("st-pen"), ["st-gross", "st-pension"], n(r.pension_annual));
+  /* Other-reliefs receipt row (P1-6 parity tail): mirrors the Net to Gross
+     page's gn-other2 row — the row rides its own field, annualised the same
+     way the engine annualises it (otherMonthly × 12). */
+  sfFig(t("st-other2"), ["st-other"], n(r.other_annual));
   sfFig(t("st-rel"), ["st-rent"], n(r.relief_annual));
   sfFig(t("st-tax"), ALL, n(r.tax_annual));
   /* BONUS BLOCK (P1-6 tail). The engine is payeBonusTax(gross, bonus, pen, nhf,
