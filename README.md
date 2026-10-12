@@ -18,7 +18,7 @@ deliberate, reasoned divergence.
 
 ```bash
 npm install
-npm run build     # fetch-snapshot → astro build → dist/ (78 pages)
+npm run build     # fetch-snapshot → astro build → dist/ (81 pages)
 npm run check     # ALL gates: header-fidelity contract + PHP-vector parity
 npx astro dev     # local dev server
 ```
@@ -35,9 +35,10 @@ non-zero if any of them fail, so a green build alone never means "shippable".
 | `scripts/check-footer-fidelity.mjs` | The footer port: WP `footer.php` sections 2–5 plus the footer slice of stylesheet section 19 — markup and copy, class-by-class CSS values, the responsive contract (`≤767px` phone / `≥768px` desktop), the icon-escape guard, and the print rules. 64 assertions. |
 | `scripts/check-homepage-fidelity.mjs` | The homepage port: WP `front-page.php` sections 2–8, `template-parts/content.php`, `inc/card-media.php`, the homepage slice of the stylesheet, plus the BASE and FORMS sections in their own files — section order, class vocabulary, byte-exact copy, the pill-strip/filter contract, the static-build divergences, the anchor reset, and the control geometry measurement had to fight for. 123 assertions. |
 | `scripts/check-article-fidelity.mjs` | The ported single-post page (`single.php`): the title stack in WordPress's order (`.art-hd` → `.bc` breadcrumb → `.badge` → `h1.art-t` → the **net-new subtitle** → `.art-meta` in its `F Y` / `N min read` / conditional-updated shape), the page scaffolding (`.prog`, `.con`, `.sb-layout`, `.art-reading-surface`), the mobile TOC dropdown, the byte-exact disclosure and share row with all four controls, the `.abio` author box and its generated social icons, the `.mt40`/`.g2` related block, both newsletter blocks, the sidebar's three `.sw` cards, plus the rules that keep it honest — the theme's stylesheet is installed verbatim, the forbidden staging notice stays out, heading ids are server-rendered, the port's own prose no longer leaks into the article page, markdown tables get Gutenberg's `<figure class="wp-block-table">` wrapper, the embed facade stylesheet ships with the article, the ≥1024 media block keeps the theme's source order, and the Gutenberg showcase carries every block class. 106 assertions. |
-| `scripts/vectors-check.mjs` | Every TypeScript calculator engine reproduces the PHP engine's numbers, vector-for-vector, against the PHP truth oracle in `scripts/php-harness/vectors.json`. |
+| `scripts/vectors-check.mjs` | Every TypeScript calculator engine reproduces the PHP engine's numbers, vector-for-vector, against three independent oracle sets: the PHP truth oracle (`scripts/php-harness/vectors.json`, 95 vectors), an independent law-derived set (`scripts/independent-vectors.json` — computed from the statute and standard maths, not the PHP engine, so a wrong rule shared by both cannot hide), and the fifth audit's statute-derived Appendix A set (`scripts/appendix-a-vectors.json`). Deliberate divergences are declared in the checker and the CHANGELOG, never silent. |
+| `scripts/check-maintained-staleness.mjs` | P3-6 (fifth audit, v0.7.58): the hand-maintained tables — NGX prices, savings rates, transfer fees, street premium — must be re-checked inside 45 days, or the build fails. |
 
-All six are wrapped by `scripts/check.mjs`.
+All seven are wrapped by `scripts/check.mjs`.
 
 ## Layout
 

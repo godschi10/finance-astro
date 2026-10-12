@@ -221,6 +221,15 @@ const ogImg = { url: `${base}images/og/article-${entry.slug}.png`, width: 1200, 
 const isoC = (x: Date) => x.toISOString().slice(0, 19) + "+00:00"; // get_the_date('c'): no millis
 const isoDay = (x: Date) => x.toISOString().slice(0, 10);
 const showUpdated = !!d.updated && isoDay(d.updated) !== isoDay(d.pubDate);
+// SITE-9 (2026-10-12, YMYL trust): dateModified is the LATER of the recorded
+// edit dates — `updated` (the WP field) and `reviewed` (the editorial-review
+// stamp, frontmatter on every post). Falls back to pubDate; a date is never
+// invented here. The visible meta row prints both "Updated" (when it exists)
+// and "Reviewed" so the reader sees the freshness story at a glance.
+const modified = [d.updated, d.reviewed].reduce<Date | undefined>(
+  (acc, x) => (x && (!acc || +x > +acc) ? x : acc),
+  undefined,
+) ?? d.pubDate;
 
 const articleLd = {
   "@context": "https://schema.org",
@@ -229,11 +238,11 @@ const articleLd = {
   description: d.description,
   author: { "@type": "Person", name: d.author },
   datePublished: isoDay(d.pubDate),
-  ...(d.updated ? { dateModified: isoDay(d.updated) } : {}),
+  dateModified: isoDay(modified),
   mainEntityOfPage: pageUrl,
 };
 ---
-<Layout title={`${d.title} - GWill Finance`} description={d.description} crumb={d.title} ogImage={ogImg} isArticle={true} publishedTime={isoC(d.pubDate)} modifiedTime={d.updated ? isoC(d.updated) : undefined} articleAuthor={d.author} forms>
+<Layout title={`${d.title} - GWill Finance`} description={d.description} crumb={d.title} ogImage={ogImg} isArticle={true} publishedTime={isoC(d.pubDate)} modifiedTime={isoC(modified)} articleAuthor={d.author} forms>
 <script type="application/ld+json" set:html={ld(articleLd)}></script>
 
 <!-- single.php:43 — reading progress -->
@@ -282,6 +291,8 @@ const articleLd = {
           <span>{d.readMins} min read</span>
           {showUpdated ? (<span class="art-dot"></span>) : null}
           {showUpdated ? (<span>Updated {fmtMonthYear(d.updated!)}</span>) : null}
+          {d.reviewed ? (<span class="art-dot"></span>) : null}
+          {d.reviewed ? (<span>Reviewed {fmtMonthYear(d.reviewed)}</span>) : null}
         </div>
       </div>
 

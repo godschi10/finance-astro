@@ -47,6 +47,11 @@ export const GET: APIRoute = async ({ site }) => {
     "about/",
     "apps/",
     "contact/",
+    // SITE-9 (BATCH S4, 2026-10-12): the trust pages — methodology/sources and
+    // the editorial policy (corrections + sponsorship). The fifth audit's
+    // launch checklist names both.
+    "methodology/",
+    "editorial-policy/",
     "newsletter/",
     "privacy-policy/",
     "disclaimer/",

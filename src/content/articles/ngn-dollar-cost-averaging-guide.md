@@ -5,6 +5,7 @@ category: "investing"
 author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-09-02
+reviewed: 2026-09-02
 readMins: 11
 image: "/wp-content/uploads/2026/04/investing.png"
 imageAlt: "Dollar-Cost Averaging Into NGX Stocks on a ₦50k Salary"

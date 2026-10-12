@@ -1,17 +1,18 @@
 ---
 title: "Best Dollar Account Apps for Nigerians in 2026"
-description: "Grey, Vance, Geegpay, Chipper Cash — tested with real money over four months. Full fee, limit, and virtual card breakdown."
+description: "Grey, Vance, Geegpay, Chipper Cash — the full fee, limit, and virtual card breakdown, side by side. Which one to open first, and which to skip."
 category: "dollar-accounts"
 author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-06-10
+reviewed: 2026-06-10
 readMins: 2
 image: "/wp-content/uploads/2026/06/dollar.png"
 imageAlt: "Best Dollar Account Apps for Nigerians in 2026"
 imageSrcset: "/wp-content/uploads/2026/06/dollar.png 1200w, /wp-content/uploads/2026/06/dollar-300x169.png 300w, /wp-content/uploads/2026/06/dollar-1024x576.png 1024w, /wp-content/uploads/2026/06/dollar-768x432.png 768w"
 ---
 
-If you earn in dollars, receive freelance payments, or want to protect your savings from naira devaluation, a dollar account is not optional anymore. I tested the four biggest apps — Grey, Geegpay, Vance, and Chipper Cash — with real money over four months. Here is the full breakdown.
+If you earn in dollars, receive freelance payments, or want to protect your savings from naira devaluation, a dollar account is not optional anymore. Here is the full breakdown of the four biggest apps — Grey, Geegpay, Vance, and Chipper Cash — on the things that decide it: fees, limits, and virtual cards.
 
 ## The quick answer
 

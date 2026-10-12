@@ -18,6 +18,13 @@ const articles = defineCollection({
     authorSlug: z.string(),
     pubDate: z.coerce.date(),
     updated: z.coerce.date().optional(),
+    // SITE-9 (2026-10-12, YMYL trust): the last date the post was editorially
+    // reviewed — rendered in the article meta row ("Reviewed …") and fed into
+    // JSON-LD/OG dateModified. Explicit frontmatter, never computed from git
+    // (a build machine has no git history). Default per batch S4: the post's
+    // own last-edit date (updated ?? pubDate) — the publish/edits WERE the
+    // review; a future review moves the field forward.
+    reviewed: z.coerce.date().optional(),
     readMins: z.number(),
     // Featured image (WP has_post_thumbnail(), single.php:106 + inc/card-media.php).
     image: z.string().optional(),

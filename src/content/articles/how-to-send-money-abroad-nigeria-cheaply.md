@@ -5,6 +5,7 @@ category: "remittance"
 author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-03-10
+reviewed: 2026-03-10
 readMins: 2
 image: "/wp-content/uploads/2026/03/remittance.png"
 imageAlt: "How to Send Money Abroad from Nigeria Cheaply"

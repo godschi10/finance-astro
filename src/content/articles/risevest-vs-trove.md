@@ -5,6 +5,7 @@ category: "investing"
 author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-02-08
+reviewed: 2026-02-08
 readMins: 2
 image: "/wp-content/uploads/2026/02/investing.png"
 imageAlt: "Risevest vs Trove: Where Should You Invest Your Dollars?"

@@ -5,6 +5,7 @@ category: "banking"
 author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-04-05
+reviewed: 2026-04-05
 readMins: 2
 image: "/wp-content/uploads/2026/04/banking.png"
 imageAlt: "Kuda vs Moniepoint: Which Is Better for Daily Use?"

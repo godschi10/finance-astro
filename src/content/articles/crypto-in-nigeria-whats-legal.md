@@ -5,6 +5,7 @@ category: "crypto"
 author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-03-22
+reviewed: 2026-03-22
 readMins: 2
 image: "/wp-content/uploads/2026/03/crypto.png"
 imageAlt: "Crypto in Nigeria: Best Apps and What’s Legal in 2026"

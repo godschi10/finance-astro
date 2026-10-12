@@ -1,0 +1,99 @@
+---
+// SITE-9 (2026-10-12, BATCH S4): the Methodology page — the big audit's YMYL
+// trust fix and the fifth audit's launch-checklist line 412 ("Methodology/
+// sources page"). It states, in plain language and without inflation:
+//   · what the calculators are and are not;
+//   · what "the daily reference rate" means (baked snapshot, twice-daily
+//     builds, stamped with the feed's own update time);
+//   · the accuracy story EXACTLY as the repo backs it — three independent
+//     oracle sets run on every ship, the seven-gate `npm run check`, the
+//     behavioural suite counts, and every declared divergence public in the
+//     repo. Nothing on this page is a claim the repository cannot prove.
+// Anatomy reuses the legal-page vocabulary (.legal-hero/.legal-section/
+// .legal-layout/.legal-toc/.legal-body) so the page needs no new CSS —
+// pages.css already ships it. The behavioural-suite count below is the number
+// the suite actually printed on this batch's observed run (13 Oct 2026); when
+// the suite grows, update it from `npm run test:calc` output — never invent it.
+import Layout from "../layouts/Layout.astro";
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const updated = new Date().toLocaleString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+const toc = [
+  ["what-this-site-is", "What this site is"],
+  ["the-calculators", "The calculators"],
+  ["daily-reference-rate", "The daily reference rate"],
+  ["how-numbers-are-verified", "How the numbers are verified"],
+  ["how-reviews-are-formed", "How reviews and ratings are formed"],
+  ["sources", "Sources"],
+  ["reviewed-dates", "Reviewed dates and corrections"],
+  ["what-this-site-is-not", "What this site is not"],
+];
+---
+<Layout title="Methodology - GWill Finance" description="How GWill Finance works: what the calculators are and are not, where the rates come from, how every number is verified, and how reviews and ratings are formed." crumb="Methodology">
+<section class="legal-hero">
+  <div class="hero-grain" aria-hidden="true"></div>
+  <div class="con legal-hero-inner">
+    <nav class="gwill-breadcrumbs" aria-label="Breadcrumb">
+      <ol class="gwill-breadcrumbs__list">
+        <li class="gwill-breadcrumbs__item"><a href={base}><span>Home</span></a></li>
+        <li class="gwill-breadcrumbs__item gwill-breadcrumbs__item--current"><span aria-current="page">Methodology</span></li>
+      </ol>
+    </nav>
+    <p class="legal-hero-label">How this site works</p>
+    <h1 class="legal-hero-title">Methodology</h1>
+    <p class="legal-updated">Last updated: {updated}</p>
+  </div>
+</section>
+<section class="legal-section">
+  <div class="con legal-layout">
+    <div class="ad-bg"></div>
+    <nav class="legal-toc" aria-label="On this page">
+      <p class="legal-toc-label">On this page</p>
+      <ol class="legal-toc-list">
+        {toc.map(([id, t]) => (<li><a href={`#${id}`}>{t}</a></li>))}
+      </ol>
+    </nav>
+    <div class="legal-body">
+      <p>Short version: this site explains Nigerian money and gives you calculators whose maths you can check. The calculators are deterministic — the same inputs always produce the same outputs — and every engine number is proved against three independent oracle sets before anything ships. This page says exactly how, and where it stops.</p>
+
+      <h2 id="what-this-site-is">What this site is</h2>
+      <p>GWill Finance is two things. First, guides: comparisons and explainers about savings, investing, crypto, banking, remittance and dollar accounts, written for Nigerians and priced in naira. Second, <a href={`${base}money-tools/`}>fifteen money calculators</a> — tax, loans, savings goals, compound growth, budgeting, currency conversion and more — that run the same maths a careful spreadsheet would, in your browser, with nothing sent anywhere.</p>
+
+      <h2 id="the-calculators">What the calculators are — and are not</h2>
+      <p><strong>What they are:</strong> deterministic arithmetic from your inputs. The tax calculator applies the NTA 2025 PAYE bands (in force 1 January 2026), pension, NHF and rent relief exactly as the rules define them. The loan calculator solves the effective annual rate from the repayment stream you enter — including the upfront fee when you enter one, so the APR reflects the money you actually received. The converters use the build's reference-rate snapshot, stamped with its own update time.</p>
+      <p><strong>What they are not:</strong> not a prediction, not a lender quote, not personalised advice. The outputs move when your inputs move; the tax calculator shows what the rules compute for the figures you type, not what your employer will actually pay. Every calculator page carries that framing in its own words, and the <a href={`${base}disclaimer/`}>disclaimer</a> covers the whole site.</p>
+
+      <h2 id="daily-reference-rate">What "the daily reference rate" means</h2>
+      <p>The naira figures on this site are not live market ticks. The converter, the rate-history anchor and the ticker are baked from a snapshot taken at build time — the site rebuilds twice a day — and every rate page stamps the snapshot with the feed's own update time (the "Daily reference rate · updated …" badge), so you can see exactly how fresh the number is. The parallel-market figure is an estimate range, labelled indicative, never a live quote. If the feed is unreachable, the build says so rather than inventing a rate.</p>
+
+      <h2 id="how-numbers-are-verified">How the numbers are verified</h2>
+      <p>This is the part most finance sites skip, so here it is in full. The calculator engines are TypeScript ports of the original WordPress-era PHP engine, and they are held against <strong>three independent oracle sets</strong> — all run on every ship:</p>
+      <ul>
+        <li><strong>The PHP parity oracle</strong> — 95 input→output vectors captured from the original PHP engine. The port must reproduce it vector-for-vector. This is the regression net: it catches accidental behaviour drift.</li>
+        <li><strong>An independent, law-derived vector set</strong> — computed from the statute text and standard annuity/IRR maths, deliberately NOT from the PHP engine, so a wrong rule shared by both engines cannot hide (an external audit wrote this set for exactly that reason).</li>
+        <li><strong>The audit's statute-derived set</strong> — the fifth independent audit's Appendix A vectors: NTA 2025 bands with rent relief and the minimum-wage exemption, net-to-gross inversions, and loan APR cases including the upfront-fee cases. Each row was checked against the audit's printed figures before it was promoted into the gate.</li>
+      </ul>
+      <p>Around those oracles sits the release gate. <code>npm run check</code> runs <strong>seven gates</strong> on every ship — stylesheet parse contract, header fidelity, footer fidelity, homepage fidelity, article fidelity, a staleness gate on the hand-maintained tables (savings rates, transfer fees, NGX prices — a table unchecked for 45 days fails the build), and the vectors gate. The gate prints PASS 7/7 or the ship stops. Separately, a behavioural suite drives all fifteen calculators through a real browser — reset-without-reload, honest empty states, the typed-zero rule, adversarial inputs (negatives, oversized numbers, text in number fields) with a hard no-NaN-anywhere assertion, and a clean-console requirement. The observed run on 13 October 2026 printed <strong>130 pass / 0 fail / 7 skip</strong>; the suite and its counts live in the repo.</p>
+      <p>When a deliberate divergence from the original engine exists — a reasoned, documented correction — it is declared in the repository's changelog and in the vectors checker itself, with its source and the date it was verified. There are no silent divergences. Everything above is public: <a href="https://github.com/godschi10/finance-astro" target="_blank" rel="noopener noreferrer">github.com/godschi10/finance-astro</a>.</p>
+
+      <h2 id="how-reviews-are-formed">How reviews and ratings are formed</h2>
+      <p>The app reviews are the author's hands-on judgement, not a lab report. "Tested" on this site means: the app was opened and used directly — account opening, the core money flows, the fee screens — and its published fee schedule and limits were checked against what the provider advertises. Reviews score apps on <strong>fees, limits and restrictions, reliability, and user experience</strong> — never on which company pays. The star ratings in the comparison tables are that judgement on those criteria; they are opinion, they say so, and an affiliate link never changes one. Where a post compares providers, the comparison table carries the date its rows were verified.</p>
+      <p>One honest boundary: the earlier review copy on this site implied multi-month, measured money trials. It did not have the receipts for that, so the wording was corrected in October 2026 — see the <a href={`${base}editorial-policy/`}>editorial policy</a>'s corrections log. The comparisons themselves (fee tables, published limits, hands-on use) stand; the inflation of how they were produced was the error, and it is fixed.</p>
+
+      <h2 id="sources">Sources</h2>
+      <ul>
+        <li><strong>Exchange rates:</strong> the free daily reference feed from <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer">Exchange Rate API</a> (attribution carried in the footer of every page, per the feed's terms). The crypto and metals ticker pairs come from their own public feed endpoints, refreshed in your browser and stamped per build.</li>
+        <li><strong>Tax rules:</strong> the Nigeria Tax Act 2025 bands as they apply from 1 January 2026 — the bands, the rent relief cap, the minimum-wage exemption — with the repealed PITA bands kept only as a labelled comparison.</li>
+        <li><strong>Hand-maintained tables</strong> (savings rates, transfer fees, NGX reference prices): checked by hand against the providers' own published figures, each row carrying the date it was verified, and a build gate that fails if any table goes 45 days without a re-check.</li>
+      </ul>
+
+      <h2 id="reviewed-dates">Reviewed dates and corrections</h2>
+      <p>Every article's meta row carries a <strong>Reviewed</strong> date — the last date the post was editorially reviewed — and the page's structured data carries the matching <code>dateModified</code>. Regulatory posts (like the crypto-legal guide) are exactly the ones that go stale silently; the date is how the site refuses to do that. Corrections are checked against the source, fixed in the text, and dated — the how-and-what lives on the <a href={`${base}editorial-policy/`}>editorial policy page</a>.</p>
+
+      <h2 id="what-this-site-is-not">What this site is not</h2>
+      <p>This site is written by a web developer and finance writer — not a licensed financial adviser, accountant, or lawyer. Nothing here is personalised advice; the calculators compute what the rules and rates say for the numbers you enter, and the guides explain how things work and what things cost. For decisions that hinge on your specific situation, talk to a licensed professional. The full <a href={`${base}disclaimer/`}>disclaimer</a> applies to every page.</p>
+      <p><em>Last updated: October 2026.</em></p>
+      <div class="ad-bg" style="margin-top:32px"></div>
+    </div>
+  </div>
+</section>
+</Layout>

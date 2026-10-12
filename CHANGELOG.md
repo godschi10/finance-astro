@@ -4,6 +4,105 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.61] — 2026-10-12 — BATCH S4 (trust/brand): identity unified, methodology + corrections + sponsorship pages, reviewed dates, honest claims
+
+The S4 leg — the big audit's SITE-6 and SITE-9 (finance-astro-audit-2026-10-08.md,
+sections at lines 359/385) plus the fifth audit's launch-checklist line 412
+("Methodology/sources page and a corrections policy"). The King's brand ruling
+(held-calls bundle, Oct 11): on-page brand unifies to **"GWill Finance"**. The
+fidelity gates that pinned the old strings were re-pinned to the King's
+corrected strings in the manager's fold (the SITE-1 precedent), so this batch
+ships with `npm run check` PASS 7/7 — no gate was weakened, only moved with the
+ruling. Behavioural suite re-observed on this batch's build: 130 pass / 0 fail /
+7 skip, exit 0 (systemd shelter, real Chrome).
+
+**SITE-6 — identity, handles and links.**
+- Brand lockup unified: header `.logo`/`.mlogo` (×3) and both footer `.flogo`
+  instances now read `₦ GWill Finance`; `og:site_name`, the JSON-LD
+  `WebSite`/`Organization` names and every `<title>` template were already
+  "GWill Finance" (grep: the only variants were the three lockups + the footer
+  network line, which the fold kept verbatim as a domain-family reference).
+  *Proof:* `check-header-fidelity` new drift guard — old `nm">gwillchijioke<`
+  absent from Layout, new lockup pinned; footer lockup pin ×2 green.
+- Author name unified to **"G-will Chijioke"** (the byline form): footer
+  copyright line (was "Gwill Chijioke"), About meta description; article
+  frontmatter and JSON-LD `Person` already carried the byline form.
+  *Proof:* footer `.fbot` pin amended and green; `grep "Gwill Chijioke" src/`
+  → comment mentions only.
+- GitHub link moved to **github.com/godschi10** (the gwillchijioke account has
+  no public repos — audit's portfolio-audit finding): article author box
+  (`content.ts` AUTHORS), JSON-LD `sameAs` in Layout, `SITE.socials`.
+- **tech.gwillchijioke.com retired → androidscroll.com** in all three places
+  (footer network ×2 via `FOOTER_NETWORK`, About "Elsewhere").
+- **All profile URLs in ONE table:** new `PROFILES` const in `src/data/site.ts`
+  (site, portfolio, github, x, instagram, linkedin, youtube) — footer network
+  column, author box, About Elsewhere and JSON-LD `sameAs` all read it, so
+  handle/domain drift is structurally dead.
+- **KING-HELD (do not guess-swap):** the social handle stays `gwillchijioke`
+  (no underscore) — the audit warns `@gwill_chijioke` and `@gwillchijioke` are
+  different accounts and says to confirm with the owner; unconfirmed, so the
+  existing links stand and the PROFILES comment records the pending
+  confirmation.
+
+**SITE-9 — YMYL trust structure (the honest part).**
+- **New `/methodology/` page:** what the calculators are and are not; what
+  "the daily reference rate" means (baked snapshot, twice-daily builds, stamped
+  with the feed's own update time); the accuracy story exactly as the repo
+  backs it — three independent oracle sets (PHP parity 95 vectors, the
+  law-derived independent set, the fifth audit's statute-derived Appendix A),
+  the seven-gate release check, the behavioural suite **130 pass / 0 fail /
+  7 skip** (observed 13 Oct 2026), and every divergence declared publicly. No
+  invented credentials; every number on the page is a number the repo prints.
+- **New `/editorial-policy/` page** (corrections + sponsorship on one page —
+  two pages would have been padding; the call is recorded here): how to flag
+  an error, how corrections are checked/dated/logged, sponsorship labels,
+  no-editorial-verdict-on-sponsored-posts, affiliate separation. Corrections
+  log seeded with the true entry for this batch (see below). Both pages are in
+  the sitemap and the footer ("Methodology", "Editorial Policy"), and linked
+  from About, Contact and the affiliate disclosure.
+- **Per-article "Reviewed" dates:** new `reviewed` frontmatter field (schema in
+  `content.config.ts`), set explicitly on **all 15 articles** — `updated ??
+  pubDate` (the publish/edits WERE the review; git-date computation is not
+  available at build). Rendered in the article meta row ("Reviewed …") and fed
+  into JSON-LD `dateModified` + OG `article:modified_time` (now the later of
+  `updated`/`reviewed`, falling back to `pubDate`; a date is never invented).
+- **Home-page claims:** already count-true since the SITE-2 leg (stats strip
+  computes articles/apps/tools from real data; "In-depth guides" → "Guides");
+  this batch swept the REMAINING claim family the audit named — "tested with
+  real money over four months", "six months of real usage", "I tested … for
+  three months", "in-depth", "tested with real money" — out of article
+  descriptions/bodies (4 articles beyond the 3 flagged ones carried the same
+  phrases), the remittance/dollar-accounts category descriptors, the About
+  promise ("real transfers, real fees measured against the mid-market rate,
+  real screenshots" → the checks the site actually runs), affiliate
+  disclosure, apps and newsletter pages, and the 4 hand-listed tool-card
+  excerpts. Tone stays warm; nothing grovels; every rewrite is listed
+  before→after in the leg report.
+- **Sponsored/affiliate labels:** About "Brand Partnerships" card now links the
+  sponsorship policy; Contact's Work-With-Me card states "Sponsored posts are
+  labelled as sponsored"; the article-top affiliate disclosure is untouched
+  (gate-pinned) and now links the methodology page's testing definition.
+
+**Housekeeping.** The dead `POSTS` array + `Post` interface in `site.ts`
+deleted (84 lines). *Grep proof:* the only reference outside site.ts was a
+historical comment in `Layout.astro` ("The old 7-item POSTS-only array"); zero
+importers.
+
+**Version/README.** 0.7.61 (package.json + lock only). README: gate table now
+lists all seven gates (the staleness gate was missing), the vectors row names
+all three oracles, build page count 78→81.
+
+**Data note.** The two builds on this leg refreshed the ticker's crypto/metals
+values (BTC/ETH/XAU moved; the NGN pairs and `fx-snapshot.ts` are unchanged) —
+build-owned data riding the same file as the S4 edits, per the v0.7.60 refresh
+precedent.
+
+**Gates (observed):** build 79→81 pages, exit 0 · `npm run check` PASS 7/7 ·
+calc-regress 130/0/7 exit 0 · served-byte greps on the new pages green ·
+changed files limited to the S4 set (+ the manager's two checker re-pins,
+his fold).
+
+
 ## [0.7.60] — 2026-10-12 — BATCH S3a (engine features): the loan upfront fee, the 31-day rounding fix, the dividend WHT toggle, custom stock
 
 The S3a leg — the fifth audit's P1-1/P1-2 feature cluster (finance-astro-calculator-audit-1.md,

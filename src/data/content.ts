@@ -1,7 +1,9 @@
 // Phase 3 shared content helpers — articles collection, authors, search
 // index data. Single-edit data files per the maintained-data rule.
 import { getCollection, type CollectionEntry } from "astro:content";
-import { CATEGORIES, catBySlug } from "./site";
+// SITE-6 (2026-10-12): profile URLs come from the one PROFILES table in
+// site.ts (footer + author box + About + JSON-LD all read it).
+import { CATEGORIES, catBySlug, PROFILES } from "./site";
 
 export type Article = CollectionEntry<"articles">;
 
@@ -12,9 +14,11 @@ export const AUTHORS = [
     role: "Founder & tester-in-chief",
     bio: "Web developer and finance writer. I build this site and write everything on it. I test every app before recommending it. Based in Nigeria.",
     socials: {
-      x: "https://x.com/gwillchijioke",
-      linkedin: "https://linkedin.com/in/gwillchijioke",
-      github: "https://github.com/gwillchijioke",
+      x: PROFILES.x,
+      linkedin: PROFILES.linkedin,
+      // SITE-6: the author box linked github.com/gwillchijioke — an account
+      // with no public repositories. The King's public work is godschi10.
+      github: PROFILES.github,
     },
   },
 ];

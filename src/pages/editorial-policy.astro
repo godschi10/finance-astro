@@ -1,0 +1,76 @@
+---
+// SITE-9 (2026-10-12, BATCH S4): the Editorial Policy page — corrections
+// policy + sponsorship policy on ONE page. The call was made deliberately:
+// two separate pages would have been two thin pages of padding; one page with
+// two plainly-named sections says everything both audits asked for (the big
+// audit SITE-9 "no sponsorship label or policy page"; the fifth audit's
+// launch checklist line 412 "a corrections policy"). Linked from the footer
+// ("Editorial Policy"), the About Brand Partnerships card, the Contact Work
+// With Me card, and the Methodology page.
+// Anatomy reuses the legal-page vocabulary (.legal-hero/.legal-section/...) —
+// no new CSS.
+import Layout from "../layouts/Layout.astro";
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const updated = new Date().toLocaleString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+const toc = [
+  ["corrections", "Corrections policy"],
+  ["corrections-log", "Corrections log"],
+  ["sponsorship", "Sponsorship policy"],
+  ["affiliate-separation", "How affiliates stay separate"],
+];
+---
+<Layout title="Editorial Policy - GWill Finance" description="The GWill Finance editorial policy: how errors are corrected and dated, and the rules for sponsored content, labels and affiliate separation." crumb="Editorial Policy">
+<section class="legal-hero">
+  <div class="hero-grain" aria-hidden="true"></div>
+  <div class="con legal-hero-inner">
+    <nav class="gwill-breadcrumbs" aria-label="Breadcrumb">
+      <ol class="gwill-breadcrumbs__list">
+        <li class="gwill-breadcrumbs__item"><a href={base}><span>Home</span></a></li>
+        <li class="gwill-breadcrumbs__item gwill-breadcrumbs__item--current"><span aria-current="page">Editorial Policy</span></li>
+      </ol>
+    </nav>
+    <p class="legal-hero-label">Policies</p>
+    <h1 class="legal-hero-title">Editorial Policy</h1>
+    <p class="legal-updated">Last updated: {updated}</p>
+  </div>
+</section>
+<section class="legal-section">
+  <div class="con legal-layout">
+    <div class="ad-bg"></div>
+    <nav class="legal-toc" aria-label="On this page">
+      <p class="legal-toc-label">On this page</p>
+      <ol class="legal-toc-list">
+        {toc.map(([id, t]) => (<li><a href={`#${id}`}>{t}</a></li>))}
+      </ol>
+    </nav>
+    <div class="legal-body">
+      <p>Short version: errors get fixed and the fix gets dated. Sponsored content is labelled as sponsored, and no sponsor ever touches a rating. Affiliate links are disclosed on every article that carries them, and they never change a verdict.</p>
+
+      <h2 id="corrections">Corrections policy</h2>
+      <p><strong>How to flag an error:</strong> use the <a href={`${base}contact/`}>contact page</a>, or drop it in the comments on the article itself. Say which page and which claim — a screenshot or a link to the source you have in mind helps, but it is not required. Every flag is read.</p>
+      <p><strong>What happens next:</strong> the claim is checked against its source — the statute, the provider's own fee schedule, the data feed, or the maths. If it is wrong, the text is corrected and the fix is dated: a short note is added at the corrected passage (or at the top of the article for a substantial fix), and the article's <strong>Reviewed</strong> date moves to the correction date, which also flows into the page's <code>dateModified</code>. If the claim turns out to be right, the reply says so and shows the source. Either way you get an answer, not a shrug.</p>
+      <p>Numbers get the same treatment with one extra step: a corrected calculator figure is re-proved against the site's oracle sets before the correction ships, and a change that is a deliberate divergence from the original engine is declared in the public repo — see the <a href={`${base}methodology/`}>methodology page</a>.</p>
+
+      <h2 id="corrections-log">Corrections log</h2>
+      <ul>
+        <li><strong>October 2026 — how reviews were described.</strong> Earlier review copy on this site described app testing as multi-month, real-money trials ("tested with real money over four months", "six months of real usage"). The posts carried comparisons — fee tables, published limits, hands-on use — but not measured trials, so the wording was rewritten site-wide to describe the comparisons actually made. No ratings or figures changed; the description of how the posts were produced was the error, and it is corrected.</li>
+      </ul>
+      <p>This log is newest-first and grows whenever a correction lands. Nothing is quietly edited away.</p>
+
+      <h2 id="sponsorship">Sponsorship policy</h2>
+      <p><strong>The honest status first:</strong> no sponsored post has been published on this site yet. The policy below is the commitment it will be held to when one runs.</p>
+      <ul>
+        <li><strong>Labels, always.</strong> A sponsored post carries a visible <em>"Sponsored"</em> label at the top of the article, in the same spot the affiliate disclosure uses — not buried in the footer, not a hashtag.</li>
+        <li><strong>Sponsored posts get no editorial verdict.</strong> Star ratings and "which one I recommend" verdicts appear only in independent, unsponsored reviews. A sponsor buying placement is buying reach, not the rating.</li>
+        <li><strong>Only honest recommendations.</strong> Pitches are accepted for products the site can honestly recommend after testing — the same bar as the <a href={`${base}about/`}>About</a> promise. A product the author wouldn't use is declined, sponsor or not.</li>
+        <li><strong>Declined outright:</strong> paid "positive review" deals — the arrangement where the verdict is the deliverable. That line also sits in the <a href={`${base}contact/`}>Contact</a> sidebar, where partnership offers are invited.</li>
+      </ul>
+
+      <h2 id="affiliate-separation">How affiliates stay separate</h2>
+      <p>Affiliate links and sponsorship are different things and are kept visibly separate. Some articles carry affiliate links — they earn the site a commission if you sign up, at no extra cost to you — and every such article discloses that at the top, in the same place, every time. The full mechanics are on the <a href={`${base}affiliate-disclosure/`}>affiliate disclosure page</a>. Affiliate relationships never change a rating, a verdict, or whether a product gets covered at all — that promise is enforced the only way it can be: in public, in the same paragraph, every time.</p>
+      <p><em>Last updated: October 2026.</em></p>
+      <div class="ad-bg" style="margin-top:32px"></div>
+    </div>
+  </div>
+</section>
+</Layout>

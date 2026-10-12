@@ -5,6 +5,7 @@ category: "crypto"
 author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-08-24
+reviewed: 2026-08-24
 readMins: 8
 image: "/wp-content/uploads/2026/03/crypto.png"
 imageAlt: "How to Buy Crypto P2P in Nigeria Without Getting Scammed"

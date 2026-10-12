@@ -1,10 +1,11 @@
 ---
 title: "Best Investment Apps for Nigerian Beginners"
-description: "Risevest, Trove, Bamboo — real returns, minimum deposits, and who each app is actually for. Tested with real money."
+description: "Risevest, Trove, Bamboo — real returns, minimum deposits, and who each app is actually for. Tested hands-on."
 category: "investing"
 author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-04-18
+reviewed: 2026-04-18
 readMins: 2
 image: "/wp-content/uploads/2026/04/investing.png"
 imageAlt: "Best Investment Apps for Nigerian Beginners"

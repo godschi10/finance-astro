@@ -5,13 +5,14 @@ category: "banking"
 author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-08-15
+reviewed: 2026-08-15
 readMins: 7
 image: "/wp-content/uploads/2026/04/banking.png"
 imageAlt: "Kuda vs Traditional Banks: The Real Cost of Free Transfers"
 imageSrcset: "/wp-content/uploads/2026/04/banking.png 1200w, /wp-content/uploads/2026/04/banking-300x169.png 300w, /wp-content/uploads/2026/04/banking-1024x576.png 1024w, /wp-content/uploads/2026/04/banking-768x432.png 768w"
 ---
 
-"Free transfers" is the headline. The real comparison is everything around it: card issuance, maintenance fees, reversal speed when transfers fail, and whether support answers when money is stuck. I ran both side by side for six months. Here is the honest maths.
+"Free transfers" is the headline. The real comparison is everything around it: card issuance, maintenance fees, reversal speed when transfers fail, and whether support answers when money is stuck. I ran both side by side. Here is the honest maths.
 
 ## The fee stack, in naira per year
 

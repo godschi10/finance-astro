@@ -5,6 +5,7 @@ category: "savings"
 author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
 pubDate: 2026-07-18
+reviewed: 2026-07-18
 readMins: 6
 image: "/wp-content/uploads/2026/05/savings.png"
 imageAlt: "How Much Emergency Fund Do You Need With Naira Inflation?"

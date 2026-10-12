@@ -20,6 +20,31 @@ export const BASE = process.env.SITE_BASE ?? "/finance-astro";
 // explicit literal: security policy reads better explicit than interpolated).
 export const COMMENTS_API = "https://comments-api.gwill.workers.dev";
 
+// SITE-6 (2026-10-12): every profile URL lives in ONE place — the footer
+// network column, the article author box, the About "Elsewhere" card and the
+// JSON-LD sameAs all read PROFILES, so a handle or domain move is a one-line
+// edit and drift dies.
+//   github  — the gwillchijioke account has no public repositories (audit
+//             SITE-6, checked during the portfolio audit); the King's public
+//             work lives under godschi10. Pointed there.
+//   portfolio — tech.gwillchijioke.com is RETIRED: the King's portfolio
+//             CHANGELOG moved every such link to androidscroll.com, so this
+//             site's references move the same way.
+//   x/instagram/linkedin/youtube — KING-HELD: the audit warns @gwill_chijioke
+//             (underscore) and @gwillchijioke are different accounts and says
+//             to confirm with the owner. Not confirmed yet, so these keep the
+//             handle the site has always carried (no underscore). Do NOT
+//             guess-swap; flip them the moment the King rules.
+export const PROFILES = {
+  site: "https://gwillchijioke.com",
+  portfolio: "https://androidscroll.com",
+  github: "https://github.com/godschi10",
+  x: "https://x.com/gwillchijioke",
+  instagram: "https://instagram.com/gwillchijioke",
+  linkedin: "https://linkedin.com/in/gwillchijioke",
+  youtube: "https://youtube.com/@gwillchijioke",
+} as const;
+
 export const SITE = {
   name: "GWill Finance",
   tagline: "Nigerian money. Explained.",
@@ -27,11 +52,11 @@ export const SITE = {
   description:
     "Nigerian money. Explained. Honest, independent finance guides for Nigerians.",
   socials: {
-    x: "https://x.com/gwillchijioke",
-    instagram: "https://instagram.com/gwillchijioke",
-    linkedin: "https://linkedin.com/in/gwillchijioke",
-    youtube: "https://youtube.com/@gwillchijioke",
-    github: "https://github.com/gwillchijioke",
+    x: PROFILES.x,
+    instagram: PROFILES.instagram,
+    linkedin: PROFILES.linkedin,
+    youtube: PROFILES.youtube,
+    github: PROFILES.github,
   },
 };
 
@@ -101,11 +126,17 @@ export const CATEGORY_META: Record<string, { h1: string; desc?: string }> = {
   },
   remittance: {
     h1: "Remittance in Nigeria",
-    desc: "Sending and receiving money across borders \u2014 Wise, Remitly, WorldRemit and SWIFT tested with real transfers to Nigeria.",
+    // SITE-9 (2026-10-12): the desc claimed "tested with real transfers" — the
+    // posts behind it are fee/rate/speed comparisons, not published transfer
+    // logs. Reworded to the comparison that is actually there (methodology
+    // page defines what "tested" means on this site).
+    desc: "Sending and receiving money across borders — Wise, Remitly, WorldRemit and SWIFT compared on fees, speed and what actually lands in the naira account.",
   },
   "dollar-accounts": {
     h1: "Dollar Accounts in Nigeria",
-    desc: "Dollar account apps for Nigerians \u2014 Grey, Vance, Geegpay and Chipper Cash tested with real money. Fees, limits and virtual cards.",
+    // SITE-9 (2026-10-12): "tested with real money" scoped out — same reasoning
+    // as the remittance descriptor above.
+    desc: "Dollar account apps for Nigerians — Grey, Vance, Geegpay and Chipper Cash compared on fees, limits and virtual cards.",
   },
   budgeting: {
     h1: "Budgeting in Nigeria",
@@ -149,23 +180,27 @@ export const FOOTER_GROUPS: Record<"articles" | "apps" | "site", FooterLink[]> =
     { label: "Finance Apps", href: "/apps/" },
     { label: "Money Calculators", href: "/money-tools/" },
     { label: "About", href: "/about/" },
+    { label: "Methodology", href: "/methodology/" },
+    { label: "Editorial Policy", href: "/editorial-policy/" },
     { label: "Contact", href: "/contact/" },
   ],
 };
 
 // The "Network" column genuinely differs between the two footers in WP itself
 // (footer.php 72–80 desktop vs 137–143 mobile), so both variants are kept.
+// SITE-6 (2026-10-12): tech.gwillchijioke.com → androidscroll.com (the King's
+// portfolio CHANGELOG moved every such link; the checker pin moved with it).
 export const FOOTER_NETWORK: { desktop: FooterLink[]; mobile: FooterLink[] } = {
   desktop: [
-    { label: "gwillchijioke.com", href: "https://gwillchijioke.com", external: true },
-    { label: "tech.gwillchijioke.com", href: "https://tech.gwillchijioke.com", external: true },
+    { label: "gwillchijioke.com", href: PROFILES.site, external: true },
+    { label: "androidscroll.com", href: PROFILES.portfolio, external: true },
     { label: "About", href: "/about/" },
     { label: "Contact", href: "/contact/" },
     { label: "Newsletter", href: "/newsletter/" },
   ],
   mobile: [
-    { label: "gwillchijioke.com", href: "https://gwillchijioke.com", external: true },
-    { label: "tech.gwillchijioke.com", href: "https://tech.gwillchijioke.com", external: true },
+    { label: "gwillchijioke.com", href: PROFILES.site, external: true },
+    { label: "androidscroll.com", href: PROFILES.portfolio, external: true },
     { label: "Newsletter", href: "/newsletter/" },
   ],
 };
@@ -211,90 +246,6 @@ export const NAV: NavItem[] = [
   { label: "About", href: "/about/" },
 ];
 
-export interface Post {
-  slug: string;
-  title: string;
-  excerpt: string;
-  category: string;
-  date: string;
-  readMins: number;
-  author: string;
-}
-
-// Homepage seed excerpts mirror the article collection (src/content/articles/).
-// The collection is the source of truth at render time.
-export const POSTS: Post[] = [
-  {
-    slug: "piggyvest-vs-cowrywise-2026",
-    title: "PiggyVest vs Cowrywise in 2026: Which Saves You More?",
-    excerpt:
-      "Interest rates, withdrawal rules, fees, and app experience compared side by side — plus the exact account to open first if you are starting from zero.",
-    category: "savings",
-    date: "Sep 2026",
-    readMins: 9,
-    author: "G-will Chijioke",
-  },
-  {
-    slug: "ngn-dollar-cost-averaging-guide",
-    title: "Dollar-Cost Averaging Into NGX Stocks on a ₦50k Salary",
-    excerpt:
-      "A step-by-step plan for buying Nigerian stocks every month without timing the market — broker choice, fees to watch, and a worked example.",
-    category: "investing",
-    date: "Sep 2026",
-    readMins: 11,
-    author: "G-will Chijioke",
-  },
-  {
-    slug: "p2p-crypto-nigeria-safely",
-    title: "How to Buy Crypto P2P in Nigeria Without Getting Scammed",
-    excerpt:
-      "Escrow rules, red flags, and the exact verification steps to run before you release a single naira on any P2P marketplace.",
-    category: "crypto",
-    date: "Aug 2026",
-    readMins: 8,
-    author: "G-will Chijioke",
-  },
-  {
-    slug: "kuda-vs-traditional-banks-charges",
-    title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers",
-    excerpt:
-      "Card fees, failed-transfer reversals, and customer support tested — what digital banks actually save you in a year, in naira.",
-    category: "banking",
-    date: "Aug 2026",
-    readMins: 7,
-    author: "G-will Chijioke",
-  },
-  {
-    slug: "cheapest-way-receive-dollars-nigeria",
-    title: "Cheapest Way to Receive Dollars in Nigeria (2026 Compared)",
-    excerpt:
-      "Wise, Grey, Geegpay, and domiciliary accounts compared on fees, speed, and exchange margins — with the cheapest pick for three common amounts.",
-    category: "remittance",
-    date: "Aug 2026",
-    readMins: 10,
-    author: "G-will Chijioke",
-  },
-  {
-    slug: "grey-vs-geegpay-dollar-account",
-    title: "Grey vs Geegpay: Which Dollar Account Should You Open?",
-    excerpt:
-      "Account opening, conversion spreads, card support, and payout speed — tested with real transfers so you know the true cost upfront.",
-    category: "dollar-accounts",
-    date: "Jul 2026",
-    readMins: 8,
-    author: "G-will Chijioke",
-  },
-  {
-    slug: "emergency-fund-naira-inflation",
-    title: "How Much Emergency Fund Do You Need With Naira Inflation?",
-    excerpt:
-      "Why the classic 6-month rule breaks under double-digit inflation, and a simple formula to size your safety net in today's naira.",
-    category: "savings",
-    date: "Jul 2026",
-    readMins: 6,
-    author: "G-will Chijioke",
-  },
-];
 
 // The homepage's Featured Article — the port's equivalent of the theme's
 // `gwill_featured_post_id` theme mod (live: post 5, the Dollar Accounts review).
@@ -321,7 +272,7 @@ export const TICKER_STATIC = [
   { label: "USD/NGN", value: "₦1,330", src: "fx" },
   { label: "GBP/NGN", value: "₦1,760", src: "fx" },
   { label: "EUR/NGN", value: "₦1,490", src: "fx" },
-  { label: "BTC/USD", value: "$83,469", src: "btc" },
-  { label: "ETH/USD", value: "$2,555", src: "eth" },
-  { label: "XAU/USD", value: "$4,178", src: "gold" },
+  { label: "BTC/USD", value: "$82,527", src: "btc" },
+  { label: "ETH/USD", value: "$2,487", src: "eth" },
+  { label: "XAU/USD", value: "$4,174", src: "gold" },
 ];
