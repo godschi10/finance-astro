@@ -95,6 +95,28 @@ staleness 7/0. No parity vector covers a changed case; no divergence entry requi
 **Version note.** 0.7.59 → 0.7.60 (npm version patch, package.json + package-lock.json). The S3b
 UX leg rides this ship as a no-bump companion.
 
+**BATCH S3b — the UX-FEATURES cluster (companion to S3a, no version bump).** The share surface
+ships in the ToolShell spine so every calculator inherits it: Copy result (clipboard + fallback,
+"Copied" confirmation, never an alert) and a WhatsApp share (`wa.me/?text=` with the honest receipt
+summary — an empty receipt shares "no figures yet", never ₦0), plus a print stylesheet that strips
+the real chrome (ticker, both headers, mobile nav, search, both footers, ads, CTA rows) and
+repapers the dark receipt ink-on-white so it prints legible. The converter gains URL-state
+(`?amt=&from=&to=`, read after the seed paint, debounced replaceState on change, unrecognised input
+falls back to the seed silently) and an optional Provider-margin reading (empty = no line, Zero
+Law; clamped 0–100% with the clamp disclosed). The crypto tool keeps its card's promise: the gap
+row is labelled P2P spread with its signed ₦ and % on buy; coin quantities print to 8dp trimmed (at
+₦110M/BTC the old 4dp rounded away real money); the Nigeria Tax Act 2025 tax note sits on the
+receipt; the reverse mode was examined and deliberately not built (cryptoProfit() has no reverse
+path — new maths, skipped per the brief). The Savings Goal tool gains the time-driven reverse mode
+("how long if I save ₦X/month?", phone-first segmented control, `savingsMonthsToGoal()`), and
+Inflation Savings gains step-up deposits (`savingsStepUpStart()`, the A7-verified solver — all
+five appendix-a stepUpDeposits rows reproduced exactly, the 0% row equal to the already-gated 307188
+baseline). Persistence is now OPT-IN: "Remember my numbers on this device", default OFF — off is
+session-only, on is the existing localStorage behaviour; the consent flag sits outside the
+cleared-numbers sweep so clearing numbers never flips the privacy choice; the storage notice is
+conditional to match, and the privacy policy's "every calculator remembers" sentence is corrected
+in this ship's policy fold.
+
 
 ## [0.7.59] — 2026-10-11 — S2c completion (DSH twin): ticker scope, rate-convention disclosures, last name unification, progress basis
 
