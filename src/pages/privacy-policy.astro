@@ -24,12 +24,16 @@
 //                     build, so the page now says so instead of describing a
 //                     processor that is not there.
 //
-// LEGAL POSTURE — what is deliberately NOT in this text: a lawful basis, a
-// named data controller, a regulator, a response deadline, or a retention
-// period for anything the Worker holds. None of those are established anywhere
-// in this repository, and inventing them in copy is the exact failure this
-// rewrite exists to remove. The rows that would need them say "not published"
-// and point at the contact page. Settling them is a pre-launch legal step.
+// LEGAL POSTURE — updated 12 Oct 2026 (SITE-4 tail, the pre-launch fold): the
+// controller, the response deadline and the Worker-data retention periods are
+// NOW in this text, settled from verified facts and cited research — the
+// deliverable is /home/opc/work/research-notes/s4-policy-research-2026-10-12.md
+// (NDPA 2023 s.27(1)(a) identity+contact, s.27(1)(e) retention notice,
+// s.34(1) the delay standard; NDPC GAID 2025 Art 27(3), Art 39(2) complaint
+// clause, Art 40/Schedule 9 the 30-day SNAG benchmark; source receipts in
+// research-notes/_s4-sources/). The one item still deliberately NOT stated: a
+// lawful-basis characterisation — researched separately, never guessed. The
+// honest-cell convention stays for anything not established in the repository.
 import Layout from "../layouts/Layout.astro";
 import { PRIVACY_LAST_UPDATED } from "../data/policy";
 
@@ -44,6 +48,7 @@ const toc = [
   ["never-collects", "What this site never collects"],
   ["every-data-flow", "Every data flow on this site"],
   ["calculator-numbers", "Calculator numbers and shared computers"],
+  ["who-is-responsible", "Who is responsible, and how to reach us"],
   ["your-rights", "Your rights"],
   ["changes-to-this-policy", "Changes to this policy"],
 ];
@@ -67,21 +72,21 @@ const rows: { what: string; why: string; who: string; where: string; how: string
     why: "To show your comment on the page and to moderate it",
     who: "<code>comments-api.gwill.workers.dev</code>, a Cloudflare Worker run by this site's owner",
     where: "Cloudflare's servers",
-    how: "<strong>Not published.</strong> No deletion period is set for submitted comments. Ask on the contact page and we will tell you what we hold.",
+    how: "Kept until deleted — there is no automatic expiry. A comment stays until you ask us to remove it or a moderator removes it, and deletion requests are answered within 30 days (see Your rights). Moderation links expire after 48 hours.",
   },
   {
     what: "Your email address, when you sign up for the newsletter",
     why: "To send the weekly digest you asked for",
     who: "The same Cloudflare Worker, <code>comments-api.gwill.workers.dev</code> — comments and the newsletter go to one place",
     where: "Cloudflare's servers",
-    how: "<strong>Not published.</strong> Same answer as comments. Every newsletter email carries a one-click unsubscribe.",
+    how: "Kept until you unsubscribe or ask us to delete the address — there is no automatic expiry. Every newsletter email carries a one-click unsubscribe.",
   },
   {
     what: "Your contact form message: your name, email, message, and the topic you picked",
     why: "To reply to you",
     who: "The same Cloudflare Worker, <code>comments-api.gwill.workers.dev</code>",
     where: "Cloudflare's servers",
-    how: "<strong>Not published.</strong> Same answer as comments.",
+    how: "Kept until deleted — same as comments: there is no automatic expiry, and it is removed when you ask.",
   },
   {
     what: "Your Gravatar avatar",
@@ -191,7 +196,7 @@ const rows: { what: string; why: string; who: string; where: string; how: string
           </tbody>
         </table>
       </div>
-      <p>Two things are worth saying plainly about that table. First, the rows that begin "Nobody" are not a trick: those values are written to your browser's storage by your own browser and are never sent to us or to anyone else — you can confirm it by opening your browser's developer tools and watching the network tab while you type. Second, where a cell says <strong>not published</strong>, that is the honest answer rather than a missing one: this site has not set a retention period for the data the Worker holds, so it will not invent one here.</p>
+      <p>Two things are worth saying plainly about that table. First, the rows that begin "Nobody" are not a trick: those values are written to your browser's storage by your own browser and are never sent to us or to anyone else — you can confirm it by opening your browser's developer tools and watching the network tab while you type. Second, the "How long" answers for everything the Worker holds are stated in the table itself: kept until deleted, no automatic expiry, and a deletion request answered within 30 days. Where a fact is genuinely not established in this repository, the cell says so plainly rather than inventing an answer — that convention stays.</p>
 
       <h2 id="calculator-numbers">Calculator numbers and shared computers</h2>
       <p>By default, calculators on this site do <strong>not</strong> remember you between visits: what you type is used for the session and then gone — nothing is written to storage, and nothing is restored after a reload. If you want a calculator to remember, it carries a <strong>"Remember my numbers on this device"</strong> switch, off until you turn it on. Turned on, what you type — a salary, a rent figure, an income, an amount you are saving — is written to your browser's own storage so you do not have to type it all again next time. <strong>Those numbers stay in your browser.</strong> They are not transmitted, not logged, and not visible to us. That is a property of how the calculators work, not a promise: no calculator has a send button, and the numbers never enter a network request. Turn the switch off again at any time — that stops the saving and the restoring immediately; what was already saved stays in the browser until you clear it (below) or until thirty days pass, after which a stored value is dropped rather than offered.</p>
@@ -205,6 +210,10 @@ const rows: { what: string; why: string; who: string; where: string; how: string
       </ul>
       <p>If you typed an email address into a comment form here, that address is deliberately <em>not</em> saved to disk — it goes away when you close the tab. The name you typed is saved, so the form is filled in next time, and the first item above removes it.</p>
 
+      <h2 id="who-is-responsible">Who is responsible, and how to reach us</h2>
+      <p><strong>GWill Finance is published and run by G-will Chijioke, Nigeria.</strong> For anything about your personal data — a copy of it, a correction, or its deletion — use the <a href={href("contact/")}>contact form</a> (it reaches our desk directly) or the email published on that page, <code>hi@gwillchijioke.com</code>. We answer access, correction and deletion requests within <strong>30 days</strong> of receiving a request we can verify; if a request is unusually complex, we will say so inside that window and agree a realistic date with you rather than let it sit.</p>
+      <p>You do not need our permission to go further: under <strong>section 46(1) of the Nigeria Data Protection Act 2023</strong> you may lodge a complaint with the <strong>Nigeria Data Protection Commission</strong> at any time. This site's data footprint is deliberately small — below the Commission's own "controller of major importance" line (more than 200 data subjects within six months) — so no Data Protection Officer is designated; if that ever changes, one is designated and named here. <em>Last verified 12 October 2026.</em></p>
+
       <h2 id="your-rights">Your rights</h2>
       <p>This site is for Nigerians, about Nigerian money. The regime that applies is the <strong>Nigeria Data Protection Act 2023</strong>. The GDPR and UK GDPR are not claimed here: this site is not directed at people in the European Union or the United Kingdom, so we are not offering GDPR rights handling we would not honour.</p>
       <p>Under the Act you can ask us for a copy of the personal data this site holds about you, ask for it to be corrected, or ask for it to be deleted. In practice the routes are:</p>
@@ -213,7 +222,7 @@ const rows: { what: string; why: string; who: string; where: string; how: string
         <li><strong>For your newsletter email:</strong> the unsubscribe link in any digest, or the contact page. Both stop the emails.</li>
         <li><strong>For anything sitting in your own browser</strong> — calculator numbers, theme choice, saved comment name — you do not need to ask us at all. <strong>Clear my saved numbers</strong> on any calculator, or clear the site's data in your browser as described above, and it is gone immediately.</li>
       </ul>
-      <p>We would rather tell you what this site does not yet have settled than dress it up. This page does not name a data controller, a lawful basis, a regulator or a response deadline, and it does not give a retention period for the data held by the comment Worker. Those are decisions to be made and recorded properly before launch, not copy to be filled in on a quiet afternoon.</p>
+      <p>One thing this page still deliberately does not do is characterise a <strong>lawful basis</strong> for the processing in legal terms — the facts are all in the table above (what is collected, why, who receives it, and for how long), and that characterisation is a decision to be made and recorded properly before launch, not copy to be filled in on a quiet afternoon. The controller, the response deadline and the retention periods — which this page used to carry as honest "not published" cells — are settled in the section above and in the table.</p>
 
       <h2 id="changes-to-this-policy">Changes to this policy</h2>
       <p>If this policy changes, the updated version is posted here with a new date at the top. Nothing in it is written to flatter the site: if a change makes this site collect more, the table above changes with it.</p>

@@ -15,4 +15,4 @@
  * the repository. Every page that shows a "Last updated" line imports it from
  * here. To update the date, change this line — do not type a date into a page.
  */
-export const PRIVACY_LAST_UPDATED = "October 2026";
+export const PRIVACY_LAST_UPDATED = "12 October 2026";
