@@ -125,6 +125,18 @@ export function maintainedTables(): MaintainedTable[] {
       verifiedOn: FX_PARALLEL_VERIFIED_ON,
       source: "src/lib/fx.ts (FX_PARALLEL_OBSERVATIONS / FX_PARALLEL_VERIFIED_ON)",
     },
+    {
+      id: "dividend_examples",
+      label: "Curated NGX dividend example chips (dividend-calculator)",
+      verifiedOn: "2026-09-01",
+      source: "src/data/dividend-examples.ts (price/DPS from src/lib/dividend.ts ngxDividendStocks, verified 2026-09-01)",
+    },
+    {
+      id: "fx_history_seed",
+      label: "USD→NGN build-time seed series (exchange-rate-history)",
+      verifiedOn: "2026-10-12",
+      source: "src/data/fx-history-seed.ts (committed fx-snapshot build history)",
+    },
   ];
 }
 

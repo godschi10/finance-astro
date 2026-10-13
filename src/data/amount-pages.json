@@ -190,6 +190,7 @@
         "amount": 500,
         "from": "USD",
         "to": "NGN",
+        "meta_desc": "How much is 500 dollars in naira today? The daily-reference mid-market figure for $500, what that mid-size sum moves in the Nigerian market, and what a provider actually pays after its spread.",
         "content": {
             "lede": "Five hundred dollars is the working freelancer's monthly invoice and the smallest amount domiciliary-account holders bother funding, the bracket where the official-versus-market spread starts being worth real thousands of naira.",
             "sections": [
@@ -238,6 +239,7 @@
         "amount": 1000,
         "from": "USD",
         "to": "NGN",
+        "meta_desc": "How much is 1000 dollars in naira today? The daily-reference mid-market figure for $1,000, what a four-figure dollar amount buys in Nigeria, and why no provider gives you the headline rate.",
         "content": {
             "lede": "A thousand dollars is where conversion stops being casual: school-fee instalments, medical invoices, flight tickets. It is the bracket where Nigerian banks typically start asking questions, and where preparation pays.",
             "sections": [
@@ -286,6 +288,7 @@
         "amount": 5000,
         "from": "USD",
         "to": "NGN",
+        "meta_desc": "How much is 5000 dollars in naira today? The daily-reference mid-market figure for $5,000, what a large dollar sum is worth locally, and how to move it without leaking value to fees.",
         "content": {
             "lede": "Five thousand dollars is import-business territory: restocking a boutique, a mid-size supplier order, a semester of tuition abroad. Negotiated money, not quoted money.",
             "sections": [
@@ -334,6 +337,7 @@
         "amount": 10000,
         "from": "NGN",
         "to": "USD",
+        "meta_desc": "How much is 10000 naira in dollars today? The daily-reference answer for ₦10,000, what that naira amount reaches in dollars, and the fees that shrink a small conversion fastest.",
         "content": {
             "lede": "Ten thousand naira is the classic will-my-card-work amount: big enough to test a foreign payment properly, small enough that a failure costs little, which is exactly why it became the standard probe.",
             "sections": [
@@ -382,6 +386,7 @@
         "amount": 100000,
         "from": "NGN",
         "to": "USD",
+        "meta_desc": "How much is 100000 naira in dollars today? The daily-reference answer for ₦100,000, what a six-figure naira balance converts to, and the honest spread on a mid-size sale.",
         "content": {
             "lede": "One hundred thousand naira is a serious monthly outlay, private school fees, rent in many state capitals, and converting it to dollars delivers the quiet shock that turns casual savers into currency-aware ones.",
             "sections": [
@@ -430,6 +435,7 @@
         "amount": 100,
         "from": "GBP",
         "to": "NGN",
+        "meta_desc": "How much is 100 pounds in naira today? The daily-reference mid-market figure for £100, what a UK remittance of this size pays out in Nigeria, and the real rate behind the receipt.",
         "content": {
             "lede": "A hundred pounds is the classic UK-to-Nigeria remittance bracket: the monthly support many British-based Nigerians send home, or the first invoice from a UK client. The figure above is computed from the same daily reference rate as our main converter, stamped with its build time, never a hardcoded \"about\" number.",
             "sections": [
@@ -468,6 +474,7 @@
         "amount": 500,
         "from": "EUR",
         "to": "NGN",
+        "meta_desc": "How much is 500 euros in naira today? The daily-reference mid-market figure for €500, what a euro remittance of this size reaches locally, and why the euro-naira rate is its own number to check.",
         "content": {
             "lede": "Five hundred euros is the working-remittance bracket from Europe: a family support instalment, a school-fee top-up, or a small business transfer. This page converts that exact amount at the live mid-market rate and shows what it buys in Nigeria.",
             "sections": [

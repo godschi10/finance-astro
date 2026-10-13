@@ -1,6 +1,7 @@
 ---
 import ToolShell from "../../components/ToolShell.astro";
 import { dividendProject, ngxDividendStocks, dividendVerified, DIVIDEND_SEED } from "../../lib/dividend";
+import { dividendExamples } from "../../data/dividend-examples";
 import { formatGrouped } from "../../lib/format";
 import { articleTitleOf } from "../../data/content";
 const n = (v: number) => formatGrouped(v, 0);
@@ -13,6 +14,10 @@ const n = (v: number) => formatGrouped(v, 0);
    page passes 10 explicitly. */
 const seed = dividendProject(DIVIDEND_SEED.investment, DIVIDEND_SEED.price, DIVIDEND_SEED.dps, DIVIDEND_SEED.price_growth, DIVIDEND_SEED.div_growth, DIVIDEND_SEED.years, DIVIDEND_SEED.drip, 10);
 const stocks = ngxDividendStocks();
+/* #10 (fifth audit) — curated dated NGX worked examples. Real figures only:
+   price/DPS resolve against the maintained NGX table (verified 2026-09-01),
+   growth is the tool's own default 10%/8% (illustrative), net of 10% WHT. */
+const examples = dividendExamples();
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 // Related-guide card titles derive from the article records (SITE-3) — an
 // unknown slug throws at build rather than shipping a stale card.
@@ -53,6 +58,23 @@ const artTitle = await articleTitleOf();
      live field must hold those slots. -->
 <div class="field" data-cur="NGN" id="dv-cp-f" hidden><label for="dv-cprice">Share price ₦</label><input id="dv-cprice" type="text" inputmode="decimal" placeholder="e.g. 128"></div>
 <div class="field" data-cur="NGN" id="dv-cd-f" hidden><label for="dv-cdps">Dividend per share ₦</label><input id="dv-cdps" type="text" inputmode="decimal" placeholder="e.g. 11.76"></div>
+</div>
+{/* #10 — curated dated NGX example chips. One tap loads a REAL maintained stock
+    (price + DPS from src/data/dividend-examples.ts, which reads the same
+    maintained NGX table the dropdown does) at the tool's default growth
+    assumptions — never a quoted or invented price. BUTTONS, not inputs: the
+    behavioural suite's control inventory and its first-two-live-field slots
+    (dv-inv, dv-pg) are unchanged, and these sit AFTER the .tgrid so no live
+    field loses its slot. Indicative figures, verified 2026-09-01; growth
+    10%/8% is illustrative; net of 10% WHT. */}
+<div class="fx-chips" style="margin-top:10px" role="group" aria-label="Curated NGX stock examples">
+<span class="hint">Try a curated NGX example:</span>
+{examples.map((ex) => (
+  <button type="button" class="fx-chip" aria-pressed="false" title={ex.sourceNote}
+    data-dv-ex={ex.ticker} data-dv-inv={String(ex.investment)}
+    data-dv-pg={String(ex.priceGrowthPct)} data-dv-dg={String(ex.divGrowthPct)}
+    data-dv-yrs={String(ex.years)}>{ex.name}</button>
+))}
 </div>
 <div class="receipt">
 <p class="receipt-lbl" id="dv-lbl">Portfolio end value</p>
@@ -256,6 +278,25 @@ function render() {
 /* S3a item 3 — the WHT toggle rides the same change event the selects use;
    Reset's snapshot restores it checked (the page's default state). */
 (document.getElementById("dv-wht") as HTMLInputElement).addEventListener("change", render);
+/* #10 — curated dated NGX example chips: one tap selects the matching
+   maintained stock and loads its illustrative investment + default growth,
+   then re-renders through the same input path a manual edit takes (so the
+   WHT/DRIP toggles and the maintenance stamps keep applying). The stock index
+   is resolved against the SAME maintained table the chips were built from, so
+   the loader can never select a dropdown row the chip did not come from. */
+document.querySelectorAll<HTMLButtonElement>("[data-dv-ex]").forEach((b) => {
+  b.addEventListener("click", () => {
+    const d = b.dataset;
+    const sel = document.getElementById("dv-stock") as HTMLSelectElement;
+    const idx = stocks.findIndex((s) => s.ticker === d.dvEx);
+    if (idx >= 0) { sel.value = String(idx); sel.dispatchEvent(new Event("change", { bubbles: true })); }
+    if (d.dvInv != null) { g("dv-inv").value = d.dvInv; g("dv-inv").dispatchEvent(new Event("input", { bubbles: true })); }
+    if (d.dvPg != null) { g("dv-pg").value = d.dvPg; g("dv-pg").dispatchEvent(new Event("input", { bubbles: true })); }
+    if (d.dvDg != null) { g("dv-dg").value = d.dvDg; g("dv-dg").dispatchEvent(new Event("input", { bubbles: true })); }
+    if (d.dvYrs != null) { g("dv-yrs").value = d.dvYrs; g("dv-yrs").dispatchEvent(new Event("input", { bubbles: true })); }
+    render();
+  });
+});
 smartFields.register(TOOL_FIELDS["dividend-calculator"]);
 sfBind("dividend-calculator", gv);
 render();
