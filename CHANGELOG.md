@@ -4,6 +4,57 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.62] — 2026-10-13 — BATCH S5: the audit's last tail, and the old theme's good calculator habits kept
+
+The final audit batch — two legs (audit tail + the WP-adoption study), the WP-calculator study
+(/home/opc/work/reports/2026-10-13-wp-calculator-study.md: the port is parity-or-better on 16 of 20
+patterns; five were worth keeping), and the manager's oracle fold. Gates on the combined tree:
+check **7/7** (parity 94/0, independent 116/0, appendix-a **67/0**, staleness 7/0) · build **81
+pages** · calc-regress **130 pass / 0 fail / 7 skip** (325.6s, service unit this run).
+
+**S5-audit-tail · the rate history finally has a past.** The exchange-rate tool cold-started: every
+new visitor saw one point until they used it repeatedly. It now seeds from the repo's OWN committed
+build-time USD/NGN snapshots — a maintained table of 12 real dated points, 2026-09-30 →
+2026-10-12 (2026-10-09 is a real gap — the feed missed it; nothing is papered over). The
+"device-collected, no invented history" principle stands: the engine, the frozen-clock oracle
+vectors and the generated snapshot are untouched; the page paints a real trend on first paint and
+live fetches layer on top. **NGX dividend examples** — three chips (GTCO, MTNN, DANGCEM) whose
+price and DPS are READ from the maintained ngxDividendStocks() table (the build throws if a ticker
+leaves it, so a quote can never drift into being invented), growth figures labelled illustrative,
+the reading stated net of 10% WHT. **Amount-page meta descriptions** — all ten are now unique
+(7 overrides; the two P0-2 pages keep their corrected wording verbatim; 50-dollars stays on its
+generated template, unique by elimination, so the amount_seo_50 oracle row stays green).
+
+**S5-WP-adopt · the five keepers.** (1) **Quick-pick chips** through the port's own component —
+compound-interest rate 4/6/8/10/12/15/20%, naira-value inflation 18/20/24/30%, gross-to-net rent
+None/₦1.2m/₦2.4m/₦3.6m, savings-goal rate. (2) **The salary tool answers its own question** —
+chips jump to the worked ₦300k/₦500k/₦1m figures the prose carried, and `?gross=` deep-links work
+(sanitised, clamped 0–₦100M, garbage falls back silently) on salary-tax and gross-to-net.
+(3) **The loan APR now says what it means** — a verdict band beside the effective APR: ≥60%
+"Expensive — compare other lenders.", ≤35% "A typical formal-lender cost.", elevated between; the
+seed's app-loan case (2,333.9% APR) reads expensive, a 30%/yr bank quote reads typical. The band is
+prose ABOUT the number — the APR figure and its oracle-gated fee behaviour are untouched, and
+"Out of range" keeps its path with the band hidden. (4) **Monthly/annual period toggles** on the
+two tax tools — display-only, through the engine's own annual field. (5) **The savings goal
+projects the win** — "If it just sits there at this rate → in 12 months", shown only when the goal
+is reached, from the engine's own compoundGrowth, "—" in every other state. What was deliberately
+NOT adopted back: WP's habit of showing first-timers receipts for numbers they never entered.
+
+**Manager's oracle fold.** The A6 savingsEffective rows move informational→gated — their promote
+condition ("when the P2-1 disclosure fix lands") shipped in S2c, so the identities gate: the
+monthly-compounding solve, the same goal under ANNUAL compounding (engine 157,606.50 vs the
+oracle's 157,606.51), and the disclosed effective yield from the page's own effFrom derivation.
+Appendix-a: pass 64→67, informational 13→11, fail 0.
+
+**Leg history, recorded honestly.** The first WP-adopt leg died under the harness with 470 lines
+uncommitted but intact; the retry found the suite's loan-console failures and died mid-diagnosis.
+The manager closed it: the band's frontmatter const was referenced from the client scope (a
+ReferenceError of the S2c TDZ class) — fixed with a documented client twin, re-probed on the
+served bytes (seed, driven, and the fee≥loan NaN edge all correct), rebuilt, regated. And a
+lineage note: the reader-complaints accounting found **zero** complaints across the 39 approved
+comments; the 16 pending rows were the security battery's own test residue and were trashed and
+deleted from the desk (final store: pending 0 / approved 39 / reactions 115 intact).
+
 ## [0.7.61] — 2026-10-12 — BATCH S4 (trust/brand): identity unified, methodology + corrections + sponsorship pages, reviewed dates, honest claims
 
 The S4 leg — the big audit's SITE-6 and SITE-9 (finance-astro-audit-2026-10-08.md,

@@ -773,9 +773,27 @@ AV.transfer.forEach((r, i) => {
   aInfo.push(`transfer[${i}] ₦${r.amountNgn} → $${r.usd} (${r.rate}) — P0-1 pending (page shows $78.51 for P2P); informational, promotes when the P0-1 direction fix lands`);
 });
 
-// A6 · savings effective-annual — the engine computes nominal-periodic only.
-aInfo.push(`savingsEffective effectiveAnnualMonthly ₦${AV.savingsEffective.effectiveAnnualMonthly}/mo vs the seed's nominal ₦${AV.savingsEffective.nominalMonthly}/mo (already gated in v1 as savingsGoal monthly 155690) — engine computes nominal-periodic only; informational, promotes when the P2-1 disclosure fix lands`);
-aInfo.push(`savingsEffective effectiveYieldPct ${AV.savingsEffective.effectiveYieldPct}% of 15% nominal monthly — P2-1 disclosure finding; informational, same promote condition`);
+// A6 · savings effective-annual — PROMOTED informational→gated (manager fold,
+// 2026-10-13): the promote condition was "when the P2-1 disclosure fix lands",
+// and it landed in S2c (v0.7.58) — the savings-goal receipt now states the
+// effective annual yield beside the nominal rate. Both rows gate. The
+// identities were verified before the promotion: nominalMonthly is the
+// monthly-compounding solve (the v1-gated 155,690 row), effectiveAnnualMonthly
+// is the SAME goal solved under ANNUAL compounding (157,606.50 vs the oracle's
+// 157,606.51 — the comparison figure the disclosure exists to name), and
+// effectiveYieldPct is the page's own effFrom derivation, restated here.
+{
+  const se = AV.savingsEffective;
+  const nominal = SV.savingsCalculate(se.target, se.haveNow, se.ratePctPerYear / 100, se.months, "monthly");
+  aNaira(nominal.monthly, se.nominalMonthly, "savingsEffective.nominalMonthly (the v1-gated row restated as the comparison base)");
+  // effFrom is the savings-goal page's derivation (frontmatter): nominal ÷ 12
+  // compounded monthly. Restated, not re-invented — the gate asserts the SAME
+  // number the receipt prints.
+  const effFrom = (n) => (Math.pow(1 + n / 100 / 12, 12) - 1) * 100;
+  aPrecise(effFrom(se.ratePctPerYear), se.effectiveYieldPct, "savingsEffective.effectiveYieldPct (the disclosed effective yield — the page's effFrom)");
+  const annual = SV.savingsCalculate(se.target, se.haveNow, se.ratePctPerYear / 100, se.months, "annual");
+  aNaira(annual.monthly, se.effectiveAnnualMonthly, "savingsEffective.effectiveAnnualMonthly (the same goal under ANNUAL compounding)");
+}
 
 // A7 · step-up deposits — inflationAdjustedGoal() has no yearly deposit-growth
 // parameter (the P2-2 feature); the 0% baseline is v1's gated nairaValue row.
