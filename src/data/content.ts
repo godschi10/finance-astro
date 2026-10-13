@@ -64,7 +64,7 @@ export async function articlesByAuthor(slug: string): Promise<Article[]> {
 }
 
 export function relatedTo(all: Article[], current: Article, n = 3): Article[] {
-  const others = all.filter((p) => p.slug !== current.slug);
+  const others = all.filter((p) => p.id !== current.id);
   const sameCat = others.filter(
     (p) => p.data.category === current.data.category
   );
@@ -89,7 +89,7 @@ export function relatedTo(all: Article[], current: Article, n = 3): Article[] {
  */
 export async function articleTitleOf(): Promise<(slug: string) => string> {
   const titles = new Map(
-    (await allArticles()).map((p) => [p.slug, p.data.title] as const)
+    (await allArticles()).map((p) => [p.id, p.data.title] as const)
   );
   return (slug: string) => {
     const title = titles.get(slug);

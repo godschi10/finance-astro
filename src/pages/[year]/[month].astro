@@ -59,7 +59,7 @@ export async function getStaticPaths() {
             return d.getUTCFullYear() === year && d.getUTCMonth() + 1 === month;
           })
           .map((p) => ({
-            slug: p.slug,
+            slug: p.id,
             title: p.data.title,
             excerpt: p.data.description,
             date: fmtLongMonthYear(p.data.pubDate),

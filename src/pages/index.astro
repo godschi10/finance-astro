@@ -31,7 +31,7 @@ import { TOOL_MANIFEST } from "../data/tool-manifest";
 // Grid: WP renders "the newest 9 posts, featured NOT excluded"; the port's
 // archive is smaller, so it renders every article under the same rule.
 const posts = await allArticles();
-const featured = posts.find((p) => p.slug === FEATURED_SLUG) ?? posts[0];
+const featured = posts.find((p) => p.id === FEATURED_SLUG) ?? posts[0];
 const grid = posts.slice(0, 9);
 const fcat = catBySlug(featured.data.category);
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
@@ -51,7 +51,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 // allocator — so the stat and the cards cannot disagree again without this
 // same list changing on both.
 const importedTools = TOOL_MANIFEST;
-const furl = `${base}articles/${featured.slug}/`;
+const furl = `${base}articles/${featured.id}/`;
 // WP prints the featured excerpt through wp_trim_words( get_the_excerpt(), 32 ).
 const trim32 = (s: string) => {
   const w = s.trim().split(/\s+/);
@@ -127,7 +127,7 @@ const trim32 = (s: string) => {
 <div id="gwill-posts-grid">
 <div class="g3">
 {grid.map((p) => (
-<ArticleCard slug={p.slug} title={p.data.title} excerpt={p.data.description} category={p.data.category} date={fmtMonthYear(p.data.pubDate)} readMins={p.data.readMins} author={p.data.author} image={p.data.image} imageAlt={p.data.imageAlt} imageSrcset={p.data.imageSrcset} />
+<ArticleCard slug={p.id} title={p.data.title} excerpt={p.data.description} category={p.data.category} date={fmtMonthYear(p.data.pubDate)} readMins={p.data.readMins} author={p.data.author} image={p.data.image} imageAlt={p.data.imageAlt} imageSrcset={p.data.imageSrcset} />
 ))}
 </div>
 </div>

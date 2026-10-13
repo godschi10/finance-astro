@@ -141,7 +141,7 @@ const searchIndex = [
     return {
       title: p.data.title,
       excerpt: p.data.description,
-      url: `${base}articles/${p.slug}/`,
+      url: `${base}articles/${p.id}/`,
       date: fmtMonthYear(p.data.pubDate),
       mins: p.data.readMins,
       cat: c?.name ?? "Finance",

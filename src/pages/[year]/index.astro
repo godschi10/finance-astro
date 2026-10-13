@@ -24,7 +24,7 @@ export async function getStaticPaths() {
       posts: posts
         .filter((p) => p.data.pubDate.getUTCFullYear() === year)
         .map((p) => ({
-          slug: p.slug,
+          slug: p.id,
           title: p.data.title,
           excerpt: p.data.description,
           date: fmtLongMonthYear(p.data.pubDate),

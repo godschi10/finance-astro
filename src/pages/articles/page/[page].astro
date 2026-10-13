@@ -21,7 +21,7 @@ export async function getStaticPaths() {
       current: i + 2,
       total: pages.length,
       rows: slice.map((p) => ({
-        slug: p.slug,
+        slug: p.id,
         title: p.data.title,
         excerpt: p.data.description,
         date: fmtMonthYear(p.data.pubDate),

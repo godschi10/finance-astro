@@ -40,7 +40,7 @@ const DESK_VERSION = "desk v2 · 2026-09-26";
  *  collection IS the site's own inventory — never invented — and now covers
  *  every post, so a row can never be labelled from a stale second list again. */
 const POST_NAMES = Object.fromEntries(
-  (await allArticles()).map((p) => [p.slug, p.data.title] as const)
+  (await allArticles()).map((p) => [p.id, p.data.title] as const)
 );
 ---
 

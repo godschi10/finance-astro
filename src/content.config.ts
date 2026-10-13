@@ -1,10 +1,24 @@
-import { defineCollection, z } from "astro:content";
+import { defineCollection } from "astro:content";
+import { glob } from "astro/loaders";
+// Astro 6 deprecated `z` from astro:content in favour of astro/zod (and 6.0
+// moved to Zod 4 underneath). Same validator, supported import path.
+import { z } from "astro/zod";
 
 // Phase 3: markdown article collection (WP `post` parity — no CPTs in the
 // truth theme). Category slugs follow the six canonical brand categories;
 // unknown slugs fall back to the Finance default at render time.
+//
+// Astro 6 removed the legacy Content Collections API outright — the guide's
+// words: "All content collections must now use the Content Layer API
+// introduced in Astro v5.0. **No backwards compatibility support is
+// available.**" A collection with no `loader` now fails with
+// ContentCollectionMissingALoaderError (observed: "The collection \"articles\"
+// does not exist or is empty"). So the bare `type: "content"` becomes an
+// explicit glob() loader over the same flat directory. glob()'s default
+// generateId returns the path-derived slug, and this directory is flat (15 .md,
+// no subdirs), so entry.id === the legacy entry.slug the pages used before.
 const articles = defineCollection({
-  type: "content",
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/articles" }),
   schema: z.object({
     title: z.string(),
     description: z.string(),

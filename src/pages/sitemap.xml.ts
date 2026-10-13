@@ -59,7 +59,7 @@ export const GET: APIRoute = async ({ site }) => {
     "money-tools/",
     ...TOOLS.map((t) => `money-tools/${t.slug}/`),
     ...amountSlugs().map((s) => `money-tools/${s}/`),
-    ...posts.map((p) => `articles/${p.slug}/`),
+    ...posts.map((p) => `articles/${p.id}/`),
     ...CATEGORIES.map((c) => `category/${c.slug}/`),
     "category/investing/fixed-income/",
     ...AUTHORS.map((a) => `author/${a.slug}/`),

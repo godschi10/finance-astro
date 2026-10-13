@@ -4,6 +4,69 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.63] — 2026-10-13 — Astro 5 → 7: the double-major security upgrade (PROC-2 / 7.1)
+
+`npm audit` reported 7 vulnerabilities, one CRITICAL, all on the build pipeline. Target `astro@7.3.8` —
+a **double major jump**, so both v6 and v7 breaking changes had to be absorbed.
+
+**The exposure analysis came first, because a CRITICAL label is not a threat.** All seven advisories were
+checked for reachability *before* upgrading:
+
+- **RCE, CVSS 9.8 (GHSA-26w7-cxv4-gfx2, AVIF image optimization) — NOT REACHABLE.** No `astro:assets`
+  import, no `<Image>`/`<Picture>`/`getImage`, no image service configured, no `.avif` anywhere. All 15
+  articles carry `image:` frontmatter but the schema declares `z.string()` (not the `image()` helper) and
+  `ArticleCard` emits a raw `<img src>`, so Astro's image service is never invoked. `sharp` was installed
+  and is now upgraded anyway — but it was dead weight, not a live path.
+- **`define:vars` XSS — reachable in principle, unexploitable in fact.** Used at `mod.astro:248`; all four
+  values (API literal, desk-version literal, `base`, article titles) are first-party build-time data. No
+  runtime or user input reaches them.
+- **Not reachable:** no hydrated islands (`client:*` is zero) kills the `transition:*` XSS; static build
+  kills the prerendered-error-page SSRF; no spread props kills the two spread-attribute XSSes.
+
+**So this was a build-pipeline hardening task with no live exploit path — and the honest reason to ship it
+is that the maintenance floor had moved two majors, not that an attacker was at the door.**
+
+**Breaking changes absorbed (each with the guide's own wording):**
+1. **v6 — legacy collections removed.** *"All content collections must now use the Content Layer API … No
+   backwards compatibility support is available."* Symptom: `The collection "articles" does not exist or is
+   empty` — **zero articles**. Fixed with an explicit `glob()` loader; `z` moved to `astro/zod`.
+2. **v6 — `entry.render()` / `entry.slug` gone.** `getCollection()` returns `ContentEntryResult`; switched
+   to `render(entry)` and `entry.slug` → `entry.id` across 14 call sites.
+3. **v7 — Sätteri is the default Markdown pipeline.** *"The deprecated … still work, but now also require
+   `@astrojs/markdown-remark`."* Added the dep and pinned `processor: unified()` — **non-optional here,
+   because `rehype-slug` is the WordPress-parity mechanism for server-rendered heading ids.**
+4. **v7 — the Rust compiler is stricter.** *"Unclosed tags now produce errors."* A real failure: an HTML
+   comment inside a ternary branch (`ArticleCard.astro:44`) reads as JSX to the new parser.
+5. **v6 — Node ≥22.12.0**; `engines` corrected from a false `>=18`.
+
+**A real bug the upgrade exposed, and the byte gates caught it.** The first `.slug`→`.id` rename was too
+broad: in templates `p` is the *mapped* array, only in `getStaticPaths` is it a collection entry. Nine
+`<ArticleCard slug={p.id}>` and two `mod.astro` runtime-API sites shipped **`id="undefined"` across 25
+pages**. The dist byte-diff caught it; exactly those 11 were reverted and the 16 genuine renames kept. This
+is the strongest argument the repo has for asserting on built bytes.
+
+**One gate changed — STRENGTHENED, not reworded.** The rehype-slug assertion matched the literal substring
+`markdown: { rehypePlugins: [rehypeSlug, rehypeWpTable]`, which the v7 config no longer contains. That was a
+source-text match, never the semantic claim its own name made. It now still pins the config **and reads a
+served article to assert the heading ids are really in the bytes** — so a future pipeline swap that drops
+them fails the gate. Equivalence evidence: 8/8 ids on the sample article, an id-set sweep across all 81
+pages, `POST_NAMES` keys and values byte-identical 15/15 (proving `entry.id === entry.slug` at runtime), and
+all 8 TOC anchors resolving. **No gate was skipped or deleted.**
+
+**Byte-level truth:** normalizing three cosmetic differences (CSS declaration reordering — the guide's
+documented Rust-compiler change; `&`→`&amp;`; comments) leaves **77/81 pages byte-equivalent**. The other 4
+are live build-time market data — proven by rebuilding twice on the same tree and getting the same 3 pages
+differing. `&amp;` is decode-identical to the raw `&` Astro 5 emitted inconsistently; **Astro 7 is uniformly
+spec-correct where Astro 5 was not.**
+
+**Audit: 7 → 2** (critical 0 · high 1 · low 1). Verified by tree inspection, not audit silence:
+**sharp 0.34.5 → 0.35.5** and **devalue → 5.9.4** genuinely cleared. **Two survive and are recorded rather
+than hidden:** `http-cache-semantics` (high) is Astro's own transitive dep with **no fixed release**
+(the advisory range is `<=4.2.0`), so it cannot be cleared from here; `esbuild` (low) is a Windows-only dev
+server advisory — unreachable on Linux + static build, and clearing it needs another semver-major.
+
+**Pages 81 → 81. Build 9.42s → 3.96s. Gates 7/7. Suite 130/0/7.** Every number re-run by the Manager.
+
 ## [0.7.62] — 2026-10-13 — BATCH S5: the audit's last tail, and the old theme's good calculator habits kept
 
 The final audit batch — two legs (audit tail + the WP-adoption study), the WP-calculator study

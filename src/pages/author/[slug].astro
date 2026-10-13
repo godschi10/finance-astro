@@ -31,7 +31,7 @@ export async function getStaticPaths() {
       posts: posts
         .filter((p) => p.data.authorSlug === a.slug)
         .map((p) => ({
-          slug: p.slug,
+          slug: p.id,
           title: p.data.title,
           excerpt: p.data.description,
           category: p.data.category,

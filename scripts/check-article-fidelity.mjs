@@ -241,7 +241,25 @@ const checks = [
 
   // ── heading anchors are server-rendered (WP: the_content priority 9) ───
   ["rehype-slug is wired so heading ids exist in the served HTML",
-    /rehypeSlug/.test(cfg) && flat(cfg).includes("markdown: { rehypePlugins: [rehypeSlug, rehypeWpTable]")],
+    // Astro 7 (2026-10-13): Sätteri became the default Markdown pipeline, so the
+    // rehype plugins only run when the unified() processor is pinned explicitly.
+    // The old assertion matched the literal substring
+    //   "markdown: { rehypePlugins: [rehypeSlug, rehypeWpTable]"
+    // which the v7 config no longer contains — it is now
+    //   "markdown: { processor: unified(), rehypePlugins: [rehypeSlug, rehypeWpTable] }".
+    // That was a source-text match, not the semantic claim its own name made, so
+    // it is STRENGTHENED here rather than reworded: it still pins the config, but
+    // it now ALSO reads a served article and asserts the heading ids really are
+    // in the bytes. A future Sätteri swap that drops the ids now fails here.
+    /rehypeSlug/.test(cfg) &&
+    /unified\(\)/.test(cfg) &&
+    /\[rehypeSlug, rehypeWpTable\]/.test(flat(cfg)) &&
+    (() => {
+      const served = read("dist/articles/kuda-vs-moniepoint/index.html");
+      return served.includes('<h2 id="the-quick-answer"') &&
+             served.includes('<h2 id="where-kuda-wins"') &&
+             served.includes('<h2 id="bottom-line"');
+    })()],
   ["the TOC is built from h2 + h3 in document order",
     /headings\.filter\(\(h\) => h\.depth === 2 \|\| h\.depth === 3\)/.test(tpl)],
   ["the old client-side id-patching script is gone",

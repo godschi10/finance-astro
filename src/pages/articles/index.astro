@@ -22,7 +22,7 @@ const posts = await allArticles();
 const pages = paginate(posts);
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 const rows = pages[0].map((p) => ({
-  slug: p.slug,
+  slug: p.id,
   title: p.data.title,
   excerpt: p.data.description,
   date: fmtMonthYear(p.data.pubDate),

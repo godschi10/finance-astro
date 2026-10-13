@@ -1,6 +1,14 @@
 import { defineConfig } from "astro/config";
 import rehypeSlug from "rehype-slug";
 import rehypeWpTable from "./scripts/rehype-wp-table.mjs";
+// Astro 7 made Sätteri the default Markdown pipeline and dropped the
+// remark/rehype one. The guide: "The deprecated `markdown.remarkPlugins`,
+// `markdown.rehypePlugins`, and `markdown.remarkRehype` options still work,
+// but now also require `@astrojs/markdown-remark` to be installed." We are not
+// optional here — rehype-slug IS the WordPress-parity mechanism for heading ids
+// (see the note below), so the unified() pipeline is pinned explicitly rather
+// than left to a default that no longer runs these plugins.
+import { unified } from "@astrojs/markdown-remark";
 // Deploy coordinates are single-sourced in src/data/site.ts (pure data, zero
 // imports — no cycle): ORIGIN/BASE carry the SITE_ORIGIN / SITE_BASE env
 // overrides with today's values as defaults, so a default build is identical.
@@ -23,5 +31,5 @@ export default defineConfig({
   // (inc/table-of-contents.php), and the article page's TOC anchors depend on
   // them. rehype-slug does the same job at build time, so the ids are in the
   // served HTML instead of being patched in by client JS.
-  markdown: { rehypePlugins: [rehypeSlug, rehypeWpTable] },
+  markdown: { processor: unified(), rehypePlugins: [rehypeSlug, rehypeWpTable] },
 });
