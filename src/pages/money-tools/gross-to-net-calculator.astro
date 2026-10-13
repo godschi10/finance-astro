@@ -16,6 +16,19 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   disclaimer="This calculator is for informational guidance only and is not tax, payroll or financial advice. Figures follow the Nigeria Tax Act 2025 with assumed deductions, confirm your exact salary and tax with your employer or a licensed adviser.">
 <div class="fx-card">
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
+<!-- PERIOD TOGGLE (S5 item 5) — the WP tax tools' Monthly/Annual switch
+     (page-gross-to-net-calculator.php:60-64, and page-salary-tax-
+     calculator.php:68-71 for its sibling), in the port's own segmented
+     grammar (.fx-stepper/.fx-step from ToolShell, the same control the
+     savings-goal mode switch uses). DISPLAY-ONLY by design: the solver and
+     every input stay monthly, the per-year view is the same engine output
+     annualised for reading (the engine ships no annual fields on this page,
+     so per-year = per-month × 12 — stated in the hint below). -->
+<div class="fx-stepper" role="group" aria-label="Receipt period">
+  <button type="button" class="fx-step active" data-gn-period="monthly" aria-pressed="true">Monthly</button>
+  <button type="button" class="fx-step" data-gn-period="annual" aria-pressed="false">Annual</button>
+</div>
+<p class="hint">Receipt figures follow this period. The solver works in months — the per-year view is the same figures annualised (monthly × 12), not a second calculation.</p>
 <div class="tgrid c3">
 
 <div class="field" data-cur="NGN"><label for="gn-net">Target take-home ₦/mo</label><input id="gn-net" type="text" value="250000" inputmode="decimal"></div>
@@ -26,19 +39,32 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field" data-cur="NGN"><label for="gn-life">Life assurance monthly ₦</label><input id="gn-life" type="text" value="0" inputmode="decimal"></div>
 <div class="field" data-cur="NGN"><label for="gn-other">Other reliefs monthly ₦</label><input id="gn-other" type="text" value="0" inputmode="decimal"></div>
 </div>
+<!-- RENT QUICK-PICK CHIPS (S5 item 1) — adopted from
+     page-gross-to-net-calculator.php:81-86, whose rent chips are exactly
+     None / ₦1.2m / ₦2.4m / ₦3.6m. The port's own component (.fx-chips /
+     .fx-chip + aria-pressed, tools.css:46-69): buttons, one tap writes the
+     annual-rent field and re-renders through the existing input path. The
+     pressed pill tracks the TYPED rent, never the last click. -->
+<div class="fx-chips" style="margin-top:10px" role="group" aria-label="Annual rent quick picks">
+<span class="hint">Annual rent quick picks:</span>
+<button type="button" class="fx-chip" data-gn-rent="0" aria-pressed="false">None</button>
+<button type="button" class="fx-chip" data-gn-rent="1200000" aria-pressed="false">₦1.2m</button>
+<button type="button" class="fx-chip" data-gn-rent="2400000" aria-pressed="false">₦2.4m</button>
+<button type="button" class="fx-chip" data-gn-rent="3600000" aria-pressed="false">₦3.6m</button>
+</div>
 <p class="hint" id="gn-dedwarn" hidden></p>
 <div class="receipt">
-<p class="receipt-lbl">Gross to negotiate</p>
+<p class="receipt-lbl" id="gn-lbl">Gross to negotiate</p>
 <p class="receipt-fig" id="gn-fig" aria-live="polite">₦{n(seed.gross_monthly)}</p>
 <p class="receipt-sub" id="gn-sub">Nets ₦{n(seed.net_monthly)}/mo after ₦{n(seed.tax_monthly)} tax{seed.exempt ? " · EXEMPT (minimum wage)" : ""}</p>
 <div class="receipt-div" aria-hidden="true"></div>
-<div class="receipt-row"><span>Pension /mo</span><b id="gn-pen2">₦{n(seed.pension_monthly)}</b></div>
-<div class="receipt-row"><span>NHF /mo</span><b id="gn-nhf2">₦{n(seed.nhf_monthly)}</b></div>
-<div class="receipt-row"><span>NHIS /mo</span><b id="gn-nhis2">₦{n(seed.nhis_monthly)}</b></div>
-<div class="receipt-row"><span>Life assurance /mo</span><b id="gn-life2">₦{n(seed.life_monthly)}</b></div>
-<div class="receipt-row"><span>Other reliefs /mo</span><b id="gn-other2">₦{n(seed.other_monthly)}</b></div>
-<div class="receipt-row"><span>Rent relief /mo</span><b id="gn-rel">₦{n(seed.relief_monthly)}</b></div>
-<div class="receipt-row"><span>Deductions /mo</span><b id="gn-ded">₦{n(seed.deductions_monthly)}</b></div>
+<div class="receipt-row"><span id="gn-lbl-pen">Pension /mo</span><b id="gn-pen2">₦{n(seed.pension_monthly)}</b></div>
+<div class="receipt-row"><span id="gn-lbl-nhf">NHF /mo</span><b id="gn-nhf2">₦{n(seed.nhf_monthly)}</b></div>
+<div class="receipt-row"><span id="gn-lbl-nhis">NHIS /mo</span><b id="gn-nhis2">₦{n(seed.nhis_monthly)}</b></div>
+<div class="receipt-row"><span id="gn-lbl-life">Life assurance /mo</span><b id="gn-life2">₦{n(seed.life_monthly)}</b></div>
+<div class="receipt-row"><span id="gn-lbl-other">Other reliefs /mo</span><b id="gn-other2">₦{n(seed.other_monthly)}</b></div>
+<div class="receipt-row"><span id="gn-lbl-rel">Rent relief /mo</span><b id="gn-rel">₦{n(seed.relief_monthly)}</b></div>
+<div class="receipt-row"><span id="gn-lbl-ded">Deductions /mo</span><b id="gn-ded">₦{n(seed.deductions_monthly)}</b></div>
 <p class="bar-note" id="gn-warn" hidden></p>
 <p class="receipt-foot">NTA 2025 bands · binary-solved · pension figured on gross as basic</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
@@ -60,7 +86,30 @@ const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).val
    "gross to negotiate", and each relief row additionally waits on its own
    field, because gross × 0% relief is a deduction the visitor never claimed. */
 const ALL = ["gn-net", "gn-pen", "gn-rent", "gn-nhf", "gn-nhis", "gn-life", "gn-other"];
+/* S5 item 5 — the period state. "monthly" is the shipped calculator (every
+   engine output and every input is monthly); "annual" is a DISPLAY view of
+   the same numbers (per-year = per-month × 12 — the engine ships no annual
+   fields on this page). Declared module-scope because render() reads it; the
+   toggle buttons below own every write. */
+let gnPeriod: "monthly" | "annual" = "monthly";
+const per = (v: number) => (gnPeriod === "annual" ? v * 12 : v);
+const perTxt = () => (gnPeriod === "annual" ? "yr" : "mo");
+/* The row labels carry the unit, so they follow the period on every path —
+   called at the top of render() like the loan page's paintRateUnit(). */
+function paintPeriodLabels(): void {
+  const s = gnPeriod === "annual" ? "/yr" : "/mo";
+  t("gn-lbl").textContent = gnPeriod === "annual" ? "Gross to negotiate (per year)" : "Gross to negotiate";
+  t("gn-lbl-pen").textContent = "Pension " + s;
+  t("gn-lbl-nhf").textContent = "NHF " + s;
+  t("gn-lbl-nhis").textContent = "NHIS " + s;
+  t("gn-lbl-life").textContent = "Life assurance " + s;
+  t("gn-lbl-other").textContent = "Other reliefs " + s;
+  t("gn-lbl-rel").textContent = "Rent relief " + s;
+  t("gn-lbl-ded").textContent = "Deductions " + s;
+}
 function render() {
+  paintPeriodLabels();
+  syncRentChips();
   const netRaw = pm(g("gn-net").value);
   const penRaw = pm(g("gn-pen").value);
   const rentRaw = pm(g("gn-rent").value);
@@ -72,15 +121,15 @@ function render() {
   const life = Math.max(0, pm(g("gn-life").value) || 0);
   const other = Math.max(0, pm(g("gn-other").value) || 0);
   const r = reverseGross(net, pen, nhf, rent, nhis, life, other);
-  sfFig(t("gn-fig"), ALL, n(r.gross_monthly));
-  sfFig(t("gn-sub"), ALL, `Nets ${n(r.net_monthly)}/mo after ${n(r.tax_monthly)} tax${r.exempt ? " · EXEMPT (minimum wage)" : ""}`);
-  sfFig(t("gn-pen2"), ["gn-net", "gn-pen"], n(r.pension_monthly));
-  sfFig(t("gn-nhf2"), ["gn-net", "gn-nhf"], n(r.nhf_monthly));
-  sfFig(t("gn-nhis2"), ["gn-net", "gn-nhis"], n(r.nhis_monthly));
-  sfFig(t("gn-life2"), ["gn-net", "gn-life"], n(r.life_monthly));
-  sfFig(t("gn-other2"), ["gn-net", "gn-other"], n(r.other_monthly));
-  sfFig(t("gn-rel"), ["gn-net", "gn-rent"], n(r.relief_monthly));
-  sfFig(t("gn-ded"), ALL, n(r.deductions_monthly));
+  sfFig(t("gn-fig"), ALL, n(per(r.gross_monthly)));
+  sfFig(t("gn-sub"), ALL, `Nets ${n(per(r.net_monthly))}/${perTxt()} after ${n(per(r.tax_monthly))} tax${r.exempt ? " · EXEMPT (minimum wage)" : ""}`);
+  sfFig(t("gn-pen2"), ["gn-net", "gn-pen"], n(per(r.pension_monthly)));
+  sfFig(t("gn-nhf2"), ["gn-net", "gn-nhf"], n(per(r.nhf_monthly)));
+  sfFig(t("gn-nhis2"), ["gn-net", "gn-nhis"], n(per(r.nhis_monthly)));
+  sfFig(t("gn-life2"), ["gn-net", "gn-life"], n(per(r.life_monthly)));
+  sfFig(t("gn-other2"), ["gn-net", "gn-other"], n(per(r.other_monthly)));
+  sfFig(t("gn-rel"), ["gn-net", "gn-rent"], n(per(r.relief_monthly)));
+  sfFig(t("gn-ded"), ALL, n(per(r.deductions_monthly)));
   const notes: string[] = [];
   if (!(netRaw > 0)) notes.push("Enter a target take-home above ₦0 — the gross waits until you do.");
   if (netRaw < 0 || penRaw < 0 || rentRaw < 0) notes.push("Negative entries are treated as ₦0.");
@@ -111,6 +160,80 @@ function render() {
 }
   sfEmpty(sfIsEmpty("gross-to-net-calculator", gv));
 ["gn-net", "gn-pen", "gn-rent", "gn-nhf", "gn-nhis", "gn-life", "gn-other"].forEach((id) => g(id).addEventListener("input", render));
+/* ── S5 item 1 — RENT QUICK-PICK CHIPS ───────────────────────────────────────
+   The port's own component (.fx-chips/.fx-chip + aria-pressed,
+   tools.css:46-69), values adopted from page-gross-to-net-calculator.php:81-86
+   (None / ₦1.2m / ₦2.4m / ₦3.6m). One tap writes the annual-rent field and
+   re-renders through the existing input path; the pressed pill tracks the
+   TYPED rent, never the last click. */
+const RENT_CHIPS = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-gn-rent]"));
+function syncRentChips(): void {
+  const typed = pm(g("gn-rent").value);
+  for (const b of RENT_CHIPS) b.setAttribute("aria-pressed", Math.abs(typed - Number(b.dataset.gnRent)) < 1e-9 ? "true" : "false");
+}
+for (const b of RENT_CHIPS) {
+  b.addEventListener("click", () => {
+    g("gn-rent").value = b.dataset.gnRent as string;
+    g("gn-rent").dispatchEvent(new Event("input", { bubbles: true }));
+  });
+}
+/* ── S5 item 5 — THE PERIOD TOGGLE ───────────────────────────────────────────
+   Buttons, not radios (the savings-goal mode switch's grammar): the period is
+   a VIEW of the same receipt, not a number. Reset restores the calculator's
+   seeded numbers and leaves the chosen period standing — the same reading
+   "give me the worked example back" gets on savings-goal. */
+const GN_PERIOD_BTNS = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-gn-period]"));
+function setGnPeriod(p: "monthly" | "annual"): void {
+  if (p === gnPeriod) return;
+  gnPeriod = p;
+  GN_PERIOD_BTNS.forEach((b) => {
+    const on = b.dataset.gnPeriod === p;
+    b.classList.toggle("active", on);
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+  render();
+}
+GN_PERIOD_BTNS.forEach((b) => b.addEventListener("click", () => setGnPeriod(b.dataset.gnPeriod as "monthly" | "annual")));
+/* ── S5 item 4 — DEEP-LINK PREFILL ?gross= ───────────────────────────────────
+   WP reads ?gross= on salary-tax (page-salary-tax-calculator.php:32-42):
+   strip non-numeric, clamp 0–₦100M/month, silent fallback to the seed. This
+   page's counterpart has no WP deep link, so the manager's item extends the
+   same key to this page's ONE amount input: on gross-to-net the gross is the
+   solver's OUTPUT, so ?gross= fills the target take-home and the gross below
+   re-solves from it. Same law, same guards as the converter's F6 URL state
+   (currency-converter.astro:191-237): read on load after the seed paint,
+   canonicalise debounced on change, pure garbage strips the query entirely —
+   no warning, no invented figure. */
+const urlNet = (raw: string): string | null => {
+  const s = raw.trim().slice(0, 40);
+  if (s === "" || pmBlank(s)) return null;
+  const v = pm(s);
+  if (!Number.isFinite(v) || v <= 0 || v > 100000000) return null;
+  return String(v);
+};
+let urlTimer: ReturnType<typeof setTimeout> | undefined;
+function syncUrlNow(): void {
+  const q = new URLSearchParams();
+  q.set("gross", g("gn-net").value.trim().slice(0, 40));
+  history.replaceState(null, "", `${location.pathname}?${q.toString()}`);
+}
+function syncUrl(): void {
+  clearTimeout(urlTimer);
+  urlTimer = setTimeout(syncUrlNow, 600);
+}
+(function applyUrlState(): void {
+  if (!location.search) return;
+  const u = new URLSearchParams(location.search);
+  const a = urlNet(u.get("gross") || "");
+  if (a !== null) {
+    g("gn-net").value = a;
+    g("gn-net").dispatchEvent(new Event("input", { bubbles: true }));
+    syncUrlNow();
+  } else {
+    history.replaceState(null, "", location.pathname);
+  }
+})();
+g("gn-net").addEventListener("input", syncUrl);
 smartFields.register(TOOL_FIELDS["gross-to-net-calculator"]);
 sfBind("gross-to-net-calculator", gv);
 render();

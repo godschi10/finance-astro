@@ -26,6 +26,25 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="ci-yrs">Years</label><input id="ci-yrs" type="number" min="1" max="50" step="1" value="5" inputmode="numeric"></div>
 <div class="field"><label for="ci-cmp">Compounding</label><select id="ci-cmp"><option value="monthly" selected>Monthly</option><option value="quarterly">Quarterly</option><option value="daily">Daily</option><option value="annual">Annual</option></select></div>
 </div>
+<!-- RATE QUICK-PICK CHIPS (S5 item 1) — adopted from
+     page-compound-interest-calculator.php:70-78, whose rate chips are 4/6/8/
+     10/12/15/20%. Same component the inflation-savings page already ships
+     (the .fx-chips/.fx-chip grammar plus the aria-pressed state from
+     tools.css:46-69): buttons, not divs, keyboard-reachable, one tap writes
+     the field and re-renders through the SAME input path a keystroke takes.
+     aria-pressed tracks the TYPED field, never the last click — type your own
+     rate by hand and every chip releases, because none of them produced the
+     number on screen. -->
+<div class="fx-chips" style="margin-top:10px" role="group" aria-label="Annual rate quick picks">
+<span class="hint">Rate quick picks:</span>
+<button type="button" class="fx-chip" data-ci-rate="4" aria-pressed="false">4%</button>
+<button type="button" class="fx-chip" data-ci-rate="6" aria-pressed="false">6%</button>
+<button type="button" class="fx-chip" data-ci-rate="8" aria-pressed="false">8%</button>
+<button type="button" class="fx-chip" data-ci-rate="10" aria-pressed="false">10%</button>
+<button type="button" class="fx-chip" data-ci-rate="12" aria-pressed="false">12%</button>
+<button type="button" class="fx-chip" data-ci-rate="15" aria-pressed="false">15%</button>
+<button type="button" class="fx-chip" data-ci-rate="20" aria-pressed="false">20%</button>
+</div>
 <div class="receipt">
 <p class="receipt-lbl">Future value</p>
 <p class="receipt-fig" id="ci-fig" aria-live="polite">₦{n(seed.future)}</p>
@@ -71,6 +90,7 @@ const sel = (id: string) => (document.getElementById(id) as HTMLSelectElement).v
    receipt. A cleared principal must not print a gold ₦0 future value. */
 const ALL = ["ci-prin", "ci-dep", "ci-rate", "ci-yrs"];
 function render() {
+  syncRateChips();
   const p = Math.max(0, pm(g("ci-prin").value) || 0);
   const d = Math.max(0, pm(g("ci-dep").value) || 0);
   const rate = Math.max(0, pm(g("ci-rate").value) || 0) / 100;
@@ -160,7 +180,24 @@ const capSfx = yrsCapped ? " Horizon capped at 100 years — figures price the c
   sfEmpty(sfIsEmpty("compound-interest-calculator", gv));
 ["ci-prin", "ci-dep", "ci-rate", "ci-yrs"].forEach((id) => g(id).addEventListener("input", render));
 ["ci-freq", "ci-cmp"].forEach((id) => (document.getElementById(id) as HTMLSelectElement).addEventListener("change", render));
+/* Rate quick-pick chips (S5 item 1) — the inflation-savings page's exact
+   component: one tap writes the rate field and re-renders through the same
+   input path a keystroke takes. aria-pressed tracks the TYPED value, never
+   the last click — type a rate by hand and every chip releases, because none
+   of them produced the number on screen. */
+const RATE_CHIPS = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-ci-rate]"));
+function syncRateChips(): void {
+  const typed = pm(g("ci-rate").value);
+  for (const b of RATE_CHIPS) b.setAttribute("aria-pressed", Math.abs(typed - Number(b.dataset.ciRate)) < 1e-9 ? "true" : "false");
+}
+for (const b of RATE_CHIPS) {
+  b.addEventListener("click", () => {
+    g("ci-rate").value = b.dataset.ciRate as string;
+    g("ci-rate").dispatchEvent(new Event("input", { bubbles: true }));
+  });
+}
 smartFields.register(TOOL_FIELDS["compound-interest-calculator"]);
 sfBind("compound-interest-calculator", gv);
 render();
+syncRateChips();
 </script>

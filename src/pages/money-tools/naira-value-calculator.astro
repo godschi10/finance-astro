@@ -41,6 +41,21 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="nv-infl">Inflation %/yr</label><input id="nv-infl" type="text" max="200" value="24" inputmode="decimal"></div>
 <div class="field"><label for="nv-yrs">Years</label><input id="nv-yrs" type="number" min="1" max="100" step="1" value={s.years} inputmode="numeric"></div>
 </div>
+<!-- INFLATION QUICK-PICK CHIPS (S5 item 1) — adopted from
+     page-naira-value-calculator.php:82-85, whose inflation chips are
+     18/20/24/30%. The port's own component (same .fx-chip + aria-pressed
+     grammar the inflation-savings presets use, tools.css:46-69): buttons,
+     one tap writes the inflation field and re-renders through the existing
+     input path. The pressed pill tracks the TYPED rate — 24% is pressed at
+     load because this page opens at 24% (the HN-2 Lagos reading above), not
+     because a chip was clicked. -->
+<div class="fx-chips" style="margin-top:10px" role="group" aria-label="Inflation quick picks">
+<span class="hint">Inflation quick picks:</span>
+<button type="button" class="fx-chip" data-nv-infl="18" aria-pressed="false">18%</button>
+<button type="button" class="fx-chip" data-nv-infl="20" aria-pressed="false">20%</button>
+<button type="button" class="fx-chip" data-nv-infl="24" aria-pressed="false">24%</button>
+<button type="button" class="fx-chip" data-nv-infl="30" aria-pressed="false">30%</button>
+</div>
 <div class="receipt">
 <p class="receipt-lbl">To buy the same in <span id="nv-yr">5</span> years you need</p>
 <p class="receipt-fig" id="nv-fig" aria-live="polite">₦{n(seed.future)}</p>
@@ -216,9 +231,26 @@ function render() {
     w.hidden = false;
     w.textContent = notes.join(" ");
   }
+  /* Inflation quick-pick chips (S5 item 1): the pressed pill tracks the
+     TYPED inflation rate, so a hand-typed figure releases every chip. */
+  syncInflChips();
 }
   sfEmpty(sfIsEmpty("naira-value-calculator", gv));
 ["nv-val", "nv-infl", "nv-yrs", "nv-pv", "nv-tgt", "nv-cur", "nv-ret"].forEach((id) => g(id).addEventListener("input", render));
+/* Inflation quick-pick chips (S5 item 1) — the same component the
+   inflation-savings presets ship: one tap writes the inflation field and
+   re-renders through the existing input path. */
+const INFL_CHIPS = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-nv-infl]"));
+function syncInflChips(): void {
+  const typed = pm(g("nv-infl").value);
+  for (const b of INFL_CHIPS) b.setAttribute("aria-pressed", Math.abs(typed - Number(b.dataset.nvInfl)) < 1e-9 ? "true" : "false");
+}
+for (const b of INFL_CHIPS) {
+  b.addEventListener("click", () => {
+    g("nv-infl").value = b.dataset.nvInfl as string;
+    g("nv-infl").dispatchEvent(new Event("input", { bubbles: true }));
+  });
+}
 smartFields.register(TOOL_FIELDS["naira-value-calculator"]);
 sfBind("naira-value-calculator", gv);
 render();

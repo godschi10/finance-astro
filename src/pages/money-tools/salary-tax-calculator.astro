@@ -22,6 +22,16 @@ const saveTxt = tie
   : newWins
     ? `You keep ₦${n(cmp.save_monthly)}/mo more under the new bands.`
     : `The old bands save you ₦${n(-cmp.save_monthly)}/mo vs the new bands.`;
+/* S5 item 2 — the quick-check worked answers. Same engine, same 8%-pension /
+   no-rent basis as the copy prose below (and as WP's server-computed answers
+   at page-salary-tax-calculator.php:245-268), but computed HERE from the
+   port's own payeCalculate() so the figures can never drift from the maths:
+   nothing is hand-typed. These are labelled reference answers, not the
+   visitor's receipt — the receipt above still waits on his own numbers. */
+const wk = [300000, 500000, 1000000].map((gross) => ({ gross, r: payeCalculate(gross, 0.08, 0, 0, true) }));
+/* Chip labels: ₦300k / ₦500k / ₦1m — the same shorthand the copy prose and
+   WP's chips use. */
+const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` : `₦${gross / 1000}k`);
 ---
 <ToolShell title="Nigeria Tax Calculator 2026, NTA 2025 vs Old Bands - GWill Finance" description="Nigerian PAYE under the NTA 2025 bands (in force 1 Jan 2026) vs the old PITA bands, for comparison only (repealed 1 Jan 2026): rent relief, minimum-wage exemption, old-vs-new comparison." slug="salary-tax-calculator" tool="Nigeria Tax Calculator 2026" crumb="Nigeria Tax Calculator" lede="2026 bands (0% under ₦800k, then 15–25%) against the repealed 7–24% PITA bands, for comparison — with 20% rent relief and the ₦70k minimum-wage exemption." verified="NTA 2025 bands · rent relief capped ₦500k · exemption ≤ ₦70,000/mo" faqs={[
   { q: "Who pays zero PAYE?", a: "You pay no income tax on an employment if your gross income from that employment is at or below the national minimum wage (Nigeria Tax Act 2025, s.163(1)(t)). This is a different thing from the ₦800,000 zero-rate band, which applies to your chargeable income once you are taxable. Last verified 11 Oct 2026 · NTA s.163(1)(t) (nta2025.txt:4407-4408) · s.58(1) (nta2025.txt:1877-1880)" },
@@ -39,6 +49,19 @@ const saveTxt = tie
   disclaimer="This calculator is for informational guidance only and is not tax, financial or investment advice. Tax rules and personal circumstances vary, confirm your figures with a licensed tax professional.">
 <div class="fx-card">
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
+<!-- PERIOD TOGGLE (S5 item 5) — the WP tax tools' Monthly/Annual switch
+     (page-salary-tax-calculator.php:68-71, with the label-flip JS at
+     assets/js/salary-tax.js:331-345), in the port's own segmented grammar
+     (.fx-stepper/.fx-step, the control the savings-goal mode switch uses).
+     DISPLAY-ONLY: the engine and every input stay monthly, and the per-year
+     view reads the engine's OWN annual fields where they exist (net_annual,
+     tax_annual, save_annual — they do on this page), so no figure is a
+     multiplied guess. -->
+<div class="fx-stepper" role="group" aria-label="Receipt period">
+  <button type="button" class="fx-step active" data-st-period="monthly" aria-pressed="true">Monthly</button>
+  <button type="button" class="fx-step" data-st-period="annual" aria-pressed="false">Annual</button>
+</div>
+<p class="hint">Receipt figures follow this period. The calculator itself works in months — the per-year view reads the engine's own annual figures.</p>
 <div class="tgrid c3">
 
 <div class="field" data-cur="NGN"><label for="st-gross">Monthly gross ₦</label><input id="st-gross" type="text" value="300000" inputmode="decimal"><p class="hint">The monthly pay the 2026 bands are worked out from — before pension and tax come off.</p></div>
@@ -52,7 +75,7 @@ const saveTxt = tie
 </div>
 <p class="hint" id="st-dedwarn" hidden></p>
 <div class="receipt">
-<p class="receipt-lbl">Take-home monthly</p>
+<p class="receipt-lbl" id="st-lbl">Take-home monthly</p>
 <p class="receipt-fig" id="st-fig" aria-live="polite">₦{n(seed.net_monthly)}</p>
 <p class="receipt-sub" id="st-sub">Tax ₦{n(seed.tax_monthly)}/mo · taxable ₦{n(seed.taxable)}/yr{seed.exempt ? " · EXEMPT (minimum wage)" : ""}</p>
 <div class="receipt-div" aria-hidden="true"></div>
@@ -74,9 +97,34 @@ const saveTxt = tie
 </div>
 </div>
 <div class="hr"></div>
+<h2 class="tool-h2">Quick check — salary after tax</h2>
+<!-- QUICK-CHECK CHIPS (S5 item 2) — adopted from page-salary-tax-calculator
+     .php:217-224, whose chips jump to pre-computed worked answers. The port's
+     figures already existed in the prose below but had no anchors and no way
+     in; these chips do both halves through the form's OWN path: one tap
+     writes the gross field (re-rendering the receipt exactly as a keystroke
+     does) and then scrolls to the matching worked row below. Buttons, not
+     divs, keyboard-reachable. aria-pressed tracks the TYPED gross, so the
+     chip releases the moment the field holds anything else. -->
+<div class="fx-chips" role="group" aria-label="Quick-check worked answers">
+<span class="hint">Load a salary, jump to its answer:</span>
+{wk.map((w) => (
+<button type="button" class="fx-chip" data-qc-gross={String(w.gross)} data-qc-goto={`st-wk-${w.gross}`} aria-pressed="false">{wkLabel(w.gross)} after tax</button>
+))}
+</div>
+<div class="st-table-wrap"><table class="st-table" id="st-quickcheck">
+<thead><tr><th>Gross salary</th><th class="n">Take-home /mo</th><th class="n">PAYE /yr</th></tr></thead>
+<tbody>
+{wk.map((w) => (
+<tr id={`st-wk-${w.gross}`}><td>₦{n(w.gross)}</td><td class="n">₦{n(w.r.net_monthly)}</td><td class="n">₦{n(w.r.tax_annual)}</td></tr>
+))}
+</tbody>
+</table></div>
+<p class="bar-note">Worked at the minimum 8% pension with no rent — reference answers, not your receipt. Tap a chip to load that salary into the calculator above and watch the receipt recompute.</p>
+<div class="hr"></div>
 <h2 class="tool-h2">Old vs new bands</h2>
 <div class="st-table-wrap"><table class="st-table" id="st-cmp">
-<thead><tr><th>Regime</th><th class="n">Tax /yr</th><th class="n">Take-home /mo</th></tr></thead>
+<thead><tr><th>Regime</th><th class="n">Tax /yr</th><th class="n" id="st-cmp-net-h">Take-home /mo</th></tr></thead>
 <tbody>
 <tr id="st-row-new" class={newWins ? "win" : ""}><td>New (2026)<span class="btag" id="st-tag-new" style={newWins ? "" : "display:none"}>Best</span></td><td class="n" id="st-new-tax">₦{n(cmp.new.tax_annual)}</td><td class="n" id="st-new-net">₦{n(cmp.new.net_monthly)}</td></tr>
 <tr id="st-row-old" class={oldWins ? "win" : ""}><td>Old (PITA, for comparison only — repealed 1 Jan 2026)<span class="btag" id="st-tag-old" style={oldWins ? "" : "display:none"}>Best</span></td><td class="n" id="st-old-tax">₦{n(cmp.old.tax_annual)}</td><td class="n" id="st-old-net">₦{n(cmp.old.net_monthly)}</td></tr>
@@ -111,7 +159,21 @@ const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).val
 /* THE ZERO LAW: every figure below declares the ids it is derived from, so a
    relief the visitor never entered cannot print itself as a gold ₦0 deduction. */
 const ALL = ["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life", "st-other"];
+/* S5 item 5 — the period state. "monthly" is the shipped calculator (every
+   input and the engine's core output); "annual" is a DISPLAY view that reads
+   the engine's OWN annual fields (net_annual, tax_annual, save_annual — the
+   engine returns all three), so no figure here is a multiplied guess.
+   Declared module-scope because render() reads it; the toggle buttons below
+   own every write. */
+let stPeriod: "monthly" | "annual" = "monthly";
+const perNet = (v: { net_annual: number; net_monthly: number }) => (stPeriod === "annual" ? v.net_annual : v.net_monthly);
+function paintPeriod(): void {
+  t("st-lbl").textContent = stPeriod === "annual" ? "Take-home per year" : "Take-home monthly";
+  t("st-cmp-net-h").textContent = stPeriod === "annual" ? "Take-home /yr" : "Take-home /mo";
+}
 function render() {
+  paintPeriod();
+  syncQcChips();
   const grossRaw = pm(g("st-gross").value);
   const penRaw = pm(g("st-pension").value);
   const rentRaw = pm(g("st-rent").value);
@@ -137,8 +199,8 @@ function render() {
      the rail below names the fields to check — never a silent clamp. */
   const netBad = (v: number) => !Number.isFinite(v) || v < 0;
   const netTxt = (v: number) => netBad(v) ? "Out of range" : n(v);
-  sfFig(t("st-fig"), ALL, netTxt(r.net_monthly));
-  sfFig(t("st-sub"), ALL, `Tax ${n(r.tax_monthly)}/mo · taxable ${n(r.taxable)}/yr${r.exempt ? " · EXEMPT (minimum wage)" : ""}`);
+  sfFig(t("st-fig"), ALL, netTxt(perNet(r)));
+  sfFig(t("st-sub"), ALL, `Tax ${n(stPeriod === "annual" ? r.tax_annual : r.tax_monthly)}/${stPeriod === "annual" ? "yr" : "mo"} · taxable ${n(r.taxable)}/yr${r.exempt ? " · EXEMPT (minimum wage)" : ""}`);
   sfFig(t("st-pen"), ["st-gross", "st-pension"], n(r.pension_annual));
   /* Other-reliefs receipt row (P1-6 parity tail): mirrors the Net to Gross
      page's gn-other2 row — the row rides its own field, annualised the same
@@ -178,9 +240,9 @@ function render() {
   }
   const c = payeCompare(gross, pen, nhf, rent, nhis, life, other);
   sfFig(t("st-new-tax"), ALL, n(c.new.tax_annual));
-  sfFig(t("st-new-net"), ALL, netTxt(c.new.net_monthly));
+  sfFig(t("st-new-net"), ALL, netTxt(perNet(c.new)));
   sfFig(t("st-old-tax"), ALL, n(c.old.tax_annual));
-  sfFig(t("st-old-net"), ALL, netTxt(c.old.net_monthly));
+  sfFig(t("st-old-net"), ALL, netTxt(perNet(c.old)));
   const nw = c.save_annual > 0.5, ow = c.save_annual < -0.5;
   (document.getElementById("st-row-new") as HTMLElement).className = nw ? "win" : "";
   (document.getElementById("st-row-old") as HTMLElement).className = ow ? "win" : "";
@@ -202,6 +264,11 @@ function render() {
      regime, so the tie/winner prose withholds rather than concluding over
      the "Out of range" cells beside it. */
   const cmpBad = netBad(c.new.net_monthly) || netBad(c.old.net_monthly);
+  /* S5 item 5 — the winner sentence follows the chosen period off the
+     engine's own save figures (save_annual in the per-year view,
+     save_monthly in the per-month view; the engine returns both). */
+  const saveFig = stPeriod === "annual" ? c.save_annual : c.save_monthly;
+  const saveUnit = stPeriod === "annual" ? "yr" : "mo";
   t("st-save").textContent = !grossKnown
     ? "Old vs new bands compared on your gross — enter it above."
     : cmpBad
@@ -209,8 +276,8 @@ function render() {
       : (!nw && !ow)
       ? "Both regimes leave you with the same take-home."
       : nw
-        ? `You keep ${n(c.save_monthly)}/mo more under the new bands.`
-        : `The old bands save you ${n(-c.save_monthly)}/mo vs the new bands.`;
+        ? `You keep ${n(saveFig)}/${saveUnit} more under the new bands.`
+        : `The old bands save you ${n(-saveFig)}/${saveUnit} vs the new bands.`;
   const notes: string[] = [];
   if (!(grossRaw > 0)) notes.push("Enter a monthly gross above ₦0 — take-home waits until you do.");
   if (grossRaw < 0 || penRaw < 0 || rentRaw < 0 || nhfRaw < 0) notes.push("Negative entries are treated as ₦0.");
@@ -258,6 +325,82 @@ function render() {
 }
   sfEmpty(sfIsEmpty("salary-tax-calculator", gv));
 ["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life", "st-other", "st-bonus"].forEach((id) => g(id).addEventListener("input", render));
+/* ── S5 item 2 — QUICK-CHECK CHIPS ──────────────────────────────────────────
+   WP's chips (page-salary-tax-calculator.php:217-224) jump to pre-computed
+   worked answers. Here each chip does both halves through the form's OWN
+   path: it writes the gross field — the receipt re-renders exactly as a
+   keystroke would, SAMPLE badge clearing included — then scrolls to the
+   matching worked row below. The worked figures themselves are rendered
+   server-side from the engine (see the frontmatter `wk`), never hand-typed.
+   aria-pressed tracks the TYPED gross, so the chip releases the moment the
+   field holds anything else. */
+const QC_CHIPS = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-qc-gross]"));
+function syncQcChips(): void {
+  const typed = pm(g("st-gross").value);
+  for (const b of QC_CHIPS) b.setAttribute("aria-pressed", Math.abs(typed - Number(b.dataset.qcGross)) < 1e-9 ? "true" : "false");
+}
+for (const b of QC_CHIPS) {
+  b.addEventListener("click", () => {
+    g("st-gross").value = b.dataset.qcGross as string;
+    g("st-gross").dispatchEvent(new Event("input", { bubbles: true }));
+    const target = document.getElementById(b.dataset.qcGoto as string);
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+}
+/* ── S5 item 5 — THE PERIOD TOGGLE ──────────────────────────────────────────
+   The savings-goal mode switch's grammar (buttons, not radios): the period is
+   a VIEW of the same receipt, not a number. Reset restores the seeded numbers
+   and leaves the chosen period standing. */
+const ST_PERIOD_BTNS = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-st-period]"));
+function setStPeriod(p: "monthly" | "annual"): void {
+  if (p === stPeriod) return;
+  stPeriod = p;
+  ST_PERIOD_BTNS.forEach((b) => {
+    const on = b.dataset.stPeriod === p;
+    b.classList.toggle("active", on);
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+  render();
+}
+ST_PERIOD_BTNS.forEach((b) => b.addEventListener("click", () => setStPeriod(b.dataset.stPeriod as "monthly" | "annual")));
+/* ── S5 item 4 — DEEP-LINK PREFILL ?gross= ──────────────────────────────────
+   WP reads ?gross= on this very page (page-salary-tax-calculator.php:32-42):
+   strip non-numeric, clamp 0–₦100M/month, silent fallback to the seed on
+   garbage. The law is ported with the port's own reader (pm/pmBlank — the
+   same honest-money alphabet every field uses) and the converter's F6 URL
+   mechanics (currency-converter.astro:191-237): read on load AFTER the seed
+   paint, canonicalise debounced on change, pure garbage strips the query
+   entirely — no warning, no invented figure, the share link rides the state. */
+const urlGross = (raw: string): string | null => {
+  const s = raw.trim().slice(0, 40);
+  if (s === "" || pmBlank(s)) return null;
+  const v = pm(s);
+  if (!Number.isFinite(v) || v <= 0 || v > 100000000) return null;
+  return String(v);
+};
+let urlTimer: ReturnType<typeof setTimeout> | undefined;
+function syncUrlNow(): void {
+  const q = new URLSearchParams();
+  q.set("gross", g("st-gross").value.trim().slice(0, 40));
+  history.replaceState(null, "", `${location.pathname}?${q.toString()}`);
+}
+function syncUrl(): void {
+  clearTimeout(urlTimer);
+  urlTimer = setTimeout(syncUrlNow, 600);
+}
+(function applyUrlState(): void {
+  if (!location.search) return;
+  const u = new URLSearchParams(location.search);
+  const a = urlGross(u.get("gross") || "");
+  if (a !== null) {
+    g("st-gross").value = a;
+    g("st-gross").dispatchEvent(new Event("input", { bubbles: true }));
+    syncUrlNow();
+  } else {
+    history.replaceState(null, "", location.pathname);
+  }
+})();
+g("st-gross").addEventListener("input", syncUrl);
 smartFields.register(TOOL_FIELDS["salary-tax-calculator"]);
 sfBind("salary-tax-calculator", gv);
 render();

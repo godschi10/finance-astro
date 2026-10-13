@@ -13,6 +13,26 @@ const seed = loanRepayment(LOAN_SEED.amount, LOAN_SEED.tenor, LOAN_SEED.tenor_un
    helper — a fix that only dressed the server-rendered copy would leave the live
    figure, the one a visitor actually watches change, still unformatted. */
 const aprFmt = (v: number) => new Intl.NumberFormat("en-NG", { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(v * 100) + "%";
+/* S5 item 3 — THE APR VERDICT BAND. Thresholds adopted from
+   page-loan-repayment-calculator.php:42,94-99, where WP both colours the true
+   APR and says it in words: red at apr >= 60% ("- expensive. Compare other
+   lenders."), green at apr <= 35% ("- a typical formal-lender cost."), gold
+   in between ("- elevated; check a bank rate."). These are the bands the
+   study's ranked item 4 names (A.5 row 4 / A.3 row 7), and they read this
+   page's own worked cases correctly: the ₦100,000 / 30-day / 1%-a-day app
+   loan lands near 2,334% APR (expensive), a 30%/yr reducing bank quote lands
+   at ~34.5% (typical). The band is PROSE ABOUT THE NUMBER — it never restates
+   or moves the APR figure itself, and the "Out of range" NaN guard keeps its
+   existing path with the band hidden. Colour rides the site's own
+   verdict-badge tokens (ToolShell's verdict-badge--action / --good / --warn);
+   no raw hex anywhere. */
+const aprBand = (v: number) =>
+  v >= 0.6
+    ? { cls: "verdict-badge--action", txt: "Expensive — compare other lenders." }
+    : v <= 0.35
+      ? { cls: "verdict-badge--good", txt: "A typical formal-lender cost." }
+      : { cls: "verdict-badge--warn", txt: "Elevated — check a bank rate." };
+const seedBand = aprBand(seed.apr);
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 // Related-guide card titles derive from the article records (SITE-3) — an
 // unknown slug throws at build rather than shipping a stale card.
@@ -59,6 +79,13 @@ const artTitle = await articleTitleOf();
      (amount − fee), the engine keeps its object shape PHP-parity-pinned. -->
 <div class="receipt-row" id="ln-fee-row" hidden><span>You receive (after the upfront fee)</span><b id="ln-net">—</b></div>
 <div class="receipt-row"><span>Effective annual rate (including the upfront fee when entered)</span><b id="ln-apr">{aprFmt(seed.apr)}</b></div>
+<!-- S5 item 3 — the APR verdict band: the same colour-and-words cue WP ships
+     (page-loan-repayment-calculator.php:94-99), on the site's own
+     verdict-badge tokens. It sits beside the APR it describes and never
+     restates the number. Hidden while the APR withholds ("—") or the loan is
+     out of range — a verdict on no figure is the lie this band exists to
+     prevent. -->
+<div class="receipt-row" id="ln-apr-band-row" hidden={!Number.isFinite(seed.apr)}><span>What that APR says</span><span class={`verdict-badge ${seedBand.cls}`} id="ln-apr-band">{seedBand.txt}</span></div>
 <!-- v0.7.56 (audit #2): day tenors on flat/reducing rates bill in WHOLE
      MONTHS, so the month-rounded headline and the exact-days price genuinely
      differ — the block shows both readings. v0.7.60 (S3a, fifth audit P1-2):
@@ -152,6 +179,31 @@ function paintRateUnit(): void {
 /* THE ZERO LAW: the three typed inputs are the whole engine. Any one of them
    blank and the instalment is 1% — a number the visitor never entered. */
 const ALL = ["ln-amt", "ln-tenor", "ln-rate"];
+/* S5 item 3 — the APR verdict band painter. Same thresholds as the
+   server-rendered seed (frontmatter aprBand): >= 60% expensive, <= 35%
+   typical, elevated between — WP's shipped bands. Driven off r.apr AFTER the
+   guards, and shown only while the APR figure itself is shown (every field
+   entered) — a band over a "—" APR would be a verdict on nothing. */
+/* The frontmatter twin (above, `aprBand`) cannot cross into the client scope —
+   the frontmatter's const is server-only, and referencing it here is the exact
+   `aprBand is not defined` ReferenceError the dead leg's suite caught. The
+   bands are stated once per scope, each naming the other: move a threshold in
+   BOTH, the seed band and the painted band are one contract. */
+const aprBand = (v: number): { cls: string; txt: string } =>
+  v >= 0.6
+    ? { cls: "verdict-badge--action", txt: "Expensive — compare other lenders." }
+    : v <= 0.35
+      ? { cls: "verdict-badge--good", txt: "A typical formal-lender cost." }
+      : { cls: "verdict-badge--warn", txt: "Elevated — check a bank rate." };
+function paintAprBand(apr: number): void {
+  const row = t("ln-apr-band-row");
+  if (!Number.isFinite(apr)) { row.hidden = true; return; }
+  const band = aprBand(apr);
+  row.hidden = false;
+  const badge = t("ln-apr-band");
+  badge.className = "verdict-badge " + band.cls;
+  badge.textContent = band.txt;
+}
 /* S3a item 1 (v0.7.60) — the upfront fee, read as % or ₦. A plain number is
    a PERCENT (the way lenders quote fees; the hint and the FAQ both say so);
    a ₦-prefixed value is a naira amount converted against the loan amount.
@@ -199,6 +251,7 @@ function render() {
     t("ln-tot").textContent = "—";
     t("ln-int").textContent = "—";
     t("ln-apr").textContent = "—";
+    t("ln-apr-band-row").hidden = true;
     (document.getElementById("ln-fee-row") as HTMLElement).hidden = true;
     return;
   }
@@ -214,14 +267,17 @@ function render() {
     t("ln-tot").textContent = "—";
     t("ln-int").textContent = "—";
     t("ln-apr").textContent = "—";
+    t("ln-apr-band-row").hidden = true;
     (document.getElementById("ln-fee-row") as HTMLElement).hidden = true;
     return;
   }
-  sfFig(t("ln-fig"), ALL, nn(r.installment));
-  sfFig(t("ln-sub"), ALL, `Total ${nn(r.total)} · interest ${nn(r.interest)} · effective annual rate (including the upfront fee when entered) ${aprFmt(r.apr)}`);
+  sfFig(t("ln-fig"), ALL, nn(r.installment));  sfFig(t("ln-sub"), ALL, `Total ${nn(r.total)} · interest ${nn(r.interest)} · effective annual rate (including the upfront fee when entered) ${aprFmt(r.apr)}`);
   sfFig(t("ln-tot"), ALL, nn(r.total));
   sfFig(t("ln-int"), ALL, nn(r.interest));
   sfFig(t("ln-apr"), ALL, aprFmt(r.apr));
+  /* S5 item 3 — the verdict band rides beside the APR: shown only while the
+     APR figure itself is shown (every field entered), never over a "—". */
+  paintAprBand(ALL.every((id) => !pmBlank(g(id).value)) ? r.apr : NaN);
   /* S3a item 1 — the net disbursement the APR just solved on, shown only
      while a fee is entered. It is the page's own arithmetic (amount − fee);
      blank amount with a fee entered still withholds as "—". */

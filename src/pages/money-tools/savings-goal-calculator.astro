@@ -45,6 +45,22 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field"><label for="sg-mo">Months</label><input id="sg-mo" type="number" min="1" max="600" step="1" value="24" inputmode="numeric"></div>
 <div class="field" data-cur="NGN" hidden><label for="sg-sav">I can save ₦/month</label><input id="sg-sav" type="text" value="" inputmode="decimal"><p class="hint">The monthly amount you can actually commit — the calculator answers how long it takes.</p></div>
 </div>
+<!-- RATE QUICK-PICK CHIPS (S5 item 1) — adopted from
+     page-savings-goal-calculator.php:66-74, whose rate chips are 4/6/8/10/
+     12/15%. The port's own component, same as compound-interest and the
+     inflation-savings presets (.fx-chips/.fx-chip + aria-pressed,
+     tools.css:46-69): buttons, one tap writes the rate field and re-renders
+     through the existing input path. The pressed pill tracks the TYPED rate,
+     never the last click. -->
+<div class="fx-chips" style="margin-top:10px" role="group" aria-label="Annual rate quick picks">
+<span class="hint">Rate quick picks:</span>
+<button type="button" class="fx-chip" data-sg-rate="4" aria-pressed="false">4%</button>
+<button type="button" class="fx-chip" data-sg-rate="6" aria-pressed="false">6%</button>
+<button type="button" class="fx-chip" data-sg-rate="8" aria-pressed="false">8%</button>
+<button type="button" class="fx-chip" data-sg-rate="10" aria-pressed="false">10%</button>
+<button type="button" class="fx-chip" data-sg-rate="12" aria-pressed="false">12%</button>
+<button type="button" class="fx-chip" data-sg-rate="15" aria-pressed="false">15%</button>
+</div>
 <div class="receipt">
 <p class="receipt-lbl" id="sg-lbl">Save monthly</p>
 <p class="receipt-fig" id="sg-fig" aria-live="polite">{seed.goal_reached ? "₦0 — goal reached" : `₦${n(seed.monthly)}`}</p>
@@ -53,6 +69,15 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Total at deadline</span><b id="sg-tot">₦{n(seed.total)}</b></div>
 <div class="receipt-row"><span>Interest earned</span><b id="sg-int">₦{n(seed.interest)}</b></div>
 <div class="receipt-row"><span>Effective annual yield</span><b id="sg-eff">{effFrom(15).toFixed(2)}%</b></div>
+<!-- U5 (audit-tail item 2, transferred to this leg by the manager) — the
+     post-goal projection. ONE labelled row, shown ONLY when the goal is
+     already reached: "If it just sits there at this rate → in 12 months".
+     The figure is the engine's own compoundGrowth(cur, 0, rate, 12) — the
+     existing rate continuation, no new maths and no new engine function.
+     The row ships hidden with "—" and render() resets it to exactly that on
+     every other path (empty / zero / adversarial / reset / not-yet-reached),
+     so a goal nobody reached never earns a projection. -->
+<div class="receipt-row" id="sg-postgoal-row" hidden><span>If it just sits there at this rate → in 12 months</span><b id="sg-postgoal">—</b></div>
 <p class="receipt-note" id="sg-warn" hidden aria-live="polite"></p>
 <p class="receipt-foot">Annuity-solved · monthly compounding</p>
 <!-- CALC-9 (v0.7.47): savingsCalculate() is an ordinary annuity, so every deposit
@@ -76,7 +101,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </table></div>
 </ToolShell>
 <script>
-import { savingsCalculate, savingsSchedule, savingsMonthsToGoal } from "../../lib/savings";
+import { savingsCalculate, savingsSchedule, savingsMonthsToGoal, compoundGrowth } from "../../lib/savings";
 import { formatGrouped } from "../../lib/format";
 import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
@@ -109,7 +134,30 @@ const ym = (m: number): string => {
   const ms = `${r} month${r === 1 ? "" : "s"}`;
   return y === 0 ? ms : r === 0 ? ys : `${ys} ${ms}`;
 };
+/* U5 (audit-tail item 2, transferred to this leg) — the post-goal projection
+   painter. Shown ONLY when the goal is genuinely reached, and the figure is
+   the engine's own compoundGrowth(cur, 0, rate, 12) — the existing rate
+   continuation, no new maths and no new engine function. Every other state
+   withholds: the row hides and its <b> reads "—", so a goal nobody reached
+   never earns a projection. */
+function paintPostGoal(reached: boolean, cur: number, rate: number): void {
+  const row = t("sg-postgoal-row");
+  if (!reached) {
+    row.hidden = true;
+    t("sg-postgoal").textContent = "—";
+    return;
+  }
+  const g12 = compoundGrowth(cur, 0, rate, 12);
+  row.hidden = false;
+  t("sg-postgoal").textContent = Number.isFinite(g12.future) ? nn(g12.future) : "—";
+}
 function render() {
+  /* Rate quick-pick chips (S5 item 1) — pressed state tracks the TYPED rate
+     on every path, including the early-return guards below. */
+  syncRateChips();
+  /* U5 — the post-goal projection row resets to its withheld state on EVERY
+     path; only a genuinely reached goal fills it (below). */
+  paintPostGoal(false, 0, 0);
   /* P2-1 — effective yield first: a pure function of the rate field, so it is
      never withheld by a missing TARGET or DEADLINE (only by a missing rate,
      which is the honest dependency). Going through sfFig rather than a bare
@@ -201,6 +249,10 @@ const capSfx = moCapped ? " Horizon capped at 100 years — figures price the ca
       t("sg-sub").textContent = `You hold ${nn(cur)} against a ${nn(target)} goal — nothing left to save into it.`;
       t("sg-tot").textContent = nn(cur);
       t("sg-int").textContent = nn(0);
+      /* U5 — the time mode's zero crossing is the same reached state in other
+         words (the line above just printed "0 months — goal reached"), so the
+         row appears here too, on the engine's own continuation. */
+      paintPostGoal(true, cur, rate);
       tb.innerHTML = "";
       return;
     }
@@ -270,6 +322,10 @@ const capSfx = moCapped ? " Horizon capped at 100 years — figures price the ca
   warn.hidden = !negHit && !moCapped;
   warn.textContent = ((negHit ? "Negative entries are treated as ₦0." : "") + capSfx).trim();
   sfFig(t("sg-fig"), ALL, r.goal_reached ? "₦0 — goal reached" : nn(r.monthly));
+  /* U5 — the row appears exactly where the page itself declares the goal
+     reached (the engine's own goal_reached field), and nowhere else: every
+     other path above returns through the reset at render()'s head. */
+  paintPostGoal(r.goal_reached, cur, rate);
   sfFig(t("sg-sub"), ALL, `Total ${nn(r.total)} · interest ${nn(r.interest)}`);
   sfFig(t("sg-tot"), ALL, nn(r.total));
   sfFig(t("sg-int"), ALL, nn(r.interest));
@@ -312,6 +368,20 @@ function setSgMode(m: "target" | "time"): void {
   render();
 }
 sgModeBtns.forEach((b) => b.addEventListener("click", () => setSgMode(b.dataset.sgMode as "target" | "time")));
+/* Rate quick-pick chips (S5 item 1) — the same component compound-interest
+   and inflation-savings ship: one tap writes the rate field and re-renders
+   through the existing input path; aria-pressed tracks the typed value. */
+const RATE_CHIPS = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-sg-rate]"));
+function syncRateChips(): void {
+  const typed = pm(g("sg-rate").value);
+  for (const b of RATE_CHIPS) b.setAttribute("aria-pressed", Math.abs(typed - Number(b.dataset.sgRate)) < 1e-9 ? "true" : "false");
+}
+for (const b of RATE_CHIPS) {
+  b.addEventListener("click", () => {
+    g("sg-rate").value = b.dataset.sgRate as string;
+    g("sg-rate").dispatchEvent(new Event("input", { bubbles: true }));
+  });
+}
 smartFields.register(TOOL_FIELDS["savings-goal-calculator"]);
 sfBind("savings-goal-calculator", gv);
 render();
