@@ -4,6 +4,32 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.64] — 2026-10-15 — dependency pass: esbuild clears the last LOW advisory; playwright patch; typescript 7 held with the reason on record
+
+The "update all software packages" ledger item, repo half. The box half (dnf+pip, 43 security packages
+incl. a staged kernel) ran as a separate leg and is reported there.
+
+**esbuild 0.27.7 → 0.28.2** — clears the surviving LOW advisory (GHSA-g7r4-m6w7-qqqr, arbitrary file read
+in the dev server, Windows-only — unreachable on this Linux static build, but the advisory stood).
+`npm audit`: 2 vulnerabilities → **1** (the remaining HIGH is `http-cache-semantics@4.2.0`, a transitive
+dep under astro with **no fixed release anywhere** — recorded, not hidden).
+
+**playwright 1.64.0 → 1.64.1** — lockfile-only (the package.json range already admitted it). **The Chrome
+pin law was checked, not assumed:** both versions expect chromium rev **1248** — the pin did NOT move, no
+browser was downloaded, and the suite ran against the existing chromium-1243 binary. Zero-diff cache
+inventory before/after.
+
+**typescript 7.0.2 HELD — the reason on record:** `@astrojs/check` peer range is `typescript:
+'^5.0.0 || ^6.0.0'` — 7.0.2 falls outside it, and npm would refuse or break `astro check`. No newer
+@astrojs/check exists (0.9.10 is latest; alpha/beta tags are older). **The one-line unblock:** an
+@astrojs/check release whose peer range includes `^7.0.0`, then this same gate chain re-run.
+
+**Gates on the combined tree (manager's own runs):** build exit 0 — **84 pages** (+3, exactly the two
+reader-request articles from 079b911 landing with their category page, not a drop) · **check 7/7** —
+article 147/147, vectors 94/0 (95 vectors, 3 declared royal divergences fail-guarded), independent 116/0,
+appendix-a 67/0, staleness clean, footer 64, homepage 128 · **suite 130/0/7 under the systemd shelter**
+(226s, chromium-1243).
+
 ## [0.7.63] — 2026-10-13 — Astro 5 → 7: the double-major security upgrade (PROC-2 / 7.1)
 
 `npm audit` reported 7 vulnerabilities, one CRITICAL, all on the build pipeline. Target `astro@7.3.8` —
