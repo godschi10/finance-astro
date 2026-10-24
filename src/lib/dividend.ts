@@ -10,17 +10,17 @@ export interface NgxStock {
   freq: number;
 }
 
-/** Maintained NGX table (verified 2026-09-01; indicative, not live quotes). */
+/** Maintained NGX table (verified 2026-10-01; indicative, not live quotes). */
 export function ngxDividendStocks(): NgxStock[] {
   return [
-    { name: "Dangote Cement", ticker: "DANGCEM", price: 1034.0, dps: 45.0, freq: 1 },
-    { name: "BUA Cement", ticker: "BUACEMENT", price: 316.0, dps: 10.0, freq: 1 },
-    { name: "MTN Nigeria", ticker: "MTNN", price: 779.0, dps: 41.0, freq: 2 },
-    { name: "GTCO", ticker: "GTCO", price: 128.0, dps: 11.76, freq: 1 },
-    { name: "Zenith Bank", ticker: "ZENITHBANK", price: 123.0, dps: 10.0, freq: 1 },
-    { name: "Stanbic IBTC", ticker: "STANBIC", price: 159.0, dps: 6.0, freq: 1 },
-    { name: "United Capital", ticker: "UCAP", price: 18.05, dps: 1.0, freq: 1 },
-    { name: "Nigerian Breweries", ticker: "NB", price: 22.0, dps: 0.0, freq: 1 },
+    { name: "Dangote Cement", ticker: "DANGCEM", price: 1010.0, dps: 45.0, freq: 1 },
+    { name: "BUA Cement", ticker: "BUACEMENT", price: 297.0, dps: 10.0, freq: 1 },
+    { name: "MTN Nigeria", ticker: "MTNN", price: 825.0, dps: 41.0, freq: 2 },
+    { name: "GTCO", ticker: "GTCO", price: 122.0, dps: 11.76, freq: 1 },
+    { name: "Zenith Bank", ticker: "ZENITHBANK", price: 121.50, dps: 8.75, freq: 1 },
+    { name: "Stanbic IBTC", ticker: "STANBIC", price: 160.0, dps: 6.0, freq: 1 },
+    { name: "United Capital", ticker: "UCAP", price: 16.55, dps: 1.0, freq: 1 },
+    { name: "Nigerian Breweries", ticker: "NB", price: 75.0, dps: 0.0, freq: 1 },
   ];
 }
 

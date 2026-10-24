@@ -104,7 +104,7 @@ export function maintainedTables(): MaintainedTable[] {
     {
       id: "ngx_prices",
       label: "NGX price/dividend table (dividend-calculator)",
-      verifiedOn: "2026-09-01",
+      verifiedOn: "2026-10-24",
       source: "src/lib/dividend.ts (ngxDividendStocks comment)",
     },
     {
@@ -128,8 +128,8 @@ export function maintainedTables(): MaintainedTable[] {
     {
       id: "dividend_examples",
       label: "Curated NGX dividend example chips (dividend-calculator)",
-      verifiedOn: "2026-09-01",
-      source: "src/data/dividend-examples.ts (price/DPS from src/lib/dividend.ts ngxDividendStocks, verified 2026-09-01)",
+      verifiedOn: "2026-10-24",
+      source: "src/data/dividend-examples.ts (price/DPS from src/lib/dividend.ts ngxDividendStocks, verified 2026-10-24)",
     },
     {
       id: "fx_history_seed",

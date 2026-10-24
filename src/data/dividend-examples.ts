@@ -37,7 +37,7 @@ export interface DividendExample {
 }
 
 /** Date the maintained NGX table these examples draw from was last verified. */
-const DIV_EXAMPLES_VERIFIED_ON = "2026-09-01";
+const DIV_EXAMPLES_VERIFIED_ON = "2026-10-24";
 export function dividendExamplesVerifiedOn(): string {
   return DIV_EXAMPLES_VERIFIED_ON;
 }
