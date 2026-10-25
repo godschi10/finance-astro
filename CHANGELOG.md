@@ -4,6 +4,21 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.65] — 2026-10-25 — maintained-table stamps split + PHP oracle repaired
+
+Maintained-table "verified" stamps split one-per-table so a YMYL money site never publishes a false freshness claim:
+
+- **NGX dividend table** now carries its own frozen stamp `NGX_PRICES_VERIFIED_ON = "2026-10-24"` (re-verified Oct 2024; ZENITHBANK DPS 8.75). The page-level "NGX table verified …" stamp reads that table alone — it no longer borrows the September stamp from two other tables nobody re-checked.
+- **Savings-rate** and **transfer-fee** tables keep their honest `"September 2026"` stamps (`SAVINGS_RATES_VERIFIED_ON`, `TRANSFER_FEES_VERIFIED_ON`). The shared `MAINTAINED_VERIFIED` was **NOT** bumped to October — doing so would claim October verification for tables nobody re-checked, the exact honesty defeat the frozen-stamp design exists to prevent.
+- The stray third date (`src/lib/dividend.ts` said "verified 2026-10-01" while staleness + examples said "2026-10-24") is gone. `src/lib/staleness.ts` now reads each date from the module that owns it (`NGX_PRICES_VERIFIED_ON` from `dividend.ts`, `dividendExamplesVerifiedOn()` from `dividend-examples.ts`) — exactly one source of truth per table.
+
+**PHP parity oracle repaired honestly (not hand-edited):**
+- `scripts/php-harness/vectors.json` regenerated from PHP truth (`php scripts/php-harness/vectors.php`) → 0 diverging rows out of 95 when anchored to the oracle instant.
+- `fxhist_range90_count` time-bomb fixed: PHP `gwill_fx_history_range()` cut its window off the wall clock while the TS checker anchors at a fixed instant — fresh regeneration silently wrote 44 where the committed value was 60. Fix: additive optional `$now` anchor in `gwill_fx_history_range()` (defaults to `time()`, live theme behaviour byte-identical), and `scripts/php-harness/vectors.php` passes `HIST_ORACLE_MS = 1791449911` so regeneration reproduces the committed 60.
+- `dividend_stocks` divergence declared in `DECLARED_REANCHORS` + fail-guard: the TS table was re-verified Oct 2024; the retiring PHP theme still carries September figures. Intentional, now proven by the gate instead of hidden by a hand-edit.
+
+Gates on the combined tree (manager's own runs): `npm run check` → **7/7** · `npm run build` → exit 0, **84 pages** · `npm run test:calc` → **130/0/7**. Built dividend page serves "NGX table verified 2026-10-24" with no "September 2026"; savings-rate + transfer pages still serve honest "September 2026".
+
 ## [0.7.64] — 2026-10-15 — dependency pass: esbuild clears the last LOW advisory; playwright patch; typescript 7 held with the reason on record
 
 The "update all software packages" ledger item, repo half. The box half (dnf+pip, 43 security packages

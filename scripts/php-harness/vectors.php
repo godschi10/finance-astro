@@ -146,9 +146,10 @@ $base_ts = strtotime( '2026-06-01' );
 for ( $i = 0; $i < 100; $i++ ) {
 	$pts[] = array( 'date' => gmdate( 'Y-m-d', $base_ts + $i * 86400 ), 'ngn' => 1400.0 + $i * 1.5 + ( $i % 7 ) * 2.0 );
 }
+$HIST_ORACLE_MS = 1791449911; // 2026-10-08T08:58:31Z — MUST mirror HIST_ORACLE_MS in scripts/vectors-check.mjs
 $rec( 'fxhist_summary', gwill_fx_history_summary( $pts ) );
-$rec( 'fxhist_range_count', count( gwill_fx_history_range( $pts, 30 ) ) );
-$rec( 'fxhist_range90_count', count( gwill_fx_history_range( $pts, 90 ) ) );
+$rec( 'fxhist_range_count', count( gwill_fx_history_range( $pts, 30, $HIST_ORACLE_MS ) ) );
+$rec( 'fxhist_range90_count', count( gwill_fx_history_range( $pts, 90, $HIST_ORACLE_MS ) ) );
 $rec( 'fxhist_single', gwill_fx_history_summary( array( array( 'date' => '2026-09-01', 'ngn' => 1482.0 ) ) ) );
 
 // ── savings-rate table ──

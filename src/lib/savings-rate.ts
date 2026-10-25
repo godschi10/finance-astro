@@ -2,7 +2,10 @@
 // gwill_savings_rate_data(). MAINTAINED table (verified September 2026;
 // marketing figures, indicative not live quotes). Single-edit source.
 // Tested vs PHP vectors.
-import { maintainedVerified } from "./maintained";
+
+// This table's own frozen verification stamp. The table was not re-verified
+// with the NGX table on 2026-10-24, so it must keep its honest month stamp.
+export const SAVINGS_RATES_VERIFIED_ON = "September 2026";
 
 export interface SavingsRateRow {
   provider: string;
@@ -31,7 +34,7 @@ export function savingsRateData(): SavingsRateRow[] {
 
 /** Freshness stamp ("verified …", never a live quote). */
 export function savingsRateVerified(): string {
-  return maintainedVerified();
+  return SAVINGS_RATES_VERIFIED_ON;
 }
 
 /* ── PER-ROW PROVENANCE (CALC-7, 2026-10-09) ────────────────────────────────
@@ -49,7 +52,7 @@ export function savingsRateVerified(): string {
  * provenance still lives in this one file, the single-edit source.
  *
  * DATES ARE NOT INVENTED. Every row carries "2026-09" — the month this table
- * already claimed (MAINTAINED_VERIFIED, "September 2026"; CHANGELOG 0.6.7
+ * already claimed (SAVINGS_RATES_VERIFIED_ON, "September 2026"; CHANGELOG 0.6.7
  * records the ruling: "Savings-rate 'verified September 2026' STAYS — it is a
  * human-maintained marketing table, the stamp is honest and not
  * build-fetchable"). The repo carries no finer date, so no finer date is

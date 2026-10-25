@@ -4,7 +4,10 @@
 // MAINTAINED (verified September 2026); the FX base is injected by the
 // caller (live rates client-side, snapshot at build time). Tested vs PHP vectors.
 import { fxCurrencies, FX_DEFAULT_NGN_USD, FX_PARALLEL_SPREAD_POINT } from "./fx";
-import { maintainedVerified } from "./maintained";
+
+// This table's own frozen verification stamp. The fee/markup model was not
+// re-verified with the NGX table on 2026-10-24, so it keeps its honest stamp.
+export const TRANSFER_FEES_VERIFIED_ON = "September 2026";
 
 export interface TransferProvider {
   id: string;
@@ -156,5 +159,5 @@ export const TRANSFER_SEED = { amount: 100000, source: "NGN", dest: "USD" };
 
 /** Freshness stamp for the maintained fee model (never a live quote). */
 export function transferVerified(): string {
-  return maintainedVerified();
+  return TRANSFER_FEES_VERIFIED_ON;
 }

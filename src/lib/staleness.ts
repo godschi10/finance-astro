@@ -27,6 +27,8 @@
  * favourable to the table, and therefore the honest one: we never claim a table
  * is fresher than the coarsest date it actually recorded. */
 import { MAINTAINED_VERIFIED } from "./maintained";
+import { NGX_PRICES_VERIFIED_ON } from "./dividend";
+import { dividendExamplesVerifiedOn } from "../data/dividend-examples";
 import { FX_PARALLEL_VERIFIED_ON, FX_PARALLEL_SPREAD_RANGE } from "./fx";
 
 /** Days after which a maintained table must have been re-checked. */
@@ -104,8 +106,8 @@ export function maintainedTables(): MaintainedTable[] {
     {
       id: "ngx_prices",
       label: "NGX price/dividend table (dividend-calculator)",
-      verifiedOn: "2026-10-24",
-      source: "src/lib/dividend.ts (ngxDividendStocks comment)",
+      verifiedOn: NGX_PRICES_VERIFIED_ON,
+      source: "src/lib/dividend.ts (NGX_PRICES_VERIFIED_ON — single source of truth)",
     },
     {
       id: "savings_rates",
@@ -128,8 +130,8 @@ export function maintainedTables(): MaintainedTable[] {
     {
       id: "dividend_examples",
       label: "Curated NGX dividend example chips (dividend-calculator)",
-      verifiedOn: "2026-10-24",
-      source: "src/data/dividend-examples.ts (price/DPS from src/lib/dividend.ts ngxDividendStocks, verified 2026-10-24)",
+      verifiedOn: dividendExamplesVerifiedOn(),
+      source: "src/data/dividend-examples.ts (dividendExamplesVerifiedOn — single source of truth)",
     },
     {
       id: "fx_history_seed",

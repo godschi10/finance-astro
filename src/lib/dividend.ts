@@ -1,6 +1,9 @@
 // Dividend/ROI estimator — TS port of inc/dividend-estimator.php (NGX,
 // forward DRIP/cash total-return projection). Tested vs PHP vectors.
-import { MAINTAINED_VERIFIED } from "./maintained";
+// This table's own frozen verification stamp. Only this table's data may be
+// re-verified independently; do not reuse the retiring PHP theme's shared
+// maintained stamp here.
+export const NGX_PRICES_VERIFIED_ON = "2026-10-24";
 
 export interface NgxStock {
   name: string;
@@ -10,7 +13,7 @@ export interface NgxStock {
   freq: number;
 }
 
-/** Maintained NGX table (verified 2026-10-01; indicative, not live quotes). */
+/** Maintained NGX table (verified 2026-10-24; indicative, not live quotes). */
 export function ngxDividendStocks(): NgxStock[] {
   return [
     { name: "Dangote Cement", ticker: "DANGCEM", price: 1010.0, dps: 45.0, freq: 1 },
@@ -25,7 +28,7 @@ export function ngxDividendStocks(): NgxStock[] {
 }
 
 export function dividendVerified(): string {
-  return MAINTAINED_VERIFIED;
+  return NGX_PRICES_VERIFIED_ON;
 }
 
 export interface DividendYear {

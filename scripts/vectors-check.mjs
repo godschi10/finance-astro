@@ -257,7 +257,15 @@ const DECLARED_ADDITIVE = new Set(["gross_full_250k", "gross_full_60k_exemptzone
 // comparing against the PHP oracle snapshot (which pins the bare 1.045 street
 // premium) and is asserted explicitly, against the maintained constant, in the
 // re-anchor block at the foot of this file. See CHANGELOG 0.7.58 Divergences.
-const DECLARED_REANCHORS = new Set(["fx_parallel", "transfer_providers_from", "amount_tokens_100"]);
+const DECLARED_REANCHORS = new Set([
+  "fx_parallel",
+  "transfer_providers_from",
+  "amount_tokens_100",
+  // dividend_stocks: TS NGX table re-verified 2026-10-24; the PHP theme still
+  // carries September figures. Declared divergence — asserted explicitly below
+  // instead of compared against the stale oracle snapshot.
+  "dividend_stocks",
+]);
 for (const [name, actual] of cases) {
   if (!(name in byName)) { missing.push(name); continue; }
   if (DECLARED_REANCHORS.has(name)) continue; // asserted explicitly below
@@ -404,7 +412,33 @@ const extra = Object.keys(byName).filter((n) => !cases.some(([c]) => c === n) &&
   else pass++;
   console.log("DECLARED DIVERGENCE transfer_from_ng: the PHP oracle snapshot multiplies the street premium INTO the P2P payout (the $78.51-class defect, fifth audit A5 [Certain]); the King's P0-1 order (2026-10-11) corrects the direction — the naira divides by the higher ₦/$ street rate, P2P below the official-rate payout. Stale PHP expectation not asserted; corrected values + direction fail-guarded. See CHANGELOG 0.7.57 Divergences.");
 }
-// ── DECLARED RE-ANCHORS (fifth audit P1-7, v0.7.58) ─────────────────────────
+// ── DECLARED DIVERGENCE (v0.7.64, manager fold 634373a, 2026-10-24) ──────────
+// dividend_stocks: the TS NGX table was re-verified on 2026-10-24 against
+// TinyFish/MansaMarkets (ZENITHBANK DPS 8.75). The retiring PHP theme
+// (/home/opc/projects/gwill-finance-theme, separate repo) still carries the
+// September figures (DANGCEM 1034/DPS45 … ZENITHBANK 123/DPS10). That is a
+// GENUINE, intentional divergence — the tables were checked on different days.
+// The oracle snapshot therefore stops comparing this leaf verbatim; instead
+// the corrected TS table is asserted here with a fail-guard so the gate
+// proves the Oct-24 values instead of hiding a hand-edit (see the CHANGELOG
+// Divergences entry and git history for the prior hand-edit defect).
+{
+  const a = D.ngxDividendStocks();
+  const expected = [
+    { name: "Dangote Cement", ticker: "DANGCEM", price: 1010.0, dps: 45.0, freq: 1 },
+    { name: "BUA Cement", ticker: "BUACEMENT", price: 297.0, dps: 10.0, freq: 1 },
+    { name: "MTN Nigeria", ticker: "MTNN", price: 825.0, dps: 41.0, freq: 2 },
+    { name: "GTCO", ticker: "GTCO", price: 122.0, dps: 11.76, freq: 1 },
+    { name: "Zenith Bank", ticker: "ZENITHBANK", price: 121.50, dps: 8.75, freq: 1 },
+    { name: "Stanbic IBTC", ticker: "STANBIC", price: 160.0, dps: 6.0, freq: 1 },
+    { name: "United Capital", ticker: "UCAP", price: 16.55, dps: 1.0, freq: 1 },
+    { name: "Nigerian Breweries", ticker: "NB", price: 75.0, dps: 0.0, freq: 1 },
+  ];
+  const r = cmp(a, expected, "dividend_stocks[corrected]");
+  if (r) { fail++; console.log(`FAIL ${r}`); }
+  else pass++;
+  console.log("DECLARED DIVERGENCE dividend_stocks: TS NGX table re-verified 2026-10-24 (ZENITHBANK DPS 8.75); retiring PHP theme still carries September figures — intentional divergence, corrected values asserted. See CHANGELOG 0.7.64 Divergences.");
+}
 // The three vectors above stopped comparing against the PHP oracle because the
 // oracle snapshot pins the bare 1.045 street premium. They are NOT dropped —
 // each is asserted here against the maintained range's point estimate, so a
