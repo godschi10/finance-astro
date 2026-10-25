@@ -4,6 +4,15 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
+## [0.7.66] — 2026-10-25 — dividend page: last hardcoded "September 2026" copy removed
+
+Caught during manager verification of 0.7.65: the dividend page's own FAQ answer still hardcoded "…indicative figures last verified in September 2026", so the same page printed **2026-10-24** in its chip and **September 2026** in its FAQ — the exact one-page-two-dates defect 0.7.65 was meant to end, surviving in a string the stamp-plumbing pass never reached.
+
+- The FAQ answer now interpolates `dividendVerified()` at build time — the page reads the NGX table's own stamp, one source of truth.
+- Two stale code comments (`verified 2026-09-01`) corrected to `2026-10-24`.
+
+Verified on the built output: `dist/money-tools/dividend-calculator/index.html` serves **0** occurrences of "September 2026" and **2** of "2026-10-24". `npm run check` 7/7 · `npm run build` 84 pages.
+
 ## [0.7.65] — 2026-10-25 — maintained-table stamps split + PHP oracle repaired
 
 Maintained-table "verified" stamps split one-per-table so a YMYL money site never publishes a false freshness claim:
