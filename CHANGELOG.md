@@ -1,8 +1,32 @@
+## [0.7.68] - 2026-10-26
+
+### Changed
+- Brand mark: header and footer updated to `₦ gwillchijioke` per brand identity v1.0
+- Gates: header/footer fidelity contracts updated to pin the corrected mark
+
 # Changelog
 
 All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
+
+## [0.7.67] — 2026-10-26 — audit-corpus re-run fixes: the visible `&#039;` entity, stale copy, hub/manifest copy, repo-hygiene paths
+
+The read-only QA sweep of the whole audit corpus against v0.7.66 found the remaining defects; this release fixes the confirmed ones. The sweep's own verdict is PARTIAL (3 areas out of its time budget, named honestly in its report) — nothing here is a guess.
+
+**The reader-visible entity bug (P1, SITE-7 / P1-4#1).** Seven tool pages printed the literal text `&#039;` where an apostrophe was meant (e.g. "a dividend stock&#039;s future value"). Cause: the long-form `copy={[[…]]}` prose strings carried the 6-character token `&#039;`; Astro escapes the `&`, so the served HTML was `&amp;#039;` and the browser showed the raw entity. The FAQ blocks on the same pages already used a plain `'` and rendered correctly. Fixed by replacing the literal `&#039;` token with `'` in the seven prose arrays — 16 occurrences across 7 pages. The Oct-11 master list had closed this finding as "does not reproduce" on a 4-page sample; a dist-wide sweep proves it reproduced on seven.
+
+**Stale inflation copy (P1, P1-3 copy half).** The naira-value page's prose still told readers "Recent Nigerian inflation has run 20-30%". Replaced with the dated, sourced figures the page's own FAQ already uses (NBS Aug-2026 national headline 15.39%, Lagos 23.68%). **The 24% default is unchanged** — that is a King-held decision, and this release touches copy only.
+
+**Other copy fixes:** the crypto page's dev-voice sentences removed; the 50-30-20 page's internal jargon "— cold, this copies our example" reworded to plain English (markup + both script assignments kept identical); the naira-value FAQ question reworded to ask about the label the UI actually shows ("Buying power lost"); the rate-history Base selector's "(more coming)" dropped; a missing full stop restored on the amount pages.
+
+**Hub & manifest copy:** the exchange-rate-history card description no longer claims the chart "starts empty" (v0.7.62 seeded 12 build-time reference points); two duplicated emojis in `tool-manifest.ts` resolved so every tool has a distinct one; the repeated "Free · no sign-up" badge dropped from all 16 hub cards and stated once in the hub header.
+
+**Repo hygiene (PROC-3 tail).** Internal absolute paths (`/home/opc/…`, `/var/www/…`) stripped from the shipping source comments across 13 files. The `docs/**` path set and any git-history rewrite are **left untouched — King's call, not an agent's**.
+
+**Scope deviation, on record:** the hygiene leg's brief was comment-only. It also made four behaviour-preserving portability changes (`vectors.php`, `ship-pages.sh`, `merge-proof.mjs`, `port-posts.py` — absolute paths → `$HOME` / `__file__`-relative, identical on this box). Accepted only after the manager verified each: syntax checks clean, and `php scripts/php-harness/vectors.php` still regenerates `vectors.json` **byte-identically** (PHP oracle frozen, `HIST_ORACLE_MS` and `DECLARED_REANCHORS` untouched).
+
+**Gates (manager's own runs):** `check` **7/7** · `build` **84 pages** · `test:calc` **130/0/7**. Entity sweep on built output: **0**. `grep /home/opc|/var/www src/ scripts/` → empty.
 
 ## [0.7.66] — 2026-10-25 — dividend page: last hardcoded "September 2026" copy removed
 

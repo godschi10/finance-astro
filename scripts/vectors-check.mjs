@@ -415,7 +415,7 @@ const extra = Object.keys(byName).filter((n) => !cases.some(([c]) => c === n) &&
 // ── DECLARED DIVERGENCE (v0.7.64, manager fold 634373a, 2026-10-24) ──────────
 // dividend_stocks: the TS NGX table was re-verified on 2026-10-24 against
 // TinyFish/MansaMarkets (ZENITHBANK DPS 8.75). The retiring PHP theme
-// (/home/opc/projects/gwill-finance-theme, separate repo) still carries the
+// (the retiring PHP theme checkout, separate repo) still carries the
 // September figures (DANGCEM 1034/DPS45 … ZENITHBANK 123/DPS10). That is a
 // GENUINE, intentional divergence — the tables were checked on different days.
 // The oracle snapshot therefore stops comparing this leaf verbatim; instead

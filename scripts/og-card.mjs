@@ -2,7 +2,7 @@
 // No file I/O, no child_process, no network. gen-og.mjs owns rasterising.
 //
 // LEG OG-C. Rewritten to the shipped coordinate contract:
-//   /home/opc/work/research-notes/og-card-design-spec.md   (the spec)
+//   the OG card design spec (og-card-design-spec)
 //   proofs: og-brand-preview.svg · og-tool-preview.svg · og-article-preview.svg
 // Every number below cites its spec section; nothing here is tuned by eye.
 //

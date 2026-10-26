@@ -1,6 +1,6 @@
 /* ==========================================================================
    HOME CSS EXTRACT, every home-page rule from the theme stylesheet
-   Source of truth : /home/opc/projects/gwill-finance-theme/style.css
+   Source of truth : the PHP theme's style.css
    Theme           : GWill Finance v1.13.39 (bespoke WordPress theme)
    Scope           : PRIMARY = every rule whose selector mentions a class or
                      id emitted by front-page.php, by the card partial it
