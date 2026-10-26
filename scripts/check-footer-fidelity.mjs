@@ -46,7 +46,7 @@ const checks = [
   // corrected brand string (the SITE-1 precedent below). The .fnet network
   // line is NOT part of this change — it names the gwillchijioke.com DOMAIN
   // family, not the brand, and stays verbatim.
-  ["brand lockup .flogo .n + .nm (both footers)", count(footer, 'class="flogo"') === 2 && count(footer, '<span class="n">₦</span><span class="nm">GWill Finance</span>') === 2],
+  ["brand lockup .flogo .n + .nm (both footers)", count(footer, 'class="flogo"') === 2 && count(footer, '<span class="n">₦</span><span class="nm">gwillchijioke</span>') === 2],
   ["blurb .ftag in both footers (mobile keeps WP inline size)", count(footer, 'class="ftag"') === 2 && has(footer, 'style="margin-top:4px;font-size:11px"')],
   ["network line .fnet", count(footer, 'class="fnet"') === 1 && has(footer, "Part of the gwillchijioke.com network")],
   ["social nav .fsoc x2 (desktop + mobile, mobile keeps WP inline margin)", count(footer, 'class="fsoc"') === 2 && has(footer, 'style="margin:16px 0"')],

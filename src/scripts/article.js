@@ -3,7 +3,7 @@
  *
  * A faithful port of everything the WordPress theme runs on a single post.
  * Every block below cites its provenance as `file:line` against the theme
- * source at /home/opc/projects/gwill-finance-theme (theme v1.13.39, git HEAD
+ * source in the PHP theme checkout (theme v1.13.39, git HEAD
  * fadf888; the live `main.js?ver=1.13.39` bytes were diff-verified identical
  * to the file on disk, see 03-article-js.md header):
  *

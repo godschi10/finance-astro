@@ -3,7 +3,7 @@
 #
 # Pipeline reality: `npm run build` renders 78 static pages to dist/ (gitignored).
 # GitHub Pages serves them from the `pages-dist` branch checkout, which lives as
-# a SEPARATE clone (default /home/opc/work/finance-astro-pages) — this repo's
+# a SEPARATE clone (default: the finance-astro-pages checkout) — this repo's
 # own branch is never pushed to Pages. This script: build → rsync → commit →
 # push → poll the Pages build → curl-probe the served bytes.
 #
@@ -11,12 +11,12 @@
 #   e.g. scripts/ship-pages.sh 0.7.15 "portability leg A: toolchain + manifest"
 # Commit lands as: v0.7.15 — portability leg A: toolchain + manifest
 #
-# Env: PAGES_CHECKOUT (default /home/opc/work/finance-astro-pages).
+# Env: PAGES_CHECKOUT (default: the finance-astro-pages checkout).
 # The MANAGER runs this. Do not run it from a worker leg.
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-PAGES_CHECKOUT="${PAGES_CHECKOUT:-/home/opc/work/finance-astro-pages}"
+PAGES_CHECKOUT="${PAGES_CHECKOUT:-$HOME/work/finance-astro-pages}"
 GH_REPO="godschi10/finance-astro"
 SITE="https://godschi10.github.io/finance-astro"
 

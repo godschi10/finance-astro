@@ -190,7 +190,7 @@ export function amountTokens(
   const live =
     `${amountFmt(d.amount, d.from)} converts to ${amountFmt(d.converted, d.to)}` +
     ` at the current mid-market rate (1 ${d.from} = ${amountRate(d.unit_rate, d.to)}).`;
-  const note = "the figure is computed from the same daily reference rate as the main converter, stamped with its build time";
+  const note = "the figure is computed from the same daily reference rate as the main converter, stamped with its build time.";
 
   const sibLinks = amountSiblings(slug).map(
     (s) => `<a href="${pageUrl(s)}">${amountSeo(s, CFG[s]).h1}</a>`,

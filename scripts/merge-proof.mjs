@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /* merge-proof.mjs — one-off live-DOM proof for the 50-30-20 × allocator merge.
  * Own Chrome (free CDP port, never 9222/9333), own static server on a free port,
- * 390px viewport, both themes. Prints PASS/FAIL lines + writes screenshots. */
+ * 390px viewport, both themes. Prints PASS/FAIL lines + writes screenshots.
+ * Outputs go to the merge-503020-2026-10-07 proof dir (research notes). */
 import { spawn } from "node:child_process";
 import { createServer } from "node:http";
 import { readFile, stat, writeFile, mkdir } from "node:fs/promises";
@@ -15,7 +16,7 @@ import WebSocket from "ws";
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = dirname(here);
 const root = process.env.PROOF_ROOT || join(repo, "dist");
-const OUT = "/home/opc/work/research-notes/merge-503020-2026-10-07";
+const OUT = process.env.MERGE_PROOF_OUT || join(process.env.HOME || os.homedir(), "work/research-notes/merge-503020-2026-10-07");
 mkdirSync(OUT, { recursive: true });
 
 const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".mjs": "text/javascript", ".css": "text/css", ".png": "image/png", ".xml": "text/xml" };
@@ -72,7 +73,7 @@ async function ev(expression) {
 }
 const say = (ok, label, extra = "") => console.log(`${ok ? "PASS" : "FAIL"}  ${label}${extra ? " — " + extra : ""}`);
 
-const CHROME = process.env.CHROME_BIN || "/home/opc/.cache/ms-playwright/chromium-1243/chrome-linux/chrome";
+const CHROME = process.env.CHROME_BIN || join(process.env.HOME || os.homedir(), ".cache/ms-playwright/chromium-1243/chrome-linux/chrome");
 const main = async () => {
   const httpPort = await freePort();
   const cdpPort = await freeCdp();

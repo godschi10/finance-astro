@@ -2,7 +2,7 @@
 // Reference-vector generator: runs every PHP engine, prints JSON to stdout.
 error_reporting( E_ALL & ~E_DEPRECATED );
 require __DIR__ . '/stubs.php';
-// The theme root. This used to be hardcoded to '/home/ubuntu/gwill-finance-theme/inc/',
+// The theme root. This used to be hardcoded to an author-machine path,
 // a path from the original author's machine that does not exist here, so the
 // oracle generator died on require_once and could not be regenerated at all —
 // which is exactly why the C1 emergency-fund bug sat unfixed: regenerating
@@ -11,7 +11,7 @@ require __DIR__ . '/stubs.php';
 $INC = getenv( 'GWILL_INC' );
 if ( ! $INC ) {
 	foreach ( array(
-		'/home/opc/projects/gwill-finance-theme/inc/',
+		getenv( 'HOME' ) . '/projects/gwill-finance-theme/inc/',
 		'/home/ubuntu/gwill-finance-theme/inc/',
 	) as $candidate ) {
 		if ( is_dir( $candidate ) ) { $INC = $candidate; break; }

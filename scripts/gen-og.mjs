@@ -7,7 +7,7 @@
 // the pages.
 //
 // Card geometry and every coordinate live in scripts/og-card.mjs, which is a
-// literal implementation of /home/opc/work/research-notes/og-card-design-spec.md.
+// literal implementation of the OG card design spec (og-card-design-spec).
 // This file only decides WHAT goes on each card, and it reads that from the real
 // sources — nothing is invented:
 //

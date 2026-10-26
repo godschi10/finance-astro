@@ -2,8 +2,9 @@
 """port-posts: import the 10 canonical live WP posts as port markdown articles."""
 import json, re, html as H, os, sys
 
-WP = "/home/opc/work/finance-truth/posts"
-ROOT = "/home/opc/work/finance-astro"
+HOME = os.path.expanduser("~")
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+WP = os.environ.get("WP_POSTS_DIR") or os.path.join(HOME, "work", "finance-truth", "posts")
 ART = f"{ROOT}/src/content/articles"
 UP = f"{ROOT}/public/wp-content/uploads"
 
