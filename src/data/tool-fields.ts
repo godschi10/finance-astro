@@ -286,8 +286,13 @@ export function sfFig(el: HTMLElement | null, deps: readonly string[], real: str
     el.removeAttribute(NO);
     el.style.color = "";
     /* Trust badge injection — opt-in via fourth arg, or auto-compute when
-       omitted (trust === undefined). Pass trust=false to suppress. */
-    if (trust !== false) {
+       omitted (trust === undefined). Pass trust=false to suppress. Never inject
+       a badge on a withheld figure (real === SF_DASH): "—" means nothing was
+       entered, so there is no value to label as example/computed/user. */
+    if (real === SF_DASH) {
+      const existing = el.parentElement?.querySelector(".trust-badge[data-trust]");
+      if (existing) existing.remove();
+    } else if (trust !== false) {
       const kind = trust ?? computeTrustKind(deps, empty);
       injectTrustBadge(el, kind);
     }
