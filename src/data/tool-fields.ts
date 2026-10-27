@@ -292,7 +292,7 @@ export function sfFig(el: HTMLElement | null, deps: readonly string[], real: str
     if (real === SF_DASH) {
       const existing = el.parentElement?.querySelector(".trust-badge[data-trust]");
       if (existing) existing.remove();
-    } else if (trust !== false) {
+    } else if (trust !== undefined && trust !== false) {
       const kind = trust ?? computeTrustKind(deps, empty);
       injectTrustBadge(el, kind);
     }
