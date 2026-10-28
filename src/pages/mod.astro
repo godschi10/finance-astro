@@ -318,47 +318,138 @@ const POST_NAMES = Object.fromEntries(
         var el = document.createElement("article");
         el.className = "mod-item";
         el.setAttribute("data-id", c.id);
+
+        /* mod-item-head */
+        var head = document.createElement("div");
+        head.className = "mod-item-head";
+
+        var ava = document.createElement("span");
+        ava.className = "mod-ava";
+        ava.setAttribute("data-author", String(c.author == null ? "" : c.author));
+        ava.textContent = initials(c.author);
+
+        var top = document.createElement("div");
+        top.className = "mod-item-top";
+        var who = document.createElement("span");
+        who.className = "who";
+        who.textContent = String(c.author == null ? "" : c.author);
+        var chipSlot = document.createElement("span");
+        chipSlot.className = "chip-slot";
+        var chip = document.createElement("span");
+        chip.className = "mod-chip " + esc(c.status);
+        chip.textContent = String(c.status == null ? "" : c.status);
+        chipSlot.appendChild(chip);
+        top.appendChild(who);
+        top.appendChild(chipSlot);
+
+        head.appendChild(ava);
+        head.appendChild(top);
+        el.appendChild(head);
+
+        /* mod-where */
+        var where = document.createElement("p");
+        where.className = "mod-where";
+        var whereA = document.createElement("a");
+        var whereHref = postUrl(c.post_slug, c.id);
+        whereA.setAttribute("href", whereHref);
+        whereA.setAttribute("target", "_blank");
+        whereA.setAttribute("rel", "noopener");
+        whereA.textContent = String(postName(c.post_slug));
+        where.appendChild(whereA);
+        el.appendChild(where);
+
+        /* mod-meta (created + spam + parent) */
+        var meta1 = document.createElement("p");
+        meta1.className = "mod-meta";
+        meta1.appendChild(document.createTextNode(String(c.created == null ? "" : c.created)));
+        var sep1 = document.createElement("span");
+        sep1.className = "sep";
+        sep1.textContent = "·";
+        meta1.appendChild(sep1);
+        meta1.appendChild(document.createTextNode(" spam " + c.spam_score + "%"));
+        if (c.parent_id) {
+          var sep2 = document.createElement("span");
+          sep2.className = "sep";
+          sep2.textContent = "·";
+          meta1.appendChild(sep2);
+          meta1.appendChild(document.createTextNode(" reply to #" + c.parent_id));
+        }
+        el.appendChild(meta1);
+
+        /* mod-body */
+        var body = document.createElement("p");
+        body.className = "mod-body";
+        body.textContent = String(c.content == null ? "" : c.content);
+        el.appendChild(body);
+
+        /* reactions */
         var rx = c.reactions || {};
-        var rxHtml = ["like", "heart", "fire", "laugh"]
-          .filter(function (k) { return rx[k] > 0; })
-          .map(function (k) { return '<span class="mod-rx" title="' + k + '">' + rxSvg(k) + rx[k] + "</span>"; })
-          .join(" ");
-        el.innerHTML =
-          '<div class="mod-item-head">' +
-            '<span class="mod-ava" data-author="' + esc(c.author) + '">' + esc(initials(c.author)) + "</span>" +
-            '<div class="mod-item-top">' +
-              '<span class="who">' + esc(c.author) + "</span>" +
-              '<span class="chip-slot"><span class="mod-chip ' + esc(c.status) + '">' + esc(c.status) + "</span></span>" +
-            "</div>" +
-          "</div>" +
-          '<p class="mod-where"><a href="' + esc(postUrl(c.post_slug, c.id)) + '" target="_blank" rel="noopener">' +
-            esc(postName(c.post_slug)) + "</a></p>" +
-          '<p class="mod-meta">' + esc(c.created) +
-            '<span class="sep">·</span> spam ' + c.spam_score + "%" +
-            (c.parent_id ? '<span class="sep">·</span> reply to #' + c.parent_id : "") +
-          "</p>" +
-          '<p class="mod-body">' + esc(c.content) + "</p>" +
-          (rxHtml ? '<p class="mod-meta">' + rxHtml + "</p>" : "") +
-          '<div class="mod-acts"></div>' +
-          '<div class="mod-reply">' +
-            '<textarea aria-label="Reply as G-will Chijioke" placeholder="Reply as G-will Chijioke…"></textarea>' +
-            '<div class="mod-acts" style="margin-top:8px">' +
-              '<button class="mod-act primary" data-act="post-reply">Post Reply</button>' +
-              '<button class="mod-act" data-act="close-reply">Cancel</button>' +
-            "</div>" +
-            '<p class="mod-note" hidden></p>' +
-          "</div>";
+        var rxKinds = ["like", "heart", "fire", "laugh"];
+        var hasRx = rxKinds.some(function (k) { return rx[k] > 0; });
+        if (hasRx) {
+          var metaRx = document.createElement("p");
+          metaRx.className = "mod-meta";
+          var rxAdded = 0;
+          rxKinds.forEach(function (k) {
+            if (rx[k] > 0) {
+              if (rxAdded > 0) {
+                metaRx.appendChild(document.createTextNode(" "));
+              }
+              var rxSpan = document.createElement("span");
+              rxSpan.className = "mod-rx";
+              rxSpan.setAttribute("title", k);
+              rxSpan.innerHTML = rxSvg(k);
+              rxSpan.appendChild(document.createTextNode(String(rx[k])));
+              metaRx.appendChild(rxSpan);
+              rxAdded++;
+            }
+          });
+          el.appendChild(metaRx);
+        }
+
+        /* mod-acts */
+        var actsDiv = document.createElement("div");
+        actsDiv.className = "mod-acts";
+        el.appendChild(actsDiv);
+
+        /* mod-reply */
+        var reply = document.createElement("div");
+        reply.className = "mod-reply";
+        var ta = document.createElement("textarea");
+        ta.setAttribute("aria-label", "Reply as G-will Chijioke");
+        ta.setAttribute("placeholder", "Reply as G-will Chijioke…");
+        reply.appendChild(ta);
+        var replyActs = document.createElement("div");
+        replyActs.className = "mod-acts";
+        replyActs.setAttribute("style", "margin-top:8px");
+        var postReplyBtn = document.createElement("button");
+        postReplyBtn.className = "mod-act primary";
+        postReplyBtn.setAttribute("data-act", "post-reply");
+        postReplyBtn.textContent = "Post Reply";
+        var closeReplyBtn = document.createElement("button");
+        closeReplyBtn.className = "mod-act";
+        closeReplyBtn.setAttribute("data-act", "close-reply");
+        closeReplyBtn.textContent = "Cancel";
+        replyActs.appendChild(postReplyBtn);
+        replyActs.appendChild(closeReplyBtn);
+        reply.appendChild(replyActs);
+        var note = document.createElement("p");
+        note.className = "mod-note";
+        note.hidden = true;
+        reply.appendChild(note);
+        el.appendChild(reply);
+
         /* Avatar: gravatar if the row carries one; initials disc is the
            honest fallback (onerror swaps the img out). */
         if (c.avatar) {
-          var ava = el.querySelector(".mod-ava");
+          var avaEl = el.querySelector(".mod-ava");
           var img = document.createElement("img");
           img.src = c.avatar;
           img.alt = "";
           img.loading = "lazy";
           img.onerror = function () { img.remove(); };
-          ava.textContent = "";
-          ava.appendChild(img);
+          avaEl.textContent = "";
+          avaEl.appendChild(img);
         }
         buildActions(el, c);
         return el;
@@ -504,9 +595,20 @@ const POST_NAMES = Object.fromEntries(
             var b = document.createElement("button");
             b.className = "mod-tile " + (t.cls || "");
             b.type = "button";
-            b.innerHTML = '<span class="n">' + t.n + "</span>" +
-              '<span class="l">' + esc(t.l) + "</span>" +
-              (t.go ? '<span class="go">' + t.go + "</span>" : "");
+            var n = document.createElement("span");
+            n.className = "n";
+            n.textContent = String(t.n == null ? "" : t.n);
+            var l = document.createElement("span");
+            l.className = "l";
+            l.textContent = String(t.l == null ? "" : t.l);
+            b.appendChild(n);
+            b.appendChild(l);
+            if (t.go) {
+              var go = document.createElement("span");
+              go.className = "go";
+              go.textContent = String(t.go);
+              b.appendChild(go);
+            }
             if (t.tab) b.addEventListener("click", function () {
               setTab(t.tab);
               if (t.filter) { allFilter = t.filter; syncFilterPills(); }
@@ -515,16 +617,33 @@ const POST_NAMES = Object.fromEntries(
             tiles.appendChild(b);
           });
           var posts = document.getElementById("mod-posts");
-          posts.innerHTML = d.posts.length ? "" : '<p class="mod-empty">No approved comments yet.</p>';
-          d.posts.forEach(function (p, i) {
-            var row = document.createElement("div");
-            row.className = "mod-post";
-            row.innerHTML = '<span class="rank">' + (i + 1) + '</span>' +
-              '<a href="' + esc(postUrl(p.slug)) + '" target="_blank" rel="noopener">' +
-              esc(postName(p.slug)) + "</a>" +
-              '<span class="c">' + p.comments + " comments</span>";
-            posts.appendChild(row);
-          });
+          posts.innerHTML = "";
+          if (!d.posts || !d.posts.length) {
+            var emptyP = document.createElement("p");
+            emptyP.className = "mod-empty";
+            emptyP.textContent = "No approved comments yet.";
+            posts.appendChild(emptyP);
+          } else {
+            d.posts.forEach(function (p, i) {
+              var row = document.createElement("div");
+              row.className = "mod-post";
+              var rank = document.createElement("span");
+              rank.className = "rank";
+              rank.textContent = String(i + 1);
+              var a = document.createElement("a");
+              a.setAttribute("href", postUrl(p.slug));
+              a.setAttribute("target", "_blank");
+              a.setAttribute("rel", "noopener");
+              a.textContent = String(postName(p.slug));
+              var cspan = document.createElement("span");
+              cspan.className = "c";
+              cspan.textContent = (p.comments == null ? "0" : p.comments) + " comments";
+              row.appendChild(rank);
+              row.appendChild(a);
+              row.appendChild(cspan);
+              posts.appendChild(row);
+            });
+          }
         });
       }
 

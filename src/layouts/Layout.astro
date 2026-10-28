@@ -195,6 +195,12 @@ const searchBase = `${base}search/`;
      same-origin referrers, and sends cross-origin sites the origin only —
      never article paths or query strings. -->
 <meta name="referrer" content="strict-origin-when-cross-origin">
+<!-- 2026-10-27 security audit F-08: Permissions-Policy via meta — forward-declaration / placeholder ONLY (not an active control).
+     Inert on GitHub Pages because Pages cannot send response headers (this <meta> has no effect in Chromium; no meta mechanism exists per W3C Permissions-Policy §6).
+     It takes effect only once the apex domain is served behind a proxy that CAN send real Permissions-Policy headers (M-01).
+     Does NOT disable anything today. Clipboard remains allowed because navigator.clipboard.writeText() is used for
+     share/copy actions (article.js, smart-fields.js, money tools). Value kept narrow as chosen. -->
+<meta name="permissions-policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), midi=(), magnetometer=(), gyroscope=(), accelerometer=()">
 <link rel="preload" href={`${base}fonts/jetbrains-mono-latin-800-normal.woff2`} as="font" type="font/woff2" crossorigin>
 <link rel="preload" href={`${base}fonts/jetbrains-mono-latin-700-normal.woff2`} as="font" type="font/woff2" crossorigin>
 <title>{title}</title>
