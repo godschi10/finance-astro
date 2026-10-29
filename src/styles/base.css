@@ -30,7 +30,16 @@
 /* style.css:172-173 — antialiased text, as WP renders it */
 body { -webkit-font-smoothing: antialiased; }
 
-/* style.css:186 — the anchor reset. The single most important line here. */
+/* style.css:186 — the anchor reset. The single most important line here.
+   `a { text-decoration: none; color: inherit; }` is WP style.css:186 verbatim.
+   Without it every real link falls back to the browser's default underline —
+   Chrome only underlines `a` elements that carry an `href`, which is why this
+   went unnoticed through four measurement passes: a probe anchor with no href
+   computes to `text-decoration: none` while 79 of the homepage's 109 real
+   links rendered underlined. The WordPress original measures 3 underlined
+   links (the footer credit link twice and the cookie-consent policy link);
+   those set `text-decoration: underline` in their own rules, so removing the
+   default is exactly right. Homepage fidelity contract pins this exact rule. */
 a { text-decoration: none; color: inherit; }
 
 /* style.css:187-188 — controls inherit the brand font */

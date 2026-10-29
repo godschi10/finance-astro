@@ -373,7 +373,7 @@
 /*
  * style.css:2010-2021 (base, immediately before the ≥1024 block):
  */
-.art-body { font-size: 16px; font-weight: 400; color: var(--text-mid); line-height: 1.8; }
+.art-body { font-size: 16px; font-weight: 400; color: var(--text-mid); line-height: 1.8; max-width: 68ch; }
 .art-body h1 { font-size: 24px; font-weight: 800; color: var(--text); letter-spacing: -0.03em; margin: 30px 0 12px; }
 .art-body h2 {
 	font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -0.03em; margin: 28px 0 10px;
@@ -891,7 +891,7 @@
      Old rule re-added the gutter to .art-body > * only, a Gutenberg group
      wrapping the paragraphs lost it → text ran flush (King: "content now has
      zero padding"). Body padding beats a shallow child selector. */
-  .art-body { margin-left: calc(-1 * var(--con-pad)); margin-right: calc(-1 * var(--con-pad)); padding: 0 var(--con-pad); }
+  .art-body { margin-left: calc(-1 * var(--con-pad)); margin-right: calc(-1 * var(--con-pad)); padding: 0 var(--con-pad); max-width: none; }
   /* Only media blocks break out true edge-to-edge. Because art-reading-surface
      is now pulled to the true edge (x=0), media escapes ONE gutter and lands at
      x=0; text stays at var(--con-pad). (v1.12.9, verified box model: cover x=0,
