@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "gemini-vision": {
+      "command": "/home/opc/.local/node/bin/node",
+      "args": [
+        "/home/opc/.local/share/gemini-vision-mcp/secret.mjs"
+      ],
+      "env": {
+        "GEMINI_API_KEY_FILE": "/home/opc/.secrets/gemini-api-key"
+      }
+    }
+  }
+}
