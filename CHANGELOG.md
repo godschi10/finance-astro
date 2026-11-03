@@ -15,11 +15,12 @@ byte-locked sheet untouched, additive layers only, no `!important`.
   overlay (`z-index: 1`, same href — the link simply reclaims its own pointer). Reasoned WP
   divergence, recorded here by port law: hit areas are corrections, not WP parity.
 - **R-2 — iOS zoom trap on the comment edit window (real fix).** The prior release's entry
-  claimed `.vibe-edit-textarea` was bumped to 16px; that edit did NOT ship (commit `34e62fc`
-  touched no CSS file, and the byte-locked sheet's rule still read `font-size: 0.95rem` —
-  15.2px, under the 16px iOS force-zoom floor). Correction shipped now, without touching the
-  38,197-byte-locked sheet: doubled-class `.vibe-edit-textarea.vibe-edit-textarea { font-size:
-  16px }` in r8.css wins by one specificity step, order-independent. The sheet stays byte-exact.
+  claimed `.vibe-edit-textarea` was bumped to 16px — the edit was made inside that run and then
+  REVERTED before landing (the article gate byte-locks the plugin sheet at 38,197), leaving the
+  CHANGELOG bullet stale; the landed tree still read `font-size: 0.95rem` — 15.2px, under the
+  16px iOS force-zoom floor. Correction shipped now, without touching the 38,197-byte-locked
+  sheet: doubled-class `.vibe-edit-textarea.vibe-edit-textarea { font-size: 16px }` in r8.css
+  wins by one specificity step, order-independent. The sheet stays byte-exact.
 - **R-3 — author archive tails missing from sitemap.** `sitemap.xml.ts` now emits `page/N/`
   URLs for every author whose post count exceeds posts_per_page (PER_PAGE = 10, same contract
   as the articles archive and `author/[slug]/[page].astro`); `/author/gwill-chijioke/page/2/`
