@@ -8,8 +8,14 @@
  * re-verified 2026-10-27: Coinbase BTC/ETH spot and gold-api XAU ARE genuinely
  * live (updated seconds before the probe), only FX is once-daily. So section 2
  * is restored: BTC/ETH/XAU refresh per visit, FX re-reads the same daily feed
- * at its next 00:02 UTC window. The .tl-tx label states this honestly; there is
- * no "LIVE" badge on a once-daily feed (P0-2 stands for that wording).
+ * at its next 00:02 UTC window. The label itself: the King ordered the plan's
+ * LIVE signature restored 2026-11-03 ("used to be a live moving strip — get it
+ * back"); the 0.7.57 exact-stamp long label is retired from the strip. HONESTY
+ * MOVED, not deleted (S2b's feed facts stand — FX IS once-daily): the .tl
+ * carries the full "Daily reference rate (FX) · updated <stamp>" as its
+ * title/tooltip, the nav aria-label says which sources are live vs daily, and
+ * every rate page still stamps the snapshot with the "Daily reference rate ·
+ * updated …" badge (methodology page documents the pipeline).
  *
  * The build-side snapshot pipeline (scripts/fetch-snapshot.mjs) is unchanged
  * and still feeds the same pairs; the client layer only improves on it.
@@ -94,10 +100,11 @@ Table of Contents
 		}
 	}
 
-	/* P0-2 (fifth audit, v0.7.57) lives on as the *label* rule only: a
-	   once-daily feed must never carry the "LIVE" badge. The feed itself
-	   is selectively live again: BTC/ETH/XAU are genuinely live and refresh
-	   per visit; FX re-reads at its next 00:02 UTC window (gate P0-2).
+	/* S2b/P0-2 (fifth audit, v0.7.57) wording rule SUPERSEDED by King's order
+	   2026-11-03: the strip carries the plan's LIVE signature again; the honest
+	   once-daily-FX disclosure lives on the .tl title + nav aria-label + the
+	   per-page badges (see the header comment). The feed-freshness mechanic
+	   below (data-ts skip + 60s cache) is exactly S2b's and unchanged.
 
 	   The restored section 2 is PORTED VERBATIM from the WP theme's
 	   assets/js/ticker-live.js v1.0.169 plus the S2b gate: a 60s

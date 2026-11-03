@@ -581,7 +581,7 @@ main{display:block;min-width:0}
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <div id="top"></div>
-<nav class="ticker" data-ts={FX_SNAPSHOT_TS} aria-label="Market ticker"><span class="tl"><span class="tl-dot" aria-hidden="true"></span><span class="tl-tx">Daily reference rate · updated {FX_SNAPSHOT.as_of}</span></span><div class="ticker-drag"><div class="ticker-inner">
+<nav class="ticker" data-ts={FX_SNAPSHOT_TS} aria-label="Market ticker — live BTC/ETH/gold, daily reference FX"><span class="tl" title={`Daily reference rate (FX) · updated ${FX_SNAPSHOT.as_of} · FX pairs are the daily reference rate; BTC/ETH/gold refresh live on visit`}><span class="tl-dot" aria-hidden="true"></span><span class="tl-tx">LIVE</span></span><div class="ticker-drag"><div class="ticker-inner">
 {/* P2-12 scope: FX pages (fxTicker) render all six pairs; every other page
     renders the USD/GBP/EUR→NGN reference pairs only. Both sets are duplicated
     for the marquee seam, and only the first set reaches screen readers. */}

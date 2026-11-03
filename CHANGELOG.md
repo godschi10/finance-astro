@@ -1,3 +1,34 @@
+## [0.7.71] - 2026-11-03 — the live moving ticker restored (King's order)
+
+**King:** "That before header strip used to be a live … moving [one], lets get that back.
+Don't like the 'Daily reference rate · updated 3 Nov 2026, 00:02' stuff."
+
+- **What actually broke the strip.** v0.7.57 (commit `4c651ff`, "LIVE claims honest on a
+  once-daily feed") replaced the R6 plan signature — green pulsing dot + gold `LIVE` — with
+  the long exact-stamp string. Uppercased at 9px/0.14em it is ~360px wide: at 390px the label
+  alone filled the entire strip row and pushed the `.ticker-drag` marquee stage past the right
+  edge, so phones got zero pixels of the moving pairs. The marquee itself never stopped; it
+  just had nowhere to be seen. The King's strip served as a static stamp line.
+- **Restored, minimal:** Layout.astro's `.tl-tx` is `LIVE` again (the §P1-4 signature, gold on
+  the mon 11px strip); the once-daily honesty is MOVED, not deleted — the `.tl` carries the
+  full "Daily reference rate (FX) · updated …" as its title/tooltip, the nav aria-label now
+  says which sources are live vs daily ("live BTC/ETH/gold, daily reference FX"), the
+  `data-ts` build stamp stays, and every rate page keeps its "Daily reference rate · updated
+  …" badge (methodology documents the pipeline). ethers/live feed mechanics in ticker-live.js
+  are untouched: BTC/ETH/XAU genuinely refresh per visit, FX re-reads its daily 00:02 window,
+  60s cache + freshness skip exactly as S2b built them.
+- ** Recorded word supersession:** v0.7.57's wording rule ("no LIVE badge on a once-daily
+  feed") stands as superseded by this King's default order; the underlying feed facts are
+  unchanged and now disclosed in-place via title/aria rather than in the strip's face.
+- **Hardened:** `chrome.css` adds the additive rule `.ticker-drag { flex: 1 1 auto;
+  min-width: 0 }` so no future label length can pinch the marquee to zero width again (this
+  is exactly the failure mode above; adds only properties header.css never sets).
+- **Gates:** check 7/7 (no gate anchors moved — the header gate never pinned the label text) ·
+  build 84 · test:calc 130/0/7. Verified at 390px and 1280px: strip = ● LIVE + USD/NGN ₦1,346
+  · GBP/NGN ₦1,805 · EUR/… with 317px/1179px of visible sliding stage; marquee motion proven
+  mechanically (inner transform moved −2.48 → −5.49 over 1.2s at 390; −9.98 → −21.18 at 1280);
+  horizontal overflow 0; console errors 0; honest title present.
+
 ## [0.7.70] - 2026-11-03 — R-1/R-2/R-3 fix batch (King: "Fix all 3 if safe")
 
 The three King-held leftovers from the 2026-11-03 audit, each on a safe path: gates untouched,

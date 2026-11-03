@@ -77,6 +77,15 @@
   .tl-dot { animation: none; }
 }
 
+/* ── Marquee room (2026-11-03, King: "live moving strip back" — retire the
+      0.7.57 long strip label): .ticker-drag is the marquee stage; it must
+      always own the width the .tl label leaves and be ABLE to shrink
+      (min-width:0) so no future label length can pinch the sliding strip to
+      zero — the long 0.7.57 exact-stamp label overflowed 390px and did
+      exactly that on phones. Order-independent: adds only properties
+      header.css never sets (.ticker-drag there carries will-change alone). ── */
+.ticker-drag { flex: 1 1 auto; min-width: 0; }
+
 /* ── Drawer: links 15px/700 (weight already 700 in header.css), item
       padding 14px 20px → 44px+ targets (min-height 48px stays). ── */
 .mno-list > li > a { font-size: 15px; padding: 14px 20px; }
