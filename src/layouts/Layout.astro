@@ -184,11 +184,11 @@ const searchBase = `${base}search/`;
      YouTube/Vimeo embed poster art + data: (inline SVG); frame-src = the three
      embed players the article video facades inject. 'unsafe-inline' on
      script-src/style-src is unavoidable: Astro inlines every script/style and
-     there is no nonce plumbing on GitHub Pages. NOTE: frame-ancestors is
-     IGNORED by browsers when delivered via <meta> — it is shipped here for
-     defence-in-depth only; the REAL framing control is the frame-buster script
-     on the /mod/ desk (src/pages/mod.astro). -->
-<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://secure.gravatar.com https://i.ytimg.com https://i.vimeocdn.com data:; connect-src 'self' https://comments-api.gwill.workers.dev https://open.er-api.com https://api.coingecko.com https://api.coinbase.com https://api.binance.com https://api.gold-api.com; frame-src https://player.vimeo.com https://open.spotify.com https://www.youtube.com; frame-ancestors 'none'; form-action 'self' https://comments-api.gwill.workers.dev; base-uri 'self'; object-src 'none'">
+     there is no nonce plumbing on GitHub Pages. frame-ancestors is NOT shipped:
+     browsers ignore the directive when a CSP arrives via <meta>, and shipping
+     it only printed a console error on every page. The real framing control is
+     the frame-buster script on the /mod/ desk (src/pages/mod.astro). -->
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://secure.gravatar.com https://i.ytimg.com https://i.vimeocdn.com data:; connect-src 'self' https://comments-api.gwill.workers.dev https://open.er-api.com https://api.coingecko.com https://api.coinbase.com https://api.binance.com https://api.gold-api.com; frame-src https://player.vimeo.com https://open.spotify.com https://www.youtube.com; form-action 'self' https://comments-api.gwill.workers.dev; base-uri 'self'; object-src 'none'">
 <!-- 2026-10-03 security audit: Referrer-Policy. strict-origin-when-cross-origin
      (not no-referrer): it matches the referrerPolicy the site's own video
      facades already set on their embed iframes (article.js), keeps useful
@@ -209,7 +209,7 @@ const searchBase = `${base}search/`;
 {!noCanonical && <link rel="canonical" href={canonical}>}
 <link rel="icon" type="image/svg+xml" href={`${base}icons/icon.svg`}>
 <link rel="manifest" href={`${base}manifest.webmanifest`}>
-<link rel="apple-touch-icon" sizes="any" href={`${base}icons/icon.svg`}>
+<link rel="apple-touch-icon" href={`${base}icons/apple-touch-icon.png`}>
 <meta property="og:type" content={isArticle ? "article" : "website"}>
 <meta property="og:site_name" content={siteName}>
 <meta property="og:title" content={title}>

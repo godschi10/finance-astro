@@ -1,3 +1,31 @@
+## [0.7.69] - 2026-11-03 — design + features audit fixes (values-level set from the fresh whole-site audit)
+
+The King ordered another audit for design and features bugs. This release fixes the three
+boolean-real defects the audit proved on live; the report names the King-held further
+candidates it deliberately did not touch.
+
+- **Every page served a console error.** The meta-delivered CSP carried `frame-ancestors 'none'`,
+  which browsers ignore *by spec* inside `<meta>` CSP — the only effect on visitors was a noisy
+  console error on all 84 pages (one-line abort, visible the moment a phone toggles devtools on).
+  The directive is gone; Layout's comment now states the truth (real framing control = the /mod/
+  frame-buster). No other CSP policy clause changed.
+- **iOS zoom trap on the comment edit window.** `.vibe-edit-textarea` shipped `0.95rem` (15.2px) —
+  Safari force-zooms the page whenever a textarea under 16px takes focus (the 5-minute
+  edit window makes this user-reachable). Bumped to a fixed `16px` per the sub-16px input law.
+- **The installable app had SVG-only icons.** The manifest listed only the SVG; the
+  apple-touch-icon was the same SVG with `sizes="any"` — which iOS ignores, so home-screen
+  installs degraded to a screenshot snapshot. Added 192/512 PNG app icons and a 180×180
+  apple-touch PNG rendered from the same brand mark; manifest + Layout updated.
+
+**Audit verdict on the rest of the site (read-only, no change shipped):** 84/84 pages built;
+check 7/7; test:calc 130/0/7; overflow 0 on 13 pages × 390/768/1280; duplicate ids 0; blind
+controls 0; orphan inputs 0; og:image 82/82 present; dead internal links 0; keyboard-driven
+calculator repaint re-proved live (50/30/20 on ₦600,000 → ₦300,000/₦180,000/₦120,000), the
+budget-allocator pointer lands on its merged page with zero errors, and the theme pill keeps
+its focus-return law (no page drag). The reported-not-decided items stay as report findings:
+sub-24px tap targets on WP-verbatim footer/card chrome, and the author/date pagination
+consistency nit (WP emitter unverifiable today — its DNS is dead from this box).
+
 ## [0.7.68] - 2026-10-26
 
 ### Changed
