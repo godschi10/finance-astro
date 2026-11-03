@@ -23,6 +23,14 @@ import "../styles/numbers.css"; // DESIGN-LANGUAGE §1 Number Law (R1) — ADDIT
 import "../styles/controls.css"; // DESIGN-LANGUAGE §6 money-form controls (R2) — ADDITIVE only: F3 ₦-in-field (.fi), F2 dip, F4 phone targets, button press. No WP rule rewritten; focus gold stays owned by ToolShell/Layout. Imported after numbers.css by design (R1 → R2).
 import "../styles/hub.css"; // DESIGN-LANGUAGE plan §P0-1/§P0-2 hub+hero (R5) — ADDITIVE only: ledger rule placement, hero spacing/type per plan (home-scoped via .hero:has(.hero-cats)), stamp-corner ink tile + wordmark, featured gold bar, hover de-bloom, M3 motion. The plan-sanctioned sheen-kill subtractions were made IN PLACE in home.css/article.css (commented with citation). Imported after numbers.css by design (R1 → R5; R2 controls + R3 ladder + R4 anatomy reverted by King order).
 import "../styles/chrome.css"; // DESIGN-LANGUAGE plan §P1-4 chrome (R6) — ADDITIVE only: gold hairline under sticky headers (border-color only), nav 13px/700, ticker mono, SIGNATURE live dot (.tl flow child of .ticker — outside .ticker-drag so the marquee seam stays identical), drawer 15px/14×20, search input 48px phone + kbd footer desktop-only. header.css untouched (gate anchors). Imported after hub.css by design (R1 → … → R5 → R6).
+// r8.css (R8, 2026-11-03, King-sanctioned "fix all 3 if safe"): a11y hit-area +
+// iOS-zoom corrections. Same ADDITIVE charter as the layers above — the verbatim
+// sheets and the byte-locked vibe plugin sheet are untouched; every rule adds a
+// property the verbatim never sets or wins by one specificity step
+// (element-qualified selectors), so import order provably does not matter.
+// Divergence from the WP look is recorded and reasoned in CHANGELOG.md 0.7.70.
+// Imported after chrome.css by design (R1 → … → R6 → R8).
+import "../styles/r8.css";
 // r7.css moved OUT of the layout 2026-10-05 (Leg D1 stylesheet-layer split): every
 // selector in it is `.feat`-descendant-scoped and `.feat*` markup is emitted ONLY by
 // src/pages/index.astro (verified: the sole built page containing a feat class is

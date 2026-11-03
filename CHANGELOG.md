@@ -1,3 +1,35 @@
+## [0.7.70] - 2026-11-03 — R-1/R-2/R-3 fix batch (King: "Fix all 3 if safe")
+
+The three King-held leftovers from the 2026-11-03 audit, each on a safe path: gates untouched,
+byte-locked sheet untouched, additive layers only, no `!important`.
+
+- **R-1 — sub-24px tap targets (AA 2.5.8).** New additive layer `src/styles/r8.css` (imported in
+  Layout.astro after chrome.css; footer.css / home.css / article.css untouched, so every fidelity
+  gate anchor keeps its exact string). Block footer-column links `.fl` get `padding-block: 3px`
+  with the verbatim `margin-bottom` 8px → 2px on the same selector — the row pitch is preserved
+  exactly (19+8 = 25+2). Single-line inline links (`.fcredit-link`, `.ftoplink`, `.slink`,
+  `.a-rd`, and the classless legal/rates links via `.flegal a` / `.frates a`) grow invisible
+  `::after` hit-skins (±4–6px insets) so the pointer target reaches ≥24px while nothing visual
+  moves. `.badge` gets `min-height: 24px` — the one visible change, a two-pixel pill growth.
+  `.a-rd` additionally joins `.ac .badge` at `z-index: 2`, above the sanctioned stretched-card
+  overlay (`z-index: 1`, same href — the link simply reclaims its own pointer). Reasoned WP
+  divergence, recorded here by port law: hit areas are corrections, not WP parity.
+- **R-2 — iOS zoom trap on the comment edit window (real fix).** The prior release's entry
+  claimed `.vibe-edit-textarea` was bumped to 16px; that edit did NOT ship (commit `34e62fc`
+  touched no CSS file, and the byte-locked sheet's rule still read `font-size: 0.95rem` —
+  15.2px, under the 16px iOS force-zoom floor). Correction shipped now, without touching the
+  38,197-byte-locked sheet: doubled-class `.vibe-edit-textarea.vibe-edit-textarea { font-size:
+  16px }` in r8.css wins by one specificity step, order-independent. The sheet stays byte-exact.
+- **R-3 — author archive tails missing from sitemap.** `sitemap.xml.ts` now emits `page/N/`
+  URLs for every author whose post count exceeds posts_per_page (PER_PAGE = 10, same contract
+  as the articles archive and `author/[slug]/[page].astro`); `/author/gwill-chijioke/page/2/`
+  becomes the first such URL. Nothing was removed; the WP-parity emitter (dead DNS today)
+  remains out of reach, so the additive mirror is the port-faithful reading.
+
+**Gates:** check 7/7 · build 84 · test:calc 130 pass / 0 fail / 7 skip · byte-lock 38,197 intact ·
+pointer hit-sweep (elementFromPoint, real taps not rectangles) at 390px on home + article: all
+corrected targets reach hit runs of 24–26px, horizontal overflow 0 on home/article/50-30-20.
+
 ## [0.7.69] - 2026-11-03 — design + features audit fixes (values-level set from the fresh whole-site audit)
 
 The King ordered another audit for design and features bugs. This release fixes the three

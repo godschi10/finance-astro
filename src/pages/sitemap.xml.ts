@@ -37,6 +37,17 @@ export const GET: APIRoute = async ({ site }) => {
   Array.from(years).forEach((y) => {
     pagesFor(posts.filter((p) => String(p.data.pubDate.getUTCFullYear()) === y).length, y);
   });
+  // Author archive tails (2026-11-03, King: "Fix all 3 if safe" — R-3). The
+  // articles archive lists /page/N/ above; author archives paginate through the
+  // same PER_PAGE=10 contract (author/[slug]/[page].astro), so any author whose
+  // post count exceeds posts_per_page gets identical treatment. Previously the
+  // built /author/gwill-chijioke/page/2/ was indexed-reachable only through the
+  // on-page pagination nav, while its article twin was listed — an
+  // inconsistency inside this file, now closed additively (WP parity
+  // emitter inc/sitemap.php remains off-box; nothing is removed here).
+  AUTHORS.forEach((a) => {
+    pagesFor(posts.filter((p) => p.data.authorSlug === a.slug).length, `author/${a.slug}`);
+  });
 
   const routes = [
     "",

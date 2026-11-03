@@ -1,0 +1,111 @@
+/* ─────────────────────────────────────────────────────────────
+   r8.css — A11Y HIT-AREA + iOS-ZOOM CORRECTIONS (R8 layer).
+   King-sanctioned 2026-11-03 ("Fix all 3 if safe") after the
+   design + features audit left R-1/R-2 as reported decisions.
+   ADDITIVE only: footer.css / home.css / article.css and the two
+   vibe-comments plugin sheets are untouched — the byte-locked
+   sheet stays exactly 38,197 bytes and every fidelity gate keeps
+   its anchored strings. Every rule here either adds a property the
+   verbatim rules do not set, or wins by ONE specificity step
+   (element-qualified selectors, same technique as r7.css), so the
+   layer is order-independent by construction. No !important. No
+   visual geometry change beyond the named two-pixel pill growth.
+   No DOM or JS change. Recorded as a deliberate, reasoned
+   divergence in CHANGELOG.md (v0.7.70).
+   ───────────────────────────────────────────────────────────── */
+
+/* ── R-1 · WCAG 2.5.8 (AA) target size. The WP-verbatim footer and
+      card chrome ships text-link hit areas 13–22px on the 390px
+      phone. Corrections grow the RAW TAP AREA without moving a
+      single pixel of layout:
+      · .fl (block footer-column links): padding-block 3px with the
+        verbatim 8px bottom margin reduced to 2px on the same
+        selector — the row pitch stays exactly 27px (19+8 = 25+2).
+      · .fcredit-link / .ftoplink / .slink / .a-rd (single-line
+        transparent text links): an invisible ::after hit-skin, a
+        positioned pseudo anchored to the link's own box. Nothing in
+        layout, paint or underline shifts; the pointer target simply
+        reaches the named size. Horizontal insets stay ≤ 4px so
+        neighbouring links (12–16px gaps) never overlap.
+      · .badge (the one painted control): min-height 24px — a
+        two-pixel pill growth, inline-flex centring unchanged.
+      Verified live with a pointer-hit sweep (elementFromPoint) at
+      390px after ship — report §R-fixes, logs /home/opc/work/logs/r8-20261103/.
+   ───────────────────────────────────────────────────────────── */
+
+a.fl {                        /* (0,1,1) vs .fl (0,1,0) */
+  padding-block: 3px;         /* 19px box → 25px */
+  margin-bottom: 2px;         /* pitch law: 19+8 = 25+2 */
+}
+
+a.fcredit-link {              /* (0,1,1) */
+  position: relative;         /* anchor for the hit-skin; new property, no conflict */
+}
+a.fcredit-link::after {       /* 13px → 25px tall hit area */
+  content: '';
+  position: absolute;
+  inset: -6px -4px;
+}
+
+/* The legal + rates rows are CLASSLESS bare <a> (footer truth) — same 13px
+   bucket as fcredit-link. Selectors mirror the verbatim sheet exactly
+   (.flegal a / .frates a) with the hit-skin on top. Horizontal insets stay
+   at ±3–4px: neighbouring links are separated by the · separators' own
+   margins (12–21px gaps), so hit-skins never overlap; vertical ±6px covers
+   the 13px text to 25px. */
+.flegal a, .frates a {        /* (0,1,1)/(0,1,2) — new property, no conflict */
+  position: relative;
+}
+.flegal a::after, .frates a::after {
+  content: '';
+  position: absolute;
+  inset: -6px -4px;
+}
+
+a.ftoplink {                  /* (0,1,1) */
+  position: relative;
+}
+a.ftoplink::after {           /* 16px → 26px */
+  content: '';
+  position: absolute;
+  inset: -5px -4px;
+}
+
+a.slink {                     /* (0,1,1) */
+  position: relative;
+}
+a.slink::after {              /* 18px → 26px */
+  content: '';
+  position: absolute;
+  inset: -4px;
+}
+
+a.a-rd {                      /* (0,1,1) */
+  position: relative;
+  /* Reclaim the pointer above the King-sanctioned stretched-card overlay
+     (.ac .ac-t a::after, z-index 1) exactly like the in-file precedent
+     `.ac .badge` (z-index 2). Same href, so no route changes — the link
+     simply stops being swallowed by the overlay's hit-skin. */
+  z-index: 2;
+}
+a.a-rd::after {               /* 16px → 26px */
+  content: '';
+  position: absolute;
+  inset: -5px -4px;
+}
+
+a.badge {                     /* (0,1,1); verbatim sets no min-height */
+  min-height: 24px;           /* 22px pill → 24px, AA floor */
+}
+
+/* ── R-2 · iOS zoom law. Any textarea under 16px force-zooms Safari
+      when focused; .vibe-edit-textarea ships 0.95rem (15.2px) inside
+      the byte-locked plugin sheet — 38,197 bytes, untouchable
+      without a gate edit, which the law forbids. The doubled class
+      is one specificity step above the sheet's own (0,1,0), so this
+      wins wherever the sheet loads, order-independent; the gold
+      sheet's edit-error rule sets border/colour only, nothing
+      competes on font-size. ── */
+.vibe-edit-textarea.vibe-edit-textarea {   /* (0,2,0) beats the sheet's (0,1,0) */
+  font-size: 16px;            /* 15.2px → 16px, exactly the law */
+}
