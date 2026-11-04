@@ -1,3 +1,36 @@
+## [0.7.72] - 2026-11-04 — A15 keyboard audit fixes: the stepper navigates, Clear keeps your place
+
+**A15** (round 15 of 40, keyboard-only journey, live site): **FAIL — 2 HIGH, 1 LOW note.**
+105 focus stops @1280 (full pass), 80 @390, console 0. Skip link, focus rings (0 stops
+without one), theme menu + Esc, dark amber ring, 390 drawer containment (14 Tabs), and
+focus retention while typing all passed. Only real occlusion in the whole walk: the stepper.
+
+- **A15-K1 (HIGH) — the stepper was two dead controls.** Both `.fx-step` buttons were real
+  `<button>`s in the tab order with no click handler; step 2 also carried `aria-disabled`
+  and `pointer-events:none` while inactive, yet still took keyboard focus. Enter, Space and
+  click were all silent no-ops in both states. They are navigation now: step 1 lands on
+  `#bg-inc`, step 2 on `#al-rent`, with focus moved to the destination. The dimmed inactive
+  state stays a progress signal (`aria-current`), not a locked door; the contradictory
+  `aria-disabled` is gone from markup and from the state sync, and pointer events are
+  restored page-scoped (no shared CSS touched).
+- **A15-K2 (HIGH) — Clear destroyed focus.** `#bg-clear-example` delegates to the shell's
+  Clear and then hides itself when no seed survives; a focused element that disappears hands
+  focus to `<body>`, so the next Tab restarted at the skip link. Both clear paths (in-card and
+  footer) now land the keyboard on `#bg-inc`. The user's own typed income is still kept —
+  only the example is cleared. Reset untouched: it never hides and keeps focus.
+- **A15-K3 (LOW note, accepted):** the "read the source" trust link sits between income and
+  Needs % because `smart-fields.js` injects each citation after the field it sources. Moving
+  it would separate the birth certificate from the claim; no change.
+- **A16 carry:** `#bg-copied` is a plain span, not `aria-live` — screen-reader copy status
+  belongs to the A16 journey, not this round.
+
+**Gates:** `npm run check` 7/7 · build 84 pages · `npm run test:calc` 130 pass / 0 fail / 7 skip.
+Fix verified on local built bytes before ship (step 2 Enter → `al-rent`, step 1 → `bg-inc`,
+Clear Enter → `bg-inc`, reset focus held, typing/preset/fill regressions clean, 390 parity,
+console 0). No changes to `smart-fields.js`, the check gates, or shared CSS.
+
+
+
 ## [0.7.71] - 2026-11-03 — the live moving ticker restored (King's order)
 
 **King:** "That before header strip used to be a live … moving [one], lets get that back.

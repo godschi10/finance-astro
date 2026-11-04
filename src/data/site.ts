@@ -270,9 +270,9 @@ export const catBySlug = (slug: string): Category => {
 // pairs per source. Never hand-edit the values; they are generated.
 export const TICKER_STATIC = [
   { label: "USD/NGN", value: "₦1,346", src: "fx" },
-  { label: "GBP/NGN", value: "₦1,805", src: "fx" },
+  { label: "GBP/NGN", value: "₦1,806", src: "fx" },
   { label: "EUR/NGN", value: "₦1,507", src: "fx" },
-  { label: "BTC/USD", value: "$77,676", src: "btc" },
-  { label: "ETH/USD", value: "$2,283", src: "eth" },
-  { label: "XAU/USD", value: "$3,922", src: "gold" },
+  { label: "BTC/USD", value: "$78,153", src: "btc" },
+  { label: "ETH/USD", value: "$2,304", src: "eth" },
+  { label: "XAU/USD", value: "$4,028", src: "gold" },
 ];

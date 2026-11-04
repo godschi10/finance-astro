@@ -49,7 +49,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <!-- Visual stepper -->
 <div class="fx-stepper" id="bg-stepper" aria-label="Budget steps">
   <button type="button" class="fx-step active" data-step="1" aria-current="step">1. Plan</button>
-  <button type="button" class="fx-step" data-step="2" aria-disabled="true">2. Itemise</button>
+  <button type="button" class="fx-step" data-step="2">2. Itemise</button>
 </div>
 <!-- E10 (A10-C7) — the seed exit, INSIDE the card and inside the first screen.
      The shell's own "Clear examples" / "Reset" pair is shared with every other
@@ -885,13 +885,11 @@ function render() {
       step1.removeAttribute('aria-current');
       step2.classList.add('active');
       step2.setAttribute('aria-current', 'step');
-      step2.removeAttribute('aria-disabled');
     } else {
       step1.classList.add('active');
       step1.setAttribute('aria-current', 'step');
       step2.classList.remove('active');
       step2.removeAttribute('aria-current');
-      step2.setAttribute('aria-disabled', 'true');
     }
   }
 
@@ -1357,12 +1355,25 @@ const clearActuals = () => {
     if (el && el.value !== "") { el.value = ""; el.dispatchEvent(new Event("input", { bubbles: true })); }
   });
 };
-document.getElementById("bg-clear-example")?.addEventListener("click", () => { shellClear?.click(); clearActuals(); render(); });
+/* E15 (A15-K2) — both Clear paths hide the control that was just activated.
+   A focused element that disappears hands focus to <body>, so the next Tab
+   restarted at the skip link instead of the calculator. Land the keyboard back
+   on the first field; the check runs on the next frame and again on the next
+   task so it survives either hide timing (shell handler now vs badge-settle). */
+const restoreAfterSeedExit = () => {
+  const land = () => {
+    if (document.activeElement !== document.body) return;
+    document.getElementById("bg-inc")?.focus({ preventScroll: true });
+  };
+  requestAnimationFrame(land);
+  setTimeout(land, 0);
+};
+document.getElementById("bg-clear-example")?.addEventListener("click", () => { shellClear?.click(); clearActuals(); render(); syncSeedExit(); restoreAfterSeedExit(); });
 document.getElementById("bg-reset-example")?.addEventListener("click", () => { shellReset?.click(); clearActuals(); render(); });
 /* E12-9 — the footer Clear examples button only walks [data-sd] seeds; the
    five al-act-* inputs are not seeds, so a footer Clear left half a score
    standing. Both in-card and footer exits now wipe them. */
-shellClear?.addEventListener("click", clearActuals);
+shellClear?.addEventListener("click", () => { clearActuals(); restoreAfterSeedExit(); });
 /* The in-card Clear stands down exactly when the shell's does (no live seed
    survives), so the two controls never disagree about whether there is
    anything left to clear. Reset never hides — it is always available. */
@@ -1371,6 +1382,22 @@ const syncSeedExit = () => {
   if (btn) btn.hidden = !shellClear || shellClear.hidden;
 };
 syncSeedExit();
+/* E15 (A15-K1) — the stepper shipped as two real <button>s in the tab order
+   with no handler at all: Enter, Space and click were silent no-ops, and step 2
+   also carried aria-disabled while still taking keyboard focus. They are
+   navigation now — each lands on its step's first field, so the keyboard path
+   continues from the destination. The dimmed inactive state stays a progress
+   signal, not a locked door. */
+document.querySelectorAll<HTMLButtonElement>(".fx-step[data-step]").forEach((b) => {
+  b.style.pointerEvents = "auto";
+  b.addEventListener("click", () => {
+    const target = b.getAttribute("data-step") === "2"
+      ? document.getElementById("al-rent")
+      : document.getElementById("bg-inc");
+    target?.focus({ preventScroll: true });
+    target?.scrollIntoView({ block: "center" });
+  });
+});
 /* BADGE SETTLE — the spine strips SAMPLE and writes memory on the document
    bubble, AFTER the target-phase render above has already run. Badge-reading
    lines (seedwarn, the remembered-warn suffix, the memory date) would sit one
