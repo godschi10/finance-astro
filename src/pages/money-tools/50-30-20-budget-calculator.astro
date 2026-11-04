@@ -45,9 +45,15 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="fx-card">
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <p class="receipt-note" id="bg-memdate" hidden></p>
-<p class="receipt-note" id="bg-live" hidden></p>
+<!-- A16-F3 — the sentence with the nouns is the live region now. It carried the
+     labelled line while #bg-fig (bare "₦150,000 · ₦90,000 · ₦60,000", no nouns)
+     did the announcing. #bg-fig stays readable; it just no longer speaks alone. -->
+<p class="receipt-note" id="bg-live" hidden aria-live="polite"></p>
 <!-- Visual stepper -->
-<div class="fx-stepper" id="bg-stepper" aria-label="Budget steps">
+<!-- A16-F5 — a label on a role-less div is dropped from the accessibility
+     tree. role="group" makes the name real, so the two steps are announced as
+     one named set instead of two loose buttons. -->
+<div class="fx-stepper" id="bg-stepper" role="group" aria-label="Budget steps">
   <button type="button" class="fx-step active" data-step="1" aria-current="step">1. Plan</button>
   <button type="button" class="fx-step" data-step="2">2. Itemise</button>
 </div>
@@ -58,7 +64,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
      working; these two are ADDITIVE and simply press the very same buttons, so
      the page still has exactly one clear() and one reset(). 44px minimum, the
      site's own tap floor. -->
-<div class="fx-chips" style="margin-top:0" id="bg-examplectl" aria-label="Leave the worked example">
+<div class="fx-chips" style="margin-top:0" id="bg-examplectl" role="group" aria-label="Leave the worked example">
   <button type="button" class="btn b-ghost b-sm" id="bg-clear-example" style="min-height:44px" hidden>Clear the example</button>
   <button type="button" class="btn b-ghost b-sm" id="bg-reset-example" style="min-height:44px">Reset to the example</button>
 </div>
@@ -87,7 +93,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-note" id="bg-range" hidden style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
 <p class="receipt-note" id="bg-big" hidden style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
 <!-- Income quick-fill chips -->
-<div class="fx-chips" style="margin-top:10px" id="income-chips" aria-label="Quick-fill income">
+<div class="fx-chips" style="margin-top:10px" id="income-chips" role="group" aria-label="Quick-fill income">
 <button type="button" class="fx-chip" data-fill="bg-inc" data-value="70000" aria-label="Fill ₦70,000">₦70k</button>
 <button type="button" class="fx-chip" data-fill="bg-inc" data-value="100000" aria-label="Fill ₦100,000">₦100k</button>
 <button type="button" class="fx-chip" data-fill="bg-inc" data-value="150000" aria-label="Fill ₦150,000">₦150k</button>
@@ -95,7 +101,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <button type="button" class="fx-chip" data-fill="bg-inc" data-value="500000" aria-label="Fill ₦500,000">₦500k</button>
 </div>
 <!-- Split preset chips -->
-<div class="fx-chips" style="margin-top:10px" id="split-chips" aria-label="Quick-fill split percentages">
+<div class="fx-chips" style="margin-top:10px" id="split-chips" role="group" aria-label="Quick-fill split percentages">
 <button type="button" class="fx-chip" data-preset="50,30,20" aria-label="Fill 50/30/20 split">50/30/20</button>
 <button type="button" class="fx-chip" data-preset="60,20,20" aria-label="Fill 60/20/20 split">60/20/20</button>
 <button type="button" class="fx-chip" data-preset="70,15,15" aria-label="Fill 70/15/15 split">70/15/15</button>
@@ -110,10 +116,13 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   <button type="button" class="btn b-ghost b-xs" data-fill-from-plan="bg-spw" title="Use my targets — put what you spent on wants straight from the plan's wants target">Use my targets — wants</button>
   <button type="button" class="btn b-ghost b-xs" data-fill-from-plan="bg-sps" title="Use my targets — put what you saved straight from the plan's savings target">Use my targets — savings</button>
 </div>
-<p class="receipt-note" id="bg-seedwarn" hidden></p>
+<!-- A16-F2 — the honesty rails are visible prose, so they must be audible
+     prose. role="status" gives each an implicit polite live region, and the
+     writes below are guarded so a re-render of identical text stays silent. -->
+<p class="receipt-note" id="bg-seedwarn" hidden role="status"></p>
 <div class="receipt">
 <p class="receipt-lbl">Plan buckets</p>
-<p class="receipt-fig" id="bg-fig" aria-live="polite">₦{n(seed.needs)} · ₦{n(seed.wants)} · ₦{n(seed.savings)}</p>
+<p class="receipt-fig" id="bg-fig">₦{n(seed.needs)} · ₦{n(seed.wants)} · ₦{n(seed.savings)}</p>
 <p class="receipt-sub" id="bg-sub">Needs · wants · savings — leftover <span id="bg-else">₦{n(seed.else)}</span></p>
 <p class="receipt-sub" id="bg-sumnote"></p>
 <p class="receipt-note" id="bg-warn" hidden aria-live="polite"></p>
@@ -121,7 +130,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row" data-goto="bg-spn" tabindex="0" role="button" style="cursor:pointer;min-height:44px;display:flex;align-items:center" title="See the field behind this figure"><span>Needs left <span aria-hidden="true">›</span></span><b id="bg-rn">₦{n(chk.needs_remaining)}</b></div>
 <div class="receipt-row" data-goto="bg-spw" tabindex="0" role="button" style="cursor:pointer;min-height:44px;display:flex;align-items:center" title="See the field behind this figure"><span>Wants left <span aria-hidden="true">›</span></span><b id="bg-rw">₦{n(chk.wants_remaining)}</b></div>
 <div class="receipt-row" data-goto="bg-sps" tabindex="0" role="button" style="cursor:pointer;min-height:44px;display:flex;align-items:center" title="See the field behind this figure"><span>Savings left to save <span aria-hidden="true">›</span></span><b id="bg-rs">₦{n(chk.savings_remaining)}</b></div>
-<p class="receipt-note" id="bg-pasted" hidden></p>
+<p class="receipt-note" id="bg-pasted" hidden role="status"></p>
 <p class="receipt-note" id="bg-whatnow" hidden></p>
 <p class="receipt-foot hint">Plan vs actual: leftover = income your splits didn't assign</p>
 <p class="receipt-foot hint">Wants left = plan wants minus spent on wants</p>
@@ -130,9 +139,12 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </div>
 <!-- Next-action CTAs after Step 1 -->
 <div class="next-actions" id="bg-next" hidden></div>
-<p class="receipt-note"><a href="#step2">See where the needs money goes ↓</a> · <button type="button" class="btn b-ghost b-lg" id="bg-copy" style="min-height:44px">Copy example plan</button><span id="bg-copywhy" data-trust="example"> — this copies our example.</span><span id="bg-copied" hidden> — copied.</span></p>
+<p class="receipt-note"><a href="#step2">See where the needs money goes ↓</a> · <button type="button" class="btn b-ghost b-lg" id="bg-copy" style="min-height:44px">Copy example plan</button><span id="bg-copywhy" data-trust="example"> — this copies our example.</span><span id="bg-copied" role="status" hidden> — copied.</span></p>
 <div class="receipt-div" aria-hidden="true"></div>
-<h3 id="step2" style="position:sticky;top:0;background:var(--surface);z-index:10;padding-top:12px">Step 2 — where the needs money goes</h3>
+<!-- A16-F7 — this is a section of the page, so it must be h2: the outline read
+     h1 → h3 → h2, a skipped level. Every metric the h3 computed is pinned
+     inline so the pixels do not move (18.72px/700/-0.3744px/29.952px, margin 0). -->
+<h2 id="step2" style="position:sticky;top:0;background:var(--surface);z-index:10;padding:12px 0 0;margin:0;font-size:18.72px;font-weight:700;letter-spacing:-0.3744px;line-height:29.952px">Step 2 — where the needs money goes</h2>
 <p>One tool, one journey. This is the plan's needs figure from step 1 — the same income, the same split — itemised into real Nigerian lines: rent, food, transport, data, bills. Knowing you should spend <span id="bg-step2-needs">₦{n(seed.needs)}</span> on needs is useful; knowing rent takes about <span id="bg-step2-rent">₦{n(seedRent)}</span> of it is actionable. The shares below are indicative starting points, not laws — tune any bucket and the naira follows instantly, always reconciling back to your income.</p>
 <p class="receipt-note"><a href="#bg-top">↑ Adjust income &amp; split</a></p>
 <p class="receipt-note" id="bg-mini" hidden></p>
@@ -162,7 +174,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
      here prices a bucket at ₦0 and then prints a confident "UNDER ₦48,000"
      for it — the exact lie step 1 was caught telling, five fields further
      down the same page. -->
-<p class="receipt-note" id="al-junk" hidden style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
+<p class="receipt-note" id="al-junk" hidden role="status" style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
 <p class="receipt-note" id="al-actual-hint">Optional — score just the buckets you know. A bucket you leave blank still shows that bucket's plan amount, but no "you spent" figure and no badge, because we have nothing real to score it against. Nothing is filled in for you here.</p>
 <!-- E12-10 — the five actuals faced a blank naira grid with no affordance.
      Same vocabulary as the income chips above: one tap writes THAT bucket's
@@ -400,10 +412,18 @@ const sfFigJ = (el: HTMLElement | null, deps: readonly string[], real: string): 
    the two malformed kinds need two DIFFERENT truths: an unparseable box was
    priced from ₦0, an unreadable one was priced from nothing, and saying "we
    ignored your input" for both would be false about one of them. */
+/* A16-F2 — role="status" turns the junk rail into a live region, so a re-render
+   of the SAME sentence must not re-announce on every keystroke. The payload is
+   remembered per element; innerHTML is only written when it actually changes. */
+const railLast = new WeakMap<HTMLElement, string>();
 const junkRail = (el: HTMLElement | null, ids: readonly string[]): void => {
   if (!el) return;
   const bad = ids.filter((id) => malformedOf(id));
-  if (!bad.length) { el.hidden = true; el.innerHTML = ""; return; }
+  if (!bad.length) {
+    if (railLast.get(el) !== "") { railLast.set(el, ""); el.innerHTML = ""; }
+    el.hidden = true;
+    return;
+  }
   const named = bad.slice(0, 3);
   const more = bad.length - named.length;
   const clauses = named.map((id) => {
@@ -415,11 +435,12 @@ const junkRail = (el: HTMLElement | null, ids: readonly string[]): void => {
       ? `${nm} reads "${esc(g(id).value)}", which is not a figure we can use — so the plan was priced as if it read ${unitOf(id)}, not as what you typed.`
       : `${nm} reads "${esc(g(id).value)}", and we could not get a figure out of it at all — so every number that depends on it is held back as "—" instead of guessed.`;
   });
-  el.hidden = false;
-  el.innerHTML = clauses.join(" ")
+  const next = clauses.join(" ")
     + (more ? ` ${more} more field${more > 1 ? "s" : ""} ${more > 1 ? "are" : "is"} in the same state.` : "")
     + ` Retype ${bad.length > 1 ? "them" : "it"} as a plain number.`
     + goTo(bad[0]);
+  if (railLast.get(el) !== next) { railLast.set(el, next); el.innerHTML = next; }
+  el.hidden = false;
 };
 /* SPLITS OUT OF RANGE. A share is a slice of ONE income, so it runs 0 to 100
    — the range is the whole fact and no benchmark is invented to support it.
@@ -709,10 +730,16 @@ function render() {
      somewhere a visitor could see it and the page never said a word; the what-
      now, the verdict and the three receipt rows already stood down on this
      predicate, and this was the last one that did not. */
-  if (empty || !splitsSet || planJunked) { live.hidden = true; live.textContent = ""; }
-  else {
+  if (empty || !splitsSet || planJunked) {
+    if (live.textContent) live.textContent = "";
+    live.hidden = true;
+  } else {
+    const liveTxt = `Plan now: ${nn(plan.needs)} needs · ${nn(plan.wants)} wants · ${nn(plan.savings)} savings`;
+    /* A16-F3 — this labelled line is the polite region now. Unhide BEFORE the
+       write so the insertion is announced, and skip identical rewrites so a
+       keystroke that leaves the plan unchanged stays silent. */
     live.hidden = false;
-    live.textContent = `Plan now: ${nn(plan.needs)} needs · ${nn(plan.wants)} wants · ${nn(plan.savings)} savings`;
+    if (live.textContent !== liveTxt) live.textContent = liveTxt;
   }
   /* F-A2-3 — the seed-actuals ambush: income or split typed, but the spends
      still wear SAMPLE (ours, never entered). Name them before they paint the
@@ -724,12 +751,18 @@ function render() {
      figure, "the spends below" would smear their number with our example. */
   const seedIds = ["bg-spn", "bg-spw", "bg-sps"].filter(sd);
   if (!empty && planTouched && seedIds.length) {
-    seedWarn.hidden = false;
     const nm = seedIds.map((id) => id === "bg-spn" ? "needs" : id === "bg-spw" ? "wants" : "savings").join(" and ");
-    seedWarn.textContent = seedIds.length === 3
+    const warnTxt = seedIds.length === 3
       ? "Heads up: the spends below are still our example, not yours — type what you really spent."
       : `Heads up: the ${nm} ${seedIds.length > 1 ? "spends are" : "spend is"} still our example — type what you really spent.`;
-  } else { seedWarn.hidden = true; seedWarn.textContent = ""; }
+    /* A16-F2 — role="status": unhide first, write only when the sentence
+       actually changed (render() runs on every keystroke). */
+    seedWarn.hidden = false;
+    if (seedWarn.textContent !== warnTxt) seedWarn.textContent = warnTxt;
+  } else {
+    if (seedWarn.textContent) seedWarn.textContent = "";
+    seedWarn.hidden = true;
+  }
   /* F-A2-4 + MF-1 — a negative must say what now: name the overage and the
      one honest action (trim the spend, or move the split). Step 2 plans from
      the plan figure either way, so say that too. */
@@ -996,7 +1029,7 @@ function render() {
           /* Honest unknown state: the plan figure is fine to show (it IS the
              plan), but there is no actual, so there is nothing to compare and no
              badge. No fabricated amount is printed anywhere in this row. */
-          html += `<div class="actuals-row" tabindex="0" data-goto="${ACT_ID[s.b]}"><span>${bucket.label}</span><b>${planTxt(s.b)}</b><span class="actuals-none">— add yours to score it</span></div>`;
+          html += `<div class="actuals-row" tabindex="0" role="button" data-goto="${ACT_ID[s.b]}" title="See the field behind this figure"><span>${bucket.label}</span><b>${planTxt(s.b)}</b><span class="actuals-none">— add yours to score it</span></div>`;
           continue;
         }
         /* E14: with the plan figure unreadable there is nothing to compare this
@@ -1005,7 +1038,7 @@ function render() {
            entered still prints — that part is true. */
         const planBad = planJunked || malformedOf("al-" + s.b);
         if (planBad) {
-          html += `<div class="actuals-row" tabindex="0" data-goto="${ACT_ID[s.b]}"><span>${bucket.label}</span><b>—</b><span class="actuals-diff">you entered ${nn(s.actual)}</span></div>`;
+          html += `<div class="actuals-row" tabindex="0" role="button" data-goto="${ACT_ID[s.b]}" title="See the field behind this figure"><span>${bucket.label}</span><b>—</b><span class="actuals-diff">you entered ${nn(s.actual)}</span></div>`;
           continue;
         }
         const variance = s.actual - s.plan;
@@ -1013,7 +1046,7 @@ function render() {
         let badgeText = "ON PLAN";
         if (variance > 0) { badgeClass = "verdict-badge--action"; badgeText = `OVER ${nn(variance)}`; }
         else if (variance < 0) { badgeClass = "verdict-badge--good"; badgeText = `UNDER ${nn(-variance)}`; }
-        html += `<div class="actuals-row" tabindex="0" data-goto="${ACT_ID[s.b]}"><span>${bucket.label}</span><b>${planTxt(s.b)}</b><span class="actuals-diff">you entered ${nn(s.actual)}</span><span class="verdict-badge ${badgeClass}">${badgeText}</span></div>`;
+        html += `<div class="actuals-row" tabindex="0" role="button" data-goto="${ACT_ID[s.b]}" title="See the field behind this figure"><span>${bucket.label}</span><b>${planTxt(s.b)}</b><span class="actuals-diff">you entered ${nn(s.actual)}</span><span class="verdict-badge ${badgeClass}">${badgeText}</span></div>`;
       }
       rowsEl.innerHTML = html;
       rowsEl.hidden = false;
@@ -1298,8 +1331,13 @@ function render() {
      Idempotence: render() runs on every keystroke and this rewrites innerHTML,
      so without a marker each pass re-wrapped its own output and the spans
      nested one deeper per keystroke. */
+  /* A16-F6 — the gloss was hover/focus-only on a span that cannot take focus,
+     so a screen reader heard "Itemise" and nothing else. Each glossed term now
+     carries the same words in a .screen-reader-text span, so the definition
+     travels with the word on every input path. "leftover" is gone from the map
+     because the very sentence it sits in already defines it ("leftover = income
+     your splits didn't assign") — a second gloss would say it twice. */
   const jargonMap: Record<string, string> = {
-    "leftover": "unallocated income — money your splits didn't assign",
     "plan vs actual": "target vs reality",
     "itemise": "break down into line items",
   };
@@ -1309,7 +1347,7 @@ function render() {
     let html = el.innerHTML;
     for (const [term, tip] of Object.entries(jargonMap)) {
       const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi");
-      html = html.replace(regex, `<span class="jargon" data-tip="${tip}">$1</span>`);
+      html = html.replace(regex, `<span class="jargon" data-tip="${tip}">$1<span class="screen-reader-text"> (${tip})</span></span>`);
     }
     el.innerHTML = html;
   });
@@ -1319,7 +1357,7 @@ function render() {
     planBucketsLabel.setAttribute("data-glossed", "");
     planBucketsLabel.innerHTML = planBucketsLabel.innerHTML.replace(
       /Plan buckets/,
-      '<span class="jargon" data-tip="your three target amounts">Plan buckets</span>'
+      '<span class="jargon" data-tip="your three target amounts">Plan buckets<span class="screen-reader-text"> (your three target amounts)</span></span>'
     );
   }
 }
@@ -1424,8 +1462,12 @@ let pasted = false;
 const disclosePlanWrite = () => {
   pasted = true;
   const note = t("bg-pasted");
+  const txt = "Put the plan in as your spending — this number came from the plan, not from your month. 'Within plan' below is true by construction, not by verdict. Type what you really spent to score your month.";
+  /* A16-F2 — role="status": unhide first, then write, and never re-write an
+     identical sentence (a second chip tap would otherwise repeat the whole
+     disclosure out loud). */
   note.hidden = false;
-  note.textContent = "Put the plan in as your spending — this number came from the plan, not from your month. 'Within plan' below is true by construction, not by verdict. Type what you really spent to score your month.";
+  if (note.textContent !== txt) note.textContent = txt;
 };
 document.addEventListener("click", (e) => {
   const u = (e.target as HTMLElement).closest?.('.offer b[data-use="bg-spn"]');
@@ -1435,8 +1477,9 @@ document.addEventListener("click", (e) => {
 g("bg-spn").addEventListener("input", () => {
   if (!pasted) return;
   pasted = false;
-  t("bg-pasted").hidden = true;
-  t("bg-pasted").textContent = "";
+  const pastedNote = t("bg-pasted");
+  if (pastedNote.textContent) pastedNote.textContent = "";
+  pastedNote.hidden = true;
 });
 smartFields.register((() => {
   /* E12-9 — the five actuals were never persisted while the page printed
@@ -1515,6 +1558,14 @@ document.addEventListener("click", (e) => {
 const copyBtn = document.getElementById("bg-copy");
 if (copyBtn) copyBtn.addEventListener("click", async () => {
   const done = t("bg-copied");
+  /* A16-F4 — role="status": every copy outcome must be spoken, including a
+     repeat copy of the same message. Unhide first; when the text is unchanged,
+     blank it and force a reflow so the second write is a real mutation. */
+  const announceDone = (msg: string) => {
+    done.hidden = false;
+    if (done.textContent === msg) { done.textContent = ""; void done.offsetWidth; }
+    done.textContent = msg;
+  };
   const planIds = PLAN_IDS;
   const typed = (id: string) => !hasBadge(id, "data-sd") && !pmBlank(g(id).value);
   /* Refuse only when the figures would be invented: a blank plan input prices
@@ -1526,8 +1577,7 @@ if (copyBtn) copyBtn.addEventListener("click", async () => {
      exact figures still travel. Same refusal voice, same reason: nothing to
      copy yet. */
   if (sfIsEmpty("50-30-20-budget-calculator", gv) || planIds.some((id) => pmBlank(g(id).value)) || junkIn(planIds)) {
-    done.textContent = " — nothing to copy yet — enter your numbers above.";
-    done.hidden = false;
+    announceDone(" — nothing to copy yet — enter your numbers above.");
     return;
   }
   const allTyped = ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"].every(typed);
@@ -1542,9 +1592,8 @@ if (copyBtn) copyBtn.addEventListener("click", async () => {
   try {
     if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(summary);
     else throw new Error("no clipboard");
-    done.textContent = " — copied.";
-  } catch { done.textContent = " — copy failed here; long-press the plan line above."; }
-  done.hidden = false;
+    announceDone(" — copied.");
+  } catch { announceDone(" — copy failed here; long-press the plan line above."); }
 });
 
   // E7: Quick-fill handlers

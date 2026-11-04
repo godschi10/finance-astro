@@ -1,3 +1,67 @@
+## [0.7.73] - 2026-11-04 — A16 screen-reader journey fixes: the controls speak, the honesty rails are audible
+
+**A16** (round 16 of 40, screen-reader journey, live site): **FAIL — 2 HIGH, 2 MEDIUM, 4 LOW.**
+970 AX nodes / 831 non-ignored / 139 ignored; **0 nameless interactive**; 7 labelled landmarks;
+all 17 textboxes carry the full visible label (the word "Sample" is inside every seeded name);
+390 drawer absent from the tree when closed (`aria-hidden` + `inert`) and a `dialog` with focus
+when open; FAQ native `<details>`; ticker duplicates `aria-hidden`. What failed was the journey:
+two operable groups announced as text, three honesty rails silent, the one polite region reading
+bare figures. All eight findings fixed — nothing held.
+
+- **A16-F1 (HIGH) — the five actuals-mirror rows were operable but role-less.** They are
+  `div tabindex="0"` with Enter/Space handlers, so the AX tree called them `generic` and the
+  snapshot collapsed all five into one text blob. They now carry `role="button"` (all three
+  template branches) plus `title="See the field behind this figure"`, matching the receipt rows
+  above them. AX now: 5 × `role=button`, each with the description.
+- **A16-F2 (HIGH) — the three honesty rails were silent.** `#bg-seedwarn`, `#bg-pasted` and
+  `#al-junk` become visible with prose that stops a visitor believing a fabricated number, and
+  carried no live semantics. Each is `role="status"` now (implicit polite + atomic), and every
+  write is guarded: identical text is not re-written, so a re-render on each keystroke stays
+  silent. Verified in the AX tree as `status / polite / atomic=true` when visible, and 0
+  mutations on an identical re-render.
+- **A16-F3 (MEDIUM) — the polite region announced bare figures.** `#bg-fig` was the live
+  region and its content is `₦150,000 · ₦90,000 · ₦60,000` — three numbers with no nouns. The
+  labelled sentence lives in `#bg-live` ("Plan now: ₦150,000 needs · …") and was not live. The
+  polite attribute moved to `#bg-live`; `#bg-fig` stays readable but no longer speaks alone.
+  Writes are guarded (unhide before write, skip identical text) — 6 live mutations for 6
+  keystrokes, 0 on an unchanged re-render.
+- **A16-F4 (MEDIUM) — copy status was silent (A15 carry).** `#bg-copied` is `role="status"`
+  now, and a repeat copy of the same message blanks and re-writes through a forced reflow so
+  the second announcement is a real mutation. Refusal path and failure path both announce.
+- **A16-F5 (LOW) — five `aria-label`s sat on role-less containers and never reached the AX
+  tree.** `role="group"` on `#bg-stepper`, `#bg-examplectl`, `#income-chips`, `#split-chips`;
+  the FAQ block is `role="region"` named by `aria-labelledby="fx-faq-h"` with the visible
+  "Questions" heading carrying that id (the old `aria-label` promised "Frequently asked
+  questions" while the heading said "Questions" — the name now matches what is on screen).
+- **A16-F6 (LOW) — jargon glosses were hover/focus-only on a span that cannot take focus.**
+  The map is trimmed to the two terms whose gloss carries meaning ("itemise", "plan vs actual")
+  and each carries the definition in a `.screen-reader-text` span, so the gloss travels with
+  the word on every input path. "leftover" was dropped from the map because the sentence it
+  sits in already defines it — a second gloss would say it twice. "Plan buckets" got the same
+  SR-text treatment where it is wrapped.
+- **A16-F7 (LOW) — heading order skipped level 2.** `#step2` was an `<h3>` directly under the
+  `<h1>` (h1 → h3 → h2). It is an `<h2>` now with every computed metric pinned inline —
+  18.72px/700/−0.3744px/29.952px, margin 0, padding 12px 0 0 — so the pixels do not move
+  (measured height 41.95px vs 41.9375px before at 1280; 72px wrapped at 390, unchanged).
+  Sticky `top:0` preserved.
+- **A16-F8 (LOW) — the theme trigger promised a menu and opened a group.** `aria-haspopup="true"`
+  removed from both triggers (desktop + mobile); the popup is `role="group"` of toggle buttons
+  and `aria-expanded` already carries the state. Popup mechanics were verified correct in A16
+  and are untouched.
+
+**Accepted, not changed:** the SAMPLE badge `title` is not exposed as a description — "Sample"
+is already in every input's accessible name, and adding it as a description would repeat the
+word 12 times with no information gain.
+
+**Gates:** `npm run check` 7/7 · build 84 pages · `npm run test:calc` 130 pass / 0 fail / 7 skip.
+Verified on local built bytes before ship: AX probe shows 5 `role=button` rows with descriptions,
+4 named groups + 1 named region, 0 `haspopup`, 3 `status` rails `polite/atomic`, `#bg-live`
+polite with the labelled sentence and `#bg-fig` no longer live, 0 live mutations on an
+unchanged re-render, 0 console errors at 1280 and 390. No gate edits; additive CSS only; the
+byte-locked vibe sheet is untouched.
+
+
+
 ## [0.7.72] - 2026-11-04 — A15 keyboard audit fixes: the stepper navigates, Clear keeps your place
 
 **A15** (round 15 of 40, keyboard-only journey, live site): **FAIL — 2 HIGH, 1 LOW note.**

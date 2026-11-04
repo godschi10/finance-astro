@@ -139,9 +139,12 @@ if (faqs.length) graph.push({
       {copy.map(([tag, text]) => tag === "h2" ? <h2>{text}</h2> : tag === "h3" ? <h3>{text}</h3> : <p>{text}</p>)}
     </div>
   )}
+  {/* A16-F5 — the label sat on a role-less div and never reached the tree.
+      role="region" makes it a real landmark, and aria-labelledby names it with
+      the heading the visitor can actually see. */}
   {faqs.length > 0 && (
-    <div class="fx-copy art-body" aria-label="Frequently asked questions" style="margin-top:24px">
-      <h2>Questions</h2>
+    <div class="fx-copy art-body" role="region" aria-labelledby="fx-faq-h" style="margin-top:24px">
+      <h2 id="fx-faq-h">Questions</h2>
       {faqs.map((f) => (<details class="faq"><summary>{f.q}</summary>{rawFaq ? <p set:html={f.a}></p> : <p>{f.a}</p>}</details>))}
     </div>
   )}
