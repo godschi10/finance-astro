@@ -1,3 +1,41 @@
+## [0.7.74] - 2026-11-05 — A17 plain-English sweep: shorter sentences, no jargon, every caveat kept
+
+**A17** (round 17 of 40, plain-English sweep, live site): **FAIL — 3 HIGH, 9 MEDIUM, 7 LOW.**
+380 unique visitor-visible strings measured (cold + every trigger state + 390): median Flesch
+Reading Ease 77.9, prose worst −3.0 / FK 15.4, 97 strings below FRE 60, 75 prose strings failing
+the bar, 51 strings over 20 words. What failed was readability, not honesty: the ownership and
+junk rails ran 42–61 words, the Step 2 intro 73, article ¶8 94, the privacy notice 84, and three
+verdict/CTA strings used unexplained finance words. All 19 findings fixed, nothing held; the
+audit's jargon-inventory terms (`gross`, `allocate`, `unallocated`, `auto-transfer`, `inflation`)
+are closed on this page too.
+
+- **A17-F1–F5 (1 HIGH pair + 2 HIGH + 2 MEDIUM) — the long rails are short.** The `.ctx`
+  source line is three sentences (median, example-above-it, Guardian stamp untouched); the
+  `#al-mirror-own` cold rail is 48 words and its triggered forms are split into four sentences
+  with the N-of-5 counts intact; `#al-actual-hint` drops to 31 words; the `#bg-junk` and
+  `#al-junk` rails keep the field name, the quoted bad value, "held back as — not guessed" and
+  the CTA, at 23 words. Every "our example, not yours" and "nothing real to score it against"
+  caveat survives.
+- **A17-F6–F11 (MEDIUM) — the caveats are easier to reach.** `#bg-pasted` keeps the verbatim
+  `"Within plan" is true by construction, not by verdict`; `#al-reconcile` keeps both figures and
+  both fix paths; `#bg-whatnow` now says `Needs are ₦X over budget` (both single and joint
+  states) and keeps the "Step 2 itemises the plan figure, not the amount you overspent" tail
+  wherever an overspend exists; the Step 2 intro is 63 words in four sentences; article ¶8 is a
+  three-mistake paragraph at 59 words; the shared privacy notice is split into seven sentences
+  with every promise and the Reset vs Clear-my-saved-numbers distinction intact.
+- **A17-F12–F19 (LOW) — small strings, plain words.** Hero lede "future you"; article ¶1 gives
+  the reason directly; ¶4 loses "the seed that grows your future" and its comma splice; the
+  gross/net FAQ is retitled `Should I use pay before or after tax?` and answers in 18 words; the
+  needs/wants FAQ fixes its list punctuation; `discretionary` becomes `spending on
+  non-essentials`; the splits verdict says `change them to add up to 100%` (the fix is to add,
+  not trim) and loses the "every naira has a job" metaphor; `Fix needs overage` becomes
+  `Needs too high`.
+- **Jargon inventory closed on this page:** `gross` is written as `pay before tax` in article
+  ¶3/¶7/¶8, the `allocate` FAQ heading becomes `How should I split a ₦250,000 salary?`,
+  `unallocated remainder` becomes `leftover`, `auto-transfer` becomes `automatic transfer`, and
+  `inflation erodes` reads `rising prices erode`. The three accepted `.jargon` glosses and all
+  A16 `aria-*`/`role` work are untouched.
+
 ## [0.7.73] - 2026-11-04 — A16 screen-reader journey fixes: the controls speak, the honesty rails are audible
 
 **A16** (round 16 of 40, screen-reader journey, live site): **FAIL — 2 HIGH, 2 MEDIUM, 4 LOW.**

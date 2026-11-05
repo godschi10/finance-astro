@@ -28,14 +28,14 @@ const al = budgetAllocator(income);
 const seedRent = al.buckets.find((b) => b.id === "rent")?.amount ?? 0;
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
-<ToolShell title="50/30/20 Budget Calculator, Nigeria - GWill Finance" description="Split any income into needs, wants and savings, check real spending against the plan — then break the needs half into rent, food, transport, data and bills, all on one page." slug="50-30-20-budget-calculator" tool="50/30/20 Budget Calculator" lede="Half for needs, 30% for wants, a fifth for future-you. Set the income, check your actual spending, then itemise the needs half — two steps, one page." verified="Two steps, one page · plan vs actual checker · needs-half buckets" faqs={[
+<ToolShell title="50/30/20 Budget Calculator, Nigeria - GWill Finance" description="Split any income into needs, wants and savings, check real spending against the plan — then break the needs half into rent, food, transport, data and bills, all on one page." slug="50-30-20-budget-calculator" tool="50/30/20 Budget Calculator" lede="Half for needs, 30% for wants, a fifth for future you. Set the income, check your spending, then itemise the needs half — two steps, one page." verified="Two steps, one page · plan vs actual checker · needs-half buckets" faqs={[
   { q: "Is 50/30/20 realistic on a Nigerian salary?", a: "As a direction, yes; as law, adjust. High rent cities may need 60/20/20 for a season — the tool accepts custom splits." },
   { q: "What counts as savings?", a: "Anything future-you keeps: emergency fund, investments, debt repayment. Not the money sitting in your spending account." },
   { q: "Where exactly does the needs half go?", a: "Step 2 on this same page breaks your plan's needs figure into rent, food, transport, data and bills, with every share tunable. One tool, one journey — no second page." },
 ]}
 
   badge="The 50/30/20 rule · Simple budgeting",
-  copy={[["p", "The 50/30/20 rule is the most popular budgeting method for a reason: it is simple enough to remember and flexible enough to stick to. You divide your take-home pay into three buckets, 50% to needs, 30% to wants, 20% to savings and debt repayment. No complicated categories, no spreadsheet required. It is a starting point you can adjust as your life changes."],["p", "Needs are the things you cannot function without: rent or mortgage, food, transport to work, utility bills, and the minimum payments on your debt. Wants are everything else, the takeaways, the subscriptions you barely use, the upgrade you do not need. The rule's real value is forcing you to draw that line honestly. Most budgets that fail do so because wants quietly sneak into the needs column."],["p", "In Nigeria, high inflation and rising costs make strict needs-heavy budgets common, housing and food can easily consume well over 50%. That is fine. Treat 50/30/20 as a target to move toward, not a rule to feel guilty about. Start by tracking what your needs actually cost, then push the savings slice up over time. Even starting at 10% savings and inching toward 20% beats saving nothing at all. Use your take-home (net) pay, the money that actually lands in your account, not your gross."],["p", "The 20% savings-and-debt bucket is the seed that grows your future. Once you are saving, put it to work, see it compound with our compound interest calculator, or set a specific target with our savings goal calculator. And remember inflation erodes any goal, our inflation-adjusted calculator shows what you truly need to save."],["p", "Strict 50/30/20 assumes your big needs cost about half your take-home. In high-cost Nigerian cities, rent and food alone can push well past that, which is not a failure of the rule, just a reality to plan around. The important part is to keep the savings slice conscious and growing, even if the mix leans heavier on needs. Adjust the three percentage fields above to whatever split your numbers actually support, rather than forcing a 50/30/20 square peg."],["p", "50/30/20 gives you the three big numbers. To turn them into a budget you can actually spend against, break the needs bucket into real Nigerian categories, rent, food, transport, data, utilities. Step 2 of this same calculator, below the receipt, takes this same split and digs into the needs half, showing exactly how many naira go to rent, food, transport, data and bills, with every share editable so the plan always adds up."],["p", "Start from your take-home pay, never your gross. Whatever your income, the goal is the same: give every naira a job, so nothing leaks away unnoticed."],["p", "The rule fails when people treat it as a rigid law instead of a compass. One classic mistake is budgeting on gross pay, which inflates every bucket and leaves you chasing money that never landed. Another is stuffing the wants bucket with expenses that are really needs in disguise, the \"basic\" phone plan you upgraded twice, the meal delivery that quietly became dinner. And the third is ignoring the leftover entirely: if your three percentages do not sum to 100, the leftover has no job, so it disappears into the void of everyday spending."],["p", "The fix for all three is honest categorising. Budget on what hits your account. When something feels like a want, ask whether you would genuinely afford to drop it this month, if it is a bill you must pay, it belongs in needs. And make sure your split adds up. The calculator above flags any unallocated remainder so you can add it to savings rather than let it vanish."],["p", "Freelancers, commission earners and seasonal workers face a question the 50/30/20 rule glosses over: what is your \"take-home\" when every month is different? The workable answer is to base the budget on your average of the last three months, not your best month. Budget on the average, and when a good month arrives, sweep the surplus past the 20% savings slice rather than inflating your wants."],["p", "Because the rule is percentage-based, it scales with whatever number you enter, that is precisely why this tool takes a single income figure and lets you adjust the three splits. Set the income to your moving average and the buckets adjust automatically, so a lean month is no longer a mystery and a strong month becomes a chance to save more."],["h2", "Budgeting questions"],["h3", "What is the 50/30/20 rule?"],["p", "A simple budget that puts 50% of your take-home pay toward needs, 30% toward wants, and 20% toward savings and paying down debt."],["h3", "How much should I allocate from a ₦250,000 salary?"],["p", "About ₦125,000 for needs, ₦75,000 for wants, and ₦50,000 for savings/debt each month."],["h3", "Should I use gross or net income?"],["p", "Use your take-home (net) pay, the amount that actually reaches your account after tax, because that is what you can genuinely spend and save."],["h3", "What counts as a need versus a want?"],["p", "Needs are what you cannot do without: housing, food, transport, utilities, minimum debt payments. Wants are the rest, dining out, entertainment, upgrading your phone. If in doubt, it is a want."]]},
+  copy={[["p", "The 50/30/20 rule is popular because it is simple enough to remember and flexible enough to stick to. Divide your take-home pay into three buckets: 50% needs, 30% wants, and 20% savings and debt repayment. You need no complicated categories or spreadsheet. It is a starting point you can adjust as your life changes."],["p", "Needs are the things you cannot function without: rent or mortgage, food, transport to work, utility bills, and the minimum payments on your debt. Wants are everything else, the takeaways, the subscriptions you barely use, the upgrade you do not need. The rule's real value is forcing you to draw that line honestly. Most budgets that fail do so because wants quietly sneak into the needs column."],["p", "In Nigeria, high inflation and rising costs make strict needs-heavy budgets common, housing and food can easily consume well over 50%. That is fine. Treat 50/30/20 as a target to move toward, not a rule to feel guilty about. Start by tracking what your needs actually cost, then push the savings slice up over time. Even starting at 10% savings and inching toward 20% beats saving nothing at all. Use your take-home (net) pay, the money that actually lands in your account, not your pay before tax."],["p", "The 20% is for future you: savings and debt repayment. Once you are saving, put it to work — see it compound with our compound interest calculator, or set a target with our savings goal calculator. Remember: rising prices erode any goal; our inflation-adjusted calculator shows what you truly need to save."],["p", "Strict 50/30/20 assumes your big needs cost about half your take-home. In high-cost Nigerian cities, rent and food alone can push well past that, which is not a failure of the rule, just a reality to plan around. The important part is to keep the savings slice conscious and growing, even if the mix leans heavier on needs. Adjust the three percentage fields above to whatever split your numbers actually support, rather than forcing a 50/30/20 square peg."],["p", "50/30/20 gives you the three big numbers. To turn them into a budget you can actually spend against, break the needs bucket into real Nigerian categories, rent, food, transport, data, utilities. Step 2 of this same calculator, below the receipt, takes this same split and digs into the needs half, showing exactly how many naira go to rent, food, transport, data and bills, with every share editable so the plan always adds up."],["p", "Start from your take-home pay, never your pay before tax. Whatever your income, the goal is the same: give every naira a job, so nothing leaks away unnoticed."],["p", "The rule fails when you treat it as fixed. Three common mistakes: budgeting on pay before tax, which inflates every bucket; treating needs as wants, such as an upgraded \"basic\" phone plan or meal delivery that became dinner; and ignoring the leftover. If your splits do not add to 100%, the leftover is unassigned and disappears into everyday spending."],["p", "The fix for all three is honest categorising. Budget on what hits your account. When something feels like a want, ask whether you would genuinely afford to drop it this month, if it is a bill you must pay, it belongs in needs. And make sure your split adds up. The calculator above flags any leftover so you can add it to savings rather than let it vanish."],["p", "Freelancers, commission earners and seasonal workers face a question the 50/30/20 rule glosses over: what is your \"take-home\" when every month is different? The workable answer is to base the budget on your average of the last three months, not your best month. Budget on the average, and when a good month arrives, sweep the surplus past the 20% savings slice rather than inflating your wants."],["p", "Because the rule is percentage-based, it scales with whatever number you enter, that is precisely why this tool takes a single income figure and lets you adjust the three splits. Set the income to your moving average and the buckets adjust automatically, so a lean month is no longer a mystery and a strong month becomes a chance to save more."],["h2", "Budgeting questions"],["h3", "What is the 50/30/20 rule?"],["p", "A simple budget that puts 50% of your take-home pay toward needs, 30% toward wants, and 20% toward savings and paying down debt."],["h3", "How should I split a ₦250,000 salary?"],["p", "About ₦125,000 for needs, ₦75,000 for wants, and ₦50,000 for savings/debt each month."],["h3", "Should I use pay before or after tax?"],["p", "Use take-home (net) pay: what reaches your account after tax. That is what you can spend and save."],["h3", "What counts as a need versus a want?"],["p", "Needs are what you cannot do without: housing, food, transport, utilities, minimum debt payments. Wants are the rest: dining out, entertainment, upgrading your phone. If in doubt, it is a want."]]},
   related={[
     { href: `${base}money-tools/compound-interest-calculator/`, title: "Compound Interest Calculator", excerpt: "Put the 20% to work — project your savings year by year." },
     { href: `${base}money-tools/savings-goal-calculator/`, title: "Savings Goal Calculator", excerpt: "Name the target and deadline — get the exact monthly price." },
@@ -145,7 +145,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
      h1 → h3 → h2, a skipped level. Every metric the h3 computed is pinned
      inline so the pixels do not move (18.72px/700/-0.3744px/29.952px, margin 0). -->
 <h2 id="step2" style="position:sticky;top:0;background:var(--surface);z-index:10;padding:12px 0 0;margin:0;font-size:18.72px;font-weight:700;letter-spacing:-0.3744px;line-height:29.952px">Step 2 — where the needs money goes</h2>
-<p>One tool, one journey. This is the plan's needs figure from step 1 — the same income, the same split — itemised into real Nigerian lines: rent, food, transport, data, bills. Knowing you should spend <span id="bg-step2-needs">₦{n(seed.needs)}</span> on needs is useful; knowing rent takes about <span id="bg-step2-rent">₦{n(seedRent)}</span> of it is actionable. The shares below are indicative starting points, not laws — tune any bucket and the naira follows instantly, always reconciling back to your income.</p>
+<p>One tool, one journey. This is the plan's needs figure from step 1 — same income, same split — broken into Nigerian lines: rent, food, transport, data and bills. Knowing you should spend <span id="bg-step2-needs">₦{n(seed.needs)}</span> on needs is useful. Knowing rent takes about <span id="bg-step2-rent">₦{n(seedRent)}</span> makes it actionable. The shares below are starting points, not rules. Tune any bucket and the naira follows, always matching your income.</p>
 <p class="receipt-note"><a href="#bg-top">↑ Adjust income &amp; split</a></p>
 <p class="receipt-note" id="bg-mini" hidden></p>
 <div class="tgrid c3" style="margin-top:14px">
@@ -175,7 +175,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
      for it — the exact lie step 1 was caught telling, five fields further
      down the same page. -->
 <p class="receipt-note" id="al-junk" hidden role="status" style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
-<p class="receipt-note" id="al-actual-hint">Optional — score just the buckets you know. A bucket you leave blank still shows that bucket's plan amount, but no "you spent" figure and no badge, because we have nothing real to score it against. Nothing is filled in for you here.</p>
+<p class="receipt-note" id="al-actual-hint">Optional: score only the buckets you know. A blank bucket keeps its plan amount, but shows no "you spent" figure and no badge. We have nothing real to score. Nothing is filled in for you.</p>
 <!-- E12-10 — the five actuals faced a blank naira grid with no affordance.
      Same vocabulary as the income chips above: one tap writes THAT bucket's
      plan amount, clearly labelled, and routes through the same disclosure
@@ -433,7 +433,7 @@ const junkRail = (el: HTMLElement | null, ids: readonly string[]): void => {
       return `${nm} reads "${esc(g(id).value)}" — the comma in there is not a thousands separator (one sits between three-digit groups), so it was dropped and the box was read as ${readAs(id)}.`;
     return kind === "unparseable"
       ? `${nm} reads "${esc(g(id).value)}", which is not a figure we can use — so the plan was priced as if it read ${unitOf(id)}, not as what you typed.`
-      : `${nm} reads "${esc(g(id).value)}", and we could not get a figure out of it at all — so every number that depends on it is held back as "—" instead of guessed.`;
+      : `${nm} reads "${esc(g(id).value)}" — not a number. Every figure that depends on it is held back as "—", not guessed.`;
   });
   const next = clauses.join(" ")
     + (more ? ` ${more} more field${more > 1 ? "s" : ""} ${more > 1 ? "are" : "is"} in the same state.` : "")
@@ -791,11 +791,16 @@ function render() {
     if (overNW.length) {
       const nm = overNW.map((o) => o.name).join(" and ");
       const tot = overNW.reduce((a, o) => a + o.over, 0);
-      bits.push(`${nm} ${nn(tot)} over — spend less there or raise the ${nm} split % above`);
+      const named = nm.charAt(0).toUpperCase() + nm.slice(1);
+      const splitsRef = overNW.length > 1 ? "splits" : `${nm} split %`;
+      bits.push(`${named} are ${nn(tot)} over budget — spend less there or raise the ${splitsRef} above`);
     }
     if (savOver > 0) bits.push(`savings ${nn(savOver)} over plan — ahead of it; leave it banked or move the split if needs run tight`);
     wn.hidden = false;
-    wn.textContent = bits.join("; ") + ". Step 2 still itemises the plan figure, not the overspend.";
+    wn.textContent = bits.join("; ")
+      + (overNW.length
+        ? ". Step 2 still itemises the plan figure, not the amount you overspent."
+        : ".");
   } else { wn.hidden = true; wn.textContent = ""; }
   /* MF-6 — the both-steps mini plan: FATIGUE CUT keeps only the pair the
      tuner cannot see from step 2 (needs + rent). Wants/savings restated the
@@ -1007,7 +1012,7 @@ function render() {
     if (!anyScored) {
       /* No actual anywhere: the panel withholds rather than inventing one, and
          says in words WHY it is empty and how to fill it. */
-      ownEl.textContent = "Our example, not yours — the naira beside each bucket is your plan, not your spending. Type what you actually spent in any bucket above; a bucket you leave blank keeps its plan amount but prints no \"you spent\" figure and no badge, because we have nothing real to score it against.";
+      ownEl.textContent = "Our example, not yours: the naira beside each bucket is the plan, not your spending. Type what you actually spent in any bucket. A blank bucket keeps its plan amount but shows no \"you spent\" figure and no badge, because there is nothing real to score it against.";
       rowsEl.innerHTML = "";
       rowsEl.hidden = true;
       t("al-reconcile").hidden = true; t("al-reconcile").textContent = "";
@@ -1015,7 +1020,7 @@ function render() {
       t("al-onplan").hidden = true; t("al-onplan").textContent = "";
     } else {
       const n = scored.filter((s) => s.actual !== null).length;
-      ownEl.textContent = `Variance = what you entered, minus that bucket's plan. ${n} of 5 buckets scored from what you typed; the other ${5 - n} still show their plan only — no "you spent" figure and no badge, because we have nothing real to score them against.${planOurs ? " The plan figures are still our worked example — touch income, a split or a share to make them yours." : ""}`;
+      ownEl.textContent = `Variance = what you entered minus that bucket's plan. ${n} of 5 buckets scored from what you typed; the other ${5 - n} still show their plan only, with no "you spent" figure and no badge, because there is nothing real to score them against.${planOurs ? " The plan figures are still our example. Touch income, a split or a share to make them yours." : ""}`;
       let html = "";
       /* E14: the plan column of a bucket is that bucket's share of needs, so a
          junk share means this column is the reader's number, not the one typed.
@@ -1119,7 +1124,7 @@ function render() {
                 verdict. So it now ASKS, which is what the user needs to do next
                 anyway: finish the buckets, or correct the total. */
           rec.hidden = false;
-          rec.textContent = `Your buckets add to ${nn(scoredSum)} but "Spent on needs" says ${nn(aggNeeds)} — these two disagree, so we cannot score your month yet. Enter the buckets you have not filled in, or correct the needs total above.`;
+          rec.textContent = `Your buckets add to ${nn(scoredSum)} but "Spent on needs" says ${nn(aggNeeds)} — they disagree, so we cannot score your month yet. Fill in the missing buckets or correct the needs total.`;
           /* E12-3 — the sentence says what to type; now it gets there too. */
           const blankBucket = AL_BUCKETS.find((b) => actualOf(b) === null);
           if (blankBucket) {
@@ -1193,11 +1198,11 @@ function render() {
     const bucketsYours = yours(["bg-inc", "bg-needs"].concat(shareIds));
     // Check splits add to 100%
     if (total !== 100) {
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">SPLITS ${total}%</span>${splitsYours ? "Your splits" : "Our example's splits"} add to ${total}% — trim to 100% so every naira has a job.</div>`);
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">SPLITS ${total}%</span>${splitsYours ? "Your splits" : "Our example's splits"} add to ${total}% — change them to add up to 100%.</div>`);
     }
     // Check savings gap
     if (c.savings_remaining > 0) {
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">SAVE GAP</span>${savYours ? `You're ${nn(c.savings_remaining)} short on savings` : `Our example is ${nn(c.savings_remaining)} short on savings — that figure is ours, not yours`} — set up an auto-transfer or raise the savings split.</div>`);
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">SAVE GAP</span>${savYours ? `You're ${nn(c.savings_remaining)} short on savings` : `Our example is ${nn(c.savings_remaining)} short on savings — that figure is ours, not yours`} — set up an automatic transfer or raise the savings split.</div>`);
     } else if (c.savings_remaining < 0) {
       verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--good">AHEAD</span>${savYours ? `You've put ${nn(-c.savings_remaining)} extra to savings` : `Our example puts ${nn(-c.savings_remaining)} extra to savings`} — ahead of plan.</div>`);
     }
@@ -1225,7 +1230,7 @@ function render() {
     }
     // Check wants overage
     if (c.wants_remaining < 0) {
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">WANTS OVER</span>${wantsYours ? `You're ${nn(-c.wants_remaining)} over on wants` : `Our example is ${nn(-c.wants_remaining)} over on wants — that figure is ours, not yours`} — cut discretionary spend or raise Wants %.</div>`);
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">WANTS OVER</span>${wantsYours ? `You're ${nn(-c.wants_remaining)} over on wants` : `Our example is ${nn(-c.wants_remaining)} over on wants — that figure is ours, not yours`} — cut spending on non-essentials or raise Wants %.</div>`);
     }
     // Check individual bucket overages in step 2
     if (r2.needs > 0 && planned > r2.needs) {
@@ -1257,7 +1262,7 @@ function render() {
       bgNextItems.push(`<a class="btn b-green" href="#bg-top" style="flex:1;text-align:center;text-decoration:none" data-goto="bg-save">Close the ${nn(c.savings_remaining)} savings gap → Adjust splits</a>`);
     }
     if (c.needs_remaining < 0) {
-      bgNextItems.push(`<a class="btn b-ghost" href="#bg-top" style="flex:1;text-align:center;text-decoration:none" data-goto="bg-needs">Fix needs overage → Raise Needs %</a>`);
+      bgNextItems.push(`<a class="btn b-ghost" href="#bg-top" style="flex:1;text-align:center;text-decoration:none" data-goto="bg-needs">Needs too high → Raise Needs %</a>`);
     }
     if (total !== 100) {
       bgNextItems.push(`<a class="btn b-ghost" href="#bg-top" style="flex:1;text-align:center;text-decoration:none" data-goto="bg-needs">Splits at ${total}% → Adjust splits to 100%</a>`);
@@ -1462,7 +1467,7 @@ let pasted = false;
 const disclosePlanWrite = () => {
   pasted = true;
   const note = t("bg-pasted");
-  const txt = "Put the plan in as your spending — this number came from the plan, not from your month. 'Within plan' below is true by construction, not by verdict. Type what you really spent to score your month.";
+  const txt = "Put the plan in as your spending, but remember: this came from the plan, not your month. \"Within plan\" is true by construction, not by verdict. Type what you really spent to score your month.";
   /* A16-F2 — role="status": unhide first, then write, and never re-write an
      identical sentence (a second chip tap would otherwise repeat the whole
      disclosure out loud). */
