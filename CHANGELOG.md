@@ -1,3 +1,42 @@
+## [0.7.75] - 2026-11-08 — E18 speed and legibility fixes: an early tap replaces the sample, the card stops moving, the receipt stops dangling separators
+
+**E18** (edit round 18 of 40, live site): **2 HIGH, 1 MEDIUM, 2 LOW — all five closed.** A18
+measured five speed/UX faults on the 50/30/20 calculator: a fast visitor's keystrokes appended
+to the sample income, the above-fold split sat at 1.97:1 on the light card, the card grew after
+first paint, JavaScript-off said nothing, and the receipt dangled separators on narrow screens.
+Behaviour, copy and layout are otherwise unchanged.
+
+- **F1 (HIGH) — an early tap replaces the sample, it never appends.** The SSR `#bg-inc` now
+  carries `onfocus="if(this.closest('.field').hasAttribute('data-sd'))this.select()"`, so
+  select-all fires only while the field still wears its SAMPLE badge. A visitor who types before
+  hydration now gets `300000`, not `250000300000` — cold proof 3/3 at 390 with 4G and 4× CPU:
+  value `300000`, figure `₦150,000 · ₦90,000 · ₦60,000`, and a second focus after blur selects
+  nothing (`[6,6]`, `stillSample:false`). A page-local early-typing reconciliation hands the
+  visitor's own value back after hydration (server truth stays in the `value` attribute; the
+  seed is restored only for the reset snapshot).
+- **F2 (HIGH) — the split line is legible.** `#bg-live` alone takes `color:var(--text-mid)`,
+  14 px and line-height 1.5 (page-scoped rule; `.receipt-note` and the dark receipt are
+  untouched). Measured contrast is **11.375:1** on the light card and **9.512:1** on the dark
+  card, and the element's top position is unchanged at 479.36 px.
+- **F3 (MEDIUM) — the card no longer grows after paint.** The seven `#bg-top` fields ship with
+  `data-sd` and their `<span class="sd">SAMPLE</span>` badges server-rendered; `#bg-live` ships
+  visible with its cold sentence
+  (`Plan now: ₦125,000 needs · ₦75,000 wants · ₦50,000 savings`); a tiny inline script sets
+  `aria-busy` only when JavaScript is present and clears it after the first render. Cold 390
+  proof n=3: **zero layout-shift entries**, CLS 0, `#bg-top` 750.45 px and `#bg-live` top
+  479.36 px identical at first paint and +4 s, `aria-busy` `true` → absent, live text
+  byte-identical. The Guardian context line — the one growth the gate found after the badges
+  were fixed (650.89 → 750.45 px, shift 0.0102) — is server-rendered in the same slot and
+  swapped for the fleet copy at boot.
+- **F4 (LOW) — JavaScript-off is not silent.** A small muted line inside the card says the
+  figures are our worked example and the calculator needs JavaScript to work out your own split.
+  JS-off: visible, 61.41 px, figure still correct. JS-on: no visible `<noscript>`.
+- **F5 (LOW) — the receipt stops dangling separators.** `#bg-fig` ships three
+  `<span class="fig-amt">` amounts with `<span class="fig-sep" aria-hidden="true"> · </span>`
+  separators, and a page-local `splitFig()` re-splits the figure after every render write, so
+  clear, reset, blank and junk states all return to split spans. At 390 the receipt is three
+  clean lines (100.31 px, no trailing `·`); at 1280 it is one line with ` · `.
+
 ## [0.7.74] - 2026-11-05 — A17 plain-English sweep: shorter sentences, no jargon, every caveat kept
 
 **A17** (round 17 of 40, plain-English sweep, live site): **FAIL — 3 HIGH, 9 MEDIUM, 7 LOW.**

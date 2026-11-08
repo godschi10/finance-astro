@@ -27,6 +27,11 @@ const chk = budget503020Compare(income, 0.5, 0.3, 0.2, seedActuals.needs, seedAc
 const al = budgetAllocator(income);
 const seedRent = al.buckets.find((b) => b.id === "rent")?.amount ?? 0;
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+/* E18-F3 — the cold-state split sentence, built ONCE here so the server can
+   paint it. nn() lives in the client module; the seed is positive, so n() is
+   the exact same string. The client render computes this identical text and
+   its "skip identical rewrites" guard keeps aria-live silent on boot. */
+const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wants · ₦${n(seed.savings)} savings`;
 ---
 <ToolShell title="50/30/20 Budget Calculator, Nigeria - GWill Finance" description="Split any income into needs, wants and savings, check real spending against the plan — then break the needs half into rent, food, transport, data and bills, all on one page." slug="50-30-20-budget-calculator" tool="50/30/20 Budget Calculator" lede="Half for needs, 30% for wants, a fifth for future you. Set the income, check your spending, then itemise the needs half — two steps, one page." verified="Two steps, one page · plan vs actual checker · needs-half buckets" faqs={[
   { q: "Is 50/30/20 realistic on a Nigerian salary?", a: "As a direction, yes; as law, adjust. High rent cities may need 60/20/20 for a season — the tool accepts custom splits." },
@@ -43,12 +48,21 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   ]}
   disclaimer="This calculator is for informational guidance only and is not financial advice. The 50/30/20 rule is a budgeting framework, not a guarantee of outcomes, adjust it to your circumstances and confirm major decisions with a licensed adviser.">
 <div class="fx-card">
+<script is:inline>var b=document.currentScript&&document.currentScript.closest(".fx-card");if(b)b.setAttribute("aria-busy","true");</script>
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <p class="receipt-note" id="bg-memdate" hidden></p>
 <!-- A16-F3 — the sentence with the nouns is the live region now. It carried the
      labelled line while #bg-fig (bare "₦150,000 · ₦90,000 · ₦60,000", no nouns)
-     did the announcing. #bg-fig stays readable; it just no longer speaks alone. -->
-<p class="receipt-note" id="bg-live" hidden aria-live="polite"></p>
+     did the announcing. #bg-fig stays readable; it just no longer speaks alone.
+     E18-F3 — the cold sentence is SERVER-RENDERED, not hidden-then-filled at
+     hydration: #bg-live used to appear at boot and push the card +41px (CLS
+     0.0635). The text is the same string render() computes from the seed, so
+     its identical-rewrite guard stays silent. aria-live stays. -->
+<p class="receipt-note" id="bg-live" aria-live="polite">{liveSeed}</p>
+<!-- E18-F4 — JS-off used to be a silent dead end: the example figures painted
+     correctly and typing did nothing. One muted line, not a warning box; the
+     browser hides it entirely when scripting is on. -->
+<noscript><p class="receipt-note" style="color:var(--text-mid);margin-top:8px">These figures are our worked example. The calculator needs JavaScript to work out your own split.</p></noscript>
 <!-- Visual stepper -->
 <!-- A16-F5 — a label on a role-less div is dropped from the accessibility
      tree. role="group" makes the name real, so the two steps are announced as
@@ -69,13 +83,30 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   <button type="button" class="btn b-ghost b-sm" id="bg-reset-example" style="min-height:44px">Reset to the example</button>
 </div>
 <div class="tgrid c3" id="bg-top">
-<div class="field" data-cur="NGN"><label for="bg-inc">Monthly income ₦</label><input id="bg-inc" type="text" value={income} inputmode="decimal" autocomplete="section-income"></div>
-<div class="field"><label for="bg-needs">Needs %</label><input id="bg-needs" type="text" max="100" value="50" inputmode="decimal" placeholder="50" autocomplete="section-budget-splits"></div>
-<div class="field"><label for="bg-wants">Wants %</label><input id="bg-wants" type="text" max="100" value="30" inputmode="decimal" placeholder="30" autocomplete="section-budget-splits"></div>
-<div class="field"><label for="bg-save">Savings %</label><input id="bg-save" type="text" max="100" value="20" inputmode="decimal" placeholder="20" autocomplete="section-budget-splits"></div>
-<div class="field" data-cur="NGN"><label for="bg-spn">Spent on needs ₦</label><input id="bg-spn" type="text" value={String(seedActuals.needs)} inputmode="decimal" autocomplete="off"></div>
-<div class="field" data-cur="NGN"><label for="bg-spw">Spent on wants ₦</label><input id="bg-spw" type="text" value={String(seedActuals.wants)} inputmode="decimal" autocomplete="off"></div>
-<div class="field" data-cur="NGN"><label for="bg-sps">Put to savings ₦</label><input id="bg-sps" type="text" value={String(seedActuals.savings)} inputmode="decimal" autocomplete="off"></div>
+<!-- E18-F3 — the seven seeded fields ship the post-hydration chrome in SSR: the
+     data-sd state attr plus the exact <span class="sd"> mark() re-creates. Every
+     delivered value IS our example, so the claim is true before JS runs, and
+     first paint now has the final (750px) grid instead of growing into it.
+     mark() still removes and re-appends an identical badge in one task — same
+     dimensions, no shift. -->
+<div class="field" data-cur="NGN" data-sd><label for="bg-inc">Monthly income ₦<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-inc" type="text" value={income} inputmode="decimal" autocomplete="section-income" onfocus="if(this.closest('.field').hasAttribute('data-sd'))this.select()"></div>
+<!-- E18-F3 — the CONTEXT line was the one growth the SAMPLE chrome did not
+     cover: smart-fields' ctx() inserts it after the income field at BOOT, so
+     #bg-top grew 650.89px → 750.45px at hydration and pushed every field
+     below it (the only layout-shift entry the F3 gate measured: 0.0102,
+     sources = the new DIV, #bg-needs, DIV). The line is a sourced, static
+     sentence, so the server paints it in the SAME slot ctx() uses — inside
+     #bg-top, right after the income field — and the client drops this
+     stand-in once the module has inserted the fleet's own copy (which stays
+     the authoritative one). Markup is byte-identical to ctx()'s output, so
+     the swap moves nothing. -->
+<p class="ctx" data-e18-ctx>Median Nigerian pay is roughly ₦120k–₦150k a month. Our worked example sits above that: a scenario, not your salary. <span class="ctx-src">Guardian · May 2026 · <a href="https://guardian.ng/nigerian/what-is-the-average-salary-in-nigeria/" rel="noopener">read the source</a></span></p>
+<div class="field" data-sd><label for="bg-needs">Needs %<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-needs" type="text" max="100" value="50" inputmode="decimal" placeholder="50" autocomplete="section-budget-splits"></div>
+<div class="field" data-sd><label for="bg-wants">Wants %<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-wants" type="text" max="100" value="30" inputmode="decimal" placeholder="30" autocomplete="section-budget-splits"></div>
+<div class="field" data-sd><label for="bg-save">Savings %<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-save" type="text" max="100" value="20" inputmode="decimal" placeholder="20" autocomplete="section-budget-splits"></div>
+<div class="field" data-cur="NGN" data-sd><label for="bg-spn">Spent on needs ₦<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-spn" type="text" value={String(seedActuals.needs)} inputmode="decimal" autocomplete="off"></div>
+<div class="field" data-cur="NGN" data-sd><label for="bg-spw">Spent on wants ₦<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-spw" type="text" value={String(seedActuals.wants)} inputmode="decimal" autocomplete="off"></div>
+<div class="field" data-cur="NGN" data-sd><label for="bg-sps">Put to savings ₦<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-sps" type="text" value={String(seedActuals.savings)} inputmode="decimal" autocomplete="off"></div>
 </div>
 <!-- E13 — the input-health rails. pm() is deliberately tolerant: it reads
      "12.5.5" as 0, "abc" as never-entered and "1e9" as a billion naira, so
@@ -122,7 +153,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-note" id="bg-seedwarn" hidden role="status"></p>
 <div class="receipt">
 <p class="receipt-lbl">Plan buckets</p>
-<p class="receipt-fig" id="bg-fig">₦{n(seed.needs)} · ₦{n(seed.wants)} · ₦{n(seed.savings)}</p>
+<p class="receipt-fig" id="bg-fig"><span class="fig-amt">₦{n(seed.needs)}</span><span class="fig-sep" aria-hidden="true"> · </span><span class="fig-amt">₦{n(seed.wants)}</span><span class="fig-sep" aria-hidden="true"> · </span><span class="fig-amt">₦{n(seed.savings)}</span></p>
 <p class="receipt-sub" id="bg-sub">Needs · wants · savings — leftover <span id="bg-else">₦{n(seed.else)}</span></p>
 <p class="receipt-sub" id="bg-sumnote"></p>
 <p class="receipt-note" id="bg-warn" hidden aria-live="polite"></p>
@@ -230,6 +261,24 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-note" id="bg-resetnote">Reset wipes what you typed and restores our example — it cannot be undone.</p>
 </div>
 </ToolShell>
+<style is:global>
+/* E18-F2 — the split sentence is the first true figure above the fold, but it
+   inherited .receipt-note's dark-slip cream (#c4b89a) while sitting on the
+   LIGHT card: 12.8px at 1.97:1. Scoped to this one element only; the dark
+   receipt (.receipt .receipt-note) and every other rail are untouched. */
+#bg-live{color:var(--text-mid);font-size:14px;line-height:1.5}
+/* E18-F5 — #bg-fig is one text node written by sfFig (tool-fields.ts, untouched),
+   so CSS alone could not stop an amount wrapping mid-line and leaving a "·" at
+   the line end. The server renders three .fig-amt spans with aria-hidden .fig-sep
+   separators, and a page-local splitFig() re-splits every later write. Amounts
+   never wrap; on a phone the separators are hidden and each amount takes its own
+   line. Font size/weight/colour and the 800 display are NOT touched. */
+#bg-fig .fig-amt{white-space:nowrap}
+@media (max-width:420px){
+#bg-fig .fig-sep{display:none}
+#bg-fig .fig-amt{display:block}
+}
+</style>
 <script>
 import { budget503020, budget503020Compare } from "../../lib/budget";
 import { budgetAllocator } from "../../lib/allocator";
@@ -407,6 +456,35 @@ const sfFigJ = (el: HTMLElement | null, deps: readonly string[], real: string): 
   if (junkIn(deps)) { sfFig(el, deps, SF_DASH); el.setAttribute(NO_FIG, ""); return; }
   sfFig(el, deps, real);
 };
+/* E18-F5 — sfFig() writes #bg-fig as ONE text node, so a wrapped amount left the
+   " · " separator dangling at a line end. The server already ships the three
+   amounts as spans; this re-splits every later write (sfFig wipes them on each
+   render). DOM nodes only, never innerHTML; the naira text is the one sfFig
+   wrote, untouched. Skips the withheld dash and any figure marked data-sf-no. */
+const splitFig = (): void => {
+  const el = document.getElementById("bg-fig");
+  if (!el) return;
+  const raw = (el.textContent || "").trim();
+  if (!raw || raw === SF_DASH || el.hasAttribute(NO_FIG)) return;
+  const parts = raw.split(" · ");
+  if (parts.length !== 3) return;
+  const spans = el.children;
+  if (spans.length === 5 && parts.every((p, i) => spans[i * 2]?.textContent === p)) return;
+  el.textContent = "";
+  parts.forEach((part, i) => {
+    if (i) {
+      const sep = document.createElement("span");
+      sep.className = "fig-sep";
+      sep.setAttribute("aria-hidden", "true");
+      sep.textContent = " · ";
+      el.appendChild(sep);
+    }
+    const amt = document.createElement("span");
+    amt.className = "fig-amt";
+    amt.textContent = part;
+    el.appendChild(amt);
+  });
+};
 /* One rail, one voice, shared by the step-1 and step-2 rails so the two can
    never drift into two sentences for one fact. Per-field clauses, because
    the two malformed kinds need two DIFFERENT truths: an unparseable box was
@@ -544,6 +622,7 @@ function render() {
      mis-read ("250," priced as 250) cannot print a plan at all — that is what
      sfFigJ adds on top of the blank test. */
   sfFigJ(t("bg-fig"), PLAN_IDS, `${nn(plan.needs)} · ${nn(plan.wants)} · ${nn(plan.savings)}`);
+  splitFig();
   sfFigJ(t("bg-else"), PLAN_IDS, nn(plan.else));
   /* B4-FIX2 — a split the visitor never entered cannot print a gold bucket:
      garbage ("abc" in a split) reads as un-entered, exactly like a cleared
@@ -1365,6 +1444,10 @@ function render() {
       '<span class="jargon" data-tip="your three target amounts">Plan buckets<span class="screen-reader-text"> (your three target amounts)</span></span>'
     );
   }
+  /* E18-F5 — the last word on #bg-fig: sfEmpty()'s kept-map restore writes plain
+     text back when the page leaves the empty state, so re-split here even when
+     the write above was a no-op. */
+  splitFig();
 }
 ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"].forEach((id) => g(id).addEventListener("input", render));
 document.querySelectorAll("[data-al-bucket]").forEach((el) => el.addEventListener("input", render));
@@ -1486,6 +1569,28 @@ g("bg-spn").addEventListener("input", () => {
   if (pastedNote.textContent) pastedNote.textContent = "";
   pastedNote.hidden = true;
 });
+/* E18-F1 — a visitor can type into the SERVER-rendered income box before this
+   module boots; that is the whole point of F1's inline onfocus, and the audit
+   proved the keystrokes land. Two things then went wrong, both because the
+   first input event happened before smart-fields' listener existed:
+     (1) the SAMPLE badge survived, so a SECOND focus selected the visitor's
+         OWN number — the one thing F1 forbids;
+     (2) the module's reset snapshot captured the typed value as "the server's
+         example", so Reset would hand the visitor's own figure back labelled
+         as ours.
+   The server's value lives in the value ATTRIBUTE, which typing never
+   touches. So the server's value goes back for the snapshot, the module boots
+   on it, and the visitor's typed value is handed back with a real input
+   event — which drops the badge exactly as a post-hydration keystroke does.
+   Nothing is painted in between: all of it happens in this one task. */
+const SSR_SEED_IDS = ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps", "al-rent", "al-food", "al-transport", "al-data", "al-utilities"];
+const earlyTyped = new Map<string, string>();
+SSR_SEED_IDS.forEach((id) => {
+  const i = document.getElementById(id) as HTMLInputElement | null;
+  if (!i) return;
+  const attr = i.getAttribute("value");
+  if (attr !== null && i.value !== attr) { earlyTyped.set(id, i.value); i.value = attr; }
+});
 smartFields.register((() => {
   /* E12-9 — the five actuals were never persisted while the page printed
      "Last saved today — only LAST USED pills are yours" above them: an honest
@@ -1496,6 +1601,20 @@ smartFields.register((() => {
   ACT_IDS.forEach((id) => { if (cfg.remember.indexOf(id) < 0) cfg.remember.push(id); });
   return cfg;
 })());
+/* E18-F1 — hand the visitor's early-typed value back now that the module is
+   listening: the input event drops the SAMPLE badge (the number is theirs)
+   and the page's own render() answers it. */
+earlyTyped.forEach((v, id) => {
+  const i = document.getElementById(id) as HTMLInputElement | null;
+  if (!i) return;
+  i.value = v;
+  i.dispatchEvent(new Event("input", { bubbles: true }));
+});
+/* E18-F3 — the server painted the context line so the grid would not grow at
+   hydration; smart-fields has now inserted its own copy in the same slot.
+   The fleet's copy is the authoritative one, so the server's stand-in goes. */
+const ssrCtx = document.querySelector("#bg-top .ctx[data-e18-ctx]");
+if (ssrCtx && document.querySelector("#bg-top .ctx:not([data-e18-ctx])")) ssrCtx.remove();
 sfBind("50-30-20-budget-calculator", gv);
 /* MF-7 — tap-a-row to compare: the receipt rows answer with the fields they
    are derived from (the offer already lives at the Spent-on-needs field, so
@@ -1681,4 +1800,8 @@ if (copyBtn) copyBtn.addEventListener("click", async () => {
   });
 
 render();
+/* E18-F3 — the inline pre-hydration script marked the card aria-busy; the first
+   full render has run, so the region is settled and the attribute goes. A
+   JS-off visitor never saw it set (that inline script is the only setter). */
+document.querySelector(".fx-card")?.removeAttribute("aria-busy");
 </script>
