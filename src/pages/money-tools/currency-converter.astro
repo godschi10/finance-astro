@@ -44,7 +44,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
 
-<div class="field" data-cur={seed.from}><label for="cc-amt">Amount <span data-cur-unit></span></label><input id="cc-amt" type="text" value="100" inputmode="decimal"></div>
+<div class="field" data-cur={seed.from}><label for="cc-amt">Amount <span data-cur-unit></span></label><span class="fi"><span class="fi-sym" aria-hidden="true">{cur[seed.from].symbol}</span><input id="cc-amt" type="text" value="100" inputmode="decimal"></span></div>
 <div class="field"><label for="cc-from">From</label><select id="cc-from">{codes.map((c) => (<option value={c} selected={c === seed.from}>{c} — {cur[c].name}</option>))}</select></div>
 <div class="field"><label for="cc-to">To</label><select id="cc-to">{codes.map((c) => (<option value={c} selected={c === seed.to}>{c} — {cur[c].name}</option>))}</select></div>
 </div>

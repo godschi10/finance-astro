@@ -39,11 +39,11 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </div>
 <div class="tgrid c3">
 
-<div class="field" data-cur="NGN"><label for="sg-target">Target ₦</label><input id="sg-target" type="text" value="5000000" inputmode="decimal"></div>
-<div class="field" data-cur="NGN"><label for="sg-cur">Have now ₦</label><input id="sg-cur" type="text" value="500000" inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="sg-target">Target ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="sg-target" type="text" value="5000000" inputmode="decimal"></span></div>
+<div class="field" data-cur="NGN"><label for="sg-cur">Have now ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="sg-cur" type="text" value="500000" inputmode="decimal"></span></div>
 <div class="field"><label for="sg-rate">Annual rate % (nominal)</label><input id="sg-rate" type="text" max="100" value="15" inputmode="decimal"><p class="hint">A nominal annual rate, compounded monthly — so 15% nominal earns more than 15% over a year once compounding is counted. The receipt shows both figures.</p></div>
 <div class="field"><label for="sg-mo">Months</label><input id="sg-mo" type="number" min="1" max="600" step="1" value="24" inputmode="numeric"></div>
-<div class="field" data-cur="NGN" hidden><label for="sg-sav">I can save ₦/month</label><input id="sg-sav" type="text" value="" inputmode="decimal"><p class="hint">The monthly amount you can actually commit — the calculator answers how long it takes.</p></div>
+<div class="field" data-cur="NGN" hidden><label for="sg-sav">I can save ₦/month</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="sg-sav" type="text" value="" inputmode="decimal"></span><p class="hint">The monthly amount you can actually commit — the calculator answers how long it takes.</p></div>
 </div>
 <!-- RATE QUICK-PICK CHIPS (S5 item 1) — adopted from
      page-savings-goal-calculator.php:66-74, whose rate chips are 4/6/8/10/

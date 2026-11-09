@@ -35,7 +35,7 @@ const seedP2pWin = best === "p2p";
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
 
-<div class="field" data-cur="NGN"><label for="tc-amt">Amount to send <span data-cur-unit></span></label><input id="tc-amt" type="text" value={TRANSFER_SEED.amount} inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="tc-amt">Amount to send <span data-cur-unit></span></label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="tc-amt" type="text" value={TRANSFER_SEED.amount} inputmode="decimal"></span></div>
 <div class="field"><label for="tc-dir">Direction</label><select id="tc-dir"><option value="to-nigeria">Send to Nigeria (USD→NGN)</option><option value="from-nigeria" selected>Send from Nigeria (NGN→USD)</option></select></div>
 <div class="field"><label for="tc-src">Send currency</label><select id="tc-src"><option>USD</option><option>GBP</option><option>EUR</option><option>CAD</option></select><p class="hint">Foreign leg only; naira side is automatic.</p></div>
 </div>

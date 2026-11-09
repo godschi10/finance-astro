@@ -23,12 +23,12 @@ const artTitle = await articleTitleOf();
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
 <div class="tgrid c3">
 
-<div class="field" data-cur="NGN"><label for="cp-inv">To invest ₦</label><input id="cp-inv" type="text" value={CRYPTO_SEED.invest} inputmode="decimal"></div>
-<div class="field" data-cur="NGN"><label for="cp-buy">Buy rate ₦</label><input id="cp-buy" type="text" value={CRYPTO_SEED.buy_rate} inputmode="decimal"></div>
-<div class="field" data-cur="NGN"><label for="cp-sell">Sell rate ₦</label><input id="cp-sell" type="text" value={CRYPTO_SEED.sell_rate} inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="cp-inv">To invest ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="cp-inv" type="text" value={CRYPTO_SEED.invest} inputmode="decimal"></span></div>
+<div class="field" data-cur="NGN"><label for="cp-buy">Buy rate ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="cp-buy" type="text" value={CRYPTO_SEED.buy_rate} inputmode="decimal"></span></div>
+<div class="field" data-cur="NGN"><label for="cp-sell">Sell rate ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="cp-sell" type="text" value={CRYPTO_SEED.sell_rate} inputmode="decimal"></span></div>
 <div class="field"><label for="cp-bf">Buy fee %</label><input id="cp-bf" type="text" value="1" inputmode="decimal"></div>
 <div class="field"><label for="cp-sf">Sell fee %</label><input id="cp-sf" type="text" value="1" inputmode="decimal"></div>
-<div class="field" data-cur="NGN"><label for="cp-flat">Flat charges ₦</label><input id="cp-flat" type="text" value="0" inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="cp-flat">Flat charges ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="cp-flat" type="text" value="0" inputmode="decimal"></span></div>
 </div>
 <div class="receipt">
 <p class="receipt-lbl">Profit</p>

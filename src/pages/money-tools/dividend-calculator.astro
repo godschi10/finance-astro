@@ -38,7 +38,7 @@ const artTitle = await articleTitleOf();
 <div class="tgrid c3">
 
 <div class="field"><label for="dv-stock">NGX stock</label><select id="dv-stock">{stocks.map((s, i) => (<option value={i} selected={s.ticker === "GTCO"}>{s.name} ({s.ticker})</option>))}<option value="custom">Custom — enter your own figures</option></select></div>
-<div class="field" data-cur="NGN"><label for="dv-inv">Investment ₦</label><input id="dv-inv" type="text" value={DIVIDEND_SEED.investment} inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="dv-inv">Investment ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="dv-inv" type="text" value={DIVIDEND_SEED.investment} inputmode="decimal"></span></div>
 <div class="field"><label for="dv-pg">Price growth %/yr</label><input id="dv-pg" type="text" max="100" value="10" inputmode="decimal"></div>
 <div class="field"><label for="dv-dg">Dividend growth %/yr</label><input id="dv-dg" type="text" max="100" value="8" inputmode="decimal"></div>
 <div class="field"><label for="dv-yrs">Years</label><input id="dv-yrs" type="number" min="1" max="40" step="1" value={DIVIDEND_SEED.years} inputmode="numeric"></div>
@@ -56,8 +56,8 @@ const artTitle = await articleTitleOf();
      they are inert, and the behavioural suite drives the first two text
      fields on the page as live dependencies (calc-regress derived/stale). A
      live field must hold those slots. -->
-<div class="field" data-cur="NGN" id="dv-cp-f" hidden><label for="dv-cprice">Share price ₦</label><input id="dv-cprice" type="text" inputmode="decimal" placeholder="e.g. 128"></div>
-<div class="field" data-cur="NGN" id="dv-cd-f" hidden><label for="dv-cdps">Dividend per share ₦</label><input id="dv-cdps" type="text" inputmode="decimal" placeholder="e.g. 11.76"></div>
+<div class="field" data-cur="NGN" id="dv-cp-f" hidden><label for="dv-cprice">Share price ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="dv-cprice" type="text" inputmode="decimal" placeholder="e.g. 128"></span></div>
+<div class="field" data-cur="NGN" id="dv-cd-f" hidden><label for="dv-cdps">Dividend per share ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="dv-cdps" type="text" inputmode="decimal" placeholder="e.g. 11.76"></span></div>
 </div>
 {/* #10 — curated dated NGX example chips. One tap loads a REAL maintained stock
     (price + DPS from src/data/dividend-examples.ts, which reads the same

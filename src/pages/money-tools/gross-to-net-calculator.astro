@@ -31,13 +31,13 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="hint">Receipt figures follow this period. The solver works in months — the per-year view is the same figures annualised (monthly × 12), not a second calculation.</p>
 <div class="tgrid c3">
 
-<div class="field" data-cur="NGN"><label for="gn-net">Target take-home ₦/mo</label><input id="gn-net" type="text" value="250000" inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="gn-net">Target take-home ₦/mo</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="gn-net" type="text" value="250000" inputmode="decimal"></span></div>
 <div class="field"><label for="gn-pen">Pension %</label><input id="gn-pen" type="text" max="100" value="8" inputmode="decimal"></div>
-<div class="field" data-cur="NGN"><label for="gn-rent">Annual rent ₦</label><input id="gn-rent" type="text" value="0" inputmode="decimal"></div>
-<div class="field" data-cur="NGN"><label for="gn-nhf">NHF monthly ₦</label><input id="gn-nhf" type="text" value="0" inputmode="decimal"></div>
-<div class="field" data-cur="NGN"><label for="gn-nhis">NHIS monthly ₦</label><input id="gn-nhis" type="text" value="0" inputmode="decimal"></div>
-<div class="field" data-cur="NGN"><label for="gn-life">Life assurance monthly ₦</label><input id="gn-life" type="text" value="0" inputmode="decimal"></div>
-<div class="field" data-cur="NGN"><label for="gn-other">Other reliefs monthly ₦</label><input id="gn-other" type="text" value="0" inputmode="decimal"></div>
+<div class="field" data-cur="NGN"><label for="gn-rent">Annual rent ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="gn-rent" type="text" value="0" inputmode="decimal"></span></div>
+<div class="field" data-cur="NGN"><label for="gn-nhf">NHF monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="gn-nhf" type="text" value="0" inputmode="decimal"></span></div>
+<div class="field" data-cur="NGN"><label for="gn-nhis">NHIS monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="gn-nhis" type="text" value="0" inputmode="decimal"></span></div>
+<div class="field" data-cur="NGN"><label for="gn-life">Life assurance monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="gn-life" type="text" value="0" inputmode="decimal"></span></div>
+<div class="field" data-cur="NGN"><label for="gn-other">Other reliefs monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="gn-other" type="text" value="0" inputmode="decimal"></span></div>
 </div>
 <!-- RENT QUICK-PICK CHIPS (S5 item 1) — adopted from
      page-gross-to-net-calculator.php:81-86, whose rent chips are exactly

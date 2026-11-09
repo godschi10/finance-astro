@@ -1,3 +1,38 @@
+## [0.7.77] - 2026-11-09 — fleet-wide: every money tool ships the currency box in its markup, so a visitor who taps and types before the page boots keeps every keystroke
+
+**Fleet-wide follow-up to E18.** v0.7.76 closed the pre-hydration caret theft on the 50/30/20
+page only; `money-controls.js` is shared by every money-tool page, so the same window existed
+on the other thirteen. This release server-renders the same `.fi` wrapper — the box `glyph()`
+would have built at boot — on every remaining `data-cur` decimal field. No JavaScript, CSS,
+copy or figure changed.
+
+- **Scope, counted on the built site.** 47 `<input inputmode="decimal">` inside `data-cur`
+  fields across 14 money-tool pages. Nine were already wrapped on 50/30/20 by v0.7.76; this
+  release adds **38 wrappers across 13 pages** — compound-interest 2, crypto-profit 4,
+  currency-converter 1, dividend 3, emergency-fund 3, gross-to-net 6, inflation-savings 2,
+  loan-repayment 1, money-transfer 1, naira-value 4, salary-tax 7, savings-goal 3,
+  savings-rate 1. Every replacement is one line: the input tag is wrapped, every attribute and
+  id stays byte-identical, no whitespace is introduced inside the inline box.
+- **Why it works.** `glyph()` already early-returns when the field carries a `.fi-sym`
+  ("the glyph is injected once and reused"), so the boot step becomes a no-op: the focused
+  input is never moved, focus is never lost. The symbol is exactly `₦` (U+20A6) on NGN fields,
+  so `sync()`'s multi-character `--fi-pad` branch never runs and the geometry is unchanged.
+  `currency-converter` renders `{cur[seed.from].symbol}` — `$` at the shipped `USD` seed — so
+  the SSR glyph equals the build-time selection and `sync()` sees no currency change on boot.
+- **Pre-hydration gate, 14/14.** 390×844 Pixel 5, 4G 9000/1500 kbps + 85 ms, CPU 4×, raw CDP
+  touch and key events, module bundles held 1200 ms per wave so the tap-and-type window is
+  real: every page **0 focusout events during boot, focus still on the input, value exactly
+  `300000`, all its fields wrapped, symbol correct, console 0 errors, no horizontal scroll —
+  14/14 pass**. Counter-proof on the live unfixed site, same harness: compound-interest and
+  salary-tax **fail with exactly 1 focusout at boot and focus falling to `BODY` (0/2)**.
+- **Gates.** `npm run check` **7/7 green** · `npm run build` **84 pages** · served markup
+  **47/47 wrappers** (per-page counts exact) · `npm run test:calc` **130 pass / 0 fail /
+  7 skip**. The build also refreshed `src/data/fx-snapshot.ts` and `src/data/site.ts` from
+  their daily sources, as every release build does.
+- **Still open elsewhere.** None from this finding: every money-tool page now carries the box.
+  The shared script keeps its `appendChild` boot path for any future `data-cur` field added
+  without the wrapper, which is the only remaining way to reintroduce this window.
+
 ## [0.7.76] - 2026-11-09 — E18 follow-up: the currency field no longer steals the caret from a visitor who types before the page boots
 
 **E18 follow-up.** v0.7.75 shipped the five A18 fixes, but the manager's own gate on the LIVE
