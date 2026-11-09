@@ -1,6 +1,49 @@
+## [0.7.76] - 2026-11-09 — E18 follow-up: the currency field no longer steals the caret from a visitor who types before the page boots
+
+**E18 follow-up.** v0.7.75 shipped the five A18 fixes, but the manager's own gate on the LIVE
+page caught a HIGH that v0.7.75 did **not** close: a visitor who tapped the income box before
+the page's JavaScript booted lost their caret mid-typing and every later keystroke was
+dropped. This release closes it. No behaviour, copy or figure changed.
+
+- **The bug.** `src/scripts/money-controls.js` `glyph()` builds the currency wrapper at boot
+  with `wrap.appendChild(input)` — it **moves the focused input** into a new `.fi` span.
+  `appendChild` is remove-then-insert, and the HTML "removing steps" unfocus the element; Chrome
+  does not re-focus a re-parented node. Focus fell to `BODY`, so the input kept its identity but
+  lost the caret and every keystroke after boot went nowhere. The in-page `focusout` stack
+  pointed at the Layout bundle (money-controls is bundled there), and the page's own
+  early-typing reconciliation — capture, revert, restore, all inside one synchronous module
+  task — provably could not drop a keystroke, so the loss was entirely the focus theft.
+  Measured live at human typing speed (100 ms per key): **3/3 runs lost**, values stuck at
+  `30`, `300` and `3`, the receipt printing `₦15 · ₦9 · ₦6` instead of
+  `₦150,000 · ₦90,000 · ₦60,000`. Typing after the page boots was always fine (23/23 runs at
+  40–120 ms per key) — the defect window is the first seconds on a slow connection.
+- **The fix — the wrapper is server-rendered, so the boot step becomes a no-op.** `glyph()`
+  already early-returns when the field carries a `.fi-sym` ("the glyph is injected once and
+  reused"), and the stylesheet already styles `.fi` and `.fi-sym`. This release ships that box
+  in the markup for the nine NGN fields on the page (income, spent-on-needs, spent-on-wants,
+  put-to-savings, and the five "you actually spent" buckets), so money-controls finds it and
+  never moves the input. The fix prevents the event instead of repairing it afterwards: no
+  `blur`, no `focusout`, no digit regroup mid-typing, and no risk of the on-screen keyboard
+  being dismissed by a programmatic refocus. The symbol is exactly `₦`, so the script's
+  multi-character `--fi-pad` branch never runs and the geometry is unchanged.
+- **A/B proof on the live page** (390×844 Pixel 5, 4G 9000/1500 kbps + 85 ms, CPU 4×, raw CDP
+  touch and key events, pre-hydration window, 6 runs per arm): wrapper present → **0 focusout
+  events, focus held, value `300000`, receipt `₦150,000 · ₦90,000 · ₦60,000` — 6/6**; wrapper
+  absent (the v0.7.75 behaviour) → **1 focusout at boot, values stuck at 3/30/300/3000 — 0/6**.
+  @freebuff independently reproduced the same A/B on the built page with the bundles delayed
+  2600 ms (3/3 each arm) and confirmed the diagnosis from the source.
+- **One side effect, in our favour.** The currency field used to paint at a 14 px text inset
+  and jump to 28 px at hydration, when the wrapper appeared. It now paints at 28 px from the
+  first frame, so that hydration-time shift is gone. The label keeps its own `₦`; nothing is
+  announced twice (the glyph is `aria-hidden`).
+- **Still open, and it is not this page's to fix.** `money-controls.js` is shared by every
+  money-tool page on the site and each page has `data-cur` fields, so the same pre-hydration
+  caret loss likely affects the other money tools. It was found at this gate, outside A18's
+  five findings, and is queued for its own round rather than folded into this fix.
+
 ## [0.7.75] - 2026-11-08 — E18 speed and legibility fixes: an early tap replaces the sample, the card stops moving, the receipt stops dangling separators
 
-**E18** (edit round 18 of 40, live site): **2 HIGH, 1 MEDIUM, 2 LOW — all five closed.** A18
+**E18** (edit round 18 of 40, live site): **2 HIGH, 1 MEDIUM, 2 LOW — four closed here; F1's focus half was closed in 0.7.76.** A18
 measured five speed/UX faults on the 50/30/20 calculator: a fast visitor's keystrokes appended
 to the sample income, the above-fold split sat at 1.97:1 on the light card, the card grew after
 first paint, JavaScript-off said nothing, and the receipt dangled separators on narrow screens.
@@ -13,7 +56,10 @@ Behaviour, copy and layout are otherwise unchanged.
   value `300000`, figure `₦150,000 · ₦90,000 · ₦60,000`, and a second focus after blur selects
   nothing (`[6,6]`, `stillSample:false`). A page-local early-typing reconciliation hands the
   visitor's own value back after hydration (server truth stays in the `value` attribute; the
-  seed is restored only for the reset snapshot).
+  seed is restored only for the reset snapshot). **This half of F1 was not enough:** the live
+  gate found that a visitor who typed in the pre-hydration window still lost the caret to
+  `money-controls.js`, which moved the focused input at boot — closed by the server-rendered
+  currency wrapper in 0.7.76.
 - **F2 (HIGH) — the split line is legible.** `#bg-live` alone takes `color:var(--text-mid)`,
   14 px and line-height 1.5 (page-scoped rule; `.receipt-note` and the dark receipt are
   untouched). Measured contrast is **11.375:1** on the light card and **9.512:1** on the dark

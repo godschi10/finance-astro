@@ -89,7 +89,24 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
      first paint now has the final (750px) grid instead of growing into it.
      mark() still removes and re-appends an identical badge in one task — same
      dimensions, no shift. -->
-<div class="field" data-cur="NGN" data-sd><label for="bg-inc">Monthly income ₦<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-inc" type="text" value={income} inputmode="decimal" autocomplete="section-income" onfocus="if(this.closest('.field').hasAttribute('data-sd'))this.select()"></div>
+<!-- E18-F1b — THE CURRENCY WRAPPER IS SERVER-RENDERED. money-controls.js glyph()
+     builds the .fi box at boot with `wrap.appendChild(input)` — that MOVES the
+     focused input, and moving a focused element blurs it in Chrome (appendChild
+     is remove+insert; the HTML "removing steps" unfocus). Focus fell to BODY and
+     every keystroke after boot was dropped: a visitor who tapped the income box
+     before the module booted typed into the void. Proved live at 100ms/key (3/3
+     lost) and A/B-proved 6/6 vs 0/6. glyph() early-returns when the field
+     already holds a .fi-sym, so shipping the wrapper makes the boot step a
+     NO-OP instead of a repaired mistake — no blur, no focusout, no regroup, no
+     keyboard flicker, and the input keeps its 28px inset from first paint
+     (it used to jump 14px -> 28px at hydration). The symbol must be exactly
+     U+20A6 so sync()'s --fi-pad branch never runs, and the whole .fi box must
+     stay on ONE line — a newline inside the inline box becomes a collapsible
+     space and shifts the input. .fi-sym is aria-hidden; the label already
+     prints the sign, so nothing is announced twice. 9 fields: 4 static + 5 in
+     the al-act loop. -->
+
+<div class="field" data-cur="NGN" data-sd><label for="bg-inc">Monthly income ₦<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="bg-inc" type="text" value={income} inputmode="decimal" autocomplete="section-income" onfocus="if(this.closest('.field').hasAttribute('data-sd'))this.select()"></span></div>
 <!-- E18-F3 — the CONTEXT line was the one growth the SAMPLE chrome did not
      cover: smart-fields' ctx() inserts it after the income field at BOOT, so
      #bg-top grew 650.89px → 750.45px at hydration and pushed every field
@@ -104,9 +121,9 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
 <div class="field" data-sd><label for="bg-needs">Needs %<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-needs" type="text" max="100" value="50" inputmode="decimal" placeholder="50" autocomplete="section-budget-splits"></div>
 <div class="field" data-sd><label for="bg-wants">Wants %<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-wants" type="text" max="100" value="30" inputmode="decimal" placeholder="30" autocomplete="section-budget-splits"></div>
 <div class="field" data-sd><label for="bg-save">Savings %<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-save" type="text" max="100" value="20" inputmode="decimal" placeholder="20" autocomplete="section-budget-splits"></div>
-<div class="field" data-cur="NGN" data-sd><label for="bg-spn">Spent on needs ₦<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-spn" type="text" value={String(seedActuals.needs)} inputmode="decimal" autocomplete="off"></div>
-<div class="field" data-cur="NGN" data-sd><label for="bg-spw">Spent on wants ₦<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-spw" type="text" value={String(seedActuals.wants)} inputmode="decimal" autocomplete="off"></div>
-<div class="field" data-cur="NGN" data-sd><label for="bg-sps">Put to savings ₦<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-sps" type="text" value={String(seedActuals.savings)} inputmode="decimal" autocomplete="off"></div>
+<div class="field" data-cur="NGN" data-sd><label for="bg-spn">Spent on needs ₦<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="bg-spn" type="text" value={String(seedActuals.needs)} inputmode="decimal" autocomplete="off"></span></div>
+<div class="field" data-cur="NGN" data-sd><label for="bg-spw">Spent on wants ₦<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="bg-spw" type="text" value={String(seedActuals.wants)} inputmode="decimal" autocomplete="off"></span></div>
+<div class="field" data-cur="NGN" data-sd><label for="bg-sps">Put to savings ₦<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="bg-sps" type="text" value={String(seedActuals.savings)} inputmode="decimal" autocomplete="off"></span></div>
 </div>
 <!-- E13 — the input-health rails. pm() is deliberately tolerant: it reads
      "12.5.5" as 0, "abc" as never-entered and "1e9" as a billion naira, so
@@ -197,7 +214,7 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
      UNKNOWN, and an unknown bucket prints no amount and no badge at all. -->
 <div class="tgrid c3" id="al-actual-fields" style="margin-top:14px">
 {al.buckets.filter((b) => b.id !== "other").map((b) => (
-<div class="field" data-cur="NGN"><label for={`al-act-${b.id}`}>{b.label} — you actually spent ₦</label><input id={`al-act-${b.id}`} type="text" inputmode="decimal" placeholder="—" autocomplete="off" data-al-actual={b.id}></div>
+<div class="field" data-cur="NGN"><label for={`al-act-${b.id}`}>{b.label} — you actually spent ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id={`al-act-${b.id}`} type="text" inputmode="decimal" placeholder="—" autocomplete="off" data-al-actual={b.id}></span></div>
 ))}
 </div>
 <!-- E13 — step 2's own malformed rail. The five shares decide what "Other
