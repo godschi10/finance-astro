@@ -91,7 +91,8 @@ const website = { "@context": "https://schema.org", "@type": "WebSite", name: si
 const organization = { "@context": "https://schema.org", "@type": "Organization", name: siteName, url: homeUrl, logo: `${homeUrl}icons/icon.svg`, sameAs };
 const breadcrumb = { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: homeUrl }, { "@type": "ListItem", position: 2, name: crumb }] };
 const fontFaces = [400, 700, 800].map((weight) =>
-  `@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:${weight};font-display:swap;src:url("${base}fonts/jetbrains-mono-latin-${weight}-normal.woff2") format("woff2")}`
+  // E24-C8 — size-adjust kills the mono↔fallback reflow seam at swap time; zero bytes.
+  `@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:${weight};font-display:swap;size-adjust:100%;src:url("${base}fonts/jetbrains-mono-latin-${weight}-normal.woff2") format("woff2")}`
 ).join("\n");
 
 // ── Faithful WP header port helpers ──────────────────────────────
@@ -209,8 +210,12 @@ const searchBase = `${base}search/`;
      Does NOT disable anything today. Clipboard remains allowed because navigator.clipboard.writeText() is used for
      share/copy actions (article.js, smart-fields.js, money tools). Value kept narrow as chosen. -->
 <meta name="permissions-policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), midi=(), magnetometer=(), gyroscope=(), accelerometer=()">
+<!-- E24-C2 — the fold's body weight (400) is what every in-fold element paints; it
+     landed ~285ms after the preloaded 700/800 pair in every run. Preload 400+800;
+     700 stays available on first use (its consumers — ticker rates, chips,
+     buttons — force it before the figure anyway). -->
+<link rel="preload" href={`${base}fonts/jetbrains-mono-latin-400-normal.woff2`} as="font" type="font/woff2" crossorigin>
 <link rel="preload" href={`${base}fonts/jetbrains-mono-latin-800-normal.woff2`} as="font" type="font/woff2" crossorigin>
-<link rel="preload" href={`${base}fonts/jetbrains-mono-latin-700-normal.woff2`} as="font" type="font/woff2" crossorigin>
 <title>{title}</title>
 <meta name="description" content={description}>
 <meta name="deployment" content="GitHub Pages staging — not production">
