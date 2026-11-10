@@ -325,13 +325,17 @@ if (faqs.length) graph.push({
      the user never entered. Token-only, same ladder as every rule above. */
 [data-sfe] .receipt-fig,[data-sfe] .receipt-row b{color:var(--text-dim)}
 .receipt{--receipt-ink:#f0ede6;background:#0d0b08;color:var(--receipt-ink);border-radius:16px;padding:18px;margin-top:18px;box-shadow:var(--sh-md)}
-.receipt-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#8f8575}
+/* E23-R2 — the 10px CAPS #6d6658 tier was 3.46:1 on the receipt's black —
+   under AA, letter-spaced caps, stripping ascender/descender shape. The hint
+   text is already sentence case in the markup; let it read as it was written,
+   at 12px, on a >=4.5:1 tier. */
+.receipt-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#a9a18d}
 .receipt-fig{font-size:clamp(1.9rem,6vw,3rem);line-height:1.1;letter-spacing:-.03em;font-weight:800;color:var(--gold-b);margin-top:6px;overflow-wrap:anywhere}
 .receipt-sub{font-size:.85rem;color:#c4b89a;margin-top:6px}
 .receipt-div{border-top:1px dashed rgba(245,158,11,.35);margin:14px 0 10px}
 .receipt-note{font-size:.8rem;color:#c4b89a}
-.receipt-foot{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#8f8575;margin-top:10px}
-.receipt-foot.hint{color:#6d6658}
+.receipt-foot{font-size:12px;letter-spacing:.02em;color:#a9a18d;margin-top:10px}
+.receipt-foot.hint{color:#c4b89a}
 .receipt-row{display:flex;justify-content:space-between;gap:12px;font-size:.85rem;padding:6px 0;color:var(--receipt-ink)}
 .receipt-row b{font-variant-numeric:tabular-nums;white-space:nowrap}
 .hr{border-top:1px solid var(--border-dim);margin:26px 0 0}
