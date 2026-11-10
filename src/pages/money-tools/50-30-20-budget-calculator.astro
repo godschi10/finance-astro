@@ -34,15 +34,15 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
    its "skip identical rewrites" guard keeps aria-live silent on boot. */
 const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wants · ₦${n(seed.savings)} savings`;
 ---
-<ToolShell title="50/30/20 Budget Calculator, Nigeria - GWill Finance" description="Split any income into needs, wants and savings, check real spending against the plan — then break the needs half into rent, food, transport, data and bills, all on one page." slug="50-30-20-budget-calculator" tool="50/30/20 Budget Calculator" lede="Half for needs, 30% for wants, a fifth for future you. Set the income, check your spending, then itemise the needs half — two steps, one page." verified="Two steps, one page · plan vs actual checker · needs-half buckets" faqs={[
-  { q: "I don't earn a regular salary — can I still use this?", a: "Yes. Add up two or three weeks of cash or transfers, divide by the weeks, and that is your rough monthly number. The split still works; in a lean month it still tells you what has to be covered, and it does not punish a small income." },
+<ToolShell title="50/30/20 Budget Calculator, Nigeria - GWill Finance" description="Split any income into needs, wants and savings, check real spending against the plan — then break the needs half into rent, food, transport, data and bills, all on one page." slug="50-30-20-budget-calculator" tool="50/30/20 Budget Calculator" lede="Half — 50% — for needs, 30% for wants, a fifth (20%) for future you. Set the income, check your spending, then itemise the needs half — two steps, one page." verified="Two steps, one page · plan vs actual checker · needs-half buckets" faqs={[
+  { q: "I don't earn a regular salary — can I still use this?", a: "Yes. Add up what you earned over three weeks, divide by 3, then multiply by 4 — say ₦45,000 ÷ 3 = ₦15,000 a week, and ₦15,000 × 4 = ₦60,000 a month. Type 60,000 into Monthly income ₦ above. In a lean month it still tells you what has to be covered, and it does not punish a small income." },
   { q: "Is 50/30/20 realistic on a Nigerian salary?", a: "As a direction, yes; as law, adjust. High rent cities may need 60/20/20 for a season — the tool accepts custom splits." },
   { q: "What counts as savings?", a: "Anything future-you keeps: emergency fund, investments, debt repayment. Not the money sitting in your spending account." },
   { q: "Where exactly does the needs half go?", a: "Step 2 on this same page breaks your plan's needs figure into rent, food, transport, data and bills, with every share tunable. One tool, one journey — no second page." },
 ]}
 
   badge="The 50/30/20 rule · Simple budgeting",
-  copy={[["p", "The 50/30/20 rule is popular because it is simple enough to remember and flexible enough to stick to. Divide your take-home pay into three buckets: 50% needs, 30% wants, and 20% savings and debt repayment. You need no complicated categories or spreadsheet. It is a starting point you can adjust as your life changes."],["p", "Needs are the things you cannot function without: rent or mortgage, food, transport to work, utility bills, and the minimum payments on your debt. Wants are everything else, the takeaways, the subscriptions you barely use, the upgrade you do not need. The rule's real value is forcing you to draw that line honestly. Most budgets that fail do so because wants quietly sneak into the needs column."],["p", "In Nigeria, high inflation and rising costs make strict needs-heavy budgets common, housing and food can easily consume well over 50%. That is fine. Treat 50/30/20 as a target to move toward, not a rule to feel guilty about. Start by tracking what your needs actually cost, then push the savings slice up over time. Even starting at 10% savings and inching toward 20% beats saving nothing at all. Use your take-home (net) pay, the money that actually lands in your account, not your pay before tax."],["p", "The 20% is for future you: savings and debt repayment. Once you are saving, put it to work — see it compound with our compound interest calculator, or set a target with our savings goal calculator. Remember: rising prices erode any goal; our inflation-adjusted calculator shows what you truly need to save."],["p", "Strict 50/30/20 assumes your big needs cost about half your take-home. In high-cost Nigerian cities, rent and food alone can push well past that, which is not a failure of the rule, just a reality to plan around. The important part is to keep the savings slice conscious and growing, even if the mix leans heavier on needs. Adjust the three percentage fields above to whatever split your numbers actually support, rather than forcing a 50/30/20 square peg."],["p", "50/30/20 gives you the three big numbers. To turn them into a budget you can actually spend against, break the needs bucket into real Nigerian categories, rent, food, transport, data, utilities. Step 2 of this same calculator, below the receipt, takes this same split and digs into the needs half, showing exactly how many naira go to rent, food, transport, data and bills, with every share editable so the plan always adds up."],["p", "Start from your take-home pay, never your pay before tax. Whatever your income, the goal is the same: give every naira a job, so nothing leaks away unnoticed."],["p", "The rule fails when you treat it as fixed. Three common mistakes: budgeting on pay before tax, which inflates every bucket; treating needs as wants, such as an upgraded \"basic\" phone plan or meal delivery that became dinner; and ignoring the leftover. If your splits do not add to 100%, the leftover is unassigned and disappears into everyday spending."],["p", "The fix for all three is honest categorising. Budget on what hits your account. When something feels like a want, ask whether you would genuinely afford to drop it this month, if it is a bill you must pay, it belongs in needs. And make sure your split adds up. The calculator above flags any leftover so you can add it to savings rather than let it vanish."],["p", "Freelancers, commission earners and seasonal workers face a question the 50/30/20 rule glosses over: what is your \"take-home\" when every month is different? The workable answer is to base the budget on your average of the last three months, not your best month. Budget on the average, and when a good month arrives, sweep the surplus past the 20% savings slice rather than inflating your wants."],["p", "Because the rule is percentage-based, it scales with whatever number you enter, that is precisely why this tool takes a single income figure and lets you adjust the three splits. Set the income to your moving average and the buckets adjust automatically, so a lean month is no longer a mystery and a strong month becomes a chance to save more."],["h2", "Budgeting questions"],["h3", "What is the 50/30/20 rule?"],["p", "A simple budget that puts 50% of your take-home pay toward needs, 30% toward wants, and 20% toward savings and paying down debt."],["h3", "How should I split a ₦250,000 salary?"],["p", "About ₦125,000 for needs, ₦75,000 for wants, and ₦50,000 for savings/debt each month."],["h3", "Should I use pay before or after tax?"],["p", "Use take-home (net) pay: what reaches your account after tax. That is what you can spend and save."],["h3", "What counts as a need versus a want?"],["p", "Needs are what you cannot do without: housing, food, transport, utilities, minimum debt payments. Wants are the rest: dining out, entertainment, upgrading your phone. If in doubt, it is a want."]]},
+  copy={[["p", "The 50/30/20 rule is popular because it is simple enough to remember and flexible enough to stick to. Divide your take-home pay into three buckets: 50% needs, 30% wants, and 20% savings and debt repayment. You need no complicated categories or spreadsheet. It is a starting point you can adjust as your life changes."],["p", "Needs are the things you cannot function without: rent or mortgage, food, transport to work, utility bills, and the minimum payments on your debt. Wants are everything else, the takeaways, the subscriptions you barely use, the upgrade you do not need. The rule's real value is forcing you to draw that line honestly. Most budgets that fail do so because wants quietly sneak into the needs column."],["p", "In Nigeria, high inflation and rising costs make strict needs-heavy budgets common, housing and food can easily consume well over 50%. That is fine. Treat 50/30/20 as a target to move toward, not a rule to feel guilty about. Start by tracking what your needs actually cost, then push the savings slice up over time. Even starting at 10% savings and inching toward 20% beats saving nothing at all. Use your take-home (net) pay, the money that actually lands in your account, not your pay before tax."],["p", "The 20% is for future you: savings and debt repayment. Once you are saving, put it to work — see it compound with our compound interest calculator, or set a target with our savings goal calculator. Remember: rising prices erode any goal; our inflation-adjusted calculator shows what you truly need to save."],["p", "Strict 50/30/20 assumes your big needs cost about half your take-home. In high-cost Nigerian cities, rent and food alone can push well past that, which is not a failure of the rule, just a reality to plan around. The important part is to keep the savings slice conscious and growing, even if the mix leans heavier on needs. Adjust the three percentage fields above to whatever split your numbers actually support, rather than forcing a 50/30/20 square peg."],["p", "50/30/20 gives you the three big numbers. To turn them into a budget you can actually spend against, break the needs bucket into real Nigerian categories, rent, food, transport, data, utilities. Step 2 of this same calculator, below the receipt, takes this same split and digs into the needs half, showing exactly how many naira go to rent, food, transport, data and bills, with every share editable so the plan always adds up."],["p", "Start from your take-home pay, never your pay before tax. Whatever your income, the goal is the same: give every naira a job, so nothing leaks away unnoticed."],["p", "The rule fails when you treat it as fixed. Three common mistakes: budgeting on pay before tax, which inflates every bucket; treating needs as wants, such as an upgraded \"basic\" phone plan or meal delivery that became dinner; and ignoring the leftover. If your splits do not add to 100%, the leftover is unassigned and disappears into everyday spending."],["p", "The fix for all three is honest categorising. Budget on what hits your account. When something feels like a want, ask whether you would genuinely afford to drop it this month, if it is a bill you must pay, it belongs in needs. And make sure your split adds up. The calculator above flags any leftover so you can add it to savings rather than let it vanish."],["p", "Freelancers, commission earners and seasonal workers face a question the 50/30/20 rule glosses over: what is your \"take-home\" when every month is different? The workable answer is to base the budget on your average of the last three months, not your best month: three months came to ₦180,000? ₦180,000 ÷ 3 = ₦60,000 — type 60,000 into the income box above, not your biggest month. Budget on the average, and when a good month arrives, sweep the surplus past the 20% savings slice rather than inflating your wants."],["p", "Because the rule is percentage-based, it scales with whatever number you enter, that is precisely why this tool takes a single income figure and lets you adjust the three splits. Set the income to your moving average and the buckets adjust automatically, so a lean month is no longer a mystery and a strong month becomes a chance to save more."],["h2", "Budgeting questions"],["h3", "What is the 50/30/20 rule?"],["p", "A simple budget that puts 50% of your take-home pay toward needs, 30% toward wants, and 20% toward savings and paying down debt."],["h3", "How should I split a ₦250,000 salary?"],["p", "About ₦125,000 for needs, ₦75,000 for wants, and ₦50,000 for savings/debt each month."],["h3", "Should I use pay before or after tax?"],["p", "Use take-home (net) pay: what reaches your account after tax. That is what you can spend and save."],["h3", "What counts as a need versus a want?"],["p", "Needs are what you cannot do without: housing, food, transport, utilities, minimum debt payments. Wants are the rest: dining out, entertainment, upgrading your phone. If in doubt, it is a want."]]},
   related={[
     { href: `${base}money-tools/compound-interest-calculator/`, title: "Compound Interest Calculator", excerpt: "Put the 20% to work — project your savings year by year." },
     { href: `${base}money-tools/savings-goal-calculator/`, title: "Savings Goal Calculator", excerpt: "Name the target and deadline — get the exact monthly price." },
@@ -119,7 +119,7 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
      stand-in once the module has inserted the fleet's own copy (which stays
      the authoritative one). Markup is byte-identical to ctx()'s output, so
      the swap moves nothing. -->
-<p class="ctx" data-e18-ctx>Median pay in formal wage jobs is roughly ₦120k–₦150k a month. Our worked example sits above that: a scenario, not your salary. <span class="ctx-src">Guardian · May 2026 · <a href="https://guardian.ng/nigerian/what-is-the-average-salary-in-nigeria/" rel="noopener">read the source</a></span></p>
+<p class="ctx" data-e18-ctx>Median pay in formal wage jobs is roughly ₦120,000–₦150,000 a month. Our worked example sits above that: a scenario, not your salary. <span class="ctx-src">Guardian · May 2026 · <a href="https://guardian.ng/nigerian/what-is-the-average-salary-in-nigeria/" rel="noopener">read the source</a></span></p>
 <!-- E19-C12 — the market strip's visible word is "LIVE", but its currency
      pairs are the DAILY reference rate (its title says so, and a phone has no
      hover path to a title). This page discloses it in words, with the
@@ -148,15 +148,21 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
 <p class="receipt-note" id="bg-junk" hidden role="status" style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
 <p class="receipt-note" id="bg-range" hidden style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
 <p class="receipt-note" id="bg-big" hidden style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
+<!-- E22-L2 — the too-small twin of #bg-big. A ×1,000 unit slip (typing 100 for
+     ₦100,000) priced the whole plan at ₦50 figures and scolded the visitor
+     ₦184,920 over, with no hint the unit was the problem. The page guards
+     absurdly LARGE figures and accepted absurdly small ones silently. This
+     rail asks — it never refuses, never re-prices, never clamps. -->
+<p class="receipt-note" id="bg-low" hidden role="status" style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
 <!-- Income quick-fill chips -->
 <div class="fx-chips" style="margin-top:10px" id="income-chips" role="group" aria-label="Quick-fill income">
-<button type="button" class="fx-chip" data-fill="bg-inc" data-value="25000" aria-label="Fill ₦25,000">₦25k</button>
-<button type="button" class="fx-chip" data-fill="bg-inc" data-value="70000" aria-label="Fill ₦70,000">₦70k</button>
-<button type="button" class="fx-chip" data-fill="bg-inc" data-value="100000" aria-label="Fill ₦100,000">₦100k</button>
-<button type="button" class="fx-chip" data-fill="bg-inc" data-value="150000" aria-label="Fill ₦150,000">₦150k</button>
-<button type="button" class="fx-chip" data-fill="bg-inc" data-value="180000" aria-label="Fill ₦180,000">₦180k</button>
-<button type="button" class="fx-chip" data-fill="bg-inc" data-value="250000" aria-label="Fill ₦250,000">₦250k</button>
-<button type="button" class="fx-chip" data-fill="bg-inc" data-value="500000" aria-label="Fill ₦500,000">₦500k</button>
+<button type="button" class="fx-chip" data-fill="bg-inc" data-value="25000" aria-label="Fill ₦25,000">₦25,000</button>
+<button type="button" class="fx-chip" data-fill="bg-inc" data-value="70000" aria-label="Fill ₦70,000">₦70,000</button>
+<button type="button" class="fx-chip" data-fill="bg-inc" data-value="100000" aria-label="Fill ₦100,000">₦100,000</button>
+<button type="button" class="fx-chip" data-fill="bg-inc" data-value="150000" aria-label="Fill ₦150,000">₦150,000</button>
+<button type="button" class="fx-chip" data-fill="bg-inc" data-value="180000" aria-label="Fill ₦180,000">₦180,000</button>
+<button type="button" class="fx-chip" data-fill="bg-inc" data-value="250000" aria-label="Fill ₦250,000">₦250,000</button>
+<button type="button" class="fx-chip" data-fill="bg-inc" data-value="500000" aria-label="Fill ₦500,000">₦500,000</button>
 </div>
 <!-- Split preset chips -->
 <div class="fx-chips" style="margin-top:10px" id="split-chips" role="group" aria-label="Quick-fill split percentages">
@@ -613,12 +619,24 @@ const junkRail = (el: HTMLElement | null, ids: readonly string[]): void => {
    statements and a visitor needs both. */
 const rangeRail = (el: HTMLElement | null, ids: readonly string[]): void => {
   if (!el) return;
+  /* E22-L3 — the too-small twin: ".5" meaning half, or "1" meaning ten, reads
+     as a legal share to the 0–100 check and as nonsense to the visitor the
+     page is here to serve. Ask, never refuse; the figure is priced exactly
+     as typed either way. */
+  const low = ids.filter((id) => { const v = pm(g(id).value); return v > 0 && v < 1; });
   const bad = ids.filter((id) => { const v = pm(g(id).value); return v < 0 || v > 100; });
-  if (!bad.length) { el.hidden = true; el.innerHTML = ""; return; }
+  if (!bad.length && !low.length) { el.hidden = true; el.innerHTML = ""; return; }
   el.hidden = false;
-  el.innerHTML = `${nameList(bad)} reads ${bad.map((id) => `${pm(g(id).value)}%`).slice(0, 3).join(", ")}.`
-    + ` A share is a slice of one income, so it runs 0 to 100 — a share above 100 is priced exactly as you typed it, and a share below 0 is priced as 0%.`
-    + goTo(bad[0]);
+  el.innerHTML = (low.length
+    ? `${nameList(low)} reads ${low.map((id) => `${pctTxt(pm(g(id).value))}%`).slice(0, 3).join(", ")}.`
+    + ` A share below 1% is usually a missing digit — if you meant 50, retype it in full.`
+    + (bad.length ? " " : "")
+    : "")
+    + (bad.length
+      ? `${nameList(bad)} reads ${bad.map((id) => `${pm(g(id).value)}%`).slice(0, 3).join(", ")}.`
+      + ` A share is a slice of one income, so it runs 0 to 100 — a share above 100 is priced exactly as you typed it, and a share below 0 is priced as 0%.`
+      : "")
+    + goTo((low.concat(bad))[0]);
 };
 /* MAGNITUDE. The page already had ONE too-large convention — the same ₦100M
    threshold and the same "That looks unusually large — double-check the
@@ -629,6 +647,24 @@ const rangeRail = (el: HTMLElement | null, ids: readonly string[]): void => {
    reconcile rail already refuses to print. No average salary is claimed
    anywhere in it: the honest signal is the size of the number itself. */
 const HUGE_MONEY = 100000000;
+/* E22-L2 — the too-small twin of bigRail. A ×1,000 unit slip (typing 100 for
+   ₦100,000) priced the whole plan at ₦50 figures and scolded the visitor
+   ₦184,920 over, with the page internally consistent the whole way — every
+   sentence true of the figure it was given and none of them asking. Only the
+   income box is covered: a genuinely small zero or an empty field is not
+   English for "I meant more", and the page's zero-plan machinery already
+   carries that case honestly. Asks, never refuses; prices exactly as typed. */
+const TINY_MONEY = 1000;
+const LOW_IDS = ["bg-inc"];
+const lowRail = (el: HTMLElement | null, ids: readonly string[]): void => {
+  if (!el) return;
+  const bad = ids.filter((id) => { const v = pm(g(id).value); return v > 0 && v < TINY_MONEY; });
+  if (!bad.length) { el.hidden = true; el.innerHTML = ""; return; }
+  el.hidden = false;
+  el.innerHTML = `${bad.map((id) => `"${esc(fieldName(id))}" reads ${nn(pm(g(id).value))}`).join(", ")}.`
+    + ` That looks unusually small for a month — if you meant ${nn(pm(g(bad[0]).value) * 1000)}, retype it in full.`
+    + goTo(bad[0]);
+};
 const bigRail = (el: HTMLElement | null, ids: readonly string[]): void => {
   if (!el) return;
   const bad = ids.filter((id) => pm(g(id).value) > HUGE_MONEY);
@@ -712,6 +748,8 @@ function render() {
   junkRail(t("bg-junk"), STEP1_IDS);
   rangeRail(t("bg-range"), SPLIT_IDS);
   bigRail(t("bg-big"), MONEY_IDS);
+  /* E22-L2 — the missing ask on the too-small side. */
+  lowRail(t("bg-low"), LOW_IDS);
   /* ONE junk in the four plan ids and there is no plan to itemise. Step 2's
      buckets, the live line, the mini line and the mirror panel are all this
      same figure, so they read the same predicate rather than each deciding for
@@ -1437,6 +1475,14 @@ function render() {
     /* E19-C7 — only a TRUE 100% earns "every naira of needs has a job": at
        99.9% the remainder is a naira with no job, and the page says so. */
     railText(sumEl, `Shares add to ${pctTxt(exactPct)}% — every naira of needs has a job.`);
+  } else if (exactPct < 80) {
+    sumEl.hidden = false;
+    /* E22-L7 — the under-100 side finally gets its plausibility question.
+       58% means 42% of the needs budget parked in "Other needs" with no
+       on-screen ask, and a visitor with weak number sense cannot weigh that.
+       The over-100 branch already fires exactly; the low branch now asks too.
+       The figure is priced exactly as typed either way. */
+    railText(sumEl, `Shares add to ${pctTxt(exactPct)}% — the other ${pctTxt(exactRemainder)}% of the needs budget is unassigned. Check the five boxes above; most households aim for 100%.`);
   } else {
     sumEl.hidden = false;
     /* E19-C7 — the remainder is printed as it is (99.9% is 99.9%, and the
@@ -1520,7 +1566,7 @@ function render() {
          threshold is the one fact the range rail above already states: a share
          runs 0 to 100. Above 100 the honest answer is the overage alone. */
       const fix = reqPct !== null && reqPct > needPctNow && reqPct <= 100
-        ? `cut about ${nn(over)} from rent/food/transport, or raise Needs % from ${Math.round(needPctNow)}% to ${reqPct}%`
+        ? `cut about ${nn(over)} from rent/food/transport, or raise Needs % from ${pctTxt(needPctNow)}% to ${reqPct}%`
         : `cut about ${nn(over)} from rent/food/transport`;
       verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">NEEDS OVER</span> ${needsYours ? `You're ${nn(over)} over on needs` : `Our example is ${nn(over)} over on needs — that figure is ours, not yours`} — ${fix}.</div>`);
     }

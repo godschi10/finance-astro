@@ -449,7 +449,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     }],
     context: [{
       field: "bg-inc",
-      text: "Median pay in formal wage jobs is roughly ₦120k–₦150k a month. Our worked example sits above that: a scenario, not your salary.",
+      text: "Median pay in formal wage jobs is roughly ₦120,000–₦150,000 a month. Our worked example sits above that: a scenario, not your salary.",
       src: "Guardian · May 2026",
       href: "https://guardian.ng/nigerian/what-is-the-average-salary-in-nigeria/",
     }],
