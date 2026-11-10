@@ -1,3 +1,11 @@
+## [0.7.84] - 2026-11-10 — E23 follow-up: the fold is the field's again, not the prose's
+
+**E23 in v0.7.83 moved the provenance gloss directly under the stepper — and pushed the income field below the 844 px fold.** The fleet pre-hydration gate (which requires the income box to be visible and tappable at 390 × 844) failed its first live run at 13/14: the only failing page was the one E23 had just changed. That is the honest regression the gate exists to catch, and it caught it in the hour after the ship.
+
+- **The fix:** the gloss ("Our example numbers carry the SAMPLE badge — ours, not yours. Type yours in to replace them.") moved to directly under the income quick-fill chips — still visible, still above Step 2, never above the field. The stepper gloss (R1) stays under the button, where the weak reader looks first. `bg-inc` measures **y = 766 px** on a 390 × 844 phone (was 835 px; the gate's ceiling is 804 px).
+- **Gates:** `check` **7/7** · `build` **84 pages** · `test:calc` **130/0/7** · acceptance contract **10/10** · **fleet pre-hydration gate 14/14 again (verified locally on this build)** · no horizontal scroll at 390 px · 390 px phone-first re-verified (field in full at the fold, stepper gloss and SAMPLE badges visible).
+- v0.7.83's own gates stand as shipped (check 7/7, build 84, test:calc 130/0/7, contract 10/10, console 0, live byte-identical). The A23 audit (0 HIGH, 4 MEDIUM, 8 LOW) remains closed by this release together with v0.7.83.
+
 ## [0.7.83] - 2026-11-10 — A23 the low-literacy path: the page's gloss travels with the words it explains, and the small print stops hiding
 
 **A23** (low-literacy audit, live site): **0 HIGH, 4 MEDIUM, 8 LOW.** The audit re-measured every reading-side load-bearing element at 390 px and found a page that writes for a schoolreader nowhere — and a phone-first bar broken by its own tooltips. All twelve findings closed here, nothing held (R10, which asks for a language alternative, is parked for the King — and noted as such). The arithmetic is unchanged.

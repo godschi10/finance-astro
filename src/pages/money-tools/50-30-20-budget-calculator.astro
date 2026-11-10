@@ -73,7 +73,6 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
   <button type="button" class="fx-step active" data-step="1" aria-current="step">1. Plan</button>
   <button type="button" class="fx-step" data-step="2">2. Itemise</button>
   <p class="receipt-note" id="bg-stepnote">2. Itemise = break the needs figure into lines — rent, food, transport, data and bills.</p>
-  <p class="receipt-note" id="bg-oursnote">Our example numbers carry the SAMPLE badge — ours, not yours. Type yours in to replace them.</p>
 </div>
 <!-- E10 (A10-C7) — the seed exit, INSIDE the card and inside the first screen.
      The shell's own "Clear examples" / "Reset" pair is shared with every other
@@ -171,6 +170,8 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
 <button type="button" class="fx-chip" data-fill="bg-inc" data-value="250000" aria-label="Fill ₦250,000">₦250,000</button>
 <button type="button" class="fx-chip" data-fill="bg-inc" data-value="500000" aria-label="Fill ₦500,000">₦500,000</button>
 </div>
+<!-- E23-R1/R3 — the provenance gloss sits under the income chips: the 844px fold belongs to the field, not to prose. The stepper gloss (R1) stays under the button, where the weak reader looks first. -->
+<p class="receipt-note" id="bg-oursnote">Our example numbers carry the SAMPLE badge — ours, not yours. Type yours in to replace them.</p>
 <!-- Split preset chips -->
 <div class="fx-chips" style="margin-top:10px" id="split-chips" role="group" aria-label="Quick-fill split percentages">
 <button type="button" class="fx-chip" data-preset="50,30,20" aria-label="Fill 50/30/20 split">50/30/20</button>
