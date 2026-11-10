@@ -35,6 +35,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wants · ₦${n(seed.savings)} savings`;
 ---
 <ToolShell title="50/30/20 Budget Calculator, Nigeria - GWill Finance" description="Split any income into needs, wants and savings, check real spending against the plan — then break the needs half into rent, food, transport, data and bills, all on one page." slug="50-30-20-budget-calculator" tool="50/30/20 Budget Calculator" lede="Half for needs, 30% for wants, a fifth for future you. Set the income, check your spending, then itemise the needs half — two steps, one page." verified="Two steps, one page · plan vs actual checker · needs-half buckets" faqs={[
+  { q: "I don't earn a regular salary — can I still use this?", a: "Yes. Add up two or three weeks of cash or transfers, divide by the weeks, and that is your rough monthly number. The split still works; in a lean month it still tells you what has to be covered, and it does not punish a small income." },
   { q: "Is 50/30/20 realistic on a Nigerian salary?", a: "As a direction, yes; as law, adjust. High rent cities may need 60/20/20 for a season — the tool accepts custom splits." },
   { q: "What counts as savings?", a: "Anything future-you keeps: emergency fund, investments, debt repayment. Not the money sitting in your spending account." },
   { q: "Where exactly does the needs half go?", a: "Step 2 on this same page breaks your plan's needs figure into rent, food, transport, data and bills, with every share tunable. One tool, one journey — no second page." },
@@ -118,7 +119,7 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
      stand-in once the module has inserted the fleet's own copy (which stays
      the authoritative one). Markup is byte-identical to ctx()'s output, so
      the swap moves nothing. -->
-<p class="ctx" data-e18-ctx>Median Nigerian pay is roughly ₦120k–₦150k a month. Our worked example sits above that: a scenario, not your salary. <span class="ctx-src">Guardian · May 2026 · <a href="https://guardian.ng/nigerian/what-is-the-average-salary-in-nigeria/" rel="noopener">read the source</a></span></p>
+<p class="ctx" data-e18-ctx>Median pay in formal wage jobs is roughly ₦120k–₦150k a month. Our worked example sits above that: a scenario, not your salary. <span class="ctx-src">Guardian · May 2026 · <a href="https://guardian.ng/nigerian/what-is-the-average-salary-in-nigeria/" rel="noopener">read the source</a></span></p>
 <!-- E19-C12 — the market strip's visible word is "LIVE", but its currency
      pairs are the DAILY reference rate (its title says so, and a phone has no
      hover path to a title). This page discloses it in words, with the
@@ -149,9 +150,11 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
 <p class="receipt-note" id="bg-big" hidden style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
 <!-- Income quick-fill chips -->
 <div class="fx-chips" style="margin-top:10px" id="income-chips" role="group" aria-label="Quick-fill income">
+<button type="button" class="fx-chip" data-fill="bg-inc" data-value="25000" aria-label="Fill ₦25,000">₦25k</button>
 <button type="button" class="fx-chip" data-fill="bg-inc" data-value="70000" aria-label="Fill ₦70,000">₦70k</button>
 <button type="button" class="fx-chip" data-fill="bg-inc" data-value="100000" aria-label="Fill ₦100,000">₦100k</button>
 <button type="button" class="fx-chip" data-fill="bg-inc" data-value="150000" aria-label="Fill ₦150,000">₦150k</button>
+<button type="button" class="fx-chip" data-fill="bg-inc" data-value="180000" aria-label="Fill ₦180,000">₦180k</button>
 <button type="button" class="fx-chip" data-fill="bg-inc" data-value="250000" aria-label="Fill ₦250,000">₦250k</button>
 <button type="button" class="fx-chip" data-fill="bg-inc" data-value="500000" aria-label="Fill ₦500,000">₦500k</button>
 </div>
@@ -315,6 +318,15 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
 @media (max-width: 360px) {
   #bg-actuals-fills .btn.b-xs, #al-actual-fills .btn.b-xs, #bg-examplectl .btn,
   #al-reconcile-fix .btn, .quick-fills .btn.b-xs { min-height: 44px; padding-left: 12px; padding-right: 12px; }
+}
+
+/* E21-F5 — the quick-fill chips measure 34px, under this page's 44px tap
+   floor. Scoped to this page's two chip rows; the shared .fx-chip class every
+   other money tool uses is untouched. */
+#income-chips .fx-chip, #split-chips .fx-chip {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
 }
 </style>
 <script>
@@ -1464,9 +1476,14 @@ function render() {
        "Last used" split beside two of our example), so it gets a voice that
        names which is which. */
     const splitsVoice = ownVoice(["bg-needs", "bg-wants", "bg-save"], "your splits", "our example's splits");
-    const savYours = yours(["bg-save", "bg-sps"]);
-    const needsYours = yours(["bg-needs", "bg-spn"]);
-    const wantsYours = yours(["bg-wants", "bg-spw"]);
+    /* A21-F1 — the spend that CREATES the comparison is the one whose owner
+       decides the voice; the matching split does not have to be typed for the
+       figure to be the visitor's. This is the needs line's rule, applied to the
+       banner's three items: a typed ₦180,000 vs the example plan is the
+       visitor's overage, never "ours, not yours". */
+    const savYours = !isOurs("bg-sps") && !pmBlank(g("bg-sps").value);
+    const needsYours = !isOurs("bg-spn") && !pmBlank(g("bg-spn").value);
+    const wantsYours = !isOurs("bg-spw") && !pmBlank(g("bg-spw").value);
     const bucketsYours = yours(["bg-inc", "bg-needs"].concat(shareIds));
     // Check splits add to 100%
     if (total !== 100) {
@@ -1524,7 +1541,11 @@ function render() {
        until there is a plan to be within. */
     if (!verdictItems.length && total === 100 && inc > 0 && planTotal > 0 && c.needs_remaining >= 0 && c.wants_remaining >= 0 && c.savings_remaining >= 0 && !(r2.needs > 0 && planned > r2.needs)) {
       const allYours = yours(["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"]);
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--good">ON PLAN</span> ${allYours ? "You're" : "Our example is"} within plan on needs, wants and savings — if this is real, the fund is ready; build the rest of the plan in Savings Goal Calculator.</div>`);
+      /* A21-F2 — "the fund is ready" over-claims at any small-but-real saving
+         slice (A19-C15 withheld it at ₦0; a ₦1,250/month saving is real but is
+         not a "the fund is ready" milestone). The claim now states what the
+         numbers support at any income: you are saving as planned. */
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--good">ON PLAN</span>${allYours ? "You're" : "Our example is"} within plan on needs, wants and savings — if this is real, you are saving as planned; set the savings aside first, then build the rest of the plan in Savings Goal Calculator.</div>`);
     }
   }
   if (verdictItems.length) {
