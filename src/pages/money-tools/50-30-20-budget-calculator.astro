@@ -353,6 +353,13 @@ const pctTxt = (v: number): string => {
    (the "Use plan — …" chips). A plan-written figure is OURS, so the page must
    never call it "you entered" nor score it as if the visitor had lived it. */
 const ACT_PROV: Record<string, "typed" | "plan"> = {};
+/* E20-NEW2 — the same question for the three STEP-1 spends: "Use my targets —
+   needs/wants/savings" writes the PLAN's figure into them, so the page must
+   not call that figure the visitor's own. */
+const SPEND_PROV: Record<string, "typed" | "plan"> = {};
+/* A chip write dispatches a synthetic "input" event; the listener must not read
+   that as the visitor typing. */
+let spendPlanWriteInFlight = false;
 /* The inverse of ACT_ID: the field id a listener sees → the bucket id the
    provenance map is keyed by (the chip writes by bucket, the DOM speaks by id). */
 const ACT_BUCKET: Record<string, string> = Object.fromEntries(
@@ -634,6 +641,28 @@ const actualOf = (bucket: string): number | null => {
    blanked id is nobody's, anything else is the visitor's. Used by seedwarn,
    the mirror, the verdict banner and the new sum line alike. */
 const isOurs = (id: string) => hasBadge(id, "data-sd");
+/* E20-NEW1 — ownership is a PER-FIELD answer. A restored "Last used" split
+   is the visitor's even while the other two are still our example, so the
+   old all-or-nothing group label called the visitor's own number ours. The
+   labels are read from the DOM (badge text stripped) so the sentence can
+   name which is which. Module scope: both the sumnote and the verdict block
+   read it, and the sumnote runs before either. */
+const fieldLabel = (id: string): string => {
+  const lab = g(id).closest(".field")?.querySelector("label");
+  if (!lab) return id;
+  const clone = lab.cloneNode(true) as HTMLElement;
+  clone.querySelectorAll(".sd").forEach((n) => n.remove());
+  return (clone.textContent || "").trim() || id;
+};
+const ownVoice = (ids: string[], allPhrase: string, nonePhrase: string): string => {
+  const own = ids.filter((id) => !isOurs(id) && !pmBlank(g(id).value));
+  if (own.length === ids.length) return allPhrase;
+  if (own.length === 0) return nonePhrase;
+  const mine = own.map(fieldLabel).join(", ");
+  const ours = ids.filter((id) => !own.includes(id)).map(fieldLabel).join(", ");
+  return `your ${mine} and our example's ${ours}`;
+};
+const cap = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
 function render() {
   /* F8 — every clamped negative says so: -x is priced as ₦0 in all seven
      inputs, so the rail names the rewrite instead of staying silent. */
@@ -733,7 +762,10 @@ function render() {
        250%") and prescribed nothing — the fix is named in the SAME line, no
        new line, no new clause family. */
     sumnote.hidden = false;
-    sumnote.textContent = `Splits add to ${total}% — buckets use your exact percentages, so bring them back to 100%.`;
+    /* E20-NEW1 — the split percentages are not all the visitor's: a restored
+       split is theirs, an untouched one is our example. The line names which
+       is which instead of calling the whole set "your exact percentages". */
+    sumnote.textContent = `Splits add to ${total}% — buckets use ${ownVoice(["bg-needs", "bg-wants", "bg-save"], "your exact percentages", "our example's percentages")}, so bring them back to 100%.`;
   }
   const c = budget503020Compare(inc, np, wp, svp,
     Math.max(0, pm(g("bg-spn").value) || 0),
@@ -918,6 +950,10 @@ function render() {
      the plan figure either way, so say that too. */
   const wn = t("bg-whatnow");
   const overNW: Array<{ name: string; over: number }> = [];
+  /* E20-NEW3 — F-P5, the page's own rule: "a ₦0 plan is a plan that doesn't
+     exist". A negative income is read as ₦0, and the page must not scold a
+     visitor against a plan of nothing. */
+  const planTotal = Math.round(plan.needs) + Math.round(plan.wants) + Math.round(plan.savings);
   /* E19-C8 — the page prints whole naira, so the verdict is decided on whole
      naira, on the DISPLAYED figures: two identical numbers (₦125,001 against
      ₦125,001) must never carry an overage verdict. A half-naira residue is
@@ -944,7 +980,7 @@ function render() {
      and how to fix it; this line would only have repeated it in a voice the
      numbers cannot support. */
   const step1Junked = junkStep1.length > 0;
-  if (!empty && !step1Junked && splitsSet && (overNW.length || savOver > 0)) {
+  if (!empty && !step1Junked && splitsSet && planTotal > 0 && (overNW.length || savOver > 0)) {
     const bits: string[] = [];
     if (overNW.length) {
       const nm = overNW.map((o) => o.name).join(" and ");
@@ -1031,7 +1067,7 @@ function render() {
      spent ₦0 vs ₦150,000 plan on needs — within plan" while the verdict above
      said CANNOT SCORE for the very same field. One screen, two owners. */
   const spendJunked = junkIn(["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn"]);
-  if (!empty && planComplete && !pmBlank(g("bg-spn").value) && !spendJunked && step1Touched) {
+  if (!empty && planComplete && planTotal > 0 && !pmBlank(g("bg-spn").value) && !spendJunked && step1Touched) {
     const spent = Math.max(0, pm(g("bg-spn").value) || 0);
     /* E19-C8 — compare the DISPLAYED figures: 125,001 against 125,001 is
        within plan, and the residue that produced the "₦1 over" claim never
@@ -1040,19 +1076,27 @@ function render() {
     const needsD = Math.round(plan.needs);
     /* E19-C4 — the SPEND's own badge decides its voice, not the plan's: a
        figure the visitor typed is theirs even while the plan is still ours. */
-    const mineSpent = !sd("bg-spn");
+    /* E20-NEW2 — a spend the page wrote from the plan is OURS, whatever its
+       badge says: the "Use my targets — needs" chip writes the plan's figure
+       and the page must not call it "You spent". */
+    const planSpent = SPEND_PROV["bg-spn"] === "plan";
+    const mineSpent = !sd("bg-spn") && !planSpent;
     /* And the plan side is labelled by who owns it: the visitor's own plan
        when they touched it, our example plan when they did not. */
     const planSide = planTouched ? `${nn(plan.needs)} plan` : `our ${nn(plan.needs)} example plan`;
     am.hidden = false;
     if (spentD > needsD) {
-      am.textContent = mineSpent
-        ? `You spent ${nn(spentD)} vs ${planSide} on needs — ${nn(spentD - needsD)} over. Tune the buckets below against the plan, then trim the spend above.`
-        : `Example: ${nn(spentD)} vs ${planSide} on needs — ${nn(spentD - needsD)} over. Our example, not yours — type what you really spent to score your month.`;
+      am.textContent = planSpent
+        ? `From the plan: ${nn(spentD)} vs ${planSide} on needs — ${nn(spentD - needsD)} over. That figure is ours, not yours — type what you really spent to score your month.`
+        : mineSpent
+          ? `You spent ${nn(spentD)} vs ${planSide} on needs — ${nn(spentD - needsD)} over. Tune the buckets below against the plan, then trim the spend above.`
+          : `Example: ${nn(spentD)} vs ${planSide} on needs — ${nn(spentD - needsD)} over. Our example, not yours — type what you really spent to score your month.`;
     } else {
-      am.textContent = mineSpent
-        ? `You spent ${nn(spentD)} vs ${planSide} on needs — within plan. The buckets below share out the plan figure.`
-        : `Example: ${nn(spentD)} vs ${planSide} on needs — within plan. Our example, not yours — the buckets below share out the plan figure.`;
+      am.textContent = planSpent
+        ? `From the plan: ${nn(spentD)} vs ${planSide} on needs — within plan. That figure is ours, not yours — type what you really spent to score your month.`
+        : mineSpent
+          ? `You spent ${nn(spentD)} vs ${planSide} on needs — within plan. The buckets below share out the plan figure.`
+          : `Example: ${nn(spentD)} vs ${planSide} on needs — within plan. Our example, not yours — the buckets below share out the plan figure.`;
     }
   } else { am.hidden = true; am.textContent = ""; }
   /* MF-5 + F9 — the memory date, visible: the spine dates LAST USED only in a
@@ -1193,14 +1237,18 @@ function render() {
          bucket really is unscored. */
       const nPlanWritten = scored.filter((s) => s.actual !== null && ACT_PROV[s.b] === "plan").length;
       const nTyped = n - nPlanWritten;
-      const unscoredTail = 5 - n > 0 ? ` the other ${5 - n} still show their plan only, with no "you spent" figure and no badge, because there is nothing real to score them against.` : "";
       const planOursTail = planOurs ? " The plan figures are still our example. Touch income, a split or a share to make them yours." : "";
       const mirrorLead = "Variance = what you entered minus that bucket's plan. ";
+      /* E20-R1/R3 — the 25-word "the other N still show their plan only …"
+         clause is GONE: it made this rail 63 words (A17 filed 61 as HIGH and
+         E17's log claimed it fixed), and it repeated what the rows already say
+         ("— add yours to score it"). The sentence now counts what was typed
+         and what came from the plan, in plain sentences with no seam. */
       ownEl.textContent = nPlanWritten === 0
-        ? `${mirrorLead}${n} of 5 buckets scored from what you typed.${unscoredTail}${planOursTail}`
+        ? `${mirrorLead}${n} of 5 buckets scored from what you typed.${planOursTail}`
         : nTyped === 0
-          ? `${mirrorLead}${nPlanWritten} of 5 buckets came from the plan, not from you.${unscoredTail}${planOursTail}`
-          : `${mirrorLead}${nTyped} of 5 buckets scored from what you typed; ${nPlanWritten} came from the plan, not from you.${unscoredTail}${planOursTail}`;
+          ? `${mirrorLead}${nPlanWritten} of 5 buckets came from the plan, not from you.${planOursTail}`
+          : `${mirrorLead}${nTyped} of 5 buckets scored from what you typed; ${nPlanWritten} came from the plan, not from you.${planOursTail}`;
       let html = "";
       /* E14: the plan column of a bucket is that bucket's share of needs, so a
          junk share means this column is the reader's number, not the one typed.
@@ -1398,29 +1446,39 @@ function render() {
   }
   else if (!empty && planComplete) {
     const splitsYours = yours(["bg-needs", "bg-wants", "bg-save"]);
+    /* E20-NEW1 — the splits group can be PARTLY the visitor's (a restored
+       "Last used" split beside two of our example), so it gets a voice that
+       names which is which. */
+    const splitsVoice = ownVoice(["bg-needs", "bg-wants", "bg-save"], "your splits", "our example's splits");
     const savYours = yours(["bg-save", "bg-sps"]);
     const needsYours = yours(["bg-needs", "bg-spn"]);
     const wantsYours = yours(["bg-wants", "bg-spw"]);
     const bucketsYours = yours(["bg-inc", "bg-needs"].concat(shareIds));
     // Check splits add to 100%
     if (total !== 100) {
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">SPLITS ${total}%</span>${splitsYours ? "Your splits" : "Our example's splits"} add to ${total}% — change them to add up to 100%.</div>`);
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">SPLITS ${total}%</span>${cap(splitsVoice)} add to ${total}% — change them to add up to 100%.</div>`);
     }
     // Check savings gap
-    if (c.savings_remaining > 0) {
+    /* E20-NEW3 — no scolding against a plan of nothing. */
+    if (planTotal > 0 && c.savings_remaining > 0) {
       verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">SAVE GAP</span>${savYours ? `You're ${nn(c.savings_remaining)} short on savings` : `Our example is ${nn(c.savings_remaining)} short on savings — that figure is ours, not yours`} — set up an automatic transfer or raise the savings split.</div>`);
-    } else if (c.savings_remaining < 0) {
+    } else if (planTotal > 0 && c.savings_remaining < 0) {
       verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--good">AHEAD</span>${savYours ? `You've put ${nn(-c.savings_remaining)} extra to savings` : `Our example puts ${nn(-c.savings_remaining)} extra to savings`} — ahead of plan.</div>`);
     }
     // Check needs overage
     /* E19-C8 — the banner verdict uses the same displayed figures. */
-    if (c.needs_remaining < 0 && Math.round(-c.needs_remaining) >= 1) {
+    /* E20-R2 — the banner decides on the SAME figures the needs line prints.
+       Post-E19 the line said "within plan" while this banner said "₦1 over"
+       about the same two identical numbers: two opposite verdicts, one
+       screen. A half-naira residue is rounding, not an overage. */
+    const needsOverShown = Math.round(Math.max(0, pm(g("bg-spn").value) || 0)) - Math.round(plan.needs);
+    if (planTotal > 0 && needsOverShown >= 1) {
       /* E12-5 — generic "increase Needs % or reduce rent/food/transport" gave no
          size to the hole. Name the overage and, where the income is known, the
          exact Needs-% that would cover the spend instead. Both figures are
          derived from the visitor's own numbers; the "cut about ₦X" path names
          the same overage as the amount to find. */
-      const over = Math.round(-c.needs_remaining);
+      const over = needsOverShown;
       const needPctNow = Math.max(0, pm(g("bg-needs").value) || 0);
       const spentNeeds = Math.max(0, pm(g("bg-spn").value) || 0);
       const reqPct = inc > 0 ? Math.ceil((spentNeeds / inc) * 100) : null;
@@ -1436,11 +1494,13 @@ function render() {
       verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">NEEDS OVER</span>${needsYours ? `You're ${nn(over)} over on needs` : `Our example is ${nn(over)} over on needs — that figure is ours, not yours`} — ${fix}.</div>`);
     }
     // Check wants overage
-    if (c.wants_remaining < 0) {
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">WANTS OVER</span>${wantsYours ? `You're ${nn(-c.wants_remaining)} over on wants` : `Our example is ${nn(-c.wants_remaining)} over on wants — that figure is ours, not yours`} — cut spending on non-essentials or raise Wants %.</div>`);
+    /* E20-R2 — same rule for wants. */
+    const wantsOverShown = Math.round(Math.max(0, pm(g("bg-spw").value) || 0)) - Math.round(plan.wants);
+    if (planTotal > 0 && wantsOverShown >= 1) {
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">WANTS OVER</span>${wantsYours ? `You're ${nn(wantsOverShown)} over on wants` : `Our example is ${nn(wantsOverShown)} over on wants — that figure is ours, not yours`} — cut spending on non-essentials or raise Wants %.</div>`);
     }
     // Check individual bucket overages in step 2
-    if (r2.needs > 0 && planned > r2.needs) {
+    if (planTotal > 0 && r2.needs > 0 && planned > r2.needs) {
       verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">BUCKETS OVER</span>${bucketsYours ? "Your" : "Our example's"} needs buckets add to ${(shareSum * 100).toFixed(0)}% — trim shares to fit ${bucketsYours ? "your" : "the example's"} ${nn(r2.needs)} needs budget.</div>`);
     }
     /* E12-6 — a clean month used to print nothing at all. One honest line:
@@ -1448,7 +1508,7 @@ function render() {
     /* E19-C15 — a ₦0 plan is not a plan: "within plan" against nothing is not
        a milestone, so the ON PLAN banner (and "the fund is ready") is withheld
        until there is a plan to be within. */
-    if (!verdictItems.length && total === 100 && inc > 0 && c.needs_remaining >= 0 && c.wants_remaining >= 0 && c.savings_remaining >= 0 && !(r2.needs > 0 && planned > r2.needs)) {
+    if (!verdictItems.length && total === 100 && inc > 0 && planTotal > 0 && c.needs_remaining >= 0 && c.wants_remaining >= 0 && c.savings_remaining >= 0 && !(r2.needs > 0 && planned > r2.needs)) {
       const allYours = yours(["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"]);
       verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--good">ON PLAN</span>${allYours ? "You're" : "Our example is"} within plan on needs, wants and savings — if this is real, the fund is ready; build the rest of the plan in Savings Goal Calculator.</div>`);
     }
@@ -1710,6 +1770,14 @@ document.addEventListener("click", (e) => {
   if (!u || u.getAttribute("aria-disabled")) return;
   disclosePlanWrite();
 });
+/* E20-NEW2 — the visitor's own typing takes the spend back: the figure stops
+   being the plan's and becomes theirs. */
+["bg-spn", "bg-spw", "bg-sps"].forEach((id) => {
+  g(id).addEventListener("input", () => {
+    if (spendPlanWriteInFlight) return;
+    if (SPEND_PROV[id] === "plan") SPEND_PROV[id] = "typed";
+  });
+});
 g("bg-spn").addEventListener("input", () => {
   if (!pasted) return;
   pasted = false;
@@ -1901,10 +1969,15 @@ if (copyBtn) copyBtn.addEventListener("click", async () => {
         Math.max(0, pm(g('bg-wants').value) || 0) / 100,
         Math.max(0, pm(g('bg-save').value) || 0) / 100
       );
+      /* E20-NEW2 — this write is the PLAN's figure: mark it before the input
+         event, so the render that follows already knows whose number it is. */
+      SPEND_PROV[target.id] = "plan";
+      spendPlanWriteInFlight = true;
       if (target.id === 'bg-spn') target.value = String(Math.round(plan.needs));
       else if (target.id === 'bg-spw') target.value = String(Math.round(plan.wants));
       else if (target.id === 'bg-sps') target.value = String(Math.round(plan.savings));
       target.dispatchEvent(new Event('input', { bubbles: true }));
+      spendPlanWriteInFlight = false;
       /* AFTER the dispatch, deliberately. dispatchEvent('input') is synchronous,
          and the bg-spn input listener above lifts this note the moment the field
          changes — so disclosing first would be undone in the same tick and the

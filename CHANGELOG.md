@@ -1,3 +1,57 @@
+## [0.7.79] - 2026-11-10 — A20 mid-program review: the truthfulness fixes — no more two verdicts about the same numbers, no more our-figure-as-yours
+
+**A20** (mid-program review, live site): verdict **MIXED** — 29 promises kept · 5 broken · 1
+regressed · 1 unmeasurable · 6 new problems. No new audit findings are shipped here except
+the fixes for what A20 itself found wrong in **v0.7.78**, plus the two broken-promise items
+in the same class. The remaining A20 items are queued as E20b (accessibility rails,
+text-extraction seam, 320 px tap targets) — see the ledger.
+
+- **R2 — the C8 banner picked up the E19 rule and the page now holds two identical verdicts
+  no more than once.** v0.7.78 made the needs line and the needs advice line compare the
+  *printed* figures, but the verdict banner still compared the engine's raw difference.
+  Income ₦250,001 with the chip filled gave "₦125,001 vs ₦125,001 … within plan" on one line
+  and "NEEDS OVER — ₦1 over" on another. The banner (and the WANTS OVER banner, on the same
+  rule) now decide on the displayed figures, exactly as the needs line does.
+- **NEW-2 — the visitor's own chip-written spend is no longer called theirs either.**
+  The three step-1 "Use my targets — …" chips write the plan's figure into the visitor's
+  spend fields, and the field's Sample badge is dropped on write — so the page announced
+  "You spent ₦125,000" beside its own "this came from the plan, not your month". The same
+  per-field provenance the five step-2 actuals carry now covers the three step-1 spends:
+  the visitor's own typing takes the figure back; the chip keeps it labelled
+  *"From the plan: … That figure is ours, not yours — type what you really spent to score
+  your month."*
+- **NEW-3 — a negative income earns no scolding.** Income `-50000` was read as ₦0 and the
+  page still said "Needs and wants are ₦185,000 over budget — spend less there or raise the
+  splits above" plus a four-item verdict banner against a plan that does not exist. F-P5 —
+  the page's own rule: "a ₦0 plan is a plan that doesn't exist" — now gates the advice line,
+  the needs line and every verdict item, so the page says nothing it cannot support and
+  keeps the visitor's own rail ("Negative entries are treated as ₦0.") for what happened.
+  The `⚠` absurd-figure rail is untouched.
+- **R1/R3 — the mirror rail is short again and loses the seam.** v0.7.78's C2 clause was
+  added on top of the 25-word "the other N still show their plan only…" sentence, making
+  the rail 63 words (A17 filed 61 as HIGH; E17's log claimed it fixed) and opening a
+  lowercase sentence start ("… from you. the other 4 …"). The 25-word clause is gone (the
+  rows already say "— add yours to score it"), the sentence starts are plain, and the counted
+  variant is ~46 words.
+- **NEW-1 — a restored split is the visitor's, and the page says so.** A visitor whose
+  "Last used" income ₦450,000 and "Last used" split 60% were restored, beside two Sample
+  fields, was told "Our example's splits add to 110%" and "buckets use your exact percentages".
+  Ownership is now a per-field answer, not a group yes/no: the verdict reads *"Your Needs %
+  and our example's Wants %, Savings % add to 110% — change them to add up to 100%."* and the
+  sumnote reads *"buckets use your Needs % and our example's Wants %, Savings %, so bring
+  them back to 100%."*
+- **One defect introduced and caught before shipping this round:** the new per-field
+  ownership helpers were declared inside `render()` *after* the sumnote that used them —
+  every render died midway with a TDZ ReferenceError, leaving the receipt restored but the
+  allocator line and verdict at their server defaults. Caught by the live-vs-local restored
+  state comparison and by a new error-tracking debug harness (the page's own `pageerror`
+  listener); the helpers are hoisted to module scope and the page boots error-free again.
+- **Gates:** `check` **7/7** · `build` **84 pages** · `test:calc` **130/0/7** · acceptance
+  contract **5/5** (R2 · NEW-2 · NEW-3 · R1/R3 · NEW-1 — the NEW-1 check now reproduces the
+  restored state end-to-end: toggle ON, two fields typed, reload) · E19 contracts re-run
+  **6/6 + 10/10** (no regression) · the seed state is byte-identical to v0.7.78 behaviour
+  · 390 phone-first: verdict fits its box (306 px), no horizontal scroll, console 0.
+
 ## [0.7.78] - 2026-11-10 — E19 confidence calibration: the page stops claiming more certainty, or more ownership, than its own arithmetic supports
 
 **E19** (edit round 19 of 40, live site): **A19 FAIL resolved — 4 HIGH, 8 MEDIUM, 3 LOW, all 15 findings closed, nothing held.** A19 audited what the 50/30/20 page *claims* about its own certainty: a verdict, a badge or a figure whose confidence its evidence does not carry. No CRITICAL — nothing was fabricated and no sum was wrong; every defect was a misstatement of certainty or ownership. No caveat was deleted: the "true by construction" family, the junk rails, the dated context line and every other disclaimer survive unchanged.
