@@ -1,3 +1,30 @@
+## [0.7.80] - 2026-11-10 — E20b: the eight silent rails get an audience, the verdict badge gets its word, the 320px chips reach the 44px floor
+
+**E20b** (the A20 remainder, live site): **all three remaining A20 items closed, nothing held.**
+
+- **NEW-4 — the eight silent rails are audible now.** A screen-reader user heard none of the eight
+  visible rails this page leans on: the reconcile rail that stops the page claiming a verdict,
+  the ON PLAN banner, the share-total rail, the needs line, the what-now advice, the junk rail,
+  the sumnote and the mirror panel. All eight now carry `role="status"` (implicit polite live
+  region), the same semantics A16 already gave the four rails it fixed, and — the caveat A20
+  flagged — every one of their writes goes through one shared **identical-text guard**, so a
+  polite region announces a change, not a re-render of the same sentence on every keystroke.
+  Console **0 errors** with the rails live.
+- **NEW-5 — the verdict badge no longer eats the first word of its sentence.** The badge and
+  the sentence were one uninterrupted text run, which broke plain-English copy-paste and
+  screen-reader reads ("SAVE GAPOur example is…"). Each verdict badge is followed by a proper
+  separator inside the flex row (whitespace text items do not render inside a flex container,
+  so the visuals are unchanged) and the mirror rows' reads likewise ("rent ₦50,000 — add yours
+  to score it"). 320 px and 390 px layout unchanged; no element moved a pixel.
+- **NEW-6 — the 320 px chip row is a 44 px tap target.** The fill chips measured 34–36 px on a
+  320 px phone (every other control on this page is already padded to the 44 px floor). A
+  page-scoped additive rule takes the chip rows to 44 px at ≤360 px. All chips now measure
+  44 px; no other page's CSS was touched; no layout change at 390 px.
+- **Gates:** `check` **7/7** · `build` **84 pages** · `test:calc` **130/0/7** · E20 acceptance
+  contract **5/5** (re-run) · E19 contracts **6/6 + 10/10** (re-run, no regression) · live
+  HTML **byte-identical** to the release dist (230,016 B) · console 0 · no horizontal scroll
+  · the 320 px screenshot is saved alongside this note.
+
 ## [0.7.79] - 2026-11-10 — A20 mid-program review: the truthfulness fixes — no more two verdicts about the same numbers, no more our-figure-as-yours
 
 **A20** (mid-program review, live site): verdict **MIXED** — 29 promises kept · 5 broken · 1

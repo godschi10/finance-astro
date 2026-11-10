@@ -144,7 +144,7 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
      prose. .receipt-note is carried for the fleet's rail vocabulary; the
      inline colour is --text-mid because these three sit on --surface, not on
      the dark receipt slip, where #c4b89a would be unreadable in light. -->
-<p class="receipt-note" id="bg-junk" hidden style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
+<p class="receipt-note" id="bg-junk" hidden role="status" style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
 <p class="receipt-note" id="bg-range" hidden style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
 <p class="receipt-note" id="bg-big" hidden style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
 <!-- Income quick-fill chips -->
@@ -179,14 +179,14 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
 <p class="receipt-lbl">Plan buckets</p>
 <p class="receipt-fig" id="bg-fig"><span class="fig-amt">₦{n(seed.needs)}</span><span class="fig-sep" aria-hidden="true"> · </span><span class="fig-amt">₦{n(seed.wants)}</span><span class="fig-sep" aria-hidden="true"> · </span><span class="fig-amt">₦{n(seed.savings)}</span></p>
 <p class="receipt-sub" id="bg-sub">Needs · wants · savings — leftover <span id="bg-else">₦{n(seed.else)}</span></p>
-<p class="receipt-sub" id="bg-sumnote"></p>
+<p class="receipt-sub" id="bg-sumnote" role="status"></p>
 <p class="receipt-note" id="bg-warn" hidden aria-live="polite"></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row" data-goto="bg-spn" tabindex="0" role="button" style="cursor:pointer;min-height:44px;display:flex;align-items:center" title="See the field behind this figure"><span>Needs left <span aria-hidden="true">›</span></span><b id="bg-rn">₦{n(chk.needs_remaining)}</b></div>
 <div class="receipt-row" data-goto="bg-spw" tabindex="0" role="button" style="cursor:pointer;min-height:44px;display:flex;align-items:center" title="See the field behind this figure"><span>Wants left <span aria-hidden="true">›</span></span><b id="bg-rw">₦{n(chk.wants_remaining)}</b></div>
 <div class="receipt-row" data-goto="bg-sps" tabindex="0" role="button" style="cursor:pointer;min-height:44px;display:flex;align-items:center" title="See the field behind this figure"><span>Savings left to save <span aria-hidden="true">›</span></span><b id="bg-rs">₦{n(chk.savings_remaining)}</b></div>
 <p class="receipt-note" id="bg-pasted" hidden role="status"></p>
-<p class="receipt-note" id="bg-whatnow" hidden></p>
+<p class="receipt-note" id="bg-whatnow" hidden role="status"></p>
 <p class="receipt-foot hint">Plan vs actual: leftover = income your splits didn't assign</p>
 <p class="receipt-foot hint">Wants left = plan wants minus spent on wants</p>
 <p class="receipt-foot hint">Savings left to save = plan savings minus put to savings</p>
@@ -258,11 +258,11 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
 ))}
 </div>
 <p class="receipt-note" id="al-warn" hidden aria-live="polite"></p>
-<p class="receipt-note" id="al-sharesum" hidden></p>
+<p class="receipt-note" id="al-sharesum" hidden role="status"></p>
 <!-- The aggregate needs-vs-plan line keeps MF-4's own element (id al-needsline).
      It was merged into al-actuals in E9 and destroyed by the same innerHTML
      overwrite; its own node is the fix. -->
-<p class="receipt-note" id="al-needsline" hidden></p>
+<p class="receipt-note" id="al-needsline" hidden role="status"></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <!-- E10 (A10-C1/C8) — the mirror panel gets its own heading (five unlabelled
      rows told a first-time visitor nothing) and its OWN disclosure element.
@@ -273,12 +273,12 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
      badge rides inside the panel, so ownership travels with the numbers instead
      of decaying at the section boundary. -->
 <p class="receipt-lbl" id="al-mirror-h" hidden>Plan vs what you actually spent, bucket by bucket <span class="trust-badge" data-trust="example" id="al-mirror-badge" hidden>Example</span></p>
-<p class="receipt-note" id="al-mirror-own" hidden></p>
+<p class="receipt-note" id="al-mirror-own" hidden role="status"></p>
 <div class="actuals-rows" id="al-actuals" hidden></div>
-<p class="receipt-note" id="al-onplan" hidden></p>
+<p class="receipt-note" id="al-onplan" hidden role="status"></p>
 <!-- E11-8: the aggregate-vs-buckets reconciliation line. Hidden until the
      visitor has scored at least one bucket AND entered a needs total. -->
-<p class="receipt-note" id="al-reconcile" hidden></p>
+<p class="receipt-note" id="al-reconcile" hidden role="status"></p>
 <p class="receipt-note" id="al-reconcile-fix" hidden><a class="btn b-ghost b-xs" id="al-reconcile-go" href="#bg-spn" data-goto="bg-spn">Correct the needs total</a></p>
 <p class="receipt-foot hint">Variance = what you entered, minus that bucket's plan</p>
 <p class="receipt-foot">Shares of needs — naira follows instantly</p>
@@ -307,6 +307,14 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
 @media (max-width:420px){
 #bg-fig .fig-sep{display:none}
 #bg-fig .fig-amt{display:block}
+}
+/* E20-NEW6 — the chip rows are a 34–36px tap target on a 320px phone. The
+   page's own floor is 44px (every primary control on this page is already
+   padded to it); at 360px and below the chips take the same floor. Additive
+   rule, scoped to this page's chip rows only. */
+@media (max-width: 360px) {
+  #bg-actuals-fills .btn.b-xs, #al-actual-fills .btn.b-xs, #bg-examplectl .btn,
+  #al-reconcile-fix .btn, .quick-fills .btn.b-xs { min-height: 44px; padding-left: 12px; padding-right: 12px; }
 }
 </style>
 <script>
@@ -551,6 +559,12 @@ const splitFig = (): void => {
    of the SAME sentence must not re-announce on every keystroke. The payload is
    remembered per element; innerHTML is only written when it actually changes. */
 const railLast = new WeakMap<HTMLElement, string>();
+/* E20-NEW4 — role="status" turns every rail in this family into a polite live
+   region. The same sentence re-written on every render would re-announce
+   itself on every keystroke, so every write goes through one shared guard. */
+const railText = (el: HTMLElement, text: string): void => {
+  if (el.textContent !== text) el.textContent = text;
+};
 const junkRail = (el: HTMLElement | null, ids: readonly string[]): void => {
   if (!el) return;
   const bad = ids.filter((id) => malformedOf(id));
@@ -747,16 +761,16 @@ function render() {
      with its empty text instead of holding whitespace. */
   const offerRail = !empty && PLAN_IDS.some((id) => pmBlank(g(id).value));
   const sumnote = t("bg-sumnote");
-  if (offerRail) { sumnote.textContent = ""; sumnote.hidden = true; }
+  if (offerRail) { railText(sumnote, ""); sumnote.hidden = true; }
   else if (missingSplits.length) {
     sumnote.hidden = false;
-    sumnote.textContent = `Nothing to compute yet — ${missingSplits.map(splitLabel).join(" and ")} ${missingSplits.length > 1 ? "are" : "is"} empty, not zero.`;
+    railText(sumnote, `Nothing to compute yet — ${missingSplits.map(splitLabel).join(" and ")} ${missingSplits.length > 1 ? "are" : "is"} empty, not zero.`);
   }
   /* E14 — a junk split is priced from the reader's number, so "Splits add to
      300%" would be a percentage nobody typed. The junk rail already owns that
      field's voice; this line stands down rather than second-guessing it. */
-  else if (junkIn(SPLIT_IDS)) { sumnote.textContent = ""; sumnote.hidden = true; }
-  else if (total === 100) { sumnote.textContent = ""; sumnote.hidden = true; }
+  else if (junkIn(SPLIT_IDS)) { railText(sumnote, ""); sumnote.hidden = true; }
+  else if (total === 100) { railText(sumnote, ""); sumnote.hidden = true; }
   else {
     /* Recovery soft spot 2 (A4): the old line stated the FACT ("Splits add to
        250%") and prescribed nothing — the fix is named in the SAME line, no
@@ -765,7 +779,7 @@ function render() {
     /* E20-NEW1 — the split percentages are not all the visitor's: a restored
        split is theirs, an untouched one is our example. The line names which
        is which instead of calling the whole set "your exact percentages". */
-    sumnote.textContent = `Splits add to ${total}% — buckets use ${ownVoice(["bg-needs", "bg-wants", "bg-save"], "your exact percentages", "our example's percentages")}, so bring them back to 100%.`;
+    railText(sumnote, `Splits add to ${total}% — buckets use ${ownVoice(["bg-needs", "bg-wants", "bg-save"], "your exact percentages", "our example's percentages")}, so bring them back to 100%.`);
   }
   const c = budget503020Compare(inc, np, wp, svp,
     Math.max(0, pm(g("bg-spn").value) || 0),
@@ -991,11 +1005,11 @@ function render() {
     }
     if (savOver > 0) bits.push(`savings ${nn(savOver)} over plan — ahead of it; leave it banked or move the split if needs run tight`);
     wn.hidden = false;
-    wn.textContent = bits.join("; ")
+    railText(wn, bits.join("; ")
       + (overNW.length
         ? ". Step 2 still itemises the plan figure, not the amount you overspent."
-        : ".");
-  } else { wn.hidden = true; wn.textContent = ""; }
+        : "."));
+  } else { wn.hidden = true; railText(wn, ""); }
   /* MF-6 — the both-steps mini plan: FATIGUE CUT keeps only the pair the
      tuner cannot see from step 2 (needs + rent). Wants/savings restated the
      live line two screens up; rent is the actionable one here. Same guard as
@@ -1086,19 +1100,19 @@ function render() {
     const planSide = planTouched ? `${nn(plan.needs)} plan` : `our ${nn(plan.needs)} example plan`;
     am.hidden = false;
     if (spentD > needsD) {
-      am.textContent = planSpent
+      railText(am, planSpent
         ? `From the plan: ${nn(spentD)} vs ${planSide} on needs — ${nn(spentD - needsD)} over. That figure is ours, not yours — type what you really spent to score your month.`
         : mineSpent
           ? `You spent ${nn(spentD)} vs ${planSide} on needs — ${nn(spentD - needsD)} over. Tune the buckets below against the plan, then trim the spend above.`
-          : `Example: ${nn(spentD)} vs ${planSide} on needs — ${nn(spentD - needsD)} over. Our example, not yours — type what you really spent to score your month.`;
+          : `Example: ${nn(spentD)} vs ${planSide} on needs — ${nn(spentD - needsD)} over. Our example, not yours — type what you really spent to score your month.`);
     } else {
-      am.textContent = planSpent
+      railText(am, planSpent
         ? `From the plan: ${nn(spentD)} vs ${planSide} on needs — within plan. That figure is ours, not yours — type what you really spent to score your month.`
         : mineSpent
           ? `You spent ${nn(spentD)} vs ${planSide} on needs — within plan. The buckets below share out the plan figure.`
-          : `Example: ${nn(spentD)} vs ${planSide} on needs — within plan. Our example, not yours — the buckets below share out the plan figure.`;
+          : `Example: ${nn(spentD)} vs ${planSide} on needs — within plan. Our example, not yours — the buckets below share out the plan figure.`);
     }
-  } else { am.hidden = true; am.textContent = ""; }
+  } else { am.hidden = true; railText(am, ""); }
   /* MF-5 + F9 — the memory date, visible: the spine dates LAST USED only in a
      hover title (no touch path), so the page reads the spine's own key and
      prints the day. A copied plan goes stale on the next keystroke, so the
@@ -1212,9 +1226,9 @@ function render() {
   if (empty || !planComplete || planJunked) {
     headEl.hidden = true; badgeEl.hidden = true; ownEl.hidden = true;
     rowsEl.hidden = true; rowsEl.innerHTML = "";
-    t("al-reconcile").hidden = true; t("al-reconcile").textContent = "";
+    t("al-reconcile").hidden = true; railText(t("al-reconcile") as HTMLElement, "");
     t("al-reconcile-fix").hidden = true;
-    t("al-onplan").hidden = true; t("al-onplan").textContent = "";
+    t("al-onplan").hidden = true; railText(t("al-onplan") as HTMLElement, "");
   } else {
     headEl.hidden = false;
     /* The Example badge rides the panel itself whenever the plan figures on
@@ -1224,12 +1238,12 @@ function render() {
     if (!anyScored) {
       /* No actual anywhere: the panel withholds rather than inventing one, and
          says in words WHY it is empty and how to fill it. */
-      ownEl.textContent = "Our example, not yours: the naira beside each bucket is the plan, not your spending. Type what you actually spent in any bucket. A blank bucket keeps its plan amount but shows no \"you spent\" figure and no badge, because there is nothing real to score it against.";
+      railText(ownEl, "Our example, not yours: the naira beside each bucket is the plan, not your spending. Type what you actually spent in any bucket. A blank bucket keeps its plan amount but shows no \"you spent\" figure and no badge, because there is nothing real to score it against.");
       rowsEl.innerHTML = "";
       rowsEl.hidden = true;
-      t("al-reconcile").hidden = true; t("al-reconcile").textContent = "";
+      t("al-reconcile").hidden = true; railText(t("al-reconcile") as HTMLElement, "");
       t("al-reconcile-fix").hidden = true;
-      t("al-onplan").hidden = true; t("al-onplan").textContent = "";
+      t("al-onplan").hidden = true; railText(t("al-onplan") as HTMLElement, "");
     } else {
       const n = scored.filter((s) => s.actual !== null).length;
       /* E19-C2/C13 — the sentence counts what the VISITOR typed and names what
@@ -1244,11 +1258,11 @@ function render() {
          E17's log claimed it fixed), and it repeated what the rows already say
          ("— add yours to score it"). The sentence now counts what was typed
          and what came from the plan, in plain sentences with no seam. */
-      ownEl.textContent = nPlanWritten === 0
+      railText(ownEl, nPlanWritten === 0
         ? `${mirrorLead}${n} of 5 buckets scored from what you typed.${planOursTail}`
         : nTyped === 0
           ? `${mirrorLead}${nPlanWritten} of 5 buckets came from the plan, not from you.${planOursTail}`
-          : `${mirrorLead}${nTyped} of 5 buckets scored from what you typed; ${nPlanWritten} came from the plan, not from you.${planOursTail}`;
+          : `${mirrorLead}${nTyped} of 5 buckets scored from what you typed; ${nPlanWritten} came from the plan, not from you.${planOursTail}`);
       let html = "";
       /* E14: the plan column of a bucket is that bucket's share of needs, so a
          junk share means this column is the reader's number, not the one typed.
@@ -1262,7 +1276,7 @@ function render() {
           /* Honest unknown state: the plan figure is fine to show (it IS the
              plan), but there is no actual, so there is nothing to compare and no
              badge. No fabricated amount is printed anywhere in this row. */
-          html += `<div class="actuals-row" tabindex="0" role="button" data-goto="${ACT_ID[s.b]}" title="See the field behind this figure"><span>${bucket.label}</span><b>${planTxt(s.b)}</b><span class="actuals-none">— add yours to score it</span></div>`;
+          html += `<div class="actuals-row" tabindex="0" role="button" data-goto="${ACT_ID[s.b]}" title="See the field behind this figure"><span>${bucket.label}</span> <b>${planTxt(s.b)}</b><span class="actuals-none">— add yours to score it</span> </div>`;
           continue;
         }
         /* E14: with the plan figure unreadable there is nothing to compare this
@@ -1271,7 +1285,7 @@ function render() {
            entered still prints — that part is true. */
         const planBad = planJunked || malformedOf("al-" + s.b);
         if (planBad) {
-          html += `<div class="actuals-row" tabindex="0" role="button" data-goto="${ACT_ID[s.b]}" title="See the field behind this figure"><span>${bucket.label}</span><b>—</b><span class="actuals-diff">${ACT_PROV[s.b] === "plan" ? "from the plan" : "you entered"} ${nn(s.actual)}</span></div>`;
+          html += `<div class="actuals-row" tabindex="0" role="button" data-goto="${ACT_ID[s.b]}" title="See the field behind this figure"><span>${bucket.label}</span><b>—</b> <span class="actuals-diff">${ACT_PROV[s.b] === "plan" ? "from the plan" : "you entered"} ${nn(s.actual)}</span> </div>`;
           continue;
         }
         const variance = s.actual - s.plan;
@@ -1282,7 +1296,7 @@ function render() {
         /* E19-C2 — a plan-written figure is ours: the row says so, and its
            badge inherits the caveat instead of claiming the visitor's month. */
         const rowProv = ACT_PROV[s.b] === "plan";
-        html += `<div class="actuals-row" tabindex="0" role="button" data-goto="${ACT_ID[s.b]}" title="See the field behind this figure"><span>${bucket.label}</span><b>${planTxt(s.b)}</b><span class="actuals-diff">${rowProv ? "from the plan" : "you entered"} ${nn(s.actual)}</span><span class="verdict-badge ${badgeClass}">${rowProv && badgeText === "ON PLAN" ? "ON PLAN (from the plan)" : badgeText}</span></div>`;
+        html += `<div class="actuals-row" tabindex="0" role="button" data-goto="${ACT_ID[s.b]}" title="See the field behind this figure"><span>${bucket.label}</span> <b>${planTxt(s.b)}</b> <span class="actuals-diff">${rowProv ? "from the plan" : "you entered"} ${nn(s.actual)}</span><span class="verdict-badge ${badgeClass}">${rowProv && badgeText === "ON PLAN" ? "ON PLAN (from the plan)" : badgeText}</span></div>`;
       }
       rowsEl.innerHTML = html;
       rowsEl.hidden = false;
@@ -1296,12 +1310,12 @@ function render() {
       const allPlanWritten = scoredRows.length > 0 && scoredRows.every((s) => ACT_PROV[s.b] === "plan");
       if (scoredRows.length > 0 && scoredRows.every((s) => s.actual === s.plan)) {
         onPlanEl.hidden = false;
-        onPlanEl.textContent = allPlanWritten
+        railText(onPlanEl, allPlanWritten
           ? `ON PLAN on all ${scoredRows.length} scored bucket${scoredRows.length > 1 ? "s" : ""} — but those figures came from the plan, not your month, so it is true by construction, not by verdict. Type what you really spent to score your month.`
-          : `ON PLAN on all ${scoredRows.length} scored bucket${scoredRows.length > 1 ? "s" : ""} — if your month really matches the plan, the plan is holding; put the savings slice to work in Savings Goal Calculator.`;
+          : `ON PLAN on all ${scoredRows.length} scored bucket${scoredRows.length > 1 ? "s" : ""} — if your month really matches the plan, the plan is holding; put the savings slice to work in Savings Goal Calculator.`);
       } else {
         onPlanEl.hidden = true;
-        onPlanEl.textContent = "";
+        railText(onPlanEl, "");
       }
       /* E11-8 — the aggregate never met the buckets. A11 proved a ₦150,000
          "Spent on needs" sitting beside ₦80,000 of scored buckets with the
@@ -1342,7 +1356,7 @@ function render() {
           ? '"Spent on needs"'
           : `"${r2.buckets.find((x) => x.id === absurdBucket!.b)?.label} — you actually spent"`;
         rec.hidden = false;
-        rec.textContent = `One of these figures looks unusually large — double-check ${absurdLabel} first, then the other amounts, before reading a gap into them.`;
+        railText(rec, `One of these figures looks unusually large — double-check ${absurdLabel} first, then the other amounts, before reading a gap into them.`);
         setFix(absurdId, `Fix ${absurdLabel}`);
       } else if (n > 0 && !pmBlank(g("bg-spn").value) && aggNeeds > 0) {
         /* E19-C10 — no hidden tolerance. The page prints whole naira, so a
@@ -1362,7 +1376,7 @@ function render() {
                 verdict. So it now ASKS, which is what the user needs to do next
                 anyway: finish the buckets, or correct the total. */
           rec.hidden = false;
-          rec.textContent = `Your buckets add to ${nn(Math.round(scoredSum))} but "Spent on needs" says ${nn(Math.round(aggNeeds))} — they disagree, so we cannot score your month yet. Fill in the missing buckets or correct the needs total.`;
+          railText(rec, `Your buckets add to ${nn(Math.round(scoredSum))} but "Spent on needs" says ${nn(Math.round(aggNeeds))} — they disagree, so we cannot score your month yet. Fill in the missing buckets or correct the needs total.`);
           /* E12-3 — the sentence says what to type; now it gets there too. */
           const blankBucket = AL_BUCKETS.find((b) => actualOf(b) === null);
           if (blankBucket) {
@@ -1372,17 +1386,17 @@ function render() {
           }
         } else {
           rec.hidden = true;
-          rec.textContent = "";
+          railText(rec, "");
           hideFix();
         }
       } else {
         rec.hidden = true;
-        rec.textContent = "";
+        railText(rec, "");
         hideFix();
       }
       /* E19-C3 — a verdict cannot stand beside the rail that says the month
          cannot be scored. The rail is the page's own authority on that. */
-      if (!rec.hidden) { onPlanEl.hidden = true; onPlanEl.textContent = ""; }
+      if (!rec.hidden) { onPlanEl.hidden = true; railText(onPlanEl, ""); }
     }
   }
   /* E10 (A10-C10) — print the allocator sum. 40+25+15+10+7 = 97% and the receipt
@@ -1399,24 +1413,24 @@ function render() {
   const exactRemainder = (1 - shareSum) * 100;
   const sumEl = t("al-sharesum");
   if (empty || !planComplete || !sharesSet || planJunked || shareJunked) {
-    sumEl.hidden = true; sumEl.textContent = "";
+    sumEl.hidden = true; railText(sumEl, "");
   } else if (planned > r2.needs) {
     sumEl.hidden = false;
     /* E19-C6 — the sentence quotes the SAME share sum the naira comes from:
        33.4 x 3 is 100.2%, and rounding it to 100% printed "0% over" over a
        visible ₦250 overflow. */
-    sumEl.textContent = `Shares add to ${pctTxt(exactPct)}% — ${pctTxt(exactPct - 100)}% over the needs budget (${nn(planned - r2.needs)}). Trim shares to ${100}% or less.`;
+    railText(sumEl, `Shares add to ${pctTxt(exactPct)}% — ${pctTxt(exactPct - 100)}% over the needs budget (${nn(planned - r2.needs)}). Trim shares to ${100}% or less.`);
   } else if (exactPct === 100) {
     sumEl.hidden = false;
     /* E19-C7 — only a TRUE 100% earns "every naira of needs has a job": at
        99.9% the remainder is a naira with no job, and the page says so. */
-    sumEl.textContent = `Shares add to ${pctTxt(exactPct)}% — every naira of needs has a job.`;
+    railText(sumEl, `Shares add to ${pctTxt(exactPct)}% — every naira of needs has a job.`);
   } else {
     sumEl.hidden = false;
     /* E19-C7 — the remainder is printed as it is (99.9% is 99.9%, and the
        ₦125 in "Other needs" is not a naira without a job). The 97% wording is
        unchanged: pctTxt prints 97 and 3 exactly as before. */
-    sumEl.textContent = `Shares add to ${pctTxt(exactPct)}% — the other ${pctTxt(exactRemainder)}% is what "Other needs" holds, so the buckets still reconcile to ${nn(r2.needs)}.`;
+    railText(sumEl, `Shares add to ${pctTxt(exactPct)}% — the other ${pctTxt(exactRemainder)}% is what "Other needs" holds, so the buckets still reconcile to ${nn(r2.needs)}.`);
   }
 
   /* === E10 (A10-C2) — the verdict banner must not speak in the second person
@@ -1442,7 +1456,7 @@ function render() {
      number nobody entered — that is the whole point of the rail above. */
   const junkVerdict = junkStep1.concat(shareIds.filter((id) => malformedOf(id)));
   if (!empty && junkVerdict.length) {
-    verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">CANNOT SCORE</span>${nameList(junkVerdict)} ${junkVerdict.length > 1 ? "are" : "is"} not a figure we can read, so nothing below is a verdict about your money. Fix the field and this scores itself.${goTo(junkVerdict[0])}</div>`);
+    verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">CANNOT SCORE</span> ${nameList(junkVerdict)} ${junkVerdict.length > 1 ? "are" : "is"} not a figure we can read, so nothing below is a verdict about your money. Fix the field and this scores itself.${goTo(junkVerdict[0])}</div>`);
   }
   else if (!empty && planComplete) {
     const splitsYours = yours(["bg-needs", "bg-wants", "bg-save"]);
@@ -1456,14 +1470,14 @@ function render() {
     const bucketsYours = yours(["bg-inc", "bg-needs"].concat(shareIds));
     // Check splits add to 100%
     if (total !== 100) {
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">SPLITS ${total}%</span>${cap(splitsVoice)} add to ${total}% — change them to add up to 100%.</div>`);
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">SPLITS ${total}%</span> ${cap(splitsVoice)} add to ${total}% — change them to add up to 100%.</div>`);
     }
     // Check savings gap
     /* E20-NEW3 — no scolding against a plan of nothing. */
     if (planTotal > 0 && c.savings_remaining > 0) {
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">SAVE GAP</span>${savYours ? `You're ${nn(c.savings_remaining)} short on savings` : `Our example is ${nn(c.savings_remaining)} short on savings — that figure is ours, not yours`} — set up an automatic transfer or raise the savings split.</div>`);
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">SAVE GAP</span> ${savYours ? `You're ${nn(c.savings_remaining)} short on savings` : `Our example is ${nn(c.savings_remaining)} short on savings — that figure is ours, not yours`} — set up an automatic transfer or raise the savings split.</div>`);
     } else if (planTotal > 0 && c.savings_remaining < 0) {
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--good">AHEAD</span>${savYours ? `You've put ${nn(-c.savings_remaining)} extra to savings` : `Our example puts ${nn(-c.savings_remaining)} extra to savings`} — ahead of plan.</div>`);
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--good">AHEAD</span> ${savYours ? `You've put ${nn(-c.savings_remaining)} extra to savings` : `Our example puts ${nn(-c.savings_remaining)} extra to savings`} — ahead of plan.</div>`);
     }
     // Check needs overage
     /* E19-C8 — the banner verdict uses the same displayed figures. */
@@ -1491,17 +1505,17 @@ function render() {
       const fix = reqPct !== null && reqPct > needPctNow && reqPct <= 100
         ? `cut about ${nn(over)} from rent/food/transport, or raise Needs % from ${Math.round(needPctNow)}% to ${reqPct}%`
         : `cut about ${nn(over)} from rent/food/transport`;
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">NEEDS OVER</span>${needsYours ? `You're ${nn(over)} over on needs` : `Our example is ${nn(over)} over on needs — that figure is ours, not yours`} — ${fix}.</div>`);
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">NEEDS OVER</span> ${needsYours ? `You're ${nn(over)} over on needs` : `Our example is ${nn(over)} over on needs — that figure is ours, not yours`} — ${fix}.</div>`);
     }
     // Check wants overage
     /* E20-R2 — same rule for wants. */
     const wantsOverShown = Math.round(Math.max(0, pm(g("bg-spw").value) || 0)) - Math.round(plan.wants);
     if (planTotal > 0 && wantsOverShown >= 1) {
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">WANTS OVER</span>${wantsYours ? `You're ${nn(wantsOverShown)} over on wants` : `Our example is ${nn(wantsOverShown)} over on wants — that figure is ours, not yours`} — cut spending on non-essentials or raise Wants %.</div>`);
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">WANTS OVER</span> ${wantsYours ? `You're ${nn(wantsOverShown)} over on wants` : `Our example is ${nn(wantsOverShown)} over on wants — that figure is ours, not yours`} — cut spending on non-essentials or raise Wants %.</div>`);
     }
     // Check individual bucket overages in step 2
     if (planTotal > 0 && r2.needs > 0 && planned > r2.needs) {
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">BUCKETS OVER</span>${bucketsYours ? "Your" : "Our example's"} needs buckets add to ${(shareSum * 100).toFixed(0)}% — trim shares to fit ${bucketsYours ? "your" : "the example's"} ${nn(r2.needs)} needs budget.</div>`);
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">BUCKETS OVER</span> ${bucketsYours ? "Your" : "Our example's"} needs buckets add to ${(shareSum * 100).toFixed(0)}% — trim shares to fit ${bucketsYours ? "your" : "the example's"} ${nn(r2.needs)} needs budget.</div>`);
     }
     /* E12-6 — a clean month used to print nothing at all. One honest line:
        affirm, and name a real next destination. No invented problem. */
@@ -1510,7 +1524,7 @@ function render() {
        until there is a plan to be within. */
     if (!verdictItems.length && total === 100 && inc > 0 && planTotal > 0 && c.needs_remaining >= 0 && c.wants_remaining >= 0 && c.savings_remaining >= 0 && !(r2.needs > 0 && planned > r2.needs)) {
       const allYours = yours(["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"]);
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--good">ON PLAN</span>${allYours ? "You're" : "Our example is"} within plan on needs, wants and savings — if this is real, the fund is ready; build the rest of the plan in Savings Goal Calculator.</div>`);
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--good">ON PLAN</span> ${allYours ? "You're" : "Our example is"} within plan on needs, wants and savings — if this is real, the fund is ready; build the rest of the plan in Savings Goal Calculator.</div>`);
     }
   }
   if (verdictItems.length) {
