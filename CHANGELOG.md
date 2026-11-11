@@ -1,3 +1,19 @@
+## [0.7.86] - 2026-11-11 — A25 the night-use pass: nine night failures closed, AA floors kept exactly where the light render already held
+
+**A25** (night-use audit, live site): **FAIL — 3 HIGH, 2 MEDIUM, 4 LOW.** Every figure-bearing surface in the dark render already passed AA with headroom (receipt 8.09:1, inputs 15.59:1, verdict banner 15.59:1, ticker rates 16.81:1, SAMPLE badges 7.74:1). The nine findings sit on rails, affordances and seams — exactly where a night reader's eyes go when the figures feel off. All nine are closed here; none held. The light render is untouched beyond the brightening cases below (all additive).
+
+- **HIGH — D1:** the drawer's subscribe CTA paired white ink with the transient `#f59e0b` — **2.15:1** on black-on-gold that flips with the theme. Now `#0d0b08` on `#f59e0b` — **9.15:1** in both themes.
+- **HIGH — D2:** `.verdict-badge--warn` referenced `--amber`, `--amber-muted` and `--amber-border`, **none of which existed anywhere in src, dist or the served bytes** — the CANNOT SCORE badge painted no badge. The three tokens are now in the layout token ladder, both themes: light dark-brown-on-cream (6.37:1), dark light-gold-on-tinted-black (9.6:1).
+- **HIGH — D3:** the inactive `.fx-step` pill sat at `opacity:0.45` and composite **1.99:1** over the card (light render was 1.86:1). Opacity restored to 1 — the ink is #8f8575 on #171512, **5.02:1** — every reading element of the stepper now clears AA.
+- **MEDIUM — D4:** `.tp-caret` opacity .55 in dark (2.39:1 vs 3:1 UI floor) → .9 (4.42:1).
+- **MEDIUM — D5:** the junk-state dim on `[data-fill-from-plan]` was .45 (both "Use my targets" chips and "Use this" badge fell below 2.85:1) → .72 (>3.5:1).
+- **LOW — D6:** footer middots `.fdot` sat at opacity .6 → dark-only override #d6cfbc at the same opacity (4.85:1), the base rule keeps the verbatim string the footer-fidelity gate asserts.
+- **LOW — D7:** the LIVE dot's 50% pulse trough dropped to ~1.96:1 on black → .6 opacity keeps the pulse alive (3.6:1).
+- **LOW — D8:** `.receipt-div` gold seam at 2.09:1 over the dark card → .55 alpha (3.34:1).
+- **LOW — D9:** the dark-theme `.field` inputs melted into the card at 1.03:1 → the site's own `#1c1a15` fourth tier (5.1:1 against the card).
+- **Gates:** `check` **7/7** (footer-fidelity gate holds by design — the opacity stays 0.6, only the ink brightened on dark) · `build` **84 pages** · `test:calc` **130/0/7** · E19/E20/E21/E22/E23 contracts re-run green · fleei pre-hydration gate **14/14** · console 0 · no horizontal scroll · phone-first 390 px re-verified (dark identity preserved).
+- **Phone-first evidence:** the dark render's identity holds — LIVE dot, monochrome ticker, amber stepper, dark card, distinct input surface.
+
 ## [0.7.85] - 2026-11-10 — A24 data-cost pass: 62% of the font bytes off the wire, in glyphs the page never painted dropped and none it does
 
 **A24** (data-cost pass, live site): **FAIL — 0 HIGH, 2 MEDIUM, 6 LOW** — nothing crossed the HIGH bar (≥100 KB or ≥1 s avoidable transfer), but the page was heavy to arrive on. The fonts were 44.7% of every byte it paid. Two MEDIUMs closed here; the two parked items stay parked and named on the ledger.

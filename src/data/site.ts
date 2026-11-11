@@ -269,10 +269,10 @@ export const catBySlug = (slug: string): Category => {
 // the rendered .t-rate. data-src lets the ported ticker-live.js refresh
 // pairs per source. Never hand-edit the values; they are generated.
 export const TICKER_STATIC = [
-  { label: "USD/NGN", value: "₦1,349", src: "fx" },
-  { label: "GBP/NGN", value: "₦1,812", src: "fx" },
-  { label: "EUR/NGN", value: "₦1,512", src: "fx" },
-  { label: "BTC/USD", value: "$73,920", src: "btc" },
-  { label: "ETH/USD", value: "$2,060", src: "eth" },
-  { label: "XAU/USD", value: "$4,033", src: "gold" },
+  { label: "USD/NGN", value: "₦1,350", src: "fx" },
+  { label: "GBP/NGN", value: "₦1,805", src: "fx" },
+  { label: "EUR/NGN", value: "₦1,511", src: "fx" },
+  { label: "BTC/USD", value: "$73,799", src: "btc" },
+  { label: "ETH/USD", value: "$2,066", src: "eth" },
+  { label: "XAU/USD", value: "$4,058", src: "gold" },
 ];

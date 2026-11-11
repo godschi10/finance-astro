@@ -264,7 +264,7 @@
 .tp[data-current="system"] .tp-ico svg[data-theme-ico="system"],
 .tp[data-current="light"] .tp-ico svg[data-theme-ico="light"],
 .tp[data-current="dark"] .tp-ico svg[data-theme-ico="dark"] { display: block; }
-.tp-caret { opacity: .55; flex: 0 0 auto; margin-left: auto; transition: transform var(--t); }
+.tp-caret { opacity: .9; flex: 0 0 auto; margin-left: auto; transition: transform var(--t); }
 .tp[data-open="true"] .tp-caret { transform: rotate(180deg); }
 
 .tp-menu {
@@ -743,7 +743,7 @@
 .mno-list .sub-menu a::before { content: '◆'; font-size: 7px; color: var(--gold); margin-right: 10px; opacity: 0.8; }
 .mno-list .sub-menu a:active { color: var(--gold-b); }
 .mno-bot { padding: 16px 20px; border-top: 1px solid var(--dark-b); }
-.mno-cta { display: block; width: 100%; text-align: center; background: var(--gold); color: #fff; border: none; font-size: 13px; font-weight: 700; padding: 14px; border-radius: var(--r-sm); transition: background var(--t); text-decoration: none; }
+.mno-cta { display: block; width: 100%; text-align: center; background: var(--gold); color: #0d0b08; border: none; font-size: 13px; font-weight: 700; padding: 14px; border-radius: var(--r-sm); transition: background var(--t); text-decoration: none; }
 .mno-cta:hover { background: var(--gold-b); }
 
 /* ── RESPONSIVE: header show/hide switch ─────────────

@@ -54,6 +54,8 @@
 .flegal a { color: var(--dark-dim); transition: color var(--t); }
 .flegal a:hover { color: var(--gold-b); }
 .fdot { color: var(--dark-dim); margin: 0 6px; opacity: 0.6; }
+/* E25-D6 — on the dark slab var(--dark-dim) at opacity 0.6 falls to ~2.55:1, below the AA UI floor; brighter ink scoped to dark only. The base rule stays byte-identical for the WP-verbatim gate. */
+[data-theme="dark"] .fdot { color: #d6cfbc; }
 .mfooter .flegal a { color: var(--dark-dim); }
 .mfooter .flegal a:hover { color: var(--gold-b); }
 .mfooter .flegal .fdot { margin: 0 4px; }
