@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════════════════
-   BASE — WP theme stylesheet section 2 (RESET / BASE), style.css:170-199
+   BASE ;  WP theme stylesheet section 2 (RESET / BASE), style.css:170-199
    ══════════════════════════════════════════════════════════════════════════
    The homepage/header/footer ports were each scoped to the stylesheet
    sections those sections render, so the theme's base layer was never
@@ -8,7 +8,7 @@
 
      `a { text-decoration: none; color: inherit; }` (style.css:186)
 
-   Without it every real link falls back to the browser's default underline —
+   Without it every real link falls back to the browser's default underline ; 
    Chrome only underlines `a` elements that carry an `href`, which is why this
    went unnoticed through four measurement passes: a probe anchor with no href
    computes to `text-decoration: none` while 79 of the homepage's 109 real
@@ -27,34 +27,34 @@
    PENDING-WORK.md is closed by this change.
    ══════════════════════════════════════════════════════════════════════════ */
 
-/* style.css:172-173 — antialiased text, as WP renders it */
+/* style.css:172-173 ;  antialiased text, as WP renders it */
 body { -webkit-font-smoothing: antialiased; }
 
-/* style.css:186 — the anchor reset. The single most important line here. */
+/* style.css:186 ;  the anchor reset. The single most important line here. */
 a { text-decoration: none; color: inherit; }
 
-/* style.css:187-188 — controls inherit the brand font */
+/* style.css:187-188 ;  controls inherit the brand font */
 button { font-family: var(--font); cursor: pointer; }
 input, select, textarea { font-family: var(--font); }
 
-/* style.css:184 — every replaced element is capped at its column, as WP does.
+/* style.css:184 ;  every replaced element is capped at its column, as WP does.
    The port capped only `img`, so an oversized video, iframe embed or data table
    could overflow a phone column; the theme never lets that happen. */
 img, picture, video, canvas, svg, iframe, input, textarea, select, table { max-width: 100%; }
 
-/* style.css:185 — images are block-level in the theme. This kills the inline
+/* style.css:185 ;  images are block-level in the theme. This kills the inline
    baseline gap WP does not have under figures and card images. */
 img { height: auto; display: block; }
 
-/* style.css:189 — WP's global heading tracking. A heading that carries its own
+/* style.css:189 ;  WP's global heading tracking. A heading that carries its own
    letter-spacing (every component heading does) still wins on specificity. */
 h1, h2, h3, h4 { letter-spacing: -0.02em; }
 
-/* style.css:191-198 — the visually-hidden utility.
+/* style.css:191-198 ;  the visually-hidden utility.
    The port's own skip link uses a `.skip` class of its own, but the newsletter
    form's "Email" label carries the theme's class name (WP emits
    `class="screen-reader-text"` for it), and with this rule absent the label
-   rendered as a visible uppercase "EMAIL" line above the field — WordPress
+   rendered as a visible uppercase "EMAIL" line above the field ;  WordPress
    hides it, the placeholder already carries the same meaning. The rule is
    installed verbatim, both selectors included, so the class behaves exactly as
    it does in the theme. */
@@ -68,14 +68,14 @@ h1, h2, h3, h4 { letter-spacing: -0.02em; }
   padding: 8px 16px; border-radius: var(--r-sm); font-size: 12px; font-weight: 700;
 }
 
-/* ══ LAYOUT UTILITIES — style.css:2966-2982 (§48) ═══════════════════════
+/* ══ LAYOUT UTILITIES ;  style.css:2966-2982 (§48) ═══════════════════════
    The theme's utilities live in the one global stylesheet, so the port must
-   ship them on EVERY page, not just the article template — the homepage,
+   ship them on EVERY page, not just the article template ;  the homepage,
    category, author, tools and legal pages all use them (.discl.mb24,
    .abio.mt20, section.sg). article.css §3.2 extracted only .con/.g2/.g3/
    .sb-layout; the rest of §48 was never extracted, which is why the
    disclosure box sat flush on the body text (0px vs live's 24px) and the
-   author box lost its 20px top gap — the King's "too close" verdict. */
+   author box lost its 20px top gap ;  the King's "too close" verdict. */
 .con { max-width: 1100px; margin: 0 auto; padding: 0 var(--con-pad); }
 .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }

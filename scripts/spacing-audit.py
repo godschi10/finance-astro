@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Sitewide cramp audit — v0.6.8 (King: "not enough space between text/elements...
+Sitewide cramp audit, v0.6.8 (King: "not enough space between text/elements...
 ...then do it sitewide").
 
 Scans every page in dist/ for inline <style> rules that TIGHTEN spacing on
-text-level elements (p, li, h2-h4, summary, td/th, .faq, note/label/meta/foot/
+text-level elements (p, li, h2-h4, summary, td/th.faq, note/label/meta/foot/
 sub classes) via font-size shrink or margin/padding/line-height values below
 the ROYAL FLOOR:
 
@@ -16,7 +16,7 @@ markup (div/p/h/section carrying copy). Prints one line per violation:
   PAGE | CONTEXT | RULE | why it's cramped
 
 Floor is deliberate: we flag CRAFT cramp (sub-15px type stacked with <10px
-margins on reading copy), not dense chrome (ticker, icons, chips) — those
+margins on reading copy), not dense chrome (ticker, icons, chips), those
 intentionally sit tight and the King has never complained about them.
 """
 import re, sys, glob, os

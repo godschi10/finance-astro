@@ -5,7 +5,7 @@ import { formatGrouped } from "../../lib/format";
 import { articleTitleOf } from "../../data/content";
 const n = (v: number) => formatGrouped(v, 0);
 /* HN-2. The field opens at 24%, not 20%: NBS put Lagos at 23.68% headline in
-   Aug 2026 — the highest of any state — while national headline was 15.39%. A
+   Aug 2026 ; the highest of any state ; while national headline was 15.39%. A
    20% default is 3.68 points UNDER what the largest readership pays, and
    calling that "cautious" was the dishonest part.
 
@@ -14,24 +14,24 @@ const n = (v: number) => formatGrouped(v, 0);
    against the PHP truth oracle gwill_emergency_fund_seed(). That oracle is the
    WP source of truth and this leg may not edit a gate or the oracle, so the
    seed constant cannot move. The PAGE's delivered default is a separate
-   concern from the WP-parity seed, so it is stated here — which keeps the SSR
+   concern from the WP-parity seed, so it is stated here ; which keeps the SSR
    receipt, the field and the client render all agreeing at 24%.
    Do not "tidy" this back to EMERGENCY_SEED.inflation. */
 const INFL_PCT = 24;
 const seed = emergencyFund(EMERGENCY_SEED.essentials, EMERGENCY_SEED.saved, EMERGENCY_SEED.monthly, EMERGENCY_SEED.cover, INFL_PCT / 100);
-/* CALC-1 — the row below shows BOTH figures and says which is which, because
+/* CALC-1 ; the row below shows BOTH figures and says which is which, because
    the page's own copy promises to measure against the inflation-adjusted finish
    line and that finish line moves while you save. `months_to_reach` is now the
    moving-target answer (the audit's monthsToMovingTarget); the flat-price figure
    is gap ÷ monthly saving, kept on screen because hiding it would be its own
-   dishonesty. ONE source for both wordings — the same two expressions the
-   client render uses — so the server-rendered seed and the hydrated render
+   dishonesty. ONE source for both wordings ; the same two expressions the
+   client render uses ; so the server-rendered seed and the hydrated render
    cannot drift apart. */
 const seedMoving = seed.months_to_reach;
 const seedNominal = seed.gap / EMERGENCY_SEED.monthly;
 const pct = Math.min(100, Math.round(seed.progress_pct));
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
-// Related-guide card titles derive from the article records (SITE-3) — an
+// Related-guide card titles derive from the article records (SITE-3) ;  an
 // unknown slug throws at build rather than shipping a stale card.
 const artTitle = await articleTitleOf();
 ---
@@ -43,10 +43,10 @@ const artTitle = await articleTitleOf();
 
   badge="The safety net · priced honestly",
   copy={[["p", "Most advice tells you to build 3-6 months of expenses, but the first useful number is the one you already have: how many months of essentials your current savings cover. That is your runway. If you save ₦450,000 and your essentials are ₦150,000, you have 3 months of cover today, a real, concrete position, not a vague sense of \"somewhere behind\". Knowing it is the starting point."],["p", "The target is your monthly essentials times the months you want covered. If your essentials are ₦150,000 and you want six months, that is ₦900,000. The exact figure depends on your own spending, not a generic table, which is why this calculator asks for your essentials rather than assuming. Three months is the minimum; six is the comfortable default; more if your income is irregular."],["p", "Your essentials do not stay the same. If you are saving toward a target you will reach in about a year, that year of inflation has raised the monthly figure you are aiming at. In Nigeria inflation has run high, so the gap is real, the naira target you set today is worth less by the time you hit it. This calculator projects the inflation-adjusted target so you are not surprised a year later by how much more you need."],["p", "Divide the target by what you add to the fund each month. But do not use the raw figure as your finish line, the inflation-adjusted target is the one to measure against, and as you progress the runway number tells you whether you are genuinely safer. Building an emergency fund is a marathon, not a sprint; the progress bar makes each month visible."],["p", "The 3-6 month rule is a starting point, not a law. The right size for your fund depends on how stable your income is. If you are a salaried worker with one employer, three months may be enough. If you freelance, run a business, or are the sole earner in a large household, your risk is higher and six months or more is safer, because a job loss or a slow month hits harder and can last longer than a standard notice period. The calculator lets you set the cover you want so the target reflects your actual situation, not a generic table."],["p", "The biggest one is using the fund for non-emergencies, a holiday, a new phone, a wedding. The second is investing it somewhere risky for a slightly higher return and then needing it the day the market is down. The third is setting the target once and never raising it as your cost of living grows. Revisit it every few months, bump the essentials figure if your rent or food bill has gone up, and the progress bar will tell you honestly whether you are keeping pace."],["p", "An emergency fund must be safe and immediately accessible, not tied up in something that drops in value or takes weeks to reach. A high-yield savings account or a fixed-deposit ladder is the usual Nigerian home for it. Compare the best rates with our savings rate comparator, and see how the balance grows with our compound interest calculator."],["p", "An emergency fund is one part of a complete money plan. To know how much to set aside each month toward a specific goal, use our savings goal calculator. To understand how high inflation erodes your target, our inflation-adjusted savings calculator and naira value calculator show the real, inflation-adjusted figure. And to divide your take-home into needs, wants and savings, our 50/30/20 budget calculator tells you how much you can safely put toward the fund each month."],["h2", "Emergency fund questions"],["h3", "How much emergency fund should I have in naira?"],["p", "Three to six months of essential expenses. Multiply your monthly essentials by the cover you want, on ₦150,000 a month, six months is about ₦900,000."],["h3", "What counts as an essential expense?"],["p", "Everything you cannot cut in a crisis: rent or mortgage, food, transport, utilities, insurance, and the minimum payments on debt. Leave out dining out, subscriptions and shopping."],["h3", "Why adjust the target for inflation?"],["p", "Because your essentials rise with inflation, the naira target you set today is worth less by the time you reach it. Adjusting shows the honest number to aim for."],["h3", "Where should I keep my emergency fund?"],["p", "Safe and instantly accessible, a high-yield savings account or a fixed-deposit ladder. Keep it separate from your spending account and only touch it for genuine emergencies."]]},
-  related={[{ href: `${base}articles/piggyvest-vs-cowrywise-2026/`, title: artTitle("piggyvest-vs-cowrywise-2026"), excerpt: "Interest rates, withdrawal rules, fees, and app experience compared side by side." }, { href: `${base}articles/grey-vs-geegpay-dollar-account/`, title: artTitle("grey-vs-geegpay-dollar-account"), excerpt: "Account opening, conversion spreads, card support, and payout speed — compared side by side." }, { href: `${base}articles/ngn-dollar-cost-averaging-guide/`, title: artTitle("ngn-dollar-cost-averaging-guide"), excerpt: "A step-by-step plan for buying Nigerian stocks every month without timing the market." }, { href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: artTitle("kuda-vs-traditional-banks-charges"), excerpt: "Card fees, failed-transfer reversals, and support tested — what digital banks actually save you." }]},
+  related={[{ href: `${base}articles/piggyvest-vs-cowrywise-2026/`, title: artTitle("piggyvest-vs-cowrywise-2026"), excerpt: "Interest rates, withdrawal rules, fees, and app experience compared side by side." }, { href: `${base}articles/grey-vs-geegpay-dollar-account/`, title: artTitle("grey-vs-geegpay-dollar-account"), excerpt: "Account opening, conversion spreads, card support, and payout speed, compared side by side." }, { href: `${base}articles/ngn-dollar-cost-averaging-guide/`, title: artTitle("ngn-dollar-cost-averaging-guide"), excerpt: "A step-by-step plan for buying Nigerian stocks every month without timing the market." }, { href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: artTitle("kuda-vs-traditional-banks-charges"), excerpt: "Card fees, failed-transfer reversals, and support tested: what digital banks actually save you." }]},
   disclaimer="This calculator is for informational guidance only and is not financial advice. The 3-6 month rule is a guideline, and the inflation-adjusted projection is an estimate based on the rate you enter. Adjust to your circumstances and confirm significant decisions with a licensed adviser.">
 <div class="fx-card">
-<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
+<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers and the receipt waits.</p>
 <div class="tgrid c3">
 
 <div class="field" data-cur="NGN"><label for="em-ess">Monthly essentials ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="em-ess" type="text" value={EMERGENCY_SEED.essentials} inputmode="decimal"></span></div>
@@ -73,13 +73,13 @@ const artTitle = await articleTitleOf();
      hydration. C1's zero cases are all named in the client render below. -->
 <!-- P2-6 (fifth audit): the percentage is measured against TODAY's target
      (essentials × months cover, engine line `progress_pct`), not the inflated
-     finish line printed in em-sub — on the seed that is 50% vs 44%. The foot
+     finish line printed in em-sub ; on the seed that is 50% vs 44%. The foot
      below already says so; the row label now carries the basis on the number
      itself so the receipt cannot be read against the wrong denominator. -->
 <div class="receipt-row"><span>Progress (of today's target)</span><b id="em-pct">{pct}%</b></div>
 <p class="bar-note" id="em-warn" hidden></p>
 <p class="receipt-foot">6-month default · inflation-adjusted</p>
-<p class="receipt-foot">Gap + progress vs today's naira target — the real target is the inflated finish line</p>
+<p class="receipt-foot">Gap + progress vs today's naira target: the real target is the inflated finish line</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
@@ -91,7 +91,7 @@ import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
-/* The rate the visitor typed, as they typed it — rounded for display, never
+/* The rate the visitor typed, as they typed it ; rounded for display, never
    rounded to zero (a 0.004% entry would otherwise read "at 0% inflation"). */
 const fmtPct = (v: number) => {
   const r = Math.round(v * 100) / 100;
@@ -104,17 +104,17 @@ const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).val
 /* THE ZERO LAW. Months-to-finish answers for the inflation-ADJUSTED finish line
    (CALC-1: the page's own copy promises that is the one to measure against, and
    that line moves while you save), so it waits on essentials, cover, the monthly
-   saving AND inflation. The flat-price figure — gap ÷ monthly saving — is still
+   saving AND inflation. The flat-price figure ; gap ÷ monthly saving ; is still
    shown beside it, named for what it is. A cleared field withholds its figure
    rather than printing the ₦0 that a 0% assumption would produce. */
 const FIVE = ["em-ess", "em-saved", "em-mo", "em-cover", "em-infl"];
 const REACH = ["em-ess", "em-mo", "em-cover"];
-/* M2 — THE ZERO LAW, THE OTHER HALF. `pm("0") || 6` is a real 0 short-circuited
+/* M2 ; THE ZERO LAW, THE OTHER HALF. `pm("0") || 6` is a real 0 short-circuited
    to the seed, so a visitor who deliberately typed 0 months of cover was shown
    the seed's SIX-month plan with no warning, while the EMPTY case was handled
    with care. The two cases disagreed; now they agree.
 
-   WHAT A GENUINE 0 MEANS HERE: a cover of 0 asks for no emergency fund at all —
+   WHAT A GENUINE 0 MEANS HERE: a cover of 0 asks for no emergency fund at all; 
    target ₦0, gap ₦0, 0 months to finish. That is a real answer to a real
    question and it is the visitor's own number, so it is printed as one, with the
    page naming what it means rather than inventing a fund nobody asked for. The
@@ -129,7 +129,7 @@ function render() {
   const inflRaw = pm(g("em-infl").value);
   /* Blank keeps the seed AND keeps saying so (the note below). A typed 0 is not
      blank and must not borrow the seed. */
-  /* B4-FIX2 — entered means honest: garbage cover ("abc12") borrows the 6-month
+  /* B4-FIX2 ; entered means honest: garbage cover ("abc12") borrows the 6-month
      seed exactly like a cleared field, never prices 12 (or 0) months. */
   const cover = !pmBlank(coverRaw) ? Math.max(0, pm(coverRaw)) : 6;
   const r = emergencyFund(
@@ -144,19 +144,19 @@ function render() {
   const gap = cover === 0 ? 0 : r.gap;
   const realTarget = cover === 0 ? 0 : r.real_target;
   const monthsToFinish = cover === 0 ? 0 : r.months_to_reach;
-  /* B6 (v0.7.55) — the engine's years_to_reach is display-capped at 50 years
+  /* B6 (v0.7.55) ; the engine's years_to_reach is display-capped at 50 years
      while months_to_reach stays exact, so on a centuries-long plan the real
-     target is priced AT 50 YEARS, not at the true horizon — and nothing said
+     target is priced AT 50 YEARS, not at the true horizon ; and nothing said
      so. When the cap binds, the figure now carries its own label instead of
      letting the two horizons disagree silently (the smaller-diff option: the
      engine's exact months_to_reach is untouched, so no oracle vector moves). */
   const capBinds = cover !== 0 && monthsToFinish / 12 > 50;
   /* CALC-1, the flat-price figure: gap ÷ monthly saving. Informative, and no
-     longer what `months_to_reach` means — the row shows both, each named. */
+     longer what `months_to_reach` means ; the row shows both, each named. */
   const nominal = moRaw > 0 ? gap / moRaw : 0;
   const progress = cover === 0 ? 0 : r.progress_pct;
   // Finite-result guard: absurd cover/inflation/saving used to compound into
-  // ₦Infinity. Never print it — say the plan is out of range instead.
+  // ₦Infinity. Never print it ;  say the plan is out of range instead.
   const fz = (v: number) => Number.isFinite(v) ? nn(v) : "out of range";
   const mtrBad = !Number.isFinite(monthsToFinish) || monthsToFinish > 12000;
   const tgtBad = !Number.isFinite(target) || !Number.isFinite(gap) || !Number.isFinite(realTarget) || realTarget > 1e15;
@@ -164,24 +164,24 @@ function render() {
   sfFig(t("em-fig"), ["em-ess", "em-saved"], r.runway_now.toFixed(1) + " months");
   sfFig(t("em-sub"), FIVE, `Target ${fz(target)} · gap ${fz(gap)} · real (inflated) target ${fz(realTarget)}${capBinds ? " at the 50-year planning cap" : ""}`);
   /* A typed 0 cover is an honest ZERO months and must not borrow the "save
-     something monthly" dash — that dash means monthlySave is 0, a different
+     something monthly" dash ; that dash means monthlySave is 0, a different
      failure entirely.
 
      C1 made the THIRD case reachable, and this is where it had to be handled:
      a CLOSED gap (saved >= target) is 0 months not because anything is broken
      but because the goal is already met. Printing the monthlySave dash there
      told a fully-funded user to "save something monthly" when their fund is
-     already complete — a false alarm on the one input they had nothing wrong
+     already complete ; a false alarm on the one input they had nothing wrong
      with. The zero cases are named separately, because they are different
      facts and only one of them is a problem:
-       · gap closed          → "done — target reached"
+       · gap closed          → "done ; target reached"
        · no cover asked for  → "0.0 (no cover asked for)"
        · no monthly saving   → the dash (the only case that is advice)
 
      CALC-1 (2026-10-09) adds the fourth, and it is the one this page used to
      break its own promise on: the fund can NEVER reach the inflated finish
      line, because inflation takes more each month than the visitor puts in.
-     That is a fact about their numbers, not an error, and it gets real words —
+     That is a fact about their numbers, not an error, and it gets real words; 
      never "Infinity", never a blank, never the nominal figure dressed up as an
      answer. */
   const gapClosed = essRaw > 0 && savedRaw >= essRaw * Math.max(0, cover) && cover > 0;
@@ -191,21 +191,21 @@ function render() {
     mtrText = "out of range";
     mtrNote = "lower the target, the inflation rate, or raise the monthly saving";
   } else if (moRaw <= 0) {
-    mtrText = "— (save something monthly)";
+    mtrText = "– (save something monthly)";
   } else if (r.never && cover > 0) {
     mtrText = "never";
     mtrNote = "your saving doesn't catch up with inflation at this rate";
   } else if (monthsToFinish > 0) {
-    /* The real answer is an estimate — it is a projection over the inflation
-       you typed — so it says "about". The flat-price figure is exact division
+    /* The real answer is an estimate ; it is a projection over the inflation
+       you typed ; so it says "about". The flat-price figure is exact division
        and does not. */
     mtrText = inflRaw > 0 ? `about ${monthsToFinish.toFixed(1)}` : monthsToFinish.toFixed(1);
     mtrNote = inflRaw > 0
       ? `at ${fmtPct(inflRaw)}% inflation · ${nominal.toFixed(1)} months if prices stood still`
-      : "prices held flat — no inflation entered";
+      : "prices held flat, no inflation entered";
   } else {
     mtrText = cover === 0 ? "0.0 (no cover asked for)"
-      : gapClosed ? "done — target reached"
+      : gapClosed ? "done: target reached"
       : "0.0 (already there)";
   }
   sfFig(t("em-mtr"), REACH, mtrText);
@@ -214,9 +214,9 @@ function render() {
   (document.getElementById("em-bar") as HTMLElement).style.width = p + "%";
   const notes: string[] = [];
   if (!(essRaw > 0) && !(savedRaw > 0) && !(moRaw > 0)) notes.push("Enter your monthly essentials and saving to see the plan.");
-  if (cover === 0) notes.push("Cover of 0 months means no target to save toward — your runway above is the figure that still applies.");
-  else if (mtrBad || tgtBad) notes.push("Out of range — lower the target: fewer months' cover, lower inflation, or a larger monthly saving.");
-  else if (pmBlank(coverRaw)) notes.push("Cover defaults to 6 months — set your own if needed.");
+  if (cover === 0) notes.push("Cover of 0 months means no target to save toward: your runway above is the figure that still applies.");
+  else if (mtrBad || tgtBad) notes.push("Out of range: lower the target; fewer months' cover, lower inflation, or a larger monthly saving.");
+  else if (pmBlank(coverRaw)) notes.push("Cover defaults to 6 months: set your own if needed.");
   if (essRaw < 0 || savedRaw < 0 || moRaw < 0 || inflRaw < 0) notes.push("Negative entries are treated as ₦0.");
   const w = t("em-warn");
   w.hidden = notes.length === 0;

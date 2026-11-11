@@ -64,7 +64,7 @@
                 },
                 {
                     "q": "How often does this page update?",
-                    "a": "The figure is computed from the daily reference rate our build fetches — the build runs twice a day, so the rate is at most about twelve hours old. The \"updated\" note beside the number shows exactly how fresh it is, and if the market feed is unreachable at build time you see the last good snapshot, honestly labelled rather than a stale figure pretending to be live."
+                    "a": "The figure is computed from the daily reference rate our build fetches: the build runs twice a day, so the rate is at most about twelve hours old. The \"updated\" note beside the number shows exactly how fresh it is, and if the market feed is unreachable at build time you see the last good snapshot, honestly labelled rather than a stale figure pretending to be live."
                 }
             ]
         }
@@ -104,7 +104,7 @@
                     "h2": "Receiving the dollar equivalent from abroad",
                     "body": [
                         "The reverse matters too: if someone abroad wants to send you the dollar value of a million naira, this bracket sits where formal remittance rails work well. Amounts of a few hundred dollars flow through licensed remittance apps and pay out in naira within minutes, and at this size the fixed fees that punish small transfers become nearly irrelevant, what matters is purely the rate margin.",
-                        "One practical note if the support is recurring. Larger transfers may need documentation — ask your bank what it requires. Keeping records of what arrived, when, and at what rate is simply good household accounting at this bracket."
+                        "One practical note if the support is recurring. Larger transfers may need documentation; ask your bank what it requires. Keeping records of what arrived, when, and at what rate is simply good household accounting at this bracket."
                     ]
                 },
                 {
@@ -253,7 +253,7 @@
                 {
                     "h2": "Timing the rate at four figures",
                     "body": [
-                        "At this size the rate's daily movement is worth real tens of thousands of naira, so timing stops being superstition. If you have flexibility, watch the figure for a few days before committing. If you have a deadline, lock the best committed payout you can get and accept it, a guaranteed figure today beats a theoretically better one next week that may never arrive. Larger transfers may need documentation — ask your bank what it requires. {SIBLINGS_SENTENCE}"
+                        "At this size the rate's daily movement is worth real tens of thousands of naira, so timing stops being superstition. If you have flexibility, watch the figure for a few days before committing. If you have a deadline, lock the best committed payout you can get and accept it, a guaranteed figure today beats a theoretically better one next week that may never arrive. Larger transfers may need documentation; ask your bank what it requires. {SIBLINGS_SENTENCE}"
                     ]
                 },
                 {

@@ -42,7 +42,7 @@ def html_to_md(c):
             inner = re.sub(r'<p[^>]*>(.*?)</p>', r'\1', m.group(1), flags=re.S)
             out.append("> " + inline(inner).replace("\n", " ").strip()); continue
         if "<table" in b or "wp-block-table" in b:
-            # keep WP tables as raw HTML (article.css carries .wp-block-table —
+            # keep WP tables as raw HTML (article.css carries .wp-block-table, 
             # the figure wrapper is part of the live markup, keep it intact)
             out.append(b.strip()); continue
         m = re.match(r'<hr[^>]*/?>', b)
@@ -76,14 +76,14 @@ FEAT = {
  "kuda-vs-moniepoint": "2026/04/banking.png",
  "best-investment-apps-nigerian-beginners": "2026/04/investing.png",
 }
-# F-01: content media paths stay base-less ("/wp-content/...") — render
+# F-01: content media paths stay base-less ("/wp-content/..."), render
 # templates prefix import.meta.env.BASE_URL at build, so base moves are
 # config-only. Do NOT reintroduce a deploy prefix here; it would re-bake the
 # base into every re-imported article.
 BASE = ""
 REPLACE = {  # live slug -> port file whose content the canonical version takes over
                # (port slugs stay canonical links: 10+ tool/app pages already point
-               # at them — renaming URLs would break shipped links)
+               # at them, renaming URLs would break shipped links)
  "piggyvest-vs-cowrywise-which-savings-app-is-better": "piggyvest-vs-cowrywise-2026",
  "how-to-receive-money-from-abroad-in-nigeria": "cheapest-way-receive-dollars-nigeria",
  "best-dollar-account-apps-for-nigerians-in-2026": "grey-vs-geegpay-dollar-account",

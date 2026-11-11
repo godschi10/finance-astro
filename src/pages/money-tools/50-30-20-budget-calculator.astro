@@ -9,7 +9,7 @@ const income = BUDGET_SEED_INCOME;
 const seed = budget503020(income);
 /* The seed month must be INTERNALLY CONSISTENT, because this is the first
    thing every visitor sees. It was not: income 250,000 at 50/30/20 puts needs
-   at 125,000, while "Spent on needs" shipped 140,000 — so the flagship tool
+   at 125,000, while "Spent on needs" shipped 140,000 ; so the flagship tool
    opened on ₦-15,000 of needs remaining, i.e. on a negative number, on a page
    whose entire argument is that its figures are honest. Wants had the same
    fault (-15,000). Income and the 50/30/20 split are untouched (BUDGET_SEED_INCOME
@@ -18,68 +18,68 @@ const seed = budget503020(income);
    real month: 120,000 spent on needs (5,000 under plan), 65,000 on wants
    (10,000 under), 40,000 put to savings (10,000 SHORT of the 20% the plan asks
    for). 225,000 spent of 250,000 earned. Every "left" figure is non-negative,
-   and the one gap the example still shows — savings 10,000 light — is the
+   and the one gap the example still shows ; savings 10,000 light ; is the
    honest, instructive one for a budget tool to show. */
 const seedActuals = { needs: 120000, wants: 65000, savings: 40000 };
 const chk = budget503020Compare(income, 0.5, 0.3, 0.2, seedActuals.needs, seedActuals.wants, seedActuals.savings);
 /* Step 2 seed: the needs half of the SAME income, itemised with the allocator
    engine's own defaults (rent 40 / food 25 / transport 15 / data 10 / bills 7).
-   One income in, both steps out — the page opens on one continuous journey. */
+   One income in, both steps out ; the page opens on one continuous journey. */
 const al = budgetAllocator(income);
 const seedRent = al.buckets.find((b) => b.id === "rent")?.amount ?? 0;
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
-/* E18-F3 — the cold-state split sentence, built ONCE here so the server can
+/* E18-F3 ; the cold-state split sentence, built ONCE here so the server can
    paint it. nn() lives in the client module; the seed is positive, so n() is
    the exact same string. The client render computes this identical text and
    its "skip identical rewrites" guard keeps aria-live silent on boot. */
 const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wants · ₦${n(seed.savings)} savings`;
 ---
-<ToolShell title="50/30/20 Budget Calculator, Nigeria - GWill Finance" description="Split any income into needs, wants and savings, check real spending against the plan — then break the needs half into rent, food, transport, data and bills, all on one page." slug="50-30-20-budget-calculator" tool="50/30/20 Budget Calculator" lede="Half — 50% — for needs, 30% for wants, a fifth (20%) for future you. Set the income, check your spending, then itemise the needs half — 50% for rent, food and bills — two steps, one page." verified="Two steps, one page · plan vs actual checker · needs-half buckets" faqs={[
-  { q: "I don't earn a regular salary — can I still use this?", a: "Yes. Paid weekly or in cash? Add up what you earned over three weeks, divide by 3, then multiply by 4 — say ₦45,000 / 3 = ₦15,000 a week, and ₦15,000 times 4 = ₦60,000 a month. Paid monthly but uneven — commission, overtime, a bonus? Average your last three months instead: three months came to ₦180,000? Type 60,000. In a lean month it still tells you what has to be covered, and it does not punish a small income." },
-  { q: "Is 50/30/20 realistic on a Nigerian salary?", a: "As a direction, yes; as law, adjust. High rent cities may need 60/20/20 for a season — the tool accepts custom splits." },
-  { q: "What if I can't save 20% this month?", a: "Then save what you can — 10% beats 0, and a 60/20/20 or 70/15/15 split is allowed (the chips above choose one in one tap). The line moves with you; the habit matters more than the share. Grow it toward 20% as costs free up." },
-  { q: "Where do my loan repayments go — the 50 or the 20?", a: "The minimum payment goes in needs. Anything extra on top goes in the 20% — treating extra debt payment as savings still counts. A 50/30/20 that hides your debt line is lying to you." },
+<ToolShell title="50/30/20 Budget Calculator, Nigeria - GWill Finance" description="Split any income into needs, wants and savings, check real spending against the plan, then break the needs half into rent, food, transport, data and bills, all on one page." slug="50-30-20-budget-calculator" tool="50/30/20 Budget Calculator" lede="Half (50%) for needs, 30% for wants, a fifth (20%) for future you. Set the income, check your spending, then itemise the needs half: 50% for rent, food and bills, two steps, one page." verified="Two steps, one page · plan vs actual checker · needs-half buckets" faqs={[
+  { q: "I don't earn a regular salary: can I still use this?", a: "Yes. Paid weekly or in cash? Add up what you earned over three weeks, divide by 3, then multiply by 4, say ₦45,000 / 3 = ₦15,000 a week, and ₦15,000 times 4 = ₦60,000 a month. Paid monthly but uneven: commission, overtime, a bonus? Average your last three months instead: three months came to ₦180,000? Type 60,000. In a lean month it still tells you what has to be covered, and it does not punish a small income." },
+  { q: "Is 50/30/20 realistic on a Nigerian salary?", a: "As a direction, yes; as law, adjust. High rent cities may need 60/20/20 for a season: the tool accepts custom splits." },
+  { q: "What if I can't save 20% this month?", a: "Then save what you can: 10% beats 0, and a 60/20/20 or 70/15/15 split is allowed (the chips above choose one in one tap). The line moves with you; the habit matters more than the share. Grow it toward 20% as costs free up." },
+  { q: "Where do my loan repayments go: the 50 or the 20?", a: "The minimum payment goes in needs. Anything extra on top goes in the 20%; treating extra debt payment as savings still counts. A 50/30/20 that hides your debt line is lying to you." },
   { q: "What counts as savings?", a: "Anything future-you keeps: emergency fund, investments, debt repayment. Not the money sitting in your spending account." },
-  { q: "Where exactly does the needs half go?", a: "Step 2 on this same page breaks your plan's needs figure into rent, food, transport, data and bills — each share editable, and the naira always adds back up." },
-  { q: "What about my children and school fees?", a: "They are needs — school fees, feeding and transport are why your needs half may sit well above 50%. Use the 60/20/20 or 70/15/15 chip, and treat needs as your real life, not the textbook's." },
-  { q: "Do my splits have to add to 100%?", a: "The leftover is real — it is assigned to nothing and leaks into daily spending. The receipt prints it; either patch the fields, or accept it knowingly. The tool never forces you." },
-  { q: "Are these my numbers, and is anything sent to me?", a: "No. The figures are our example until you type yours — the SAMPLE badges mark them. Everything stays in this browser; nothing is transmitted or logged. For guidance only, not financial advice." },
+  { q: "Where exactly does the needs half go?", a: "Step 2 on this same page breaks your plan's needs figure into rent, food, transport, data and bills: each share editable, and the naira always adds back up." },
+  { q: "What about my children and school fees?", a: "They are needs: school fees, feeding and transport are why your needs half may sit well above 50%. Use the 60/20/20 or 70/15/15 chip, and treat needs as your real life, not the textbook's." },
+  { q: "Do my splits have to add to 100%?", a: "The leftover is real: it is assigned to nothing and leaks into daily spending. The receipt prints it; either patch the fields, or accept it knowingly. The tool never forces you." },
+  { q: "Are these my numbers, and is anything sent to me?", a: "No. The figures are our example until you type yours: the SAMPLE badges mark them. Everything stays in this browser; nothing is transmitted or logged. For guidance only, not financial advice." },
 ]}
 
   badge="The 50/30/20 rule · Simple budgeting",
-  copy={[["p", "The 50/30/20 rule is popular because it is simple enough to remember and flexible enough to stick to. Divide your take-home pay into three buckets: 50% needs, 30% wants, and 20% savings and any extra debt payments. You need no complicated categories or spreadsheet. It is a starting point you can adjust as your life changes."],["p", "Needs are the things you cannot function without: rent or mortgage, food, transport to work, utility bills, and the minimum payments on your debt. Wants are everything else, the takeaways, the subscriptions you barely use, the upgrade you do not need. The rule's real value is forcing you to draw that line honestly. Most budgets that fail do so because wants quietly sneak into the needs column."],["p", "In Nigeria, high inflation and rising costs make strict needs-heavy budgets common, housing and food can easily consume well over 50%. That is fine. Treat 50/30/20 as a target to move toward, not a rule to feel guilty about. Start by tracking what your needs actually cost, then push the savings slice up over time. Even starting at 10% savings and inching toward 20% beats saving nothing at all. Use your take-home (net) pay, the money that actually lands in your account, not your pay before tax."],["p", "The 20% is for future you: savings, or any extra you put on debt. Once you are saving, put it to work — see it compound with our compound interest calculator, or set a target with our savings goal calculator. Remember: rising prices erode any goal; our inflation-adjusted calculator shows what you truly need to save."],["p", "Strict 50/30/20 assumes your big needs cost about half your take-home. In high-cost Nigerian cities, rent and food alone can push well past that, which is not a failure of the rule, just a reality to plan around. The important part is to keep the savings slice conscious and growing, even if the mix leans heavier on needs. Adjust the three percentage fields above to whatever split your numbers actually support, rather than forcing a 50/30/20 square peg."],["p", "50/30/20 gives you the three big numbers. To turn them into a budget you can actually spend against, break the needs bucket into real Nigerian categories, rent, food, transport, data, utilities. Step 2 of this same calculator, below the receipt, takes this same split and digs into the needs half, showing exactly how many naira go to rent, food, transport, data and bills, with every share editable so the plan always adds up."],["p", "Start from your take-home pay, never your pay before tax. Whatever your income, the goal is the same: give every naira a job, so nothing leaks away unnoticed."],["p", "The rule fails when you treat it as fixed. Three common mistakes: budgeting on pay before tax, which inflates every bucket; treating needs as wants, such as an upgraded \"basic\" phone plan or meal delivery that became dinner; and ignoring the leftover. If your splits do not add to 100%, the leftover is unassigned and disappears into everyday spending."],["p", "The fix for all three is honest categorising. Budget on what hits your account. When something feels like a want, ask whether you would genuinely afford to drop it this month, if it is a bill you must pay, it belongs in needs. And make sure your split adds up. The calculator above flags any leftover so you can add it to savings rather than let it vanish."],["p", "Freelancers, commission earners and seasonal workers face a question the 50/30/20 rule glosses over: what is your \"take-home\" when every month is different? The workable answer is to base the budget on your average of the last three months, not your best month: three months came to ₦180,000? ₦180,000 / 3 = ₦60,000 — type 60,000 into the income box above, not your biggest month. Budget on the average, and when a good month arrives, sweep the surplus past the 20% savings slice rather than inflating your wants."],["p", "Because the rule is percentage-based, it scales with whatever number you enter, that is precisely why this tool takes a single income figure and lets you adjust the three splits. Set the income to your moving average and the buckets adjust automatically, so a lean month is no longer a mystery and a strong month becomes a chance to save more."],["h2", "Budgeting questions"],["h3", "What is the 50/30/20 rule?"],["p", "A simple budget that puts 50% of your take-home pay toward needs, 30% toward wants, and 20% toward savings and any extra debt payments."],["h3", "How should I split a ₦250,000 salary?"],["p", "About ₦125,000 for needs, ₦75,000 for wants, and ₦50,000 for savings and any extra debt payments each month."],["h3", "Should I use pay before or after tax?"],["p", "Use take-home (net) pay: what reaches your account after tax. That is what you can spend and save."],["h3", "What counts as a need versus a want?"],["p", "Needs are what you cannot do without: housing, food, transport, utilities, minimum debt payments. Wants are the rest: dining out, entertainment, upgrading your phone. If in doubt, it is a want."]]},
+  copy={[["p", "The 50/30/20 rule is popular because it is simple enough to remember and flexible enough to stick to. Divide your take-home pay into three buckets: 50% needs, 30% wants, and 20% savings and any extra debt payments. You need no complicated categories or spreadsheet. It is a starting point you can adjust as your life changes."],["p", "Needs are the things you cannot function without: rent or mortgage, food, transport to work, utility bills, and the minimum payments on your debt. Wants are everything else, the takeaways, the subscriptions you barely use, the upgrade you do not need. The rule's real value is forcing you to draw that line honestly. Most budgets that fail do so because wants quietly sneak into the needs column."],["p", "In Nigeria, high inflation and rising costs make strict needs-heavy budgets common, housing and food can easily consume well over 50%. That is fine. Treat 50/30/20 as a target to move toward, not a rule to feel guilty about. Start by tracking what your needs actually cost, then push the savings slice up over time. Even starting at 10% savings and inching toward 20% beats saving nothing at all. Use your take-home (net) pay, the money that actually lands in your account, not your pay before tax."],["p", "The 20% is for future you: savings, or any extra you put on debt. Once you are saving, put it to work: see it compound with our compound interest calculator, or set a target with our savings goal calculator. Remember: rising prices erode any goal; our inflation-adjusted calculator shows what you truly need to save."],["p", "Strict 50/30/20 assumes your big needs cost about half your take-home. In high-cost Nigerian cities, rent and food alone can push well past that, which is not a failure of the rule, just a reality to plan around. The important part is to keep the savings slice conscious and growing, even if the mix leans heavier on needs. Adjust the three percentage fields above to whatever split your numbers actually support, rather than forcing a 50/30/20 square peg."],["p", "50/30/20 gives you the three big numbers. To turn them into a budget you can actually spend against, break the needs bucket into real Nigerian categories, rent, food, transport, data, utilities. Step 2 of this same calculator, below the receipt, takes this same split and digs into the needs half, showing exactly how many naira go to rent, food, transport, data and bills, with every share editable so the plan always adds up."],["p", "Start from your take-home pay, never your pay before tax. Whatever your income, the goal is the same: give every naira a job, so nothing leaks away unnoticed."],["p", "The rule fails when you treat it as fixed. Three common mistakes: budgeting on pay before tax, which inflates every bucket; treating needs as wants, such as an upgraded \"basic\" phone plan or meal delivery that became dinner; and ignoring the leftover. If your splits do not add to 100%, the leftover is unassigned and disappears into everyday spending."],["p", "The fix for all three is honest categorising. Budget on what hits your account. When something feels like a want, ask whether you would genuinely afford to drop it this month, if it is a bill you must pay, it belongs in needs. And make sure your split adds up. The calculator above flags any leftover so you can add it to savings rather than let it vanish."],["p", "Freelancers, commission earners and seasonal workers face a question the 50/30/20 rule glosses over: what is your \"take-home\" when every month is different? The workable answer is to base the budget on your average of the last three months, not your best month: three months came to ₦180,000? ₦180,000 / 3 = ₦60,000: type 60,000 into the income box above, not your biggest month. Budget on the average, and when a good month arrives, sweep the surplus past the 20% savings slice rather than inflating your wants."],["p", "Because the rule is percentage-based, it scales with whatever number you enter, that is precisely why this tool takes a single income figure and lets you adjust the three splits. Set the income to your moving average and the buckets adjust automatically, so a lean month is no longer a mystery and a strong month becomes a chance to save more."],["h2", "Budgeting questions"],["h3", "What is the 50/30/20 rule?"],["p", "A simple budget that puts 50% of your take-home pay toward needs, 30% toward wants, and 20% toward savings and any extra debt payments."],["h3", "How should I split a ₦250,000 salary?"],["p", "About ₦125,000 for needs, ₦75,000 for wants, and ₦50,000 for savings and any extra debt payments each month."],["h3", "Should I use pay before or after tax?"],["p", "Use take-home (net) pay: what reaches your account after tax. That is what you can spend and save."],["h3", "What counts as a need versus a want?"],["p", "Needs are what you cannot do without: housing, food, transport, utilities, minimum debt payments. Wants are the rest: dining out, entertainment, upgrading your phone. If in doubt, it is a want."]]},
   related={[
-    { href: `${base}money-tools/compound-interest-calculator/`, title: "Compound Interest Calculator", excerpt: "Put the 20% to work — project your savings year by year." },
-    { href: `${base}money-tools/savings-goal-calculator/`, title: "Savings Goal Calculator", excerpt: "Name the target and deadline — get the exact monthly price." },
+    { href: `${base}money-tools/compound-interest-calculator/`, title: "Compound Interest Calculator", excerpt: "Put the 20% to work: project your savings year by year." },
+    { href: `${base}money-tools/savings-goal-calculator/`, title: "Savings Goal Calculator", excerpt: "Name the target and deadline: get the exact monthly price." },
     { href: `${base}money-tools/inflation-savings-calculator/`, title: "Inflation-Adjusted Savings Calculator", excerpt: "Inflate the goal first, then price what you truly need to save." },
   ]}
   disclaimer="This calculator is for informational guidance only and is not financial advice. The 50/30/20 rule is a budgeting framework, not a guarantee of outcomes, adjust it to your circumstances and confirm major decisions with a licensed adviser.">
 <div class="fx-card">
 <script is:inline>var b=document.currentScript&&document.currentScript.closest(".fx-card");if(b)b.setAttribute("aria-busy","true");</script>
-<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
+<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers and the receipt waits.</p>
 <p class="receipt-note" id="bg-memdate" hidden></p>
-<!-- A16-F3 — the sentence with the nouns is the live region now. It carried the
+<!-- A16-F3 ; the sentence with the nouns is the live region now. It carried the
      labelled line while #bg-fig (bare "₦150,000 · ₦90,000 · ₦60,000", no nouns)
      did the announcing. #bg-fig stays readable; it just no longer speaks alone.
-     E18-F3 — the cold sentence is SERVER-RENDERED, not hidden-then-filled at
+     E18-F3 ; the cold sentence is SERVER-RENDERED, not hidden-then-filled at
      hydration: #bg-live used to appear at boot and push the card +41px (CLS
      0.0635). The text is the same string render() computes from the seed, so
      its identical-rewrite guard stays silent. aria-live stays. -->
 <p class="receipt-note" id="bg-live" aria-live="polite">{liveSeed}</p>
-<!-- E18-F4 — JS-off used to be a silent dead end: the example figures painted
+<!-- E18-F4 ; JS-off used to be a silent dead end: the example figures painted
      correctly and typing did nothing. One muted line, not a warning box; the
      browser hides it entirely when scripting is on. -->
 <noscript><p class="receipt-note" style="color:var(--text-mid);margin-top:8px">These figures are our worked example. The calculator needs JavaScript to work out your own split.</p></noscript>
 <!-- Visual stepper -->
-<!-- A16-F5 — a label on a role-less div is dropped from the accessibility
+<!-- A16-F5 ; a label on a role-less div is dropped from the accessibility
      tree. role="group" makes the name real, so the two steps are announced as
      one named set instead of two loose buttons. -->
 <div class="fx-stepper" id="bg-stepper" role="group" aria-label="Budget steps">
   <button type="button" class="fx-step active" data-step="1" aria-current="step">1. Plan</button>
   <button type="button" class="fx-step" data-step="2">2. Itemise</button>
-  <p class="receipt-note" id="bg-stepnote">2. Itemise = break the needs figure into lines — rent, food, transport, data and bills.</p>
+  <p class="receipt-note" id="bg-stepnote">2. Itemise = break the needs figure into lines: rent, food, transport, data and bills.</p>
 </div>
-<!-- E10 (A10-C7) — the seed exit, INSIDE the card and inside the first screen.
+<!-- E10 (A10-C7) ; the seed exit, INSIDE the card and inside the first screen.
      The shell's own "Clear examples" / "Reset" pair is shared with every other
      calculator: it lives in a footer strip 4.9 viewport-heights down a 390px
      phone, outside .fx-card, at 31px. Both of those are untouched and keep
@@ -91,81 +91,81 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
   <button type="button" class="btn b-ghost b-sm" id="bg-reset-example" style="min-height:44px">Reset to the example</button>
 </div>
 <div class="tgrid c3" id="bg-top">
-<!-- E18-F3 — the seven seeded fields ship the post-hydration chrome in SSR: the
+<!-- E18-F3 ; the seven seeded fields ship the post-hydration chrome in SSR: the
      data-sd state attr plus the exact <span class="sd"> mark() re-creates. Every
      delivered value IS our example, so the claim is true before JS runs, and
      first paint now has the final (750px) grid instead of growing into it.
-     mark() still removes and re-appends an identical badge in one task — same
+     mark() still removes and re-appends an identical badge in one task ; same
      dimensions, no shift. -->
-<!-- E18-F1b — THE CURRENCY WRAPPER IS SERVER-RENDERED. money-controls.js glyph()
-     builds the .fi box at boot with `wrap.appendChild(input)` — that MOVES the
+<!-- E18-F1b ; THE CURRENCY WRAPPER IS SERVER-RENDERED. money-controls.js glyph()
+     builds the .fi box at boot with `wrap.appendChild(input)` ; that MOVES the
      focused input, and moving a focused element blurs it in Chrome (appendChild
      is remove+insert; the HTML "removing steps" unfocus). Focus fell to BODY and
      every keystroke after boot was dropped: a visitor who tapped the income box
      before the module booted typed into the void. Proved live at 100ms/key (3/3
      lost) and A/B-proved 6/6 vs 0/6. glyph() early-returns when the field
      already holds a .fi-sym, so shipping the wrapper makes the boot step a
-     NO-OP instead of a repaired mistake — no blur, no focusout, no regroup, no
+     NO-OP instead of a repaired mistake ; no blur, no focusout, no regroup, no
      keyboard flicker, and the input keeps its 28px inset from first paint
      (it used to jump 14px -> 28px at hydration). The symbol must be exactly
      U+20A6 so sync()'s --fi-pad branch never runs, and the whole .fi box must
-     stay on ONE line — a newline inside the inline box becomes a collapsible
+     stay on ONE line ; a newline inside the inline box becomes a collapsible
      space and shifts the input. .fi-sym is aria-hidden; the label already
      prints the sign, so nothing is announced twice. 9 fields: 4 static + 5 in
      the al-act loop. -->
 
-<div class="field" data-cur="NGN" data-sd><label for="bg-inc">Monthly income ₦<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="bg-inc" type="text" value={income} inputmode="decimal" autocomplete="section-income" onfocus="if(this.closest('.field').hasAttribute('data-sd'))this.select()"></span></div>
-<!-- E18-F3 — the CONTEXT line was the one growth the SAMPLE chrome did not
+<div class="field" data-cur="NGN" data-sd><label for="bg-inc">Monthly income ₦<span class="sd" title="Example: ours, not yours. Tap to replace it.">Sample</span></label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="bg-inc" type="text" value={income} inputmode="decimal" autocomplete="section-income" onfocus="if(this.closest('.field').hasAttribute('data-sd'))this.select()"></span></div>
+<!-- E18-F3 ; the CONTEXT line was the one growth the SAMPLE chrome did not
      cover: smart-fields' ctx() inserts it after the income field at BOOT, so
      #bg-top grew 650.89px → 750.45px at hydration and pushed every field
      below it (the only layout-shift entry the F3 gate measured: 0.0102,
      sources = the new DIV, #bg-needs, DIV). The line is a sourced, static
-     sentence, so the server paints it in the SAME slot ctx() uses — inside
-     #bg-top, right after the income field — and the client drops this
+     sentence, so the server paints it in the SAME slot ctx() uses ; inside
+     #bg-top, right after the income field ; and the client drops this
      stand-in once the module has inserted the fleet's own copy (which stays
      the authoritative one). Markup is byte-identical to ctx()'s output, so
      the swap moves nothing. -->
 <p class="fx-signpost" style="margin:2px 0 0;font-size:.85rem"><a href="#fx-faq-h" style="color:var(--text-dim);text-decoration:underline;text-underline-offset:2px">Questions answered below ↓</a></p>
 <p class="ctx" data-e18-ctx>Median pay in formal wage jobs is roughly ₦120,000–₦150,000 a month. Our worked example sits above that: a scenario, not your salary. <span class="ctx-src">Guardian · May 2026 · <a href="https://guardian.ng/nigerian/what-is-the-average-salary-in-nigeria/" rel="noopener" style="padding-block: 8px; display: inline-flex; align-items: center; min-height: 24px;">read the source</a></span></p>
-<!-- E19-C12 — the market strip's visible word is "LIVE", but its currency
+<!-- E19-C12 ; the market strip's visible word is "LIVE", but its currency
      pairs are the DAILY reference rate (its title says so, and a phone has no
      hover path to a title). This page discloses it in words, with the
      snapshot's own date. The shared ticker label is site chrome, on every
-     page — not this page's to change. -->
-<p class="ctx" data-fx-note>The market strip above shows the site's daily reference rate for currency pairs — updated {FX_SNAPSHOT.as_of}. Crypto and gold prices refresh on each visit.</p>
-<div class="field" data-sd><label for="bg-needs">Needs %<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-needs" type="text" max="100" value="50" inputmode="decimal" placeholder="50" autocomplete="section-budget-splits"></div>
-<div class="field" data-sd><label for="bg-wants">Wants %<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-wants" type="text" max="100" value="30" inputmode="decimal" placeholder="30" autocomplete="section-budget-splits"></div>
-<div class="field" data-sd><label for="bg-save">Savings %<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-save" type="text" max="100" value="20" inputmode="decimal" placeholder="20" autocomplete="section-budget-splits"></div>
-<div class="field" data-cur="NGN" data-sd><label for="bg-spn">Spent on needs ₦<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="bg-spn" type="text" value={String(seedActuals.needs)} inputmode="decimal" autocomplete="off"></span></div>
-<div class="field" data-cur="NGN" data-sd><label for="bg-spw">Spent on wants ₦<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="bg-spw" type="text" value={String(seedActuals.wants)} inputmode="decimal" autocomplete="off"></span></div>
-<div class="field" data-cur="NGN" data-sd><label for="bg-sps">Put to savings ₦<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="bg-sps" type="text" value={String(seedActuals.savings)} inputmode="decimal" autocomplete="off"></span></div>
+     page ; not this page's to change. -->
+<p class="ctx" data-fx-note>The market strip above shows the site's daily reference rate for currency pairs, updated {FX_SNAPSHOT.as_of}. Crypto and gold prices refresh on each visit.</p>
+<div class="field" data-sd><label for="bg-needs">Needs %<span class="sd" title="Example: ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-needs" type="text" max="100" value="50" inputmode="decimal" placeholder="50" autocomplete="section-budget-splits"></div>
+<div class="field" data-sd><label for="bg-wants">Wants %<span class="sd" title="Example: ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-wants" type="text" max="100" value="30" inputmode="decimal" placeholder="30" autocomplete="section-budget-splits"></div>
+<div class="field" data-sd><label for="bg-save">Savings %<span class="sd" title="Example: ours, not yours. Tap to replace it.">Sample</span></label><input id="bg-save" type="text" max="100" value="20" inputmode="decimal" placeholder="20" autocomplete="section-budget-splits"></div>
+<div class="field" data-cur="NGN" data-sd><label for="bg-spn">Spent on needs ₦<span class="sd" title="Example: ours, not yours. Tap to replace it.">Sample</span></label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="bg-spn" type="text" value={String(seedActuals.needs)} inputmode="decimal" autocomplete="off"></span></div>
+<div class="field" data-cur="NGN" data-sd><label for="bg-spw">Spent on wants ₦<span class="sd" title="Example: ours, not yours. Tap to replace it.">Sample</span></label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="bg-spw" type="text" value={String(seedActuals.wants)} inputmode="decimal" autocomplete="off"></span></div>
+<div class="field" data-cur="NGN" data-sd><label for="bg-sps">Put to savings ₦<span class="sd" title="Example: ours, not yours. Tap to replace it.">Sample</span></label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="bg-sps" type="text" value={String(seedActuals.savings)} inputmode="decimal" autocomplete="off"></span></div>
 </div>
-<!-- E13 — the input-health rails. pm() is deliberately tolerant: it reads
+<!-- E13 ; the input-health rails. pm() is deliberately tolerant: it reads
      "12.5.5" as 0, "abc" as never-entered and "1e9" as a billion naira, so
      the field and the maths could disagree and the visitor was never told
-     (A13 proved it live: "12.5.5" in the income box still printed "AHEAD —
+     (A13 proved it live: "12.5.5" in the income box still printed "AHEAD; 
      Our example puts ₦40,000 extra to savings"). Each of these owns ONE
      question, names the fields at fault in the labels' own words, and routes
      to the first offender. They sit directly under the grid they police, so
      nobody has to hunt for the box, and they are emptied as well as hidden
-     when they have nothing to say — a hidden rail must never carry stale
+     when they have nothing to say ; a hidden rail must never carry stale
      prose. .receipt-note is carried for the fleet's rail vocabulary; the
      inline colour is --text-mid because these three sit on --surface, not on
      the dark receipt slip, where #c4b89a would be unreadable in light. -->
 <p class="receipt-note" id="bg-junk" hidden role="status" style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
 <p class="receipt-note" id="bg-range" hidden style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
 <p class="receipt-note" id="bg-big" hidden style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
-<!-- E22-L2 — the too-small twin of #bg-big. A ×1,000 unit slip (typing 100 for
+<!-- E22-L2 ; the too-small twin of #bg-big. A ×1,000 unit slip (typing 100 for
      ₦100,000) priced the whole plan at ₦50 figures and scolded the visitor
      ₦184,920 over, with no hint the unit was the problem. The page guards
      absurdly LARGE figures and accepted absurdly small ones silently. This
-     rail asks — it never refuses, never re-prices, never clamps. -->
+     rail asks ; it never refuses, never re-prices, never clamps. -->
 <p class="receipt-note" id="bg-low" hidden role="status" style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
-<!-- A23-R9 — the only instruction for a reader with no fixed monthly pay sat
+<!-- A23-R9 ; the only instruction for a reader with no fixed monthly pay sat
      twelve screens down behind a tap, and "needs half" was used four times with
      no local gloss. This disclosure sits directly under the income field; the
      lede now glosses "the needs half" at first sight. -->
-<details class="plain-note" id="bg-weekly" style="margin:12px 0 0;font-size:.8rem;color:var(--text-dim)"><summary style="min-height:44px;display:flex;align-items:center">Paid weekly or in cash?</summary><p>Yes. Add up what you earned over three weeks, divide by 3, then multiply by 4 — say ₦45,000 / 3 = ₦15,000 a week, and ₦15,000 times 4 = ₦60,000 a month. Type 60,000 into Monthly income ₦ above. In a lean month it still tells you what has to be covered, and it does not punish a small income.</p></details>
+<details class="plain-note" id="bg-weekly" style="margin:12px 0 0;font-size:.8rem;color:var(--text-dim)"><summary style="min-height:44px;display:flex;align-items:center">Paid weekly or in cash?</summary><p>Yes. Add up what you earned over three weeks, divide by 3, then multiply by 4, say ₦45,000 / 3 = ₦15,000 a week, and ₦15,000 times 4 = ₦60,000 a month. Type 60,000 into Monthly income ₦ above. In a lean month it still tells you what has to be covered, and it does not punish a small income.</p></details>
 <!-- Income quick-fill chips -->
 <div class="fx-chips" style="margin-top:10px" id="income-chips" role="group" aria-label="Quick-fill income">
 <button type="button" class="fx-chip" data-fill="bg-inc" data-value="25000" aria-label="Fill ₦25,000">₦25,000</button>
@@ -176,32 +176,32 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
 <button type="button" class="fx-chip" data-fill="bg-inc" data-value="250000" aria-label="Fill ₦250,000">₦250,000</button>
 <button type="button" class="fx-chip" data-fill="bg-inc" data-value="500000" aria-label="Fill ₦500,000">₦500,000</button>
 </div>
-<!-- E23-R1/R3 — the provenance gloss sits under the income chips: the 844px fold belongs to the field, not to prose. The stepper gloss (R1) stays under the button, where the weak reader looks first. -->
-<p class="receipt-note" id="bg-oursnote">Our example numbers carry the SAMPLE badge — ours, not yours. Type yours in to replace them.</p>
+<!-- E23-R1/R3 ; the provenance gloss sits under the income chips: the 844px fold belongs to the field, not to prose. The stepper gloss (R1) stays under the button, where the weak reader looks first. -->
+<p class="receipt-note" id="bg-oursnote">Our example numbers carry the SAMPLE badge, ours, not yours. Type yours in to replace them.</p>
 <!-- Split preset chips -->
 <div class="fx-chips" style="margin-top:10px" id="split-chips" role="group" aria-label="Quick-fill split percentages">
 <button type="button" class="fx-chip" data-preset="50,30,20" aria-label="Fill 50/30/20 split">50/30/20</button>
 <button type="button" class="fx-chip" data-preset="60,20,20" aria-label="Fill 60/20/20 split">60/20/20</button>
 <button type="button" class="fx-chip" data-preset="70,15,15" aria-label="Fill 70/15/15 split">70/15/15</button>
 </div>
-<!-- E10 (A10-C5) — the plain words live on the LABEL, not on a hover title.
+<!-- E10 (A10-C5) ; the plain words live on the LABEL, not on a hover title.
      E9 rewrote only the hover `title`, and only on two of these three (the
      savings button's title reads "Fill savings from plan", so the single-match
      replace skipped it). A 390px phone has no hover path at all, so the gloss
      was dead where it matters. All three now say it, visibly, on every device. -->
 <div class="quick-fills" id="bg-actuals-fills" style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
-  <button type="button" class="btn b-ghost b-xs" data-fill-from-plan="bg-spn" title="Use my targets — put what you spent on needs straight from the plan's needs target">Use my targets — needs</button>
-  <button type="button" class="btn b-ghost b-xs" data-fill-from-plan="bg-spw" title="Use my targets — put what you spent on wants straight from the plan's wants target">Use my targets — wants</button>
-  <button type="button" class="btn b-ghost b-xs" data-fill-from-plan="bg-sps" title="Use my targets — put what you saved straight from the plan's savings target">Use my targets — savings</button>
+  <button type="button" class="btn b-ghost b-xs" data-fill-from-plan="bg-spn" title="Use my targets: put what you spent on needs straight from the plan's needs target">Use my targets: needs</button>
+  <button type="button" class="btn b-ghost b-xs" data-fill-from-plan="bg-spw" title="Use my targets: put what you spent on wants straight from the plan's wants target">Use my targets: wants</button>
+  <button type="button" class="btn b-ghost b-xs" data-fill-from-plan="bg-sps" title="Use my targets: put what you saved straight from the plan's savings target">Use my targets: savings</button>
 </div>
-<!-- A16-F2 — the honesty rails are visible prose, so they must be audible
+<!-- A16-F2 ; the honesty rails are visible prose, so they must be audible
      prose. role="status" gives each an implicit polite live region, and the
      writes below are guarded so a re-render of identical text stays silent. -->
 <p class="receipt-note" id="bg-seedwarn" hidden role="status"></p>
 <div class="receipt">
 <p class="receipt-lbl">Plan buckets</p>
 <p class="receipt-fig" id="bg-fig"><span class="fig-amt">₦{n(seed.needs)}</span><span class="fig-sep" aria-hidden="true"> · </span><span class="fig-amt">₦{n(seed.wants)}</span><span class="fig-sep" aria-hidden="true"> · </span><span class="fig-amt">₦{n(seed.savings)}</span></p>
-<p class="receipt-sub" id="bg-sub">Needs · wants · savings — leftover <span id="bg-else">₦{n(seed.else)}</span></p>
+<p class="receipt-sub" id="bg-sub">Needs · wants · savings: leftover <span id="bg-else">₦{n(seed.else)}</span></p>
 <p class="receipt-sub" id="bg-sumnote" role="status"></p>
 <p class="receipt-note" id="bg-warn" hidden aria-live="polite"></p>
 <div class="receipt-div" aria-hidden="true"></div>
@@ -217,59 +217,59 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
 </div>
 <!-- Next-action CTAs after Step 1 -->
 <div class="next-actions" id="bg-next" hidden></div>
-<p class="receipt-note"><a href="#step2">See where the needs money goes ↓</a> · <button type="button" class="btn b-ghost b-lg" id="bg-copy" style="min-height:44px">Copy example plan</button><span id="bg-copywhy" data-trust="example"> — this copies our example.</span><span id="bg-copied" role="status" hidden> — copied.</span></p>
+<p class="receipt-note"><a href="#step2">See where the needs money goes ↓</a> · <button type="button" class="btn b-ghost b-lg" id="bg-copy" style="min-height:44px">Copy example plan</button><span id="bg-copywhy" data-trust="example">: this copies our example.</span><span id="bg-copied" role="status" hidden>: copied.</span></p>
 <div class="receipt-div" aria-hidden="true"></div>
-<!-- A16-F7 — this is a section of the page, so it must be h2: the outline read
+<!-- A16-F7 ; this is a section of the page, so it must be h2: the outline read
      h1 → h3 → h2, a skipped level. Every metric the h3 computed is pinned
      inline so the pixels do not move (18.72px/700/-0.3744px/29.952px, margin 0). -->
-<h2 id="step2" style="position:sticky;top:0;background:var(--surface);z-index:10;padding:12px 0 0;margin:0;font-size:18.72px;font-weight:700;letter-spacing:-0.3744px;line-height:29.952px">Step 2 — Itemise: where the needs money goes</h2>
-<p>One tool, one journey. This is the plan's needs figure from step 1 — same income, same split — broken into Nigerian lines: rent, food, transport, data and bills. Knowing you should spend <span id="bg-step2-needs">₦{n(seed.needs)}</span> on needs is useful. Knowing rent takes about <span id="bg-step2-rent">₦{n(seedRent)}</span> makes it actionable. The shares below are starting points, not rules. Tune any bucket and the naira follows, always matching your income.</p>
+<h2 id="step2" style="position:sticky;top:0;background:var(--surface);z-index:10;padding:12px 0 0;margin:0;font-size:18.72px;font-weight:700;letter-spacing:-0.3744px;line-height:29.952px">Step 2 · Itemise: where the needs money goes</h2>
+<p>One tool, one journey. This is the plan's needs figure from step 1 (same income, same split), broken into Nigerian lines: rent, food, transport, data and bills. Knowing you should spend <span id="bg-step2-needs">₦{n(seed.needs)}</span> on needs is useful. Knowing rent takes about <span id="bg-step2-rent">₦{n(seedRent)}</span> makes it actionable. The shares below are starting points, not rules. Tune any bucket and the naira follows, always matching your income.</p>
 <p class="receipt-note"><a href="#bg-top">↑ Adjust income &amp; split</a></p>
 <p class="receipt-note" id="bg-mini" hidden></p>
-<!-- E19-C11 — the five share seeds are our example too, and the seven step-1
+<!-- E19-C11 ; the five share seeds are our example too, and the seven step-1
      fields already say so in the served markup (E18-F3). Until now these five
-     read as the visitor's own before the page boots — and for good, with
+     read as the visitor's own before the page boots ; and for good, with
      JavaScript off. Same data-sd attr and the same <span class="sd"> the
      module's mark() re-creates; the value attribute is untouched, so the
      early-typing handoff still works. -->
 <div class="tgrid c3" style="margin-top:14px">
 {al.buckets.filter((b) => b.id !== "other").map((b) => (
-<div class="field" data-sd><label for={`al-${b.id}`}>{b.label} % of needs<span class="sd" title="Example — ours, not yours. Tap to replace it.">Sample</span></label><input id={`al-${b.id}`} type="text" max="100" value={(b.share * 100).toFixed(0)} inputmode="decimal" data-al-bucket={b.id}></div>
+<div class="field" data-sd><label for={`al-${b.id}`}>{b.label} % of needs<span class="sd" title="Example: ours, not yours. Tap to replace it.">Sample</span></label><input id={`al-${b.id}`} type="text" max="100" value={(b.share * 100).toFixed(0)} inputmode="decimal" data-al-bucket={b.id}></div>
 ))}
 </div>
 <!-- Apply defaults button -->
 <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
   <button type="button" class="btn b-ghost b-sm" data-apply-defaults aria-label="Use the starting needs shares (rent 40%, food 25%, transport 15%, data 10%, bills 7%)">Use the starting shares</button>
 </div>
-<!-- E10 (A10-C1/C3) — the mirror's own inputs. The old panel had no
+<!-- E10 (A10-C1/C3) ; the mirror's own inputs. The old panel had no
      per-bucket actual field anywhere: it MANUFACTURED one by rescaling the
      single "Spent on needs" figure, so all five variance badges always agreed
      and the panel could never say the only thing worth saying ("rent over,
-     food under"). These five are the fix. They ship EMPTY — no invented
-     naira is typed in for anyone — and each is optional: a blank bucket is
+     food under"). These five are the fix. They ship EMPTY ; no invented
+     naira is typed in for anyone ; and each is optional: a blank bucket is
      UNKNOWN, and an unknown bucket prints no amount and no badge at all. -->
 <div class="tgrid c3" id="al-actual-fields" style="margin-top:14px">
 {al.buckets.filter((b) => b.id !== "other").map((b) => (
-<div class="field" data-cur="NGN"><label for={`al-act-${b.id}`}>{b.label} — you actually spent ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id={`al-act-${b.id}`} type="text" inputmode="decimal" placeholder="—" autocomplete="off" data-al-actual={b.id}></span></div>
+<div class="field" data-cur="NGN"><label for={`al-act-${b.id}`}>{b.label}: you actually spent ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id={`al-act-${b.id}`} type="text" inputmode="decimal" placeholder="–" autocomplete="off" data-al-actual={b.id}></span></div>
 ))}
 </div>
-<!-- E13 — step 2's own malformed rail. The five shares decide what "Other
+<!-- E13 ; step 2's own malformed rail. The five shares decide what "Other
      needs" IS and the five actuals are scored into badges, so one junk box
      here prices a bucket at ₦0 and then prints a confident "UNDER ₦48,000"
-     for it — the exact lie step 1 was caught telling, five fields further
+     for it ; the exact lie step 1 was caught telling, five fields further
      down the same page. -->
 <p class="receipt-note" id="al-junk" hidden role="status" style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
-<p class="receipt-note" id="al-actual-hint">Optional: score only the buckets you know. A blank bucket keeps its plan amount — our example figure rides there until you type your own spend.</p>
-<!-- E12-10 — the five actuals faced a blank naira grid with no affordance.
+<p class="receipt-note" id="al-actual-hint">Optional: score only the buckets you know. A blank bucket keeps its plan amount: our example figure rides there until you type your own spend.</p>
+<!-- E12-10 ; the five actuals faced a blank naira grid with no affordance.
      Same vocabulary as the income chips above: one tap writes THAT bucket's
      plan amount, clearly labelled, and routes through the same disclosure
      the step-1 "Use my targets" chips use. -->
 <div class="quick-fills" id="al-actual-fills" style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
-  <button type="button" class="btn b-ghost b-xs" data-fill-actual="rent">Use plan — rent</button>
-  <button type="button" class="btn b-ghost b-xs" data-fill-actual="food">Use plan — food</button>
-  <button type="button" class="btn b-ghost b-xs" data-fill-actual="transport">Use plan — transport</button>
-  <button type="button" class="btn b-ghost b-xs" data-fill-actual="data">Use plan — data</button>
-  <button type="button" class="btn b-ghost b-xs" data-fill-actual="utilities">Use plan — bills</button>
+  <button type="button" class="btn b-ghost b-xs" data-fill-actual="rent">Use plan: rent</button>
+  <button type="button" class="btn b-ghost b-xs" data-fill-actual="food">Use plan: food</button>
+  <button type="button" class="btn b-ghost b-xs" data-fill-actual="transport">Use plan: transport</button>
+  <button type="button" class="btn b-ghost b-xs" data-fill-actual="data">Use plan: data</button>
+  <button type="button" class="btn b-ghost b-xs" data-fill-actual="utilities">Use plan: bills</button>
 </div>
 <!-- Verdict banner (plain-language) -->
 <div class="verdict-banner" id="al-verdict" aria-live="polite"></div>
@@ -287,10 +287,10 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
      overwrite; its own node is the fix. -->
 <p class="receipt-note" id="al-needsline" hidden role="status"></p>
 <div class="receipt-div" aria-hidden="true"></div>
-<!-- E10 (A10-C1/C8) — the mirror panel gets its own heading (five unlabelled
+<!-- E10 (A10-C1/C8) ; the mirror panel gets its own heading (five unlabelled
      rows told a first-time visitor nothing) and its OWN disclosure element.
      E9 wrote the ownership sentence into this panel's note and then, 100 lines
-     later, overwrote the same node with innerHTML — the page deleted its own
+     later, overwrote the same node with innerHTML ; the page deleted its own
      safety disclosure at render time. The disclosure now lives in #al-mirror-own
      and NOTHING else writes it; the rows write #al-actuals only. The Example
      badge rides inside the panel, so ownership travels with the numbers instead
@@ -304,23 +304,23 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
 <p class="receipt-note" id="al-reconcile" hidden role="status"></p>
 <p class="receipt-note" id="al-reconcile-fix" hidden><a class="btn b-ghost b-xs" id="al-reconcile-go" href="#bg-spn" data-goto="bg-spn">Correct the needs total</a></p>
 <p class="receipt-foot hint">Variance = what you entered, minus that bucket's plan</p>
-<p class="receipt-foot">Shares of needs — naira follows instantly</p>
+<p class="receipt-foot">Shares of needs: naira follows instantly</p>
 <p class="receipt-foot hint">Other needs is whatever is left after the named shares</p>
 <p class="receipt-foot hint">Buckets are % of Needs (50%), not of total income. Defaults leave about 3% in Other.</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 <!-- Next-action CTAs after Step 2 -->
 <div class="next-actions" id="al-next" hidden></div>
-<p class="receipt-note" id="bg-resetnote">Reset wipes what you typed and restores our example — it cannot be undone.</p>
+<p class="receipt-note" id="bg-resetnote">Reset wipes what you typed and restores our example, and it cannot be undone.</p>
 </div>
 </ToolShell>
 <style is:global>
-/* E18-F2 — the split sentence is the first true figure above the fold, but it
+/* E18-F2 ; the split sentence is the first true figure above the fold, but it
    inherited .receipt-note's dark-slip cream (#c4b89a) while sitting on the
    LIGHT card: 12.8px at 1.97:1. Scoped to this one element only; the dark
    receipt (.receipt .receipt-note) and every other rail are untouched. */
 #bg-live{color:var(--text-mid);font-size:14px;line-height:1.5}
-/* E18-F5 — #bg-fig is one text node written by sfFig (tool-fields.ts, untouched),
+/* E18-F5 ; #bg-fig is one text node written by sfFig (tool-fields.ts, untouched),
    so CSS alone could not stop an amount wrapping mid-line and leaving a "·" at
    the line end. The server renders three .fig-amt spans with aria-hidden .fig-sep
    separators, and a page-local splitFig() re-splits every later write. Amounts
@@ -331,15 +331,15 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
 #bg-fig .fig-sep{display:none}
 #bg-fig .fig-amt{display:block}
 }
-/* E20-NEW6 — the chip rows are a 34–36px tap target on a 320px phone. The
+/* E20-NEW6 ; the chip rows are a 34–36px tap target on a 320px phone. The
    page's own floor is 44px (every primary control on this page is already
    padded to it); at 360px and below the chips take the same floor. Additive
    rule, scoped to this page's chip rows only. */
 @media (max-width: 360px) {
   #bg-actuals-fills .btn.b-xs, #al-actual-fills .btn.b-xs, #bg-examplectl .btn,
-  #al-reconcile-fix .btn, .quick-fills .btn.b-xs { min-height: 44px; padding-left: 12px; padding-right: 12px; }
+  #al-reconcile-fix .btn.quick-fills .btn.b-xs { min-height: 44px; padding-left: 12px; padding-right: 12px; }
 }
-/* E23-R8 — the mid-page CTAs measured 17–25px tall on a phone: the two the
+/* E23-R8 ; the mid-page CTAs measured 17–25px tall on a phone: the two the
    tool depends on its reader finding. The page floor is 44px. */
 .receipt-note a { min-height: 44px; display: inline-flex; align-items: center; }
 .app-card a { min-height: 44px; display: inline-flex; align-items: center; }
@@ -347,7 +347,7 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
 #bg-examplectl .btn { min-height: 44px; }
 .btn.b-ghost.b-sm[data-apply-defaults] { min-height: 44px; }
 
-/* E21-F5 — the quick-fill chips measure 34px, under this page's 44px tap
+/* E21-F5 ; the quick-fill chips measure 34px, under this page's 44px tap
    floor. Scoped to this page's two chip rows; the shared .fx-chip class every
    other money tool uses is untouched. */
 #income-chips .fx-chip, #split-chips .fx-chip {
@@ -363,7 +363,7 @@ import { formatGrouped } from "../../lib/format";
 import { pm, pmBlank, pmHonest } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig, SF_DASH } from "../../data/tool-fields";
-/* F1 — fleet-wide negative shape (the crypto tool's winner): a negative prints
+/* F1 ; fleet-wide negative shape (the crypto tool's winner): a negative prints
    −₦X (U+2212 minus before the symbol), never ₦-X. format.ts stays
    PHP-parity-pinned (it mirrors gwill_paye_number), so this is fixed per page
    on the two pages whose figures can actually go negative. */
@@ -378,7 +378,7 @@ const hasBadge = (id: string, attr: string) => {
   const f = fi && (fi as HTMLElement).closest ? (fi as HTMLElement).closest(".field") : null;
   return !!(f && (f as Element).hasAttribute(attr));
 };
-/* E10 — the five needs buckets, and the OPTIONAL actual-spend field that goes
+/* E10 ; the five needs buckets, and the OPTIONAL actual-spend field that goes
    with each. Module scope because render()'s negative-rail check needs the ids
    too. The engine's own bucket list is never re-typed here: AL_BUCKETS is the
    five NAMED buckets only, in the allocator's order. */
@@ -388,19 +388,19 @@ const ACT_ID: Record<string, string> = {
   data: "al-act-data", utilities: "al-act-utilities",
 };
 const ACT_IDS = AL_BUCKETS.map((b) => ACT_ID[b]);
-/* E19-C6/C7/C14 — a percentage printed at the precision the figure is really
+/* E19-C6/C7/C14 ; a percentage printed at the precision the figure is really
    at: 33.4 x 3 is 100.2% (not 100%), and 33.33% is not 33%. Up to two decimals
    with no trailing zeros, so every whole-number sentence stays byte-identical. */
 const pctTxt = (v: number): string => {
   const s = v.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
   return s === "-0" ? "0" : s;
 };
-/* E19-C2/C5 — PROVENANCE for the five "you actually spent" fields: "typed" is
+/* E19-C2/C5 ; PROVENANCE for the five "you actually spent" fields: "typed" is
    the visitor's own number; "plan" is a figure the page wrote from the plan
-   (the "Use plan — …" chips). A plan-written figure is OURS, so the page must
+   (the "Use plan ; …" chips). A plan-written figure is OURS, so the page must
    never call it "you entered" nor score it as if the visitor had lived it. */
 const ACT_PROV: Record<string, "typed" | "plan"> = {};
-/* E20-NEW2 — the same question for the three STEP-1 spends: "Use my targets —
+/* E20-NEW2 ; the same question for the three STEP-1 spends: "Use my targets; 
    needs/wants/savings" writes the PLAN's figure into them, so the page must
    not call that figure the visitor's own. */
 const SPEND_PROV: Record<string, "typed" | "plan"> = {};
@@ -415,20 +415,20 @@ const ACT_BUCKET: Record<string, string> = Object.fromEntries(
 /* A chip write dispatches a synthetic "input" event; the listener must not
    read that as the visitor typing. */
 let planWriteInFlight = false;
-/* ── E13 — INPUT HEALTH ───────────────────────────────────────────────────
+/* ── E13 ; INPUT HEALTH ───────────────────────────────────────────────────
    A13 found the CRITICAL on this page and the Manager re-proved it on live
    bytes: the income box accepted "12.5.5" and the page still printed "AHEAD
-   — Our example puts ₦40,000 extra to savings", a verdict computed from a
+   ; Our example puts ₦40,000 extra to savings", a verdict computed from a
    figure nobody entered. "abc" emptied the verdict with no explanation, and
    "1e9" moved a billion naira through the plan unchallenged. The cause is
-   that pm() is deliberately TOLERANT — that tolerance is what keeps a
-   grouped "₦1,234.50" live-accurate — so the field showed one thing while the
+   that pm() is deliberately TOLERANT ; that tolerance is what keeps a
+   grouped "₦1,234.50" live-accurate ; so the field showed one thing while the
    maths used another and nothing on the page said so.
 
    These predicates are the only NEW truth source here, and they are built
    FROM pm/pmBlank/pmHonest rather than beside them, so they can never
    disagree with the reader the maths actually uses. */
-/* pm()'s own strip expression (pm.js) — but WITHOUT pm()'s final NaN→0
+/* pm()'s own strip expression (pm.js) ; but WITHOUT pm()'s final NaN→0
    swallow, which is the one thing this test has to see through. pm() returns
    0 for both "" and "12.5.5"; the only way to tell a real figure from junk is
    to run its strip yourself and look at the Number it fed to that swallow.
@@ -438,7 +438,7 @@ const pmRaw = (v: string): number => Number(String(v).replace(/[\u200B-\u200F\uF
 /* The field names exactly as the visitor reads them. TEXT NODES ONLY, never
    textContent: the spine appends its SAMPLE / LAST USED pill INSIDE the
    label (mark(), smart-fields.js), so textContent is "Needs %Last used" and
-   every sentence below would ship garbled — the BREAK-1 lesson, applied to
+   every sentence below would ship garbled ; the BREAK-1 lesson, applied to
    the new rails rather than rediscovered by them. */
 const fieldName = (id: string): string => {
   const l = document.querySelector(`label[for="${id}"]`);
@@ -448,7 +448,7 @@ const fieldName = (id: string): string => {
   return s.trim() || id;
 };
 /* Every one of these rails is innerHTML (it ends on an anchor), and one of
-   them echoes what the visitor typed back at them — so the echo is escaped. */
+   them echoes what the visitor typed back at them ; so the echo is escaped. */
 const esc = (s: string): string => s.replace(/[&<>"']/g, (c) => (({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" } as Record<string, string>)[c]));
 /* The seven step-1 inputs this page's maths reads, and the three of them
    that are SHARES of one income rather than amounts. */
@@ -457,7 +457,7 @@ const SPLIT_IDS = ["bg-needs", "bg-wants", "bg-save"];
 /* The four ids a PLAN figure is read from: income and the three splits. Step 1's
    receipt, step 2's buckets, the live line, the mini line and the whole mirror
    panel are that one figure itemised, so a junk box among the four means no
-   plan figure anywhere on the page is true — not "priced from a number nobody
+   plan figure anywhere on the page is true ; not "priced from a number nobody
    entered". */
 const PLAN_IDS = ["bg-inc", "bg-needs", "bg-wants", "bg-save"];
 /* What the reader took from a malformed box, in the field's own unit, so the
@@ -467,18 +467,18 @@ const PLAN_IDS = ["bg-inc", "bg-needs", "bg-wants", "bg-save"];
 const PCT_IDS = SPLIT_IDS.concat(AL_BUCKETS.map((b) => "al-" + b));
 const MONEY_IDS = ["bg-inc", "bg-spn", "bg-spw", "bg-sps"];
 const unitOf = (id: string): string => (PCT_IDS.indexOf(id) >= 0 ? "0%" : "₦0");
-/* What the reader ACTUALLY took from a box, in the field's own unit — so a rail
+/* What the reader ACTUALLY took from a box, in the field's own unit ; so a rail
    can quote the figure instead of leaving the visitor to work out that "250,"
    was priced as ₦250. */
 const readAs = (id: string): string => (PCT_IDS.indexOf(id) >= 0 ? `${pm(g(id).value)}%` : nn(pm(g(id).value)));
 /* ── THE COMMA THAT IS NOT A THOUSANDS COMMA ────────────────────────────────
    pm() is provenance-blind about separators: it strips "," before it reads, so
-   "₦1,500,000" lands on 1500000 — the grouped naira a blurred money field
+   "₦1,500,000" lands on 1500000 ; the grouped naira a blurred money field
    legitimately holds. The SAME strip is why "250," reads 250 and "," reads 0,
    and both are alphabet-legal, so every predicate built from pmHonest() waves
    them through as well-formed: malformedOf() said not-malformed, pmBlank() said
    entered, the reader took 250, and the page priced an entire plan off a
-   near-miss keystroke — ₦125 of needs with the verdict confidently AHEAD, on
+   near-miss keystroke ; ₦125 of needs with the verdict confidently AHEAD, on
    income that is either ₦250,000 or a typo. The Manager re-proved it on live
    bytes.
 
@@ -487,7 +487,7 @@ const readAs = (id: string): string => (PCT_IDS.indexOf(id) >= 0 ? `${pm(g(id).v
    question the reader cannot. A thousands comma has digits on its left,
    exactly three digits on its right, and a group boundary after them. Anything
    else is a separator the visitor reached for while typing a naira amount, and
-   it goes through the same junk rail as "12.5.5" — with the figure the reader
+   it goes through the same junk rail as "12.5.5" ; with the figure the reader
    took said out loud, never silently repaired to 250000. */
 const misplacedComma = (v: string): boolean => {
   const s = String(v).trim();
@@ -503,7 +503,7 @@ const misplacedComma = (v: string): boolean => {
   }
   return false;
 };
-/* MALFORMED — visible text that is not a figure, in the three shapes this page
+/* MALFORMED ; visible text that is not a figure, in the three shapes this page
    actually produces, because it does three different things with them:
      "unparseable"  every character is in the honest-money alphabet but the
                     text is still not a number ("12.5.5"). pm() discards the
@@ -511,17 +511,17 @@ const misplacedComma = (v: string): boolean => {
                     nobody typed.
      "unreadable"   characters outside that alphabet ("abc"). pmBlank reads
                     these as never-entered, so every dependent figure is
-                    held back as "—" and the verdict goes quiet with no
+                    held back as "; " and the verdict goes quiet with no
                     explanation at all.
      "separator"    the honest-money alphabet with a comma in it that is not a
                     grouping comma ("250," / ","). pm() drops it and reads the
                     rest, so the field shows one figure while the maths uses
-                    another — the near-miss CRITICAL. It is not blank (there
+                    another ; the near-miss CRITICAL. It is not blank (there
                     are digits) and it is not NaN (the rest is a real number),
                     so this test is the only thing on the page that can see it.
    A genuinely EMPTY field is NOT malformed: the offer rail already names it
    and says "empty, not zero", which is the honest answer. Neither is a value
-   pm() reads exactly as written — "₦1,234.50", "1 234 500", "8.5%", "007",
+   pm() reads exactly as written ; "₦1,234.50", "1 234 500", "8.5%", "007",
    "1e5", "+500" all parse and are left strictly alone. */
 const malformedOf = (id: string): "" | "unreadable" | "unparseable" | "separator" => {
   const v = g(id).value;
@@ -530,8 +530,8 @@ const malformedOf = (id: string): "" | "unreadable" | "unparseable" | "separator
   if (misplacedComma(v)) return "separator";
   return Number.isFinite(pmRaw(v)) ? "" : "unparseable";
 };
-/* Name up to three offending fields in the labels' own words — "A", "B and C"
-   — then count the rest, so seventeen junk boxes cannot become a
+/* Name up to three offending fields in the labels' own words ; "A", "B and C"
+   ; then count the rest, so seventeen junk boxes cannot become a
    seventeen-field sentence. */
 const nameList = (ids: readonly string[]): string => {
   const named = ids.slice(0, 3).map((id) => `"${esc(fieldName(id))}"`);
@@ -541,17 +541,17 @@ const nameList = (ids: readonly string[]): string => {
   return s;
 };
 /* The tail every input-health rail ends on: the FIRST offender, named, on the
-   same data-goto CTA grammar the reconcile fix already uses — a tap scrolls
+   same data-goto CTA grammar the reconcile fix already uses ; a tap scrolls
    AND focuses the box instead of only jumping to it. */
 const goTo = (id: string): string => ` <a class="btn b-ghost b-xs" href="#${id}" data-goto="${id}">Go to "${esc(fieldName(id))}"</a>`;
 /* The junk predicate, per FIGURE: the ids this figure is read from, judged the
    way the rails above judge them. A figure whose inputs include a malformed
    field would print the reader's number while the field shows another, so it
-   withholds — the rule sfFig() already applies to a BLANK dep, extended to a
+   withholds ; the rule sfFig() already applies to a BLANK dep, extended to a
    junk one. One helper, so no call site can invent its own narrower test. */
 const junkIn = (ids: readonly string[]): boolean => ids.some((id) => !!malformedOf(id));
 /* The same withhold grammar tool-fields.ts uses for a blank dep: the same dim
-   dash, and the same data-sf-no marker. The marker is load-bearing — without
+   dash, and the same data-sf-no marker. The marker is load-bearing ; without
    it sfEmpty()'s kept-map restore mistakes this deliberate dash for the empty
    state's and writes a stale figure straight back over it. */
 const NO_FIG = "data-sf-no";
@@ -560,7 +560,7 @@ const sfFigJ = (el: HTMLElement | null, deps: readonly string[], real: string): 
   if (junkIn(deps)) { sfFig(el, deps, SF_DASH); el.setAttribute(NO_FIG, ""); return; }
   sfFig(el, deps, real);
 };
-/* E18-F5 — sfFig() writes #bg-fig as ONE text node, so a wrapped amount left the
+/* E18-F5 ; sfFig() writes #bg-fig as ONE text node, so a wrapped amount left the
    " · " separator dangling at a line end. The server already ships the three
    amounts as spans; this re-splits every later write (sfFig wipes them on each
    render). DOM nodes only, never innerHTML; the naira text is the one sfFig
@@ -594,11 +594,11 @@ const splitFig = (): void => {
    the two malformed kinds need two DIFFERENT truths: an unparseable box was
    priced from ₦0, an unreadable one was priced from nothing, and saying "we
    ignored your input" for both would be false about one of them. */
-/* A16-F2 — role="status" turns the junk rail into a live region, so a re-render
+/* A16-F2 ; role="status" turns the junk rail into a live region, so a re-render
    of the SAME sentence must not re-announce on every keystroke. The payload is
    remembered per element; innerHTML is only written when it actually changes. */
 const railLast = new WeakMap<HTMLElement, string>();
-/* E20-NEW4 — role="status" turns every rail in this family into a polite live
+/* E20-NEW4 ; role="status" turns every rail in this family into a polite live
    region. The same sentence re-written on every render would re-announce
    itself on every keystroke, so every write goes through one shared guard. */
 const railText = (el: HTMLElement, text: string): void => {
@@ -618,10 +618,10 @@ const junkRail = (el: HTMLElement | null, ids: readonly string[]): void => {
     const nm = `"${esc(fieldName(id))}"`;
     const kind = malformedOf(id);
     if (kind === "separator")
-      return `${nm} reads "${esc(g(id).value)}" — the comma in there is not a thousands separator (one sits between three-digit groups), so it was dropped and the box was read as ${readAs(id)}.`;
+      return `${nm} reads "${esc(g(id).value)}": the comma in there is not a thousands separator (one sits between three-digit groups), so it was dropped and the box was read as ${readAs(id)}.`;
     return kind === "unparseable"
-      ? `${nm} reads "${esc(g(id).value)}" — this page cannot read that one, so the plan was priced as if it read ${unitOf(id)}. Type the figure in full to score it.`
-      : `${nm} reads "${esc(g(id).value)}" — not a number. Every figure that depends on it is held back as "—", not guessed.`;
+      ? `${nm} reads "${esc(g(id).value)}": this page cannot read that one, so the plan was priced as if it read ${unitOf(id)}. Type the figure in full to score it.`
+      : `${nm} reads "${esc(g(id).value)}": not a number. Every figure that depends on it is held back as "–", not guessed.`;
   });
   const next = clauses.join(" ")
     + (more ? ` ${more} more field${more > 1 ? "s" : ""} ${more > 1 ? "are" : "is"} in the same state.` : "")
@@ -631,7 +631,7 @@ const junkRail = (el: HTMLElement | null, ids: readonly string[]): void => {
   el.hidden = false;
 };
 /* SPLITS OUT OF RANGE. A share is a slice of ONE income, so it runs 0 to 100
-   — the range is the whole fact and no benchmark is invented to support it.
+   ; the range is the whole fact and no benchmark is invented to support it.
    The engine prices the value as typed and clamps only the NEGATIVE to 0, so
    150 really does move 150% of income into needs and −10 really is priced as
    0%; the rail says which happened rather than letting the figure speak for
@@ -640,7 +640,7 @@ const junkRail = (el: HTMLElement | null, ids: readonly string[]): void => {
    statements and a visitor needs both. */
 const rangeRail = (el: HTMLElement | null, ids: readonly string[]): void => {
   if (!el) return;
-  /* E22-L3 — the too-small twin: ".5" meaning half, or "1" meaning ten, reads
+  /* E22-L3 ; the too-small twin: ".5" meaning half, or "1" meaning ten, reads
      as a legal share to the 0–100 check and as nonsense to the visitor the
      page is here to serve. Ask, never refuse; the figure is priced exactly
      as typed either way. */
@@ -650,27 +650,27 @@ const rangeRail = (el: HTMLElement | null, ids: readonly string[]): void => {
   el.hidden = false;
   el.innerHTML = (low.length
     ? `${nameList(low)} reads ${low.map((id) => `${pctTxt(pm(g(id).value))}%`).slice(0, 3).join(", ")}.`
-    + ` A share below 1% is usually a missing digit — if you meant 50, retype it in full.`
+    + ` A share below 1% is usually a missing digit: if you meant 50, retype it in full.`
     + (bad.length ? " " : "")
     : "")
     + (bad.length
       ? `${nameList(bad)} reads ${bad.map((id) => `${pm(g(id).value)}%`).slice(0, 3).join(", ")}.`
-      + ` A share is a slice of one income, so it runs 0 to 100 — a share above 100 is priced exactly as you typed it, and a share below 0 is priced as 0%.`
+      + ` A share is a slice of one income, so it runs 0 to 100: a share above 100 is priced exactly as you typed it, and a share below 0 is priced as 0%.`
       : "")
     + goTo((low.concat(bad))[0]);
 };
-/* MAGNITUDE. The page already had ONE too-large convention — the same ₦100M
-   threshold and the same "That looks unusually large — double-check the
-   figure" voice the salary-tax page uses — but it covered the income box only
+/* MAGNITUDE. The page already had ONE too-large convention ; the same ₦100M
+   threshold and the same "That looks unusually large ; double-check the
+   figure" voice the salary-tax page uses ; but it covered the income box only
    and never said WHICH box. The threshold and the voice now cover the income
    and the three step-1 actual spends, each named and routed, so a stray
    keystroke cannot become the confident "₦95,000,000,000 over" the step-2
    reconcile rail already refuses to print. No average salary is claimed
    anywhere in it: the honest signal is the size of the number itself. */
 const HUGE_MONEY = 100000000;
-/* E22-L2 — the too-small twin of bigRail. A ×1,000 unit slip (typing 100 for
+/* E22-L2 ; the too-small twin of bigRail. A ×1,000 unit slip (typing 100 for
    ₦100,000) priced the whole plan at ₦50 figures and scolded the visitor
-   ₦184,920 over, with the page internally consistent the whole way — every
+   ₦184,920 over, with the page internally consistent the whole way ; every
    sentence true of the figure it was given and none of them asking. Only the
    income box is covered: a genuinely small zero or an empty field is not
    English for "I meant more", and the page's zero-plan machinery already
@@ -683,7 +683,7 @@ const lowRail = (el: HTMLElement | null, ids: readonly string[]): void => {
   if (!bad.length) { el.hidden = true; el.innerHTML = ""; return; }
   el.hidden = false;
   el.innerHTML = `${bad.map((id) => `"${esc(fieldName(id))}" reads ${nn(pm(g(id).value))}`).join(", ")}.`
-    + ` That looks unusually small for a month — if you meant ${nn(pm(g(bad[0]).value) * 1000)}, retype it in full.`
+    + ` That looks unusually small for a month: if you meant ${nn(pm(g(bad[0]).value) * 1000)}, retype it in full.`
     + goTo(bad[0]);
 };
 const bigRail = (el: HTMLElement | null, ids: readonly string[]): void => {
@@ -694,23 +694,23 @@ const bigRail = (el: HTMLElement | null, ids: readonly string[]): void => {
   const more = bad.length - named.length;
   el.hidden = false;
   el.innerHTML = `${named.map((id) => `"${esc(fieldName(id))}" reads ${esc(nn(pm(g(id).value)))}`).join(", ")}.`
-    + ` That looks unusually large — double-check the figure before reading anything into the plan.`
+    + ` That looks unusually large: double-check the figure before reading anything into the plan.`
     + (more ? ` ${more} more figure${more > 1 ? "s" : ""} ${more > 1 ? "are" : "is"} past the same line.` : "")
     + goTo(bad[0]);
 };
-/* E10 — a bucket the visitor has NOT entered is UNKNOWN, and unknown never
+/* E10 ; a bucket the visitor has NOT entered is UNKNOWN, and unknown never
    prices as ₦0. pmBlank (no digit / not the honest-money alphabet) is the same
    predicate the copy handler and the ZERO LAW already use, so "abc" and "" read
    alike and neither becomes a scored bucket. Returns null, never a number. */
 const actualOf = (bucket: string): number | null => {
   const el = document.getElementById(ACT_ID[bucket]) as HTMLInputElement | null;
-  /* E13 — junk is UNKNOWN, never ₦0. pmBlank already returns null for "abc",
+  /* E13 ; junk is UNKNOWN, never ₦0. pmBlank already returns null for "abc",
      but "1.2.3" has digits inside the honest-money alphabet, so it slipped
-     through and was scored as a real ₦0 — printing "you entered ₦0 UNDER
+     through and was scored as a real ₦0 ; printing "you entered ₦0 UNDER
      ₦50,000", a fabricated verdict about a bucket nobody scored. A malformed
      bucket now reads exactly like a blank one: no figure, no badge, and the
      new #al-junk rail names the box instead. */
-  /* E14 — a NEGATIVE actual is unknown for the same reason. -1 used to be
+  /* E14 ; a NEGATIVE actual is unknown for the same reason. -1 used to be
      clamped to ₦0 here and the mirror then asserted "you entered ₦0 UNDER
      ₦67,500" while the field visibly held -1: a figure nobody entered, scored
      with total confidence. A spend cannot be negative, so nothing is scored
@@ -719,12 +719,12 @@ const actualOf = (bucket: string): number | null => {
   if (pm(el.value) < 0) return null;
   return Math.max(0, pm(el.value) || 0);
 };
-/* E10 — the ONE ownership predicate, reusing the page's existing sd()/badge
+/* E10 ; the ONE ownership predicate, reusing the page's existing sd()/badge
    truth (never a new truth source): an id still wearing SAMPLE is ours, a
    blanked id is nobody's, anything else is the visitor's. Used by seedwarn,
    the mirror, the verdict banner and the new sum line alike. */
 const isOurs = (id: string) => hasBadge(id, "data-sd");
-/* E20-NEW1 — ownership is a PER-FIELD answer. A restored "Last used" split
+/* E20-NEW1 ; ownership is a PER-FIELD answer. A restored "Last used" split
    is the visitor's even while the other two are still our example, so the
    old all-or-nothing group label called the visitor's own number ours. The
    labels are read from the DOM (badge text stripped) so the sentence can
@@ -747,20 +747,20 @@ const ownVoice = (ids: string[], allPhrase: string, nonePhrase: string): string 
 };
 const cap = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
 function render() {
-  /* F8 — every clamped negative says so: -x is priced as ₦0 in all seven
+  /* F8 ; every clamped negative says so: -x is priced as ₦0 in all seven
      inputs, so the rail names the rewrite instead of staying silent. */
   const bgNeg = ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"].some((id) => pm(g(id).value) < 0);
   /* Recovery soft spot 1 (A4): 999999999 income printed ₦500,000,000 plan
-     figures with no line saying the number is absurd — figures were the only
+     figures with no line saying the number is absurd ; figures were the only
      signal. The honest line reuses the fleet's own too-large vocabulary
-     verbatim (salary-tax "That gross looks unusually large — double-check
+     verbatim (salary-tax "That gross looks unusually large ; double-check
      the figure", same ₦100M threshold), so no new clause family is invented. */
   const bgHuge = pm(g("bg-inc").value) > 100000000;
   t("bg-warn").hidden = !(bgNeg || bgHuge);
   t("bg-warn").textContent = (bgNeg ? "Negative entries are treated as ₦0." : "")
     + ((bgNeg && bgHuge) ? " " : "")
-    + (bgHuge ? "That income looks unusually large — double-check the figure." : "");
-  /* ── E13 — the three input-health rails, in the order the orders that asked
+    + (bgHuge ? "That income looks unusually large: double-check the figure." : "");
+  /* ── E13 ; the three input-health rails, in the order the orders that asked
      for them came in. The malformed line is the confirmed CRITICAL: without
      it a verdict was computed from "12.5.5". Computed once here and then read
      by the rail, the verdict banner and the step-1 CTAs below, so none of the
@@ -769,7 +769,7 @@ function render() {
   junkRail(t("bg-junk"), STEP1_IDS);
   rangeRail(t("bg-range"), SPLIT_IDS);
   bigRail(t("bg-big"), MONEY_IDS);
-  /* E22-L2 — the missing ask on the too-small side. */
+  /* E22-L2 ; the missing ask on the too-small side. */
   lowRail(t("bg-low"), LOW_IDS);
   /* ONE junk in the four plan ids and there is no plan to itemise. Step 2's
      buckets, the live line, the mini line and the mirror panel are all this
@@ -783,12 +783,12 @@ function render() {
   const plan = budget503020(inc, np, wp, svp);
   /* THE ZERO LAW: every figure declares the ids it is derived from. A split the
      visitor never entered cannot print a gold ₦0 bucket. A split the reader
-     mis-read ("250," priced as 250) cannot print a plan at all — that is what
+     mis-read ("250," priced as 250) cannot print a plan at all ; that is what
      sfFigJ adds on top of the blank test. */
-  /* E19-C9 — the page prints whole naira, so the plan is compared AND printed
+  /* E19-C9 ; the page prints whole naira, so the plan is compared AND printed
      in whole naira: the leftover is computed from the same rounded parts that
      are on screen, so the printed parts always add up to the printed income,
-     and a rounding residue prints as the ±₦1 it is — never as "−₦0", which is
+     and a rounding residue prints as the ±₦1 it is ; never as "−₦0", which is
      a shortfall the plan does not have. */
   const planNeedsD = Math.round(plan.needs);
   const planWantsD = Math.round(plan.wants);
@@ -797,17 +797,17 @@ function render() {
   sfFigJ(t("bg-fig"), PLAN_IDS, `${nn(planNeedsD)} · ${nn(planWantsD)} · ${nn(planSavingsD)}`);
   splitFig();
   sfFigJ(t("bg-else"), PLAN_IDS, nn(leftoverD));
-  /* B4-FIX2 — a split the visitor never entered cannot print a gold bucket:
+  /* B4-FIX2 ; a split the visitor never entered cannot print a gold bucket:
      garbage ("abc" in a split) reads as un-entered, exactly like a cleared
      field, so the demand line below matches the blank state. */
   const total = Math.round((np + wp + svp) * 100);
-  /* FATIGUE CUT — the old sentence lived here ("Set all three splits — an
+  /* FATIGUE CUT ; the old sentence lived here ("Set all three splits ; an
      empty split is not a zero"), a second teacher for the one "empty ≠ zero"
      rule. It now speaks in the Nothing-to-compute rail's own voice
-     (guardOffer, tool-fields.ts: "Nothing to compute yet — X is empty, not
+     (guardOffer, tool-fields.ts: "Nothing to compute yet ; X is empty, not
      zero"), naming the exact missing split(s) in the fields' own words
      (text-nodes-only labels, so SAMPLE/LAST USED badges can never garble it
-     — the BREAK-1 lesson). One voice for the rule instead of two; the error
+     ; the BREAK-1 lesson). One voice for the rule instead of two; the error
      path below is untouched. */
   const splitLabel = (id: string) => {
     const l = document.querySelector(`label[for="${id}"]`);
@@ -819,15 +819,15 @@ function render() {
   const missingSplits = ["bg-needs", "bg-wants", "bg-save"].filter((id) => pmBlank(g(id).value));
   /* E4 census gate: `empty` is needed above (F-P2) as well as below. It reads
      VALUES only (sfIsEmpty), never badge state, so judging it here instead of
-     at the foot of render() changes nothing — first paint included. */
+     at the foot of render() changes nothing ; first paint included. */
   const empty = sfIsEmpty("50-30-20-budget-calculator", gv);
-  /* F-P2 — the empty/partial state fired TWO rail-voice lines at once: this
+  /* F-P2 ; the empty/partial state fired TWO rail-voice lines at once: this
      sumnote ("Needs % and Wants % … are empty, not zero") AND the offer rail
      ~40px below ("Monthly income ₦ and Needs % …"). The offer now carries the
      ONE union sentence (its `needs` in tool-fields.ts names income + all three
      splits, so guardOffer's single clause already says every missing id), so
      this line stands down whenever the offer rail is active. Same information,
-     one line fewer. F-P3 — a shown-but-empty sumnote is a visible nothing
+     one line fewer. F-P3 ; a shown-but-empty sumnote is a visible nothing
      (cold + every 100%-split state painted a blank <p>), so the element hides
      with its empty text instead of holding whitespace. */
   const offerRail = !empty && PLAN_IDS.some((id) => pmBlank(g(id).value));
@@ -835,43 +835,43 @@ function render() {
   if (offerRail) { railText(sumnote, ""); sumnote.hidden = true; }
   else if (missingSplits.length) {
     sumnote.hidden = false;
-    railText(sumnote, `Nothing to compute yet — ${missingSplits.map(splitLabel).join(" and ")} ${missingSplits.length > 1 ? "are" : "is"} empty, not zero.`);
+    railText(sumnote, `Nothing to compute yet: ${missingSplits.map(splitLabel).join(" and ")} ${missingSplits.length > 1 ? "are" : "is"} empty, not zero.`);
   }
-  /* E14 — a junk split is priced from the reader's number, so "Splits add to
+  /* E14 ; a junk split is priced from the reader's number, so "Splits add to
      300%" would be a percentage nobody typed. The junk rail already owns that
      field's voice; this line stands down rather than second-guessing it. */
   else if (junkIn(SPLIT_IDS)) { railText(sumnote, ""); sumnote.hidden = true; }
   else if (total === 100) { railText(sumnote, ""); sumnote.hidden = true; }
   else {
     /* Recovery soft spot 2 (A4): the old line stated the FACT ("Splits add to
-       250%") and prescribed nothing — the fix is named in the SAME line, no
+       250%") and prescribed nothing ; the fix is named in the SAME line, no
        new line, no new clause family. */
     sumnote.hidden = false;
-    /* E20-NEW1 — the split percentages are not all the visitor's: a restored
+    /* E20-NEW1 ; the split percentages are not all the visitor's: a restored
        split is theirs, an untouched one is our example. The line names which
        is which instead of calling the whole set "your exact percentages". */
-    railText(sumnote, `Splits add to ${total}% — buckets use ${ownVoice(["bg-needs", "bg-wants", "bg-save"], "your exact percentages", "our example's percentages")}, so bring them back to 100%.`);
+    railText(sumnote, `Splits add to ${total}%: buckets use ${ownVoice(["bg-needs", "bg-wants", "bg-save"], "your exact percentages", "our example's percentages")}, so bring them back to 100%.`);
   }
   const c = budget503020Compare(inc, np, wp, svp,
     Math.max(0, pm(g("bg-spn").value) || 0),
     Math.max(0, pm(g("bg-spw").value) || 0),
     Math.max(0, pm(g("bg-sps").value) || 0));
-  /* E13 manager follow-up — the SAME dishonesty, one surface up. When income is
+  /* E13 manager follow-up ; the SAME dishonesty, one surface up. When income is
    malformed ("12.5.5"), pm() reads ₦0 but the field still shows "12.5.5", and
-   these three receipt rows printed "Needs left › −₦120,000" — a confident
+   these three receipt rows printed "Needs left › −₦120,000" ; a confident
    number about the visitor's month, derived from a figure that does not exist.
    The verdict banner and the what-now line already withhold on this predicate;
    the rows were the last surface that did not. They show the spine's withheld
-   "—" instead, which is what the page prints for "we cannot price this". */
-  const rowDash = junkStep1.length > 0 ? "—" : null;
-  /* E19-C8/C9 — "Needs left" is a whole-naira figure: a half-naira residue is
+   "; " instead, which is what the page prints for "we cannot price this". */
+  const rowDash = junkStep1.length > 0 ? "–" : null;
+  /* E19-C8/C9 ; "Needs left" is a whole-naira figure: a half-naira residue is
      rounding, and "−₦0" would claim a shortfall that is not there. */
   sfFig(t("bg-rn"), ["bg-inc", "bg-needs", "bg-spn"], rowDash ?? nn(Math.round(c.needs_remaining)));
   sfFig(t("bg-rw"), ["bg-inc", "bg-wants", "bg-spw"], rowDash ?? nn(c.wants_remaining));
   sfFig(t("bg-rs"), ["bg-inc", "bg-save", "bg-sps"], rowDash ?? nn(c.savings_remaining));
-  /* STEP 2 — the needs half, itemised. Same income, same split: the needs
+  /* STEP 2 ; the needs half, itemised. Same income, same split: the needs
      figure feeding these buckets IS plan.needs, so step 1 → step 2 is one
-     continuous journey — change income or split and both steps move. */
+     continuous journey ; change income or split and both steps move. */
   const shares: Record<string, number> = {};
   const shareIds: string[] = [];
   document.querySelectorAll("[data-al-bucket]").forEach((el) => {
@@ -879,26 +879,26 @@ function render() {
     shares[inp.dataset.alBucket as string] = Math.max(0, pm(inp.value) || 0) / 100;
     shareIds.push(inp.id);
   });
-  /* E13 — step 2's own malformed rail. The five shares decide what "Other
+  /* E13 ; step 2's own malformed rail. The five shares decide what "Other
      needs" IS and the five actuals are scored straight into badges, so one
      junk box here prices a bucket at ₦0 and then prints a confident
-     "UNDER ₦48,000" for it — the same lie step 1 was caught telling, five
+     "UNDER ₦48,000" for it ; the same lie step 1 was caught telling, five
      fields further down the page. */
   junkRail(t("al-junk"), shareIds.concat(ACT_IDS));
   const r2 = budgetAllocator(inc, np, wp, svp, shares);
-  /* E14 — every one of these is plan.needs itemised, so a junk income or split
+  /* E14 ; every one of these is plan.needs itemised, so a junk income or split
      leaves the whole itemised step reading from the reader's number instead of
      the one on screen. They read planJunked through sfFigJ, the same predicate
      the receipt above does. */
   sfFigJ(t("al-needs"), ["bg-inc", "bg-needs"], nn(r2.needs));
-  /* T3 — the step-2 label names the LIVE split, never a fixed "half": at a
+  /* T3 ; the step-2 label names the LIVE split, never a fixed "half": at a
      60/20/20 split "Needs half: ₦150,000" was a live lie. Same live-span
-     pattern E2 used for the intro (sfFig withholds as "—" while blank). */
-  /* E19-C14 — the percentage is printed at the precision the figure is at, so
+     pattern E2 used for the intro (sfFig withholds as "; " while blank). */
+  /* E19-C14 ; the percentage is printed at the precision the figure is at, so
      "33% of income: ₦99,990" cannot happen (33% of ₦300,000 is ₦99,000). */
   sfFigJ(t("al-pct"), ["bg-inc", "bg-needs"], `${pctTxt(np * 100)}%`);
-  /* F-A2-1 — the step-2 intro names live figures, never the seed's. sfFig
-     withholds them as "—" while the inputs are blank, exactly like the
+  /* F-A2-1 ; the step-2 intro names live figures, never the seed's. sfFig
+     withholds them as "; " while the inputs are blank, exactly like the
      receipt, so no ₦0 is ever printed in prose. */
   sfFigJ(t("bg-step2-needs"), ["bg-inc", "bg-needs"], nn(r2.needs));
   const rentAmt = r2.buckets.find((b) => b.id === "rent")?.amount ?? 0;
@@ -906,38 +906,38 @@ function render() {
   const shareSum = Object.values(shares).reduce((a, b) => a + b, 0);
   const planned = r2.needs * shareSum;
   /* A junk share is priced from the reader's number too, so "buckets add to
-     345% of needs" would be a percentage nobody typed — the same standing rule
+     345% of needs" would be a percentage nobody typed ; the same standing rule
      for the overage line as for the sum line above. */
   const shareJunked = junkIn(shareIds);
   /* Every clamped negative says so: -x is priced as ₦0 in income, splits and
      every share, so the rail names the rewrite instead of staying silent.
      #bg-warn already owns the seven step-1 boxes, so this clause names only the
      five shares it alone covers. */
-  /* E14 — but a negative SPEND is not a spend that was clamped: it is a spend
+  /* E14 ; but a negative SPEND is not a spend that was clamped: it is a spend
      that cannot exist. The old treatment clamped it to ₦0 and the mirror then
-     printed "you entered ₦0 UNDER ₦67,500" over a field visibly holding -1 —
+     printed "you entered ₦0 UNDER ₦67,500" over a field visibly holding -1; 
      an entry nobody made, in the panel whose whole job is to score what was
      really spent. So the two families get two different truths, each naming its
      own fields in the labels' own words. */
   const negClampIds = shareIds.filter((id) => pm((document.getElementById(id) as HTMLInputElement).value) < 0);
   const negActIds = ACT_IDS.filter((id) => pm(g(id).value) < 0);
   const negClampClause = negClampIds.length
-    ? ` ${nameList(negClampIds)} ${negClampIds.length > 1 ? "read" : "reads"} ${negClampIds.map((id) => nn(pm(g(id).value))).slice(0, 3).join(", ")} — ${negClampIds.length > 1 ? "a figure there cannot be negative, so they are" : "a figure there cannot be negative, so it is"} treated as ₦0.`
+    ? ` ${nameList(negClampIds)} ${negClampIds.length > 1 ? "read" : "reads"} ${negClampIds.map((id) => nn(pm(g(id).value))).slice(0, 3).join(", ")}: ${negClampIds.length > 1 ? "a figure there cannot be negative, so they are" : "a figure there cannot be negative, so it is"} treated as ₦0.`
     : "";
   const negActClause = negActIds.length
-    ? ` ${nameList(negActIds)} ${negActIds.length > 1 ? "read" : "reads"} ${negActIds.map((id) => nn(pm(g(id).value))).slice(0, 3).join(", ")} — ${negActIds.length > 1 ? "a spend cannot be negative, so those buckets are" : "a spend cannot be negative, so that bucket is"} left unscored rather than read as ₦0.`
+    ? ` ${nameList(negActIds)} ${negActIds.length > 1 ? "read" : "reads"} ${negActIds.map((id) => nn(pm(g(id).value))).slice(0, 3).join(", ")}: ${negActIds.length > 1 ? "a spend cannot be negative, so those buckets are" : "a spend cannot be negative, so that bucket is"} left unscored rather than read as ₦0.`
     : "";
   const alNegSfx = negClampClause + negActClause;
   /* A field still wearing SAMPLE has not been touched; one wearing LAST USED
      holds the visitor's own remembered number. Both are the spine's own
-     badges, read off the DOM — no new state kept here (hasBadge, module scope). */
+     badges, read off the DOM ; no new state kept here (hasBadge, module scope). */
   if (r2.needs > 0 && planned > r2.needs && !shareJunked) {
     t("al-warn").hidden = false;
-    /* F-A2-7 — a remembered tune must not read as a scold: when the overage
+    /* F-A2-7 ; a remembered tune must not read as a scold: when the overage
        rides on LAST USED shares, the warn says so instead of greeting the
        returner with a warning new visitors never see. The maths never moves. */
-    const memSfx = shareIds.some((id) => hasBadge(id, "data-r")) ? " Includes shares from your last visit — trim any bucket to fit." : "";
-    t("al-warn").textContent = `Over by ${nn(planned - r2.needs)} — buckets add to ${(shareSum * 100).toFixed(0)}% of needs. Trim shares to 100% or less.` + memSfx + alNegSfx;
+    const memSfx = shareIds.some((id) => hasBadge(id, "data-r")) ? " Includes shares from your last visit; trim any bucket to fit." : "";
+    t("al-warn").textContent = `Over by ${nn(planned - r2.needs)}: buckets add to ${(shareSum * 100).toFixed(0)}% of needs. Trim shares to 100% or less.` + memSfx + alNegSfx;
   } else if (negClampIds.length || negActIds.length) {
     t("al-warn").hidden = false;
     t("al-warn").textContent = (negClampClause + negActClause).trim();
@@ -947,7 +947,7 @@ function render() {
   }
   const box = t("al-rows");
   box.innerHTML = "";
-  /* E19-C14 — the engine rounds each bucket, so five rounded rows can miss the
+  /* E19-C14 ; the engine rounds each bucket, so five rounded rows can miss the
      needs total by a naira. The residual row carries the difference, so the
      rows reconcile to the figure the receipt prints. */
   const namedRounded = r2.buckets
@@ -966,14 +966,14 @@ function render() {
     sfFigJ(amt, b.id === "other" ? ["bg-inc", "bg-needs"].concat(shareIds) : ["bg-inc", "bg-needs", "al-" + b.id], nn(shown));
     div.appendChild(lab); div.appendChild(amt); box.appendChild(div);
   }
-  /* E10 — the five needs-share fields decide what "Other needs" IS, so they
+  /* E10 ; the five needs-share fields decide what "Other needs" IS, so they
      gate every figure derived from them. The receipt above already withholds a
      blanked share's own row through sfFig; sharesSet keeps the mirror and the
      sum line on the SAME rule, so a half-cleared set of shares never prints a
      sum that quietly counts a blank as 0%. */
   const sharesSet = shareIds.length > 0 && shareIds.every((id) => !pmBlank(g(id).value));
-  /* F-A2-6 — over-100% must not swallow the residual: the engine (rightly,
-     untouched — it lives outside this file) omits "Other needs" at zero, so
+  /* F-A2-6 ; over-100% must not swallow the residual: the engine (rightly,
+     untouched ; it lives outside this file) omits "Other needs" at zero, so
      the page re-states it here as the honest negative step 1 already prints.
      Exactly-100% stays omitted: ₦0 of other is nothing to show. */
   if (r2.needs > 0 && planned > r2.needs && !r2.buckets.some((b) => b.id === "other")) {
@@ -986,14 +986,14 @@ function render() {
     div.appendChild(lab); div.appendChild(amt); box.appendChild(div);
   }
   sfEmpty(empty);
-  /* F2 — the receipt sits below the fold at 390px, so a split change used to
+  /* F2 ; the receipt sits below the fold at 390px, so a split change used to
      recompute figures the visitor could not see. This one line lives beside
      the fields and mirrors the plan, so every edit is visibly answered. */
   const splitsSet = PLAN_IDS.every((id) => !pmBlank(g(id).value));
   const live = t("bg-live");
   /* A hidden line carries no text: the rails contract reads note prose
     verbatim, so a stale "Plan now: ₦…" must not sit in the DOM behind hidden. */
-  /* E14 — the same for a junk plan id. "250," priced the whole line at ₦125
+  /* E14 ; the same for a junk plan id. "250," priced the whole line at ₦125
      somewhere a visitor could see it and the page never said a word; the what-
      now, the verdict and the three receipt rows already stood down on this
      predicate, and this was the last one that did not. */
@@ -1002,13 +1002,13 @@ function render() {
     live.hidden = true;
   } else {
     const liveTxt = `Plan now: ${nn(plan.needs)} needs · ${nn(plan.wants)} wants · ${nn(plan.savings)} savings`;
-    /* A16-F3 — this labelled line is the polite region now. Unhide BEFORE the
+    /* A16-F3 ; this labelled line is the polite region now. Unhide BEFORE the
        write so the insertion is announced, and skip identical rewrites so a
        keystroke that leaves the plan unchanged stays silent. */
     live.hidden = false;
     if (live.textContent !== liveTxt) live.textContent = liveTxt;
   }
-  /* F-A2-3 — the seed-actuals ambush: income or split typed, but the spends
+  /* F-A2-3 ; the seed-actuals ambush: income or split typed, but the spends
      still wear SAMPLE (ours, never entered). Name them before they paint the
      first triple negative as the visitor's month. */
   const sd = (id: string) => hasBadge(id, "data-sd");
@@ -1020,9 +1020,9 @@ function render() {
   if (!empty && planTouched && seedIds.length) {
     const nm = seedIds.map((id) => id === "bg-spn" ? "needs" : id === "bg-spw" ? "wants" : "savings").join(" and ");
     const warnTxt = seedIds.length === 3
-      ? "Heads up: the spends below are still our example, not yours — type what you really spent."
-      : `Heads up: the ${nm} ${seedIds.length > 1 ? "spends are" : "spend is"} still our example — type what you really spent.`;
-    /* A16-F2 — role="status": unhide first, write only when the sentence
+      ? "Heads up: the spends below are still our example, not yours: type what you really spent."
+      : `Heads up: the ${nm} ${seedIds.length > 1 ? "spends are" : "spend is"} still our example: type what you really spent.`;
+    /* A16-F2 ; role="status": unhide first, write only when the sentence
        actually changed (render() runs on every keystroke). */
     seedWarn.hidden = false;
     if (seedWarn.textContent !== warnTxt) seedWarn.textContent = warnTxt;
@@ -1030,16 +1030,16 @@ function render() {
     if (seedWarn.textContent) seedWarn.textContent = "";
     seedWarn.hidden = true;
   }
-  /* F-A2-4 + MF-1 — a negative must say what now: name the overage and the
+  /* F-A2-4 + MF-1 ; a negative must say what now: name the overage and the
      one honest action (trim the spend, or move the split). Step 2 plans from
      the plan figure either way, so say that too. */
   const wn = t("bg-whatnow");
   const overNW: Array<{ name: string; over: number }> = [];
-  /* E20-NEW3 — F-P5, the page's own rule: "a ₦0 plan is a plan that doesn't
+  /* E20-NEW3 ; F-P5, the page's own rule: "a ₦0 plan is a plan that doesn't
      exist". A negative income is read as ₦0, and the page must not scold a
      visitor against a plan of nothing. */
   const planTotal = Math.round(plan.needs) + Math.round(plan.wants) + Math.round(plan.savings);
-  /* E19-C8 — the page prints whole naira, so the verdict is decided on whole
+  /* E19-C8 ; the page prints whole naira, so the verdict is decided on whole
      naira, on the DISPLAYED figures: two identical numbers (₦125,001 against
      ₦125,001) must never carry an overage verdict. A half-naira residue is
      rounding, not a disagreement. */
@@ -1048,17 +1048,17 @@ function render() {
   if (needsOverD >= 1) overNW.push({ name: "needs", over: needsOverD });
   if (wantsOverD >= 1) overNW.push({ name: "wants", over: wantsOverD });
   /* Savings reads opposite: remaining>0 is "still to save" (self-explanatory,
-     the seed's own story), remaining<0 is OVER-put — ahead of plan, not short
+     the seed's own story), remaining<0 is OVER-put ; ahead of plan, not short
      of it. Only the confusing sign gets the gloss, never a scold for saving. */
-  /* E19-C8 — same rule for savings (over-put reads the other way round). */
+  /* E19-C8 ; same rule for savings (over-put reads the other way round). */
   const savOverD = Math.round(plan.savings) - Math.round(pm(g("bg-sps").value) || 0);
   const savOver = savOverD < 0 ? -savOverD : 0;
-  /* E13 manager follow-up — the boundary the leg logged instead of hiding.
+  /* E13 manager follow-up ; the boundary the leg logged instead of hiding.
      With "12.5.5" typed into income, pm() reads ₦0 while the FIELD still shows
      "12.5.5". The verdict banner was gated on that and prints CANNOT SCORE, but
-     this line was NOT: it still said "needs and wants ₦185,000 over — spend
+     this line was NOT: it still said "needs and wants ₦185,000 over ; spend
      less there", computed from a figure that does not exist and phrased in the
-     visitor's voice. That is the same shape as the mirror E10 removed — a
+     visitor's voice. That is the same shape as the mirror E10 removed ; a
      confident number about your month, derived from nothing.
      So the advice line withholds exactly where the verdict does: no verdict
      means no advice ABOUT the verdict. The rail above already names the field
@@ -1072,16 +1072,16 @@ function render() {
       const tot = overNW.reduce((a, o) => a + o.over, 0);
       const named = nm.charAt(0).toUpperCase() + nm.slice(1);
       const splitsRef = overNW.length > 1 ? "splits" : `${nm} split %`;
-      bits.push(`${named} are ${nn(tot)} over budget — spend less there or raise the ${splitsRef} above`);
+      bits.push(`${named} are ${nn(tot)} over budget: spend less there or raise the ${splitsRef} above`);
     }
-    if (savOver > 0) bits.push(`savings ${nn(savOver)} over plan — ahead of it; leave it banked or move the split if needs run tight`);
+    if (savOver > 0) bits.push(`savings ${nn(savOver)} over plan, ahead of it; leave it banked or move the split if needs run tight`);
     wn.hidden = false;
     railText(wn, bits.join("; ")
       + (overNW.length
         ? ". Step 2 still itemises the plan figure, not the amount you overspent."
         : "."));
   } else { wn.hidden = true; railText(wn, ""); }
-  /* MF-6 — the both-steps mini plan: FATIGUE CUT keeps only the pair the
+  /* MF-6 ; the both-steps mini plan: FATIGUE CUT keeps only the pair the
      tuner cannot see from step 2 (needs + rent). Wants/savings restated the
      live line two screens up; rent is the actionable one here. Same guard as
      the live line: no figures on an empty page. */
@@ -1092,8 +1092,8 @@ function render() {
     /* E14: a junk share is priced from the reader's number, so "rent of needs"
        here would come from a share nobody typed. Same predicate the bucket rows
        below use, so the two cannot disagree about one share. */
-    const rentTxt = pmBlank(g("al-rent").value) || malformedOf("al-rent") ? "—" : nn(rentAmt);
-    mini.textContent = `Mini plan — needs ${nn(plan.needs)} · rent ${rentTxt} of needs`;
+    const rentTxt = pmBlank(g("al-rent").value) || malformedOf("al-rent") ? "–" : nn(rentAmt);
+    mini.textContent = `Mini plan: needs ${nn(plan.needs)} · rent ${rentTxt} of needs`;
   }
   /* Discovery (A4 bottom-3): the copy button's cold honesty must be visible
      PRE-tap, not just in the clipboard payload. The static span beside the
@@ -1109,7 +1109,7 @@ function render() {
     const planTyped = ["bg-inc", "bg-needs", "bg-wants", "bg-save"].every(typedFld);
     if (empty) {
       cwhy.hidden = false;
-      cwhy.textContent = " — this copies our example.";
+      cwhy.textContent = ": this copies our example.";
       cwhy.setAttribute("data-trust", "example");
       copyBtn.textContent = "Copy example plan";
     } else if (allTyped) {
@@ -1117,52 +1117,52 @@ function render() {
       copyBtn.textContent = "Copy my plan";
     } else if (planTyped) {
       cwhy.hidden = false;
-      cwhy.textContent = " — copies the example plan (your splits, our spends).";
+      cwhy.textContent = ": copies the example plan (your splits, our spends).";
       cwhy.setAttribute("data-trust", "computed");
       copyBtn.textContent = "Copy plan summary";
     } else {
       cwhy.hidden = false;
-      cwhy.textContent = " — this copies our example.";
+      cwhy.textContent = ": this copies our example.";
       cwhy.setAttribute("data-trust", "example");
       copyBtn.textContent = "Copy example plan";
     }
   }
-  /* MF-4 — the whole-needs line, kept and given its OWN element. It compares
+  /* MF-4 ; the whole-needs line, kept and given its OWN element. It compares
      the aggregate needs spend against the plan, which is a DIFFERENT question
      from the per-bucket mirror below; it no longer shares an id with anything
      the mirror writes, because E9's collision (this sentence and five
      fabricated rows in ONE node, the second overwrite deleting the first) is
      exactly what this split removes.
-     T1 — the same plan-touched gate as seedwarn, in seedwarn's own words:
+     T1 ; the same plan-touched gate as seedwarn, in seedwarn's own words:
      until the visitor touches a plan input AND the spend itself, the figures
      are our example, so the line reads as example, never "You spent".
-     F-P1 — cold painted the plan THREE times (live + mini + mirror) before a
+     F-P1 ; cold painted the plan THREE times (live + mini + mirror) before a
      keystroke. While step-1 is untouched the seed keeps this line waiting; a
      spend typed alone still raises the Example voice (the history-trap path),
      so the gate is "nobody touched anything", not "plan untouched".
-     F-P5 — a ₦0 plan is a plan that doesn't exist: the line withholds exactly
+     F-P5 ; a ₦0 plan is a plan that doesn't exist: the line withholds exactly
      where copy refuses (the same plan-complete guard as the copy handler
      below), so a kept spend + cleared plan never scolds "₦95,000 over" against
      a plan nobody entered. */
   const am = t("al-needsline");
-  /* F-P1/F-P5 gates, verbatim as before — the plan is what both halves read. */
+  /* F-P1/F-P5 gates, verbatim as before ; the plan is what both halves read. */
   const planComplete = PLAN_IDS.every((id) => !pmBlank(g(id).value));
   const step1Touched = planTouched || !sd("bg-spn");
-  /* E14 — "12.5.5" in "Spent on needs" read as ₦0 and the line printed "You
-     spent ₦0 vs ₦150,000 plan on needs — within plan" while the verdict above
+  /* E14 ; "12.5.5" in "Spent on needs" read as ₦0 and the line printed "You
+     spent ₦0 vs ₦150,000 plan on needs ; within plan" while the verdict above
      said CANNOT SCORE for the very same field. One screen, two owners. */
   const spendJunked = junkIn(["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn"]);
   if (!empty && planComplete && planTotal > 0 && !pmBlank(g("bg-spn").value) && !spendJunked && step1Touched) {
     const spent = Math.max(0, pm(g("bg-spn").value) || 0);
-    /* E19-C8 — compare the DISPLAYED figures: 125,001 against 125,001 is
+    /* E19-C8 ; compare the DISPLAYED figures: 125,001 against 125,001 is
        within plan, and the residue that produced the "₦1 over" claim never
        reaches the screen. */
     const spentD = Math.round(spent);
     const needsD = Math.round(plan.needs);
-    /* E19-C4 — the SPEND's own badge decides its voice, not the plan's: a
+    /* E19-C4 ; the SPEND's own badge decides its voice, not the plan's: a
        figure the visitor typed is theirs even while the plan is still ours. */
-    /* E20-NEW2 — a spend the page wrote from the plan is OURS, whatever its
-       badge says: the "Use my targets — needs" chip writes the plan's figure
+    /* E20-NEW2 ; a spend the page wrote from the plan is OURS, whatever its
+       badge says: the "Use my targets ; needs" chip writes the plan's figure
        and the page must not call it "You spent". */
     const planSpent = SPEND_PROV["bg-spn"] === "plan";
     const mineSpent = !sd("bg-spn") && !planSpent;
@@ -1172,19 +1172,19 @@ function render() {
     am.hidden = false;
     if (spentD > needsD) {
       railText(am, planSpent
-        ? `From the plan: ${nn(spentD)} vs ${planSide} on needs — ${nn(spentD - needsD)} over. That figure is ours, not yours — type what you really spent to score your month.`
+        ? `From the plan: ${nn(spentD)} vs ${planSide} on needs: ${nn(spentD - needsD)} over. That figure is ours, not yours: type what you really spent to score your month.`
         : mineSpent
-          ? `You spent ${nn(spentD)} vs ${planSide} on needs — ${nn(spentD - needsD)} over. Tune the buckets below against the plan, then trim the spend above.`
-          : `Example: ${nn(spentD)} vs ${planSide} on needs — ${nn(spentD - needsD)} over. Our example, not yours — type what you really spent to score your month.`);
+          ? `You spent ${nn(spentD)} vs ${planSide} on needs: ${nn(spentD - needsD)} over. Tune the buckets below against the plan, then trim the spend above.`
+          : `Example: ${nn(spentD)} vs ${planSide} on needs: ${nn(spentD - needsD)} over. Our example, not yours: type what you really spent to score your month.`);
     } else {
       railText(am, planSpent
-        ? `From the plan: ${nn(spentD)} vs ${planSide} on needs — within plan. That figure is ours, not yours — type what you really spent to score your month.`
+        ? `From the plan: ${nn(spentD)} vs ${planSide} on needs: within plan. That figure is ours, not yours: type what you really spent to score your month.`
         : mineSpent
-          ? `You spent ${nn(spentD)} vs ${planSide} on needs — within plan. The buckets below share out the plan figure.`
-          : `Example: ${nn(spentD)} vs ${planSide} on needs — within plan. Our example, not yours — the buckets below share out the plan figure.`);
+          ? `You spent ${nn(spentD)} vs ${planSide} on needs: within plan. The buckets below share out the plan figure.`
+          : `Example: ${nn(spentD)} vs ${planSide} on needs: within plan. Our example, not yours: the buckets below share out the plan figure.`);
     }
   } else { am.hidden = true; railText(am, ""); }
-  /* MF-5 + F9 — the memory date, visible: the spine dates LAST USED only in a
+  /* MF-5 + F9 ; the memory date, visible: the spine dates LAST USED only in a
      hover title (no touch path), so the page reads the spine's own key and
      prints the day. A copied plan goes stale on the next keystroke, so the
      confirmation hides here too. */
@@ -1199,7 +1199,7 @@ function render() {
         const days = Math.floor((Date.now() - s.t) / 864e5);
         const rel = days <= 0 ? "today" : days === 1 ? "yesterday" : days + " days ago";
         const dst = new Date(s.t).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
-        memTxt = `Last saved ${rel} (${dst}) — only LAST USED pills are yours.`;
+        memTxt = `Last saved ${rel} (${dst}): only LAST USED pills are yours.`;
       }
     }
   } catch {}
@@ -1254,7 +1254,7 @@ function render() {
     }
   });
 
-  /* === E10 (A10-C1/C3) — the actuals mirror, rebuilt to measure something REAL.
+  /* === E10 (A10-C1/C3) ; the actuals mirror, rebuilt to measure something REAL.
      E9 shipped a panel with no per-bucket actual input anywhere on the page. It
      MANUFACTURED one by rescaling the single aggregate spend:
 
@@ -1262,7 +1262,7 @@ function render() {
          variance  = planAmt × (spent/needs − 1)
 
      Because planAmt/needs is a CONSTANT share, sign(variance) was the same for
-     every bucket — one finding printed five times. The five badges could never
+     every bucket ; one finding printed five times. The five badges could never
      disagree and could never say "rent over, food under", the only case that
      teaches anything. That rescaling is GONE; nothing on this page invents an
      actual any more.
@@ -1270,20 +1270,20 @@ function render() {
      The panel now scores what the visitor actually types, per bucket, into the
      five optional al-act-* fields above: variance = actual − plan, each one
      reading its own field, so the badges are structurally independent.
-       · a bucket with a BLANK actual shows no amount and no badge — it says so
+       · a bucket with a BLANK actual shows no amount and no badge ; it says so
          in words instead. Unknown is never priced as ₦0.
        · if NO bucket has an actual, the whole variance panel withholds. There is
          no fallback to the fabricated rescaling; there is no fallback at all.
        · ownership travels WITH the numbers: the Example badge sits inside the
          panel, next to the figures it describes, not only in a sibling note.
      The heading, the badge and the disclosure each live in their OWN element,
-     and #al-mirror-own is written by exactly one line below — so no later write
+     and #al-mirror-own is written by exactly one line below ; so no later write
      can destroy the disclosure the way E9's innerHTML overwrite did. */
   const scored = AL_BUCKETS.map((b) => ({ b, plan: r2.buckets.find((x) => x.id === b)?.amount ?? 0, actual: actualOf(b) }));
   const anyScored = scored.some((s) => s.actual !== null);
   /* Ownership of the FIGURE ON SHOW: the plan half is derived from income, the
      splits and the five shares. While any of those still wears SAMPLE the
-     numbers are our worked example — the same sd() gate seedwarn and the copy
+     numbers are our worked example ; the same sd() gate seedwarn and the copy
      button already read, not a new truth source. */
   const planOurs = ["bg-inc", "bg-needs", "bg-wants", "bg-save"].some(isOurs)
     || shareIds.some(isOurs) || !sharesSet;
@@ -1291,7 +1291,7 @@ function render() {
   const badgeEl = t("al-mirror-badge");
   const ownEl = t("al-mirror-own");
   const rowsEl = t("al-actuals");
-  /* E14 — with a junk plan id there is no plan column to score against, so the
+  /* E14 ; with a junk plan id there is no plan column to score against, so the
      whole panel withholds instead of pricing "Rent / housing ₦56" off a figure
      the visitor never typed. Same predicate, same empty-state treatment. */
   if (empty || !planComplete || planJunked) {
@@ -1303,13 +1303,13 @@ function render() {
   } else {
     headEl.hidden = false;
     /* The Example badge rides the panel itself whenever the plan figures on
-       show are ours — ownership travels with the numbers, never a section away. */
+       show are ours ; ownership travels with the numbers, never a section away. */
     badgeEl.hidden = !planOurs;
     ownEl.hidden = false;
     if (!anyScored) {
       /* No actual anywhere: the panel withholds rather than inventing one, and
          says in words WHY it is empty and how to fill it. */
-      railText(ownEl, "Our example numbers, not yours: the naira beside each bucket is the plan. Type what you actually spent in any bucket; a blank bucket prints the plan amount — your spend scores against it once you type it.");
+      railText(ownEl, "Our example numbers, not yours: the naira beside each bucket is the plan. Type what you actually spent in any bucket; a blank bucket prints the plan amount: your spend scores against it once you type it.");
       rowsEl.innerHTML = "";
       rowsEl.hidden = true;
       t("al-reconcile").hidden = true; railText(t("al-reconcile") as HTMLElement, "");
@@ -1317,17 +1317,17 @@ function render() {
       t("al-onplan").hidden = true; railText(t("al-onplan") as HTMLElement, "");
     } else {
       const n = scored.filter((s) => s.actual !== null).length;
-      /* E19-C2/C13 — the sentence counts what the VISITOR typed and names what
+      /* E19-C2/C13 ; the sentence counts what the VISITOR typed and names what
          the PLAN wrote, and the "the other 0 …" clause only prints when a
          bucket really is unscored. */
       const nPlanWritten = scored.filter((s) => s.actual !== null && ACT_PROV[s.b] === "plan").length;
       const nTyped = n - nPlanWritten;
       const planOursTail = planOurs ? " The plan figures are still our example. Touch income, a split or a share to make them yours." : "";
       const mirrorLead = "Variance = what you entered minus that bucket's plan. ";
-      /* E20-R1/R3 — the 25-word "the other N still show their plan only …"
+      /* E20-R1/R3 ; the 25-word "the other N still show their plan only …"
          clause is GONE: it made this rail 63 words (A17 filed 61 as HIGH and
          E17's log claimed it fixed), and it repeated what the rows already say
-         ("— add yours to score it"). The sentence now counts what was typed
+         ("; add yours to score it"). The sentence now counts what was typed
          and what came from the plan, in plain sentences with no seam. */
       railText(ownEl, nPlanWritten === 0
         ? `${mirrorLead}${n} of 5 buckets scored from what you typed.${planOursTail}`
@@ -1339,7 +1339,7 @@ function render() {
          junk share means this column is the reader's number, not the one typed.
          It withholds exactly like the #al-rows figure above it, per bucket, so
          a "250," in rent dashes rent and leaves food priced honestly. */
-      const planTxt = (b: string): string => (planJunked || malformedOf("al-" + b) ? "—" : nn(scored.find((x) => x.b === b)?.plan ?? 0));
+      const planTxt = (b: string): string => (planJunked || malformedOf("al-" + b) ? "–" : nn(scored.find((x) => x.b === b)?.plan ?? 0));
       for (const s of scored) {
         const bucket = r2.buckets.find((x) => x.id === s.b);
         if (!bucket) continue;
@@ -1347,16 +1347,16 @@ function render() {
           /* Honest unknown state: the plan figure is fine to show (it IS the
              plan), but there is no actual, so there is nothing to compare and no
              badge. No fabricated amount is printed anywhere in this row. */
-          html += `<div class="actuals-row" tabindex="0" role="button" data-goto="${ACT_ID[s.b]}" title="See the field behind this figure"><span>${bucket.label}</span> <b>${planTxt(s.b)}</b><span class="actuals-none">— add yours to score it</span> </div>`;
+          html += `<div class="actuals-row" tabindex="0" role="button" data-goto="${ACT_ID[s.b]}" title="See the field behind this figure"><span>${bucket.label}</span> <b>${planTxt(s.b)}</b><span class="actuals-none">· add yours to score it</span> </div>`;
           continue;
         }
         /* E14: with the plan figure unreadable there is nothing to compare this
            actual against, so the badge withholds with it rather than printing
            "OVER ₦99,944" computed from a share nobody typed. What the visitor
-           entered still prints — that part is true. */
+           entered still prints ; that part is true. */
         const planBad = planJunked || malformedOf("al-" + s.b);
         if (planBad) {
-          html += `<div class="actuals-row" tabindex="0" role="button" data-goto="${ACT_ID[s.b]}" title="See the field behind this figure"><span>${bucket.label}</span><b>—</b> <span class="actuals-diff">${ACT_PROV[s.b] === "plan" ? "from the plan" : "you entered"} ${nn(s.actual)}</span> </div>`;
+          html += `<div class="actuals-row" tabindex="0" role="button" data-goto="${ACT_ID[s.b]}" title="See the field behind this figure"><span>${bucket.label}</span><b>–</b> <span class="actuals-diff">${ACT_PROV[s.b] === "plan" ? "from the plan" : "you entered"} ${nn(s.actual)}</span> </div>`;
           continue;
         }
         const variance = s.actual - s.plan;
@@ -1364,37 +1364,37 @@ function render() {
         let badgeText = "ON PLAN";
         if (variance > 0) { badgeClass = "verdict-badge--action"; badgeText = `OVER ${nn(variance)}`; }
         else if (variance < 0) { badgeClass = "verdict-badge--good"; badgeText = `UNDER ${nn(-variance)}`; }
-        /* E19-C2 — a plan-written figure is ours: the row says so, and its
+        /* E19-C2 ; a plan-written figure is ours: the row says so, and its
            badge inherits the caveat instead of claiming the visitor's month. */
         const rowProv = ACT_PROV[s.b] === "plan";
         html += `<div class="actuals-row" tabindex="0" role="button" data-goto="${ACT_ID[s.b]}" title="See the field behind this figure"><span>${bucket.label}</span> <b>${planTxt(s.b)}</b> <span class="actuals-diff">${rowProv ? "from the plan" : "you entered"} ${nn(s.actual)}</span><span class="verdict-badge ${badgeClass}">${rowProv && badgeText === "ON PLAN" ? "ON PLAN (from the plan)" : badgeText}</span></div>`;
       }
       rowsEl.innerHTML = html;
       rowsEl.hidden = false;
-      /* E12-7 — "ON PLAN" badges used to be the end of the interaction. When
+      /* E12-7 ; "ON PLAN" badges used to be the end of the interaction. When
          every scored bucket matches its plan exactly, say what it means and
          where to go next. */
       const onPlanEl = t("al-onplan");
       const scoredRows = scored.filter((s) => s.actual !== null);
-      /* E19-C3 — when every scored bucket came from the plan, "ON PLAN" is true
+      /* E19-C3 ; when every scored bucket came from the plan, "ON PLAN" is true
          by construction, not by verdict: the banner must say so. */
       const allPlanWritten = scoredRows.length > 0 && scoredRows.every((s) => ACT_PROV[s.b] === "plan");
       if (scoredRows.length > 0 && scoredRows.every((s) => s.actual === s.plan)) {
         onPlanEl.hidden = false;
         railText(onPlanEl, allPlanWritten
-          ? `ON PLAN on all ${scoredRows.length} scored bucket${scoredRows.length > 1 ? "s" : ""} — but those figures came from the plan, not your month, so it is true by construction, not by verdict. Type what you really spent to score your month.`
-          : `ON PLAN on all ${scoredRows.length} scored bucket${scoredRows.length > 1 ? "s" : ""} — if your month really matches the plan, the plan is holding; put the savings slice to work in Savings Goal Calculator.`);
+          ? `ON PLAN on all ${scoredRows.length} scored bucket${scoredRows.length > 1 ? "s" : ""}: but those figures came from the plan, not your month, so it is true by construction, not by verdict. Type what you really spent to score your month.`
+          : `ON PLAN on all ${scoredRows.length} scored bucket${scoredRows.length > 1 ? "s" : ""}: if your month really matches the plan, the plan is holding; put the savings slice to work in Savings Goal Calculator.`);
       } else {
         onPlanEl.hidden = true;
         railText(onPlanEl, "");
       }
-      /* E11-8 — the aggregate never met the buckets. A11 proved a ₦150,000
+      /* E11-8 ; the aggregate never met the buckets. A11 proved a ₦150,000
          "Spent on needs" sitting beside ₦80,000 of scored buckets with the
-         contradiction never mentioned — two numbers about the same money, on the
+         contradiction never mentioned ; two numbers about the same money, on the
          same screen, silently disagreeing. Say it. When the visitor has scored at
          least one bucket AND their aggregate needs spend is entered, the buckets
          must sum to that aggregate or one of the two is wrong; we do not know
-         which, so we do not guess — we print both and name the gap. Uses the
+         which, so we do not guess ; we print both and name the gap. Uses the
          scored total, never an estimate, and says so. */
       const scoredSum = scored.reduce((a, s) => a + (s.actual ?? 0), 0);
       const aggNeeds = pm(g("bg-spn").value) || 0;
@@ -1418,19 +1418,19 @@ function render() {
       };
       const hideFix = () => { recFix.hidden = true; };
       if ((aggNeeds > HUGE || actualsAbsurd) && n > 0) {
-        /* E12-4 — the absurd rail must NAME the offending field, not shrug at
+        /* E12-4 ; the absurd rail must NAME the offending field, not shrug at
            "the needs total and the bucket amounts". Same ₦100M flag the page
            body already uses; name the first offender and route to it. */
         const absurdBucket = scored.find((s) => s.actual !== null && s.actual > HUGE);
         const absurdId = aggNeeds > HUGE ? "bg-spn" : absurdBucket ? ACT_ID[absurdBucket.b] : "bg-spn";
         const absurdLabel = absurdId === "bg-spn"
           ? '"Spent on needs"'
-          : `"${r2.buckets.find((x) => x.id === absurdBucket!.b)?.label} — you actually spent"`;
+          : `"${r2.buckets.find((x) => x.id === absurdBucket!.b)?.label}: you actually spent"`;
         rec.hidden = false;
-        railText(rec, `One of these figures looks unusually large — double-check ${absurdLabel} first, then the other amounts, before reading a gap into them.`);
+        railText(rec, `One of these figures looks unusually large: double-check ${absurdLabel} first, then the other amounts, before reading a gap into them.`);
         setFix(absurdId, `Fix ${absurdLabel}`);
       } else if (n > 0 && !pmBlank(g("bg-spn").value) && aggNeeds > 0) {
-        /* E19-C10 — no hidden tolerance. The page prints whole naira, so a
+        /* E19-C10 ; no hidden tolerance. The page prints whole naira, so a
            fraction of one is rounding and a naira or more is a disagreement.
            The rail names both numbers, so it carries this without new copy. */
         const diff = Math.abs(Math.round(scoredSum) - Math.round(aggNeeds));
@@ -1439,16 +1439,16 @@ function render() {
              is exactly what the suite is for.
              1. The first wording said "the buckets are missing X" from
                 aggNeeds - scoredSum, which goes NEGATIVE when the buckets sum to
-                MORE than the total — it printed "missing −₦1,696,968", nonsense on
+                MORE than the total ; it printed "missing −₦1,696,968", nonsense on
                 its face. Sign-agnostic now: we never say which side is at fault.
              2. rails then failed it as a BARE naira assertion: the line named
                 three figures and never asked for anything. That contract is
-                right — a sentence that only reports a difference reads as a
+                right ; a sentence that only reports a difference reads as a
                 verdict. So it now ASKS, which is what the user needs to do next
                 anyway: finish the buckets, or correct the total. */
           rec.hidden = false;
-          railText(rec, `Your buckets add to ${nn(Math.round(scoredSum))} but "Spent on needs" says ${nn(Math.round(aggNeeds))} — they disagree, so we cannot score your month yet. Fill in the missing buckets or correct the needs total.`);
-          /* E12-3 — the sentence says what to type; now it gets there too. */
+          railText(rec, `Your buckets add to ${nn(Math.round(scoredSum))} but "Spent on needs" says ${nn(Math.round(aggNeeds))}: they disagree, so we cannot score your month yet. Fill in the missing buckets or correct the needs total.`);
+          /* E12-3 ; the sentence says what to type; now it gets there too. */
           const blankBucket = AL_BUCKETS.find((b) => actualOf(b) === null);
           if (blankBucket) {
             setFix(ACT_ID[blankBucket], `Fill in ${r2.buckets.find((x) => x.id === blankBucket)?.label}`);
@@ -1465,20 +1465,20 @@ function render() {
         railText(rec, "");
         hideFix();
       }
-      /* E19-C3 — a verdict cannot stand beside the rail that says the month
+      /* E19-C3 ; a verdict cannot stand beside the rail that says the month
          cannot be scored. The rail is the page's own authority on that. */
       if (!rec.hidden) { onPlanEl.hidden = true; railText(onPlanEl, ""); }
     }
   }
-  /* E10 (A10-C10) — print the allocator sum. 40+25+15+10+7 = 97% and the receipt
+  /* E10 (A10-C10) ; print the allocator sum. 40+25+15+10+7 = 97% and the receipt
      never said so: the visitor had to add five percentages by hand to learn the
      shares close. Now the sum AND the remainder are both printed, and the
-     remainder is named as exactly what it buys. No new figure — both are
+     remainder is named as exactly what it buys. No new figure ; both are
      derived from the shares already on screen. */
   const sumPct = Math.round(shareSum * 100);
   const remainderPct = Math.round((1 - shareSum) * 100);
-  /* E19-C6/C7 — the EXACT share sum and the EXACT remainder. The rounded pair
-     is what produced "Shares add to 100% — 0% over" beside a visible ₦250 and
+  /* E19-C6/C7 ; the EXACT share sum and the EXACT remainder. The rounded pair
+     is what produced "Shares add to 100% ; 0% over" beside a visible ₦250 and
      "every naira of needs has a job" while ₦125 sat unassigned. */
   const exactPct = shareSum * 100;
   const exactRemainder = (1 - shareSum) * 100;
@@ -1487,35 +1487,35 @@ function render() {
     sumEl.hidden = true; railText(sumEl, "");
   } else if (planned > r2.needs) {
     sumEl.hidden = false;
-    /* E19-C6 — the sentence quotes the SAME share sum the naira comes from:
+    /* E19-C6 ; the sentence quotes the SAME share sum the naira comes from:
        33.4 x 3 is 100.2%, and rounding it to 100% printed "0% over" over a
        visible ₦250 overflow. */
-    railText(sumEl, `Shares add to ${pctTxt(exactPct)}% — ${pctTxt(exactPct - 100)}% over the needs budget (${nn(planned - r2.needs)}). Trim shares to ${100}% or less.`);
+    railText(sumEl, `Shares add to ${pctTxt(exactPct)}%: ${pctTxt(exactPct - 100)}% over the needs budget (${nn(planned - r2.needs)}). Trim shares to ${100}% or less.`);
   } else if (exactPct === 100) {
     sumEl.hidden = false;
-    /* E19-C7 — only a TRUE 100% earns "every naira of needs has a job": at
+    /* E19-C7 ; only a TRUE 100% earns "every naira of needs has a job": at
        99.9% the remainder is a naira with no job, and the page says so. */
-    railText(sumEl, `Shares add to ${pctTxt(exactPct)}% — every naira of needs has a job.`);
+    railText(sumEl, `Shares add to ${pctTxt(exactPct)}%: every naira of needs has a job.`);
   } else if (exactPct < 80) {
     sumEl.hidden = false;
-    /* E22-L7 — the under-100 side finally gets its plausibility question.
+    /* E22-L7 ; the under-100 side finally gets its plausibility question.
        58% means 42% of the needs budget parked in "Other needs" with no
        on-screen ask, and a visitor with weak number sense cannot weigh that.
        The over-100 branch already fires exactly; the low branch now asks too.
        The figure is priced exactly as typed either way. */
-    railText(sumEl, `Shares add to ${pctTxt(exactPct)}% — the other ${pctTxt(exactRemainder)}% of the needs budget is unassigned. Check the five boxes above; most households aim for 100%.`);
+    railText(sumEl, `Shares add to ${pctTxt(exactPct)}%: the other ${pctTxt(exactRemainder)}% of the needs budget is unassigned. Check the five boxes above; most households aim for 100%.`);
   } else {
     sumEl.hidden = false;
-    /* E19-C7 — the remainder is printed as it is (99.9% is 99.9%, and the
+    /* E19-C7 ; the remainder is printed as it is (99.9% is 99.9%, and the
        ₦125 in "Other needs" is not a naira without a job). The 97% wording is
        unchanged: pctTxt prints 97 and 3 exactly as before. */
-    railText(sumEl, `Shares add to ${pctTxt(exactPct)}% — the other ${pctTxt(exactRemainder)}% is what "Other needs" holds, so the buckets still add up to ${nn(r2.needs)}.`);
+    railText(sumEl, `Shares add to ${pctTxt(exactPct)}%: the other ${pctTxt(exactRemainder)}% is what "Other needs" holds, so the buckets still add up to ${nn(r2.needs)}.`);
   }
 
-  /* === E10 (A10-C2) — the verdict banner must not speak in the second person
+  /* === E10 (A10-C2) ; the verdict banner must not speak in the second person
      about numbers WE seeded. Every variant below derives from the seven step-1
      fields, so each one declares the ids it reads; if any of them still wears
-     SAMPLE the sentence switches to the page's own "our example" voice — the
+     SAMPLE the sentence switches to the page's own "our example" voice ; the
      same sd() gate seedwarn, the copy button and the mirror already use, not a
      new truth source. On cold load the banner says "Our example is ₦10,000
      short on savings" about the ₦40,000 seed, instead of addressing a visitor
@@ -1525,25 +1525,25 @@ function render() {
   const verdictItems: string[] = [];
   /* "yours" for every id still wearing SAMPLE ⇒ the number belongs to our seed. */
   const yours = (ids: string[]) => ids.every((id) => !isOurs(id) && !pmBlank(g(id).value));
-  /* E13 — the other half of the confirmed CRITICAL. The rail says what the
+  /* E13 ; the other half of the confirmed CRITICAL. The rail says what the
      page DID with a malformed box; this stops the banner printing a verdict
      on top of it. A13 proved "12.5.5" in the income box still printed "AHEAD
-     — Our example puts ₦40,000 extra to savings" (plan ₦0 minus the ₦40,000
+     ; Our example puts ₦40,000 extra to savings" (plan ₦0 minus the ₦40,000
      seed actual), and "abc" left the banner silently empty, which is its own
      dishonesty. So instead of either, the banner says the month is NOT
      scored and routes to the box. It never asserts a conclusion built from a
-     number nobody entered — that is the whole point of the rail above. */
+     number nobody entered ; that is the whole point of the rail above. */
   const junkVerdict = junkStep1.concat(shareIds.filter((id) => malformedOf(id)));
   if (!empty && junkVerdict.length) {
     verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">CANNOT SCORE</span> ${nameList(junkVerdict)} ${junkVerdict.length > 1 ? "are" : "is"} not a figure we can read, so nothing below is a verdict about your money. Fix the field and this scores itself.${goTo(junkVerdict[0])}</div>`);
   }
   else if (!empty && planComplete) {
     const splitsYours = yours(["bg-needs", "bg-wants", "bg-save"]);
-    /* E20-NEW1 — the splits group can be PARTLY the visitor's (a restored
+    /* E20-NEW1 ; the splits group can be PARTLY the visitor's (a restored
        "Last used" split beside two of our example), so it gets a voice that
        names which is which. */
     const splitsVoice = ownVoice(["bg-needs", "bg-wants", "bg-save"], "your splits", "our example's splits");
-    /* A21-F1 — the spend that CREATES the comparison is the one whose owner
+    /* A21-F1 ; the spend that CREATES the comparison is the one whose owner
        decides the voice; the matching split does not have to be typed for the
        figure to be the visitor's. This is the needs line's rule, applied to the
        banner's three items: a typed ₦180,000 vs the example plan is the
@@ -1554,24 +1554,24 @@ function render() {
     const bucketsYours = yours(["bg-inc", "bg-needs"].concat(shareIds));
     // Check splits add to 100%
     if (total !== 100) {
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">SPLITS ${total}%</span> ${cap(splitsVoice)} add to ${total}% — change them to add up to 100%.</div>`);
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">SPLITS ${total}%</span> ${cap(splitsVoice)} add to ${total}%: change them to add up to 100%.</div>`);
     }
     // Check savings gap
-    /* E20-NEW3 — no scolding against a plan of nothing. */
+    /* E20-NEW3 ; no scolding against a plan of nothing. */
     if (planTotal > 0 && c.savings_remaining > 0) {
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">SAVE GAP</span> ${savYours ? `You're ${nn(c.savings_remaining)} short on savings` : `Our example is ${nn(c.savings_remaining)} short on savings — that figure is ours, not yours`} — set up an automatic transfer or raise the savings split.</div>`);
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">SAVE GAP</span> ${savYours ? `You're ${nn(c.savings_remaining)} short on savings` : `Our example is ${nn(c.savings_remaining)} short on savings: that figure is ours, not yours`}: set up an automatic transfer or raise the savings split.</div>`);
     } else if (planTotal > 0 && c.savings_remaining < 0) {
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--good">AHEAD</span> ${savYours ? `You've put ${nn(-c.savings_remaining)} extra to savings` : `Our example puts ${nn(-c.savings_remaining)} extra to savings`} — ahead of plan.</div>`);
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--good">AHEAD</span> ${savYours ? `You've put ${nn(-c.savings_remaining)} extra to savings` : `Our example puts ${nn(-c.savings_remaining)} extra to savings`}: ahead of plan.</div>`);
     }
     // Check needs overage
-    /* E19-C8 — the banner verdict uses the same displayed figures. */
-    /* E20-R2 — the banner decides on the SAME figures the needs line prints.
+    /* E19-C8 ; the banner verdict uses the same displayed figures. */
+    /* E20-R2 ; the banner decides on the SAME figures the needs line prints.
        Post-E19 the line said "within plan" while this banner said "₦1 over"
        about the same two identical numbers: two opposite verdicts, one
        screen. A half-naira residue is rounding, not an overage. */
     const needsOverShown = Math.round(Math.max(0, pm(g("bg-spn").value) || 0)) - Math.round(plan.needs);
     if (planTotal > 0 && needsOverShown >= 1) {
-      /* E12-5 — generic "increase Needs % or reduce rent/food/transport" gave no
+      /* E12-5 ; generic "increase Needs % or reduce rent/food/transport" gave no
          size to the hole. Name the overage and, where the income is known, the
          exact Needs-% that would cover the spend instead. Both figures are
          derived from the visitor's own numbers; the "cut about ₦X" path names
@@ -1580,39 +1580,39 @@ function render() {
       const needPctNow = Math.max(0, pm(g("bg-needs").value) || 0);
       const spentNeeds = Math.max(0, pm(g("bg-spn").value) || 0);
       const reqPct = inc > 0 ? Math.ceil((spentNeeds / inc) * 100) : null;
-      /* E13 — the "raise Needs % to X%" half of this sentence is only a SHARE
+      /* E13 ; the "raise Needs % to X%" half of this sentence is only a SHARE
          when X is a share. With an absurd spend it printed "raise Needs % from
-         50% to 100000%" — arithmetically true, practically nonsense, and the
+         50% to 100000%" ; arithmetically true, practically nonsense, and the
          exact implausibility order 3 asks this page not to assert. The
          threshold is the one fact the range rail above already states: a share
          runs 0 to 100. Above 100 the honest answer is the overage alone. */
       const fix = reqPct !== null && reqPct > needPctNow && reqPct <= 100
         ? `cut about ${nn(over)} from rent/food/transport, or raise Needs % from ${pctTxt(needPctNow)}% to ${reqPct}%`
         : `cut about ${nn(over)} from rent/food/transport`;
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">NEEDS OVER</span> ${needsYours ? `You're ${nn(over)} over on needs` : `Our example is ${nn(over)} over on needs — that figure is ours, not yours`} — ${fix}.</div>`);
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">NEEDS OVER</span> ${needsYours ? `You're ${nn(over)} over on needs` : `Our example is ${nn(over)} over on needs: that figure is ours, not yours`}: ${fix}.</div>`);
     }
     // Check wants overage
-    /* E20-R2 — same rule for wants. */
+    /* E20-R2 ; same rule for wants. */
     const wantsOverShown = Math.round(Math.max(0, pm(g("bg-spw").value) || 0)) - Math.round(plan.wants);
     if (planTotal > 0 && wantsOverShown >= 1) {
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">WANTS OVER</span> ${wantsYours ? `You're ${nn(wantsOverShown)} over on wants` : `Our example is ${nn(wantsOverShown)} over on wants — that figure is ours, not yours`} — cut spending on non-essentials or raise Wants %.</div>`);
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">WANTS OVER</span> ${wantsYours ? `You're ${nn(wantsOverShown)} over on wants` : `Our example is ${nn(wantsOverShown)} over on wants: that figure is ours, not yours`}: cut spending on non-essentials or raise Wants %.</div>`);
     }
     // Check individual bucket overages in step 2
     if (planTotal > 0 && r2.needs > 0 && planned > r2.needs) {
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">BUCKETS OVER</span> ${bucketsYours ? "Your" : "Our example's"} needs buckets add to ${(shareSum * 100).toFixed(0)}% — trim shares to fit ${bucketsYours ? "your" : "the example's"} ${nn(r2.needs)} needs budget.</div>`);
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--action">BUCKETS OVER</span> ${bucketsYours ? "Your" : "Our example's"} needs buckets add to ${(shareSum * 100).toFixed(0)}%: trim shares to fit ${bucketsYours ? "your" : "the example's"} ${nn(r2.needs)} needs budget.</div>`);
     }
-    /* E12-6 — a clean month used to print nothing at all. One honest line:
+    /* E12-6 ; a clean month used to print nothing at all. One honest line:
        affirm, and name a real next destination. No invented problem. */
-    /* E19-C15 — a ₦0 plan is not a plan: "within plan" against nothing is not
+    /* E19-C15 ; a ₦0 plan is not a plan: "within plan" against nothing is not
        a milestone, so the ON PLAN banner (and "the fund is ready") is withheld
        until there is a plan to be within. */
     if (!verdictItems.length && total === 100 && inc > 0 && planTotal > 0 && c.needs_remaining >= 0 && c.wants_remaining >= 0 && c.savings_remaining >= 0 && !(r2.needs > 0 && planned > r2.needs)) {
       const allYours = yours(["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"]);
-      /* A21-F2 — "the fund is ready" over-claims at any small-but-real saving
+      /* A21-F2 ; "the fund is ready" over-claims at any small-but-real saving
          slice (A19-C15 withheld it at ₦0; a ₦1,250/month saving is real but is
          not a "the fund is ready" milestone). The claim now states what the
          numbers support at any income: you are saving as planned. */
-      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--good">ON PLAN</span>${allYours ? "You're" : "Our example is"} within plan on needs, wants and savings — if this is real, you are saving as planned; set the savings aside first, then build the rest of the plan in Savings Goal Calculator.</div>`);
+      verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--good">ON PLAN</span>${allYours ? "You're" : "Our example is"} within plan on needs, wants and savings: if this is real, you are saving as planned; set the savings aside first, then build the rest of the plan in Savings Goal Calculator.</div>`);
     }
   }
   if (verdictItems.length) {
@@ -1626,7 +1626,7 @@ function render() {
   /* === NEW: Next-action CTAs after Step 1 === */
   const bgNext = t("bg-next");
   const bgNextItems: string[] = [];
-  /* E13 — a CTA is a conclusion with a button on it. With a malformed step-1
+  /* E13 ; a CTA is a conclusion with a button on it. With a malformed step-1
      field every figure it would conclude from is the reader's ₦0, so the row
      stands down and the CANNOT SCORE banner routes to the field instead. */
   if (!empty && planComplete && !junkVerdict.length) {
@@ -1651,16 +1651,16 @@ function render() {
   /* === NEW: Next-action CTAs after Step 2 === */
   const alNext = t("al-next");
   const alNextItems: string[] = [];
-  /* E13 — same gate as the row above: a "Fix rent overage" button computed
+  /* E13 ; same gate as the row above: a "Fix rent overage" button computed
      from a junk share is the dressed-up zero this whole change exists to
      stop, so the row stands down while any field it reads is malformed. */
   if (!empty && planComplete && !junkVerdict.length) {
     if (r2.needs > 0 && planned > r2.needs) {
-      /* E12-2 — the old CTA named "rent" no matter which bucket overshoots.
+      /* E12-2 ; the old CTA named "rent" no matter which bucket overshoots.
          Now name the bucket that deviates most above the engine's own default
          share (the same 40/25/15/10/7 the starter plan is built from), and
          route to its field. If no bucket sits above its default, we cannot
-         name an offender — say so plainly and scroll to the shares block
+         name an offender ; say so plainly and scroll to the shares block
          instead of inventing a field. */
       const DEF_SHARE: Record<string, number> = { rent: 0.40, food: 0.25, transport: 0.15, data: 0.10, utilities: 0.07 };
       let worst: string | null = null;
@@ -1690,35 +1690,35 @@ function render() {
     alNext.innerHTML = "";
   }
 
-  /* === E10 (A10-C4/C5) — the glossary, pointed at elements that actually
+  /* === E10 (A10-C4/C5) ; the glossary, pointed at elements that actually
      CONTAIN each word, and idempotent.
 
      A10-C4 ("itemise" → "break down") was dead code: the pass ran only over
      .receipt-foot.hint, and "itemise" appears in none of those four elements
-     (lines 95–97 and 129) — it lives in the stepper tab. So the term now rides
+     (lines 95–97 and 129) ; it lives in the stepper tab. So the term now rides
      the stepper tab, which is where a reader meets the word. The other dead
      entry, "needs/wants/savings split", is DELETED rather than left parked:
      the word appears in no glossed element on this page either, and a glossary
      entry that can never fire is noise.
 
      A10-C5 ("use my targets") fired only into a hover `title`, on 2 of the 3
-     buttons, and a 390px phone has no hover path — so that one moved into the
+     buttons, and a 390px phone has no hover path ; so that one moved into the
      VISIBLE label in the markup above and the title rewrite is gone.
 
      Idempotence: render() runs on every keystroke and this rewrites innerHTML,
      so without a marker each pass re-wrapped its own output and the spans
      nested one deeper per keystroke. */
-  /* A16-F6 — the gloss was hover/focus-only on a span that cannot take focus,
+  /* A16-F6 ; the gloss was hover/focus-only on a span that cannot take focus,
      so a screen reader heard "Itemise" and nothing else. Each glossed term now
      carries the same words in a .screen-reader-text span, so the definition
      travels with the word on every input path. "leftover" is gone from the map
      because the very sentence it sits in already defines it ("leftover = income
-     your splits didn't assign") — a second gloss would say it twice. */
+     your splits didn't assign") ; a second gloss would say it twice. */
   const jargonMap: Record<string, string> = {
     "plan vs actual": "target vs reality",
     "itemise": "break down into line items",
   };
-  document.querySelectorAll(".receipt-foot.hint, .fx-step[data-step=\"2\"]").forEach((el) => {
+  document.querySelectorAll(".receipt-foot.hint.fx-step[data-step=\"2\"]").forEach((el) => {
     if (el.hasAttribute("data-glossed")) return;
     el.setAttribute("data-glossed", "");
     let html = el.innerHTML;
@@ -1737,20 +1737,20 @@ function render() {
       '<span class="jargon" data-tip="your three target amounts">Plan buckets<span class="screen-reader-text"> (your three target amounts)</span></span>'
     );
   }
-  /* E18-F5 — the last word on #bg-fig: sfEmpty()'s kept-map restore writes plain
+  /* E18-F5 ; the last word on #bg-fig: sfEmpty()'s kept-map restore writes plain
      text back when the page leaves the empty state, so re-split here even when
      the write above was a no-op. */
   splitFig();
 }
 ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"].forEach((id) => g(id).addEventListener("input", render));
 document.querySelectorAll("[data-al-bucket]").forEach((el) => el.addEventListener("input", render));
-/* E10 — the five actual-spend fields drive the mirror, so they render on their
+/* E10 ; the five actual-spend fields drive the mirror, so they render on their
    own keystroke exactly like the seven step-1 fields do. They are NOT smart-
    fields seeds (nothing is pre-filled in them) and NOT remembered ids, so the
    spine never badges, offers or restores them: an empty field here means the
    visitor has not said anything, which is the whole point. */
 ACT_IDS.forEach((id) => g(id).addEventListener("input", render));
-/* E19-C5 — the visitor taking a bucket over: the figure becomes theirs, and the
+/* E19-C5 ; the visitor taking a bucket over: the figure becomes theirs, and the
    plan-provenance note must move with it (it used to keep telling them to type
    what they had just typed). */
 ACT_IDS.forEach((id) => {
@@ -1763,11 +1763,11 @@ ACT_IDS.forEach((id) => {
     if (note.hidden || !note.textContent) return;
     const stillPlan = Object.keys(ACT_PROV).some((k) => ACT_PROV[k] === "plan");
     note.textContent = stillPlan
-      ? 'That one is yours now — the others are still the plan. "Within plan" is true by construction, not by verdict.'
-      : 'That one is yours now — the other four still show the plan only, with nothing real to score them against.';
+      ? 'That one is yours now: the others are still the plan. "Within plan" is true by construction, not by verdict.'
+      : 'That one is yours now: the other four still show the plan only, with nothing real to score them against.';
   });
 });
-/* E10 (A10-C7) — the in-card seed exit. These two DELEGATE to the shell's own
+/* E10 (A10-C7) ; the in-card seed exit. These two DELEGATE to the shell's own
    [data-sf-clear] / [data-sf-reset] buttons rather than reimplementing either,
    so the page keeps exactly one clearExamples() and one reset() (smart-fields.js
    is off-limits and correct to stay so). The shell's pair is untouched and keeps
@@ -1775,12 +1775,12 @@ ACT_IDS.forEach((id) => {
    card at a 44px target instead of 4.9 screens down a 31px one. */
 const shellClear = document.querySelector("[data-sf-clear]") as HTMLButtonElement | null;
 const shellReset = document.querySelector("[data-sf-reset]") as HTMLButtonElement | null;
-/* Manager fix (post-E10 audit) — "Clear the example" used to leave the five
+/* Manager fix (post-E10 audit) ; "Clear the example" used to leave the five
    Step-2 ACTUAL fields standing. smart-fields clearExamples() only walks
    `.field[data-sd]`, i.e. the SEEDED fields; the five al-act-* inputs ship
    empty on purpose (never seeded, never an invented naira), so they are not
    in that set and the clear walked straight past them. The user pressed the
-   one control that promises a clean page and kept their half-typed score —
+   one control that promises a clean page and kept their half-typed score; 
    a silent, dishonest half-reset. Both seed-exit paths now also wipe the
    actual fields, because a clear that clears some of what you typed is a
    lie about the page being empty. Nothing else about the shell's pair
@@ -1791,7 +1791,7 @@ const clearActuals = () => {
     if (el && el.value !== "") { el.value = ""; el.dispatchEvent(new Event("input", { bubbles: true })); }
   });
 };
-/* E15 (A15-K2) — both Clear paths hide the control that was just activated.
+/* E15 (A15-K2) ; both Clear paths hide the control that was just activated.
    A focused element that disappears hands focus to <body>, so the next Tab
    restarted at the skip link instead of the calculator. Land the keyboard back
    on the first field; the check runs on the next frame and again on the next
@@ -1806,22 +1806,22 @@ const restoreAfterSeedExit = () => {
 };
 document.getElementById("bg-clear-example")?.addEventListener("click", () => { shellClear?.click(); clearActuals(); render(); syncSeedExit(); restoreAfterSeedExit(); });
 document.getElementById("bg-reset-example")?.addEventListener("click", () => { shellReset?.click(); clearActuals(); render(); });
-/* E12-9 — the footer Clear examples button only walks [data-sd] seeds; the
+/* E12-9 ; the footer Clear examples button only walks [data-sd] seeds; the
    five al-act-* inputs are not seeds, so a footer Clear left half a score
    standing. Both in-card and footer exits now wipe them. */
 shellClear?.addEventListener("click", () => { clearActuals(); restoreAfterSeedExit(); });
 /* The in-card Clear stands down exactly when the shell's does (no live seed
    survives), so the two controls never disagree about whether there is
-   anything left to clear. Reset never hides — it is always available. */
+   anything left to clear. Reset never hides ; it is always available. */
 const syncSeedExit = () => {
   const btn = document.getElementById("bg-clear-example");
   if (btn) btn.hidden = !shellClear || shellClear.hidden;
 };
 syncSeedExit();
-/* E15 (A15-K1) — the stepper shipped as two real <button>s in the tab order
+/* E15 (A15-K1) ; the stepper shipped as two real <button>s in the tab order
    with no handler at all: Enter, Space and click were silent no-ops, and step 2
    also carried aria-disabled while still taking keyboard focus. They are
-   navigation now — each lands on its step's first field, so the keyboard path
+   navigation now ; each lands on its step's first field, so the keyboard path
    continues from the destination. The dimmed inactive state stays a progress
    signal, not a locked door. */
 document.querySelectorAll<HTMLButtonElement>(".fx-step[data-step]").forEach((b) => {
@@ -1834,20 +1834,20 @@ document.querySelectorAll<HTMLButtonElement>(".fx-step[data-step]").forEach((b) 
     target?.scrollIntoView({ block: "center" });
   });
 });
-/* BADGE SETTLE — the spine strips SAMPLE and writes memory on the document
+/* BADGE SETTLE ; the spine strips SAMPLE and writes memory on the document
    bubble, AFTER the target-phase render above has already run. Badge-reading
    lines (seedwarn, the remembered-warn suffix, the memory date) would sit one
    keystroke late without this; the re-render is idempotent and writes nothing
    the first pass did not already own. */
 document.addEventListener("input", () => setTimeout(() => { render(); syncSeedExit(); }, 0));
-/* F3 + E11-1 — "Use this" writes the plan into actuals, collapsing Needs left to ₦0.
+/* F3 + E11-1 ; "Use this" writes the plan into actuals, collapsing Needs left to ₦0.
    The compare must survive the click: say what happened, and lift the note the
    moment the visitor types their real figure. render() never touches the note,
    so it stands until the visitor takes the field over (or Reset/Clear moves it).
 
    A11 (2026-10-08) found this note was bound to ONE of the two controls that
    perform the write. The `.offer [data-use]` rail disclosed; the three
-   `Use my targets — needs/wants/savings` chips (handler near the end of this
+   `Use my targets ; needs/wants/savings` chips (handler near the end of this
    script) wrote the SAME plan figure into the SAME fields SILENTLY. Manager
    confirmed live: one tap put ₦125,000 into "Spent on needs", left "Needs left"
    at ₦0 as if the visitor had simply spent exactly their target, and printed
@@ -1861,7 +1861,7 @@ const disclosePlanWrite = () => {
   pasted = true;
   const note = t("bg-pasted");
   const txt = "Put the plan in as your spending, but remember: this came from the plan, not your month. \"Within plan\" is true by construction, not by verdict. Type what you really spent to score your month.";
-  /* A16-F2 — role="status": unhide first, then write, and never re-write an
+  /* A16-F2 ; role="status": unhide first, then write, and never re-write an
      identical sentence (a second chip tap would otherwise repeat the whole
      disclosure out loud). */
   note.hidden = false;
@@ -1872,7 +1872,7 @@ document.addEventListener("click", (e) => {
   if (!u || u.getAttribute("aria-disabled")) return;
   disclosePlanWrite();
 });
-/* E20-NEW2 — the visitor's own typing takes the spend back: the figure stops
+/* E20-NEW2 ; the visitor's own typing takes the spend back: the figure stops
    being the plan's and becomes theirs. */
 ["bg-spn", "bg-spw", "bg-sps"].forEach((id) => {
   g(id).addEventListener("input", () => {
@@ -1887,19 +1887,19 @@ g("bg-spn").addEventListener("input", () => {
   if (pastedNote.textContent) pastedNote.textContent = "";
   pastedNote.hidden = true;
 });
-/* E18-F1 — a visitor can type into the SERVER-rendered income box before this
+/* E18-F1 ; a visitor can type into the SERVER-rendered income box before this
    module boots; that is the whole point of F1's inline onfocus, and the audit
    proved the keystrokes land. Two things then went wrong, both because the
    first input event happened before smart-fields' listener existed:
      (1) the SAMPLE badge survived, so a SECOND focus selected the visitor's
-         OWN number — the one thing F1 forbids;
+         OWN number ; the one thing F1 forbids;
      (2) the module's reset snapshot captured the typed value as "the server's
          example", so Reset would hand the visitor's own figure back labelled
          as ours.
    The server's value lives in the value ATTRIBUTE, which typing never
    touches. So the server's value goes back for the snapshot, the module boots
    on it, and the visitor's typed value is handed back with a real input
-   event — which drops the badge exactly as a post-hydration keystroke does.
+   event ; which drops the badge exactly as a post-hydration keystroke does.
    Nothing is painted in between: all of it happens in this one task. */
 const SSR_SEED_IDS = ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps", "al-rent", "al-food", "al-transport", "al-data", "al-utilities"];
 const earlyTyped = new Map<string, string>();
@@ -1910,8 +1910,8 @@ SSR_SEED_IDS.forEach((id) => {
   if (attr !== null && i.value !== attr) { earlyTyped.set(id, i.value); i.value = attr; }
 });
 smartFields.register((() => {
-  /* E12-9 — the five actuals were never persisted while the page printed
-     "Last saved today — only LAST USED pills are yours" above them: an honest
+  /* E12-9 ; the five actuals were never persisted while the page printed
+     "Last saved today ; only LAST USED pills are yours" above them: an honest
      summary of a loss. Persist them like the other twelve. They restore as
      LAST USED (never SAMPLE, never invented), re-render on load, and are
      wiped by both Clear and Reset exactly like a typed step-1 figure. */
@@ -1919,7 +1919,7 @@ smartFields.register((() => {
   ACT_IDS.forEach((id) => { if (cfg.remember.indexOf(id) < 0) cfg.remember.push(id); });
   return cfg;
 })());
-/* E18-F1 — hand the visitor's early-typed value back now that the module is
+/* E18-F1 ; hand the visitor's early-typed value back now that the module is
    listening: the input event drops the SAMPLE badge (the number is theirs)
    and the page's own render() answers it. */
 earlyTyped.forEach((v, id) => {
@@ -1928,13 +1928,13 @@ earlyTyped.forEach((v, id) => {
   i.value = v;
   i.dispatchEvent(new Event("input", { bubbles: true }));
 });
-/* E18-F3 — the server painted the context line so the grid would not grow at
+/* E18-F3 ; the server painted the context line so the grid would not grow at
    hydration; smart-fields has now inserted its own copy in the same slot.
    The fleet's copy is the authoritative one, so the server's stand-in goes. */
 const ssrCtx = document.querySelector("#bg-top .ctx[data-e18-ctx]");
 if (ssrCtx && document.querySelector("#bg-top .ctx:not([data-e18-ctx])")) ssrCtx.remove();
 sfBind("50-30-20-budget-calculator", gv);
-/* MF-7 — tap-a-row to compare: the receipt rows answer with the fields they
+/* MF-7 ; tap-a-row to compare: the receipt rows answer with the fields they
    are derived from (the offer already lives at the Spent-on-needs field, so
    the row takes the visitor to it). Existing behaviour only: scroll + focus,
    the same focus that selects a SAMPLE field. */
@@ -1947,7 +1947,7 @@ document.querySelectorAll(".receipt-row[data-goto]").forEach((row) => {
     target.focus({ preventScroll: true });
   };
   row.addEventListener("click", go);
-  /* KEYBOARD — the rows are tabbable buttons (tabindex/role in markup), so
+  /* KEYBOARD ; the rows are tabbable buttons (tabindex/role in markup), so
      Enter/Space must do what a tap does. Same go(), no new behaviour. */
   row.addEventListener("keydown", (e) => {
     if ((e as KeyboardEvent).key === "Enter" || (e as KeyboardEvent).key === " ") {
@@ -1956,7 +1956,7 @@ document.querySelectorAll(".receipt-row[data-goto]").forEach((row) => {
     }
   });
 });
-/* E12 — the mirror rows are tabbable buttons too: Enter/Space must behave
+/* E12 ; the mirror rows are tabbable buttons too: Enter/Space must behave
    like the receipt rows (same focus destination: THE bucket's actual field). */
 document.addEventListener("click", (e) => {
   const row = (e.target as HTMLElement).closest?.(".actuals-row[data-goto]");
@@ -1977,7 +1977,7 @@ document.addEventListener("keydown", (e) => {
     target.focus({ preventScroll: true });
   }
 });
-/* E12-3/E12-2 — every "go there" CTA (bg-next, al-next, the reconcile
+/* E12-3/E12-2 ; every "go there" CTA (bg-next, al-next, the reconcile
    fix, saved-splits links) scrolls AND focuses, never just jumps. Native
    anchor hrefs stay as the no-JS fallback. */
 document.addEventListener("click", (e) => {
@@ -1989,18 +1989,18 @@ document.addEventListener("click", (e) => {
   target.scrollIntoView({ behavior: "smooth", block: "center" });
   target.focus({ preventScroll: true });
 });
-/* MF-5 — plan save: copy the live plan as one line. The "copied" word hides
+/* MF-5 ; plan save: copy the live plan as one line. The "copied" word hides
    on the next render (the figures it copied are stale by then).
-   T2 — "My plan" is TRUE only when all seven step-1 fields are the
+   T2 ; "My plan" is TRUE only when all seven step-1 fields are the
    visitor's own (no SAMPLE badge, real digits entered): cold it would
    export our example as theirs, empty it would export a ₦0 plan. So
    all-typed copies "My plan"; a touched-but-partial page copies the same
    figures labelled as our example; an empty (or plan-incomplete) page
-   refuses with the waiting line and copies nothing — never ₦0. */
+   refuses with the waiting line and copies nothing ; never ₦0. */
 const copyBtn = document.getElementById("bg-copy");
 if (copyBtn) copyBtn.addEventListener("click", async () => {
   const done = t("bg-copied");
-  /* A16-F4 — role="status": every copy outcome must be spoken, including a
+  /* A16-F4 ; role="status": every copy outcome must be spoken, including a
      repeat copy of the same message. Unhide first; when the text is unchanged,
      blank it and force a reflow so the second write is a real mutation. */
   const announceDone = (msg: string) => {
@@ -2012,14 +2012,14 @@ if (copyBtn) copyBtn.addEventListener("click", async () => {
   const typed = (id: string) => !hasBadge(id, "data-sd") && !pmBlank(g(id).value);
   /* Refuse only when the figures would be invented: a blank plan input prices
      as ₦0, and ₦0 is never copied. Cold (all SAMPLE, all valued) is NOT a
-     refusal — it copies the example, honestly labelled. */
-  /* E14 — and refuse when the plan on screen is not the plan the reader took.
+     refusal ; it copies the example, honestly labelled. */
+  /* E14 ; and refuse when the plan on screen is not the plan the reader took.
      With "250," in income the page will not print ₦125/₦75/₦50 anywhere (the
      verdict is CANNOT SCORE), so the clipboard must not be the one place those
      exact figures still travel. Same refusal voice, same reason: nothing to
      copy yet. */
   if (sfIsEmpty("50-30-20-budget-calculator", gv) || planIds.some((id) => pmBlank(g(id).value)) || junkIn(planIds)) {
-    announceDone(" — nothing to copy yet — enter your numbers above.");
+    announceDone(": nothing to copy yet; enter your numbers above.");
     return;
   }
   const allTyped = ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"].every(typed);
@@ -2034,8 +2034,8 @@ if (copyBtn) copyBtn.addEventListener("click", async () => {
   try {
     if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(summary);
     else throw new Error("no clipboard");
-    announceDone(" — copied.");
-  } catch { announceDone(" — copy failed here; long-press the plan line above."); }
+    announceDone(": copied.");
+  } catch { announceDone(": copy failed here; long-press the plan line above."); }
 });
 
   // E7: Quick-fill handlers
@@ -2057,7 +2057,7 @@ if (copyBtn) copyBtn.addEventListener("click", async () => {
       ['bg-needs','bg-wants','bg-save'].forEach(id => g(id).dispatchEvent(new Event('input', { bubbles: true })));
     });
   });
-  /* E11-1 — the OTHER half of the A11 CRITICAL. These three chips write a PLAN
+  /* E11-1 ; the OTHER half of the A11 CRITICAL. These three chips write a PLAN
      figure into a SPEND field, exactly like the `.offer [data-use]` rail, and
      they were doing it with no disclosure at all. They now call the same
      disclosePlanWrite() the rail calls, so there is one voice for one fact. */
@@ -2071,7 +2071,7 @@ if (copyBtn) copyBtn.addEventListener("click", async () => {
         Math.max(0, pm(g('bg-wants').value) || 0) / 100,
         Math.max(0, pm(g('bg-save').value) || 0) / 100
       );
-      /* E20-NEW2 — this write is the PLAN's figure: mark it before the input
+      /* E20-NEW2 ; this write is the PLAN's figure: mark it before the input
          event, so the render that follows already knows whose number it is. */
       SPEND_PROV[target.id] = "plan";
       spendPlanWriteInFlight = true;
@@ -2082,7 +2082,7 @@ if (copyBtn) copyBtn.addEventListener("click", async () => {
       spendPlanWriteInFlight = false;
       /* AFTER the dispatch, deliberately. dispatchEvent('input') is synchronous,
          and the bg-spn input listener above lifts this note the moment the field
-         changes — so disclosing first would be undone in the same tick and the
+         changes ; so disclosing first would be undone in the same tick and the
          note would never be seen. Order is load-bearing; do not swap. */
       disclosePlanWrite();
     });
@@ -2090,7 +2090,7 @@ if (copyBtn) copyBtn.addEventListener("click", async () => {
   document.querySelectorAll('[data-fill-actual]').forEach(btn => {
     btn.addEventListener('click', () => {
       const b = btn.dataset.fillActual;
-      /* Same inputs render() reads, same engine — never a second maths source. */
+      /* Same inputs render() reads, same engine ; never a second maths source. */
       const inc = Math.max(0, pm(g('bg-inc').value) || 0);
       const shares3: Record<string, number> = {};
       document.querySelectorAll('[data-al-bucket]').forEach((el) => {
@@ -2105,14 +2105,14 @@ if (copyBtn) copyBtn.addEventListener("click", async () => {
       const amt = r.buckets.find((x) => x.id === b)?.amount ?? 0;
       const el = document.getElementById(ACT_ID[b]) as HTMLInputElement;
       if (!el) return;
-      /* E19-C2 — the chip writes the PLAN figure: mark it before the synthetic
+      /* E19-C2 ; the chip writes the PLAN figure: mark it before the synthetic
          input event so the render that follows already knows whose number it is. */
       ACT_PROV[b] = "plan";
       planWriteInFlight = true;
       el.value = String(Math.round(amt));
       el.dispatchEvent(new Event('input', { bubbles: true }));
       planWriteInFlight = false;
-      /* A plan figure scored as an actual is "on plan" by construction — the
+      /* A plan figure scored as an actual is "on plan" by construction ; the
          visitor must hear that, same disclosure as every other plan-write. */
       disclosePlanWrite();
     });
@@ -2128,7 +2128,7 @@ if (copyBtn) copyBtn.addEventListener("click", async () => {
   });
 
 render();
-/* E18-F3 — the inline pre-hydration script marked the card aria-busy; the first
+/* E18-F3 ; the inline pre-hydration script marked the card aria-busy; the first
    full render has run, so the region is settled and the attribute goes. A
    JS-off visitor never saw it set (that inline script is the only setter). */
 document.querySelector(".fx-card")?.removeAttribute("aria-busy");

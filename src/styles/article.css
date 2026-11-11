@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════════════════
-   ARTICLE — single-post (single.php) surface, GWill Finance theme
+   ARTICLE ;  single-post (single.php) surface, GWill Finance theme
    ══════════════════════════════════════════════════════════════════════════
    WHAT THIS IS
    The article-page slice of the WordPress theme's stylesheet, as a standalone
@@ -49,10 +49,10 @@
    WHAT IS DELIBERATELY NOT HERE (already installed elsewhere in the port;
    re-declaring them here would only duplicate identical values):
      · §1 DESIGN TOKENS (:root, style.css:96-137) and the dark token block
-       (style.css:140-168) — the port declares its own token set in
+       (style.css:140-168) ;  the port declares its own token set in
        src/layouts/Layout.astro, including the two breakpoint re-declarations of
        --con-pad / --header-h (style.css:2986 and :3016).
-     · §2 RESET / BASE (style.css:170-198) — installed verbatim in
+     · §2 RESET / BASE (style.css:170-198) ;  installed verbatim in
        src/styles/base.css.
    Page chrome that the spec transcribes inside shared blocks (.sh/.mh/.ticker,
    .hero* /.feat* /.stat-strip/.si, .phd, .author-head, .about-hero, .page-surface,
@@ -61,7 +61,7 @@
    rather than split out, so each block reads exactly as it does in the theme's
    own source order.
 
-   KNOWN OVERLAP WITH THE PORT'S OTHER STYLESHEETS (informational — identical
+   KNOWN OVERLAP WITH THE PORT'S OTHER STYLESHEETS (informational ;  identical
    values, so the cascade result is unchanged; dedupe at review if desired):
    src/styles/home.css already carries .badge, .ac*, .con, .g2/.g3, .m-nl,
    .ad-* (+ its print hides) and the .no-flex-gap ad rules; src/styles/forms.css
@@ -77,11 +77,11 @@
    .ac* /.a-dt/.a-rd (related posts) and the .ad-* slots the article renders.
    ══════════════════════════════════════════════════════════════════════════ */
 
-/* ══ 3.1 Progress bar — style.css:1964-1965 ══ */
+/* ══ 3.1 Progress bar ;  style.css:1964-1965 ══ */
 .prog { height: 3px; background: var(--border-dim); position: sticky; top: var(--header-h); z-index: 90; }
 .prog-f { height: 100%; width: 0; background: linear-gradient(90deg, var(--gold), var(--green)); border-radius: 0 2px 2px 0; transition: width 120ms linear; }
 
-/* ══ 3.2 Layout shell — style.css:2966-2982 ══
+/* ══ 3.2 Layout shell ;  style.css:2966-2982 ══
    .con/.g2/.g3/.sb-layout/.cl-layout and ALL §48 utilities (.sg, .mt*,
    .mb*, .flex/.aic/.jsb, .g16, .fw3, .fz*, .cm-c/.cd, .lh) are installed
    GLOBALLY in base.css (the theme ships them in the one global stylesheet;
@@ -95,7 +95,7 @@
  * (single.php:274). These are not in style.css.
  */
 
-/* ══ 3.3 Article header — style.css:1966-1973 and :2002-2009 ══ */
+/* ══ 3.3 Article header ;  style.css:1966-1973 and :2002-2009 ══ */
 .art-surface-pad { padding: 36px 44px 40px; }
 .art-cover { min-height: 300px; border-bottom: 1px solid var(--border-dim); overflow: hidden; display: flex; align-items: center; justify-content: center; }
 .art-cover img { width: 100%; height: 100%; object-fit: cover; }
@@ -113,12 +113,12 @@
 .art-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border); }
 .art-reading-surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--sh-sm); }
 /*
- * Oddity (kept): .art-t declares font-size twice — 34px then clamp(28px, 3.8vw, 40px).
+ * Oddity (kept): .art-t declares font-size twice ;  34px then clamp(28px, 3.8vw, 40px).
  * The clamp wins (later declaration, same specificity). Do not "tidy" the 34px away if you want
  * byte-identical output.
  */
 
-/* ══ 3.4 Breadcrumb helper (not used by single.php, but shares .bc visual language) — style.css:1976-1982 ══ */
+/* ══ 3.4 Breadcrumb helper (not used by single.php, but shares .bc visual language) ;  style.css:1976-1982 ══ */
 /*
  * single.php renders .bc inline on purpose (single.php:56). The helper variant exists for other templates:
  */
@@ -130,7 +130,7 @@
 .gwill-breadcrumbs__item a:hover { color: var(--gold); }
 .gwill-breadcrumbs__item--current { opacity: 1; }
 
-/* ══ 3.5 Badge (category pill in .art-hd, and inside .ac cards) — style.css:672-684 ══ */
+/* ══ 3.5 Badge (category pill in .art-hd, and inside .ac cards) ;  style.css:672-684 ══ */
 /*
  * .badge is emitted with one modifier from gwill_finance_post_style() (.bg / .bgn / .bpu / .bsl / .brd),
  * plus inline style="margin-bottom:14px;display:inline-flex" on the single page (single.php:84).
@@ -160,18 +160,18 @@
 [data-theme="dark"] .bin { background: rgba(79,70,229,0.12); border-color: rgba(79,70,229,0.25); color: #818cf8; }
 [data-theme="dark"] .brd { background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.2); color: #f87171; }
 
-/* ══ 3.6 Disclosure — style.css:927-930 ══ */
+/* ══ 3.6 Disclosure ;  style.css:927-930 ══ */
 .discl { background: var(--gold-muted); border: 1px solid var(--gold-border); border-radius: var(--r-sm); padding: 12px 16px; display: flex; gap: 10px; align-items: flex-start; }
 .discl-i { color: var(--gold); font-size: 13px; flex-shrink: 0; margin-top: 1px; }
 .discl-t { font-size: 11px; font-weight: 300; color: var(--text-mid); line-height: 1.65; }
 .discl-t strong { color: var(--gold); font-weight: 700; }
 
-/* ══ 3.7 Share row — style.css:2250-2253 ══ */
+/* ══ 3.7 Share row ;  style.css:2250-2253 ══ */
 /*
- * §27/28 LIGHTBOX BASE — style.css:2192-2237 (.gl-* + zoom cursor), missing from
+ * §27/28 LIGHTBOX BASE ;  style.css:2192-2237 (.gl-* + zoom cursor), missing from
  * the original extraction and now ported verbatim. Without it the ported
  * lightbox.js builds .gl-overlay on click but it renders UNSTYLED (fully
- * transparent, no geometry) — the "lightbox doesn't even work" report.
+ * transparent, no geometry) ;  the "lightbox doesn't even work" report.
  */
 .gl-overlay {
   position: fixed; top: 0; right: 0; bottom: 0; left: 0; inset: 0; z-index: 99999;
@@ -225,7 +225,7 @@
 }
 .art-body .wp-block-image img { cursor: zoom-in; }
 /*
- * §51/56 dark hovers for the lightbox — style.css:3323-3324, missing from the
+ * §51/56 dark hovers for the lightbox ;  style.css:3323-3324, missing from the
  * port's 4.10 touch block along with their siblings.
  */
 @media (hover: none) {
@@ -239,7 +239,7 @@
 .share-b svg { flex: none; width: 14px; height: 14px; color: inherit; }
 .share-b:hover { border-color: var(--gold-border); color: var(--gold); }
 
-/* ══ 3.8 Author bio — style.css:2254-2271 ══ */
+/* ══ 3.8 Author bio ;  style.css:2254-2271 ══ */
 .abio { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md); padding: 20px; display: flex; gap: 16px; align-items: flex-start; }
 .aav {
   width: 48px; height: 48px; border-radius: 50%; background: var(--gold-muted);
@@ -259,22 +259,22 @@
 .abio-si svg { width: 13px; height: 13px; }
 .abio-si:hover { background: var(--gold-muted); border-color: var(--gold-border); color: var(--gold); }
 
-/* ══ 3.9 Sidebar widget — style.css:933-936 ══ */
+/* ══ 3.9 Sidebar widget ;  style.css:933-936 ══ */
 .sw { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); padding: 20px; margin-bottom: 14px; }
 .sw-t { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border-dim); }
 .sw .gwill-newsletter__prompt { display: none; }
 .sw .gwill-form__status { font-size: 11px; }
 
-/* ══ 3.10 .article-sidebar (TOC/ad/digest column) — style.css:1020-1021 ══ */
+/* ══ 3.10 .article-sidebar (TOC/ad/digest column) ;  style.css:1020-1021 ══ */
 .article-sidebar { padding-top: 20px; }
 .article-sidebar .sw { padding: 16px; margin-bottom: 10px; }
 /*
  * Oddity (kept): the comment block at style.css:1010-1019 says *"padding-top: 40px ALIGNS the TOC card
- * with the breadcrumb line"*, but the live declaration is padding-top: 20px. The value is 20px — the
+ * with the breadcrumb line"*, but the live declaration is padding-top: 20px. The value is 20px ;  the
  * comment is stale. Parity must follow the value, not the comment.
  */
 
-/* ══ 3.11 TOC sidebar — style.css:2274-2307 ══ */
+/* ══ 3.11 TOC sidebar ;  style.css:2274-2307 ══ */
 .toc-i { padding: 8px 0; border-bottom: 1px solid var(--border-dim); font-size: 11px; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
 .toc-i:last-child { border-bottom: none; }
 .toc-i.cur { color: var(--gold); font-weight: 700; }
@@ -300,11 +300,11 @@
 /*
  * Magic number (kept): height: 220px on .toc-scroll. The comment (style.css:2277-2288) records it
  * was *"trimmed from the width-derived 274px"* so the 300×250 ad + digest fit below. Also note
- * .toc-scroll is declared twice as a bare selector-adjacent rule set — the grep hits at
+ * .toc-scroll is declared twice as a bare selector-adjacent rule set ;  the grep hits at
  * style.css:1011, :2370, :2395, :2398 are comments, not live rules.
  */
 
-/* ══ 3.12 Mobile TOC dropdown — style.css:2348-2363 + :2409-2412 ══ */
+/* ══ 3.12 Mobile TOC dropdown ;  style.css:2348-2363 + :2409-2412 ══ */
 .toc-dropdown { position: relative; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; margin-bottom: 20px; box-shadow: var(--sh-sm); }
 .toc-summary { list-style: none; cursor: pointer; padding: 12px 16px; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text); display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; background: none; border: none; }
 .toc-summary::-webkit-details-marker { display: none; }
@@ -337,7 +337,7 @@
  * The mobile TOC visibility switch lives in /* ── 30. Author archive profile header (style.css:2313-2331, theme v1.0.217) ──
    Ported with the author archive (King order 2026-09-30: "You didn't port
    author archive"). Mirrors the About hero (.about-hero .aav) and single-post
-   author bio (.abio) language — the theme's own comment: whole-site coherence
+   author bio (.abio) language ;  the theme's own comment: whole-site coherence
    over page-specific styling. */
 .author-head { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
 .author-av {
@@ -355,9 +355,9 @@
 .author-socials .abio-si svg { width: 15px; height: 15px; }
 /* Port-only (the theme's CSS omits these two but its templates need them):
    the archive's empty state (.page-surface, base omitted from the verbatim
-   slices — mobile override at §50 already shipped at line ~904) and the card
+   slices ;  mobile override at §50 already shipped at line ~904) and the card
    stretched-link on the REAL card markup. The theme's content.php emits
-   h2.ac-t (finance-home.html truth: 9/9 h2, zero h3) — its `.ac h3 a::after`
+   h2.ac-t (finance-home.html truth: 9/9 h2, zero h3) ;  its `.ac h3 a::after`
    therefore matches NOTHING and the cards are only half-clickable live; the
    King ordered them fully clickable, and the image link must survive as its
    own anchor (see home.css note + ArticleCard). */
@@ -369,7 +369,7 @@
  * sidebar TOC takes over.
  */
 
-/* ══ 3.13 .art-body — base article typography ══ */
+/* ══ 3.13 .art-body ;  base article typography ══ */
 /*
  * style.css:2010-2021 (base, immediately before the ≥1024 block):
  */
@@ -386,14 +386,14 @@
 .art-body h3 { font-size: 16px; font-weight: 700; color: var(--text); margin: 20px 0 8px; }
 .art-body h4, .art-body h5, .art-body h6 { font-size: 14px; font-weight: 700; color: var(--text); margin: 18px 0 8px; letter-spacing: -0.01em; }
 
-/* ══ @media (min-width: 1024px) — desktop editorial polish, style.css:2026-2039 ══
+/* ══ @media (min-width: 1024px) ;  desktop editorial polish, style.css:2026-2039 ══
    SOURCE ORDER IS THE CONTRACT. In the theme this block sits BEFORE the .art-body base
    rules below (style.css:2040-2076): font-size/h2/h3/h4/p:first-of-type therefore WIN
    (declared later only as bases that don't conflict), while `.art-body ul, ol` and
    `blockquote/pullquote` margins are RE-DECLARED by the later base shorthand and the
    BASE WINS on the live site (measured: WP serves list margin 0 0 16px 20px and
    blockquote 18px at 1280, NOT the media values). Placing this block after the bases
-   — as an earlier revision did — flipped those four winners and shipped margins
+   ;  as an earlier revision did ;  flipped those four winners and shipped margins
    WordPress never serves. Do not move this block past the base rules. */
 @media (min-width: 1024px) {
   .art-surface-pad { padding: 48px 56px 56px; }
@@ -551,7 +551,7 @@
 .art-body .wp-block-latest-comments li { margin-bottom: 10px; color: var(--text-dim); }
 /*
  * Stray !important (kept): .art-body .wp-block-tag-cloud a { font-size: 11px !important; … }
- * (style.css:2145) — the only !important in the whole .art-body rule set. Do not drop it.
+ * (style.css:2145) ;  the only !important in the whole .art-body rule set. Do not drop it.
  */
 /*
  * style.css:2167-2169 (manual callout class, used inside article copy):
@@ -578,7 +578,7 @@
 .art-body .wp-block-search__input { flex: 1; min-width: 0; }
 .art-body .wp-block-search__button { height: 38px; padding: 0 18px; flex-shrink: 0; }
 
-/* ══ 3.14 .wp-block-table (article tables; global class, not .art-body-scoped at base) — style.css:896-924 ══ */
+/* ══ 3.14 .wp-block-table (article tables; global class, not .art-body-scoped at base) ;  style.css:896-924 ══ */
 .wp-block-table { border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; }
 .wp-block-table table { border-collapse: collapse; width: 100%; font-size: 12px; }
 .wp-block-table figure, .wp-block-table { max-width: 100%; }
@@ -603,7 +603,7 @@
 .wp-block-table td .tbl-no,  .st-table td .tbl-no  { color: var(--red); font-weight: 800; }
 .wp-block-table td .tbl-star, .st-table td .tbl-star { color: var(--gold-b); letter-spacing: 0.06em; }
 
-/* ══ 3.15 Related-post card (.ac*) — rendered by template-parts/content.php inside .g2 — style.css:745-775 ══ */
+/* ══ 3.15 Related-post card (.ac*) ;  rendered by template-parts/content.php inside .g2 ;  style.css:745-775 ══ */
 .ac {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md);
   overflow: hidden; transition: border-color var(--t-md), transform var(--t-md), box-shadow var(--t-md);
@@ -615,7 +615,7 @@
   border-bottom: 1px solid var(--border-dim); font-size: 28px; position: relative; overflow: hidden;
 }
 /* SANCTIONED SUBTRACTION (plan §P0-2, kill the white-sheen gloss): was
-   .ac-img::after { ...; background: linear-gradient(135deg, rgba(255,255,255,0.45), transparent); ... } — removed 2026-10-01 R5. */
+   .ac-img::after { ...; background: linear-gradient(135deg, rgba(255,255,255,0.45), transparent); ... } ;  removed 2026-10-01 R5. */
 .ac-img img { width: 100%; height: 100%; object-fit: cover; }
 .ac-emoji { position: relative; z-index: 1; font-size: 28px; }
 .ac-body { padding: 16px 20px 20px; position: static; }
@@ -625,18 +625,18 @@
 .ac-ft { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border-dim); }
 .a-dt { font-size: 10px; color: var(--text-dim); font-weight: 300; }
 .a-rd { font-size: 10px; color: var(--gold); font-weight: 700; }
-/* Fully clickable card (port fix: real markup is h2.ac-t, not h3 — see
+/* Fully clickable card (port fix: real markup is h2.ac-t, not h3 ;  see
    home.css note; the badge stays independently clickable at z-index:2). */
 .ac .ac-t a::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; z-index: 1; }
 .ac .badge { position: relative; z-index: 2; }
 /*
- * @supports fallback for the card art box — style.css:761-763:
+ * @supports fallback for the card art box ;  style.css:761-763:
  */
 @supports not (aspect-ratio: 16/9) {
   .ac-img::before { content: ''; display: block; padding-top: 56.25%; }
 }
 /*
- * Category art gradients used by gwill_finance_card_media() — style.css:778-783:
+ * Category art gradients used by gwill_finance_card_media() ;  style.css:778-783:
  */
 /* Category art gradients */
 .i-sav { background: linear-gradient(135deg, #fef3c7, #fcd34d); }
@@ -646,7 +646,7 @@
 .i-rem { background: linear-gradient(135deg, #fff7ed, #fed7aa); }
 .i-dol { background: linear-gradient(135deg, #fef9ee, #fde68a); }
 
-/* ══ 3.16 Section header above related posts — style.css:801-803 ══ */
+/* ══ 3.16 Section header above related posts ;  style.css:801-803 ══ */
 .shd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
 .stitle { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); }
 .slink { font-size: 11px; font-weight: 700; color: var(--gold); }
@@ -654,7 +654,7 @@
  * single.php:195 also applies inline style="margin-bottom:16px" to .shd (overrides the 20px).
  */
 
-/* ══ 3.17 Comments area — style.css:2951-2963 ══ */
+/* ══ 3.17 Comments area ;  style.css:2951-2963 ══ */
 .comments-area { margin-top: 40px; }
 .comments-title { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 16px; }
 .comment-list { list-style: none; }
@@ -668,7 +668,7 @@
    cards, clashing with the gold theme. Neutralized to their resting state.
    Keyboard focus (:focus-visible) and press feedback (:active/:disabled)
    deliberately KEPT, a11y stays intact. (King's order 2026-09-26: the WP
-   site solved this — style.css:2497-2515 — and the port must match.) */
+   site solved this ;  style.css:2497-2515 ;  and the port must match.) */
 .vibe-comment-body:hover { box-shadow: none !important; }
 .vibe-comment-author a:hover { color: inherit !important; }
 .vibe-reaction-summary:hover { background: none !important; border-color: var(--vibe-border, #e5e7eb) !important; }
@@ -688,7 +688,7 @@
  * single.php:212 adds .mt48 on top of .comments-area's own margin-top: 40px.
  */
 
-/* ══ 3.18 Newsletter — .m-nl-wrap / .m-nl (mobile-only block) + .sw digest form ══ */
+/* ══ 3.18 Newsletter ;  .m-nl-wrap / .m-nl (mobile-only block) + .sw digest form ══ */
 /*
  * style.css:973-979 and :1002:
  */
@@ -721,12 +721,12 @@
 /*
  * Oddity (kept, real cascade trap): .sw .gwill-form__submit is set to height: 38px at
  * style.css:983 and then to height: 48px at style.css:997 (same specificity, later wins).
- * The live computed height is 48px. The 38px declaration is dead but present — a naive
+ * The live computed height is 48px. The 38px declaration is dead but present ;  a naive
  * selector-by-selector port that copies :983 without :997 will ship a 38px button.
  * Also: the .nl-hero-* selectors in those shared rule lists are for the newsletter page, not single.php.
  */
 
-/* ══ 3.19 Newsletter form fields (shared, from template-parts/forms/contact-newsletter.php) — style.css:2884-2948 ══ */
+/* ══ 3.19 Newsletter form fields (shared, from template-parts/forms/contact-newsletter.php) ;  style.css:2884-2948 ══ */
 .gwill-form .gwill-form__field { margin-bottom: 18px; }
 .gwill-form input[type="text"], .gwill-form input[type="email"], .gwill-form input[type="tel"], .gwill-form textarea, .gwill-form select {
   width: 100%; border: 1px solid var(--border); border-radius: var(--r-md); padding: 12px 16px;
@@ -754,7 +754,7 @@
 .sw .gwill-form__field-error { color: #f87171; }
 .gwill-honey { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }
 
-/* ══ 3.20 Ad slots (the article renders leaderboard + rect + sq) — style.css:1654-1694, :1704, :1722-1724 ══ */
+/* ══ 3.20 Ad slots (the article renders leaderboard + rect + sq) ;  style.css:1654-1694, :1704, :1722-1724 ══ */
 .ad-slot {
   background: #eae8e3; border: 1.5px dashed #c8c4bc; border-radius: var(--r-sm);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
@@ -770,11 +770,11 @@
 .gwill-comment-ad { width: 100%; margin: 28px 0; }
 .ad-slot { margin: 24px 0; position: relative; }
 /*
- * @keyframes used by .ad-ring — style.css:887:
+ * @keyframes used by .ad-ring ;  style.css:887:
  */
 @keyframes gwill-spin { to { transform: rotate(360deg); } }
 
-/* ══ 4.2 @media (max-width: 1023px) — tablet, style.css:2985-3012 (article-relevant lines shown; the block also styles .g3, .ftop, .hero*, .feat*, .stat-strip, .si, .phd, :root, .ticker) ══ */
+/* ══ 4.2 @media (max-width: 1023px) ;  tablet, style.css:2985-3012 (article-relevant lines shown; the block also styles .g3, .ftop, .hero*, .feat*, .stat-strip, .si, .phd, :root, .ticker) ══ */
 @media (max-width: 1023px) {
   :root { --con-pad: 28px; --header-h: 56px; }
   .g3 { grid-template-columns: 1fr 1fr; }
@@ -794,18 +794,18 @@
  * .art-surface-pad's mobile variables, .prog's sticky top, and html's scroll-padding-top.
  */
 
-/* ══ 4.3 @media (min-width: 768px) and (max-width: 1023px) — tablet gallery, style.css:2181-2183 ══ */
+/* ══ 4.3 @media (min-width: 768px) and (max-width: 1023px) ;  tablet gallery, style.css:2181-2183 ══ */
 @media (min-width: 768px) and (max-width: 1023px) {
   .art-body .wp-block-gallery { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* ══ 4.4 @media (max-width: 767px) — every article-touching mobile block ══ */
+/* ══ 4.4 @media (max-width: 767px) ;  every article-touching mobile block ══ */
 /*
  * There are five (max-width: 767px) blocks that touch in-scope selectors, plus two more that touch
  * shared .art-body-adjacent classes. All are transcribed below in source order.
  */
 /*
- * (a) Mobile TOC visibility switch — style.css:2413-2417
+ * (a) Mobile TOC visibility switch ;  style.css:2413-2417
  */
 @media (max-width: 767px) {
   .toc-mobile { display: block; }
@@ -813,7 +813,7 @@
   .toc-dropdown:not(.toc-open) .toc-list { display: none; }
 }
 /*
- * (b) Mobile-only newsletter switch + sidebar hide — style.css:1003-1009
+ * (b) Mobile-only newsletter switch + sidebar hide ;  style.css:1003-1009
  */
 @media (max-width: 767px) {
   .m-nl-wrap { display: block; margin-top: 24px; }
@@ -823,7 +823,7 @@
   .m-nl .gwill-form__submit { background: var(--gold-btn); color: #fff; border: none; font-size: 12px; font-weight: 700; padding: 0 20px; border-radius: var(--r-md); white-space: nowrap; height: 46px; }
 }
 /*
- * (c) Gutenberg content mobile — style.css:2185-2190
+ * (c) Gutenberg content mobile ;  style.css:2185-2190
  */
 /* Mobile content */
 @media (max-width: 767px) {
@@ -833,7 +833,7 @@
   .art-body .wp-block-image.alignleft, .art-body .wp-block-image.alignright { float: none; max-width: 100%; margin: 0 0 14px; }
 }
 /*
- * (d) Article table breakout — style.css:901-904
+ * (d) Article table breakout ;  style.css:901-904
  */
 /* Mobile: table scrolls inside its own box, never blows the page wide */
 @media (max-width: 767px) {
@@ -841,7 +841,7 @@
   .art-body .wp-block-table table { width: max-content; min-width: 100%; }
 }
 /*
- * (e) Lightbox mobile — style.css:2243-2248
+ * (e) Lightbox mobile ;  style.css:2243-2248
  */
 @media (max-width: 767px) {
   .gl-nav { width: 36px; height: 36px; font-size: 20px }
@@ -850,7 +850,7 @@
   .gl-image { max-height: 70vh }
 }
 /*
- * (f) THE mobile override block (§50) — style.css:3015-3105. Verbatim, complete (only the
+ * (f) THE mobile override block (§50) ;  style.css:3015-3105. Verbatim, complete (only the
  * article-relevant selectors are commented; everything is included because .con, .g2, .sb-layout,
  * :root and the .art-* rules all live here):
  */
@@ -942,7 +942,7 @@
   .art-body .wp-block-search__input { font-size: 16px; }
 }
 /*
- * (g) Misc mobile text floors — style.css:3168-3172 (ticker/hero chips, .db used on the article hero-adjacent chips; not on single.php directly but in the shared chip family):
+ * (g) Misc mobile text floors ;  style.css:3168-3172 (ticker/hero chips, .db used on the article hero-adjacent chips; not on single.php directly but in the shared chip family):
  */
 @media (max-width: 767px) {
   .t-pair { font-size: 12px; }
@@ -950,20 +950,20 @@
   .db { font-size: 11px; }
 }
 
-/* ══ 4.5 @media (min-width: 768px) — hides mobile chrome, style.css:3108-3110 ══ */
+/* ══ 4.5 @media (min-width: 768px) ;  hides mobile chrome, style.css:3108-3110 ══ */
 /* Desktop / tablet default above 767 */
 @media (min-width: 768px) {
   .mh, .mfooter, .mno { display: none; }
 }
 /*
  * This is what makes .m-nl-wrap { display: none } (base) take effect on desktop and .article-sidebar
- * sticky on desktop — the sidebar is hidden only by the ≤767 rule at style.css:1005, not by any
+ * sticky on desktop ;  the sidebar is hidden only by the ≤767 rule at style.css:1005, not by any
  * min-width: 768px rule.
  */
 
 
 
-/* ══ 4.8 @media (pointer: coarse) — touch ergonomics, style.css:3125-3144 ══ */
+/* ══ 4.8 @media (pointer: coarse) ;  touch ergonomics, style.css:3125-3144 ══ */
 @media (pointer: coarse) {
   .msearch, .hbg, .mno-close { width: 44px; height: 44px; }
   .cp { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
@@ -988,7 +988,7 @@
  * .share-b { min-height: 44px; min-width: 44px; } is the only in-scope selector changed here.
  */
 
-/* ══ 4.9 @media (pointer: coarse) — Firefox-Android scrollbar kill, style.css:2391-2408 ══ */
+/* ══ 4.9 @media (pointer: coarse) ;  Firefox-Android scrollbar kill, style.css:2391-2408 ══ */
 @media (pointer: coarse) {
   @supports (-moz-appearance: none) {
     * { scrollbar-width: none; scrollbar-color: auto; }
@@ -1008,7 +1008,7 @@
   }
 }
 
-/* ══ 4.10 @media (hover: none) — touch hover-stickiness reset, style.css:3288-3326 (in-scope lines only; the block also resets .cp, .ac, .b-*, .bh*, .fsoc .soci, .pagination, .snav-list, .gs-*, .nl, .ncta, .nsearch, .msearch, .mno-cta, .legal-toc-list, .gl-*, .ad-sticky-x) ══ */
+/* ══ 4.10 @media (hover: none) ;  touch hover-stickiness reset, style.css:3288-3326 (in-scope lines only; the block also resets .cp, .ac, .b-*, .bh*, .fsoc .soci, .pagination, .snav-list, .gs-*, .nl, .ncta, .nsearch, .msearch, .mno-cta, .legal-toc-list, .gl-*, .ad-sticky-x) ══ */
 @media (hover: none) {
   .share-b:hover { border-color: var(--border); color: var(--text-mid); }
   .toc-i a:hover { color: var(--text-dim); }
@@ -1018,7 +1018,7 @@
  * Also in the same block, the .ac cards rendered by related posts get:
  */
 
-/* ══ 4.11 .no-flex-gap fallback rules for the article page — style.css:3207-3275 (base, no media query) + :3276-3278 ══ */
+/* ══ 4.11 .no-flex-gap fallback rules for the article page ;  style.css:3207-3275 (base, no media query) + :3276-3278 ══ */
 /*
  * The .no-flex-gap class is added to <html> by a JS probe only on Safari 14.0 / iOS 14.0-14.4.
  * In-scope article lines:
@@ -1046,7 +1046,7 @@
 .no-flex-gap .gwill-form__submit > * + * { margin-left: 8px; }
 .no-flex-gap .author-head > * + * { margin-left: 20px; }
 
-/* ══ 4.12 @media print — article print surface, style.css:3453-3470 (complete) ══ */
+/* ══ 4.12 @media print ;  article print surface, style.css:3453-3470 (complete) ══ */
 @media print {
   html { color-scheme: light; scroll-behavior: auto; }
   body { background: #fff; color: #0d0b08; overflow: visible; }
@@ -1065,7 +1065,7 @@
   th, td { border: 1px solid #999; padding: 6px; }
 }
 /*
- * Stray !importants (kept): the print block is dense with them — 3 in the hide-list, 2 on
+ * Stray !importants (kept): the print block is dense with them ;  3 in the hide-list, 2 on
  * body.ad-sticky-visible, 4 on the main, article, .art-body, .con reset, 1 on img, table, figure.
  * All verbatim above.
  */
@@ -1089,28 +1089,28 @@
    source order rather than merged, and the two lines are byte-identical. */
 
 /* ══════════════════════════════════════════════════════════════════════════
-   TOKENS FORMERLY MISSING — RESOLVED (installed in Layout.astro:404/:430)
+   TOKENS FORMERLY MISSING ;  RESOLVED (installed in Layout.astro:404/:430)
    ══════════════════════════════════════════════════════════════════════════
    Every var(--token) the rules above reference was checked against the tokens
    that actually exist in this port: src/layouts/Layout.astro (:root +
    [data-theme="dark"]), src/styles/header.css:11 (--font-mono) and
    src/styles/home.css:947 (--gold-input-border). The two tokens below were
    referenced by the rules above but declared NOWHERE in the port; they are
-   NOW INSTALLED in src/layouts/Layout.astro — :root at :404,
-   [data-theme="dark"] at :430 — with the theme's own values, recorded below.
+   NOW INSTALLED in src/layouts/Layout.astro ;  :root at :404,
+   [data-theme="dark"] at :430 ;  with the theme's own values, recorded below.
    The .brd rule resolves in both themes, and the article gate pins the
    tokens ("no uninstalled tokens are left" assertion). Their var() names are
-   kept exactly as the theme writes them — no substitution, no invented value.
+   kept exactly as the theme writes them ;  no substitution, no invented value.
 
    -- 1. --red-muted ---------------------------------------------------------
-      used by    : .brd  (style.css:676 — cluster "3.5 Badge" above)
+      used by    : .brd  (style.css:676 ;  cluster "3.5 Badge" above)
       theme light: --red-muted: #fff1f2;                (style.css:124)
       theme dark : --red-muted: rgba(248,113,113,0.1);  (style.css:163)
       port has   : installed at Layout.astro:404/:430 (was: --red only).
       effect now : .brd resolves (was: no background while its siblings had one).
 
    -- 2. --red-border --------------------------------------------------------
-      used by    : .brd  (style.css:676 — cluster "3.5 Badge" above)
+      used by    : .brd  (style.css:676 ;  cluster "3.5 Badge" above)
       theme light: --red-border: #fecdd3;               (style.css:125)
       theme dark : --red-border: rgba(248,113,113,0.3); (style.css:164)
       port has   : installed at Layout.astro:404/:430 (was: nothing equivalent).
@@ -1119,7 +1119,7 @@
    NOT affected: the dark variant [data-theme="dark"] .brd (style.css:684) uses
    literal rgba() values, not these tokens.
 
-   Installed — the theme's own values below now live in
+   Installed ;  the theme's own values below now live in
    src/layouts/Layout.astro (:404 / :430), not here:
 
    :root {

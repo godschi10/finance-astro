@@ -1,4 +1,4 @@
-// Umbrella gate for the finance-astro port — `npm run check`.
+// Umbrella gate for the finance-astro port, `npm run check`.
 //
 // package.json has always declared `check: node scripts/check.mjs`, but this
 // file was missing from the tree, so the documented gate died with
@@ -31,7 +31,7 @@ for (const gate of GATES) {
 }
 
 if (failed.length) {
-  console.error(`\ncheck: FAIL — ${failed.length}/${GATES.length} gate(s) failed: ${failed.join(", ")}`);
+  console.error(`\ncheck: FAIL, ${failed.length}/${GATES.length} gate(s) failed: ${failed.join(", ")}`);
   process.exit(1);
 }
-console.log(`\ncheck: PASS — ${GATES.length}/${GATES.length} gates green`);
+console.log(`\ncheck: PASS, ${GATES.length}/${GATES.length} gates green`);

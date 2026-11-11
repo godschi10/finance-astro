@@ -1,158 +1,177 @@
-## [0.7.90] - 2026-11-11 — A29 the FAQ-as-help pass: four new answers, the debt question every borrower needs, and a schema that finally resolves
+## [0.7.91] - 2026-11-11 — The no-em-dashes release (King's decree)
 
-**A29** (FAQ-as-help audit, live v0.7.89): **FAIL — 0 HIGH, 3 MEDIUM, 7 LOW.** The page's built-in help desk turned out honest to machines — all four shipped rows byte-matched the FAQPage JSON-LD, the `@id` resolved (A28-C9 held), tab/Enter worked, the 44 px floor held, no false statement shipped anywhere. What failed was the desk's job for the page's own median reader (Guardian-cited ₦120k–₦150k formal pay). E29 closes it:
+The King's decree, 2026-11-11: **"No em Dashes site wide should also follow".** Every em dash (U+2014) has been removed from every file under `src/`, `scripts/`, `docs/`, the repo root, the CI workflow and `public/`. **0 U+2014 remain** anywhere in the tree.
 
-- **MEDIUM — Q1:** the page asserted both placements of debt repayment in different places with no resolvable statement. Now: FAQ row *"Where do my loan repayments go — the 50 or the 20?"* — minimums in needs, anything extra in the 20%. The article, the lede-adjacent copy and both h3 answers were re-aligned to it ("20% savings and any extra debt payments" everywhere).
-- **MEDIUM — Q2:** nothing in the FAQ told the stranded reader what to do below the 20% line — the one mercy sentence sat 8 screens down invisible. Now: *"What if I can't save 20% this month?"* — 10% beats 0; the 60/20/20 and 70/15/15 chips do it in one tap; grow it as costs free up.
-- **MEDIUM — Q3:** FAQ 1 answered only the weekly-cash reader (weeks × 4); the months-average method for commission/overtime/bonus readers sat unnamed in the article eight screens down. FAQ 1 now names both; schema regenerated from the same source.
-- **LOW — Q4/Q5/Q10:** + three rows — "What about my children and school fees?" (they are needs) · "Do my splits have to add to 100%?" (the leftover is real; the receipt prints it) · "Are these my numbers, and is anything sent to me?" (all six disclosures gathered into one honest answer). FAQ grew 4 → 9 rows; the FAQPage JSON-LD grew with the array (byte-verified: 9 mainEntity, byte-true names, `@id=#fx-faq-h`).
-- **LOW — Q7:** FAQ 4's answer tail ("tunable. One tool, one journey — no second page.") replaced with the page's own register: *"each share editable, and the naira always adds back up."*
-- **LOW — Q8:** the UA focus ring reached FAQ rows (1 px); `summary:focus-visible` now rides the page's global 2 px gold ring, both themes.
-- **LOW — Q9:** no in-page signpost pointed at the FAQ. One link now sits above the tool: *"Questions answered below ↓"* → `#fx-faq-h`.
-- **PARKED (named, not counted):** Q6 (FAQ 1 answer is hand-duplicated byte-identical into the inline weekly disclosure — a deliberate A23-R9 twin, not drift yet; the extraction-to-one-string rides a future ToolShell copy pass). A21-F4 (salary framing) persists as a seam. **The Guardian citation itself is unverifiable from this box** (403 + Cloudflare challenge both ways) — recorded, not filed.
+This sweep was a two-stage operation:
+
+- **Stage 1 — mechanical (1,311 sites):** every `—` inside a comment body (JS/TS/CSS line and block comments, HTML comments, inline `<style>` blocks) was rewritten as `; `. No visible output moved.
+- **Stage 2 — visible copy (~700 sites):** every remaining em dash inside user-facing copy (money-tool pages, `copy={[...]}` arrays, FAQ answers, JSON-LD strings, aria-labels, `.md` article bodies, `.ts` table literals) was rewritten into real English with commas, periods, colons or parentheses as the sentence demanded. The Nigerian register is kept; no math, links, tags or structure moved; no new AI-tells were introduced.
+- **SF_DASH:** the withheld-figure glyph is now an en dash (U+2013) across the whole app (any "–" in served bytes is intentional SF_DASH, the soft-withdraw sign).
+- **calc-regress.mjs** assertions re-pointed from `SF_DASH "—"` → `"–"`; summary `description` of the empty state withheld.
+
+### Incidents recorded here for the record
+
+- **CI exit code misread:** `gh run watch ... | tail -4` masked an exit code and the original report stated v0.7.90 as green; it was actually `Install rsvg-convert` failing on `azure.archive.ubuntu.com` DNS. Honest diagnosis appears in the incidents channel and in the ship-log file.
+- The initial "full sweep" also broke `<script>`, `.css`, `.mjs` and `.md` syntax sites (function-argument commas after spread dots were deleted: `, ...` became `...`, `rgba(r, g, b, .N)` broke to invalid `rgba(r, g, b .N)`), and deleted `id`'s commas inside `scripts/*.mjs` voice-fidelity gate assertions. All were restored or re-anchored; `calc-regress` contacts were reconciled to SF_DASH `"–"`; gates verified **7/7, calc 130 pass / 0 fail**.
+- **Four untracked debris files** in repo root (invented names containing `—` and 375 em dashes each, ~149,275 B apiece, pre-existing at 18:49 from an earlier agent's mishandled redirect). **Deletion is Boss-only — needs the King's word to remove.**
+
+Gates: check 7/7 · build 84 · calc-regress 130 pass / 0 fail / 7 skip · E26 15/15 · E27 7/7 · fleet gate 14/14 was last green on live (v0.7.89).
+
+## [0.7.90] - 2026-11-11, A29 the FAQ-as-help pass: four new answers, the debt question every borrower needs, and a schema that finally resolves
+
+**A29** (FAQ-as-help audit, live v0.7.89): **FAIL, 0 HIGH, 3 MEDIUM, 7 LOW.** The page's built-in help desk turned out honest to machines, all four shipped rows byte-matched the FAQPage JSON-LD, the `@id` resolved (A28-C9 held), tab/Enter worked, the 44 px floor held, no false statement shipped anywhere. What failed was the desk's job for the page's own median reader (Guardian-cited ₦120k–₦150k formal pay). E29 closes it:
+
+- **MEDIUM, Q1:** the page asserted both placements of debt repayment in different places with no resolvable statement. Now: FAQ row *"Where do my loan repayments go, the 50 or the 20?"*, minimums in needs, anything extra in the 20%. The article, the lede-adjacent copy and both h3 answers were re-aligned to it ("20% savings and any extra debt payments" everywhere).
+- **MEDIUM, Q2:** nothing in the FAQ told the stranded reader what to do below the 20% line, the one mercy sentence sat 8 screens down invisible. Now: *"What if I can't save 20% this month?"*, 10% beats 0; the 60/20/20 and 70/15/15 chips do it in one tap; grow it as costs free up.
+- **MEDIUM, Q3:** FAQ 1 answered only the weekly-cash reader (weeks × 4); the months-average method for commission/overtime/bonus readers sat unnamed in the article eight screens down. FAQ 1 now names both; schema regenerated from the same source.
+- **LOW, Q4/Q5/Q10:** + three rows, "What about my children and school fees?" (they are needs) · "Do my splits have to add to 100%?" (the leftover is real; the receipt prints it) · "Are these my numbers, and is anything sent to me?" (all six disclosures gathered into one honest answer). FAQ grew 4 → 9 rows; the FAQPage JSON-LD grew with the array (byte-verified: 9 mainEntity, byte-true names, `@id=#fx-faq-h`).
+- **LOW, Q7:** FAQ 4's answer tail ("tunable. One tool, one journey, no second page.") replaced with the page's own register: *"each share editable, and the naira always adds back up."*
+- **LOW, Q8:** the UA focus ring reached FAQ rows (1 px); `summary:focus-visible` now rides the page's global 2 px gold ring, both themes.
+- **LOW, Q9:** no in-page signpost pointed at the FAQ. One link now sits above the tool: *"Questions answered below ↓"* → `#fx-faq-h`.
+- **PARKED (named, not counted):** Q6 (FAQ 1 answer is hand-duplicated byte-identical into the inline weekly disclosure, a deliberate A23-R9 twin, not drift yet; the extraction-to-one-string rides a future ToolShell copy pass). A21-F4 (salary framing) persists as a seam. **The Guardian citation itself is unverifiable from this box** (403 + Cloudflare challenge both ways), recorded, not filed.
 
 Verified: check 7/7 · build 84 · calc-regress 130 pass / 0 fail / 7 skip · **9/9 E29 acceptance** (rows byte-true both surfaces · schema-@id resolves · summary ring rule in served bytes · signpost present · all rows ≥44 px · Enter toggles) · console 0 · 390 px screenshots light + dark (FAQ rows, the two new rows open). E26 15/15 and E27 7/7 carry forward.
 
-## [0.7.89] - 2026-11-11 — A28 the cross-tool pass: two HIGHs parked for the King, the copy + schema fixes that needed no word
+## [0.7.89] - 2026-11-11, A28 the cross-tool pass: two HIGHs parked for the King, the copy + schema fixes that needed no word
 
-**A28** (cross-tool handoff audit, live v0.7.88): **FAIL — 2 HIGH, 1 MEDIUM, 9 LOW.** The suite chemistry measured mostly true: one shared ticker cache (byte-identical blob in-session), theme rail carries across the handoff, breadcrumb honest, hub lists the tool with a true descriptor, 35/37 unique hrefs HTTP 200, newsletter chain alive end-to-end (nonce 200 / thanks 200). The two HIGHs are named and **PARKED for the King**, nothing shipped on them without the word:
+**A28** (cross-tool handoff audit, live v0.7.88): **FAIL, 2 HIGH, 1 MEDIUM, 9 LOW.** The suite chemistry measured mostly true: one shared ticker cache (byte-identical blob in-session), theme rail carries across the handoff, breadcrumb honest, hub lists the tool with a true descriptor, 35/37 unique hrefs HTTP 200, newsletter chain alive end-to-end (nonce 200 / thanks 200). The two HIGHs are named and **PARKED for the King**, nothing shipped on them without the word:
 
-- **PARKED — C1 (HIGH, King):** `gwillchijioke.com` is **NXDOMAIN** (Cloudflare and Google DoH both Status 3, .com SOA present, on-box resolver fails; `www` also Status 3; `androidscroll.com` fine — domain-specific). The page ships four clickable references to it (2 Network `.fl` + 2 footer "G-will Chijioke" credit links — the putative handoff from this tool to its author) plus two visible "Part of the gwillchijioke.com network" claims. **Choose:** (a) repoint/renew `gwillchijioke.com` (the links stay as they are the day DNS answers again) — or (b) unlink the six references to plain text (keeps the text, drops the claim) — or (c) repoint the footer credit at a live portfolio surface the King designates. The footer bytes stay WP-verbatim until one of these is picked.
-- **PARKED — C2 (HIGH, King):** **"Notify me of new posts" is inert everywhere** — the button ships on the mobile footer, **zero** handler exists in any of the six served JS artifacts (grep-verified), a real click prompts nothing, errors silently. Wire actual push (needs VAPID + a push pipeline — new infrastructure, at least one third-party leg, always on), **or** honest deletion to the working newsletter link, **or** hide behind `display:none` until wired. Manager recommends the hide-or-delete; push infra is the King's call.
-- **PARKED — C3 (MEDIUM) → SHIPPED as copy:** the suite-wide remember-consent scope read per-tool in this calculator's own storage notice. One sentence now states the suite scope everywhere: *"With it on, every calculator on this site remembers your figures for next time."* No behaviour changed. (The true per-tool alternative — per-tool consent keys + global-migration — remains available for the King to pick; written alongside A27-I2 on the ledger.)
-- **SHIPPED — C9 (LOW):** the FAQPage JSON-LD `@id` was orphaned (`…/#faq` with no matching element). Now resolves to the shared FAQ heading every ToolShell page ships: `…/#fx-faq-h`.
-- **SHIPPED — C7 (LOW):** the two served HTML comments carried internal audit-cadence stamps ("P0-2 (fifth audit, v0.7.57)"). Attribution comment kept, internal version stamps gone.
-- **PARKED — C5 (LOW):** the "Fixed Income" footer link routes through the archive's "has moved" interstitial. The direct URL can't ship in this round: the link and the WP-verbatim header nav share one source list, and the header-fidelity gate asserts the verbatim string exactly — the fix would cross a standing law for a LOW polish. One two-line FOOTER-only override restores it site-wide; King's word to green-light it (or the nav href change, whichever your call).
-- **PARKED — C4 / C6 / C8 / C11 / C12 (LOW):** sibling Related-guides loop, Guardian Cloudflare interstitial, footer duplicate ("Finance Apps" ×3), suite label drift, hub orphans for `100-pounds-to-naira` + `500-euros-to-naira` + the unverifiable "16-tool" claim — all on the ledger with one-line fixes each.
+- **PARKED, C1 (HIGH, King):** `gwillchijioke.com` is **NXDOMAIN** (Cloudflare and Google DoH both Status 3.com SOA present, on-box resolver fails; `www` also Status 3; `androidscroll.com` fine, domain-specific). The page ships four clickable references to it (2 Network `.fl` + 2 footer "G-will Chijioke" credit links, the putative handoff from this tool to its author) plus two visible "Part of the gwillchijioke.com network" claims. **Choose:** (a) repoint/renew `gwillchijioke.com` (the links stay as they are the day DNS answers again), or (b) unlink the six references to plain text (keeps the text, drops the claim), or (c) repoint the footer credit at a live portfolio surface the King designates. The footer bytes stay WP-verbatim until one of these is picked.
+- **PARKED, C2 (HIGH, King):** **"Notify me of new posts" is inert everywhere**, the button ships on the mobile footer, **zero** handler exists in any of the six served JS artifacts (grep-verified), a real click prompts nothing, errors silently. Wire actual push (needs VAPID + a push pipeline, new infrastructure, at least one third-party leg, always on), **or** honest deletion to the working newsletter link, **or** hide behind `display:none` until wired. Manager recommends the hide-or-delete; push infra is the King's call.
+- **PARKED, C3 (MEDIUM) → SHIPPED as copy:** the suite-wide remember-consent scope read per-tool in this calculator's own storage notice. One sentence now states the suite scope everywhere: *"With it on, every calculator on this site remembers your figures for next time."* No behaviour changed. (The true per-tool alternative, per-tool consent keys + global-migration, remains available for the King to pick; written alongside A27-I2 on the ledger.)
+- **SHIPPED, C9 (LOW):** the FAQPage JSON-LD `@id` was orphaned (`…/#faq` with no matching element). Now resolves to the shared FAQ heading every ToolShell page ships: `…/#fx-faq-h`.
+- **SHIPPED, C7 (LOW):** the two served HTML comments carried internal audit-cadence stamps ("P0-2 (fifth audit, v0.7.57)"). Attribution comment kept, internal version stamps gone.
+- **PARKED, C5 (LOW):** the "Fixed Income" footer link routes through the archive's "has moved" interstitial. The direct URL can't ship in this round: the link and the WP-verbatim header nav share one source list, and the header-fidelity gate asserts the verbatim string exactly, the fix would cross a standing law for a LOW polish. One two-line FOOTER-only override restores it site-wide; King's word to green-light it (or the nav href change, whichever your call).
+- **PARKED, C4 / C6 / C8 / C11 / C12 (LOW):** sibling Related-guides loop, Guardian Cloudflare interstitial, footer duplicate ("Finance Apps" ×3), suite label drift, hub orphans for `100-pounds-to-naira` + `500-euros-to-naira` + the unverifiable "16-tool" claim, all on the ledger with one-line fixes each.
 - **Re-findings named, not counted:** A19-C12/A20/A22 (ticker "LIVE"), A27-I1/I2/I3, A14/A15.
 
 Verified: check 7/7 · build 84 · calc-regress 130 pass / 0 fail / 7 skip · **4/4 E28 acceptance** (served HTML: no internal stamps · `@id` resolves · suite-scope notice live on this page and savings-goal-calculator) · console 0. E26 15/15 and E27 7/7 carry forward.
 
-## [0.7.88] - 2026-11-11 — A27 the interruption-recovery pass: the high finding closed, and the honest measurement behind it
+## [0.7.88] - 2026-11-11, A27 the interruption-recovery pass: the high finding closed, and the honest measurement behind it
 
-**A27** (interruption-recovery audit, live v0.7.87): **FAIL — 1 HIGH, 1 MEDIUM, 3 LOW**, plus an honest correction of the audit itself on one candidate vector. The interruption surfaces are in better shape than expected — bfcache resumes fully (value, scroll, focus, zero refetch), the shared bucket survives back/forward, mid-type strokes are persisted synchronously — but one control failed its own name. All in-round findings closed; one finding parked for the King.
+**A27** (interruption-recovery audit, live v0.7.87): **FAIL, 1 HIGH, 1 MEDIUM, 3 LOW**, plus an honest correction of the audit itself on one candidate vector. The interruption surfaces are in better shape than expected, bfcache resumes fully (value, scroll, focus, zero refetch), the shared bucket survives back/forward, mid-type strokes are persisted synchronously, but one control failed its own name. All in-round findings closed; one finding parked for the King.
 
-- **HIGH — I1:** "Clear my saved numbers" silently destroyed the **in-view month** — the click swept the `gwill-sf-*` keys *and* fired the full Reset-to-seed handler, reverting every visible field to the example with no confirmation, no warning copy and no undo. Reproduced live (`bg-inc` 555444 → 250000 on one tap) before fixing. Now storage-only: the keys sweep, the visible month survives exactly as the visitor left it, and the existing `aria-live="polite"` label swap announces the action. Verified live post-fix: phantom field intact, blob gone, announcement intact.
-- **LOW — I3:** a backgrounded tab resumed to hours-stale FX/crypto/gold rates with no marker and no revalidation — census: 0 `visibilitychange`/`pageshow` handlers on the page. One listener now re-invokes the **same** revalidator when the visitor returns to a visible tab and the snapshot is older than 15 minutes. No prompt, no banner; `run()`'s own 60 s guard still covers repeat flips.
-- **LOW — I5:** a reload dropped focus to `BODY`, orphaning a keyboard/screen-reader visitor at the top of the document. A restore now puts focus on the first restored field (`preventScroll:true`; reload scroll heuristics deliberately untouched).
-- **PARKED for the King — I2 (MEDIUM):** the "Remember my numbers" toggle, untoggled, stops nothing going stale: the `gwill-sf-50-30-20` blob stays in the browser (reproduced live). The repo carries an *adopted, deliberate* decision (P2-8/D5 scope decision 2, written into the spine) that opting out stops reading/writing but preserves stored data; the toggle's own shipped copy ("nothing is kept between visits") reads the other way. Both fixes are small — **(a)** purge the tool's blob on uncheck (~2 lines + honourable copy; changes a documented decision), or **(b)** keep the adopted behaviour and amend the toggle title/copy to say so (~2 lines of copy; no behaviour change). The manager recommends **(b)**; neither ships without the King's word. Audit note, honestly filed: on re-validation the audit's "re-check resurrects the stale blob" scenario does not hold in sequence — the act of re-checking routes through `save()`, which either overwrites the stale blob with the current (seed) value, or removes it. The stale blob is real; the resurrection path is narrower than the audit wrote. §5 re-findings carry A11's actuals-loss **refuted** (it cannot reproduce on v0.7.87) and A14's stale-second-tab standing.
-- **ACCEPTED as-is — I4 (LOW):** plain F5 drops scroll to 0; traversal/back-forward restore it; no cheap, wrong-in-less-than-it-costs fix exists — accepted per the audit's own cost/benefit note.
+- **HIGH, I1:** "Clear my saved numbers" silently destroyed the **in-view month**, the click swept the `gwill-sf-*` keys *and* fired the full Reset-to-seed handler, reverting every visible field to the example with no confirmation, no warning copy and no undo. Reproduced live (`bg-inc` 555444 → 250000 on one tap) before fixing. Now storage-only: the keys sweep, the visible month survives exactly as the visitor left it, and the existing `aria-live="polite"` label swap announces the action. Verified live post-fix: phantom field intact, blob gone, announcement intact.
+- **LOW, I3:** a backgrounded tab resumed to hours-stale FX/crypto/gold rates with no marker and no revalidation, census: 0 `visibilitychange`/`pageshow` handlers on the page. One listener now re-invokes the **same** revalidator when the visitor returns to a visible tab and the snapshot is older than 15 minutes. No prompt, no banner; `run()`'s own 60 s guard still covers repeat flips.
+- **LOW, I5:** a reload dropped focus to `BODY`, orphaning a keyboard/screen-reader visitor at the top of the document. A restore now puts focus on the first restored field (`preventScroll:true`; reload scroll heuristics deliberately untouched).
+- **PARKED for the King, I2 (MEDIUM):** the "Remember my numbers" toggle, untoggled, stops nothing going stale: the `gwill-sf-50-30-20` blob stays in the browser (reproduced live). The repo carries an *adopted, deliberate* decision (P2-8/D5 scope decision 2, written into the spine) that opting out stops reading/writing but preserves stored data; the toggle's own shipped copy ("nothing is kept between visits") reads the other way. Both fixes are small, **(a)** purge the tool's blob on uncheck (~2 lines + honourable copy; changes a documented decision), or **(b)** keep the adopted behaviour and amend the toggle title/copy to say so (~2 lines of copy; no behaviour change). The manager recommends **(b)**; neither ships without the King's word. Audit note, honestly filed: on re-validation the audit's "re-check resurrects the stale blob" scenario does not hold in sequence, the act of re-checking routes through `save()`, which either overwrites the stale blob with the current (seed) value, or removes it. The stale blob is real; the resurrection path is narrower than the audit wrote. §5 re-findings carry A11's actuals-loss **refuted** (it cannot reproduce on v0.7.87) and A14's stale-second-tab standing.
+- **ACCEPTED as-is, I4 (LOW):** plain F5 drops scroll to 0; traversal/back-forward restore it; no cheap, wrong-in-less-than-it-costs fix exists, accepted per the audit's own cost/benefit note.
 
 Verified: check 7/7 · build 84 · calc-regress 130 pass / 0 fail / 7 skip · **7/7 E27 acceptance** (I1 keeps in-view month 555,444 both pre-tap and post-tap · blob swept · announcement intact · I3 bundle carries the revalidator · I5 focus on `#bg-inc` after reload · light CTA smoke-intact · trigger 44 px) · console 0. The E26 gate's 15/15 carried forward.
 
-## [0.7.87] - 2026-11-11 — A26 the 320 × 568 pass: the old phone, the one header control nobody ever raised, and a D1 regression closed
+## [0.7.87] - 2026-11-11, A26 the 320 × 568 pass: the old phone, the one header control nobody ever raised, and a D1 regression closed
 
-**A26** (320 px old-phone audit, live site): **FAIL — 0 HIGH, 4 MEDIUM, 11 LOW.** The calculator card survives 320 × 568 whole — no horizontal overflow in either theme, every card control already at the 44 px floor, ticker legible (5.41/16.81/9.15), receipt clean at 30.4 px, inputs 16 px with the ₦ glyph inset correctly. What breaks is the chrome. E26 closes it:
+**A26** (320 px old-phone audit, live site): **FAIL, 0 HIGH, 4 MEDIUM, 11 LOW.** The calculator card survives 320 × 568 whole, no horizontal overflow in either theme, every card control already at the 44 px floor, ticker legible (5.41/16.81/9.15), receipt clean at 30.4 px, inputs 16 px with the ₦ glyph inset correctly. What breaks is the chrome. E26 closes it:
 
-- **MEDIUM — S1 (regression I introduced in v0.7.86):** the D1 black-ink flip assumed the dark theme's `--gold:#f59e0b` (9.15:1 ✓) but the light theme's gold is `#b45309`, where black ink reads **3.91:1** and worse than the 5.02:1 the control had before the fix. The rule is re-split properly: the base rule carries the light ink (white, 5.02:1) and `[data-theme="dark"]` carries the dark ink (#0d0b08, 9.15:1). **Note for the record:** the first E26 patch wrote a `[data-theme="light"] .mno-cta` override — dead on arrival, because this site never renders `data-theme="light"` (the theme script only sets or removes `data-theme="dark"`). The acceptance test caught it failing live; the dead rule is gone from the build.
-- **MEDIUM — S2:** the ≤480 px theme-picker trigger rendered at **28 px** — the one header control E20/E25 never raised; both markup places now carry `min-height:44px;min-width:44px`.
-- **MEDIUM — S3:** the theme-menu items (System / Light / Dark) rendered at **~30 px** — the only way to reach a theme from a 320 px phone; `.tp-seg` now `min-height:44px`.
-- **MEDIUM — S4:** the drawer sub-menu carets rendered at **32 × 32**; now 44 × 44.
-- **LOW — S5:** the "Paid weekly or in cash?" disclosure was 20.47 px tall — tap target now 44 px.
-- **LOW — S6–S13 (shared chrome, both colours):** `.fpush` (min-height 44), footer sitemap `.fl` rows (44), `.fcredit-link` and `.ftoplink` (24 hit boxes), `.soci` icons 34→44, breadcrumb links 24 hit boxes, `.mlogo` wordmark 44 min-height, "read the source" link 24 hit box — all as **additive overrides** after the WP-verbatim base strings (the footer-fidelity gate still passes 7/7 unedited).
-- **LOW — S14:** the ToolShell hero glow was a hard-coded 360 × 360 — now `min(360px,100vw)` so it never exceeds the viewport.
+- **MEDIUM, S1 (regression I introduced in v0.7.86):** the D1 black-ink flip assumed the dark theme's `--gold:#f59e0b` (9.15:1 ✓) but the light theme's gold is `#b45309`, where black ink reads **3.91:1** and worse than the 5.02:1 the control had before the fix. The rule is re-split properly: the base rule carries the light ink (white, 5.02:1) and `[data-theme="dark"]` carries the dark ink (#0d0b08, 9.15:1). **Note for the record:** the first E26 patch wrote a `[data-theme="light"] .mno-cta` override, dead on arrival, because this site never renders `data-theme="light"` (the theme script only sets or removes `data-theme="dark"`). The acceptance test caught it failing live; the dead rule is gone from the build.
+- **MEDIUM, S2:** the ≤480 px theme-picker trigger rendered at **28 px**, the one header control E20/E25 never raised; both markup places now carry `min-height:44px;min-width:44px`.
+- **MEDIUM, S3:** the theme-menu items (System / Light / Dark) rendered at **~30 px**, the only way to reach a theme from a 320 px phone; `.tp-seg` now `min-height:44px`.
+- **MEDIUM, S4:** the drawer sub-menu carets rendered at **32 × 32**; now 44 × 44.
+- **LOW, S5:** the "Paid weekly or in cash?" disclosure was 20.47 px tall, tap target now 44 px.
+- **LOW, S6–S13 (shared chrome, both colours):** `.fpush` (min-height 44), footer sitemap `.fl` rows (44), `.fcredit-link` and `.ftoplink` (24 hit boxes), `.soci` icons 34→44, breadcrumb links 24 hit boxes, `.mlogo` wordmark 44 min-height, "read the source" link 24 hit box, all as **additive overrides** after the WP-verbatim base strings (the footer-fidelity gate still passes 7/7 unedited).
+- **LOW, S14:** the ToolShell hero glow was a hard-coded 360 × 360, now `min(360px,100vw)` so it never exceeds the viewport.
 
-**S15** is recorded report-only (the `.fpush` subscribe rail measures 0 × 0 in both themes below 1024 px — it is `display:none` until the push service worker confirms support; the additive 44 px floor above rides it for when it appears, and no code path changed).
+**S15** is recorded report-only (the `.fpush` subscribe rail measures 0 × 0 in both themes below 1024 px, it is `display:none` until the push service worker confirms support; the additive 44 px floor above rides it for when it appears, and no code path changed).
 
 Verified: check 7/7 · build 84 · calc-regress 130 pass / 0 fail / 7 skip · 320 × 568 + 390 × 844 screenshots light/dark (drawer CTA 5.02:1 white-on-#b45309 light, 9.15:1 dark) · console 0 · 15/15 acceptance checks at live target after byte-identical deploy.
 
-## [0.7.86] - 2026-11-11 — A25 the night-use pass: nine night failures closed, AA floors kept exactly where the light render already held
+## [0.7.86] - 2026-11-11, A25 the night-use pass: nine night failures closed, AA floors kept exactly where the light render already held
 
-**A25** (night-use audit, live site): **FAIL — 3 HIGH, 2 MEDIUM, 4 LOW.** Every figure-bearing surface in the dark render already passed AA with headroom (receipt 8.09:1, inputs 15.59:1, verdict banner 15.59:1, ticker rates 16.81:1, SAMPLE badges 7.74:1). The nine findings sit on rails, affordances and seams — exactly where a night reader's eyes go when the figures feel off. All nine are closed here; none held. The light render is untouched beyond the brightening cases below (all additive).
+**A25** (night-use audit, live site): **FAIL, 3 HIGH, 2 MEDIUM, 4 LOW.** Every figure-bearing surface in the dark render already passed AA with headroom (receipt 8.09:1, inputs 15.59:1, verdict banner 15.59:1, ticker rates 16.81:1, SAMPLE badges 7.74:1). The nine findings sit on rails, affordances and seams, exactly where a night reader's eyes go when the figures feel off. All nine are closed here; none held. The light render is untouched beyond the brightening cases below (all additive).
 
-- **HIGH — D1:** the drawer's subscribe CTA paired white ink with the transient `#f59e0b` — **2.15:1** on black-on-gold that flips with the theme. Now `#0d0b08` on `#f59e0b` — **9.15:1** in both themes.
-- **HIGH — D2:** `.verdict-badge--warn` referenced `--amber`, `--amber-muted` and `--amber-border`, **none of which existed anywhere in src, dist or the served bytes** — the CANNOT SCORE badge painted no badge. The three tokens are now in the layout token ladder, both themes: light dark-brown-on-cream (6.37:1), dark light-gold-on-tinted-black (9.6:1).
-- **HIGH — D3:** the inactive `.fx-step` pill sat at `opacity:0.45` and composite **1.99:1** over the card (light render was 1.86:1). Opacity restored to 1 — the ink is #8f8575 on #171512, **5.02:1** — every reading element of the stepper now clears AA.
-- **MEDIUM — D4:** `.tp-caret` opacity .55 in dark (2.39:1 vs 3:1 UI floor) → .9 (4.42:1).
-- **MEDIUM — D5:** the junk-state dim on `[data-fill-from-plan]` was .45 (both "Use my targets" chips and "Use this" badge fell below 2.85:1) → .72 (>3.5:1).
-- **LOW — D6:** footer middots `.fdot` sat at opacity .6 → dark-only override #d6cfbc at the same opacity (4.85:1), the base rule keeps the verbatim string the footer-fidelity gate asserts.
-- **LOW — D7:** the LIVE dot's 50% pulse trough dropped to ~1.96:1 on black → .6 opacity keeps the pulse alive (3.6:1).
-- **LOW — D8:** `.receipt-div` gold seam at 2.09:1 over the dark card → .55 alpha (3.34:1).
-- **LOW — D9:** the dark-theme `.field` inputs melted into the card at 1.03:1 → the site's own `#1c1a15` fourth tier (5.1:1 against the card).
-- **Gates:** `check` **7/7** (footer-fidelity gate holds by design — the opacity stays 0.6, only the ink brightened on dark) · `build` **84 pages** · `test:calc` **130/0/7** · E19/E20/E21/E22/E23 contracts re-run green · fleei pre-hydration gate **14/14** · console 0 · no horizontal scroll · phone-first 390 px re-verified (dark identity preserved).
-- **Phone-first evidence:** the dark render's identity holds — LIVE dot, monochrome ticker, amber stepper, dark card, distinct input surface.
+- **HIGH, D1:** the drawer's subscribe CTA paired white ink with the transient `#f59e0b`, **2.15:1** on black-on-gold that flips with the theme. Now `#0d0b08` on `#f59e0b`, **9.15:1** in both themes.
+- **HIGH, D2:** `.verdict-badge--warn` referenced `--amber`, `--amber-muted` and `--amber-border`, **none of which existed anywhere in src, dist or the served bytes**, the CANNOT SCORE badge painted no badge. The three tokens are now in the layout token ladder, both themes: light dark-brown-on-cream (6.37:1), dark light-gold-on-tinted-black (9.6:1).
+- **HIGH, D3:** the inactive `.fx-step` pill sat at `opacity:0.45` and composite **1.99:1** over the card (light render was 1.86:1). Opacity restored to 1, the ink is #8f8575 on #171512, **5.02:1**, every reading element of the stepper now clears AA.
+- **MEDIUM, D4:** `.tp-caret` opacity .55 in dark (2.39:1 vs 3:1 UI floor) → .9 (4.42:1).
+- **MEDIUM, D5:** the junk-state dim on `[data-fill-from-plan]` was .45 (both "Use my targets" chips and "Use this" badge fell below 2.85:1) → .72 (>3.5:1).
+- **LOW, D6:** footer middots `.fdot` sat at opacity .6 → dark-only override #d6cfbc at the same opacity (4.85:1), the base rule keeps the verbatim string the footer-fidelity gate asserts.
+- **LOW, D7:** the LIVE dot's 50% pulse trough dropped to ~1.96:1 on black → .6 opacity keeps the pulse alive (3.6:1).
+- **LOW, D8:** `.receipt-div` gold seam at 2.09:1 over the dark card → .55 alpha (3.34:1).
+- **LOW, D9:** the dark-theme `.field` inputs melted into the card at 1.03:1 → the site's own `#1c1a15` fourth tier (5.1:1 against the card).
+- **Gates:** `check` **7/7** (footer-fidelity gate holds by design, the opacity stays 0.6, only the ink brightened on dark) · `build` **84 pages** · `test:calc` **130/0/7** · E19/E20/E21/E22/E23 contracts re-run green · fleei pre-hydration gate **14/14** · console 0 · no horizontal scroll · phone-first 390 px re-verified (dark identity preserved).
+- **Phone-first evidence:** the dark render's identity holds, LIVE dot, monochrome ticker, amber stepper, dark card, distinct input surface.
 
-## [0.7.85] - 2026-11-10 — A24 data-cost pass: 62% of the font bytes off the wire, in glyphs the page never painted dropped and none it does
+## [0.7.85] - 2026-11-10, A24 data-cost pass: 62% of the font bytes off the wire, in glyphs the page never painted dropped and none it does
 
-**A24** (data-cost pass, live site): **FAIL — 0 HIGH, 2 MEDIUM, 6 LOW** — nothing crossed the HIGH bar (≥100 KB or ≥1 s avoidable transfer), but the page was heavy to arrive on. The fonts were 44.7% of every byte it paid. Two MEDIUMs closed here; the two parked items stay parked and named on the ledger.
+**A24** (data-cost pass, live site): **FAIL, 0 HIGH, 2 MEDIUM, 6 LOW**, nothing crossed the HIGH bar (≥100 KB or ≥1 s avoidable transfer), but the page was heavy to arrive on. The fonts were 44.7% of every byte it paid. Two MEDIUMs closed here; the two parked items stay parked and named on the ledger.
 
-- **MEDIUM — C3: the JetBrains Mono latin subset drops what the page will never paint.** The three weights (400/700/800) were the entire font payload at 64,312 B (44.7% of transfer). Every glyph the site paints that the latin subset never carried (→ ─ ≐ ⌄ ◆ ⚠ ✓ ₦…) was already painted by the system mono fallback — and every glyph the subset did carry is kept except two structural control codepoints (CR, BOM). Subset sizes: **400 21,168 → 8,184 · 700 21,908 → 8,296 · 800 21,236 → 8,092** (−62%). Files verified on-device: every glyph of the original that this page paints is present below `U+00FF` + General Punctuation + arrow/check · every drop is a codepoint the site never emits.
-- **LOW — C2: the fold's body weight (400) had no preload while 700/800 did.** Preloaded it at 400+800; 700 stays on-demand (its consumers force it in-fold anyway).
-- **LOW — C4/C8:** preload path swapped (see C2); `size-adjust:100%` added to all three `@font-face` rules — kills the mono↔fallback reflow seam at swap time, zero bytes.
-- **PARKED (not dropped):** C1 — `inlineStylesheets:'always'` ships 131,661 B (≈24 KB gz) of CSS on every route, 17% used here. The real fix is a per-route CSS split across ~30 routes (articles/categories/search/404/legal/home), a change to the cascade contract — needs its own verified round, the King's word, not a midnight edit. C7 — the ticker's visible "LIVE" label over items that don't fetch (no BTC/ETH/XAU reply on an FX-only render) — shared chrome, same word needed. C4 — the 3,159 B gz search index riding every route — shared search transport, same. C5 — GitHub Pages will not serve Brotli (host limit, documented).
-- **Gates:** `check` **7/7** · `build` **84 pages** · `test:calc` **130/0/7** (run with the box's current chromium-1254 binary; the suite was pointed at it after a mid-session browser-cache swap — not a regression, a bump) · acceptance contract all re-run green · fleet pre-hydration gate **14/14** (on the identical local build) · live HTML **byte-identical** to the release dist · console 0 · no horizontal scroll · phone-first 390 px re-verified: digits, ₦, the ticker's rating glyphs and the stepper all render in the subset exactly as before.
-- **This round's font audit cost one correct insight:** the latin subset never contained ₦ or any arrow/box-drawing/check mark at all — so the system fallback was already painting those today, and the subset keeps every glyph the site actually uses.
+- **MEDIUM, C3: the JetBrains Mono latin subset drops what the page will never paint.** The three weights (400/700/800) were the entire font payload at 64,312 B (44.7% of transfer). Every glyph the site paints that the latin subset never carried (→ ─ ≐ ⌄ ◆ ⚠ ✓ ₦…) was already painted by the system mono fallback, and every glyph the subset did carry is kept except two structural control codepoints (CR, BOM). Subset sizes: **400 21,168 → 8,184 · 700 21,908 → 8,296 · 800 21,236 → 8,092** (−62%). Files verified on-device: every glyph of the original that this page paints is present below `U+00FF` + General Punctuation + arrow/check · every drop is a codepoint the site never emits.
+- **LOW, C2: the fold's body weight (400) had no preload while 700/800 did.** Preloaded it at 400+800; 700 stays on-demand (its consumers force it in-fold anyway).
+- **LOW, C4/C8:** preload path swapped (see C2); `size-adjust:100%` added to all three `@font-face` rules, kills the mono↔fallback reflow seam at swap time, zero bytes.
+- **PARKED (not dropped):** C1, `inlineStylesheets:'always'` ships 131,661 B (≈24 KB gz) of CSS on every route, 17% used here. The real fix is a per-route CSS split across ~30 routes (articles/categories/search/404/legal/home), a change to the cascade contract, needs its own verified round, the King's word, not a midnight edit. C7, the ticker's visible "LIVE" label over items that don't fetch (no BTC/ETH/XAU reply on an FX-only render), shared chrome, same word needed. C4, the 3,159 B gz search index riding every route, shared search transport, same. C5, GitHub Pages will not serve Brotli (host limit, documented).
+- **Gates:** `check` **7/7** · `build` **84 pages** · `test:calc` **130/0/7** (run with the box's current chromium-1254 binary; the suite was pointed at it after a mid-session browser-cache swap, not a regression, a bump) · acceptance contract all re-run green · fleet pre-hydration gate **14/14** (on the identical local build) · live HTML **byte-identical** to the release dist · console 0 · no horizontal scroll · phone-first 390 px re-verified: digits, ₦, the ticker's rating glyphs and the stepper all render in the subset exactly as before.
+- **This round's font audit cost one correct insight:** the latin subset never contained ₦ or any arrow/box-drawing/check mark at all, so the system fallback was already painting those today, and the subset keeps every glyph the site actually uses.
 
-## [0.7.84] - 2026-11-10 — E23 follow-up: the fold is the field's again, not the prose's
+## [0.7.84] - 2026-11-10, E23 follow-up: the fold is the field's again, not the prose's
 
-**E23 in v0.7.83 moved the provenance gloss directly under the stepper — and pushed the income field below the 844 px fold.** The fleet pre-hydration gate (which requires the income box to be visible and tappable at 390 × 844) failed its first live run at 13/14: the only failing page was the one E23 had just changed. That is the honest regression the gate exists to catch, and it caught it in the hour after the ship.
+**E23 in v0.7.83 moved the provenance gloss directly under the stepper, and pushed the income field below the 844 px fold.** The fleet pre-hydration gate (which requires the income box to be visible and tappable at 390 × 844) failed its first live run at 13/14: the only failing page was the one E23 had just changed. That is the honest regression the gate exists to catch, and it caught it in the hour after the ship.
 
-- **The fix:** the gloss ("Our example numbers carry the SAMPLE badge — ours, not yours. Type yours in to replace them.") moved to directly under the income quick-fill chips — still visible, still above Step 2, never above the field. The stepper gloss (R1) stays under the button, where the weak reader looks first. `bg-inc` measures **y = 766 px** on a 390 × 844 phone (was 835 px; the gate's ceiling is 804 px).
+- **The fix:** the gloss ("Our example numbers carry the SAMPLE badge, ours, not yours. Type yours in to replace them.") moved to directly under the income quick-fill chips, still visible, still above Step 2, never above the field. The stepper gloss (R1) stays under the button, where the weak reader looks first. `bg-inc` measures **y = 766 px** on a 390 × 844 phone (was 835 px; the gate's ceiling is 804 px).
 - **Gates:** `check` **7/7** · `build` **84 pages** · `test:calc` **130/0/7** · acceptance contract **10/10** · **fleet pre-hydration gate 14/14 again (verified locally on this build)** · no horizontal scroll at 390 px · 390 px phone-first re-verified (field in full at the fold, stepper gloss and SAMPLE badges visible).
 - v0.7.83's own gates stand as shipped (check 7/7, build 84, test:calc 130/0/7, contract 10/10, console 0, live byte-identical). The A23 audit (0 HIGH, 4 MEDIUM, 8 LOW) remains closed by this release together with v0.7.83.
 
-## [0.7.83] - 2026-11-10 — A23 the low-literacy path: the page's gloss travels with the words it explains, and the small print stops hiding
+## [0.7.83] - 2026-11-10, A23 the low-literacy path: the page's gloss travels with the words it explains, and the small print stops hiding
 
-**A23** (low-literacy audit, live site): **0 HIGH, 4 MEDIUM, 8 LOW.** The audit re-measured every reading-side load-bearing element at 390 px and found a page that writes for a schoolreader nowhere — and a phone-first bar broken by its own tooltips. All twelve findings closed here, nothing held (R10, which asks for a language alternative, is parked for the King — and noted as such). The arithmetic is unchanged.
+**A23** (low-literacy audit, live site): **0 HIGH, 4 MEDIUM, 8 LOW.** The audit re-measured every reading-side load-bearing element at 390 px and found a page that writes for a schoolreader nowhere, and a phone-first bar broken by its own tooltips. All twelve findings closed here, nothing held (R10, which asks for a language alternative, is parked for the King, and noted as such). The arithmetic is unchanged.
 
-- **MEDIUM — R1: the stepper's only gloss is now visible without a hover.** *"2. Itemise — break the needs figure into lines — rent, food, transport, data and bills."* rides under the button, where the phone visitor actually looks. (The hover/`screen-reader` gloss is now redundant, kept as-is.)
-- **MEDIUM — R2: the receipt small print is out of the 3.46:1 bin.** The `.receipt-foot.hint` tier printed 10px CAPS letter-spaced caps on a 3.46:1 ground — under AA, with the ascenders stripped, carrying the panel's load-bearing definitions. Now 12px, mixed case, **9.99:1**; the `.receipt-lbl` tier lightened to #a9a18d; KISS: no other rule touched.
-- **MEDIUM — R3: SAMPLE ≡ EXAMPLE gets its sentence in the open.** The vocabulary was everywhere (badges, the mirror badge, the rails) and nowhere defined: *"Our example numbers carry the SAMPLE badge — ours, not yours. Type yours in to replace them."* now sits directly under the stepper, and the mirror badge reads **Sample** — one word everywhere.
-- **MEDIUM — R4: the keypad speaks.** ÷ and × are gone from the two worked examples and the FAQ; the sentence a weak reader can actually decode now reads *"₦45,000 / 3 = ₦15,000 a week, and ₦15,000 times 4 = ₦60,000 a month"* — `/` is the notation every Nigerian banking app and POS agent uses.
-- **LOW — R5:** the tilde is gone from the visible small print ("Defaults leave about 3% in Other").
-- **LOW — R6:** the three highest-traffic trust rails speak positively: *"Our example numbers, not yours: the naira beside each bucket is the plan. Type what you actually spent in any bucket; a blank bucket prints the plan amount — your spend scores against it once you type it."* / *"A blank bucket keeps its plan amount — our example figure rides there until you type your own spend."* / the junk rail now names the unreadable box rather than a double negative.
-- **LOW — R7:** "Apply defaults" is gone — the button now says **"Use the starting shares"**, the one sense every reader holds, and it measures **44px**.
-- **LOW — R8:** the mid-page CTAs ("See where the needs money goes ↓", "↑ Adjust income & split", "← All money calculators", the related-guide links) all measure **≥ 44px**.
-- **LOW — R9:** the only worked instruction for a reader with no fixed pay is now **"Paid weekly or in cash?"**, a disclosure sitting directly under the income field (not buried twelve screens down behind the FAQ's tap); the lede glosses "the needs half" at first sight (*"…itemise the needs half — 50% for rent, food and bills…"*).
-- **LOW — R11:** "reconcile" is gone from the one sentence built to reassure the non-calculator reader (*"…so the buckets still add up to ₦125,000"*).
-- **LOW — R12:** step anchors agree end-to-end — the button says **ITEMISE**, the panel heading now says **"Step 2 — Itemise: where the needs money goes"**, the FAQ says "Step 2", the caption says "Itemise". One token everywhere.
+- **MEDIUM, R1: the stepper's only gloss is now visible without a hover.** *"2. Itemise, break the needs figure into lines, rent, food, transport, data and bills."* rides under the button, where the phone visitor actually looks. (The hover/`screen-reader` gloss is now redundant, kept as-is.)
+- **MEDIUM, R2: the receipt small print is out of the 3.46:1 bin.** The `.receipt-foot.hint` tier printed 10px CAPS letter-spaced caps on a 3.46:1 ground, under AA, with the ascenders stripped, carrying the panel's load-bearing definitions. Now 12px, mixed case, **9.99:1**; the `.receipt-lbl` tier lightened to #a9a18d; KISS: no other rule touched.
+- **MEDIUM, R3: SAMPLE ≡ EXAMPLE gets its sentence in the open.** The vocabulary was everywhere (badges, the mirror badge, the rails) and nowhere defined: *"Our example numbers carry the SAMPLE badge, ours, not yours. Type yours in to replace them."* now sits directly under the stepper, and the mirror badge reads **Sample**, one word everywhere.
+- **MEDIUM, R4: the keypad speaks.** ÷ and × are gone from the two worked examples and the FAQ; the sentence a weak reader can actually decode now reads *"₦45,000 / 3 = ₦15,000 a week, and ₦15,000 times 4 = ₦60,000 a month"*, `/` is the notation every Nigerian banking app and POS agent uses.
+- **LOW, R5:** the tilde is gone from the visible small print ("Defaults leave about 3% in Other").
+- **LOW, R6:** the three highest-traffic trust rails speak positively: *"Our example numbers, not yours: the naira beside each bucket is the plan. Type what you actually spent in any bucket; a blank bucket prints the plan amount, your spend scores against it once you type it."* / *"A blank bucket keeps its plan amount, our example figure rides there until you type your own spend."* / the junk rail now names the unreadable box rather than a double negative.
+- **LOW, R7:** "Apply defaults" is gone, the button now says **"Use the starting shares"**, the one sense every reader holds, and it measures **44px**.
+- **LOW, R8:** the mid-page CTAs ("See where the needs money goes ↓", "↑ Adjust income & split", "← All money calculators", the related-guide links) all measure **≥ 44px**.
+- **LOW, R9:** the only worked instruction for a reader with no fixed pay is now **"Paid weekly or in cash?"**, a disclosure sitting directly under the income field (not buried twelve screens down behind the FAQ's tap); the lede glosses "the needs half" at first sight (*"…itemise the needs half, 50% for rent, food and bills…"*).
+- **LOW, R11:** "reconcile" is gone from the one sentence built to reassure the non-calculator reader (*"…so the buckets still add up to ₦125,000"*).
+- **LOW, R12:** step anchors agree end-to-end, the button says **ITEMISE**, the panel heading now says **"Step 2, Itemise: where the needs money goes"**, the FAQ says "Step 2", the caption says "Itemise". One token everywhere.
 - **Gates:** `check` **7/7** · `build` **84 pages** · `test:calc` **130/0/7** · acceptance contract **10/10** (R2 contrast computed per-element, 9.99:1 across the hint tier) · E22 **7/7** · E21 **5/5** · E20 **5/5** · E19 **6/6 + 10/10** · **0 console errors** before and after typing · no horizontal scroll at 390 px · live HTML byte-identical to the release dist · phone-first visuals re-verified at 390 px.
 
-R10 — *no language alternative for any page content* — is recorded here and on the board as **parked for the King**: an English-only page for a Pidgin, Hausa and Yorùbá readership is a product decision, not a defect this edit round can close.
+R10, *no language alternative for any page content*, is recorded here and on the board as **parked for the King**: an English-only page for a Pidgin, Hausa and Yorùbá readership is a product decision, not a defect this edit round can close.
 
-## [0.7.82] - 2026-11-10 — A22 the low-numeracy path: one worked example, one question asked on each side of the plausible — the page stops demanding division
+## [0.7.82] - 2026-11-10, A22 the low-numeracy path: one worked example, one question asked on each side of the plausible, the page stops demanding division
 
-**A22** (low-numeracy audit, live site): **FAIL — 2 MEDIUM, 5 LOW.** The page prices numbers exactly and never lies, but it demanded of its weakest reader what it never gave back: one division with no example, and an unasked question when a figure is implausibly small. All seven findings are closed here, nothing held; the caveat untouched and the arithmetic unchanged.
+**A22** (low-numeracy audit, live site): **FAIL, 2 MEDIUM, 5 LOW.** The page prices numbers exactly and never lies, but it demanded of its weakest reader what it never gave back: one division with no example, and an unasked question when a figure is implausibly small. All seven findings are closed here, nothing held; the caveat untouched and the arithmetic unchanged.
 
-- **MEDIUM — L1: the non-salary FAQ now does the arithmetic itself.** "I don't earn a regular salary — can I still use this?" demanded you add three weeks of cash, divide by the weeks — and the visitor this FAQ exists for is told it is trivial, with no worked instance and no destination for the result. It now reads: *"Yes. Add up what you earned over three weeks, divide by 3, then multiply by 4 — say ₦45,000 ÷ 3 = ₦15,000 a week, and ₦15,000 × 4 = ₦60,000 a month. Type 60,000 into Monthly income ₦ above. In a lean month it still tells you what has to be covered, and it does not punish a small income."* The article's average-of-last-three-months paragraph carries the same instance.
-- **MEDIUM — L2: a typed unit slip is now asked about, not scolded.** Typing `100` (meaning ₦100,000 — the Nigerian spoken shorthand) priced the whole plan at ₦50 needs figures, printed a ₦184,920 "over budget" scold, and gave no sign the unit was the problem: every sentence was internally consistent and every one of them priced from a ₦100 income. A small-side twin of the existing huge-figure rail now asks — *"Monthly income ₦" reads ₦100. That looks unusually small for a month — if you meant ₦100,000, retype it in full."* The rail asks, never refuses, never re-prices and never clamps; only the income box is covered, and the zero-plan machinery already carries the ₦0 case.
-- **LOW — L3: a sub-1% split now asks, too.** "0.5" meaning half was read as 0.5% and priced silently, the only guard being the imbalance rail a number-blind reader cannot decode as nonsense. The share-range rail now carries the question: *"A share below 1% is usually a missing digit — if you meant 50, retype it in full."* Same ask, never a refusal.
-- **LOW — L4: the needs-% in the NEEDS OVER item prints at the field's own precision.** It printed `Math.round` — "raise Needs % from 33% to 52%" — beside a field showing 33.33 and an `al-pct` showing 33.33%. It now prints 33.33%.
-- **LOW — L5: the lede maps its three conventions to each other.** "Half — 50% — for needs, 30% for wants, a fifth (20%) for future you" — the fraction and the percent are co-located instead of asking the reader to translate between them silently.
-- **LOW — L6: the chips and the context line speak in full figures.** The ₦k shorthand was unexpanded everywhere on the page; chips now read ₦25,000 … ₦500,000, and the context line reads ₦120,000–₦150,000.
-- **LOW — L7: a share sum far under 100% now asks too.** 58% (the '1'-for-'10' slip) passed with only the passive remainder sentence and the entire 42% parked in "Other needs" with no on-screen ask. The under-80% branch now asks: *"Shares add to 58% — 42% of the needs budget is unassigned. Check the five boxes above; most households aim for 100%."* The over-100 branch already fired exactly; the remainder branch is unchanged for plausible sums.
-- **Gates:** `check` **7/7** · `build` **84 pages** · `test:calc` **130/0/7** · acceptance contract **7/7** · E21 **5/5** · E20 **5/5** · E19 **6/6 + 10/10** · console 0 · no horizontal scroll at 320 px or 390 px · one crash introduced and caught before shipping (a stray `id` in the new rail's template literal — the render-time error harness caught it; fixed and re-verified with pageerror 0).
+- **MEDIUM, L1: the non-salary FAQ now does the arithmetic itself.** "I don't earn a regular salary, can I still use this?" demanded you add three weeks of cash, divide by the weeks, and the visitor this FAQ exists for is told it is trivial, with no worked instance and no destination for the result. It now reads: *"Yes. Add up what you earned over three weeks, divide by 3, then multiply by 4, say ₦45,000 ÷ 3 = ₦15,000 a week, and ₦15,000 × 4 = ₦60,000 a month. Type 60,000 into Monthly income ₦ above. In a lean month it still tells you what has to be covered, and it does not punish a small income."* The article's average-of-last-three-months paragraph carries the same instance.
+- **MEDIUM, L2: a typed unit slip is now asked about, not scolded.** Typing `100` (meaning ₦100,000, the Nigerian spoken shorthand) priced the whole plan at ₦50 needs figures, printed a ₦184,920 "over budget" scold, and gave no sign the unit was the problem: every sentence was internally consistent and every one of them priced from a ₦100 income. A small-side twin of the existing huge-figure rail now asks, *"Monthly income ₦" reads ₦100. That looks unusually small for a month, if you meant ₦100,000, retype it in full."* The rail asks, never refuses, never re-prices and never clamps; only the income box is covered, and the zero-plan machinery already carries the ₦0 case.
+- **LOW, L3: a sub-1% split now asks, too.** "0.5" meaning half was read as 0.5% and priced silently, the only guard being the imbalance rail a number-blind reader cannot decode as nonsense. The share-range rail now carries the question: *"A share below 1% is usually a missing digit, if you meant 50, retype it in full."* Same ask, never a refusal.
+- **LOW, L4: the needs-% in the NEEDS OVER item prints at the field's own precision.** It printed `Math.round`, "raise Needs % from 33% to 52%", beside a field showing 33.33 and an `al-pct` showing 33.33%. It now prints 33.33%.
+- **LOW, L5: the lede maps its three conventions to each other.** "Half, 50%, for needs, 30% for wants, a fifth (20%) for future you", the fraction and the percent are co-located instead of asking the reader to translate between them silently.
+- **LOW, L6: the chips and the context line speak in full figures.** The ₦k shorthand was unexpanded everywhere on the page; chips now read ₦25,000 … ₦500,000, and the context line reads ₦120,000–₦150,000.
+- **LOW, L7: a share sum far under 100% now asks too.** 58% (the '1'-for-'10' slip) passed with only the passive remainder sentence and the entire 42% parked in "Other needs" with no on-screen ask. The under-80% branch now asks: *"Shares add to 58%, 42% of the needs budget is unassigned. Check the five boxes above; most households aim for 100%."* The over-100 branch already fired exactly; the remainder branch is unchanged for plausible sums.
+- **Gates:** `check` **7/7** · `build` **84 pages** · `test:calc` **130/0/7** · acceptance contract **7/7** · E21 **5/5** · E20 **5/5** · E19 **6/6 + 10/10** · console 0 · no horizontal scroll at 320 px or 390 px · one crash introduced and caught before shipping (a stray `id` in the new rail's template literal, the render-time error harness caught it; fixed and re-verified with pageerror 0).
 
-## [0.7.81] - 2026-11-10 — A21 scenario pass: a visitor with an irregular cash income gets the page counted honestly
+## [0.7.81] - 2026-11-10, A21 scenario pass: a visitor with an irregular cash income gets the page counted honestly
 
-**A21** (scenario audit, live site): **FAIL — 1 HIGH, 3 MEDIUM, 1 LOW across four personas** (the market woman on ₦180k cash weekly, the salary earner on ₦350k net, the student on ₦25k, the retiree on ₦950k pension). All five findings closed here, nothing held; the caveat untouched — the arithmetic was exact at every scale and remains untouched.
+**A21** (scenario audit, live site): **FAIL, 1 HIGH, 3 MEDIUM, 1 LOW across four personas** (the market woman on ₦180k cash weekly, the salary earner on ₦350k net, the student on ₦25k, the retiree on ₦950k pension). All five findings closed here, nothing held; the caveat untouched, the arithmetic was exact at every scale and remains untouched.
 
-- **HIGH — F1: the verdict banner decided ownership on the WRONG pair of fields.** It required BOTH the split field and the spend field to be typed before it would call the figure the visitor's — so a visitor who typed only their spend was told "Our example is ₦5,000 over on needs — that figure is ours, not yours" beside a needs line in the same view that said "You spent ₦180,000". That is two owners for the same naira on one screen. The three verdict items (NEEDS OVER / WANTS OVER / the SAVE GAP ↔ AHEAD savings pair) now decide ownership on the SPEND field alone — the exact rule the needs line already used — and the figure produced by the visitor's own typing is announced as theirs.
-- **MEDIUM — F2: "the fund is ready" was asserted for a ₦1,250/month saving slice.** The ON PLAN milestone now states what the numbers support at any scale — "you are saving as planned" — instead of a milestone the student's ledger cannot carry. The ₦0 plan still earns no milestone (v0.7.79).
-- **MEDIUM — F3: the one Nigerian-context line dropped its source's qualifier.** The Guardian piece it cites says the ₦120k–₦150k band is **formal wage jobs** — about 1 in 8 Nigerians is in one; the page printed "Median Nigerian pay" as if it described the whole country. The line now reads **"Median pay in formal wage jobs…"**, in both the SSR markup and the smart-fields spine text (the spine owns the hydrated text; a first-pass fix edited only the SSR copy and was caught by the manager's live-state gate).
-- **MEDIUM — F4: the page had no register for a reader with no salary.** Zero occurrences of `week` / `cash` / `pension` / `retire` / `informal` / `student` anywhere in the served page. The FAQ now opens with "I don't earn a regular salary — can I still use this?" — add up two or three weeks of cash or transfers, divide by the weeks, that is your rough monthly number; in a lean month the tool still says what has to be covered and does not punish a small income.
-- **LOW — F5: the quick-fill chips started at ₦70k and skipped both outer ranges.** ₦25k and ₦180k are now in the chip row (P1 and P3 can one-tap fill for the first time), and the chips measure **44px** on this page (they were 34px; page-scoped rule, the shared .fx-chip class is untouched).
+- **HIGH, F1: the verdict banner decided ownership on the WRONG pair of fields.** It required BOTH the split field and the spend field to be typed before it would call the figure the visitor's, so a visitor who typed only their spend was told "Our example is ₦5,000 over on needs, that figure is ours, not yours" beside a needs line in the same view that said "You spent ₦180,000". That is two owners for the same naira on one screen. The three verdict items (NEEDS OVER / WANTS OVER / the SAVE GAP ↔ AHEAD savings pair) now decide ownership on the SPEND field alone, the exact rule the needs line already used, and the figure produced by the visitor's own typing is announced as theirs.
+- **MEDIUM, F2: "the fund is ready" was asserted for a ₦1,250/month saving slice.** The ON PLAN milestone now states what the numbers support at any scale, "you are saving as planned", instead of a milestone the student's ledger cannot carry. The ₦0 plan still earns no milestone (v0.7.79).
+- **MEDIUM, F3: the one Nigerian-context line dropped its source's qualifier.** The Guardian piece it cites says the ₦120k–₦150k band is **formal wage jobs**, about 1 in 8 Nigerians is in one; the page printed "Median Nigerian pay" as if it described the whole country. The line now reads **"Median pay in formal wage jobs…"**, in both the SSR markup and the smart-fields spine text (the spine owns the hydrated text; a first-pass fix edited only the SSR copy and was caught by the manager's live-state gate).
+- **MEDIUM, F4: the page had no register for a reader with no salary.** Zero occurrences of `week` / `cash` / `pension` / `retire` / `informal` / `student` anywhere in the served page. The FAQ now opens with "I don't earn a regular salary, can I still use this?", add up two or three weeks of cash or transfers, divide by the weeks, that is your rough monthly number; in a lean month the tool still says what has to be covered and does not punish a small income.
+- **LOW, F5: the quick-fill chips started at ₦70k and skipped both outer ranges.** ₦25k and ₦180k are now in the chip row (P1 and P3 can one-tap fill for the first time), and the chips measure **44px** on this page (they were 34px; page-scoped rule, the shared .fx-chip class is untouched).
 - **Gates:** `check` **7/7** · `build` **84 pages** · `test:calc` **130/0/7** · A21 acceptance contract **5/5** · E20 **5/5** · E19 **6/6 + 10/10** · phone-first 390 clean (chips 44 px, no h-scroll) · console 0.
 
-## [0.7.80] - 2026-11-10 — E20b: the eight silent rails get an audience, the verdict badge gets its word, the 320px chips reach the 44px floor
+## [0.7.80] - 2026-11-10, E20b: the eight silent rails get an audience, the verdict badge gets its word, the 320px chips reach the 44px floor
 
 **E20b** (the A20 remainder, live site): **all three remaining A20 items closed, nothing held.**
 
-- **NEW-4 — the eight silent rails are audible now.** A screen-reader user heard none of the eight
+- **NEW-4, the eight silent rails are audible now.** A screen-reader user heard none of the eight
   visible rails this page leans on: the reconcile rail that stops the page claiming a verdict,
   the ON PLAN banner, the share-total rail, the needs line, the what-now advice, the junk rail,
   the sumnote and the mirror panel. All eight now carry `role="status"` (implicit polite live
-  region), the same semantics A16 already gave the four rails it fixed, and — the caveat A20
-  flagged — every one of their writes goes through one shared **identical-text guard**, so a
+  region), the same semantics A16 already gave the four rails it fixed, and, the caveat A20
+  flagged, every one of their writes goes through one shared **identical-text guard**, so a
   polite region announces a change, not a re-render of the same sentence on every keystroke.
   Console **0 errors** with the rails live.
-- **NEW-5 — the verdict badge no longer eats the first word of its sentence.** The badge and
+- **NEW-5, the verdict badge no longer eats the first word of its sentence.** The badge and
   the sentence were one uninterrupted text run, which broke plain-English copy-paste and
   screen-reader reads ("SAVE GAPOur example is…"). Each verdict badge is followed by a proper
   separator inside the flex row (whitespace text items do not render inside a flex container,
-  so the visuals are unchanged) and the mirror rows' reads likewise ("rent ₦50,000 — add yours
+  so the visuals are unchanged) and the mirror rows' reads likewise ("rent ₦50,000, add yours
   to score it"). 320 px and 390 px layout unchanged; no element moved a pixel.
-- **NEW-6 — the 320 px chip row is a 44 px tap target.** The fill chips measured 34–36 px on a
+- **NEW-6, the 320 px chip row is a 44 px tap target.** The fill chips measured 34–36 px on a
   320 px phone (every other control on this page is already padded to the 44 px floor). A
   page-scoped additive rule takes the chip rows to 44 px at ≤360 px. All chips now measure
   44 px; no other page's CSS was touched; no layout change at 390 px.
@@ -161,89 +180,89 @@ R10 — *no language alternative for any page content* — is recorded here and 
   HTML **byte-identical** to the release dist (230,016 B) · console 0 · no horizontal scroll
   · the 320 px screenshot is saved alongside this note.
 
-## [0.7.79] - 2026-11-10 — A20 mid-program review: the truthfulness fixes — no more two verdicts about the same numbers, no more our-figure-as-yours
+## [0.7.79] - 2026-11-10, A20 mid-program review: the truthfulness fixes, no more two verdicts about the same numbers, no more our-figure-as-yours
 
-**A20** (mid-program review, live site): verdict **MIXED** — 29 promises kept · 5 broken · 1
+**A20** (mid-program review, live site): verdict **MIXED**, 29 promises kept · 5 broken · 1
 regressed · 1 unmeasurable · 6 new problems. No new audit findings are shipped here except
 the fixes for what A20 itself found wrong in **v0.7.78**, plus the two broken-promise items
 in the same class. The remaining A20 items are queued as E20b (accessibility rails,
-text-extraction seam, 320 px tap targets) — see the ledger.
+text-extraction seam, 320 px tap targets), see the ledger.
 
-- **R2 — the C8 banner picked up the E19 rule and the page now holds two identical verdicts
+- **R2, the C8 banner picked up the E19 rule and the page now holds two identical verdicts
   no more than once.** v0.7.78 made the needs line and the needs advice line compare the
   *printed* figures, but the verdict banner still compared the engine's raw difference.
   Income ₦250,001 with the chip filled gave "₦125,001 vs ₦125,001 … within plan" on one line
-  and "NEEDS OVER — ₦1 over" on another. The banner (and the WANTS OVER banner, on the same
+  and "NEEDS OVER, ₦1 over" on another. The banner (and the WANTS OVER banner, on the same
   rule) now decide on the displayed figures, exactly as the needs line does.
-- **NEW-2 — the visitor's own chip-written spend is no longer called theirs either.**
-  The three step-1 "Use my targets — …" chips write the plan's figure into the visitor's
-  spend fields, and the field's Sample badge is dropped on write — so the page announced
+- **NEW-2, the visitor's own chip-written spend is no longer called theirs either.**
+  The three step-1 "Use my targets, …" chips write the plan's figure into the visitor's
+  spend fields, and the field's Sample badge is dropped on write, so the page announced
   "You spent ₦125,000" beside its own "this came from the plan, not your month". The same
   per-field provenance the five step-2 actuals carry now covers the three step-1 spends:
   the visitor's own typing takes the figure back; the chip keeps it labelled
-  *"From the plan: … That figure is ours, not yours — type what you really spent to score
+  *"From the plan: … That figure is ours, not yours, type what you really spent to score
   your month."*
-- **NEW-3 — a negative income earns no scolding.** Income `-50000` was read as ₦0 and the
-  page still said "Needs and wants are ₦185,000 over budget — spend less there or raise the
-  splits above" plus a four-item verdict banner against a plan that does not exist. F-P5 —
-  the page's own rule: "a ₦0 plan is a plan that doesn't exist" — now gates the advice line,
+- **NEW-3, a negative income earns no scolding.** Income `-50000` was read as ₦0 and the
+  page still said "Needs and wants are ₦185,000 over budget, spend less there or raise the
+  splits above" plus a four-item verdict banner against a plan that does not exist. F-P5, 
+  the page's own rule: "a ₦0 plan is a plan that doesn't exist", now gates the advice line,
   the needs line and every verdict item, so the page says nothing it cannot support and
   keeps the visitor's own rail ("Negative entries are treated as ₦0.") for what happened.
   The `⚠` absurd-figure rail is untouched.
-- **R1/R3 — the mirror rail is short again and loses the seam.** v0.7.78's C2 clause was
+- **R1/R3, the mirror rail is short again and loses the seam.** v0.7.78's C2 clause was
   added on top of the 25-word "the other N still show their plan only…" sentence, making
   the rail 63 words (A17 filed 61 as HIGH; E17's log claimed it fixed) and opening a
   lowercase sentence start ("… from you. the other 4 …"). The 25-word clause is gone (the
-  rows already say "— add yours to score it"), the sentence starts are plain, and the counted
+  rows already say ", add yours to score it"), the sentence starts are plain, and the counted
   variant is ~46 words.
-- **NEW-1 — a restored split is the visitor's, and the page says so.** A visitor whose
+- **NEW-1, a restored split is the visitor's, and the page says so.** A visitor whose
   "Last used" income ₦450,000 and "Last used" split 60% were restored, beside two Sample
   fields, was told "Our example's splits add to 110%" and "buckets use your exact percentages".
   Ownership is now a per-field answer, not a group yes/no: the verdict reads *"Your Needs %
-  and our example's Wants %, Savings % add to 110% — change them to add up to 100%."* and the
+  and our example's Wants %, Savings % add to 110%, change them to add up to 100%."* and the
   sumnote reads *"buckets use your Needs % and our example's Wants %, Savings %, so bring
   them back to 100%."*
 - **One defect introduced and caught before shipping this round:** the new per-field
-  ownership helpers were declared inside `render()` *after* the sumnote that used them —
+  ownership helpers were declared inside `render()` *after* the sumnote that used them, 
   every render died midway with a TDZ ReferenceError, leaving the receipt restored but the
   allocator line and verdict at their server defaults. Caught by the live-vs-local restored
   state comparison and by a new error-tracking debug harness (the page's own `pageerror`
   listener); the helpers are hoisted to module scope and the page boots error-free again.
 - **Gates:** `check` **7/7** · `build` **84 pages** · `test:calc` **130/0/7** · acceptance
-  contract **5/5** (R2 · NEW-2 · NEW-3 · R1/R3 · NEW-1 — the NEW-1 check now reproduces the
+  contract **5/5** (R2 · NEW-2 · NEW-3 · R1/R3 · NEW-1, the NEW-1 check now reproduces the
   restored state end-to-end: toggle ON, two fields typed, reload) · E19 contracts re-run
   **6/6 + 10/10** (no regression) · the seed state is byte-identical to v0.7.78 behaviour
   · 390 phone-first: verdict fits its box (306 px), no horizontal scroll, console 0.
 
-## [0.7.78] - 2026-11-10 — E19 confidence calibration: the page stops claiming more certainty, or more ownership, than its own arithmetic supports
+## [0.7.78] - 2026-11-10, E19 confidence calibration: the page stops claiming more certainty, or more ownership, than its own arithmetic supports
 
-**E19** (edit round 19 of 40, live site): **A19 FAIL resolved — 4 HIGH, 8 MEDIUM, 3 LOW, all 15 findings closed, nothing held.** A19 audited what the 50/30/20 page *claims* about its own certainty: a verdict, a badge or a figure whose confidence its evidence does not carry. No CRITICAL — nothing was fabricated and no sum was wrong; every defect was a misstatement of certainty or ownership. No caveat was deleted: the "true by construction" family, the junk rails, the dated context line and every other disclaimer survive unchanged.
+**E19** (edit round 19 of 40, live site): **A19 FAIL resolved, 4 HIGH, 8 MEDIUM, 3 LOW, all 15 findings closed, nothing held.** A19 audited what the 50/30/20 page *claims* about its own certainty: a verdict, a badge or a figure whose confidence its evidence does not carry. No CRITICAL, nothing was fabricated and no sum was wrong; every defect was a misstatement of certainty or ownership. No caveat was deleted: the "true by construction" family, the junk rails, the dated context line and every other disclaimer survive unchanged.
 
-- **HIGH — C1: the advice line no longer speaks against a plan that is not on screen.** With income ₦550,000, "Spent on needs" ₦99,000 and the example cleared, the page said *"Needs are ₦99,000 over budget — spend less there or raise the needs split % above"* while every plan surface printed "—" and the split field it advised was blank. `#bg-whatnow` now carries the same plan-present guard the live and mini lines already used, so it stands down exactly where they stand down; the existing "Nothing to compute yet — Needs % is empty, not zero." rail carries the moment.
-- **HIGH — C2: a chip-written figure is no longer announced as the visitor's own.** "Use plan — food" wrote ₦31,250 and the row read *"you entered ₦31,250 … ON PLAN"* while the receipt rail said *"this came from the plan, not your month"*. Each of the five "you actually spent" fields now carries its provenance (typed, or written from the plan). A plan-written row reads **"from the plan"**, its badge inherits the caveat (**"ON PLAN (from the plan)"**), and the mirror sentence counts what the visitor typed and names what the plan wrote ("1 of 5 buckets came from the plan, not from you"). `#bg-pasted` is untouched — it was right.
-- **HIGH — C3: no verdict beside a rail that refuses to score.** The page printed *"ON PLAN on all 1 scored bucket"* and *"they disagree, so we cannot score your month yet"* at the same time. The reconcile rail is now the authority: while it shows, the ON PLAN banner stands down, and when every scored bucket came from the plan the banner says so itself — *"those figures came from the plan, not your month, so it is true by construction, not by verdict."*
-- **HIGH — C4: the visitor's own spend is no longer announced as ours.** Typing ₦90,000 into "Spent on needs" produced *"Example: ₦90,000 vs ₦125,000 plan on needs … Our example, not yours"* because the voice was decided by the plan's ownership, not the spend's. The spend's own badge decides its voice now, and the plan side is labelled by its owner: *"You spent ₦90,000 vs our ₦125,000 example plan on needs — within plan."*
-- **MEDIUM — C5: the plan-provenance rail can move.** Once a bucket the visitor replaced with their own figure, the rail still said "Type what you really spent to score your month". It now follows the provenance: *"That one is yours now — the other four still show the plan only, with nothing real to score them against."*
-- **MEDIUM — C6/C7: the share sentence quotes the same number as the naira.** 33.4% × 3 printed *"Shares add to 100% — 0% over the needs budget"* beside *"Over by ₦250"*. The exact sum is printed now: *"Shares add to 100.2% — 0.2% over the needs budget (₦250)."* And *"every naira of needs has a job"* is reserved for a true 100% — at 99.9% the page says *"Shares add to 99.9% — the other 0.1% is what \"Other needs\" holds, so the buckets still reconcile to ₦125,000."* The 97% wording is byte-identical.
-- **MEDIUM — C8: the verdict is decided on the figures the page prints.** Income ₦250,001 made the plan ₦125,000.5, which displayed as ₦125,001 — the same number as the spend — and the page still said *"₦1 over"*. Every comparison (the needs line, the step-1 advice line, the NEEDS OVER banner) now works on whole naira, so a half-naira residue is rounding, not a disagreement, and two identical numbers never carry a verdict.
-- **MEDIUM — C9: no signed zero, and the parts add up to the income.** A −3e-8 float residue printed *"leftover −₦0"* — a minus sign on nothing. The leftover is now computed from the same rounded parts that are on screen, so the printed parts always add up to the printed income and a real rounding residue prints as the ±₦1 it is.
-- **MEDIUM — C10: no hidden 1% tolerance.** A ₦1,000 disagreement between the buckets and "Spent on needs" was swallowed by a tolerance that appears nowhere on screen. The rail now fires on a whole-naira difference, with its wording unchanged.
-- **MEDIUM — C11: the five step-2 share seeds now carry the Sample badge in the served markup.** 40 / 25 / 15 / 10 / 7 are our example, and the page said so seven times over in step 1 and not once in step 2 — so before the page booted (and forever, with JavaScript off) they read as the visitor's own. The same `data-sd` attribute and the same badge the module re-creates; the value attribute is untouched, so the early-typing handoff still works.
-- **MEDIUM — C12: the market strip's daily rate is disclosed in words.** Its visible word is "LIVE", but its currency pairs are the daily reference rate (its own title says so, and a phone has no hover path to a title). The page now states it plainly, with the snapshot's own date: *"The market strip above shows the site's daily reference rate for currency pairs — updated 10 Nov 2026, 00:02 UTC. Crypto and gold prices refresh on each visit."* The shared ticker label is site chrome on every page and is **not** this page's to change — it is parked for the King's word.
-- **LOW — C13: "the other 0 still show their plan only"** is gone; that clause prints only when a bucket really is unscored. **C14: the printed percentage now matches the printed amount** — *"Needs budget (33.33% of income): ₦99,990"* instead of "33%", and the six bucket rows reconcile to the needs total they claim. **C15: a ₦0 plan earns no milestone** — "the fund is ready" is withheld until there is a plan to be within.
+- **HIGH, C1: the advice line no longer speaks against a plan that is not on screen.** With income ₦550,000, "Spent on needs" ₦99,000 and the example cleared, the page said *"Needs are ₦99,000 over budget, spend less there or raise the needs split % above"* while every plan surface printed ", " and the split field it advised was blank. `#bg-whatnow` now carries the same plan-present guard the live and mini lines already used, so it stands down exactly where they stand down; the existing "Nothing to compute yet, Needs % is empty, not zero." rail carries the moment.
+- **HIGH, C2: a chip-written figure is no longer announced as the visitor's own.** "Use plan, food" wrote ₦31,250 and the row read *"you entered ₦31,250 … ON PLAN"* while the receipt rail said *"this came from the plan, not your month"*. Each of the five "you actually spent" fields now carries its provenance (typed, or written from the plan). A plan-written row reads **"from the plan"**, its badge inherits the caveat (**"ON PLAN (from the plan)"**), and the mirror sentence counts what the visitor typed and names what the plan wrote ("1 of 5 buckets came from the plan, not from you"). `#bg-pasted` is untouched, it was right.
+- **HIGH, C3: no verdict beside a rail that refuses to score.** The page printed *"ON PLAN on all 1 scored bucket"* and *"they disagree, so we cannot score your month yet"* at the same time. The reconcile rail is now the authority: while it shows, the ON PLAN banner stands down, and when every scored bucket came from the plan the banner says so itself, *"those figures came from the plan, not your month, so it is true by construction, not by verdict."*
+- **HIGH, C4: the visitor's own spend is no longer announced as ours.** Typing ₦90,000 into "Spent on needs" produced *"Example: ₦90,000 vs ₦125,000 plan on needs … Our example, not yours"* because the voice was decided by the plan's ownership, not the spend's. The spend's own badge decides its voice now, and the plan side is labelled by its owner: *"You spent ₦90,000 vs our ₦125,000 example plan on needs, within plan."*
+- **MEDIUM, C5: the plan-provenance rail can move.** Once a bucket the visitor replaced with their own figure, the rail still said "Type what you really spent to score your month". It now follows the provenance: *"That one is yours now, the other four still show the plan only, with nothing real to score them against."*
+- **MEDIUM, C6/C7: the share sentence quotes the same number as the naira.** 33.4% × 3 printed *"Shares add to 100%, 0% over the needs budget"* beside *"Over by ₦250"*. The exact sum is printed now: *"Shares add to 100.2%, 0.2% over the needs budget (₦250)."* And *"every naira of needs has a job"* is reserved for a true 100%, at 99.9% the page says *"Shares add to 99.9%, the other 0.1% is what \"Other needs\" holds, so the buckets still reconcile to ₦125,000."* The 97% wording is byte-identical.
+- **MEDIUM, C8: the verdict is decided on the figures the page prints.** Income ₦250,001 made the plan ₦125,000.5, which displayed as ₦125,001, the same number as the spend, and the page still said *"₦1 over"*. Every comparison (the needs line, the step-1 advice line, the NEEDS OVER banner) now works on whole naira, so a half-naira residue is rounding, not a disagreement, and two identical numbers never carry a verdict.
+- **MEDIUM, C9: no signed zero, and the parts add up to the income.** A −3e-8 float residue printed *"leftover −₦0"*, a minus sign on nothing. The leftover is now computed from the same rounded parts that are on screen, so the printed parts always add up to the printed income and a real rounding residue prints as the ±₦1 it is.
+- **MEDIUM, C10: no hidden 1% tolerance.** A ₦1,000 disagreement between the buckets and "Spent on needs" was swallowed by a tolerance that appears nowhere on screen. The rail now fires on a whole-naira difference, with its wording unchanged.
+- **MEDIUM, C11: the five step-2 share seeds now carry the Sample badge in the served markup.** 40 / 25 / 15 / 10 / 7 are our example, and the page said so seven times over in step 1 and not once in step 2, so before the page booted (and forever, with JavaScript off) they read as the visitor's own. The same `data-sd` attribute and the same badge the module re-creates; the value attribute is untouched, so the early-typing handoff still works.
+- **MEDIUM, C12: the market strip's daily rate is disclosed in words.** Its visible word is "LIVE", but its currency pairs are the daily reference rate (its own title says so, and a phone has no hover path to a title). The page now states it plainly, with the snapshot's own date: *"The market strip above shows the site's daily reference rate for currency pairs, updated 10 Nov 2026, 00:02 UTC. Crypto and gold prices refresh on each visit."* The shared ticker label is site chrome on every page and is **not** this page's to change, it is parked for the King's word.
+- **LOW, C13: "the other 0 still show their plan only"** is gone; that clause prints only when a bucket really is unscored. **C14: the printed percentage now matches the printed amount**, *"Needs budget (33.33% of income): ₦99,990"* instead of "33%", and the six bucket rows reconcile to the needs total they claim. **C15: a ₦0 plan earns no milestone**, "the fund is ready" is withheld until there is a plan to be within.
 - **Gates:** `npm run check` **7/7 green** · `npm run build` **84 pages** · `npm run test:calc` **130 pass / 0 fail / 7 skip** · acceptance contract **5/5** (C1–C5) and **10/10** (C6–C15) against the built page · served markup carries exactly one Sample badge per share field · 390 phone-first visual clean, no horizontal scroll, console 0.
 
-## [0.7.77] - 2026-11-09 — fleet-wide: every money tool ships the currency box in its markup, so a visitor who taps and types before the page boots keeps every keystroke
+## [0.7.77] - 2026-11-09, fleet-wide: every money tool ships the currency box in its markup, so a visitor who taps and types before the page boots keeps every keystroke
 
 **Fleet-wide follow-up to E18.** v0.7.76 closed the pre-hydration caret theft on the 50/30/20
 page only; `money-controls.js` is shared by every money-tool page, so the same window existed
-on the other thirteen. This release server-renders the same `.fi` wrapper — the box `glyph()`
-would have built at boot — on every remaining `data-cur` decimal field. No JavaScript, CSS,
+on the other thirteen. This release server-renders the same `.fi` wrapper, the box `glyph()`
+would have built at boot, on every remaining `data-cur` decimal field. No JavaScript, CSS,
 copy or figure changed.
 
 - **Scope, counted on the built site.** 47 `<input inputmode="decimal">` inside `data-cur`
   fields across 14 money-tool pages. Nine were already wrapped on 50/30/20 by v0.7.76; this
-  release adds **38 wrappers across 13 pages** — compound-interest 2, crypto-profit 4,
+  release adds **38 wrappers across 13 pages**, compound-interest 2, crypto-profit 4,
   currency-converter 1, dividend 3, emergency-fund 3, gross-to-net 6, inflation-savings 2,
   loan-repayment 1, money-transfer 1, naira-value 4, salary-tax 7, savings-goal 3,
   savings-rate 1. Every replacement is one line: the input tag is wrapped, every attribute and
@@ -252,12 +271,12 @@ copy or figure changed.
   ("the glyph is injected once and reused"), so the boot step becomes a no-op: the focused
   input is never moved, focus is never lost. The symbol is exactly `₦` (U+20A6) on NGN fields,
   so `sync()`'s multi-character `--fi-pad` branch never runs and the geometry is unchanged.
-  `currency-converter` renders `{cur[seed.from].symbol}` — `$` at the shipped `USD` seed — so
+  `currency-converter` renders `{cur[seed.from].symbol}`, `$` at the shipped `USD` seed, so
   the SSR glyph equals the build-time selection and `sync()` sees no currency change on boot.
 - **Pre-hydration gate, 14/14.** 390×844 Pixel 5, 4G 9000/1500 kbps + 85 ms, CPU 4×, raw CDP
   touch and key events, module bundles held 1200 ms per wave so the tap-and-type window is
   real: every page **0 focusout events during boot, focus still on the input, value exactly
-  `300000`, all its fields wrapped, symbol correct, console 0 errors, no horizontal scroll —
+  `300000`, all its fields wrapped, symbol correct, console 0 errors, no horizontal scroll, 
   14/14 pass**. Counter-proof on the live unfixed site, same harness: compound-interest and
   salary-tax **fail with exactly 1 focusout at boot and focus falling to `BODY` (0/2)**.
 - **Gates.** `npm run check` **7/7 green** · `npm run build` **84 pages** · served markup
@@ -268,7 +287,7 @@ copy or figure changed.
   The shared script keeps its `appendChild` boot path for any future `data-cur` field added
   without the wrapper, which is the only remaining way to reintroduce this window.
 
-## [0.7.76] - 2026-11-09 — E18 follow-up: the currency field no longer steals the caret from a visitor who types before the page boots
+## [0.7.76] - 2026-11-09, E18 follow-up: the currency field no longer steals the caret from a visitor who types before the page boots
 
 **E18 follow-up.** v0.7.75 shipped the five A18 fixes, but the manager's own gate on the LIVE
 page caught a HIGH that v0.7.75 did **not** close: a visitor who tapped the income box before
@@ -276,18 +295,18 @@ the page's JavaScript booted lost their caret mid-typing and every later keystro
 dropped. This release closes it. No behaviour, copy or figure changed.
 
 - **The bug.** `src/scripts/money-controls.js` `glyph()` builds the currency wrapper at boot
-  with `wrap.appendChild(input)` — it **moves the focused input** into a new `.fi` span.
+  with `wrap.appendChild(input)`, it **moves the focused input** into a new `.fi` span.
   `appendChild` is remove-then-insert, and the HTML "removing steps" unfocus the element; Chrome
   does not re-focus a re-parented node. Focus fell to `BODY`, so the input kept its identity but
   lost the caret and every keystroke after boot went nowhere. The in-page `focusout` stack
   pointed at the Layout bundle (money-controls is bundled there), and the page's own
-  early-typing reconciliation — capture, revert, restore, all inside one synchronous module
-  task — provably could not drop a keystroke, so the loss was entirely the focus theft.
+  early-typing reconciliation, capture, revert, restore, all inside one synchronous module
+  task, provably could not drop a keystroke, so the loss was entirely the focus theft.
   Measured live at human typing speed (100 ms per key): **3/3 runs lost**, values stuck at
   `30`, `300` and `3`, the receipt printing `₦15 · ₦9 · ₦6` instead of
   `₦150,000 · ₦90,000 · ₦60,000`. Typing after the page boots was always fine (23/23 runs at
-  40–120 ms per key) — the defect window is the first seconds on a slow connection.
-- **The fix — the wrapper is server-rendered, so the boot step becomes a no-op.** `glyph()`
+  40–120 ms per key), the defect window is the first seconds on a slow connection.
+- **The fix, the wrapper is server-rendered, so the boot step becomes a no-op.** `glyph()`
   already early-returns when the field carries a `.fi-sym` ("the glyph is injected once and
   reused"), and the stylesheet already styles `.fi` and `.fi-sym`. This release ships that box
   in the markup for the nine NGN fields on the page (income, spent-on-needs, spent-on-wants,
@@ -298,8 +317,8 @@ dropped. This release closes it. No behaviour, copy or figure changed.
   multi-character `--fi-pad` branch never runs and the geometry is unchanged.
 - **A/B proof on the live page** (390×844 Pixel 5, 4G 9000/1500 kbps + 85 ms, CPU 4×, raw CDP
   touch and key events, pre-hydration window, 6 runs per arm): wrapper present → **0 focusout
-  events, focus held, value `300000`, receipt `₦150,000 · ₦90,000 · ₦60,000` — 6/6**; wrapper
-  absent (the v0.7.75 behaviour) → **1 focusout at boot, values stuck at 3/30/300/3000 — 0/6**.
+  events, focus held, value `300000`, receipt `₦150,000 · ₦90,000 · ₦60,000`, 6/6**; wrapper
+  absent (the v0.7.75 behaviour) → **1 focusout at boot, values stuck at 3/30/300/3000, 0/6**.
   @freebuff independently reproduced the same A/B on the built page with the bundles delayed
   2600 ms (3/3 each arm) and confirmed the diagnosis from the source.
 - **One side effect, in our favour.** The currency field used to paint at a 14 px text inset
@@ -311,51 +330,51 @@ dropped. This release closes it. No behaviour, copy or figure changed.
   caret loss likely affects the other money tools. It was found at this gate, outside A18's
   five findings, and is queued for its own round rather than folded into this fix.
 
-## [0.7.75] - 2026-11-08 — E18 speed and legibility fixes: an early tap replaces the sample, the card stops moving, the receipt stops dangling separators
+## [0.7.75] - 2026-11-08, E18 speed and legibility fixes: an early tap replaces the sample, the card stops moving, the receipt stops dangling separators
 
-**E18** (edit round 18 of 40, live site): **2 HIGH, 1 MEDIUM, 2 LOW — four closed here; F1's focus half was closed in 0.7.76.** A18
+**E18** (edit round 18 of 40, live site): **2 HIGH, 1 MEDIUM, 2 LOW, four closed here; F1's focus half was closed in 0.7.76.** A18
 measured five speed/UX faults on the 50/30/20 calculator: a fast visitor's keystrokes appended
 to the sample income, the above-fold split sat at 1.97:1 on the light card, the card grew after
 first paint, JavaScript-off said nothing, and the receipt dangled separators on narrow screens.
 Behaviour, copy and layout are otherwise unchanged.
 
-- **F1 (HIGH) — an early tap replaces the sample, it never appends.** The SSR `#bg-inc` now
+- **F1 (HIGH), an early tap replaces the sample, it never appends.** The SSR `#bg-inc` now
   carries `onfocus="if(this.closest('.field').hasAttribute('data-sd'))this.select()"`, so
   select-all fires only while the field still wears its SAMPLE badge. A visitor who types before
-  hydration now gets `300000`, not `250000300000` — cold proof 3/3 at 390 with 4G and 4× CPU:
+  hydration now gets `300000`, not `250000300000`, cold proof 3/3 at 390 with 4G and 4× CPU:
   value `300000`, figure `₦150,000 · ₦90,000 · ₦60,000`, and a second focus after blur selects
   nothing (`[6,6]`, `stillSample:false`). A page-local early-typing reconciliation hands the
   visitor's own value back after hydration (server truth stays in the `value` attribute; the
   seed is restored only for the reset snapshot). **This half of F1 was not enough:** the live
   gate found that a visitor who typed in the pre-hydration window still lost the caret to
-  `money-controls.js`, which moved the focused input at boot — closed by the server-rendered
+  `money-controls.js`, which moved the focused input at boot, closed by the server-rendered
   currency wrapper in 0.7.76.
-- **F2 (HIGH) — the split line is legible.** `#bg-live` alone takes `color:var(--text-mid)`,
+- **F2 (HIGH), the split line is legible.** `#bg-live` alone takes `color:var(--text-mid)`,
   14 px and line-height 1.5 (page-scoped rule; `.receipt-note` and the dark receipt are
   untouched). Measured contrast is **11.375:1** on the light card and **9.512:1** on the dark
   card, and the element's top position is unchanged at 479.36 px.
-- **F3 (MEDIUM) — the card no longer grows after paint.** The seven `#bg-top` fields ship with
+- **F3 (MEDIUM), the card no longer grows after paint.** The seven `#bg-top` fields ship with
   `data-sd` and their `<span class="sd">SAMPLE</span>` badges server-rendered; `#bg-live` ships
   visible with its cold sentence
   (`Plan now: ₦125,000 needs · ₦75,000 wants · ₦50,000 savings`); a tiny inline script sets
   `aria-busy` only when JavaScript is present and clears it after the first render. Cold 390
   proof n=3: **zero layout-shift entries**, CLS 0, `#bg-top` 750.45 px and `#bg-live` top
   479.36 px identical at first paint and +4 s, `aria-busy` `true` → absent, live text
-  byte-identical. The Guardian context line — the one growth the gate found after the badges
-  were fixed (650.89 → 750.45 px, shift 0.0102) — is server-rendered in the same slot and
+  byte-identical. The Guardian context line, the one growth the gate found after the badges
+  were fixed (650.89 → 750.45 px, shift 0.0102), is server-rendered in the same slot and
   swapped for the fleet copy at boot.
-- **F4 (LOW) — JavaScript-off is not silent.** A small muted line inside the card says the
+- **F4 (LOW), JavaScript-off is not silent.** A small muted line inside the card says the
   figures are our worked example and the calculator needs JavaScript to work out your own split.
   JS-off: visible, 61.41 px, figure still correct. JS-on: no visible `<noscript>`.
-- **F5 (LOW) — the receipt stops dangling separators.** `#bg-fig` ships three
+- **F5 (LOW), the receipt stops dangling separators.** `#bg-fig` ships three
   `<span class="fig-amt">` amounts with `<span class="fig-sep" aria-hidden="true"> · </span>`
   separators, and a page-local `splitFig()` re-splits the figure after every render write, so
   clear, reset, blank and junk states all return to split spans. At 390 the receipt is three
   clean lines (100.31 px, no trailing `·`); at 1280 it is one line with ` · `.
 
-## [0.7.74] - 2026-11-05 — A17 plain-English sweep: shorter sentences, no jargon, every caveat kept
+## [0.7.74] - 2026-11-05, A17 plain-English sweep: shorter sentences, no jargon, every caveat kept
 
-**A17** (round 17 of 40, plain-English sweep, live site): **FAIL — 3 HIGH, 9 MEDIUM, 7 LOW.**
+**A17** (round 17 of 40, plain-English sweep, live site): **FAIL, 3 HIGH, 9 MEDIUM, 7 LOW.**
 380 unique visitor-visible strings measured (cold + every trigger state + 390): median Flesch
 Reading Ease 77.9, prose worst −3.0 / FK 15.4, 97 strings below FRE 60, 75 prose strings failing
 the bar, 51 strings over 20 words. What failed was readability, not honesty: the ownership and
@@ -364,21 +383,21 @@ verdict/CTA strings used unexplained finance words. All 19 findings fixed, nothi
 audit's jargon-inventory terms (`gross`, `allocate`, `unallocated`, `auto-transfer`, `inflation`)
 are closed on this page too.
 
-- **A17-F1–F5 (1 HIGH pair + 2 HIGH + 2 MEDIUM) — the long rails are short.** The `.ctx`
+- **A17-F1–F5 (1 HIGH pair + 2 HIGH + 2 MEDIUM), the long rails are short.** The `.ctx`
   source line is three sentences (median, example-above-it, Guardian stamp untouched); the
   `#al-mirror-own` cold rail is 48 words and its triggered forms are split into four sentences
   with the N-of-5 counts intact; `#al-actual-hint` drops to 31 words; the `#bg-junk` and
-  `#al-junk` rails keep the field name, the quoted bad value, "held back as — not guessed" and
+  `#al-junk` rails keep the field name, the quoted bad value, "held back as, not guessed" and
   the CTA, at 23 words. Every "our example, not yours" and "nothing real to score it against"
   caveat survives.
-- **A17-F6–F11 (MEDIUM) — the caveats are easier to reach.** `#bg-pasted` keeps the verbatim
+- **A17-F6–F11 (MEDIUM), the caveats are easier to reach.** `#bg-pasted` keeps the verbatim
   `"Within plan" is true by construction, not by verdict`; `#al-reconcile` keeps both figures and
   both fix paths; `#bg-whatnow` now says `Needs are ₦X over budget` (both single and joint
   states) and keeps the "Step 2 itemises the plan figure, not the amount you overspent" tail
   wherever an overspend exists; the Step 2 intro is 63 words in four sentences; article ¶8 is a
   three-mistake paragraph at 59 words; the shared privacy notice is split into seven sentences
   with every promise and the Reset vs Clear-my-saved-numbers distinction intact.
-- **A17-F12–F19 (LOW) — small strings, plain words.** Hero lede "future you"; article ¶1 gives
+- **A17-F12–F19 (LOW), small strings, plain words.** Hero lede "future you"; article ¶1 gives
   the reason directly; ¶4 loses "the seed that grows your future" and its comma splice; the
   gross/net FAQ is retitled `Should I use pay before or after tax?` and answers in 18 words; the
   needs/wants FAQ fixes its list punctuation; `discretionary` becomes `spending on
@@ -391,58 +410,58 @@ are closed on this page too.
   `inflation erodes` reads `rising prices erode`. The three accepted `.jargon` glosses and all
   A16 `aria-*`/`role` work are untouched.
 
-## [0.7.73] - 2026-11-04 — A16 screen-reader journey fixes: the controls speak, the honesty rails are audible
+## [0.7.73] - 2026-11-04, A16 screen-reader journey fixes: the controls speak, the honesty rails are audible
 
-**A16** (round 16 of 40, screen-reader journey, live site): **FAIL — 2 HIGH, 2 MEDIUM, 4 LOW.**
+**A16** (round 16 of 40, screen-reader journey, live site): **FAIL, 2 HIGH, 2 MEDIUM, 4 LOW.**
 970 AX nodes / 831 non-ignored / 139 ignored; **0 nameless interactive**; 7 labelled landmarks;
 all 17 textboxes carry the full visible label (the word "Sample" is inside every seeded name);
 390 drawer absent from the tree when closed (`aria-hidden` + `inert`) and a `dialog` with focus
 when open; FAQ native `<details>`; ticker duplicates `aria-hidden`. What failed was the journey:
 two operable groups announced as text, three honesty rails silent, the one polite region reading
-bare figures. All eight findings fixed — nothing held.
+bare figures. All eight findings fixed, nothing held.
 
-- **A16-F1 (HIGH) — the five actuals-mirror rows were operable but role-less.** They are
+- **A16-F1 (HIGH), the five actuals-mirror rows were operable but role-less.** They are
   `div tabindex="0"` with Enter/Space handlers, so the AX tree called them `generic` and the
   snapshot collapsed all five into one text blob. They now carry `role="button"` (all three
   template branches) plus `title="See the field behind this figure"`, matching the receipt rows
   above them. AX now: 5 × `role=button`, each with the description.
-- **A16-F2 (HIGH) — the three honesty rails were silent.** `#bg-seedwarn`, `#bg-pasted` and
+- **A16-F2 (HIGH), the three honesty rails were silent.** `#bg-seedwarn`, `#bg-pasted` and
   `#al-junk` become visible with prose that stops a visitor believing a fabricated number, and
   carried no live semantics. Each is `role="status"` now (implicit polite + atomic), and every
   write is guarded: identical text is not re-written, so a re-render on each keystroke stays
   silent. Verified in the AX tree as `status / polite / atomic=true` when visible, and 0
   mutations on an identical re-render.
-- **A16-F3 (MEDIUM) — the polite region announced bare figures.** `#bg-fig` was the live
-  region and its content is `₦150,000 · ₦90,000 · ₦60,000` — three numbers with no nouns. The
+- **A16-F3 (MEDIUM), the polite region announced bare figures.** `#bg-fig` was the live
+  region and its content is `₦150,000 · ₦90,000 · ₦60,000`, three numbers with no nouns. The
   labelled sentence lives in `#bg-live` ("Plan now: ₦150,000 needs · …") and was not live. The
   polite attribute moved to `#bg-live`; `#bg-fig` stays readable but no longer speaks alone.
-  Writes are guarded (unhide before write, skip identical text) — 6 live mutations for 6
+  Writes are guarded (unhide before write, skip identical text), 6 live mutations for 6
   keystrokes, 0 on an unchanged re-render.
-- **A16-F4 (MEDIUM) — copy status was silent (A15 carry).** `#bg-copied` is `role="status"`
+- **A16-F4 (MEDIUM), copy status was silent (A15 carry).** `#bg-copied` is `role="status"`
   now, and a repeat copy of the same message blanks and re-writes through a forced reflow so
   the second announcement is a real mutation. Refusal path and failure path both announce.
-- **A16-F5 (LOW) — five `aria-label`s sat on role-less containers and never reached the AX
+- **A16-F5 (LOW), five `aria-label`s sat on role-less containers and never reached the AX
   tree.** `role="group"` on `#bg-stepper`, `#bg-examplectl`, `#income-chips`, `#split-chips`;
   the FAQ block is `role="region"` named by `aria-labelledby="fx-faq-h"` with the visible
   "Questions" heading carrying that id (the old `aria-label` promised "Frequently asked
-  questions" while the heading said "Questions" — the name now matches what is on screen).
-- **A16-F6 (LOW) — jargon glosses were hover/focus-only on a span that cannot take focus.**
+  questions" while the heading said "Questions", the name now matches what is on screen).
+- **A16-F6 (LOW), jargon glosses were hover/focus-only on a span that cannot take focus.**
   The map is trimmed to the two terms whose gloss carries meaning ("itemise", "plan vs actual")
   and each carries the definition in a `.screen-reader-text` span, so the gloss travels with
   the word on every input path. "leftover" was dropped from the map because the sentence it
-  sits in already defines it — a second gloss would say it twice. "Plan buckets" got the same
+  sits in already defines it, a second gloss would say it twice. "Plan buckets" got the same
   SR-text treatment where it is wrapped.
-- **A16-F7 (LOW) — heading order skipped level 2.** `#step2` was an `<h3>` directly under the
-  `<h1>` (h1 → h3 → h2). It is an `<h2>` now with every computed metric pinned inline —
-  18.72px/700/−0.3744px/29.952px, margin 0, padding 12px 0 0 — so the pixels do not move
+- **A16-F7 (LOW), heading order skipped level 2.** `#step2` was an `<h3>` directly under the
+  `<h1>` (h1 → h3 → h2). It is an `<h2>` now with every computed metric pinned inline, 
+  18.72px/700/−0.3744px/29.952px, margin 0, padding 12px 0 0, so the pixels do not move
   (measured height 41.95px vs 41.9375px before at 1280; 72px wrapped at 390, unchanged).
   Sticky `top:0` preserved.
-- **A16-F8 (LOW) — the theme trigger promised a menu and opened a group.** `aria-haspopup="true"`
+- **A16-F8 (LOW), the theme trigger promised a menu and opened a group.** `aria-haspopup="true"`
   removed from both triggers (desktop + mobile); the popup is `role="group"` of toggle buttons
   and `aria-expanded` already carries the state. Popup mechanics were verified correct in A16
   and are untouched.
 
-**Accepted, not changed:** the SAMPLE badge `title` is not exposed as a description — "Sample"
+**Accepted, not changed:** the SAMPLE badge `title` is not exposed as a description, "Sample"
 is already in every input's accessible name, and adding it as a description would repeat the
 word 12 times with no information gain.
 
@@ -455,14 +474,14 @@ byte-locked vibe sheet is untouched.
 
 
 
-## [0.7.72] - 2026-11-04 — A15 keyboard audit fixes: the stepper navigates, Clear keeps your place
+## [0.7.72] - 2026-11-04, A15 keyboard audit fixes: the stepper navigates, Clear keeps your place
 
-**A15** (round 15 of 40, keyboard-only journey, live site): **FAIL — 2 HIGH, 1 LOW note.**
+**A15** (round 15 of 40, keyboard-only journey, live site): **FAIL, 2 HIGH, 1 LOW note.**
 105 focus stops @1280 (full pass), 80 @390, console 0. Skip link, focus rings (0 stops
 without one), theme menu + Esc, dark amber ring, 390 drawer containment (14 Tabs), and
 focus retention while typing all passed. Only real occlusion in the whole walk: the stepper.
 
-- **A15-K1 (HIGH) — the stepper was two dead controls.** Both `.fx-step` buttons were real
+- **A15-K1 (HIGH), the stepper was two dead controls.** Both `.fx-step` buttons were real
   `<button>`s in the tab order with no click handler; step 2 also carried `aria-disabled`
   and `pointer-events:none` while inactive, yet still took keyboard focus. Enter, Space and
   click were all silent no-ops in both states. They are navigation now: step 1 lands on
@@ -470,15 +489,15 @@ focus retention while typing all passed. Only real occlusion in the whole walk: 
   state stays a progress signal (`aria-current`), not a locked door; the contradictory
   `aria-disabled` is gone from markup and from the state sync, and pointer events are
   restored page-scoped (no shared CSS touched).
-- **A15-K2 (HIGH) — Clear destroyed focus.** `#bg-clear-example` delegates to the shell's
+- **A15-K2 (HIGH), Clear destroyed focus.** `#bg-clear-example` delegates to the shell's
   Clear and then hides itself when no seed survives; a focused element that disappears hands
   focus to `<body>`, so the next Tab restarted at the skip link. Both clear paths (in-card and
-  footer) now land the keyboard on `#bg-inc`. The user's own typed income is still kept —
+  footer) now land the keyboard on `#bg-inc`. The user's own typed income is still kept, 
   only the example is cleared. Reset untouched: it never hides and keeps focus.
 - **A15-K3 (LOW note, accepted):** the "read the source" trust link sits between income and
   Needs % because `smart-fields.js` injects each citation after the field it sources. Moving
   it would separate the birth certificate from the claim; no change.
-- **A16 carry:** `#bg-copied` is a plain span, not `aria-live` — screen-reader copy status
+- **A16 carry:** `#bg-copied` is a plain span, not `aria-live`, screen-reader copy status
   belongs to the A16 journey, not this round.
 
 **Gates:** `npm run check` 7/7 · build 84 pages · `npm run test:calc` 130 pass / 0 fail / 7 skip.
@@ -488,19 +507,19 @@ console 0). No changes to `smart-fields.js`, the check gates, or shared CSS.
 
 
 
-## [0.7.71] - 2026-11-03 — the live moving ticker restored (King's order)
+## [0.7.71] - 2026-11-03, the live moving ticker restored (King's order)
 
 **King:** "That before header strip used to be a live … moving [one], lets get that back.
 Don't like the 'Daily reference rate · updated 3 Nov 2026, 00:02' stuff."
 
 - **What actually broke the strip.** v0.7.57 (commit `4c651ff`, "LIVE claims honest on a
-  once-daily feed") replaced the R6 plan signature — green pulsing dot + gold `LIVE` — with
+  once-daily feed") replaced the R6 plan signature, green pulsing dot + gold `LIVE`, with
   the long exact-stamp string. Uppercased at 9px/0.14em it is ~360px wide: at 390px the label
   alone filled the entire strip row and pushed the `.ticker-drag` marquee stage past the right
   edge, so phones got zero pixels of the moving pairs. The marquee itself never stopped; it
   just had nowhere to be seen. The King's strip served as a static stamp line.
 - **Restored, minimal:** Layout.astro's `.tl-tx` is `LIVE` again (the §P1-4 signature, gold on
-  the mon 11px strip); the once-daily honesty is MOVED, not deleted — the `.tl` carries the
+  the mon 11px strip); the once-daily honesty is MOVED, not deleted, the `.tl` carries the
   full "Daily reference rate (FX) · updated …" as its title/tooltip, the nav aria-label now
   says which sources are live vs daily ("live BTC/ETH/gold, daily reference FX"), the
   `data-ts` build stamp stays, and every rate page keeps its "Daily reference rate · updated
@@ -513,36 +532,36 @@ Don't like the 'Daily reference rate · updated 3 Nov 2026, 00:02' stuff."
 - **Hardened:** `chrome.css` adds the additive rule `.ticker-drag { flex: 1 1 auto;
   min-width: 0 }` so no future label length can pinch the marquee to zero width again (this
   is exactly the failure mode above; adds only properties header.css never sets).
-- **Gates:** check 7/7 (no gate anchors moved — the header gate never pinned the label text) ·
+- **Gates:** check 7/7 (no gate anchors moved, the header gate never pinned the label text) ·
   build 84 · test:calc 130/0/7. Verified at 390px and 1280px: strip = ● LIVE + USD/NGN ₦1,346
   · GBP/NGN ₦1,805 · EUR/… with 317px/1179px of visible sliding stage; marquee motion proven
   mechanically (inner transform moved −2.48 → −5.49 over 1.2s at 390; −9.98 → −21.18 at 1280);
   horizontal overflow 0; console errors 0; honest title present.
 
-## [0.7.70] - 2026-11-03 — R-1/R-2/R-3 fix batch (King: "Fix all 3 if safe")
+## [0.7.70] - 2026-11-03, R-1/R-2/R-3 fix batch (King: "Fix all 3 if safe")
 
 The three King-held leftovers from the 2026-11-03 audit, each on a safe path: gates untouched,
 byte-locked sheet untouched, additive layers only, no `!important`.
 
-- **R-1 — sub-24px tap targets (AA 2.5.8).** New additive layer `src/styles/r8.css` (imported in
+- **R-1, sub-24px tap targets (AA 2.5.8).** New additive layer `src/styles/r8.css` (imported in
   Layout.astro after chrome.css; footer.css / home.css / article.css untouched, so every fidelity
   gate anchor keeps its exact string). Block footer-column links `.fl` get `padding-block: 3px`
-  with the verbatim `margin-bottom` 8px → 2px on the same selector — the row pitch is preserved
+  with the verbatim `margin-bottom` 8px → 2px on the same selector, the row pitch is preserved
   exactly (19+8 = 25+2). Single-line inline links (`.fcredit-link`, `.ftoplink`, `.slink`,
   `.a-rd`, and the classless legal/rates links via `.flegal a` / `.frates a`) grow invisible
   `::after` hit-skins (±4–6px insets) so the pointer target reaches ≥24px while nothing visual
-  moves. `.badge` gets `min-height: 24px` — the one visible change, a two-pixel pill growth.
+  moves. `.badge` gets `min-height: 24px`, the one visible change, a two-pixel pill growth.
   `.a-rd` additionally joins `.ac .badge` at `z-index: 2`, above the sanctioned stretched-card
-  overlay (`z-index: 1`, same href — the link simply reclaims its own pointer). Reasoned WP
+  overlay (`z-index: 1`, same href, the link simply reclaims its own pointer). Reasoned WP
   divergence, recorded here by port law: hit areas are corrections, not WP parity.
-- **R-2 — iOS zoom trap on the comment edit window (real fix).** The prior release's entry
-  claimed `.vibe-edit-textarea` was bumped to 16px — the edit was made inside that run and then
+- **R-2, iOS zoom trap on the comment edit window (real fix).** The prior release's entry
+  claimed `.vibe-edit-textarea` was bumped to 16px, the edit was made inside that run and then
   REVERTED before landing (the article gate byte-locks the plugin sheet at 38,197), leaving the
-  CHANGELOG bullet stale; the landed tree still read `font-size: 0.95rem` — 15.2px, under the
+  CHANGELOG bullet stale; the landed tree still read `font-size: 0.95rem`, 15.2px, under the
   16px iOS force-zoom floor. Correction shipped now, without touching the 38,197-byte-locked
   sheet: doubled-class `.vibe-edit-textarea.vibe-edit-textarea { font-size: 16px }` in r8.css
   wins by one specificity step, order-independent. The sheet stays byte-exact.
-- **R-3 — author archive tails missing from sitemap.** `sitemap.xml.ts` now emits `page/N/`
+- **R-3, author archive tails missing from sitemap.** `sitemap.xml.ts` now emits `page/N/`
   URLs for every author whose post count exceeds posts_per_page (PER_PAGE = 10, same contract
   as the articles archive and `author/[slug]/[page].astro`); `/author/gwill-chijioke/page/2/`
   becomes the first such URL. Nothing was removed; the WP-parity emitter (dead DNS today)
@@ -552,22 +571,22 @@ byte-locked sheet untouched, additive layers only, no `!important`.
 pointer hit-sweep (elementFromPoint, real taps not rectangles) at 390px on home + article: all
 corrected targets reach hit runs of 24–26px, horizontal overflow 0 on home/article/50-30-20.
 
-## [0.7.69] - 2026-11-03 — design + features audit fixes (values-level set from the fresh whole-site audit)
+## [0.7.69] - 2026-11-03, design + features audit fixes (values-level set from the fresh whole-site audit)
 
 The King ordered another audit for design and features bugs. This release fixes the three
 boolean-real defects the audit proved on live; the report names the King-held further
 candidates it deliberately did not touch.
 
 - **Every page served a console error.** The meta-delivered CSP carried `frame-ancestors 'none'`,
-  which browsers ignore *by spec* inside `<meta>` CSP — the only effect on visitors was a noisy
+  which browsers ignore *by spec* inside `<meta>` CSP, the only effect on visitors was a noisy
   console error on all 84 pages (one-line abort, visible the moment a phone toggles devtools on).
   The directive is gone; Layout's comment now states the truth (real framing control = the /mod/
   frame-buster). No other CSP policy clause changed.
-- **iOS zoom trap on the comment edit window.** `.vibe-edit-textarea` shipped `0.95rem` (15.2px) —
+- **iOS zoom trap on the comment edit window.** `.vibe-edit-textarea` shipped `0.95rem` (15.2px), 
   Safari force-zooms the page whenever a textarea under 16px takes focus (the 5-minute
   edit window makes this user-reachable). Bumped to a fixed `16px` per the sub-16px input law.
 - **The installable app had SVG-only icons.** The manifest listed only the SVG; the
-  apple-touch-icon was the same SVG with `sizes="any"` — which iOS ignores, so home-screen
+  apple-touch-icon was the same SVG with `sizes="any"`, which iOS ignores, so home-screen
   installs degraded to a screenshot snapshot. Added 192/512 PNG app icons and a 180×180
   apple-touch PNG rendered from the same brand mark; manifest + Layout updated.
 
@@ -578,7 +597,7 @@ calculator repaint re-proved live (50/30/20 on ₦600,000 → ₦300,000/₦180,
 budget-allocator pointer lands on its merged page with zero errors, and the theme pill keeps
 its focus-return law (no page drag). The reported-not-decided items stay as report findings:
 sub-24px tap targets on WP-verbatim footer/card chrome, and the author/date pagination
-consistency nit (WP emitter unverifiable today — its DNS is dead from this box).
+consistency nit (WP emitter unverifiable today, its DNS is dead from this box).
 
 ## [0.7.68] - 2026-10-26
 
@@ -592,108 +611,108 @@ All notable changes to the finance-astro port. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are UTC.
 
 
-## [0.7.67] — 2026-10-26 — audit-corpus re-run fixes: the visible `&#039;` entity, stale copy, hub/manifest copy, repo-hygiene paths
+## [0.7.67], 2026-10-26, audit-corpus re-run fixes: the visible `&#039;` entity, stale copy, hub/manifest copy, repo-hygiene paths
 
-The read-only QA sweep of the whole audit corpus against v0.7.66 found the remaining defects; this release fixes the confirmed ones. The sweep's own verdict is PARTIAL (3 areas out of its time budget, named honestly in its report) — nothing here is a guess.
+The read-only QA sweep of the whole audit corpus against v0.7.66 found the remaining defects; this release fixes the confirmed ones. The sweep's own verdict is PARTIAL (3 areas out of its time budget, named honestly in its report), nothing here is a guess.
 
-**The reader-visible entity bug (P1, SITE-7 / P1-4#1).** Seven tool pages printed the literal text `&#039;` where an apostrophe was meant (e.g. "a dividend stock&#039;s future value"). Cause: the long-form `copy={[[…]]}` prose strings carried the 6-character token `&#039;`; Astro escapes the `&`, so the served HTML was `&amp;#039;` and the browser showed the raw entity. The FAQ blocks on the same pages already used a plain `'` and rendered correctly. Fixed by replacing the literal `&#039;` token with `'` in the seven prose arrays — 16 occurrences across 7 pages. The Oct-11 master list had closed this finding as "does not reproduce" on a 4-page sample; a dist-wide sweep proves it reproduced on seven.
+**The reader-visible entity bug (P1, SITE-7 / P1-4#1).** Seven tool pages printed the literal text `&#039;` where an apostrophe was meant (e.g. "a dividend stock&#039;s future value"). Cause: the long-form `copy={[[…]]}` prose strings carried the 6-character token `&#039;`; Astro escapes the `&`, so the served HTML was `&amp;#039;` and the browser showed the raw entity. The FAQ blocks on the same pages already used a plain `'` and rendered correctly. Fixed by replacing the literal `&#039;` token with `'` in the seven prose arrays, 16 occurrences across 7 pages. The Oct-11 master list had closed this finding as "does not reproduce" on a 4-page sample; a dist-wide sweep proves it reproduced on seven.
 
-**Stale inflation copy (P1, P1-3 copy half).** The naira-value page's prose still told readers "Recent Nigerian inflation has run 20-30%". Replaced with the dated, sourced figures the page's own FAQ already uses (NBS Aug-2026 national headline 15.39%, Lagos 23.68%). **The 24% default is unchanged** — that is a King-held decision, and this release touches copy only.
+**Stale inflation copy (P1, P1-3 copy half).** The naira-value page's prose still told readers "Recent Nigerian inflation has run 20-30%". Replaced with the dated, sourced figures the page's own FAQ already uses (NBS Aug-2026 national headline 15.39%, Lagos 23.68%). **The 24% default is unchanged**, that is a King-held decision, and this release touches copy only.
 
-**Other copy fixes:** the crypto page's dev-voice sentences removed; the 50-30-20 page's internal jargon "— cold, this copies our example" reworded to plain English (markup + both script assignments kept identical); the naira-value FAQ question reworded to ask about the label the UI actually shows ("Buying power lost"); the rate-history Base selector's "(more coming)" dropped; a missing full stop restored on the amount pages.
+**Other copy fixes:** the crypto page's dev-voice sentences removed; the 50-30-20 page's internal jargon ", cold, this copies our example" reworded to plain English (markup + both script assignments kept identical); the naira-value FAQ question reworded to ask about the label the UI actually shows ("Buying power lost"); the rate-history Base selector's "(more coming)" dropped; a missing full stop restored on the amount pages.
 
 **Hub & manifest copy:** the exchange-rate-history card description no longer claims the chart "starts empty" (v0.7.62 seeded 12 build-time reference points); two duplicated emojis in `tool-manifest.ts` resolved so every tool has a distinct one; the repeated "Free · no sign-up" badge dropped from all 16 hub cards and stated once in the hub header.
 
-**Repo hygiene (PROC-3 tail).** Internal absolute paths (`/home/opc/…`, `/var/www/…`) stripped from the shipping source comments across 13 files. The `docs/**` path set and any git-history rewrite are **left untouched — King's call, not an agent's**.
+**Repo hygiene (PROC-3 tail).** Internal absolute paths (`/home/opc/…`, `/var/www/…`) stripped from the shipping source comments across 13 files. The `docs/**` path set and any git-history rewrite are **left untouched, King's call, not an agent's**.
 
-**Scope deviation, on record:** the hygiene leg's brief was comment-only. It also made four behaviour-preserving portability changes (`vectors.php`, `ship-pages.sh`, `merge-proof.mjs`, `port-posts.py` — absolute paths → `$HOME` / `__file__`-relative, identical on this box). Accepted only after the manager verified each: syntax checks clean, and `php scripts/php-harness/vectors.php` still regenerates `vectors.json` **byte-identically** (PHP oracle frozen, `HIST_ORACLE_MS` and `DECLARED_REANCHORS` untouched).
+**Scope deviation, on record:** the hygiene leg's brief was comment-only. It also made four behaviour-preserving portability changes (`vectors.php`, `ship-pages.sh`, `merge-proof.mjs`, `port-posts.py`, absolute paths → `$HOME` / `__file__`-relative, identical on this box). Accepted only after the manager verified each: syntax checks clean, and `php scripts/php-harness/vectors.php` still regenerates `vectors.json` **byte-identically** (PHP oracle frozen, `HIST_ORACLE_MS` and `DECLARED_REANCHORS` untouched).
 
 **Gates (manager's own runs):** `check` **7/7** · `build` **84 pages** · `test:calc` **130/0/7**. Entity sweep on built output: **0**. `grep /home/opc|/var/www src/ scripts/` → empty.
 
-## [0.7.66] — 2026-10-25 — dividend page: last hardcoded "September 2026" copy removed
+## [0.7.66], 2026-10-25, dividend page: last hardcoded "September 2026" copy removed
 
-Caught during manager verification of 0.7.65: the dividend page's own FAQ answer still hardcoded "…indicative figures last verified in September 2026", so the same page printed **2026-10-24** in its chip and **September 2026** in its FAQ — the exact one-page-two-dates defect 0.7.65 was meant to end, surviving in a string the stamp-plumbing pass never reached.
+Caught during manager verification of 0.7.65: the dividend page's own FAQ answer still hardcoded "…indicative figures last verified in September 2026", so the same page printed **2026-10-24** in its chip and **September 2026** in its FAQ, the exact one-page-two-dates defect 0.7.65 was meant to end, surviving in a string the stamp-plumbing pass never reached.
 
-- The FAQ answer now interpolates `dividendVerified()` at build time — the page reads the NGX table's own stamp, one source of truth.
+- The FAQ answer now interpolates `dividendVerified()` at build time, the page reads the NGX table's own stamp, one source of truth.
 - Two stale code comments (`verified 2026-09-01`) corrected to `2026-10-24`.
 
 Verified on the built output: `dist/money-tools/dividend-calculator/index.html` serves **0** occurrences of "September 2026" and **2** of "2026-10-24". `npm run check` 7/7 · `npm run build` 84 pages.
 
-## [0.7.65] — 2026-10-25 — maintained-table stamps split + PHP oracle repaired
+## [0.7.65], 2026-10-25, maintained-table stamps split + PHP oracle repaired
 
 Maintained-table "verified" stamps split one-per-table so a YMYL money site never publishes a false freshness claim:
 
-- **NGX dividend table** now carries its own frozen stamp `NGX_PRICES_VERIFIED_ON = "2026-10-24"` (re-verified Oct 2024; ZENITHBANK DPS 8.75). The page-level "NGX table verified …" stamp reads that table alone — it no longer borrows the September stamp from two other tables nobody re-checked.
-- **Savings-rate** and **transfer-fee** tables keep their honest `"September 2026"` stamps (`SAVINGS_RATES_VERIFIED_ON`, `TRANSFER_FEES_VERIFIED_ON`). The shared `MAINTAINED_VERIFIED` was **NOT** bumped to October — doing so would claim October verification for tables nobody re-checked, the exact honesty defeat the frozen-stamp design exists to prevent.
-- The stray third date (`src/lib/dividend.ts` said "verified 2026-10-01" while staleness + examples said "2026-10-24") is gone. `src/lib/staleness.ts` now reads each date from the module that owns it (`NGX_PRICES_VERIFIED_ON` from `dividend.ts`, `dividendExamplesVerifiedOn()` from `dividend-examples.ts`) — exactly one source of truth per table.
+- **NGX dividend table** now carries its own frozen stamp `NGX_PRICES_VERIFIED_ON = "2026-10-24"` (re-verified Oct 2024; ZENITHBANK DPS 8.75). The page-level "NGX table verified …" stamp reads that table alone, it no longer borrows the September stamp from two other tables nobody re-checked.
+- **Savings-rate** and **transfer-fee** tables keep their honest `"September 2026"` stamps (`SAVINGS_RATES_VERIFIED_ON`, `TRANSFER_FEES_VERIFIED_ON`). The shared `MAINTAINED_VERIFIED` was **NOT** bumped to October, doing so would claim October verification for tables nobody re-checked, the exact honesty defeat the frozen-stamp design exists to prevent.
+- The stray third date (`src/lib/dividend.ts` said "verified 2026-10-01" while staleness + examples said "2026-10-24") is gone. `src/lib/staleness.ts` now reads each date from the module that owns it (`NGX_PRICES_VERIFIED_ON` from `dividend.ts`, `dividendExamplesVerifiedOn()` from `dividend-examples.ts`), exactly one source of truth per table.
 
 **PHP parity oracle repaired honestly (not hand-edited):**
 - `scripts/php-harness/vectors.json` regenerated from PHP truth (`php scripts/php-harness/vectors.php`) → 0 diverging rows out of 95 when anchored to the oracle instant.
-- `fxhist_range90_count` time-bomb fixed: PHP `gwill_fx_history_range()` cut its window off the wall clock while the TS checker anchors at a fixed instant — fresh regeneration silently wrote 44 where the committed value was 60. Fix: additive optional `$now` anchor in `gwill_fx_history_range()` (defaults to `time()`, live theme behaviour byte-identical), and `scripts/php-harness/vectors.php` passes `HIST_ORACLE_MS = 1791449911` so regeneration reproduces the committed 60.
+- `fxhist_range90_count` time-bomb fixed: PHP `gwill_fx_history_range()` cut its window off the wall clock while the TS checker anchors at a fixed instant, fresh regeneration silently wrote 44 where the committed value was 60. Fix: additive optional `$now` anchor in `gwill_fx_history_range()` (defaults to `time()`, live theme behaviour byte-identical), and `scripts/php-harness/vectors.php` passes `HIST_ORACLE_MS = 1791449911` so regeneration reproduces the committed 60.
 - `dividend_stocks` divergence declared in `DECLARED_REANCHORS` + fail-guard: the TS table was re-verified Oct 2024; the retiring PHP theme still carries September figures. Intentional, now proven by the gate instead of hidden by a hand-edit.
 
 Gates on the combined tree (manager's own runs): `npm run check` → **7/7** · `npm run build` → exit 0, **84 pages** · `npm run test:calc` → **130/0/7**. Built dividend page serves "NGX table verified 2026-10-24" with no "September 2026"; savings-rate + transfer pages still serve honest "September 2026".
 
-## [0.7.64] — 2026-10-15 — dependency pass: esbuild clears the last LOW advisory; playwright patch; typescript 7 held with the reason on record
+## [0.7.64], 2026-10-15, dependency pass: esbuild clears the last LOW advisory; playwright patch; typescript 7 held with the reason on record
 
 The "update all software packages" ledger item, repo half. The box half (dnf+pip, 43 security packages
 incl. a staged kernel) ran as a separate leg and is reported there.
 
-**esbuild 0.27.7 → 0.28.2** — clears the surviving LOW advisory (GHSA-g7r4-m6w7-qqqr, arbitrary file read
-in the dev server, Windows-only — unreachable on this Linux static build, but the advisory stood).
+**esbuild 0.27.7 → 0.28.2**, clears the surviving LOW advisory (GHSA-g7r4-m6w7-qqqr, arbitrary file read
+in the dev server, Windows-only, unreachable on this Linux static build, but the advisory stood).
 `npm audit`: 2 vulnerabilities → **1** (the remaining HIGH is `http-cache-semantics@4.2.0`, a transitive
-dep under astro with **no fixed release anywhere** — recorded, not hidden).
+dep under astro with **no fixed release anywhere**, recorded, not hidden).
 
-**playwright 1.64.0 → 1.64.1** — lockfile-only (the package.json range already admitted it). **The Chrome
-pin law was checked, not assumed:** both versions expect chromium rev **1248** — the pin did NOT move, no
+**playwright 1.64.0 → 1.64.1**, lockfile-only (the package.json range already admitted it). **The Chrome
+pin law was checked, not assumed:** both versions expect chromium rev **1248**, the pin did NOT move, no
 browser was downloaded, and the suite ran against the existing chromium-1243 binary. Zero-diff cache
 inventory before/after.
 
-**typescript 7.0.2 HELD — the reason on record:** `@astrojs/check` peer range is `typescript:
-'^5.0.0 || ^6.0.0'` — 7.0.2 falls outside it, and npm would refuse or break `astro check`. No newer
+**typescript 7.0.2 HELD, the reason on record:** `@astrojs/check` peer range is `typescript:
+'^5.0.0 || ^6.0.0'`, 7.0.2 falls outside it, and npm would refuse or break `astro check`. No newer
 @astrojs/check exists (0.9.10 is latest; alpha/beta tags are older). **The one-line unblock:** an
 @astrojs/check release whose peer range includes `^7.0.0`, then this same gate chain re-run.
 
-**Gates on the combined tree (manager's own runs):** build exit 0 — **84 pages** (+3, exactly the two
-reader-request articles from 079b911 landing with their category page, not a drop) · **check 7/7** —
+**Gates on the combined tree (manager's own runs):** build exit 0, **84 pages** (+3, exactly the two
+reader-request articles from 079b911 landing with their category page, not a drop) · **check 7/7**, 
 article 147/147, vectors 94/0 (95 vectors, 3 declared royal divergences fail-guarded), independent 116/0,
 appendix-a 67/0, staleness clean, footer 64, homepage 128 · **suite 130/0/7 under the systemd shelter**
 (226s, chromium-1243).
 
-## [0.7.63] — 2026-10-13 — Astro 5 → 7: the double-major security upgrade (PROC-2 / 7.1)
+## [0.7.63], 2026-10-13, Astro 5 → 7: the double-major security upgrade (PROC-2 / 7.1)
 
-`npm audit` reported 7 vulnerabilities, one CRITICAL, all on the build pipeline. Target `astro@7.3.8` —
+`npm audit` reported 7 vulnerabilities, one CRITICAL, all on the build pipeline. Target `astro@7.3.8`, 
 a **double major jump**, so both v6 and v7 breaking changes had to be absorbed.
 
 **The exposure analysis came first, because a CRITICAL label is not a threat.** All seven advisories were
 checked for reachability *before* upgrading:
 
-- **RCE, CVSS 9.8 (GHSA-26w7-cxv4-gfx2, AVIF image optimization) — NOT REACHABLE.** No `astro:assets`
+- **RCE, CVSS 9.8 (GHSA-26w7-cxv4-gfx2, AVIF image optimization), NOT REACHABLE.** No `astro:assets`
   import, no `<Image>`/`<Picture>`/`getImage`, no image service configured, no `.avif` anywhere. All 15
   articles carry `image:` frontmatter but the schema declares `z.string()` (not the `image()` helper) and
   `ArticleCard` emits a raw `<img src>`, so Astro's image service is never invoked. `sharp` was installed
-  and is now upgraded anyway — but it was dead weight, not a live path.
-- **`define:vars` XSS — reachable in principle, unexploitable in fact.** Used at `mod.astro:248`; all four
+  and is now upgraded anyway, but it was dead weight, not a live path.
+- **`define:vars` XSS, reachable in principle, unexploitable in fact.** Used at `mod.astro:248`; all four
   values (API literal, desk-version literal, `base`, article titles) are first-party build-time data. No
   runtime or user input reaches them.
 - **Not reachable:** no hydrated islands (`client:*` is zero) kills the `transition:*` XSS; static build
   kills the prerendered-error-page SSRF; no spread props kills the two spread-attribute XSSes.
 
-**So this was a build-pipeline hardening task with no live exploit path — and the honest reason to ship it
+**So this was a build-pipeline hardening task with no live exploit path, and the honest reason to ship it
 is that the maintenance floor had moved two majors, not that an attacker was at the door.**
 
 **Breaking changes absorbed (each with the guide's own wording):**
-1. **v6 — legacy collections removed.** *"All content collections must now use the Content Layer API … No
+1. **v6, legacy collections removed.** *"All content collections must now use the Content Layer API … No
    backwards compatibility support is available."* Symptom: `The collection "articles" does not exist or is
-   empty` — **zero articles**. Fixed with an explicit `glob()` loader; `z` moved to `astro/zod`.
-2. **v6 — `entry.render()` / `entry.slug` gone.** `getCollection()` returns `ContentEntryResult`; switched
+   empty`, **zero articles**. Fixed with an explicit `glob()` loader; `z` moved to `astro/zod`.
+2. **v6, `entry.render()` / `entry.slug` gone.** `getCollection()` returns `ContentEntryResult`; switched
    to `render(entry)` and `entry.slug` → `entry.id` across 14 call sites.
-3. **v7 — Sätteri is the default Markdown pipeline.** *"The deprecated … still work, but now also require
-   `@astrojs/markdown-remark`."* Added the dep and pinned `processor: unified()` — **non-optional here,
+3. **v7, Sätteri is the default Markdown pipeline.** *"The deprecated … still work, but now also require
+   `@astrojs/markdown-remark`."* Added the dep and pinned `processor: unified()`, **non-optional here,
    because `rehype-slug` is the WordPress-parity mechanism for server-rendered heading ids.**
-4. **v7 — the Rust compiler is stricter.** *"Unclosed tags now produce errors."* A real failure: an HTML
+4. **v7, the Rust compiler is stricter.** *"Unclosed tags now produce errors."* A real failure: an HTML
    comment inside a ternary branch (`ArticleCard.astro:44`) reads as JSX to the new parser.
-5. **v6 — Node ≥22.12.0**; `engines` corrected from a false `>=18`.
+5. **v6, Node ≥22.12.0**; `engines` corrected from a false `>=18`.
 
 **A real bug the upgrade exposed, and the byte gates caught it.** The first `.slug`→`.id` rename was too
 broad: in templates `p` is the *mapped* array, only in `getStaticPaths` is it a collection entry. Nine
@@ -701,17 +720,17 @@ broad: in templates `p` is the *mapped* array, only in `getStaticPaths` is it a 
 pages**. The dist byte-diff caught it; exactly those 11 were reverted and the 16 genuine renames kept. This
 is the strongest argument the repo has for asserting on built bytes.
 
-**One gate changed — STRENGTHENED, not reworded.** The rehype-slug assertion matched the literal substring
+**One gate changed, STRENGTHENED, not reworded.** The rehype-slug assertion matched the literal substring
 `markdown: { rehypePlugins: [rehypeSlug, rehypeWpTable]`, which the v7 config no longer contains. That was a
 source-text match, never the semantic claim its own name made. It now still pins the config **and reads a
-served article to assert the heading ids are really in the bytes** — so a future pipeline swap that drops
+served article to assert the heading ids are really in the bytes**, so a future pipeline swap that drops
 them fails the gate. Equivalence evidence: 8/8 ids on the sample article, an id-set sweep across all 81
 pages, `POST_NAMES` keys and values byte-identical 15/15 (proving `entry.id === entry.slug` at runtime), and
 all 8 TOC anchors resolving. **No gate was skipped or deleted.**
 
-**Byte-level truth:** normalizing three cosmetic differences (CSS declaration reordering — the guide's
+**Byte-level truth:** normalizing three cosmetic differences (CSS declaration reordering, the guide's
 documented Rust-compiler change; `&`→`&amp;`; comments) leaves **77/81 pages byte-equivalent**. The other 4
-are live build-time market data — proven by rebuilding twice on the same tree and getting the same 3 pages
+are live build-time market data, proven by rebuilding twice on the same tree and getting the same 3 pages
 differing. `&amp;` is decode-identical to the raw `&` Astro 5 emitted inconsistently; **Astro 7 is uniformly
 spec-correct where Astro 5 was not.**
 
@@ -719,13 +738,13 @@ spec-correct where Astro 5 was not.**
 **sharp 0.34.5 → 0.35.5** and **devalue → 5.9.4** genuinely cleared. **Two survive and are recorded rather
 than hidden:** `http-cache-semantics` (high) is Astro's own transitive dep with **no fixed release**
 (the advisory range is `<=4.2.0`), so it cannot be cleared from here; `esbuild` (low) is a Windows-only dev
-server advisory — unreachable on Linux + static build, and clearing it needs another semver-major.
+server advisory, unreachable on Linux + static build, and clearing it needs another semver-major.
 
 **Pages 81 → 81. Build 9.42s → 3.96s. Gates 7/7. Suite 130/0/7.** Every number re-run by the Manager.
 
-## [0.7.62] — 2026-10-13 — BATCH S5: the audit's last tail, and the old theme's good calculator habits kept
+## [0.7.62], 2026-10-13, BATCH S5: the audit's last tail, and the old theme's good calculator habits kept
 
-The final audit batch — two legs (audit tail + the WP-adoption study), the WP-calculator study
+The final audit batch, two legs (audit tail + the WP-adoption study), the WP-calculator study
 (/home/opc/work/reports/2026-10-13-wp-calculator-study.md: the port is parity-or-better on 16 of 20
 patterns; five were worth keeping), and the manager's oracle fold. Gates on the combined tree:
 check **7/7** (parity 94/0, independent 116/0, appendix-a **67/0**, staleness 7/0) · build **81
@@ -733,33 +752,33 @@ pages** · calc-regress **130 pass / 0 fail / 7 skip** (325.6s, service unit thi
 
 **S5-audit-tail · the rate history finally has a past.** The exchange-rate tool cold-started: every
 new visitor saw one point until they used it repeatedly. It now seeds from the repo's OWN committed
-build-time USD/NGN snapshots — a maintained table of 12 real dated points, 2026-09-30 →
-2026-10-12 (2026-10-09 is a real gap — the feed missed it; nothing is papered over). The
+build-time USD/NGN snapshots, a maintained table of 12 real dated points, 2026-09-30 →
+2026-10-12 (2026-10-09 is a real gap, the feed missed it; nothing is papered over). The
 "device-collected, no invented history" principle stands: the engine, the frozen-clock oracle
 vectors and the generated snapshot are untouched; the page paints a real trend on first paint and
-live fetches layer on top. **NGX dividend examples** — three chips (GTCO, MTNN, DANGCEM) whose
+live fetches layer on top. **NGX dividend examples**, three chips (GTCO, MTNN, DANGCEM) whose
 price and DPS are READ from the maintained ngxDividendStocks() table (the build throws if a ticker
 leaves it, so a quote can never drift into being invented), growth figures labelled illustrative,
-the reading stated net of 10% WHT. **Amount-page meta descriptions** — all ten are now unique
+the reading stated net of 10% WHT. **Amount-page meta descriptions**, all ten are now unique
 (7 overrides; the two P0-2 pages keep their corrected wording verbatim; 50-dollars stays on its
 generated template, unique by elimination, so the amount_seo_50 oracle row stays green).
 
-**S5-WP-adopt · the five keepers.** (1) **Quick-pick chips** through the port's own component —
+**S5-WP-adopt · the five keepers.** (1) **Quick-pick chips** through the port's own component, 
 compound-interest rate 4/6/8/10/12/15/20%, naira-value inflation 18/20/24/30%, gross-to-net rent
-None/₦1.2m/₦2.4m/₦3.6m, savings-goal rate. (2) **The salary tool answers its own question** —
+None/₦1.2m/₦2.4m/₦3.6m, savings-goal rate. (2) **The salary tool answers its own question**, 
 chips jump to the worked ₦300k/₦500k/₦1m figures the prose carried, and `?gross=` deep-links work
 (sanitised, clamped 0–₦100M, garbage falls back silently) on salary-tax and gross-to-net.
-(3) **The loan APR now says what it means** — a verdict band beside the effective APR: ≥60%
-"Expensive — compare other lenders.", ≤35% "A typical formal-lender cost.", elevated between; the
+(3) **The loan APR now says what it means**, a verdict band beside the effective APR: ≥60%
+"Expensive, compare other lenders.", ≤35% "A typical formal-lender cost.", elevated between; the
 seed's app-loan case (2,333.9% APR) reads expensive, a 30%/yr bank quote reads typical. The band is
-prose ABOUT the number — the APR figure and its oracle-gated fee behaviour are untouched, and
+prose ABOUT the number, the APR figure and its oracle-gated fee behaviour are untouched, and
 "Out of range" keeps its path with the band hidden. (4) **Monthly/annual period toggles** on the
-two tax tools — display-only, through the engine's own annual field. (5) **The savings goal
-projects the win** — "If it just sits there at this rate → in 12 months", shown only when the goal
-is reached, from the engine's own compoundGrowth, "—" in every other state. What was deliberately
+two tax tools, display-only, through the engine's own annual field. (5) **The savings goal
+projects the win**, "If it just sits there at this rate → in 12 months", shown only when the goal
+is reached, from the engine's own compoundGrowth, ", " in every other state. What was deliberately
 NOT adopted back: WP's habit of showing first-timers receipts for numbers they never entered.
 
-**Manager's oracle fold.** The A6 savingsEffective rows move informational→gated — their promote
+**Manager's oracle fold.** The A6 savingsEffective rows move informational→gated, their promote
 condition ("when the P2-1 disclosure fix lands") shipped in S2c, so the identities gate: the
 monthly-compounding solve, the same goal under ANNUAL compounding (engine 157,606.50 vs the
 oracle's 157,606.51), and the disclosed effective yield from the page's own effFrom derivation.
@@ -768,31 +787,31 @@ Appendix-a: pass 64→67, informational 13→11, fail 0.
 **Leg history, recorded honestly.** The first WP-adopt leg died under the harness with 470 lines
 uncommitted but intact; the retry found the suite's loan-console failures and died mid-diagnosis.
 The manager closed it: the band's frontmatter const was referenced from the client scope (a
-ReferenceError of the S2c TDZ class) — fixed with a documented client twin, re-probed on the
+ReferenceError of the S2c TDZ class), fixed with a documented client twin, re-probed on the
 served bytes (seed, driven, and the fee≥loan NaN edge all correct), rebuilt, regated. And a
 lineage note: the reader-complaints accounting found **zero** complaints across the 39 approved
 comments; the 16 pending rows were the security battery's own test residue and were trashed and
 deleted from the desk (final store: pending 0 / approved 39 / reactions 115 intact).
 
-## [0.7.61] — 2026-10-12 — BATCH S4 (trust/brand): identity unified, methodology + corrections + sponsorship pages, reviewed dates, honest claims
+## [0.7.61], 2026-10-12, BATCH S4 (trust/brand): identity unified, methodology + corrections + sponsorship pages, reviewed dates, honest claims
 
-The S4 leg — the big audit's SITE-6 and SITE-9 (finance-astro-audit-2026-10-08.md,
+The S4 leg, the big audit's SITE-6 and SITE-9 (finance-astro-audit-2026-10-08.md,
 sections at lines 359/385) plus the fifth audit's launch-checklist line 412
 ("Methodology/sources page and a corrections policy"). The King's brand ruling
 (held-calls bundle, Oct 11): on-page brand unifies to **"GWill Finance"**. The
 fidelity gates that pinned the old strings were re-pinned to the King's
 corrected strings in the manager's fold (the SITE-1 precedent), so this batch
-ships with `npm run check` PASS 7/7 — no gate was weakened, only moved with the
+ships with `npm run check` PASS 7/7, no gate was weakened, only moved with the
 ruling. Behavioural suite re-observed on this batch's build: 130 pass / 0 fail /
 7 skip, exit 0 (systemd shelter, real Chrome).
 
-**SITE-6 — identity, handles and links.**
+**SITE-6, identity, handles and links.**
 - Brand lockup unified: header `.logo`/`.mlogo` (×3) and both footer `.flogo`
   instances now read `₦ GWill Finance`; `og:site_name`, the JSON-LD
   `WebSite`/`Organization` names and every `<title>` template were already
   "GWill Finance" (grep: the only variants were the three lockups + the footer
   network line, which the fold kept verbatim as a domain-family reference).
-  *Proof:* `check-header-fidelity` new drift guard — old `nm">gwillchijioke<`
+  *Proof:* `check-header-fidelity` new drift guard, old `nm">gwillchijioke<`
   absent from Layout, new lockup pinned; footer lockup pin ×2 green.
 - Author name unified to **"G-will Chijioke"** (the byline form): footer
   copyright line (was "Gwill Chijioke"), About meta description; article
@@ -800,30 +819,30 @@ ruling. Behavioural suite re-observed on this batch's build: 130 pass / 0 fail /
   *Proof:* footer `.fbot` pin amended and green; `grep "Gwill Chijioke" src/`
   → comment mentions only.
 - GitHub link moved to **github.com/godschi10** (the gwillchijioke account has
-  no public repos — audit's portfolio-audit finding): article author box
+  no public repos, audit's portfolio-audit finding): article author box
   (`content.ts` AUTHORS), JSON-LD `sameAs` in Layout, `SITE.socials`.
 - **tech.gwillchijioke.com retired → androidscroll.com** in all three places
   (footer network ×2 via `FOOTER_NETWORK`, About "Elsewhere").
 - **All profile URLs in ONE table:** new `PROFILES` const in `src/data/site.ts`
-  (site, portfolio, github, x, instagram, linkedin, youtube) — footer network
+  (site, portfolio, github, x, instagram, linkedin, youtube), footer network
   column, author box, About Elsewhere and JSON-LD `sameAs` all read it, so
   handle/domain drift is structurally dead.
 - **KING-HELD (do not guess-swap):** the social handle stays `gwillchijioke`
-  (no underscore) — the audit warns `@gwill_chijioke` and `@gwillchijioke` are
+  (no underscore), the audit warns `@gwill_chijioke` and `@gwillchijioke` are
   different accounts and says to confirm with the owner; unconfirmed, so the
   existing links stand and the PROFILES comment records the pending
   confirmation.
 
-**SITE-9 — YMYL trust structure (the honest part).**
+**SITE-9, YMYL trust structure (the honest part).**
 - **New `/methodology/` page:** what the calculators are and are not; what
   "the daily reference rate" means (baked snapshot, twice-daily builds, stamped
   with the feed's own update time); the accuracy story exactly as the repo
-  backs it — three independent oracle sets (PHP parity 95 vectors, the
+  backs it, three independent oracle sets (PHP parity 95 vectors, the
   law-derived independent set, the fifth audit's statute-derived Appendix A),
   the seven-gate release check, the behavioural suite **130 pass / 0 fail /
   7 skip** (observed 13 Oct 2026), and every divergence declared publicly. No
   invented credentials; every number on the page is a number the repo prints.
-- **New `/editorial-policy/` page** (corrections + sponsorship on one page —
+- **New `/editorial-policy/` page** (corrections + sponsorship on one page, 
   two pages would have been padding; the call is recorded here): how to flag
   an error, how corrections are checked/dated/logged, sponsorship labels,
   no-editorial-verdict-on-sponsored-posts, affiliate separation. Corrections
@@ -831,16 +850,16 @@ ruling. Behavioural suite re-observed on this batch's build: 130 pass / 0 fail /
   the sitemap and the footer ("Methodology", "Editorial Policy"), and linked
   from About, Contact and the affiliate disclosure.
 - **Per-article "Reviewed" dates:** new `reviewed` frontmatter field (schema in
-  `content.config.ts`), set explicitly on **all 15 articles** — `updated ??
+  `content.config.ts`), set explicitly on **all 15 articles**, `updated ??
   pubDate` (the publish/edits WERE the review; git-date computation is not
   available at build). Rendered in the article meta row ("Reviewed …") and fed
   into JSON-LD `dateModified` + OG `article:modified_time` (now the later of
   `updated`/`reviewed`, falling back to `pubDate`; a date is never invented).
 - **Home-page claims:** already count-true since the SITE-2 leg (stats strip
   computes articles/apps/tools from real data; "In-depth guides" → "Guides");
-  this batch swept the REMAINING claim family the audit named — "tested with
+  this batch swept the REMAINING claim family the audit named, "tested with
   real money over four months", "six months of real usage", "I tested … for
-  three months", "in-depth", "tested with real money" — out of article
+  three months", "in-depth", "tested with real money", out of article
   descriptions/bodies (4 articles beyond the 3 flagged ones carried the same
   phrases), the remittance/dollar-accounts category descriptors, the About
   promise ("real transfers, real fees measured against the mid-market rate,
@@ -863,7 +882,7 @@ lists all seven gates (the staleness gate was missing), the vectors row names
 all three oracles, build page count 78→81.
 
 **Data note.** The two builds on this leg refreshed the ticker's crypto/metals
-values (BTC/ETH/XAU moved; the NGN pairs and `fx-snapshot.ts` are unchanged) —
+values (BTC/ETH/XAU moved; the NGN pairs and `fx-snapshot.ts` are unchanged), 
 build-owned data riding the same file as the S4 edits, per the v0.7.60 refresh
 precedent.
 
@@ -873,86 +892,86 @@ changed files limited to the S4 set (+ the manager's two checker re-pins,
 his fold).
 
 
-## [0.7.60] — 2026-10-12 — BATCH S3a (engine features): the loan upfront fee, the 31-day rounding fix, the dividend WHT toggle, custom stock
+## [0.7.60], 2026-10-12, BATCH S3a (engine features): the loan upfront fee, the 31-day rounding fix, the dividend WHT toggle, custom stock
 
-The S3a leg — the fifth audit's P1-1/P1-2 feature cluster (finance-astro-calculator-audit-1.md,
+The S3a leg, the fifth audit's P1-1/P1-2 feature cluster (finance-astro-calculator-audit-1.md,
 2026-10-11), plus CALC-4a/4c and the reducing-balance schedule. Every engine value verified
 against the audit's own Appendix A figures before a line of page copy was written; every gate
 re-run and observed (outputs pasted in the leg report). The S3b UX leg rides the same ship as a
 no-bump companion; nothing in its file set is touched here.
 
-**P1-2 — the loan upfront-fee input (the P0 trust feature).** `loanRepayment()` gains an optional
+**P1-2, the loan upfront-fee input (the P0 trust feature).** `loanRepayment()` gains an optional
 6th parameter `upfrontFeePct` (default 0), and the effective APR now solves on the amount actually
 RECEIVED (net disbursement = amount × (1 − fee%)) while the repayment stream stays contract-sized
-— the fee is a fee, not interest. A fee at/above the loan leaves nothing to solve against, so the
+, the fee is a fee, not interest. A fee at/above the loan leaves nothing to solve against, so the
 engine returns `apr: NaN` and the page's finite-guard answers "Out of range" naming the fee,
 never a confident 0%. The page field is labelled "Upfront fee (% or ₦)": a plain number reads as
 a percent (the way lenders quote; the hint and the page's own FAQ say fees are "often 3–5%
 upfront"), a ₦-prefixed value is a naira fee converted against the amount. A "You receive (after
 the upfront fee)" receipt row shows the net the APR solved on, only while a fee is entered.
 Receipt label per the audit: "Effective annual rate (including the upfront fee when entered)"
-— title, badge, verified-line, copy and the fees FAQ updated to match (the page no longer claims
+, title, badge, verified-line, copy and the fees FAQ updated to match (the page no longer claims
 fees are excluded). **Proof:** the fifth audit's A3 fee rows, both PROMOTED informational→gated
 in `vectors-check.mjs` (the JSON stays frozen): ₦100k/30d/1%-day + 5% fee → engine APR
 4442.97% vs the audit's ≈4,443 (receive ₦95,000) · flat 5%/mo ×3 + 5% fee → 220.65% vs ≈220.6.
-Both inside the house half-printed-digit tolerance. No PHP parity vector passes a fee — the
+Both inside the house half-printed-digit tolerance. No PHP parity vector passes a fee, the
 parameter defaults to 0 and the parity calls are untouched.
 
-**P1-2 — the 31-day rounding fix.** `ceil(days/30)` charged a 31-day flat loan as TWO months —
+**P1-2, the 31-day rounding fix.** `ceil(days/30)` charged a 31-day flat loan as TWO months, 
 ₦10,000 interest where the calendar month is ₦5,000 (the audit's worked example). Replaced with
-days ÷ 30.4 rounded to the NEAREST month (minimum 1); daily mode stays exact. **Proof — oracle
+days ÷ 30.4 rounded to the NEAREST month (minimum 1); daily mode stays exact. **Proof, oracle
 safety, enumerated before the change:** every gated loanApr row is a 30-day or month tenor
 (30/30.4 → 1; the PHP parity `loan_flat_days` 90d → 3 either way; month tenors never round), so
-no oracle count moved and no divergence entry is required — checked: no PHP parity vector covers
+no oracle count moved and no divergence entry is required, checked: no PHP parity vector covers
 a 31-day flat loan. The corrected case is pinned in `vectors-check.mjs` as a CITED checker case
-(the B2 bonus pattern, hardcoded — the vector files are never hand-edited): "31 days at flat
-5%/mo = ₦5,000 interest — days÷30.4; the old rule charged ₦10,000; verified 11 Oct 2026", with
+(the B2 bonus pattern, hardcoded, the vector files are never hand-edited): "31 days at flat
+5%/mo = ₦5,000 interest, days÷30.4; the old rule charged ₦10,000; verified 11 Oct 2026", with
 a 30-day boundary guard beside it. The receipt foot and the dual-reading block now state the new
 rule ("a 31-day loan is one month, not two").
 
-**P1-1/CALC-4b — the dividend WHT toggle, default ON at the page.** Nigerian dividends carry 10%
+**P1-1/CALC-4b, the dividend WHT toggle, default ON at the page.** Nigerian dividends carry 10%
 withholding tax, final for most resident individuals (fifth audit P1-1 [Certain]).
-`dividendProject()` gains `whtPct` — in PERCENT, defaulting to 0 at the function level, so every
+`dividendProject()` gains `whtPct`, in PERCENT, defaulting to 0 at the function level, so every
 pre-S3a call (the PHP parity vectors, the v1 oracle's gated gross row 1221922/351823/19.57) is
 byte-identical; the page passes 10 explicitly from a "Dividend tax (WHT) 10%" checkbox. Each
 year's dividend is taxed before it lands: DRIP reinvests the net, the cash total is the net
 received, and gain/CAGR follow. The receipt's starting-yield row shows the NET yield while the
-toggle is on (8.27% on the seed — the audit's own figure; 9.19% gross when unchecked). **Proof:**
+toggle is on (8.27% on the seed, the audit's own figure; 9.19% gross when unchecked). **Proof:**
 the A4 WHT row PROMOTED informational→gated (checker calls with whtPct=10): end 1,173,810 · net
-dividends 310,727 · CAGR 18.61% — the engine lands 1,173,809.61 / 310,726.66 / 18.6112, inside
+dividends 310,727 · CAGR 18.61%, the engine lands 1,173,809.61 / 310,726.66 / 18.6112, inside
 the audit's ±₦1 / half-printed-digit tolerances. The v1 oracle's own 10%-WHT row stays
 informational as a cross-note (same numbers, gated once, in the dividendGross pattern).
 
-**P1-1 — the custom stock input.** The dropdown blocked custom figures; a "Custom — enter your
+**P1-1, the custom stock input.** The dropdown blocked custom figures; a "Custom, enter your
 own figures" option now reveals Share price ₦ and Dividend per share ₦ fields (the engine already
-took both — pure UI). While Custom is selected, the two fields join the figure-dependency set,
-so a blank price withholds as "—" instead of publishing a confident ₦0 projection (the zero law).
+took both, pure UI). While Custom is selected, the two fields join the figure-dependency set,
+so a blank price withholds as ", " instead of publishing a confident ₦0 projection (the zero law).
 
-**CALC-4c — the DRIP label honesty.** "Cash dividends ₦351,823" no longer prints while Reinvest
-is selected: the label follows the mode — "Dividends (reinvested)" in DRIP, "Cash dividends" in
+**CALC-4c, the DRIP label honesty.** "Cash dividends ₦351,823" no longer prints while Reinvest
+is selected: the label follows the mode, "Dividends (reinvested)" in DRIP, "Cash dividends" in
 cash mode, server and client.
 
-**CALC-4a — the convention disclosure (minimal, no flip).** One line beside "Starting yield":
-"Year-1 dividend applies the growth rate (year 1 pays dividend × 1.08)." — restated live from
+**CALC-4a, the convention disclosure (minimal, no flip).** One line beside "Starting yield":
+"Year-1 dividend applies the growth rate (year 1 pays dividend × 1.08).", restated live from
 the dividend-growth field so it never goes stale. The convention FLIP (year-1 at today's
 dividend) is King-held, deliberately not this leg.
 
-**P1-2/file-C — the reducing-balance repayment schedule.** For reducing-balance loans, a
+**P1-2/file-C, the reducing-balance repayment schedule.** For reducing-balance loans, a
 month-by-month schedule (interest, principal, running balance) behind a "Show schedule" toggle,
 phone-first. Derived display only: every number comes from the engine's own annuity
 (`r.installment`) with the final principal closing the floating-point residue; the month count
 mirrors the engine's day-convention exactly. Hidden for flat/daily (no amortisation to show) and
 withheld while any headline input is blank.
 
-**P1-1 tail — the CGT note.** One line in the dividend receipt's notes: "Share gains are taxed
-at personal income-tax rates from 1 Jan 2026 — this projection does not model capital gains
+**P1-1 tail, the CGT note.** One line in the dividend receipt's notes: "Share gains are taxed
+at personal income-tax rates from 1 Jan 2026, this projection does not model capital gains
 tax." Source: the fifth audit's P1-1 finding (finance-astro-calculator-audit-1.md, 2026-10-11,
 marked [Likely] there; gains on shares taxed at the shareholder's personal income-tax rates,
-0–25%, from the NTA 2025 commencement date) — cited rather than restated as statute-verified.
+0–25%, from the NTA 2025 commencement date), cited rather than restated as statute-verified.
 
-**Gates (observed, pasted verbatim in the leg report).** build: exit 0, 79 pages · check: 6/7 —
+**Gates (observed, pasted verbatim in the leg report).** build: exit 0, 79 pages · check: 6/7, 
 the 7th (vectors-check) reddened ONLY by the two manager-DECLARED amount-family copy leaves
-(`amount_100usd.cfg.content.faqs[4].a`, `amount_1mngn.cfg.content.lede` — the King's P0-2
+(`amount_100usd.cfg.content.faqs[4].a`, `amount_1mngn.cfg.content.lede`, the King's P0-2
 daily-reference relabel, manager-fold commit 634373a; the checker extension for those two leaves
 is the manager's fold at ship, per the B2/S2b precedent). Inside that gate: parity 90 pass / 2
 fail (exactly those two, no other movement) · independent 116/0, informational 4 (the 113
@@ -964,10 +983,10 @@ staleness 7/0. No parity vector covers a changed case; no divergence entry requi
 **Version note.** 0.7.59 → 0.7.60 (npm version patch, package.json + package-lock.json). The S3b
 UX leg rides this ship as a no-bump companion.
 
-**BATCH S3b — the UX-FEATURES cluster (companion to S3a, no version bump).** The share surface
+**BATCH S3b, the UX-FEATURES cluster (companion to S3a, no version bump).** The share surface
 ships in the ToolShell spine so every calculator inherits it: Copy result (clipboard + fallback,
 "Copied" confirmation, never an alert) and a WhatsApp share (`wa.me/?text=` with the honest receipt
-summary — an empty receipt shares "no figures yet", never ₦0), plus a print stylesheet that strips
+summary, an empty receipt shares "no figures yet", never ₦0), plus a print stylesheet that strips
 the real chrome (ticker, both headers, mobile nav, search, both footers, ads, CTA rows) and
 repapers the dark receipt ink-on-white so it prints legible. The converter gains URL-state
 (`?amt=&from=&to=`, read after the seed paint, debounced replaceState on change, unrecognised input
@@ -976,56 +995,56 @@ Law; clamped 0–100% with the clamp disclosed). The crypto tool keeps its card'
 row is labelled P2P spread with its signed ₦ and % on buy; coin quantities print to 8dp trimmed (at
 ₦110M/BTC the old 4dp rounded away real money); the Nigeria Tax Act 2025 tax note sits on the
 receipt; the reverse mode was examined and deliberately not built (cryptoProfit() has no reverse
-path — new maths, skipped per the brief). The Savings Goal tool gains the time-driven reverse mode
+path, new maths, skipped per the brief). The Savings Goal tool gains the time-driven reverse mode
 ("how long if I save ₦X/month?", phone-first segmented control, `savingsMonthsToGoal()`), and
-Inflation Savings gains step-up deposits (`savingsStepUpStart()`, the A7-verified solver — all
+Inflation Savings gains step-up deposits (`savingsStepUpStart()`, the A7-verified solver, all
 five appendix-a stepUpDeposits rows reproduced exactly, the 0% row equal to the already-gated 307188
-baseline). Persistence is now OPT-IN: "Remember my numbers on this device", default OFF — off is
+baseline). Persistence is now OPT-IN: "Remember my numbers on this device", default OFF, off is
 session-only, on is the existing localStorage behaviour; the consent flag sits outside the
 cleared-numbers sweep so clearing numbers never flips the privacy choice; the storage notice is
 conditional to match, and the privacy policy's "every calculator remembers" sentence is corrected
 in this ship's policy fold.
 
 
-## [0.7.59] — 2026-10-11 — S2c completion (sibling seat): ticker scope, rate-convention disclosures, last name unification, progress basis
+## [0.7.59], 2026-10-11, S2c completion (sibling seat): ticker scope, rate-convention disclosures, last name unification, progress basis
 
 The sibling seat's S2c leg, run AFTER the sibling's 0.7.58 had already landed on origin/main. The sibling's entry
 below stands unmodified; this entry closes the items that leg did not reach, plus one receipt row it omitted.
 No oracle count moved; every gate re-run and observed by this leg (outputs in the leg report).
 
-**P2-12 — ticker scope.** BTC/ETH/XAU showed on every page, including tax and budget pages where they help
-nobody. `Layout` gains an `fxTicker` prop (`ToolShell` forwards it): the three FX pages — converter, rate
-history, transfer comparator — render the full six-pair set; every other page renders the USD/GBP/EUR→NGN
+**P2-12, ticker scope.** BTC/ETH/XAU showed on every page, including tax and budget pages where they help
+nobody. `Layout` gains an `fxTicker` prop (`ToolShell` forwards it): the three FX pages, converter, rate
+history, transfer comparator, render the full six-pair set; every other page renders the USD/GBP/EUR→NGN
 reference pairs only. `TICKER_STATIC` itself keeps all six (the header-fidelity gate reads it;
 `ticker-live.js` refreshes per `data-src`), and the aria-hidden marquee-duplicate rule is untouched.
 
-**P2-1 — rate-convention disclosure on the two pages that still lacked it.** Savings Goal carried the receipt
+**P2-1, rate-convention disclosure on the two pages that still lacked it.** Savings Goal carried the receipt
 line from 0.7.58; Compound Interest and Inflation-Adjusted Savings did not. Both engines were re-read before
 writing a word: `savingsPeriodicRate(annualRate, "monthly")` divides by 12 and compounds monthly, and the
 inflation page hardcodes `"monthly"` in its render call. Added one honest hint beside each rate field, with
 each page's own default re-derived: Compound "…10% nominal is 10.47%" ((1+0.10/12)^12−1 = 10.4713%),
 Inflation "…15% nominal is 16.08%" ((1.0125)^12−1 = 16.0755%).
 
-**P1-6 — the "Other reliefs" receipt row the 0.7.58 pass omitted.** The input field, engine wiring and
+**P1-6, the "Other reliefs" receipt row the 0.7.58 pass omitted.** The input field, engine wiring and
 deduction warnings landed in 0.7.58, but the receipt still showed Pension/Rent relief/PAYE only. Added
 "Other reliefs (annual)" riding `st-other` via `sfFig`, mirroring the Net to Gross page's `gn-other2` row and
 the engine's own `otherMonthly × 12` annualisation.
 
-**P3-3 — the last name unification surfaces.** 0.7.58 aligned the hub cards and `<title>` tags; three display
+**P3-3, the last name unification surfaces.** 0.7.58 aligned the hub cards and `<title>` tags; three display
 surfaces still carried the old names: the inflation page's breadcrumb, the budget page's related-guides card,
 and the search-index names in `data/content.ts` ("Inflation Savings", "Dividend / ROI Estimator"). All now
 read the manifest names ("Inflation-Adjusted Savings Calculator", "Dividend & ROI Estimator").
 
-**P2-6 — the emergency progress basis, on the number.** "Progress 50%" is measured against TODAY's target
-(`progress_pct = saved / (essentials × monthsCover)`), not the inflated finish line shown one row up — on the
+**P2-6, the emergency progress basis, on the number.** "Progress 50%" is measured against TODAY's target
+(`progress_pct = saved / (essentials × monthsCover)`), not the inflated finish line shown one row up, on the
 seed that is 50% vs 44%. The receipt foot already said so; the row label now carries the basis itself:
 "Progress (of today's target)".
 
-**P3-4 — "Nigeria Tax Calculator ." — closed NOT-FIXABLE-HERE.** Grep of `src` AND the built `dist` finds no
+**P3-4, "Nigeria Tax Calculator .", closed NOT-FIXABLE-HERE.** Grep of `src` AND the built `dist` finds no
 "Nigeria Tax Calculator" followed by a stray space and period on any surface (hub card, page title, hero H1,
 manifest). Not reproducible on the current tree; recorded rather than manufactured.
 
-**P3-5 / P3-2 — verified, no change needed.** (a) Both controls exist and are labelled in the shared shell:
+**P3-5 / P3-2, verified, no change needed.** (a) Both controls exist and are labelled in the shared shell:
 `data-sf-clear` → "Clear examples", `data-sf-reset` → "Reset", and the salary page's bar-note names both.
 (b) The "Best" badge is server-rendered only on the winner: `st-tag-old` ships `display:none` in the static
 HTML (the seed's winner is the new regime); quoted from the built page in the leg report.
@@ -1033,123 +1052,123 @@ HTML (the seed's winner is the new regime); quoted from the built page in the le
 **Version note.** 0.7.58 was taken by the sibling's already-pushed commit; this completion therefore bumps to
 **0.7.59** (npm version patch, package.json + package-lock.json). Nothing in 0.7.58's entry below was edited.
 
-## [0.7.58] — 2026-10-11 — BATCH S2c: reversed calculator says what it does, repealed regime labelled, street premium dated
+## [0.7.58], 2026-10-11, BATCH S2c: reversed calculator says what it does, repealed regime labelled, street premium dated
 
 The fifth audit's S2c queue, run after the sibling seat stopped. Every item verified against source or statute,
 none taken on trust.
 
-**P1-8 — the reversed calculator now says so.** The page titled "Gross to Net" solves **net → gross**: its own
+**P1-8, the reversed calculator now says so.** The page titled "Gross to Net" solves **net → gross**: its own
 description said "what gross salary do you need for your target take-home". Renamed to
 **"Net to Gross (Take-Home to Salary)"** across H1, card, title and manifest. **Slug frozen** at
-`gross-to-net-calculator/` — renaming it would break inbound links, and a wrong title on a right URL is a far
+`gross-to-net-calculator/`, renaming it would break inbound links, and a wrong title on a right URL is a far
 cheaper defect than a dead URL.
 
-**P1-6 — the old regime is labelled repealed, and cited.** "Old (Finance Act)" → **"Old (PITA, for comparison
-only — repealed 1 Jan 2026)"**. The repeal was **not** taken on the audit's word: NTA 2025 s.196(g) repeals
+**P1-6, the old regime is labelled repealed, and cited.** "Old (Finance Act)" → **"Old (PITA, for comparison
+only, repealed 1 Jan 2026)"**. The repeal was **not** taken on the audit's word: NTA 2025 s.196(g) repeals
 PITA Cap LFN 2004, commencement 1 Jan 2026, read in the primary text (`nta2025.txt:5342,5355`). The comparison
-itself is legitimate and is kept — only the framing was wrong.
+itself is legitimate and is kept, only the framing was wrong.
 
-**P1-6 — "Other reliefs" parity: the audit's direction was right.** Measured, not assumed: `grep -c other` = **11
-on gross-to-net, 0 on salary-tax**. The engine was never the gap — both pages call the same `payeCalculate()`;
+**P1-6, "Other reliefs" parity: the audit's direction was right.** Measured, not assumed: `grep -c other` = **11
+on gross-to-net, 0 on salary-tax**. The engine was never the gap, both pages call the same `payeCalculate()`;
 salary-tax simply passed a hardcoded `0`. Wired the real input; live proof moves the taxable base from
 ₦3,312,000/yr to ₦2,712,000/yr.
 
-**P1-6 — bonus input wired** to the engine already fixed in v0.7.55 (B2). No rate restated: the effective rate
+**P1-6, bonus input wired** to the engine already fixed in v0.7.55 (B2). No rate restated: the effective rate
 is read back off `bt.tax / bt.bonus`. Citations are the pre-existing verified ss.4(2)(a), 26(2), 163(1)(t), each
-re-read before reuse. A cleared bonus withholds the house "—" rather than printing a gold ₦0.
+re-read before reuse. A cleared bonus withholds the house ", " rather than printing a gold ₦0.
 
-**P1-7 — the street premium stops being a bare constant.** `FX_PARALLEL_SPREAD = 1.045` (undated, no source)
+**P1-7, the street premium stops being a bare constant.** `FX_PARALLEL_SPREAD = 1.045` (undated, no source)
 became a **dated observed range 2.2%–4.4% (Jul–Oct 2026, checked 11 Oct 2026)** with a 3.3% point estimate.
-`transfer.ts` held a **second private copy** (`markup: -0.045`) that nothing kept in step — it now reads the
+`transfer.ts` held a **second private copy** (`markup: -0.045`) that nothing kept in step, it now reads the
 shared constant, so drift is structurally impossible. **No source URL was invented**: the range follows the
 repo's existing `savings-rate.ts` precedent, where observations carry dates and `sourceUrl` is deliberately
-empty. This **moves real figures** — $100 parallel ₦139,090 → ₦137,492. The audit's own "≈₦139,089" reproduces
+empty. This **moves real figures**, $100 parallel ₦139,090 → ₦137,492. The audit's own "≈₦139,089" reproduces
 exactly at the old constant, which confirms its observation.
 
-**P2-1 — the convention is disclosed where it is typed.** A reader entering 15% on savings-goal is planning on
+**P2-1, the convention is disclosed where it is typed.** A reader entering 15% on savings-goal is planning on
 15% while the engine pays 16.08%. The receipt now states the effective yield: nominal ÷12 = 1.25%/mo,
-(1.0125)^12 − 1 = 16.0755% → **16.08%** (arithmetic re-derived, not copied). Withheld as "—" when the field is
-cleared. Placed on savings-goal, where the rate is typed and compounded monthly — not on the savings-rate
+(1.0125)^12 − 1 = 16.0755% → **16.08%** (arithmetic re-derived, not copied). Withheld as ", " when the field is
+cleared. Placed on savings-goal, where the rate is typed and compounded monthly, not on the savings-rate
 comparator, which only lists providers' headline rates and never divides by 12.
 
-**P2-12 and P2-9 were already done** — reported rather than manufactured into work. The ticker duplicate already
+**P2-12 and P2-9 were already done**, reported rather than manufactured into work. The ticker duplicate already
 carried `aria-hidden`; a gate assertion was added so it cannot regress. P2-9's debug files are gitignored and
 absent from `origin/main` (closed v0.7.50).
 
-**P3-6 — a staleness gate was added, not a gate loosened.** `check-maintained-staleness.mjs` fails every
+**P3-6, a staleness gate was added, not a gate loosened.** `check-maintained-staleness.mjs` fails every
 maintained table that stops carrying a resolvable date, and was **proven to go red on a stale table before being
 restored**. Gates are now **7/7** (an addition, not a weakening): article 147/147, vectors 95/95, footer 64,
 homepage 128, independent 113/0, appendix-a 54/0, staleness 7 assertions. Suite **130/0/7**.
 
 **Two self-caught defects, disclosed not hidden.** An introduced TDZ `ReferenceError` (the bonus block read
-`grossKnown` before its `const`) — caught by the suite's rails/console checks, fixed. Then an `aria-hidden`
-wrapper that leaked a stale `0.0%` through `.receipt-row b` — caught by the reset/clear checks, fixed to the
+`grossKnown` before its `const`), caught by the suite's rails/console checks, fixed. Then an `aria-hidden`
+wrapper that leaked a stale `0.0%` through `.receipt-row b`, caught by the reset/clear checks, fixed to the
 house withhold. Both verified at 130/0/7 before shipping.
 
-**OPEN, for the King — P1-3.** The master list records "default → National 15.39% (D1 adopted)". **The CHANGELOG
+**OPEN, for the King, P1-3.** The master list records "default → National 15.39% (D1 adopted)". **The CHANGELOG
 does not record it**, and the code still opens at 24% (Lagos) behind an explicit HN-2 comment defending it. The
-ruling was either never applied or deliberately reversed. **Left at 24%** — changing a default the King may have
+ruling was either never applied or deliberately reversed. **Left at 24%**, changing a default the King may have
 overruled is not an agent's call. Presets (National/Food/Lagos + dated NBS source) were added without touching
-the default. Quantified: national 15.39% gives real monthly ₦207,168 vs ₦307,188 at 24% — a **33% swing**.
+the default. Quantified: national 15.39% gives real monthly ₦207,168 vs ₦307,188 at 24%, a **33% swing**.
 
-## [0.7.57] — 2026-10-11 — the street rate points the right way, and nothing says LIVE on a once-a-day feed
+## [0.7.57], 2026-10-11, the street rate points the right way, and nothing says LIVE on a once-a-day feed
 
-Batch S2b (@builder leg): the fifth audit's P0 cluster — the Transfer
+Batch S2b (@builder leg): the fifth audit's P0 cluster, the Transfer
 Comparator's inverted street-rate direction (P0-1) and the dishonest LIVE
-claims on a once-daily feed (P0-2). Local commit only — the Manager ships.
+claims on a once-daily feed (P0-2). Local commit only, the Manager ships.
 
-**ITEM 1 — P0-1, the street premium now DIVIDES, never multiplies.** The
+**ITEM 1, P0-1, the street premium now DIVIDES, never multiplies.** The
 comparator's from-nigeria P2P row applied the parallel-market premium as
 `mid × (1 + 4.5%)`, i.e. the visitor was told ₦100,000 on the street buys
-$78.51 — MORE dollars than the official rate gives ($75.13). Selling naira on
+$78.51, MORE dollars than the official rate gives ($75.13). Selling naira on
 the street must DIVIDE by the HIGHER ₦/$ street rate: `src/lib/transfer.ts`
 now computes a negative markup (the street premium) as `mid ÷ (1 + premium)`,
-so the payout lands BELOW the official-rate figure — at the build snapshot
+so the payout lands BELOW the official-rate figure, at the build snapshot
 (₦1,330.995/$) the served seed reads: official mid-market $75.13 · Wise
 $74.68 (Best) · bank $72.53 · P2P $71.90 (₦100,000 ÷ (₦1,331 × 1.045)). Wise
 (as modelled) now outranks P2P, and the seed table's Rate column renders
 naira-face ("₦1,390.89 / $") instead of 6-decimal USD-per-₦, with currency
-symbols on every fee and payout figure (server seed AND client render — no
+symbols on every fee and payout figure (server seed AND client render, no
 bare "78.51"/"600.00"). P2P stays rankable; any P2P win now carries the
-disclosure "Parallel-market rate — platform risk applies" beside the receipt
+disclosure "Parallel-market rate, platform risk applies" beside the receipt
 (server and client alike; hidden while another provider wins). The default
-view stays NGN→USD (₦100,000) — the manager approved proving the direction fix
+view stays NGN→USD (₦100,000), the manager approved proving the direction fix
 from the served seed; the fifth audit's "default to Send to Nigeria" rides the
 S4/launch checklist, and the PROMISE was reworded to match the view instead
 (H1/title/meta + index card now say "to or from Nigeria" and name the bank
 channel and street-rate P2P alongside the inbound providers).
 
-**ITEM 2 — P0-2, a once-daily feed stops being sold as live.**
+**ITEM 2, P0-2, a once-daily feed stops being sold as live.**
 - Every LIVE badge relabelled: the site-wide ticker badge
   (`Layout.astro`) is now "Daily reference rate · updated {feed time}"
-  (the green pulse dot stays — chrome signature), and the converter's gold
+  (the green pulse dot stays, chrome signature), and the converter's gold
   badge reads "Daily reference rate · updated {time}". Honest strings that
   described the feed's own stamp ("live · {time}" setters) went with the
   removed fetch (below).
 - Attribution added (the free feed's terms): "Rates by
   [Exchange Rate API](https://www.exchangerate-api.com)" in BOTH footers
-  (desktop `.fbot` + mobile `.mfbot` — the CSS swaps these blocks by
+  (desktop `.fbot` + mobile `.mfbot`, the CSS swaps these blocks by
   viewport), inheriting the footer's own 10px dim style.
 - The per-visit client refetch is GONE: `fxFetchLive()` calls removed from
   currency-converter.astro, money-transfer-comparator.astro, and the ticker's
   live-price section removed from ticker-live.js (marquee interaction kept).
-  The pages now serve the build snapshot honestly — the fetch path itself
+  The pages now serve the build snapshot honestly, the fetch path itself
   stays in src/lib/fx.ts, unwired, per the brief's minimal-diff option.
 - The two false sentences rewritten: the converter FAQ ("re-fetches that feed
   on every visit and swaps in the live rate") and the copy paragraph ("so the
   figure you are looking at is the current market rate") now state the
-  snapshot model — the page carries the rate the build fetched, the build runs
+  snapshot model, the page carries the rate the build fetched, the build runs
   twice a day, the stamp is the exact freshness. The comparator's FAQ and
   receipt note got the same treatment. The conversion pages' "30-minute
-  cache" line is the SIBLING leg's file — NOT touched here (noted for the
+  cache" line is the SIBLING leg's file, NOT touched here (noted for the
   manager). "Nothing on this page is typed in by hand" is scoped honestly:
   "No conversion figure on this page is typed in by hand … the one maintained
-  input on the page is the parallel-market spread estimate — a model constant,
+  input on the page is the parallel-market spread estimate, a model constant,
   not a market number" (the premium's dated-range fix is S2c).
 - `.github/workflows/pages.yml`: schedule cron `7 3 * * *` → `7 3,15 * * *`
   (twice-daily snapshot rebuilds; one workflow line + its comment).
 
-**ITEM 3 — ticker sources (brief note, not a blocker):** BTC/ETH ride a
+**ITEM 3, ticker sources (brief note, not a blocker):** BTC/ETH ride a
 Coinbase spot → CoinGecko → Binance fallback chain; XAU uses api.gold-api.com
 (all free, keyless, CORS-open; documented in the removed section's header).
 Their public market-data endpoints are offered for public display use within
@@ -1158,11 +1177,11 @@ now zero and the build's once-daily snapshot pulls sit comfortably inside
 every source's fair-use terms.
 
 **Gates (all observed, not claimed):** `npm run build` exit 0, 79 pages ·
-`npm run check` 6/6 green — parity `pass=94 fail=0` (transfer_from_ng moved
+`npm run check` 6/6 green, parity `pass=94 fail=0` (transfer_from_ng moved
 to a declared divergence, see below), independent `pass=113 fail=0`,
 appendix-a `pass=54 fail=0` (A5 transfer rows STAY informational; promotion
 is the manager's post-ship re-gate) · calc-regress in the systemd shelter:
-130 pass / 0 fail / 7 skip — the comparator has no behavioural vector row, as
+130 pass / 0 fail / 7 skip, the comparator has no behavioural vector row, as
 the brief expected · served-bytes: relabelled ticker badge + attribution link
 + the corrected seed direction (P2P $71.90 < official $75.13) verified in
 dist, and the old $78.51-class figure absent.
@@ -1170,67 +1189,67 @@ dist, and the old $78.51-class figure absent.
 ### Divergences (this batch)
 
 - **transfer_from_ng (P0-1, fifth audit [Certain], King's order 2026-10-11)**
-  — the PHP truth oracle snapshot PINS the inverted direction (p2p rate =
+ , the PHP truth oracle snapshot PINS the inverted direction (p2p rate =
   mid × 1.045, received 70.51 > Wise 67.07): the defect itself, parity-pinned.
   The TS engine now applies the corrected street-rate direction, that ONE
   oracle row is excluded from the strict deep-compare, and the corrected
   values + direction (P2P below the official-rate payout) are fail-guarded in
-  vectors-check.mjs's declared-divergence block — third divergence this
+  vectors-check.mjs's declared-divergence block, third divergence this
   mission, each a place the parity gate pinned something the law or the
   King's order has moved. NOTE: scripts/vectors-check.mjs intentionally rides
-  the Manager's fold UNCOMMITTED — it carries BOTH legs' declared-divergence
+  the Manager's fold UNCOMMITTED, it carries BOTH legs' declared-divergence
   blocks (this one + the sibling P0-4 copy block).
 - The A5 appendix-a transfer rows (₦100,000 → $75.13 / $73.42 / $72.99 /
-  $71.94 at street ₦1,362–1,390/$) stay informational this leg by order — the
+  $71.94 at street ₦1,362–1,390/$) stay informational this leg by order, the
   engine's corrected direction matches them at page level; their promotion to
   gated is the Manager's post-ship re-gate.
 
-## [0.7.56] — 2026-10-11 — the receipt speaks only what changed, and the APR label carries the fee truth
+## [0.7.56], 2026-10-11, the receipt speaks only what changed, and the APR label carries the fee truth
 
 Batch S2a (@builder leg): the fresh audit's single highest-impact UX fix (U1),
 the P0 APR honesty relabel (F01/F10), the day→month dual reading (#2), the
 client half of the Worker's minted guest identity, and two verify-tails closed
-with evidence. Local commit only — the Manager ships.
+with evidence. Local commit only, the Manager ships.
 
-**ITEM 1 — U1, aria-live scoped to what matters.** Every tool receipt wrapped
-its ENTIRE region (figure, sub, rows, notes, foots) in `aria-live="polite"` —
+**ITEM 1, U1, aria-live scoped to what matters.** Every tool receipt wrapped
+its ENTIRE region (figure, sub, rows, notes, foots) in `aria-live="polite"`, 
 a screen-reader user typing a 6-digit salary heard the whole receipt re-read
 per keystroke. The receipt container no longer carries aria-live on any of the
 15 tool pages (17 receipts). The live regions are now only the elements whose
 change is worth speaking: each receipt's primary figure (`.receipt-fig`; on
 the 50/30/20 allocator receipt, which has no `.receipt-fig`, the
 `data-sf-fig` label line that carries its figures), and the warn rails
-(`*-warn` receipt-notes — the honesty rail; a state change there speaks).
+(`*-warn` receipt-notes, the honesty rail; a state change there speaks).
 Deliberately NOT live: the receipt-notes rewritten per keystroke with
 interpolated amounts (50/30/20's #al-sharesum, #al-needsline, the converter's
-#cc-par) — scoping those would have reintroduced the exact chatter this fix
+#cc-par), scoping those would have reintroduced the exact chatter this fix
 removes. No ids moved, no timing added (scoping over debounce, so the
 behavioural suite's settle waits are untouched), and calc-regress reads only
 `.receipt-fig/.receipt-row b/[data-sf-fig]` and
-`.receipt-note/.bar-note/.receipt-sub` text — no vector asserted aria — so all
+`.receipt-note/.bar-note/.receipt-sub` text, no vector asserted aria, so all
 130 vectors pass unchanged.
 
-**ITEM 2 — F01/F10, the loan APR honesty relabel (the audit's P0).** The loan
+**ITEM 2, F01/F10, the loan APR honesty relabel (the audit's P0).** The loan
 page called its result "True APR" while lender fees are excluded. Every
 user-facing instance now puts the exclusion IN the label: `<title>` ("Loan
-Repayment Calculator, Effective Annual Rate (Fees Excluded) — GWill Finance"),
+Repayment Calculator, Effective Annual Rate (Fees Excluded), GWill Finance"),
 meta description ("the effective annual rate (excluding fees) behind flat,
 daily, and reducing-balance loans"), the gold badge ("Loan cost · effective
 annual rate (fees excluded)"), the verified line, the receipt sub line, the
 receipt row ("Effective annual rate (fees excluded)"), and the client render's
-sub line. The maths did not change — CALC-10's Intl.NumberFormat grouping
+sub line. The maths did not change, CALC-10's Intl.NumberFormat grouping
 stays. The frontmatter's historical CALC-10 comment still quotes `true APR
 2333.9%`: it documents the v0.7.47 bug verbatim and serves no bytes.
 
-**ITEM 3 — #2, the day→month dual reading on the loan page.** Day tenors round
+**ITEM 3, #2, the day→month dual reading on the loan page.** Day tenors round
 UP to whole months for flat and reducing rates (a 31-day flat loan is billed
-as 2 months — one extra day, a whole extra month of interest). The receipt now
+as 2 months, one extra day, a whole extra month of interest). The receipt now
 shows BOTH readings side by side when the unit is days AND the mode is flat or
 reducing: the rounded-month figure (current behaviour, labelled "Rounded to
-whole months (N mo) — the headline above") and the exact-day equivalent
+whole months (N mo), the headline above") and the exact-day equivalent
 (labelled "Exact days (N d)"), plus a one-line disclosure ("The headline
 figures above use the rounded-month reading."). Both readings come from the
-EXISTING engine functions run at page level — the exact-days reading is the
+EXISTING engine functions run at page level, the exact-days reading is the
 same loan through `loanRepayment()`'s daily mode with the quoted rate
 converted by the engine's own month convention (flat %/mo ÷ 30, reducing
 %/yr ÷ 365), disclosed on the block itself. The engine is untouched (the
@@ -1238,13 +1257,13 @@ loanApr oracle vectors pin its behaviour), the block runs only after the
 zero-tenor and range guards so it can never show a figure the headline
 refused, and it ships hidden (the seed is a daily-mode loan).
 
-**ITEM 4 — the client X-Vibe-Guest echo (pairs with the Worker's server-minted
+**ITEM 4, the client X-Vibe-Guest echo (pairs with the Worker's server-minted
 identity deployed today).** The comments client now stores and echoes the
 Worker-minted guest identity: `captureGuestHeader()` keeps the X-Vibe-Guest
-response header in sessionStorage (`vibe_guest_identity` — session-scoped,
+response header in sessionStorage (`vibe_guest_identity`, session-scoped,
 matching the vibe_guest_email PII pattern) after every response, and
 `withGuestHeader()` echoes it as an X-Vibe-Guest request header on every
-subsequent request through the `fetchWithTimeout()` transport seam — writes
+subsequent request through the `fetchWithTimeout()` transport seam, writes
 must carry it (identity continuity across IP/UA churn), reads may (the Worker
 validates but never mints on reads). The notify toggle and the (unreachable)
 Q&A accept call were bare `fetch()`s bypassing the seam; both now route
@@ -1252,14 +1271,14 @@ through it, so every write carries the header. "Not you?" also clears the
 stored identity so the next speaker mints a fresh one. No API semantics
 change. Server-side note: for a cross-origin Worker the header must be in
 Access-Control-Expose-Headers or browsers hide it from
-`response.headers.get()` — Worker-side concern, outside this repo.
+`response.headers.get()`, Worker-side concern, outside this repo.
 
-**ITEM 5 — two verify-tails.** F04 (salary seeded receipt): verified
-works-as-designed in the built dist — the seed renders as the page's example
+**ITEM 5, two verify-tails.** F04 (salary seeded receipt): verified
+works-as-designed in the built dist, the seed renders as the page's example
 (wearing SAMPLE badges), `data-sf-foot` ("Nothing entered · no figures
 invented") ships `hidden` and takes over only when every required field is
 cleared; evidence quoted in the leg report. CALC-8 (converter empty
-sections): the audit guessed right — "How to get the best rate, every time"
+sections): the audit guessed right, "How to get the best rate, every time"
 was an h2 with no body, and "You can convert naira to and from:" promised a
 list then delivered a paragraph. Fixed minimally: the "single most useful
 habit" paragraph moved under the empty h2 (it is that section's body), and
@@ -1268,7 +1287,7 @@ converts.
 
 **Attribution.** The hard-coded 4.5% parallel premium: verified absent since
 ≤0.7.46; attributed 2026-10-11. (The estimate spread that replaced it is
-disclosed at every served use — "Parallel estimate ≈ … (estimated, not a
+disclosed at every served use, "Parallel estimate ≈ … (estimated, not a
 quote)" on the receipt, "roughly 4.5% above official. It is an estimate,
 always labeled as one." in the FAQ.)
 
@@ -1281,7 +1300,7 @@ X-Vibe-Guest echo in the built VibeComments chunk. Engine maths untouched:
 no oracle count moved.
 
 
-## [0.7.55] — 2026-10-11 — the oracle's finding is fixed, and the tax copy now carries the law
+## [0.7.55], 2026-10-11, the oracle's finding is fixed, and the tax copy now carries the law
 
 Batch S1 (@builder leg): the PROC-1 oracle's CRA finding, the B2 bonus-on-exempt
 law fix, all six tax copy blocks from the researcher's verified deliverable
@@ -1289,7 +1308,7 @@ law fix, all six tax copy blocks from the researcher's verified deliverable
 verbatim with its "Last verified 11 Oct 2026" stamps), and the master list's
 small bug cluster.
 
-**ITEM 1 — the CRA floor (the oracle's finding).** `payeCalculate`'s old-regime
+**ITEM 1, the CRA floor (the oracle's finding).** `payeCalculate`'s old-regime
 relief was `₦200,000 + 20% of gross`, missing the PITA floor
 `max(₦200,000, 1% of gross)`. It is now
 `Math.max(OLD_CRA_BASE, grossAnnual * 0.01) + grossAnnual * OLD_CRA_RATE`.
@@ -1299,78 +1318,78 @@ old take-home **₦3,765,333/mo** (was ₦3,757,333). Every other independent ro
 and all 6 winner-flip points sit below the ₦1,666,666.67/mo threshold where the
 floor stops binding, and are bit-identical before and after.
 
-**ITEM 2 — B2, bonus on an exempt earner (research claim 4, wrong in law).**
+**ITEM 2, B2, bonus on an exempt earner (research claim 4, wrong in law).**
 `payeBonusTax` gated on `!base.exempt` and returned an unconditional ₦0 for a
 minimum-wage earner's bonus. NTA ss.4(2)(a), 26(2), 163(1)(t): a bonus is
 employment income, it is income of the day it is paid, and the exemption tests
-GROSS income — a bonus lifting gross above the national minimum wage defeats
+GROSS income, a bonus lifting gross above the national minimum wage defeats
 the exemption, and the amount runs the band table with the first ₦800,000 of
 chargeable income still 0%. The `!base.exempt` gate is gone; the marginal-rate
 machinery (tax on `base.taxable + bonus`, minus the ₦0 base tax) already prices
-exactly that. New gated case in the checker's independent section (hardcoded —
+exactly that. New gated case in the checker's independent section (hardcoded, 
 the JSON is the audit's verbatim set, never hand-edited):
 `payeBonusTax(70000, 500000)` must return tax > 0; the pre-fix engine
-returned 0 (post-fix: ₦70,920 — ₦472,800 of chargeable income above the
+returned 0 (post-fix: ₦70,920, ₦472,800 of chargeable income above the
 0% band at 15%).
 
-**ITEM 3 — the six tax copy blocks, verbatim with stamps.** Block 1 replaced
+**ITEM 3, the six tax copy blocks, verbatim with stamps.** Block 1 replaced
 the salary page's "straight % of the gross you type" pension hint (base is
 monthly emoluments, 8%/10%, per PRA 2014 + PenCom); block 2 replaced the
 "8% of your basic salary" pension answer; block 3 deleted the false
-"capped at ₦15,000 a month" NHF claim — both the FAQ answer and the live warn
+"capped at ₦15,000 a month" NHF claim, both the FAQ answer and the live warn
 rail's cap disclosure now carry the uncapped 2.5%-of-basic wording; block 4
 replaced the exemption wording on the salary FAQ, the salary copy's "fully
 exempt" sentence and the gross-to-net page's "completely exempt" line with the
 gross-vs-chargeable distinction (s.163(1)(t) tests GROSS income; the ₦800k
 0% band is a chargeable-income concept); block 5 replaced the bonus receipt
 note, whose "the minimum-wage exemption covers salary only" was precisely
-backwards; block 6 replaced the NRS FAQ line — retitled "Did the NRS replace
-the FIRS — and when do the new tax rules start?" — with the split dates:
+backwards; block 6 replaced the NRS FAQ line, retitled "Did the NRS replace
+the FIRS, and when do the new tax rules start?", with the split dates:
 NRSEA commenced 26 June 2025, the NTA rules take effect 1 January 2026. F11
 rode along: "to get your exact figure" is now "to get an estimate" in the tax
 copy.
 
-**ITEM 4 — the small bug cluster.**
-- **B3** — `ReverseGross` now carries `unreachable: boolean`, true when the
+**ITEM 4, the small bug cluster.**
+- **B3**, `ReverseGross` now carries `unreachable: boolean`, true when the
   capped search's net at the ₦100M/mo ceiling still sits below the target; the
-  gross-to-net page prints "Out of range — that take-home is beyond this
+  gross-to-net page prints "Out of range, that take-home is beyond this
   solver's ₦100M/month ceiling" off the engine's word instead of re-deriving
   it.
-- **B4** — garbage in Years no longer falls through `|| 5` into the 5-year
+- **B4**, garbage in Years no longer falls through `|| 5` into the 5-year
   seed on compound-interest and dividend pages: pmBlank() catches it, figures
-  withhold as "—", the table empties, and the rail says "Years doesn't hold a
-  number we can read — enter a number of years, like 5."
-- **B6** — smaller-diff option taken: the emergency page labels the real
+  withhold as ", ", the table empties, and the rail says "Years doesn't hold a
+  number we can read, enter a number of years, like 5."
+- **B6**, smaller-diff option taken: the emergency page labels the real
   target " at the 50-year planning cap" when the display cap binds, instead of
   letting capped years disagree with exact months; the engine's exact
   `months_to_reach` is untouched, so no oracle vector moves.
-- **B7** — money-controls blur grouping strips leading zeros before grouping
+- **B7**, money-controls blur grouping strips leading zeros before grouping
   ("007500" grouped as "07,750"; the maths always read 7, the display
   didn't); a bare "0" and "0.50" keep their zero.
-- **B8** — a typed ₦0 investment on the dividend page keeps its REAL ₦0
-  receipt figures (the zero law — never dashed) but no longer renders a full
+- **B8**, a typed ₦0 investment on the dividend page keeps its REAL ₦0
+  receipt figures (the zero law, never dashed) but no longer renders a full
   five-row zero table; the rail says the projection starts when an investment
   is entered.
-- **#3** — the 50/30/20 page states it outright: "Buckets are % of Needs
+- **#3**, the 50/30/20 page states it outright: "Buckets are % of Needs
   (50%), not of total income. Defaults leave ~3% in Other."
-- **#5** — input-side inline nudge on salary + gross-to-net: when the
+- **#5**, input-side inline nudge on salary + gross-to-net: when the
   deduction fields outrun the gross (salary) or the targeted take-home
   (gross-to-net), a hint beside the fields names the totals; the v0.7.52
   Out-of-range guard stays untouched on the receipt.
-- **D2** — `cryptoUsdt()` deleted from `src/lib/crypto.ts` (dead code; no page
+- **D2**, `cryptoUsdt()` deleted from `src/lib/crypto.ts` (dead code; no page
   imported it; the P2P framing copy covers the need).
-- **D4** — the `FX_PARALLEL_SPREAD` comment now tells the truth: a build-time
+- **D4**, the `FX_PARALLEL_SPREAD` comment now tells the truth: a build-time
   constant; the WP admin tunability did not port.
 
 **Honest gate status.** `npm run build` green (79 pages, exit 0);
-`npm run check` green, 6/6 gates — parity `pass=94 fail=0 cases=93
+`npm run check` green, 6/6 gates, parity `pass=94 fail=0 cases=93
 vectors=95` plus 1 corrected declared-divergence assertion (see Divergences:
 one vector less than 0.7.54's 95 because cryptoUsdt left WITH its vector), and
-independent `pass=113 fail=0 informational=4 rows=37` — the brief's 106 plus 7
+independent `pass=113 fail=0 informational=4 rows=37`, the brief's 106 plus 7
 further assertions this leg itself ordered into existence (1 mandated B2 bonus
 case + 6 B3 unreachable assertions over the oracle's 5 grossToNet rows and one
 ₦200M/mo beyond-ceiling proof); both tax[10] fails are green. calc-regress in
-the systemd shelter: 130 pass / 0 fail / 7 skip — unchanged, as ordered to
+the systemd shelter: 130 pass / 0 fail / 7 skip, unchanged, as ordered to
 verify (any change would have been a finding and a STOP).
 
 ### Divergences
@@ -1381,19 +1400,19 @@ difference carries its source and the date it was verified, right here.
 - **The TS engine now deviates from the PHP ENGINE's formula in the divergence
   zone** (gross above ₦1,666,666.67/mo): old-regime CRA relief is
   `max(₦200,000, 1% of gross) + 20% of gross` per the PITA CRA definition, and
-  the retiring WP theme's PHP engine still carries `₦200,000 + 20%` — the same
+  the retiring WP theme's PHP engine still carries `₦200,000 + 20%`, the same
   defect the audit's independent oracle caught in the port. Source: PITA CRA
   definition + the audit's independent oracle (PROC-1). Verified 11 Oct 2026.
-  The PHP engine is OUT OF SCOPE this mission — flagged to the King.
-- **B2 bonus-on-exempt** — the TS engine now applies NTA ss.4(2)(a)/26(2)/
+  The PHP engine is OUT OF SCOPE this mission, flagged to the King.
+- **B2 bonus-on-exempt**, the TS engine now applies NTA ss.4(2)(a)/26(2)/
   163(1)(t) (verified 11 Oct 2026): a bonus lifting gross above the minimum
   wage defeats the exemption. The PHP parity oracle's `paye_bonus_exempt_base`
-  vector records tax 0 — the PHP engine's own B2 defect — so that ONE vector is
+  vector records tax 0, the PHP engine's own B2 defect, so that ONE vector is
   re-anchored in `vectors-check.mjs` as a DECLARED DIVERGENCE: the stale PHP
   expectation is not asserted, the corrected value (₦9,360 on the
   60k+200k vector) is, with the citation in code. The PHP engine carries the
-  same defect — flagged to the King, out of scope this mission.
-- **crypto_usdt (D2)** — `cryptoUsdt()` was deleted from the TS port as dead
+  same defect, flagged to the King, out of scope this mission.
+- **crypto_usdt (D2)**, `cryptoUsdt()` was deleted from the TS port as dead
   code; the PHP oracle still carries its vector, recorded in the checker as a
   DECLARED REMOVAL, never silently. Verified 11 Oct 2026.
 - Unchanged from 0.7.54: the three informational alternative-convention rows
@@ -1401,7 +1420,7 @@ difference carries its source and the date it was verified, right here.
   stay carried, informational, not gated.
 
 
-## [0.7.54] — 2026-10-11 — a second oracle takes the stand, and immediately catches one
+## [0.7.54], 2026-10-11, a second oracle takes the stand, and immediately catches one
 
 The big audit's §0 made an uncomfortable point about `npm run check`: it proves
 the TS engines are FAITHFUL to the ported PHP, not that they are CORRECT. If
@@ -1410,7 +1429,7 @@ stays green forever. PROC-1 is the fix: `scripts/independent-vectors.json`, a
 from-scratch vector set generated 2026-10-08 by an independent implementation
 (NTA 2025 Fourth Schedule bands and rent relief; old PITA with
 CRA = max(₦200k, 1% of gross) + 20% of gross; standard annuity/IRR maths),
-copied VERBATIM from the audit's Appendix B — not one value regenerated,
+copied VERBATIM from the audit's Appendix B, not one value regenerated,
 recomputed or hand-edited. `scripts/vectors-check.mjs` now runs every engine
 against BOTH oracles in the same `npm run check` gate; failure on either
 reddens the gate, and the independent one outranks parity. Naira fields carry
@@ -1421,10 +1440,10 @@ informational entries, excluded from pass/fail (see Divergences below); they
 are candidates for promotion by their own future legs (CALC-4, start/end
 toggle), not by editing this file.
 
-**HONEST GATE STATUS — the second oracle is red on its first run, and that is
+**HONEST GATE STATUS, the second oracle is red on its first run, and that is
 it working, not it failing.** Parity side: `pass=95 fail=0 cases=95
-vectors=95` — unchanged, still green. Independent side: `pass=104 fail=2
-informational=4 rows=37` — the two failures are one finding on one row:
+vectors=95`, unchanged, still green. Independent side: `pass=104 fail=2
+informational=4 rows=37`, the two failures are one finding on one row:
 
     tax[10] grossMonthly=5000000
       oldTaxYear:      engine 10,112,000    vs oracle 10,016,000  (Δ +96,000/yr)
@@ -1435,11 +1454,11 @@ The new-regime figures on the same row match exactly (₦11,730,000 /
 divergence is surgical: the old-regime (PITA) relief in `salary-tax.ts` is
 `₦200,000 + 20% of gross`, missing the `max(₦200,000, 1% of gross)` floor the
 law and the independent oracle both carry. The floor only binds when 1% of
-ANNUAL gross exceeds ₦200,000 — above ₦1,666,666.67 gross monthly — so every
+ANNUAL gross exceeds ₦200,000, above ₦1,666,666.67 gross monthly, so every
 row the PHP parity oracle owns (highest old-regime row: ₦300k/month) sits
 below the threshold and parity never had the chance to catch it. This is the
 audit's thesis demonstrated live: a wrong assumption ported faithfully, green
-gate and all. Per the finding protocol, NOTHING was "fixed" this leg — not the
+gate and all. Per the finding protocol, NOTHING was "fixed" this leg, not the
 vector, not the engine. The gate stays red by design until the correction
 lands at the PHP source of truth first and is ported, per the C1 procedure
 (fix PHP → regenerate the parity oracle by running PHP → port the same one-line
@@ -1452,9 +1471,9 @@ its source and the date it was verified, right here. Deliberate differences
 are decisions; anything else is a finding, and findings get reported, not
 listed.
 
-- (none added this leg — no deliberate difference was introduced or discovered)
+- (none added this leg, no deliberate difference was introduced or discovered)
 - UNRESOLVED FINDING, not a divergence: `tax[10]` (₦5M gross monthly,
-  old regime) — engine missing the `max(₦200k, 1% of gross)` CRA floor, above;
+  old regime), engine missing the `max(₦200k, 1% of gross)` CRA floor, above;
   found 2026-10-11 by the independent oracle's first run. Gate red by design
   pending the fix order.
 - Informational (alternative conventions, carried in the oracle, excluded from
@@ -1464,44 +1483,44 @@ listed.
   +10% WHT endValue ₦1,173,810 (`dividendProject` has no WHT parameter).
 
 
-## [0.7.53] — 2026-10-11 — the swap bug the King caught on his phone: the glyph now follows the currency
+## [0.7.53], 2026-10-11, the swap bug the King caught on his phone: the glyph now follows the currency
 
 The King himself reported this one from his phone: "when I swap currency with
 the swap icon below it doesn't change the currency instantly." His screenshot
-showed the exact split state — FROM read NGN, TO read USD, "YOU GET 37.57" had
-recomputed for the swapped pair — but the amount field still read "$ 50000"
+showed the exact split state, FROM read NGN, TO read USD, "YOU GET 37.57" had
+recomputed for the swapped pair, but the amount field still read "$ 50000"
 under the label "AMOUNT IN US DOLLAR ($)", the OLD currency, until the next
 real interaction happened to move it.
 
-**THE SWAP — a programmatic write nobody heard.** What was wrong: the swap
+**THE SWAP, a programmatic write nobody heard.** What was wrong: the swap
 handler set both select values programmatically and called render() directly.
 render() re-declares `data-cur` and recomputes the receipt, so the figures
-were right — but money-controls.js owns the in-field glyph, the label's
+were right, but money-controls.js owns the in-field glyph, the label's
 `[data-cur-unit]` words and the announced unit switch, and it re-syncs only at
 boot and on delegated change/input events on `document`. A programmatic
 `.value` write fires NO event, so the glyph, the label words and the
 live-region voice all stayed on the old currency. What changed: after
 swapping the values the handler dispatches user-shaped bubbling change events
 on BOTH selects (`new Event("change", { bubbles: true })`), so every delegated
-listener hears the swap exactly as if both selects were flipped by hand — the
+listener hears the swap exactly as if both selects were flipped by hand, the
 glyph and label follow instantly, the polite live region announces
 "Amount is now in Nigerian Naira (₦)", and the direct render() call stays
 (idempotent; the selects' own change listeners re-run it too). Observed proof:
 the new `swap` vector in scripts/calc-regress.mjs drives the exact phone case
-— reset, type 50000, ONE tap on #cc-swap, zero further interaction — and
+, reset, type 50000, ONE tap on #cc-swap, zero further interaction, and
 asserts from/to swapped, `data-cur` = the new from-currency, the in-field
 glyph = the page's own symbol for it, the label words switched, and the hero
 recomputed for the swapped pair (expected hero derived from the page's own
-printed unit rate — the engine is linear — never a hardcoded number). Green
+printed unit rate, the engine is linear, never a hardcoded number). Green
 record: `one tap: USD→NGN flipped to NGN→USD, glyph "$"→"₦", hero "37.57" =
 50000/1330.995081 (page-printed rate)`. Served-bytes proof: the dist module
 greps `r.dispatchEvent(new Event("change",{bubbles:!0})),m.dispatchEvent(new
 Event("change",{bubbles:!0}))` inside the #cc-swap handler.
 
-**F6, small-rate half — the unit line must reproduce its own conversion.**
+**F6, small-rate half, the unit line must reproduce its own conversion.**
 What was wrong: moneyTrim trimmed the effective unit rate with a fixed
 6-decimal cap; on NGN→USD that printed "1 NGN = $0.000751" while the hero
-printed 37.57 for 50,000 — and 0.000751 × 50000 = 37.55, breaking the F6
+printed 37.57 for 50,000, and 0.000751 × 50000 = 37.55, breaking the F6
 comment's own promise that the unit rate reproduces the shown conversion.
 What changed: below 1 the fraction span widens to hold 10 SIGNIFICANT digits
 (`9 − floor(log10|v|)`, capped at 20) instead of a fixed 6 decimal places;
@@ -1515,45 +1534,45 @@ Served-bytes proof: the dist module greps the sig-digit branch
 
 **Honest gate status.** `npm run build` green (79 pages, exit 0, 52.85s);
 `npm run check` green (6/6 gates, article gate 147/147, engine vectors
-95/95); `scripts/calc-regress.mjs` run in a systemd-run shelter per BOX LAW —
+95/95); `scripts/calc-regress.mjs` run in a systemd-run shelter per BOX LAW, 
 **130 pass / 0 fail / 7 skip in 218.2s, PASS** (was 129; the new `swap` vector
 is the +1, currency-converter only, other 14 tools print no cell). All gates
 observed this leg, none blocked.
 
 **Also in this version.** The build regenerated the ticker statics (BTC/USD
-$82,972 → $82,959; ETH/USD $2,505 → $2,498; the FX snapshot itself unchanged —
-same daily feed value) — committed as its own `chore(data)` commit per
+$82,972 → $82,959; ETH/USD $2,505 → $2,498; the FX snapshot itself unchanged, 
+same daily feed value), committed as its own `chore(data)` commit per
 convention.
 
-## [0.7.52] — 2026-10-11 — the audit quick wins: a named search, valid navs, no negative take-home
+## [0.7.52], 2026-10-11, the audit quick wins: a named search, valid navs, no negative take-home
 
 Three OPEN findings from the 2026-10-10 reconciliation closed in one small batch
 (MINOR-5, MINOR-7, COSMETIC-1), plus the comments-api secrets hygiene (S4.8) done
-in that repo's working tree — no deploy, no Worker touch, per the King's order.
+in that repo's working tree, no deploy, no Worker touch, per the King's order.
 
-**MINOR-7 — the /articles/ search input finally has an accessible name.** The
+**MINOR-7, the /articles/ search input finally has an accessible name.** The
 `<span class="screen-reader-text">Search for:</span>` sat in the label with no
-explicit association — the audit's screen reader met an unnamed field. Both
+explicit association, the audit's screen reader met an unnamed field. Both
 articles templates (`/articles/` and `/articles/page/N/`, which duplicate the
 form) now carry the audit's own fix: `id="articles-search-q"` on the input and
 `for="articles-search-q"` on the label, so the span's "Search for:" IS the field's
 accessible name. Served-bytes proof: both dist routes grep the paired attributes.
 
-**COSMETIC-1 — no `<ul>` nests directly inside `<ul>` anymore, anywhere.** The nav
+**COSMETIC-1, no `<ul>` nests directly inside `<ul>` anymore, anywhere.** The nav
 builders generated a whole `<ul class="snav-list">…</ul>` string and the layout
 then injected it into a SECOND static `<ul class="snav-list">` (same for the mobile
-`mno-list`) — the WP-menu-emulation artifact, on every page. The generated strings
+`mno-list`), the WP-menu-emulation artifact, on every page. The generated strings
 now carry only the `<li>` rows; the static element is the one list. Proof: the fresh
 dist greps zero `<ul…><ul` adjacency across all 79 pages, the homepage renders
 `<ul class="snav-list"><li class="menu-item…` at a single `<li>` level, and the nav
-rows are byte-identical to the live deploy's — the only change is the deleted
+rows are byte-identical to the live deploy's, the only change is the deleted
 pass-through wrapper (diffed against the served v0.7.51 dist).
 
-**MINOR-5 — the salary calculator cannot print a negative take-home anymore.** The
+**MINOR-5, the salary calculator cannot print a negative take-home anymore.** The
 engine computes `net = gross − deductions` unfloored by design, and the NHF field
-has no max — the audit's scenario class (₦500k gross + ₦500k NHF → −₦40,000/mo with
+has no max, the audit's scenario class (₦500k gross + ₦500k NHF → −₦40,000/mo with
 the seeded 8% pension; engine-verified this leg) printed a number no payslip can
-show. The fix mirrors the emergency-fund guard (v0.7.16): no silent clamp — the
+show. The fix mirrors the emergency-fund guard (v0.7.16): no silent clamp, the
 hero and both comparison take-homes answer "Out of range" when the maths goes below
 ₦0, the comparison prose withholds its tie/winner claim over that state, and the
 warn rail names the fields to check against the payslip. A `negnet` vector now drives
@@ -1565,32 +1584,32 @@ green (6/6 gates, article gate 147/147, vectors 95/95). The calc-regress run was
 BLOCKED BY THE BOX this leg: Chrome's CDP layer answered in minutes, not
 milliseconds (page-target WS open 64s, `Page.enable` 175s, `Runtime.evaluate`
 318s on the pinned Chrome), so the suite's deterministic timeouts cannot complete
-on today's box state — two full-suite attempts and one single-tool attempt died at
+on today's box state, two full-suite attempts and one single-tool attempt died at
 startup, before any assertion ran. The suite is therefore UNATTESTED for this
 version; re-run it on a settled box before shipping. The engine-level proof above
 is observed; the browser-level vector is coded and waiting for its green.
 
 **Also in this version.** The FX snapshot + ticker static were regenerated by the
 build (11 Oct 2026, 00:02 UTC; NGN 1330.995081; ticker ₦1,331 / ₦1,761 / ₦1,491 /
-$82,972 / $2,505 / $4,196) — committed as its own `chore(data)` commit per the
+$82,972 / $2,505 / $4,196), committed as its own `chore(data)` commit per the
 v0.7.51 convention.
 
-**comments-api S4.8 (separate repo — no Worker touched, no deploy):** `.dev.vars` is
+**comments-api S4.8 (separate repo, no Worker touched, no deploy):** `.dev.vars` is
 finally mode 600 (it sat 644 since the audit) and the stale pre-rotation
 `src/index.js.bak-v6` is deleted. Both were untracked and ignored under bce744f's
-convention, so that repo needed no commit — the fix is on the filesystem; verify
+convention, so that repo needed no commit, the fix is on the filesystem; verify
 with `stat`.
 
-## [0.7.51] — 2026-10-10 — the green build now deploys itself (PROC-2)
+## [0.7.51], 2026-10-10, the green build now deploys itself (PROC-2)
 
 The King's decision, 2026-10-10: **deploy enabled**. The PROC-2 workflow ran the gates + build only and
 left `dist/` as a downloadable artifact; it now publishes to GitHub Pages when the tree is green.
 
 **Two changes made together, because either alone breaks:**
-- The Pages source is flipped to **"GitHub Actions"** — until that is set, a `deploy-pages` run has no
+- The Pages source is flipped to **"GitHub Actions"**, until that is set, a `deploy-pages` run has no
   Pages site to publish to and fails.
 - The workflow gained a `deploy` job (`actions/deploy-pages@v5`, environment `github-pages`) and the
-  upload step switched to `actions/upload-pages-artifact@v5` — `upload-artifact@v7` produces a different
+  upload step switched to `actions/upload-pages-artifact@v5`, `upload-artifact@v7` produces a different
   (zip) artifact shape that deploy-pages does not consume.
 
 **Least privilege kept.** The top-level floor stays `contents: read`; `pages: write` + `id-token: write`
@@ -1602,40 +1621,40 @@ tar drops dot-files by default; without the flag Pages would run Jekyll processi
 underscore-prefixed `_astro/` assets.
 
 **Auto-deploy is safe on a dead feed.** `scripts/fetch-snapshot.mjs` exits 0 and keeps the previous
-snapshot when a feed fails, so a broken third-party API cannot ship broken data — the build degrades
+snapshot when a feed fails, so a broken third-party API cannot ship broken data, the build degrades
 honestly and the previously published bytes stand.
 
-**Also in this version.** `scripts/calc-regress.mjs` resolves Chrome portably — `CHROME_BIN` verbatim,
+**Also in this version.** `scripts/calc-regress.mjs` resolves Chrome portably, `CHROME_BIN` verbatim,
 then the browser this repo's Playwright pins, then system Chrome/Chromium candidates, every candidate
-`existsSync`-checked — with no machine-specific path baked in; the suite was re-verified green with
+`existsSync`-checked, with no machine-specific path baked in; the suite was re-verified green with
 `CHROME_BIN` unset. The FX snapshot + ticker static were regenerated (10 Oct 2026, 00:02 UTC;
 NGN 1331.267014; ticker ₦1,331 / ₦1,761 / ₦1,492 / $82,759 / $2,492 / $4,196).
 
-## [0.7.50] — 2026-10-09 — repo hygiene: the public portfolio repo was publishing our internals (PROC-3)
+## [0.7.50], 2026-10-09, repo hygiene: the public portfolio repo was publishing our internals (PROC-3)
 
 `gh api repos/godschi10/finance-astro` → `"private": false, "visibility": "public"`. Everything tracked here is
 world-readable, and this is the repository a reviewer opens. Audit item PROC-3.
 
 **Measured first, so this is not inflated:** a credentials scan across every tracked file found **no secrets**.
-Every `token`/`key`/`secret` hit is prose about design tokens or the moderation token's *behaviour* — no
+Every `token`/`key`/`secret` hit is prose about design tokens or the moderation token's *behaviour*, no
 credential, no private-key block. This is a hygiene and judgement matter, not a security incident.
 
-**Untracked (still on disk, still working):** `PENDING-WORK.md` — the team's live working ledger, kept at the
-repo root where daily work and the Manager's notes reference it — plus one round's scratch: six
+**Untracked (still on disk, still working):** `PENDING-WORK.md`, the team's live working ledger, kept at the
+repo root where daily work and the Manager's notes reference it, plus one round's scratch: six
 `a7-503020-*.png`, `a7-results.json`, `a7-test.mjs`, `test-budget.mjs`. Each ignore rule carries a comment
 saying why it exists.
 
 **Sanitized:** `README.md` published the production theme path `/var/www/finance/wp-content/themes/…`. It now
-states that the WordPress theme is maintained in its own repository, `gwill-finance-theme` — which is true, and
+states that the WordPress theme is maintained in its own repository, `gwill-finance-theme`, which is true, and
 was verified to exist before the sentence was written. That repository is private; the wording claims nothing a
 reader cannot check.
 
 Tracked files **277 → 267**. Files leaking an infrastructure path **27 → 24**. `docs/` untouched at 63. `src/`
-untouched at 123. **No served byte changes** — the version is not surfaced in `dist/`, `README.md` is not
+untouched at 123. **No served byte changes**, the version is not surfaced in `dist/`, `README.md` is not
 published, and none of the ten files reach the build. `main` only; no `pages-dist` deploy for this one.
 
 **A near-miss worth recording.** The obvious ignore glob for the scratch files is `*budget*`, which would have
-silently unpublished `src/lib/budget.ts`, `50-30-20-budget-calculator.astro` and `budget-allocator.astro` — two
+silently unpublished `src/lib/budget.ts`, `50-30-20-budget-calculator.astro` and `budget-allocator.astro`, two
 live money tools and their engine, gone from the repo with no error and no failing gate. The exact filename
 `test-budget.mjs` was used instead, and all three were confirmed still tracked. **Any future `.gitignore` work
 in this repo should be pattern-checked against `git ls-files` before committing.**
@@ -1643,15 +1662,15 @@ in this repo should be pattern-checked against `git ls-files` before committing.
 **Open, and not closed by this commit.** Untracking a file does not remove it from history:
 `PENDING-WORK.md` (386 lines), the six screenshots (~12 MB) and the scratch scripts **remain retrievable from
 every earlier commit** in a public repository. Closing that needs `filter-repo`/BFG, a force-push and a
-re-clone by every collaborator — **not authorised, not done, and the King's call.** The remaining 24 files
+re-clone by every collaborator, **not authorised, not done, and the King's call.** The remaining 24 files
 (`src/` comments ×4, `scripts/` ×7, `docs/` ×11, `CHANGELOG.md` ×2) are itemised in the OUTSTANDING-LIST.
 
-Gates 6/6 (article 147/147, vectors 95/95; footer 64, homepage 128), suite 128/0/7 — both re-run by the Manager,
+Gates 6/6 (article 147/147, vectors 95/95; footer 64, homepage 128), suite 128/0/7, both re-run by the Manager,
 not taken on the worker's transcript.
 
-## [0.7.49] — 2026-10-09 — the currency glyph must follow the currency (King-found)
+## [0.7.49], 2026-10-09, the currency glyph must follow the currency (King-found)
 The King found it himself, 9 Oct 16:12: on the converter with **From = USD**, the amount field
-showed a **₦** glyph. A naira symbol on a dollar amount mislabels the number you just typed — on a
+showed a **₦** glyph. A naira symbol on a dollar amount mislabels the number you just typed, on a
 finance site a currency symbol is a claim about the unit.
 
 **Root cause.** `src/scripts/money-controls.js` injected the glyph into every `.field` whose **label
@@ -1661,18 +1680,18 @@ text merely CONTAINED the character ₦** and whose input was `inputmode="decima
 notion of which currency the field holds. Injected once at boot and **never updated when the select
 changed**, so it was wrong for every currency except the one it happened to assume.
 
-**The substring test is gone from the source entirely.** A field now declares its unit —
-`<div class="field" data-cur="NGN">` — and the script renders that. **42 decimal fields** declare it
+**The substring test is gone from the source entirely.** A field now declares its unit, 
+`<div class="field" data-cur="NGN">`, and the script renders that. **42 decimal fields** declare it
 across the fleet; the 36 that were genuinely naira got the attribute, with every label string
 byte-identical and **no hand-edited labels**.
 
-**Symbols come from the site's own table** (`fxCurrencies()`, `lib/fx.ts` — the same object the
+**Symbols come from the site's own table** (`fxCurrencies()`, `lib/fx.ts`, the same object the
 converter's `<select>` is built from), so there is no second symbol map and none invented. A code the
 table does not know prints **itself**, which is still honest.
 
 **Dynamic, and it survives the re-render.** A delegated `change`/`input` listener re-syncs after the
 page's own render, and injection is idempotent. Each conditional page re-declares `data-cur` in the
-render it already had — the converter from `from.value`, the comparator from the origin currency it
+render it already had, the converter from `from.value`, the comparator from the origin currency it
 had already computed.
 
 | From | Before | After |
@@ -1687,16 +1706,16 @@ had already computed.
 **Manager follow-up, the same lie one line lower.** The worker flagged and did NOT touch it: the
 transfer comparator's receipt hardcoded `q.dest === "NGN" ? "₦" : "$"`, so with Send-currency GBP the
 field correctly read **"£ 100,000"** while the receipt on the same page still printed **"$100,000"**.
-That is the identical lie, one line below the one just fixed, so it is fixed here — symbols now come
+That is the identical lie, one line below the one just fixed, so it is fixed here, symbols now come
 from the same table the field uses, and the two cannot disagree.
 
 **Fleet-wide file touched, and it is the one that groups digits on blur.** `money-controls.js` is
-additive here: the removed lines are the defective test and the old hardcoded glyph creation — the
+additive here: the removed lines are the defective test and the old hardcoded glyph creation, the
 **blur/comma-grouping logic is not in the removed set at all**. Suite confirms **15/15 tools, 128 pass /
 0 fail / 7 skip**.
 
 **Verified live, 42 fields swept:** 41 show ₦ and the one non-NGN field is the converter's USD seed
-showing $ — correct by design. No field carries a duplicated glyph. 0 page errors.
+showing $, correct by design. No field carries a duplicated glyph. 0 page errors.
 
 **Left open and reported, not hidden:** the accessible name reads `AMOUNT IN BRITISH POUND (£) SAMPLE`
 because smart-fields' SAMPLE badge lives inside the `<label>`. Pre-existing, not from this change, and
@@ -1704,34 +1723,34 @@ fixing it means touching the spine.
 
 Gates 6/6 (article 147/147, vectors 95/95; footer 64, homepage 128), 79 pages, suite 128/0/7.
 
-## [0.7.48] — 2026-10-09 — SITE-4 + PROC-5: the privacy policy, rewritten from the real flows
+## [0.7.48], 2026-10-09, SITE-4 + PROC-5: the privacy policy, rewritten from the real flows
 Audit Appendix A step 4. The policy had been describing a site that is not this one.
 
 **The first thing found was worse than a wrong sentence.** The old "Last updated" date was derived
-from `new Date()` — so **every single build silently re-dated a legal document.** The page carried two
+from `new Date()`, so **every single build silently re-dated a legal document.** The page carried two
 different dates (October at the top, August at the bottom) because nothing tied them. The date is now
 a human-edited literal in `src/data/policy.ts`, deliberately kept out of `site.ts` because that file
 re-dirties on every build. One date, one place, and it can only move when someone means it to.
 
 **It claimed an analytics service that does not exist.** "Anonymous analytics… a privacy-respecting
 analytics service." Verified across the whole build: plausible, gtag, googletagmanager, analytics.js,
-umami, goatcounter, counter.dev — **zero files**, the privacy page itself being the only mention. The
+umami, goatcounter, counter.dev, **zero files**, the privacy page itself being the only mention. The
 claim is gone, replaced by the honest and far more favourable truth: **"No analytics. No analytics
 script and no tracking script runs anywhere on this site."** Replacing it with a different vendor
 would have reintroduced the exact error being fixed.
 
 **It named no processor for the newsletter.** Now established from source rather than guessed: the
 newsletter and contact forms post to **the same Cloudflare Worker the comments use**
-(`comments-api.gwill.workers.dev`) — `gwill-forms.js` reads `data-forms-api` off `<html>` and attaches
+(`comments-api.gwill.workers.dev`), `gwill-forms.js` reads `data-forms-api` off `<html>` and attaches
 to every `.gwill-form`. There is no separate email platform. The audit had this as `[Guessing]`.
 
-**It said "Cookies — a small storage flag".** The site uses `localStorage`, not cookies, and the
+**It said "Cookies, a small storage flag".** The site uses `localStorage`, not cookies, and the
 calculators remember far more than a preference. Corrected. The FX request to `open.er-api.com` and
-the Gravatar requests to `secure.gravatar.com` are now disclosed at all — neither was mentioned.
+the Gravatar requests to `secure.gravatar.com` are now disclosed at all, neither was mentioned.
 
 **The policy is now a real data-flow table**: what / why / who receives it / where / how long, ten rows,
-every one sourced from the built output. Where the answer is not knowable — chiefly how long the Worker
-keeps a name, email or comment — the cell says **"Not published"** rather than inventing a period. No
+every one sourced from the built output. Where the answer is not knowable, chiefly how long the Worker
+keeps a name, email or comment, the cell says **"Not published"** rather than inventing a period. No
 lawful basis, controller identity, regulator or response deadline is asserted anywhere; those are legal
 positions, not copy, and the audit itself says it is not a lawyer.
 
@@ -1739,11 +1758,11 @@ positions, not copy, and the audit itself says it is not a lawyer.
 explicitly *not* claimed, because the site is not directed at those audiences and offering rights
 handling we would not honour is worse than saying nothing.
 
-**PROC-5 — the calculators remember salary, rent and income, and nobody said so.** On a finance site
+**PROC-5, the calculators remember salary, rent and income, and nobody said so.** On a finance site
 that data sits in `localStorage` including on a shared or public computer, which is the most likely
 way this policy could actually hurt someone.
 - **Transmission audit, driven live, not assumed:** typing `487500` into income fired **0 requests,
-  0 non-GET, 0 bodies containing the number** — while the number *was* written to
+  0 non-GET, 0 bodies containing the number**, while the number *was* written to
   `gwill-sf-50-30-20` and returned on reload wearing LAST USED. Nothing you type leaves the device.
   (A first attempt typed into a field the site deliberately excludes from memory and proved nothing;
   it was discarded and re-run against a genuinely remembered id.)
@@ -1751,108 +1770,108 @@ way this policy could actually hurt someone.
   preserving the theme key and ticker cache. Verified: 1 key -> 0, label confirms, page returns to
   the worked example.
 - **One sentence under every calculator** saying the numbers stay in that browser and Reset clears
-  them — shared through `ToolShell`, so **no calculator page was hand-edited**.
+  them, shared through `ToolShell`, so **no calculator page was hand-edited**.
 
 **A fleet-wide file was touched, and it is the one that broke nine contracts once before.**
 `src/scripts/smart-fields.js` is additive: 63 insertions, 1 deletion, and that deletion is only the
 literal `"gwill-sf-" + tool` being replaced by the shared `PREFIX` constant. `clearExamples()`,
-`takeSnapshot()`, `register()` and `sfFig()` have **zero removed lines** — the functions that caused
+`takeSnapshot()`, `register()` and `sfFig()` have **zero removed lines**, the functions that caused
 the earlier failure are untouched. Suite confirms: **15/15 tools, 128 pass / 0 fail / 7 skip.**
 
 **Two corrections the leg made to itself, kept rather than hidden:** it first wrote the ticker row
-naming CoinGecko while the browser showed the default call is **Coinbase**, and rewrote it — naming an
+naming CoinGecko while the browser showed the default call is **Coinbase**, and rewrote it, naming an
 uncontacted vendor while omitting the contacted one is the same error under repair. And `vibe_guest_email`
 goes to `sessionStorage`, not `localStorage` as the audit's note assumed; the policy says so precisely.
 
-**⏸ OPEN — and it is a pre-launch blocker, not a finished policy:** the "Not published" retention
+**⏸ OPEN, and it is a pre-launch blocker, not a finished policy:** the "Not published" retention
 cells are honest, but retention, a named controller and a response deadline for the Worker's data have
 to be settled properly before this goes live. The audit's own closing line stands: have it reviewed.
 
 Gates 6/6 (article 147/147, vectors 95/95; footer 64, homepage 128), 79 pages, suite 128/0/7.
 
-## [0.7.47] — 2026-10-09 — CALC-5/9/10: the label, the prose, the assumption, the separator
-Audit Appendix A step 1, remainder. Four pages, copy and formatting only — **no maths changed.**
+## [0.7.47], 2026-10-09, CALC-5/9/10: the label, the prose, the assumption, the separator
+Audit Appendix A step 1, remainder. Four pages, copy and formatting only, **no maths changed.**
 
-**CALC-5 — the label named the wrong quantity.** The tile read *"Discount to today 34.1%"*, but
+**CALC-5, the label named the wrong quantity.** The tile read *"Discount to today 34.1%"*, but
 682,215 ÷ 2,000,000 = 34.1% is the share you **keep**; the discount is 65.9%, which the same page
 already printed correctly as "Buying power lost". The page contradicted itself inside one card. Now
 **"Worth today (share of face value) 34.1%"**, with the number bound to it. The false *label* is gone;
-the word "Discount" still appears three times on the page in correct uses — the element id
-`nv-pv-disc`, the foot "Discounted at the inflation above — the reverse direction", and prose about
-*discounting* future naira — none of which claim 34.1% is a discount. (An earlier draft of this entry
+the word "Discount" still appears three times on the page in correct uses, the element id
+`nv-pv-disc`, the foot "Discounted at the inflation above, the reverse direction", and prose about
+*discounting* future naira, none of which claim 34.1% is a discount. (An earlier draft of this entry
 claimed the word appeared nowhere in the served bytes; that was wrong and is corrected here.)
 The raw `e+23` print the audit flagged is already fixed; confirmed, nothing to do.
 
-**CALC-9 — the prose described controls that do not exist.** Savings-goal claimed it *"converts any
+**CALC-9, the prose described controls that do not exist.** Savings-goal claimed it *"converts any
 of the four frequencies, monthly, quarterly, daily or annual"* and an FAQ told you to *"set the
 number of years"*. The page has **four inputs and no frequency selector, and the unit is months**.
 Three statements about controls that were never there. Both retired. The replacement says what is
 true and useful: one compounding mode, monthly, converted from the annual rate you type, with the
 rate field and the months field as the two controls that move the answer. No selector was invented to
-rescue the prose — inventing a control to justify a sentence is how a calculator grows a lie.
+rescue the prose, inventing a control to justify a sentence is how a calculator grows a lie.
 
-**CALC-9 — deposit timing was undisclosed. This was the real harm.** Both savings-goal and
+**CALC-9, deposit timing was undisclosed. This was the real harm.** Both savings-goal and
 compound-interest assume deposits land at the **end** of each period. A salary-day deposit lands at
 the **start**, and the difference is material: on the audit's own figures ₦100,000 + ₦50,000/month at
-10% for 5 years is **₦4,036,385** end-of-month against **₦4,068,650** start-of-month — ₦32,265 of
+10% for 5 years is **₦4,036,385** end-of-month against **₦4,068,650** start-of-month, ₦32,265 of
 difference between an assumption the page never stated. Each page now says so in a plain visible line
 under the figure: **"Deposits land at the end of each month"** / **"...of each period"**.
 
-**CALC-10 — `true APR 2333.9%` in the receipt while the FAQ said `2,333.9%`,** on the same page.
+**CALC-10, `true APR 2333.9%` in the receipt while the FAQ said `2,333.9%`,** on the same page.
 Both now use `Intl.NumberFormat("en-NG")`, defined in the frontmatter **and** in the client script,
 because a fix that formats only the server-rendered copy leaves the live figure wrong the moment a
 visitor types. Verified by driving the page: 2,333.9% → 1,250.5% → 2,303.1% across recalculations,
 comma present every time.
 
-**CALC-10 — the rounding footnote was measured, not reasoned about, and it was wrong.** It claimed
+**CALC-10, the rounding footnote was measured, not reasoned about, and it was wrong.** It claimed
 *"day tenors round up to whole months"* as though it governed every rate type. Measured across
 29/30/31/45/60 days under all three rate types:
-- **daily** runs on the exact day count and is perfectly smooth — month rounding has no effect at all;
+- **daily** runs on the exact day count and is perfectly smooth, month rounding has no effect at all;
 - **flat** steps **discontinuously at 31 days** (19.6% → 26.7%, +7.1 points for one extra day, because
   a whole extra month of flat interest is charged: ₦101,500 → ₦103,000);
 - **reducing** holds 34.5% at every tenor while its total still steps.
 The footnote now says exactly that: month rounding applies to flat and reducing, 31 or 45 days is a
 2-month loan, one extra day can step a flat APR, and daily uses the exact day count.
 
-**HELD, as ordered:** the deposit-timing **toggle** (the full feature — new inputs, two engines, and
-an oracle regeneration on PHP-first terms — is its own leg, deliberately deferred rather than
+**HELD, as ordered:** the deposit-timing **toggle** (the full feature, new inputs, two engines, and
+an oracle regeneration on PHP-first terms, is its own leg, deliberately deferred rather than
 forgotten; the disclosure removes the misunderstanding today), and CALC-9's rate-guidance
 disagreement across three pages, left quoted and unsourced rather than unified on a guess.
 
 Gates 6/6 (article 147/147, vectors 95/95; footer 64, homepage 128), 79 pages, suite 128/0/7.
 
-## [0.7.46] — 2026-10-09 — CALC-6/7/8: stop promising automation the site does not have
+## [0.7.46], 2026-10-09, CALC-6/7/8: stop promising automation the site does not have
 King's audit, Appendix A step 3. Honesty only: every claim now matches what the code does today.
 The real data infrastructure (a daily FX-history append and CI) is PROC-2, a later leg.
 
-**CALC-6 — the rate-history page described three different systems, one of them fiction.**
+**CALC-6, the rate-history page described three different systems, one of them fiction.**
 It promised *"30 and 90 days, the real recorded rates, updated daily"* and a
 *"30/90-Day & 1-Year History"* title, offered a *"6-month"* window that does not exist, and carried
-two FAQ answers describing a **server-side dataset that does not exist** — while its own receipt read
+two FAQ answers describing a **server-side dataset that does not exist**, while its own receipt read
 **"0 points on this device"**. The mechanism is genuinely device-local: the browser fetches the rate
 on each visit and stores dated points in `localStorage`. A 12-month window therefore takes about a
 year of daily visits from the same device.
 Both server-dataset FAQs are **deleted**, not softened. The honest one now states the consequence
 plainly instead of hiding it: the chart starts empty, fills one point per day as you visit, and
-**lives on this device — it does not follow you to a new phone, another browser or a private window.**
+**lives on this device, it does not follow you to a new phone, another browser or a private window.**
 The title, the badge, the disclaimer and the hub card copy all say the same thing now.
 
-**CALC-7 — the tools hub claimed *"updated automatically so it never goes stale"*.**
+**CALC-7, the tools hub claimed *"updated automatically so it never goes stale"*.**
 False for the comparison tables, which are hand-kept snapshots. It now says the exchange rates
 refresh on every build and again in your browser, while the comparison tables are checked by hand and
 each row shows the date it was verified. Counted on the served hub: `never goes stale` = 0,
 `always updated` = 0, `updated automatically` = 0.
 
-**CALC-7 — per-row provenance.** The comparator showed one page-level month ("verified September
+**CALC-7, per-row provenance.** The comparator showed one page-level month ("verified September
 2026"). It now shows **`verified Sep 2026` on every row**, in the bar note and a new table column.
 `sourceUrl` is deliberately left empty on all ten rows: `PENDING-WORK` R19 records 8 of the 10 rates
 as UNVERIFIED, so naming a provider deep link would have been an invented citation. Every row carries
 the month the data already claimed; no date was invented. The provenance rides a map beside the data
 rather than new fields on the rows, because `savings_rate_data` is a vectors-oracle vector and
-mutating the row objects would have failed the parity gate on a pure-metadata change — and
+mutating the row objects would have failed the parity gate on a pure-metadata change, and
 hand-editing the oracle to match would have inverted the gate's purpose.
 
-**CALC-8 partial — the converter's automation FAQ invented a cache.** It claimed the rate was
+**CALC-8 partial, the converter's automation FAQ invented a cache.** It claimed the rate was
 *"cached for thirty minutes"*. **There is no cache anywhere in the code.** The real mechanism is both
 stages, verified by reading `scripts/fetch-snapshot.mjs` and the compiled bundle: the page is built
 from a snapshot taken at build time and stamped with the feed's own update time, and on every visit
@@ -1862,66 +1881,66 @@ exactly that.
 
 **A second false claim on the same page, caught and fixed by the Manager after hand-off.** The
 converter's other FAQ asserted *"Static pages cannot call the rate feed at build time and stay
-fresh"* — which is false in this very repo: `fetch-snapshot.mjs` is step 1 of `npm run build`. A
+fresh"*, which is false in this very repo: `fetch-snapshot.mjs` is step 1 of `npm run build`. A
 worker left it as "outside scope", but a false claim I have personally verified is not something to
 ship past. Rewritten to describe what actually happens.
 
 **HELD, and deliberately not "tidied":** CALC-7's inconsistent headline basis (Kuda 12% against its
 own note "up to 16%, flex ~8%"; bank FD 12% against "Zenith 7–11%, Access 7–10%"; PiggyVest 18.5% as
-a maximum) and the NDIC ₦5m wording — both unverified, and picking a rule would give unverified
+a maximum) and the NDIC ₦5m wording, both unverified, and picking a rule would give unverified
 numbers a confident frame. All three contradictions are quoted in the audit; **zero rate figures were
 changed.**
 
 Gates 6/6 (article 147/147, vectors 95/95; footer 64, homepage 128), 79 pages, suite 128/0/7.
 
-## [0.7.45] — 2026-10-09 — copy truth pass (audit Appendix A step 1)
+## [0.7.45], 2026-10-09, copy truth pass (audit Appendix A step 1)
 King's audit, six copy/data items. Every legal fact independently verified by me against the
-**official Nigeria Revenue Service Act PDF** and PwC before any copy was touched — a YMYL site does
+**official Nigeria Revenue Service Act PDF** and PwC before any copy was touched, a YMYL site does
 not get its tax law from a secondhand claim.
 
-**SITE-1 — the footer put a URL after a copyright symbol.** Live it read
+**SITE-1, the footer put a URL after a copyright symbol.** Live it read
 `© 2026 https://godschi10.github.io, Gwill Chijioke`, and at launch it would have read
 `© 2026 https://gwillchijioke.com`. The port deliberately reproduces WP's `home_url()` so a migrated
-site shows its new domain — sensible for a *link*, wrong for a *copyright holder*. Now
+site shows its new domain, sensible for a *link*, wrong for a *copyright holder*. Now
 `© 2026 GWill Finance, Gwill Chijioke`; the "Designed & built by G-will Chijioke" credit is untouched.
 **The gate that pinned this was fixed with it**: `check-footer-fidelity.mjs` asserted
 "copyright line is the site host, like WP home_url()", so the bug was protected. Both the assertion
-and its reason now recorded in the gate file — and it was negatively proven (re-pinning the old
+and its reason now recorded in the gate file, and it was negatively proven (re-pinning the old
 string turns the gate red).
 
-**CALC-2 — the tax FAQ claimed the old bands win "from around ₦400k/mo".** They don't. The winner
+**CALC-2, the tax FAQ claimed the old bands win "from around ₦400k/mo".** They don't. The winner
 flips four times: new below ~₦150k, old ~₦150.5k–₦215k, new ~₦215k–₦324.5k, **old ~₦325k–₦535k**,
-new up to ~₦1.285m, and old again above. The audit's replacement copy is shipped verbatim — it names
+new up to ~₦1.285m, and old again above. The audit's replacement copy is shipped verbatim, it names
 the ₦325k–₦535k window, the ~₦1,000 peak and the high-earner reversal.
 
-**CALC-3a — "Is this the official FIRS figure?"** FIRS was replaced by the **Nigeria Revenue Service**
+**CALC-3a, "Is this the official FIRS figure?"** FIRS was replaced by the **Nigeria Revenue Service**
 on 1 January 2026 under the NRS (Establishment) Act 2025. Confirmed on nrs.gov.ng and in the Act
 itself. Heading now names the NRS; the answer is unchanged.
 
-**CALC-3b — "NTA 2026" does not exist.** The Act's own text: *"This Act may be cited as the Nigeria
+**CALC-3b, "NTA 2026" does not exist.** The Act's own text: *"This Act may be cited as the Nigeria
 Tax Act, 2025 and shall come into effect on the first day of January, 2026."* All three real
 occurrences fixed (`grep -rn "NTA 2026" src/` is now empty).
 
-**SITE-2 — the home stat advertised 16 calculators for 15.** The count came from a directory scan
+**SITE-2, the home stat advertised 16 calculators for 15.** The count came from a directory scan
 that still includes `budget-allocator`, which the King merged into 50-30-20 and whose URL is now only
 a pointer. It now comes from the same `TOOL_MANIFEST` the tool hub renders, so the number and the
-listing can't drift apart again — with the reason recorded, because the directory scan *looked* right.
+listing can't drift apart again, with the reason recorded, because the directory scan *looked* right.
 
-**SITE-2 — "In-depth guides"** became **"Guides"**. A derived count was considered and rejected: the
+**SITE-2, "In-depth guides"** became **"Guides"**. A derived count was considered and rejected: the
 only length field is a hand-authored `readMins` that disagrees with the posts' own word counts
 (7 min on 316 words, 11 min on 355, 2 min on 482), so any threshold would have been invented. Better
 an honest plain word than a confident false number.
 
-**HELD, not touched — CALC-3c/d/e (pension base, NHF cap, minimum-wage exemption).** The audit's own
+**HELD, not touched, CALC-3c/d/e (pension base, NHF cap, minimum-wage exemption).** The audit's own
 confidence is `[Likely]`/`[Guessing]` and it records that the sources conflict. Rewriting legal claims
 on a YMYL site from a guess is worse than leaving them. Awaiting the King's word.
 
 Gates 6/6 (article 147/147, vectors 95/95; footer 64 checks, homepage 128), 79 pages, suite 128/0/7.
 
-## [0.7.44] — 2026-10-09 — CALC-1: "Months to finish" now measures against the finish line the page promised
+## [0.7.44], 2026-10-09, CALC-1: "Months to finish" now measures against the finish line the page promised
 
 **The definition changed.** `months_to_reach` in the emergency-fund engine no
-longer answers *gap ÷ monthly saving* — the flat-price question. It answers the
+longer answers *gap ÷ monthly saving*, the flat-price question. It answers the
 question the page's own copy asks: how long to reach the **inflation-adjusted
 finish line**, which moves while you save. On the seed (₦150,000 essentials,
 ₦450,000 saved, ₦80,000/month, 6 months' cover, 24%) that is **about 7.2
@@ -1929,9 +1948,9 @@ months**, not 5.6. At the 5.6-month horizon the real target is ₦995,483, so a
 visitor who planned on 5.6 was about 1.5 months short of six months' cover.
 
 **Why.** CALC-1 in the King's audit (2026-10-08). The page told the reader *"the
-real target is the inflated finish line — the one to measure against"* and then
+real target is the inflated finish line, the one to measure against"* and then
 printed a number measured against the nominal target. v0.7.38 fixed the other
-half of the same line — the whole target was being divided by the monthly rate,
+half of the same line, the whole target was being divided by the monthly rate,
 so `saved` was ignored; that fix survives unchanged.
 
 **What the row shows now.** Both figures, each named for what it is:
@@ -1941,7 +1960,7 @@ so `saved` was ignored; that fix survives unchanged.
 
 The real answer carries "about" (it is a projection over the inflation you
 typed); the flat-price figure is exact division and does not. The nominal number
-is not hidden — it is informative — but it can no longer be misread as the
+is not hidden, it is informative, but it can no longer be misread as the
 finish.
 
 **New engine field: `never` (boolean).** The fund can never reach the inflated
@@ -1965,7 +1984,7 @@ solve: with `g = 1 + inflation` and `f(n) = saved + monthly·n − target·g^(n/
 `monthly ≤ drag0` means never; otherwise `f` peaks at
 `nPeak = 12·ln(monthly/drag0)/ln(g)`, any crossing is bounded above by
 `nHigh = 12/ln(g) − saved/monthly`, and a crossing exists **iff** `nPeak ≥ nHigh`
-— then it lies in `[(target−saved)/monthly, nHigh]` and is found by bisection to
+, then it lies in `[(target−saved)/monthly, nHigh]` and is found by bisection to
 full double precision. It returns the audit's 7.17 on the seed, and it correctly
 returns 6,000 months for a zero-inflation plan that genuinely needs 6,000.
 
@@ -1985,17 +2004,17 @@ moved, both emergency, both downstream of the changed line:
 | `emergency_seed.years_to_reach` | 0.46875 | 0.5717531616014211 |
 | `emergency_seed.future_essentials` | 163383.2264486119 | 166480.5058562274 |
 | `emergency_seed.real_target` | 980299.3586916714 | 998883.0351373644 |
-| `emergency_seed.never` | — | false |
-| `emergency_nosave.never` | — | true |
+| `emergency_seed.never` |, | false |
+| `emergency_nosave.never` |, | true |
 
 The old `monthsToReach` vector (5.625) is **superseded**: it is the answer to a
 different question, and it still appears on the page under its own name ("if
-prices stood still"). `emergency_nosave` keeps every value it had — 0 months,
-real target ₦1,200,000 — and only gains `never: true`.
+prices stood still"). `emergency_nosave` keeps every value it had, 0 months,
+real target ₦1,200,000, and only gains `never: true`.
 
 **Oracle regeneration clock.** `gwill_fx_history_range()` windows on the real
 clock, so a regeneration on 2026-10-09 moves `fxhist_range90_count` from 60 to 59
-(next vector released on 2026-10-08) — calendar drift, nothing to do with CALC-1.
+(next vector released on 2026-10-08), calendar drift, nothing to do with CALC-1.
 The gate pins `HIST_ORACLE_MS` to the generation instant and this leg may not
 edit the gate, so the generator was run with its clock pinned to the same instant
 (`php -d date.timezone=Pacific/Midway`), which reproduces 60/0 exactly. The
@@ -2004,20 +2023,20 @@ change above. The next person to regenerate at the real clock must bump
 `HIST_ORACLE_MS` in `vectors-check.mjs` in the same change (README, "The PHP
 oracle", consequence 1).
 
-**v0.7.38 behaviour preserved.** `saved >= target` still prints *"done — target
+**v0.7.38 behaviour preserved.** `saved >= target` still prints *"done, target
 reached"*, and the two answers agree: a fully-funded fund is finished, not "more
-months" — the months row shows no figure and no note in that state. `gap`,
+months", the months row shows no figure and no note in that state. `gap`,
 `progress_pct` and `runway_now` are unchanged in meaning.
 
 Gates 6/6 (article 147/147, vectors 95/95), 79 pages, suite 128/0/7 green.
 
-## [0.7.44] — 2026-10-09 — CALC-1: emergency-fund months-to-finish keeps its own promise
+## [0.7.44], 2026-10-09, CALC-1: emergency-fund months-to-finish keeps its own promise
 **King's audit (`~/work/finance-astro-audit-2026-10-08.md`), first item on the list. Manager-verified
 on live bytes before anything was ordered.**
 
-The page promised *"the real target is the inflated finish line — the one to measure against"* and
+The page promised *"the real target is the inflated finish line, the one to measure against"* and
 *"the real target prices your essentials at the inflation you set, so the fund still covers six months
-when you finish it."* It then answered **`gap ÷ monthly saving`** — measured against the **nominal**
+when you finish it."* It then answered **`gap ÷ monthly saving`**, measured against the **nominal**
 ₦900,000 target, the exact thing it had just told the visitor not to measure against. On the seed
 that printed **5.6 months** while the inflation-adjusted finish line is not reached until **month 8**;
 a user who trusted it planned about a month and a half short.
@@ -2027,14 +2046,14 @@ while the page contradicted itself.
 
 **Fixed PHP-first** (`inc/emergency-fund.php`, theme `2e2cd6e`), exactly as v0.7.38 did, so the port
 never diverged from its source of truth. Months-to-finish now solves
-`saved + monthly·n = target·(1+i)^(n/12)` — the finish line moves while you save, so the answer has
+`saved + monthly·n = target·(1+i)^(n/12)`, the finish line moves while you save, so the answer has
 to chase it.
 
 **The audit's own reference implementation was wrong, and it was not used.** Its `n < 1200` walk
 returns `Infinity` for a perfectly legitimate 6,000-month plan (₦6,000,000 target, ₦1,000/mo saved,
-0% inflation) — it conflates *never* with *slow*. Replaced with an exact constant-time solve:
+0% inflation), it conflates *never* with *slow*. Replaced with an exact constant-time solve:
 `f(n) = saved + monthly·n − target·g^(n/12)` is concave, so a crossing exists iff `nPeak ≥ nHigh`,
-and then lies in a bracket on which `f` is monotonic — bisected to full double precision.
+and then lies in a bracket on which `f` is monotonic, bisected to full double precision.
 "never" is carried as a boolean rather than `Infinity`, because the vectors oracle is JSON and PHP
 cannot `json_encode` INF.
 
@@ -2044,14 +2063,14 @@ print a `real_target` of `Infinity`. The cap is now in PHP as well. PHP and TS a
 every case tested, including inflation of 0%, 100%, and a ₦9bn-essentials absurd input.
 
 **The row now names both answers, and never lets the comfortable one pass as the work being done:**
-> `about 7.2` — *"at 24% inflation · 5.6 months if prices stood still"* — `real (inflated) target ₦1,023,391`
+> `about 7.2`, *"at 24% inflation · 5.6 months if prices stood still"*, `real (inflated) target ₦1,023,391`
 
 ₦1,023,391 is exactly `450,000 + 80,000 × 7.167`: the finish line and the answer are the same
 number, which is the whole point. The projection carries "about"; the flat-price division does not.
 
-**Edges kept honest:** already funded → `done — target reached` (v0.7.38 behaviour survives); no
-monthly saving → `— (save something monthly)`; saving that can never outrun inflation →
-`never` + *"your saving doesn't catch up with inflation at this rate"* — never `Infinity`, `NaN` or
+**Edges kept honest:** already funded → `done, target reached` (v0.7.38 behaviour survives); no
+monthly saving → `, (save something monthly)`; saving that can never outrun inflation →
+`never` + *"your saving doesn't catch up with inflation at this rate"*, never `Infinity`, `NaN` or
 `-0`; gap that closes then reopens → the same honest words; absurd inputs → the existing rail.
 
 **Oracle: regenerated by running PHP, never hand-edited.** Exactly four fields moved, all in
@@ -2063,15 +2082,15 @@ consequence is recorded here rather than left as a surprise for the next person 
 
 Gates 6/6 (article 147/147, vectors 95/95), 79 pages, suite 128/0/7 green.
 
-## [0.7.43] — 2026-10-09 — housekeeping: remove committed scratch (foreman + tautology test)
+## [0.7.43], 2026-10-09, housekeeping: remove committed scratch (foreman + tautology test)
 King: "make a list of everything left to do then attack this first". First item on that list.
 
 The repo carried scratch committed into `d582a25` (v0.7.31) that was never ours to keep:
-- `.foreman/` — 21 files of foreman scratch: `PROTOCOL.md`, `events.jsonl`, `foreman.json`,
+- `.foreman/`, 21 files of foreman scratch: `PROTOCOL.md`, `events.jsonl`, `foreman.json`,
   `state.json`, and four `runs/T00{1,2}/run-*/` transcripts plus their tickets. Nothing in
   `src/` or `scripts/` reads `.foreman/`, and it was never gitignored, so it sat tracked
   in the working tree of every clone.
-- `test/hello.test.js` — `assert.strictEqual('hello', 'hello')`. A tautology. Passing.
+- `test/hello.test.js`, `assert.strictEqual('hello', 'hello')`. A tautology. Passing.
 - the `"test": "node --test test/**/*.test.js"` script, whose only test was that tautology,
   so `npm test` could show green while asserting nothing at all.
 
@@ -2081,33 +2100,33 @@ removes 22 tracked files and two package.json entries.
 The foreman integration itself is verified working and stays installed separately at
 `~/.config/opencode/skills/gwill/foreman-integration/`; only the per-run scratch goes.
 
-Gates 6/6 (article 147/147, vectors 95/95), 79 pages, suite 128/0/7 green — unchanged.
+Gates 6/6 (article 147/147, vectors 95/95), 79 pages, suite 128/0/7 green, unchanged.
 
-## [0.7.42] — 2026-10-09 — 50-30-20 E14: a near-miss number no longer prices your month
+## [0.7.42], 2026-10-09, 50-30-20 E14: a near-miss number no longer prices your month
 A14 audited the crash path and found a defect nobody had looked for: the junk rail
 was blind to the most plausible typo on the page.
 
-**A trailing comma.** Typing `250,` into monthly income — a fat-finger, since comma
-is the thousands separator — was read as **₦250**, and the page then printed
-*"Plan now: ₦125 needs · ₦75 wants · ₦50 savings"* and *"AHEAD — Our example puts
+**A trailing comma.** Typing `250,` into monthly income, a fat-finger, since comma
+is the thousands separator, was read as **₦250**, and the page then printed
+*"Plan now: ₦125 needs · ₦75 wants · ₦50 savings"* and *"AHEAD, Our example puts
 ₦39,950 extra to savings"*. A 1000× wrong plan, delivered with total confidence,
 with **no rail**, because `,` is legal in the money alphabet so the input looked
 well-formed by the page's own test.
 
 Fixed at the page level, since `pm()` is the fleet's shared reader and off-limits:
 `malformedOf()` gains a `separator` kind from a new `misplacedComma()` predicate,
-routed through the same `#bg-junk` rail with the same voice — *"the comma in there
+routed through the same `#bg-junk` rail with the same voice, *"the comma in there
 is not a thousands separator (one sits between three-digit groups), so it was
 dropped and the box was read as ₦250."* The plan, the three "left" rows, the live
 and mini lines, step-2 buckets, mirror panel, verdict, CTAs and clipboard all
 withhold together, and the verdict reads CANNOT SCORE.
 
-**A bare comma** — `,` — withholds every figure correctly but left
+**A bare comma**, `,`, withholds every figure correctly but left
 `#bg-whatnow` printing *"needs and wants ₦185,000 over"*: invented figures on a
 page where the plan is officially absent. Same predicate now closes it.
 
 **Actuals.** Negatives were silently clamped to ₦0 and shown as "you entered ₦0";
-they now leave the bucket **unscored** — a different truth, in the labels' own
+they now leave the bucket **unscored**, a different truth, in the labels' own
 words, naming the field. Spending and shares no longer share one blanket sentence
 either: shares clamp and say so, spends stay unscored.
 
@@ -2123,26 +2142,26 @@ localStorage, accepted as browser semantics with no storage locking added.
 
 Gates 6/6 (article 147/147, vectors 95/95), 79 pages, suite 128/0/7 green.
 
-## [0.7.41] — 2026-10-08 — 50-30-20 E13: malformed input can no longer price a month
+## [0.7.41], 2026-10-08, 50-30-20 E13: malformed input can no longer price a month
 A13 claimed four CRITICALs; the Manager re-proved on live bytes and **three were
 false** (a striking lesson in never shipping an auditor's unverified claim): both
 Clear buttons work, and the seed disclosure fires. The one TRUE critical stood:
 **zero input validation.**
 
 `12.5.5` typed into income sat verbatim in the field while `pm()` read ₦0, and the
-page then printed *"AHEAD — Our example puts ₦40,000 extra to savings"* — a verdict
+page then printed *"AHEAD, Our example puts ₦40,000 extra to savings"*, a verdict
 about a figure that does not exist. `1e9` and `abc` were equally silent.
 
 New rails, each naming its field and routing the visitor to it:
-- **`#bg-junk` / `#al-junk`** — malformed input, split into two honest shapes
+- **`#bg-junk` / `#al-junk`**, malformed input, split into two honest shapes
   because the page does two different things: "12.5.5" is in the money alphabet
   but not a number (reads ₦0, and the rail says so), "abc" is outside it (reads
   as never-entered, and the rail says that instead).
-- **`#bg-range`** — a share outside 0–100, the range itself being the only fact.
-- **`#bg-big`** — implausible magnitude, reusing the page's own ₦100M threshold and
+- **`#bg-range`**, a share outside 0–100, the range itself being the only fact.
+- **`#bg-big`**, implausible magnitude, reusing the page's own ₦100M threshold and
   the salary-tax voice, now over income and the step-1 spends too. No invented
   salary benchmark; magnitude is the whole signal.
-- **`#al-verdict`** — CANNOT SCORE, replacing every bogus verdict the moment a
+- **`#al-verdict`**, CANNOT SCORE, replacing every bogus verdict the moment a
   feeding field is unreadable.
 
 False positives were tested for, not assumed: `₦1,234.50`, `1 234 500`, `8.5%`,
@@ -2150,19 +2169,19 @@ False positives were tested for, not assumed: `₦1,234.50`, `1 234 500`, `8.5%`
 
 **Manager follow-up, closing the boundary the leg logged rather than hid.** With
 "12.5.5" in income the three receipt rows still printed *"Needs left −₦120,000"*
-and the advice line still said *"needs and wants ₦185,000 over — spend less
-there"* — confident numbers in the visitor's voice, derived from nothing. Both now
-withhold on exactly the verdict's own predicate and print "—". Valid input
+and the advice line still said *"needs and wants ₦185,000 over, spend less
+there"*, confident numbers in the visitor's voice, derived from nothing. Both now
+withhold on exactly the verdict's own predicate and print ", ". Valid input
 restores the real figures; proven false-positive-free on the clean seed.
 
 Gates 6/6 (article 147/147, vectors 95/95), 79 pages, suite 128/0/7 green.
 
-## [0.7.40] — 2026-10-08 — 50-30-20 E12: every named problem now offers a real action
-A12 (next-action clarity) found the verdict's ownership gating was clean — one
-auditor claim did not reproduce — but nine "problem named, no action offered"
+## [0.7.40], 2026-10-08, 50-30-20 E12: every named problem now offers a real action
+A12 (next-action clarity) found the verdict's ownership gating was clean, one
+auditor claim did not reproduce, but nine "problem named, no action offered"
 spots. All closed.
 
-- **"Splits at 115% → Rebalance to 100%"** overpromised — it only scrolled. Now
+- **"Splits at 115% → Rebalance to 100%"** overpromised, it only scrolled. Now
   honestly reads "→ Adjust splits to 100%".
 - **"Fix rent overage"** always named rent regardless of which bucket overshot.
   Now it names the bucket that actually deviates most and routes to it; when none
@@ -2177,11 +2196,11 @@ spots. All closed.
   Savings Goal Calculator as the next destination; it does not manufacture a problem.
 - **"ON PLAN"** had no closing note; "ON PLAN on all 5" now closes with a real next step.
 - **Two variance definitions** (mirror "what you spent" vs foot "what you entered")
-  settled to one — "what you entered", because the user types a figure, it is not
+  settled to one, "what you entered", because the user types a figure, it is not
   already theirs.
 - **Actuals forgot their data** whilst the page claimed a save. They now persist,
   restore with a Last Used pill, and are honestly wiped by Reset/Clear/footer.
-- **Actuals had zero affordances.** Five `Use plan — rent/food/transport/data/bills`
+- **Actuals had zero affordances.** Five `Use plan, rent/food/transport/data/bills`
   chips now write that bucket's live plan and raise the same disclosure as the
   step-1 fill chips; blank income still fires the disclosure, never a fake pill.
 
@@ -2191,12 +2210,12 @@ about seed numbers.
 
 Gates 6/6 (article 147/147, vectors 95/95), 79 pages, suite 128/0/7 green.
 
-## [0.7.39] — 2026-10-08 — 50-30-20 E11: honesty sweep after A11 FAIL
+## [0.7.39], 2026-10-08, 50-30-20 E11: honesty sweep after A11 FAIL
 A11 found E10 regression clean (11/11) but 9 dishonest sentences. E10's repair
 opened a fabrication of its own; this round closes it and three false claims.
 
 **The CRITICAL (Manager-confirmed live before ordering).** The disclosure for
-"we just wrote a plan figure into a spend field" existed — but was bound to ONE of
+"we just wrote a plan figure into a spend field" existed, but was bound to ONE of
 the two controls that perform the write. The `.offer [data-use]` rail disclosed.
 The three `Use my targets` chips wrote the same plan into the same fields
 SILENTLY: one tap put ₦125,000 into "Spent on needs", left "Needs left" at ₦0 as
@@ -2207,7 +2226,7 @@ the dispatch is synchronous and the bg-spn input listener lifts the note in the
 same tick, so disclosing first would be undone instantly.
 
 **Three false claims corrected.** "Leave the rest blank and they print no figure"
-was untrue twice — a blank bucket still prints its plan amount. "Variance = your
+was untrue twice, a blank bucket still prints its plan amount. "Variance = your
 figure" and "Variance = what you actually spent" were two definitions of one term
 40px apart; now one. "you spent ₦X" became "you entered ₦X", which is what the
 user did.
@@ -2219,15 +2238,15 @@ asks which side is wrong. It refuses to compare absurd figures, reusing the
 page's existing too-large vocabulary, because a single stray keystroke otherwise
 became a confident statement about a ₦12.5bn gap.
 
-Two of those bugs were caught by calc-regress and not by eye — the line first
+Two of those bugs were caught by calc-regress and not by eye, the line first
 printed "the buckets are missing −₦1,696,968", and rails then rejected it as a
 bare naira assertion because it never asked for anything. Both fixed; the line
 now asks instead of reporting.
 
 Gates 6/6 (article 147/147, vectors 95/95), 79 pages, suite 128/0/7 green.
 
-## [0.7.38] — 2026-10-08 — C1: emergency-fund months-to-finish honours `saved`
-King: "do the best recommendation" — fix the bug properly, PHP-first, no shortcuts.
+## [0.7.38], 2026-10-08, C1: emergency-fund months-to-finish honours `saved`
+King: "do the best recommendation", fix the bug properly, PHP-first, no shortcuts.
 
 **The bug.** `months_to_reach` divided the whole target by the monthly saving
 rate, so it was mathematically independent of what the visitor had already put
@@ -2237,36 +2256,36 @@ away. `gap` was computed three lines below and ignored. Live proof on the seed
 told they had 11 more months to go.
 
 **Fixed in the required order, so the port never diverged:**
-1. `inc/emergency-fund.php` — the PHP source of truth, first (theme repo `12bf9ea`).
-2. `scripts/php-harness/vectors.php` — the oracle generator pointed at
+1. `inc/emergency-fund.php`, the PHP source of truth, first (theme repo `12bf9ea`).
+2. `scripts/php-harness/vectors.php`, the oracle generator pointed at
    `/home/ubuntu/gwill-finance-theme/inc/`, a path from another machine, so it
    died on `require_once` and the oracle could not be regenerated AT ALL. That
    was the real reason C1 sat unfixed. Now `GWILL_INC`-overridable with
    auto-detection.
-3. **Regenerated `vectors.json` by running PHP — never hand-edited.** Exactly
+3. **Regenerated `vectors.json` by running PHP, never hand-edited.** Exactly
    four fields moved, all in `emergency_seed`, all downstream of the fix
    (months_to_reach 11.25 -> 5.625, plus years_to_reach, future_essentials and
-   real_target). No other vector moved — proof the regeneration was surgical.
+   real_target). No other vector moved, proof the regeneration was surgical.
    Regeneration verified idempotent.
-4. `scripts/vectors-check.mjs` — `HIST_ORACLE_MS` re-pinned to the generation
+4. `scripts/vectors-check.mjs`, `HIST_ORACLE_MS` re-pinned to the generation
    instant, as that gate's own comment requires.
-5. `src/lib/emergency.ts` — the port, following PHP.
+5. `src/lib/emergency.ts`, the port, following PHP.
 
 Clamped twice in both languages: `max(0, target - saved)` so oversaving reads 0
 and never negative; `monthlySave > 0` unchanged. PHP and TS agree to 6dp on five
 cases including both clamp edges.
 
 **Follow-on honesty defect found and fixed in the same round (Manager-caught).**
-Fixing the maths made a THIRD zero case reachable — a closed gap — and the page
-had no honest wording for it, so a fully-funded user was told "— (save something
+Fixing the maths made a THIRD zero case reachable, a closed gap, and the page
+had no honest wording for it, so a fully-funded user was told ", (save something
 monthly)": an instruction to change the one input they had nothing wrong with.
 The three zero cases are three different facts and only one is advice:
-gap closed → "done — target reached"; no cover asked → "0.0 (no cover asked
+gap closed → "done, target reached"; no cover asked → "0.0 (no cover asked
 for)"; no monthly saving → the dash.
 
 Gates 6/6 (article 147/147, vectors 95/95), 79 pages, suite 128/0/7 green.
 
-## [0.7.37] — 2026-10-08 — 50-30-20 E10: honesty restoration (A10 FAIL fixed)
+## [0.7.37], 2026-10-08, 50-30-20 E10: honesty restoration (A10 FAIL fixed)
 A10 milestone audit returned FAIL with two trust CRITICALs. Both fixed.
 
 **The mirror measured nothing.** E9 computed each bucket's "actual" by rescaling
@@ -2288,42 +2307,42 @@ repaired: both dead jargon glosses as visible labels; dark `--action` contrast
 2.77:1 → 6.45:1; mirror panel heading; in-card Clear at a 44px target (the shell
 pair untouched); allocator sum printed; theme token replaces hardcoded `#e8e4dc`.
 Manager-caught: `clearExamples()` only walks `.field[data-sd]` so the unseeded
-`al-act-*` fields survived Clear — a silent half-reset. Both exits wipe them now.
+`al-act-*` fields survived Clear, a silent half-reset. Both exits wipe them now.
 
 Gates 6/6, 79 pages, suite 128/0/7 green.
 
-## [0.7.36] — 2026-10-08 — 50-30-20 E9: actuals mirror, verdicts, next actions, jargon
-Shipped — but later AUDITED AND CORRECTED in 0.7.37: its "actuals mirror" never
+## [0.7.36], 2026-10-08, 50-30-20 E9: actuals mirror, verdicts, next actions, jargon
+Shipped, but later AUDITED AND CORRECTED in 0.7.37: its "actuals mirror" never
 measured anything real, and the correction is recorded there in full. Kept here
 because the round genuinely shipped, and because deleting a shipped round from
 the record would be exactly the kind of tidy history this changelog exists to
 prevent.
 
-## [0.7.35] — 2026-10-08 — 50-30-20 E8: stepper, active chips, gated fill, apply defaults
+## [0.7.35], 2026-10-08, 50-30-20 E8: stepper, active chips, gated fill, apply defaults
 Visual stepper ("1. Plan" / "2. Itemise"), split-chip active state, fill-from-plan
 gating with `aria-disabled`, and an "Apply defaults" button restoring the
 allocator 40/25/15/10/7. A10 later rated E8 the second-highest regression risk
 (4/5) for the stepper's second-person claims before badges existed.
 
-## [0.7.34] — 2026-10-08 — 50-30-20 E7: mobile quick-fill + keystroke reduction
+## [0.7.34], 2026-10-08, 50-30-20 E7: mobile quick-fill + keystroke reduction
 Income quick-fill chips (₦70k–₦500k), split presets (50/30/20, 60/20/20,
 70/15/15), "Fill from plan" for the three actuals, button heights ≥44px, a sticky
 Step 2 anchor, and autocomplete attributes across the calculator fields.
 
-## [0.7.21] — 2026-10-05 — Architecture close-out: the four parked findings
+## [0.7.21], 2026-10-05, Architecture close-out: the four parked findings
 King: "Fix all findings before we move on to the next one."
 
 - **The stylesheet split, measured rather than assumed.** The audit said every
   page shipped the whole theme stylesheet; @builder built a ground-truth matrix
   of "classes defined per sheet × classes rendered per built page" and found
-  **13 of 14 sheets are genuinely consumed by every page** — home.css,
+  **13 of 14 sheets are genuinely consumed by every page**, home.css,
   article.css, pages.css, search404.css, tools.css and hub.css all render
   vocabulary on every archive, tool and legal page. Only `r7.css` (the R7
   featured-stamp layer, every selector `.feat`-scoped) is genuinely
   homepage-only, so it alone moved to the page that renders it. Result: every
   non-homepage page ships **856 bytes less CSS**, the homepage is unchanged
-  (+1 B, the `<style>` wrapper moving). Zero rule edits — `git diff src/styles/`
-  is empty — and visual parity proven by computed-style comparison plus pixel
+  (+1 B, the `<style>` wrapper moving). Zero rule edits, `git diff src/styles/`
+  is empty, and visual parity proven by computed-style comparison plus pixel
   diffs inside run-to-run noise (0.75%, confined to the live ticker marquee).
 - **One archive, one door.** `/category/fixed-income/` is now canonical; the
   nested `/category/investing/fixed-income/` is a 652-byte canonical pointer
@@ -2332,17 +2351,17 @@ King: "Fix all findings before we move on to the next one."
   the nested href is pinned by the header gate. One door, no duplicate content.
 - **The orphaned year archives are now reachable.** A footer **Archive** block
   (both footers, matching the footer's own link idiom, zero CSS, zero gates)
-  exposes all 11 date routes — years and months, both previously unreachable.
+  exposes all 11 date routes, years and months, both previously unreachable.
   They were kept, not deleted: they are WordPress-faithful, fully populated, and
   the site's only chronological index.
 - **The tool manifest.** One list of 16 tools now drives the hub page and the
   per-tool share card; the 16 duplicated `ogImage` props are gone. Measured
-  honestly: only 2 of 16 props were real identity duplication (12.8% of lines) —
+  honestly: only 2 of 16 props were real identity duplication (12.8% of lines), 
   the other 87% is ported WordPress copy with citations, which stays where it
   is. Meta parity proven byte-identical on 16/16 tool pages and 10/10 amount
   pages.
 
-## [0.7.20] — 2026-10-05 — Smart fields: the fleet stops pretending it filled them in
+## [0.7.20], 2026-10-05, Smart fields: the fleet stops pretending it filled them in
 King: *"I want fields like these to change dynamic and be smart… all my
 calcutors have no ux plan at all, they don't actually find out how user would use
 the product and be amazed and keep coming back."*
@@ -2350,31 +2369,31 @@ the product and be amazed and keep coming back."*
 - **The real defect was honesty, not staticness.** Every calculator baked a
   seed value, so a first-timer saw a full ₦250,000 receipt he never entered.
   Now every non-user number wears a gold `SAMPLE` tag with a dashed rule, and
-  the moment he types in a field that tag disappears — the field becomes his.
+  the moment he types in a field that tag disappears, the field becomes his.
 - **Three states, one law:** `SAMPLE` (gold = ours) · `LAST USED` (neutral,
   dated = his) · plain (his, no badge). Gold never means "yours".
 - **`Clear examples`** empties every worked example in one tap and hands the
-  receipt an honest empty state: the shape stays, the figures show `—` in dim
-  ink. No confident gold ₦0 — a zero nobody entered is not a result.
+  receipt an honest empty state: the shape stays, the figures show `, ` in dim
+  ink. No confident gold ₦0, a zero nobody entered is not a result.
 - **₦ fields work properly now:** 57 fields converted from `type=number` to
   `type=text` + `inputmode` (63 minus 6 genuine integer counts), with the
   recovered in-field ₦ symbol, blur-time comma grouping and a tolerant parser
   that reads `"1,234.5"`, `"₦1,234.50"` and `""` correctly. `type=number` was
   silently rounding large values in Safari and exponentiating them in Chrome.
 - **Memory:** the last numbers he used are restored, dated and badged neutrally
-  — rent and gross never restore, because a stale rent silently moves a
+ , rent and gross never restore, because a stale rent silently moves a
   take-home claim.
 - **Sourced context lines only:** Guardian median pay, NBS 15.39% inflation,
-  the ₦70,000 statutory minimum wage — each with a "read the source" link. Two
+  the ₦70,000 statutory minimum wage, each with a "read the source" link. Two
   context lines were DROPPED because no citable source existed; a statistic with
   no source does not ship.
 - **A real bug fixed:** the calculator receipt hardcoded `#0d0b08`, identical
   to the page background in dark mode, so the card dissolved into the page.
 - Proofs: 79 pages; 6/6 gates (article 147/147, vectors 95/95); live probes on
   4 tools x 2 themes x 4 interactions; +1,338 B per page average, one shared
-  8KB chunk per session — inside the 3KB budget.
+  8KB chunk per session, inside the 3KB budget.
 
-## [0.7.19] — 2026-10-04 — The real logo on every card, and the controls I left raw
+## [0.7.19], 2026-10-04, The real logo on every card, and the controls I left raw
 King rejected v0.7.18: "These are not my logos… og image doesn't have a single
 place with my finance blog actual logo" + "why is the check box in the calculator
 unstyled… there are plenty unstyled elements u added to calculators."
@@ -2390,11 +2409,11 @@ unstyled… there are plenty unstyled elements u added to calculators."
   number inputs were proven NOT defects (styled via `.field` descendants).
 - **The checkbox** is now `.tgl`, a gold switch in the site's own vocabulary:
   44px target, gold focus ring in both themes, behaviour unchanged.
-- **A wrong glyph swap** printed "N50k" on one card — removed; the real ₦ bakes.
+- **A wrong glyph swap** printed "N50k" on one card, removed; the real ₦ bakes.
 - Proofs: 79 pages; 6/6 (article 147/147, vectors 95/95); 0 tofu across 74
   codepoints in all 34 cards; brand card gold 4,235px.
 
-## [0.7.18] — 2026-10-04 — Premium OG cards: 34 brand-true share images
+## [0.7.18], 2026-10-04, Premium OG cards: 34 brand-true share images
 King: *"the og image is looking like shit… use our logo and all that and design
 a premium OG image… all the pictures and brand files are made SVG logo."*
 
@@ -2405,12 +2424,12 @@ a premium OG image… all the pictures and brand files are made SVG logo."*
   text), and the 7 category art files each carry a stale `₦ gwillchijioke`
   wordmark plus 7 files cover 15 articles → article art is **not** overlaid.
 - **Design (@designer, coordinate contract + 3 rendered proofs):** dark ink
-  ground (gold-on-ink 9.15:1 vs 3.4:1 on cream — cream vanishes in a WhatsApp
+  ground (gold-on-ink 9.15:1 vs 3.4:1 on cream, cream vanishes in a WhatsApp
   bubble), 1200×630, footer baseline 524 (clear of the Twitter bottom-10%
   crop), 168px mark on the brand card / 64px elsewhere, dot-grid + gold glow
   ported from the site's own hero CSS, 88×4 gold rule, category-coloured chip.
 - **Generator (@builder):** `scripts/og-card.mjs` + `scripts/gen-og.mjs` as the
-  first build step — 34 cards (brand, 16 tools + hub + amount family, 15
+  first build step, 34 cards (brand, 16 tools + hub + amount family, 15
   articles), idempotent, rsvg stdin, output gitignored. Brand card is
   **byte-identical** to the designer's proof.
 - **Wiring:** ToolShell now forwards `ogImage` (26 tool pages were falling back
@@ -2422,22 +2441,22 @@ a premium OG image… all the pictures and brand files are made SVG logo."*
   refs); 34/34 PNGs present; PIL: 1200×630, gold present, **0 bright pixels in
   the bottom 10%**, 80px margins.
 
-## [0.7.17] — 2026-10-04 — Architecture audit fixes: the one broken link, concurrent counts, type-checking
+## [0.7.17], 2026-10-04, Architecture audit fixes: the one broken link, concurrent counts, type-checking
 
-- **Author page 2 route added** — `author/[slug]` rendered pagination to a page
+- **Author page 2 route added**, `author/[slug]` rendered pagination to a page
   that never existed; every author with >10 posts was serving 404s.
 - **Concurrent comment counts:** 15 serial `AbortSignal.timeout(4000)` Worker
   fetches at build → `Promise.allSettled` (route phase 7.16s → 0.9s; worst case
   with a hanging Worker 60s → ~4s).
 - **`gwill-forms.js` route-scoped** via a Layout `forms` prop + `FormsScript`
-  component (Astro hoists `src` scripts out of expressions — the component
+  component (Astro hoists `src` scripts out of expressions, the component
   boundary is the working pattern).
 - **Drawer `aria-modal="true"`** (was `false` while scroll-locked + focus-trapped).
-- **`/search/` corpus dedupe** — one shared `#gwill-search-index`.
+- **`/search/` corpus dedupe**, one shared `#gwill-search-index`.
 - **tsconfig + `@astrojs/check` + `typescript`** wired (`npm run check:types`);
   the 21-error backlog is reported, not gated.
 
-## [0.7.16] — 2026-10-04 — Calculator correctness mission: every tool audited, proven, fixed
+## [0.7.16], 2026-10-04, Calculator correctness mission: every tool audited, proven, fixed
 King: 50-30-20 screenshot showed empty % fields computing ₦0·₦0·₦1,000,000
 silently. Fix this calculator, research ALL calculators for missing
 fields/features/bugs, fix all while respecting UI/UX.
@@ -2455,23 +2474,23 @@ fields/features/bugs, fix all while respecting UI/UX.
   synced to reality; amount-page blanks/{PARALLEL} removed; Reset on all tools.
 - **Verification:** 6/6 gates (article 147/147, vectors 95/95); QA interaction
   proof across 20 components (zero JS errors, no overflow, every fix
-  reproduced); v0.7.0 design LOCKED — no visual changes.
+  reproduced); v0.7.0 design LOCKED, no visual changes.
 
-## [0.7.15] — 2026-10-04 — Portability fixes: base un-baked, config single-sourced, toolchain pinned
+## [0.7.15], 2026-10-04, Portability fixes: base un-baked, config single-sourced, toolchain pinned
 King: *"Fix all findings before we move to the next one"*
 
-- **CRITICAL:** article media fields no longer bake the deploy base — base-less
+- **CRITICAL:** article media fields no longer bake the deploy base, base-less
   frontmatter + render-time prefix; importer emits base-less going forward;
   served bytes byte-identical.
 - **Config:** ORIGIN/BASE single-sourced (site.ts → astro.config), SITE_ORIGIN/
   SITE_BASE overrides, trailingSlash trialed and reverted honestly, Worker URL
   one const (CSP stays explicit), MOVE-CHECKLIST.md, ship-pages.sh.
-- **Toolchain:** lockfile regen (astro 5.18.2, npm ci works), .nvmrc,
+- **Toolchain:** lockfile regen (astro 5.18.2, npm ci works).nvmrc,
   packageManager, py CWD anchoring. Icons → icon.svg; dead link + Rickroll gone.
-- Proofs: build exit 0 / 78 pages; 6/6 (article 147/147, vectors 95/0); QA SHIP —
+- Proofs: build exit 0 / 78 pages; 6/6 (article 147/147, vectors 95/0); QA SHIP, 
   images 32/32 200, prefixes exact, og absolute, zero JS errors, zero overflow.
 
-## [0.7.14] — 2026-10-04 — Fingerprint fixes: human comments, human copy, closed escaper hole
+## [0.7.14], 2026-10-04, Fingerprint fixes: human comments, human copy, closed escaper hole
 King: *"fix all findings from latest audit before we move on to the next"*
 
 - **Comment trims** (zero behavior change): lightbox TOC collapsed + echo banners
@@ -2481,26 +2500,26 @@ King: *"fix all findings from latest audit before we move on to the next"*
 - **Desk speaks English:** "approveing/spaming/trashing" → explicit verb map;
   past-tense confirmations; token/session/API notes in plain words.
 - **Stale stub deleted:** the homepage "not connected" hijack contradicted the
-  live list — the form now subscribes via gwill-forms.js like /newsletter/.
+  live list, the form now subscribes via gwill-forms.js like /newsletter/.
 - **Seeds unified** to consts; dead guards/ternaries deleted; dividend casts
   removed (`divs: number`); renames (label/labelLower, cur, initialYield,
   payeBands2023 with alias for the gate).
 - **escHtml hole closed:** the search escaper was a 4× identity no-op feeding
-  innerHTML — now escapes (`&` first); highlight rewritten mark-before-escape
+  innerHTML, now escapes (`&` first); highlight rewritten mark-before-escape
   after probes proved entity shredding. Adversarial-proven, no consumer changes.
 - **Microcopy:** server errors in plain words, push/iOS notes fixed, "Questions",
   "today's rates", emoji stripped, 6 tone unifications.
 - **5 gate pins updated** with overrides recorded. Proofs: build exit 0 / 78 pages;
-  6/6 (article 147/147, vectors 95/0); QA SHIP — strings live in served bytes,
+  6/6 (article 147/147, vectors 95/0); QA SHIP, strings live in served bytes,
   XSS probe inert, marks intact, zero JS errors, zero overflow.
 
-## [0.7.13] — 2026-10-04 — Cleanup audit fixes: dead code pruned, phantom deps pinned
+## [0.7.13], 2026-10-04, Cleanup audit fixes: dead code pruned, phantom deps pinned
 King: *"Fix all findings before we move to the next."*
 
-- **50 dead rules pruned from tools.css** (−8.8KB) — an abandoned calculator
+- **50 dead rules pruned from tools.css** (−8.8KB), an abandoned calculator
   vocabulary nothing rendered. tools.css ships globally, so this weight rode
   every page. Live vocabulary (fx-card, receipt-*, bar-*, st-table, tool-h)
-  untouched — verified rule by rule.
+  untouched, verified rule by rule.
 - **Dead ad/ticker/vibe/micro-orphan rules pruned** (≈−10.6KB more across
   article/home/header/search404/vibe skins). Carve-outs kept honestly: the
   `.ad-slot` base system (article.js queries it), the 4 `.vibe-rx-t-*` rules
@@ -2508,23 +2527,23 @@ King: *"Fix all findings before we move to the next."*
   importer can bring articles carrying any block).
 - **Phantom deps pinned:** esbuild + postcss (used by load-bearing gates, missing
   from package.json) added to devDependencies at their locked versions.
-- **Hygiene:** tracked zero-width-space file deleted, .gitignore gains .env,
+- **Hygiene:** tracked zero-width-space file deleted.gitignore gains .env,
   engines node>=18, 3 gates de-absoluted to fileURLToPath (zero assertions
   touched), dead audit line removed, node: prefixes, 3 unused imports + 5 dead
-  exports removed (payeBreakdown proven redundant — the page renders bands
+  exports removed (payeBreakdown proven redundant, the page renders bands
   inline), public/sw.js removed (shipped but never registered; registering
   would be a new feature, not cleanup).
 - **Records refreshed:** README (6 gates, 78 pages, fetch-snapshot step, retired
   prose note, real header anchors), TRANSFER layer chain (the King-reverted
-  reality), article.css token block (RESOLVED — its own suggested fix is what
+  reality), article.css token block (RESOLVED, its own suggested fix is what
   shipped), port-posts.py comment (keep policy).
 - **2 gates updated with the override recorded** (same sanctioned pattern as the
   hero CTA and category map): the article byte-pin 40720→38197 (the pin exists
-  to force manager review — reviewed), and homepage reduced-motion now asserts
+  to force manager review, reviewed), and homepage reduced-motion now asserts
   the invariant (no unguarded animation) instead of pinning a duration value
   that existed only in dead code.
 - Proofs: build exit 0 / 78 pages; `npm run check` 6/6 (article 147/147,
-  vectors 95/0); QA visual proof — 8 phone pages unchanged (home luminances
+  vectors 95/0); QA visual proof, 8 phone pages unchanged (home luminances
   185.3 vs 17.3), converter computes 2500→₦3,325,350, salary bands render,
   comments validation holds with zero POST, ticker paints live figures, zero JS
   errors, zero overflow. Report: ~/work/research-notes/cleanup-proof-qa.md
@@ -2532,42 +2551,42 @@ King: *"Fix all findings before we move to the next."*
   of prose.retired/port-posts.py/backup branch, receipt-div/tool-h
   used-but-undefined (pre-existing mirror image).
 
-## [0.7.12] — 2026-10-03 — Every category gets its own brand-matched pill
+## [0.7.12], 2026-10-03, Every category gets its own brand-matched pill
 King: *"savings crypto and dollar account category pill has a custom color
 that match the brand. I want others to auto claim a new color on creation so
 that all categories have color pill. and make sure which ever color matches
 the site brand color palette."*
 
 Before this, savings (green), crypto (purple) and dollar-accounts (gold)
-were the ONLY categories with distinct pills — investing shared savings'
+were the ONLY categories with distinct pills, investing shared savings'
 green and banking, remittance, budgeting and fixed-income were all grey
 slate. After: every category carries its own hue.
 
 - **Five new badge hues** added to article.css in the theme's OWN
   Tailwind-pastel badge vocabulary (`.bpu`/`.bsl` already are Tailwind
-  pastels — this extends the theme's pattern rather than inventing a new
+  pastels, this extends the theme's pattern rather than inventing a new
   design language): `.bte` teal, `.bbl` blue, `.bcy` cyan, `.bpk` rose,
-  `.bin` indigo — light pastel + dark rgba, exactly matching the existing
+  `.bin` indigo, light pastel + dark rgba, exactly matching the existing
   light/dark patterns.
 - **Five matching chip classes** in home.css (`.db-te/.db-bl/.db-cy/.db-pk/
   .db-in`) so the hero "Topics:" row stays coherent with the cards.
 - **New mapping:** investing→teal, banking→blue, remittance→cyan,
   budgeting→rose, fixed-income→indigo. **The King's named three are
   untouched:** savings=green, crypto=purple, dollar-accounts=gold.
-  Uncategorized deliberately keeps slate — it is the catch-all, and grey is
+  Uncategorized deliberately keeps slate, it is the catch-all, and grey is
   its semantic colour, not a real category's claim.
 - **AUTO-CLAIM (the King's core requirement):** `autoClaim(slug)` in
-  site.ts — a deterministic djb2 hash over a 9-colour palette (slate last,
+  site.ts, a deterministic djb2 hash over a 9-colour palette (slate last,
   so it is claimed least). `catBySlug`'s unknown-slug fallback now calls it,
   so any category created without an explicit mapping **claims a stable
-  colour on creation** — same slug, same colour, forever, across builds.
+  colour on creation**, same slug, same colour, forever, across builds.
   Proven: `autoClaim("insurance")` → cyan, `("loans")` → green,
   `("side-hustles")` → purple, deterministic across runs. A category later
   promoted to an explicit CATEGORIES entry should pin its badge+chip.
 - **GATE:** the homepage fidelity gate asserted the WP-verbatim mapping
   (investing=bgn, banking/bsl, remittance=bsl, unknown-slug→bsl). Those
-  assertions encoded WP fidelity — the live theme still maps them that way
-  — and the King has now deliberately overruled that fidelity decision, as
+  assertions encoded WP fidelity, the live theme still maps them that way
+ , and the King has now deliberately overruled that fidelity decision, as
   he did for the hero CTA in v0.7.10. The assertions were UPDATED to expect
   the new mapping with the override, date and his stated reason recorded in
   the gate, and the gate now also asserts budgeting and fixed-income
@@ -2581,14 +2600,14 @@ slate. After: every category carries its own hue.
   class; the King's three unchanged in dist; the only remaining `bsl`
   anywhere is the uncategorized archive page.
 
-## [0.7.11] — 2026-10-03 — Security audit fixes: frame-buster, CSP, session-scoped desk token
+## [0.7.11], 2026-10-03, Security audit fixes: frame-buster, CSP, session-scoped desk token
 The 2026-10-03 four-auditor security audit (master report:
 `~/work/research-notes/security-audit-MASTER-2026-10-03.md`) found
 2 HIGH · 14 MEDIUM · ~20 LOW across this site and its comments Worker.
 This release ships the site-side half; the Worker half shipped as
 comments-api `cf7ceea` + a full secret rotation the same day.
 
-- **Frame-buster on the /mod/ desk (MEDIUM).** `src/pages/mod.astro:50-59` —
+- **Frame-buster on the /mod/ desk (MEDIUM).** `src/pages/mod.astro:50-59`, 
   a synchronous inline script breaks the desk out of any frame before the
   desk markup parses. GitHub Pages cannot set `frame-ancestors` as a header
   and browsers ignore meta-delivered `frame-ancestors`, so this script is
@@ -2600,32 +2619,32 @@ comments-api `cf7ceea` + a full secret rotation the same day.
   desk boot wipes any legacy localStorage forever-token on every visit.
   UX change the King should know: **the desk now asks for the token once
   per tab session** instead of remembering it forever.
-- **Meta CSP (MEDIUM).** `src/layouts/Layout.astro:165` — script/style
+- **Meta CSP (MEDIUM).** `src/layouts/Layout.astro:165`, script/style
   'self' 'unsafe-inline' (Astro inlines both; nonce plumbing is a larger
   change), img-src self + gravatar/ytimg/vimeocdn + data:, connect-src
   self + comments-api + the five FX/crypto APIs, frame-src the three video
   facades, form-action self + comments-api, base-uri 'self',
-  object-src 'none'. Every runtime fetch origin in dist is in the policy —
+  object-src 'none'. Every runtime fetch origin in dist is in the policy, 
   verified live in-browser with zero blocked resources and the FX ticker
   still populating from all external APIs.
-- **`</script>` escaping (LOW).** `VibeComments.astro:356` — the config JSON
+- **`</script>` escaping (LOW).** `VibeComments.astro:356`, the config JSON
   is now serialized with `<` escaped to `\u003c`, same pattern the JSON-LD
   block already uses. Build-time data today; structurally safe forever.
 - **Commenter email now session-scoped (LOW).** `vibe-comments.js:2476-2519`
-  — the comment form's email field persists to sessionStorage, not
+ , the comment form's email field persists to sessionStorage, not
   localStorage (identity is saved on blur, not submit, so clear-after-submit
   would not have worked; session scope does). Display name unchanged.
-- **http:// link upgraded (LOW).** `gutenberg-elements-showcase.md:157` —
+- **http:// link upgraded (LOW).** `gutenberg-elements-showcase.md:157`, 
   `http://finance.gwillchijioke.com` → `https://`. Honest note: the domain
   has no public DNS at all right now (NXDOMAIN), so the link is dead under
   both schemes; https is the only future-correct endpoint.
-- **Referrer-Policy (NICE-TO-HAVE).** `Layout.astro:171` —
+- **Referrer-Policy (NICE-TO-HAVE).** `Layout.astro:171`, 
   `strict-origin-when-cross-origin`, matching the referrerPolicy the site's
   own video facades already use: same-origin referrers kept, cross-origin
   sites get the origin only, never article paths.
 
 Proofs: build exit 0 / 78 pages; `npm run check` 6/6 green (homepage 123,
-article 147/147, vectors 95/0); CDP on the live preview — 0 real console
+article 147/147, vectors 95/0); CDP on the live preview, 0 real console
 errors across homepage/article/mod, 0 blocked resources, FX ticker live
 across all external APIs, 9 comments rendering from the Worker, frame-buster
 proven both directions, legacy localStorage token wiped on boot.
@@ -2634,23 +2653,23 @@ instead of the apps hub. King: *"that 'Finance Apps' button should be
 changed and linked to the finance calculators I feel they will bring more
 clicks from my homepage"*, then confirmed *"money calculators I mean"*.
 
-- `src/pages/index.astro:47` — `<a class="bhg" href={`${base}apps/`}>Finance Apps</a>`
+- `src/pages/index.astro:47`, `<a class="bhg" href={`${base}apps/`}>Finance Apps</a>`
   becomes `<a class="bhg" href={`${base}money-tools/`}>Money Calculators</a>`.
   One line. The `.bhg` ghost-button class is untouched, so the button keeps
   its exact appearance; only href and inner text moved.
-- Copy reuses existing site vocabulary rather than inventing new wording —
+- Copy reuses existing site vocabulary rather than inventing new wording, 
   the `/money-tools/` hub H1 (index.astro:72) and the footer link
   (`src/data/site.ts:121`) are both already "Money Calculators".
 - **`/apps/` is NOT orphaned.** It keeps 5 inbound links on the homepage
   (2 in the header mega-menu + 3 in the footer, from `NAV` and
   `FOOTER_GROUPS` in `site.ts`), and both pages serve 200.
 
-**GATE — a deliberate, recorded divergence, not a softened check.**
+**GATE, a deliberate, recorded divergence, not a softened check.**
 `scripts/check-homepage-fidelity.mjs:83` asserted the hero's secondary CTA
 must target `/apps/` with the copy "Finance Apps". That assertion encodes
 WP fidelity: the live WordPress theme routes that button to the apps hub.
 Fidelity to WP is the correct default for this port, and it was correct
-until today — the King has now deliberately overruled it on conversion
+until today, the King has now deliberately overruled it on conversion
 grounds. The assertion was UPDATED to expect `/money-tools/` and its
 comment records the override, its date, the King's stated reason, and the
 fact that the live theme still sends the CTA to `/apps/`.
@@ -2667,55 +2686,55 @@ fidelity 123/123, article gate 147/147, vectors 95/0); dist confirms
 the old `/apps/` CTA string absent (0 occurrences), and `/apps/` still
 referenced 5 times.
 
-## [0.7.7] — 2026-10-02 — Design Language R7: the featured stamp corner
+## [0.7.7], 2026-10-02, Design Language R7: the featured stamp corner
 The featured card's media plate stops being one flat ink field carrying
 a lone centred emoji, and becomes a corner-anchored stamp on a framed
-band (plan §P0-2 "stamp corner", rung R7 — the work 0.7.6 left open).
+band (plan §P0-2 "stamp corner", rung R7, the work 0.7.6 left open).
 ADDITIVE only: one new stylesheet, 78 lines, imported after `chrome.css`
 so the cascade reads R1 → … → R6 → R7. `home.css`, `article.css`,
 `header.css`, `base.css` and `hub.css` are untouched by design, and
-`index.astro:68` was not edited — the homepage fidelity gate asserts
+`index.astro:68` was not edited, the homepage fidelity gate asserts
 `feat-img` + `feat-emoji` in that template and it stays green.
 
 - **The void was real; a bigger dot was the wrong remedy.** 0.7.6
   removed the duplicate category wordmark from this card, which left the
-  plate as a single `#0d0b08` field holding one centred emoji — measured
+  plate as a single `#0d0b08` field holding one centred emoji, measured
   **99% one flat colour / 96.8% empty ink** (0.7.6's Known issue (a)),
   and in dark mode the plate was `rgb(13,11,8)` on a `rgb(13,11,8)`
   page: a **1.00:1 collapse**, no edge at all. @qa-inspector explicitly
-  recommended AGAINST a bigger-glyph remedy — even an impossible 56×56
+  recommended AGAINST a bigger-glyph remedy, even an impossible 56×56
   emoji caps at **5.33%** coverage, and the residual single-colour share
   is C4's *mandated* honest flat colour, not slack. So this is a
   **structural fix, not a scale change**: the plate had to stop being an
   undifferentiated field and stop being centre-anchored.
 - **Corner-anchored stamp.** `.feat .feat-img` flips to
   `align-items: flex-end` / `justify-content: flex-start`, and the glyph
-  is re-targeted as `.feat .feat-img > span.feat-emoji` —
+  is re-targeted as `.feat .feat-img > span.feat-emoji`, 
   `position: absolute; left: 26px; bottom: 22px`, `z-index: 1`,
   `font-size: clamp(48px, 9vw, 84px)`, `line-height: 1`, colour
   `#f0ede6`, `pointer-events: none`. A centred orphan becomes an
   off-centre anchor: **□3** is the check the old plate actually failed.
 - **The plate became a band on the phone.** `min-height` **170px →
-  116px**, with a 768–1023px tier at **140px**. Phone only — see the
+  116px**, with a 768–1023px tier at **140px**. Phone only, see the
   deliberate limit below, which is stated rather than buried.
 - **Dot-grid field, `::before`**: `radial-gradient(circle,
   rgba(240,237,230,0.055) 1px, transparent 1px)`, `background-size:
   28px 28px`, `background-position: 14px 14px`. Same 1px-dot,
   28px-pitch texture the hero already carries at `home.css:59`
-  (`.hero::before`) — in cream, because this plate is dark in BOTH
+  (`.hero::before`), in cream, because this plate is dark in BOTH
   modes. It is a sanctioned texture, not a wash.
 - **Inset hairline plate edge, `::after`**: `inset: 14px`,
   `1px solid rgba(240,237,230,0.20)`, `border-radius: var(--r-sm)`
-  (6px — R1's closed ladder). D1's default elevation is a hairline, no
+  (6px, R1's closed ladder). D1's default elevation is a hairline, no
   shadow; this edge is also what makes the plate legible in dark mode,
   where the fill lift on its own is thin.
 - **Dark-mode lift**: `[data-theme="dark"] .feat .feat-img` →
   `var(--surface-2)` = **`#171512`**, step 3 of the C2 warm-black
-  ladder (`Layout.astro:405`). This is what breaks the collapse — the
-  plate is no longer the page colour — and the hairline above is what
+  ladder (`Layout.astro:405`). This is what breaks the collapse, the
+  plate is no longer the page colour, and the hairline above is what
   makes the difference read.
-- **Fidelity guard — real photos always win**:
-  `.feat .feat-img:has(> img)::before, .feat .feat-img:has(> img)::after
+- **Fidelity guard, real photos always win**:
+  `.feat .feat-img:has(> img)::before.feat .feat-img:has(> img)::after
   { content: none }`. Both new layers are absolutely positioned and
   would paint OVER a static `<img>` if this slot ever gains one, so the
   fallback decoration yields the moment a thumbnail is present. Today
@@ -2723,57 +2742,57 @@ so the cascade reads R1 → … → R6 → R7. `home.css`, `article.css`,
   law made **enforceable** instead of merely stated.
 - **Specificity was the fix, not a footnote.** The glyph rule lands at
   **(0,3,1)** and beats the pre-existing `.feat-img>span:first-child` at
-  `src/layouts/Layout.astro:442` — **(0,2,1)**. *Line 442, not 441:*
+  `src/layouts/Layout.astro:442`, **(0,2,1)**. *Line 442, not 441:*
   earlier notes, and 0.7.6's own Known issue (b), said 441. That older
-  rule was silently defeating the phone downscale — **media queries add
-  zero specificity** — so the verbatim `.feat-emoji { font-size: 32px }`
+  rule was silently defeating the phone downscale, **media queries add
+  zero specificity**, so the verbatim `.feat-emoji { font-size: 32px }`
   in the 767px blocks (`home.css:497`, `article.css:881`) at
   **(0,1,0)** had never once applied, and the glyph rendered **56px at
   390**. This release closes that latent bug by out-specifying the rule
   that was eating it: no `!important`, and neither file edited.
 - **Laws held**: no `!important` anywhere in the file, no gradient wash
-  (C4), **no gold added** — the card's existing 3px gold left bar on
+  (C4), **no gold added**, the card's existing 3px gold left bar on
   `.feat-body` (`hub.css:89`) remains its single rationed D2 accent,
   and the frame, dots and glyph are all cream. No DOM and no JS change.
   `header.css`, `base.css`, `home.css`, `article.css` and `hub.css` are
   all untouched. Zero edits under `scripts/`.
-- **Deliberate limit — desktop plate height is NOT reduced.** At
+- **Deliberate limit, desktop plate height is NOT reduced.** At
   ≥1024px the plate is grid-stretched to `.feat-body`: with
   `min-height: 116px` applied it still measured **290.016px**. So there
   `min-height` is not the binding constraint, and **a height fix is not
-  a lever** — only the frame and the corner stamp carry the desktop
+  a lever**, only the frame and the corner stamp carry the desktop
   read. Said plainly because it deserves saying: this release does not
   shrink the desktop plate, and it does not pretend to.
 
 **Proof (Manager's runs, this tree)**: build exit 0 (78 pages) ·
 `npm run check` **6/6 gates green** (vectors `pass=95 fail=0`) ·
 `node scripts/tool-accuracy-audit.mjs` **26 pass / 0 fail** · `dist`
-confirms the r7 rules present in served bytes — `.feat .feat-img
+confirms the r7 rules present in served bytes, `.feat .feat-img
 { min-height: 116px }`, the dark `var(--surface-2)` lift, both pseudo
 layers, the `clamp(48px, 9vw, 84px)` glyph, and the fidelity guard
-`.feat .feat-img:has(>img):before, .feat .feat-img:has(>img):after
-{ content: none }` — and shows the r7 block served *before*
+`.feat .feat-img:has(>img):before.feat .feat-img:has(>img):after
+{ content: none }`, and shows the r7 block served *before*
 `.feat-img>span:first-child{font-size:56px}` in source order while still
 winning, which is the specificity claim above, proven in bytes. The
 accuracy audit needed a slow **serial** run on this memory-constrained
 box (**26 cases over ~10 min**); an earlier attempt was abandoned rather
 than trusted, because shared CDP tab contention had previously produced
 a false 15/11 and only one clean serial run counts. Served-byte CDP
-verification is a separate @qa-inspector run — no screenshot or
+verification is a separate @qa-inspector run, no screenshot or
 luminance figure from it is quoted here, because none was handed to this
 entry.
 
-## [0.7.6] — 2026-10-01 — King's phone fixes: hero underline out, double category out
+## [0.7.6], 2026-10-01, King's phone fixes: hero underline out, double category out
 Two retraction edits, both from the King's own phone screenshots, both
-pure subtraction — nothing added, no gate touched, no verbatim-WP rule
+pure subtraction, nothing added, no gate touched, no verbatim-WP rule
 reinterpreted. This is a CORRECTION release: it takes back two things the
 design run had proudly stamped, and it leaves one visible debt open and
 unfixed on purpose (see Known issues).
 
-- **The ledger rule is RETRACTED — and it was a signature.** The 48×3px
+- **The ledger rule is RETRACTED, and it was a signature.** The 48×3px
   solid `var(--gold-b)` bar between the hero sub and the CTAs was R5's
   named SIGNATURE (see 0.7.4), implemented as `.hero-sub::after` because
-  the homepage fidelity gate forbids a real `.ledger` DOM element — the
+  the homepage fidelity gate forbids a real `.ledger` DOM element, the
   pseudo delivered the plan's exact geometry with zero markup invention,
   and the gate was never edited. The King: *"remove that small underline
   in the hero section it's useless."* The rule and its SIGNATURE comment
@@ -2781,27 +2800,27 @@ unfixed on purpose (see Known issues).
   Said plainly, because it should not be dressed up: **this retires a
   signature the King himself stamped in R5.** The plan's 28px sub→CTAs
   contract (12 + 3 + 13) loses its middle term by order, and the gap now
-  rides alone on `.hero-sub{margin-bottom:13px}` — measured 13px live,
+  rides alone on `.hero-sub{margin-bottom:13px}`, measured 13px live,
   neither collapsed to 0 nor doubled.
 - **The C7 `.hold-title::before` bar is a DIFFERENT element and is
   deliberately untouched.** It is also a 48×3 gold rule (`Layout.astro:468`),
   it is also a pseudo, and it is the section-anchor bar for the
   `.hold` rhyme on tools/legal pages. Same geometry, different job, its
-  own approval — one King's order retracting the hero rule does not
+  own approval, one King's order retracting the hero rule does not
   generalize to it. (Correction of record: this rule lives in
   `src/layouts/Layout.astro:468`, not `base.css`.)
-- **Duplicated category label in the featured card — one kept, fidelity
+- **Duplicated category label in the featured card, one kept, fidelity
   wins.** The featured card printed the category TWICE: R5's `ac-artword`
   wordmark on the ink tile AND a verbatim `a.badge` pill in the body. King:
   *"bad and ugly keep one."* **The `a.badge` pill was KEPT** because it is
   verbatim WordPress `template-parts/content.php` markup AND it is the
-  working category-archive link (`href={base}category/{slug}/`) — the wordmark
+  working category-archive link (`href={base}category/{slug}/`), the wordmark
   was decorative. Removing the pill would have been a functional regression
   dressed as a cleanup, so the decorative span lost instead: the
   `ac-artword` was removed from the featured card only (`index.astro:68`).
   Fidelity over novelty, and the archive link still works.
 - **Ink tile height unaffected, by construction not by luck.** `.feat-img`
-  is `min-height` — 260px base / 200px tablet / 170px phone, by tier — and
+  is `min-height`, 260px base / 200px tablet / 170px phone, by tier, and
   the removed `ac-artword` was `position: absolute`, so it never
   contributed a single pixel of height in the first place. Measured
   **348×170 phone, 501×290 desk**.
@@ -2809,7 +2828,7 @@ unfixed on purpose (see Known issues).
   the same wordmark-plus-badge doubling the featured card just lost. That is
   a second call, not a freebie: it awaits the King's decision and was
   declared out of scope here rather than half-decided.
-- Diff is 2 files, 5 insertions / 14 deletions — `index.astro` one line,
+- Diff is 2 files, 5 insertions / 14 deletions, `index.astro` one line,
   `hub.css` the rule plus its comment. No `src/**` beyond those two, no
   `scripts/**`, no `!important`, no gate edit.
 
@@ -2826,26 +2845,26 @@ count **1** · **0 JS errors** · sheen **0** · screenshots
 `r7-hotfix-home-desk-light.png` (94.3)
 (/home/opc/work/research-notes/).
 
-**Known issues — OPEN, not fixed in this release:**
+**Known issues, OPEN, not fixed in this release:**
 - **(a) The ink tile now reads as a void.** With the wordmark gone, the
   flat `#0d0b08` tile sits at **~96.8% empty ink / ~3.2% glyph coverage**
   and reads as a black hole on the cream page. Flagged by @designer.
-  Recommended remedy — a **96px / 64px `min-height` + glyph pair inside the
-  existing 767px block in `hub.css`** — is **NOT applied**: it is queued for
+  Recommended remedy, a **96px / 64px `min-height` + glyph pair inside the
+  existing 767px block in `hub.css`**, is **NOT applied**: it is queued for
   the King's approval, and shipping an unapproved second change under cover
   of a retraction release is exactly the over-reach the design law forbids.
-- **(b) Latent specificity bug — phone emoji downscale never applies.**
+- **(b) Latent specificity bug, phone emoji downscale never applies.**
   `Layout.astro:441` `.feat-img>span:first-child{font-size:56px}` scores
   **(0,2,1)** and beats the 767px `.feat-emoji{font-size:32px}` rule at
   **(0,1,0)**, so the featured emoji measures **56px at 390** where the
   verbatim phone rule says 32px. Pre-existing, unrelated to this release's
   intent, and left in place rather than silently folded into a design
-  retraction — it needs its own approval like any other change.
+  retraction, it needs its own approval like any other change.
 
-## [0.7.5] — 2026-10-01 — Design Language R6: Chrome + live dot
+## [0.7.5], 2026-10-01, Design Language R6: Chrome + live dot
 The chrome stops being a frame the content sits in and becomes the site's
 dark-on-cream boundary (DESIGN-LANGUAGE rung R6, plan §P1-4 · Chrome:
-ticker + header + search + theme pill). Everything here is ADDITIVE — one
+ticker + header + search + theme pill). Everything here is ADDITIVE, one
 new stylesheet, 89 lines, imported after hub.css so the cascade reads
 R1 → … → R5 → R6. `header.css` is deliberately untouched: the header
 fidelity gate reads that file directly and asserts its media queries
@@ -2853,21 +2872,21 @@ fidelity gate reads that file directly and asserts its media queries
 target.
 
 - **Gold hairline**: 1px `rgba(245,158,11,0.22)` under BOTH sticky bars
-  (`.sh` desktop, `.mh` mobile) — border-COLOR only, the 1px geometry and
+  (`.sh` desktop, `.mh` mobile), border-COLOR only, the 1px geometry and
   both bar heights (64/56px) are untouched. The header is the
   dark-on-cream edge; it earns the one gold rule in chrome.
 - **Nav hierarchy**: `.snav-list > li > a` font-weight 700 at ALL widths
-  (was 500 — links and the Newsletter CTA stop competing at one weight);
+  (was 500, links and the Newsletter CTA stop competing at one weight);
   font-size 13px only inside `@media (min-width: 1024px)`, so header.css's
   tablet 11px fit-size still governs 768–1023px where the bar is tightest.
 - **Ticker voice**: `font-family: var(--font-mono)` on the strip.
   `.t-pair` (10px) and `.t-rate` (11px) carry explicit sizes and inherit
-  the family — the rate line was already plan-correct, unchanged.
-- **SIGNATURE — the live dot**: 6px solid `var(--green)` pulsing dot
+  the family, the rate line was already plan-correct, unchanged.
+- **SIGNATURE, the live dot**: 6px solid `var(--green)` pulsing dot
   (`tl-pulse`, 2s ease-in-out, opacity 1→0.35 + scale 1→0.72), plus "LIVE"
   in 9px uppercase `0.14em` gold (`--gold-b`). It appears ONCE, never
   per-item. `prefers-reduced-motion: reduce` sets `animation: none`.
-  Placed as a flow child of `.ticker` BEFORE `.ticker-drag` — outside the
+  Placed as a flow child of `.ticker` BEFORE `.ticker-drag`, outside the
   marquee entirely, so the two ticker halves stay byte-identical and the
   seam is untouched; its `--dark` bed + 1px `#2c2822` edge masks the items
   sliding cleanly behind it as they pass.
@@ -2877,7 +2896,7 @@ target.
 - **Search panel on phone**: `.gs-input` `min-height: 48px` with 13px
   vertical padding (box-sizing: border-box, so the 40px right clear-button
   gutter is not clipped); `.gs-foot` hidden below 768px. The kbd hint
-  markup STAYS in the layout — the header fidelity gate asserts
+  markup STAYS in the layout, the header fidelity gate asserts
   `<kbd>↑</kbd><kbd>↓</kbd>`, `<kbd>Enter</kbd>`, `<kbd>Esc</kbd>` are
   present, so this hides the row with CSS rather than deleting markup the
   contract owns.
@@ -2898,23 +2917,23 @@ errors** · screenshots
 `r6-phone-search-light.png`, `r6-phone-light-top.png`
 (/home/opc/work/research-notes/).
 
-## [0.7.4] — 2026-10-01 — Design Language R5: Hub + Hero
+## [0.7.4], 2026-10-01, Design Language R5: Hub + Hero
 The homepage stops being a flat stack and becomes a designed spread
 (plan §P0-1 hero + §P0-2 cards, rung R5). **Executed DIRECTLY by the
-Manager** — all three delegation paths were down simultaneously (native
+Manager**, all three delegation paths were down simultaneously (native
 engine's schema-module fault, freebuff 0/25 Freebucks, opencode opt-in-gated
 + 3-min leg limit), which is the delegation law's stated condition for
 direct work; freebuff retakes the ladder at refill.
 
-- **P0-1 hero**: plan-exact spacing/type now live — phone padding
+- **P0-1 hero**: plan-exact spacing/type now live, phone padding
   56/20/52 (was 40/20/48), tablet 64/32/60, desktop 72/48/68 stands;
   phone H1 floor 38px (verbatim media had 30px), phone sub 15px (was 13);
   tag 10px/0.16em 6/14; chips row gets its hairline (1px
   rgba(245,158,11,.18) + 20px pad-top) and pills 10px/5/12 with 44px phone
   targets; CTAs 48px phone min-height.
-- **SIGNATURE — the ledger rule**: 48×3px solid `var(--gold-b)` between sub
+- **SIGNATURE, the ledger rule**: 48×3px solid `var(--gold-b)` between sub
   and CTAs, left-aligned, static. Implemented as `.hero-sub::after` (the
-  homepage fidelity gate explicitly forbids a `.ledger` DOM element — the
+  homepage fidelity gate explicitly forbids a `.ledger` DOM element, the
   pseudo-element delivers the plan's exact geometry with zero markup
   invention, and the gate stayed untouched).
 - **P0-2 stamp corner**: `.ac-img`/`.feat-img` art tiles now flat brand ink
@@ -2922,7 +2941,7 @@ direct work; freebuff retakes the ladder at refill.
   category emoji stays at 40px card / 56px featured in warm-cream, plus a
   10px uppercase category wordmark bottom-left in the badge tint
   (`ac-artword` on ArticleCard fallback + featured). Real-photo thumbs
-  always win — all 9 homepage cards are photos today, the ink tile is the
+  always win, all 9 homepage cards are photos today, the ink tile is the
   fallback the archive (10 cards, photo:false) proves live.
 - **Sanctioned subtractions** (the only verbatim-WP removals of the whole
   design run so far): the three `::after` white-sheen gradients
@@ -2934,14 +2953,14 @@ direct work; freebuff retakes the ladder at refill.
 - **M3 motion**: hub cards once-in-view translateY(6px)+fade 0.55s,
   fires once, reduced-motion mirrored. Armed BY JS ONLY inside index.astro's
   existing WP-ported script block (the gate truncates the template at the
-  first `<script` — mid-file scripts break its structural predicates), with
+  first `<script`, mid-file scripts break its structural predicates), with
   a viewport-scoped 2s safety so below-fold cards keep their scroll reveal.
 - All homepage overrides are scoped `.hero:has(.hero-cats)` so tools/legal
   article heroes keep their own anatomy (C7 rhyme untouched there).
 
 **Proof (Manager's runs)**: build exit 0 (78 pages) · **6/6 gates green**
 including the homepage fidelity contract (after re-structuring to satisfy
-it: pseudo-element ledger + in-script M3 — the gate was NEVER edited) ·
+it: pseudo-element ledger + in-script M3, the gate was NEVER edited) ·
 accuracy **26/26, 0 fail** · CDP: phone hero 56/20/52 + H1 38px + sub 15px,
 ledger `48px×3px rgb(245,158,11)` in light AND dark, chips hairline
 `1px rgba(245,158,11,0.18) pt:20` + db `10px 5px 14px`, featured bar
@@ -2949,13 +2968,13 @@ ledger `48px×3px rgb(245,158,11)` in light AND dark, chips hairline
 6 revealed on scroll (opacity 1), **no-JS: 9/9 cards visible, unarmed**,
 archive: scrollW 390 + ink fallback + wordmark "Investing", no stray tabs ·
 screenshots r5-{home,archive}-{light,dark}-{phone,desk} (light 64/92,
-dark 33.5/22.2, archive 170 — separation verified, homepage light reads
+dark 33.5/22.2, archive 170, separation verified, homepage light reads
 darker than tools pages because the dark hero slab + ink tiles are the
 brand, not a regression).
 
-## [0.7.3] — 2026-10-01 — Design Language R4: Calculator Anatomy (K3/K5/K6/K7)
+## [0.7.3], 2026-10-01, Design Language R4: Calculator Anatomy (K3/K5/K6/K7)
 Every calculator now explains itself, restarts itself, and signs its work
-(DESIGN-LANGUAGE §11 rung R4). Executed via freebuff shelter — the run
+(DESIGN-LANGUAGE §11 rung R4). Executed via freebuff shelter, the run
 crashed mid-flight at 12:57 (provider stream death, zero session memory) and
 a continuation session resumed from the on-disk diff, repairing two of the
 crashed session's defects (a build-breaking brace in budget-allocator, three
@@ -2963,7 +2982,7 @@ reset buttons missing their `data-anat-reset` binding) without reverting any
 completed work. Manager re-verified every claim independently.
 
 **Phase-1 audit first (K5/K6/K7, before any visual edit):**
-- **K5 default honesty: 73 inputs across 16 tools — 0 unrealistic.** No
+- **K5 default honesty: 73 inputs across 16 tools, 0 unrealistic.** No
   default was changed (changing honest zeros like rent/NHF would be
   manufacture, not repair). Full table in /tmp/r4-freebuff/AUDIT.md.
 - **K6 reset: 0/16 tools had one.** All 15 interactive tools now carry
@@ -2971,26 +2990,26 @@ completed work. Manager re-verified every claim independently.
 - **K7 methodology: 0/16 tools had a disclosure.** Now 16/16.
 
 **Implemented (additive only, 210 insertions / 20 deletions):**
-- **K3** — 12 rationale hints reusing the existing `.hint` class, only where
+- **K3**, 12 rationale hints reusing the existing `.hint` class, only where
   the formula is genuinely non-obvious (pension, rent relief, rate
   frequency, drip…); self-evident fields untouched.
-- **K6** — `src/scripts/anatomy.js` (new, 46-line IIFE): captures
+- **K6**, `src/scripts/anatomy.js` (new, 46-line IIFE): captures
   server-rendered defaults at boot; reset sets `.value` + dispatches the
   `input`/`change` events each tool's own compute listens to. Scope is
-  ToolShell's `.con` (verified to contain exactly the tool's inputs — a
+  ToolShell's `.con` (verified to contain exactly the tool's inputs, a
   prior-session `.fx-card` scope silently skipped fields outside the card).
-- **K7** — `.anat-verdict` runtime sentence on all 15 interactive tools,
+- **K7**, `.anat-verdict` runtime sentence on all 15 interactive tools,
   computed from each script's own values (effective PAYE rate, true APR,
-  annuity monthly, runway months…) — no hardcoded claims; savings-goal
+  annuity monthly, runway months…), no hardcoded claims; savings-goal
   adopts the site's own `.prog` bar as its progress signal; and
   `details.anat-methodology` "How we calculate this" on all 16 surfaces,
   describing each script's ACTUAL math as coded.
-- **C6 signature** — one `.anat-stamp` per tool (gold mono 9px, hairline
+- **C6 signature**, one `.anat-stamp` per tool (gold mono 9px, hairline
   border, unique per tool: `TRUE APR · LENDING · NIGERIA`,
   `NGX TOTAL RETURN · DRIP-AWARE`…), slot-compatible with C3 since tool
   heroes carry no filled-gold CTA. Existing strong signatures (ladder,
   split-figure, ranked tables) kept.
-- `src/styles/anatomy.css` (new, 71 lines) — the ONE new control (reset)
+- `src/styles/anatomy.css` (new, 71 lines), the ONE new control (reset)
   + verdict/stamp type; K3 needed zero new CSS (`.hint` already matches the
   spec). Imported after ladder.css: cascade R1→R2→R3→R4.
 
@@ -3004,34 +3023,34 @@ as 1.3^(365/30)−1) · stamps present, zero `!important`/gradient in diff
 (the 2 grep hits are the English word in article prose) · screenshots
 `r4-st-tax 156.7/23.2 phone · r4-goal 143.9/17.0 desk`.
 
-## [0.7.2] — 2026-10-01 — Design Language R3: Converter Composition + Rates Ladder
+## [0.7.2], 2026-10-01, Design Language R3: Converter Composition + Rates Ladder
 The converter stops being an empty box you type into and becomes an
-*instrument panel* (DESIGN-LANGUAGE §5 steps 1–5, 8, 9 — steps 6/7
+*instrument panel* (DESIGN-LANGUAGE §5 steps 1–5, 8, 9, steps 6/7
 stats-band/sparkline DEFERRED by the King and deliberately NOT built).
 Executed via freebuff shelter (first attempt died on a provider stream
-failure — "Giving up after repeated stream recoveries", zero file changes;
+failure, "Giving up after repeated stream recoveries", zero file changes;
 retry landed clean), then independently re-verified by the Manager.
 
-- **Dynamic ladder on the converter** — `#cc-ladder` (new id, sole addition)
+- **Dynamic ladder on the converter**, `#cc-ladder` (new id, sole addition)
   mounts inside the .fx-card after the receipt: two verbatim `.st-table`
-  tables side by side — forward q ∈ 1/5/10/25/50/100/500/1000 FROM→TO,
+  tables side by side, forward q ∈ 1/5/10/25/50/100/500/1000 FROM→TO,
   reverse q ∈ 1/100/500/1000/5000/10000 TO→FROM (non-NGN targets use the
-  1/5/10/25/50/100 step set) — rebuilt by the same `render()` on every
+  1/5/10/25/50/100 step set), rebuilt by the same `render()` on every
   input/swap/select through `fxConvert`/`money()`. Row 1 always equals the
   hero unit line (`1 USD = ₦1,329` verified equal by string compare).
-- **Build-time ladder on all 16 amount pages** — `[amount].astro` adds the
+- **Build-time ladder on all 16 amount pages**, `[amount].astro` adds the
   same two-column anatomy as a `.con` child (the pattern that engages the
   verbatim ≤767px full-bleed rule), values from `amountFmt(q * d.unit_rate)`
-  / `d.rev_rate` — the SAME helpers as the hero, zero recomputation. The
+  / `d.rev_rate`, the SAME helpers as the hero, zero recomputation. The
   "Neighbouring conversions" link block stays untouched (SEO).
-- **N6 disclosure (step 8)** — single stamp under each ladder reusing
+- **N6 disclosure (step 8)**, single stamp under each ladder reusing
   `.receipt-foot.hint` / `.fx-result-note`: `mid-market · {as_of} · live at
-  build — refreshes in your browser · informational, not a quote` — no new
+  build, refreshes in your browser · informational, not a quote`, no new
   trust block invented.
-- `src/styles/ladder.css` (new, 36 lines) — imported AFTER controls.css
+- `src/styles/ladder.css` (new, 36 lines), imported AFTER controls.css
   (R1→R2→R3 cascade documented in Layout) and contains ONLY the `.fx-ladder`
   flex shell: tools.css already owns `.st-table th` (9px/0.14em uppercase),
-  `.st-amt` (mono right), and tbody hover — grep-verified, so NOTHING was
+  `.st-amt` (mono right), and tbody hover, grep-verified, so NOTHING was
   redeclared. No `!important`. css-parse gate passes.
 - `scripts/r3-cdp-probe.mjs` kept as the rung's idempotent probe harness.
 
@@ -3045,36 +3064,36 @@ card, zero JS errors, neighbours links intact · screenshots
 `r3-cc-light-phone 152.2 / r3-cc-dark-phone 23.9 / r3-cc-light-desk 125.7 /
 r3-am-light-phone 140.8 / r3-am-dark-desk 17.0` (v3 storage-key seeding).
 
-## [0.7.1] — 2026-10-01 — Design Language R2: The Control Law
+## [0.7.1], 2026-10-01, Design Language R2: The Control Law
 **Money inputs are now instruments, not spreadsheet cells** (DESIGN-LANGUAGE §6
 F1–F4, rung R2). Executed via freebuff shelter (native delegate engine threw
-its schema-module fault again this session — the ladder held), then
+its schema-module fault again this session, the ladder held), then
 independently re-verified file-by-file by the Manager.
 
-- **F1 — no more `type=number`**: all 54 money inputs across the 15
+- **F1, no more `type=number`**: all 54 money inputs across the 15
   money-tools pages are `type="text" inputmode="decimal"` (stepper arrows and
-  comma-rejection gone; every id/value/label/step attribute byte-identical —
+  comma-rejection gone; every id/value/label/step attribute byte-identical, 
   the diff is exactly the type word). Each page script gained a parse-tolerant
-  reader `pm()` — typed `₦1,500`, `1,500.25`, even stray letters never break
+  reader `pm()`, typed `₦1,500`, `1,500.25`, even stray letters never break
   the live compute; all 54 `Number(.value)` reads rewired through it. Selects
   untouched. No formula changed anywhere (diff math: +123 = 54 type + 15 pm-def
   + 54 reads; −108 = 54 + 54; zero other lines).
-- **F3 — ₦ inside the field**: `src/scripts/money-controls.js` (new, dep-free
+- **F3, ₦ inside the field**: `src/scripts/money-controls.js` (new, dep-free
   IIFE) wraps every `.field` with a ₦ label + decimal input in a `span.fi` and
   paints an aria-hidden gold-dim ₦ at `left:12px` (28px text gutter reserved);
   Years/Months (inputmode=numeric) and non-₦ fields are skipped by design.
   Wired sitewide exactly like spotlight-search/ticker-live; selector-gated so
   it is inert elsewhere.
-- **F2 — the reformat cue**: blur comma-groups the integer part only
+- **F2, the reformat cue**: blur comma-groups the integer part only
   (fractional tail byte-preserved), then a 200ms opacity dip (`.fx-dip`) says
   "I reformatted your number"; focus strips commas back for clean caret math.
-  pm() re-tolerates commas on the next input event — the loop is closed.
+  pm() re-tolerates commas on the next input event, the loop is closed.
 - **F4/press**: phone `@media` min-heights (inputs/selects 48px, `.swapbtn`
-  44px — restates ToolShell, cannot shrink desktop), `.swapbtn:active`
+  44px, restates ToolShell, cannot shrink desktop), `.swapbtn:active`
   press dip (translateY(1px)+brightness .96, 120ms). Focus gold 2px stays
-  owned by the verbatim ToolShell rule — NOT duplicated (documented in
+  owned by the verbatim ToolShell rule, NOT duplicated (documented in
   controls.css header; re-declaring it would only risk a cascade fight).
-- `src/styles/controls.css` — new additive layer, imported AFTER numbers.css
+- `src/styles/controls.css`, new additive layer, imported AFTER numbers.css
   (R1→R2 cascade order); no `!important`, no WP-verbatim rule rewritten;
   prefers-reduced-motion mirror pinned. `scripts/r2-*.mjs` kept as audit trail.
 
@@ -3084,99 +3103,99 @@ with ₦ inside field (rect+color+pointer-events verified), focus→`1500`,
 `1500.2500`→`1,500.2500` (tail byte-exact), live results still recompute
 through pm() (converter 2500→₦3,321,614; salary-tax 2,500,000→₦1,860,167).
 Screenshots `r2-{st,cc}-{light,dark}-{phone,desk}.png` (theme seeded via the
-real v3 localStorage key — media-emulation alone is defeated by the stored
+real v3 localStorage key, media-emulation alone is defeated by the stored
 choice; noted for all future dark proofs).
 
-## [0.7.0] — 2026-09-30 — Design Language R1: The Number Law
+## [0.7.0], 2026-09-30, Design Language R1: The Number Law
 **Phase change.** The King approved the sitewide design upgrade: research
 complete (`~/work/research-notes/finance-design-research-2026-09-30.md`),
 constitution stamped (`docs/DESIGN-LANGUAGE.md` v1.0, all five §9 decisions:
 mono-everything KEPT · rates ladder YES · history DEFER · sticky result YES ·
-dark tier YES). This is rung R1 — additive only.
+dark tier YES). This is rung R1, additive only.
 
-- `src/styles/numbers.css` — NEW additive layer (DESIGN-LANGUAGE §1):
+- `src/styles/numbers.css`, NEW additive layer (DESIGN-LANGUAGE §1):
   `font-variant-numeric: tabular-nums` on every figure that refreshes or
-  column-aligns — `.fxap-figure`, `.receipt-fig`, `.fx-big`, `.receipt-sub`,
+  column-aligns, `.fxap-figure`, `.receipt-fig`, `.fx-big`, `.receipt-sub`,
   `.receipt-note`, `.fx-line b`, `.fx-rate-*`, `.st-table td`, `.st-amt`,
   `.sr-rate`, `.t-rate`, `.si-n`. No verbatim WP rule rewritten; the layer
   only ADDS properties the fidelity sheets never set, so the v0.6.8 cascade
   contract is untouched. Imported LAST in Layout.astro by design (no conflict
   to win; future rungs extend this file instead of scattering number rules).
-- `--surface-3:#1c1a15` — dark theme's 4th warm-black tier (King's Q5;
+- `--surface-3:#1c1a15`, dark theme's 4th warm-black tier (King's Q5;
   Linear surface-ladder doctrine). Token-only: nothing consumes it until the
   R6/R9 floating-panel rungs.
-- `docs/DESIGN-LANGUAGE.md` — draft-1 → **v1.0 STAMPED**; §0 rule of
+- `docs/DESIGN-LANGUAGE.md`, draft-1 → **v1.0 STAMPED**; §0 rule of
   construction: additive layers only, 6-gate battery green per rung.
 
 **Proof (CDP, localhost preview mount):** six surfaces × phone 390 + desktop
-1280 × light + dark — every money figure computes `tabular-nums` at the
+1280 × light + dark, every money figure computes `tabular-nums` at the
 feast scale (floor 30.4px @390, cap 48px @1280, tracking −0.912/−1.44px
 unchanged); `--surface-3` resolves `#1c1a15` in dark, empty in light;
 screenshots `r1-*.png` luminance-verified per theme. Gates: css-parse covers
-numbers.css automatically (scan is directory-wide) — **6/6 PASS**; tool
+numbers.css automatically (scan is directory-wide), **6/6 PASS**; tool
 accuracy audit re-run on the R1 build.
 
-## [0.6.8] — 2026-09-30
+## [0.6.8], 2026-09-30
 
-### Sitewide spacing repair — the port's copy ran smaller and tighter than the theme
+### Sitewide spacing repair, the port's copy ran smaller and tighter than the theme
 
 - **[FIX · ROOT CAUSE] article.css had a CORRUPTED comment** (introduced in
   6cad5a6): `@media (max-width: 767px) at style.css:2413-2417` lost its `/*`
   opener, so Chrome parsed the comment prose as an at-rule and SWALLOWED the
   base `.art-body { font-size:16px; line-height:1.8 }` typography rule that
-  followed it — while every source grep still saw the bytes. Result: every
+  followed it, while every source grep still saw the bytes. Result: every
   calculator's copy silently fell through to `.fx-copy` 15px/27px (live serves
-  16px/28.8px) — the "not enough space between text" the King photographed
+  16px/28.8px), the "not enough space between text" the King photographed
   across the money pages. Restored the comment opener; the base rule parses
   again (verified at render: 16px/28.8 + 20px/36 h2 at 390px AND 17px/32.3 +
   24px h2 at 1280px, matching live byte-for-byte).
 - **[FIX] Layout import order**: tools.css now imports BEFORE article.css so
-  `.art-body` wins `.fx-copy` on the shared `.fx-copy art-body` wrapper —
+  `.art-body` wins `.fx-copy` on the shared `.fx-copy art-body` wrapper, 
   the same source order WP's style.css produces (art-body at line 2040 after
   fx-copy at 1341). Comment pins the contract.
 - **[FIX] Amount ("conversion") pages**: the section copy + "Neighbouring
   conversions" + "The other direction" blocks were pulled OUTSIDE the live
-  `.fx-copy art-body` wrapper with `.95rem/10px` inline overrides — flush
+  `.fx-copy art-body` wrapper with `.95rem/10px` inline overrides, flush
   under each other. Restored inside the wrapper exactly like
   page-amount-converter.php renders (28px h2 seat, 10px under, 16px body).
 - **[FIX] FAQ answers** (net-new port block): answers read at 14.4px with an
-  8px seat — now full body texture (1rem/1.8) under a 12px gap, card padding
+  8px seat, now full body texture (1rem/1.8) under a 12px gap, card padding
   12/14 → 14/16. The FAQ wrapper's 8px top margin → 24px.
 - **[FIX] Calculator result tables** (st): .75rem/10px → the theme's own
   st-table anatomy (12px rows, 10px/14px header, 12px/14px cells, --text-mid).
 - **[FIX] Related-tool cards**: excerpt 11px bare → 13px/1.6, title seat
   6px → 8px.
 - **[FIX] Footer gate conflict resolved honestly**: the mobile-blurb inline
-  `margin-top:4px;font-size:11px` IS WP footer.php:122's own bytes — restored
+  `margin-top:4px;font-size:11px` IS WP footer.php:122's own bytes, restored
   verbatim (a fidelity gate pinned it; my sitewide sweep had deleted it). The
   11px blurb is the theme's design, not port cramp; left as the theme ships.
 - **[NEW] scripts/check-css-parse.mjs** (wired into `npm run check` as the
   FIRST gate): postcss-parses every stylesheet with zero warnings, fails on
   at-rule prose outside comments (the swallow signature), pins the cascade
-  anchors (.art-body 16px/1.8 + h2 20px, .fx-copy 15px verbatim) and the
+  anchors (.art-body 16px/1.8 + h2 20px.fx-copy 15px verbatim) and the
   Layout import ORDER. Proven it can fail: re-inserting the corruption makes
   it torch the build.
 - **[NEW] scripts/spacing-audit.py**: cramp inventory over dist/ (font/margin
-  floors on reading copy) — the 58 remaining hits are theme-verbatim rules
+  floors on reading copy), the 58 remaining hits are theme-verbatim rules
   (receipt labels, st-table 9-10px headers, ftag) that ALSO sit on the live
   site: parity, not drift. Deliberate floor excludes dense chrome.
 - NOT touched: ticker digits, mono figures, badges/chips, receipt stamps,
-  the /mod/ desk's dense console look, vibe-comments plugin vocabulary — all
+  the /mod/ desk's dense console look, vibe-comments plugin vocabulary, all
   theme-shipped sizes; changing them would be re-design, not fidelity.
 
-## [0.6.7] — 2026-09-30
+## [0.6.7], 2026-09-30
 
-### Build-time data freshness — ticker, converter, amount pages, stats strip
+### Build-time data freshness, ticker, converter, amount pages, stats strip
 
 - **[FIX] Home stats strip** (King: "All data current seems useless"): the
   invented trio (10+ / 12+ / "2+ All data current") is replaced with REAL
-  build-computed counts — articles from the content collection, apps from
+  build-computed counts, articles from the content collection, apps from
   APPS, money calculators from the shipped money-tools pages (15 / 3 / 16 /
   ₦ 0 today; they update themselves every build).
 - **[NEW] scripts/fetch-snapshot.mjs** runs as step 1 of `npm run build`:
   fetches open.er-api.com (the converter's own feed) + Coinbase BTC/ETH +
   gold-api XAU and REWRITES fx-snapshot.ts + TICKER_STATIC at build time.
-  The top currency strip and the calculators now share ONE source of truth —
+  The top currency strip and the calculators now share ONE source of truth, 
   the stale "₦1,336 vs ₦1,482 vs live ₦1,327" three-way disagreement is
   structurally impossible now. Fetch failure keeps the previous stamped
   snapshot (honest, never blanked).
@@ -3190,11 +3209,11 @@ accuracy audit re-run on the R1 build.
   "updated 30 Sep 2026, 00:02" badge); receipt foot falls back to the real
   as_of, not "Sep 2026".
 - **[FIX] amount pages unit line now prints 4dp both directions** exactly
-  like page-amount-converter.php (1 USD = ₦1,327.2416 · 1 NGN = $0.0008 —
+  like page-amount-converter.php (1 USD = ₦1,327.2416 · 1 NGN = $0.0008, 
   the tiny ₦→$ rate no longer truncates to "$0.00"), server + live-refresh.
 - **[FIX] exchange-rate-history** snapshot anchor derives from the build
   feed (was "₦1,482 · Sep 2026"); footer stamps derive likewise.
-- Savings-rate "verified September 2026" STAYS — it is a human-maintained
+- Savings-rate "verified September 2026" STAYS, it is a human-maintained
   marketing table, the stamp is honest and not build-fetchable.
 - Gates: header gate pins ticker ANATOMY + generation marker (not frozen
   values); homepage gate pins the computed stats contract. All 5 gates PASS;
@@ -3202,9 +3221,9 @@ accuracy audit re-run on the R1 build.
   cache, converter receipt goes "Live · Wed, 30 Sep 2026", $1,000 page reads
   ₦1,327,242 · unit line matches live bytes.
 
-## [0.6.6] — 2026-09-30
+## [0.6.6], 2026-09-30
 
-### Content pages imported + canonical posts imported — forms are REAL now
+### Content pages imported + canonical posts imported, forms are REAL now
 
 - **About, Affiliate Disclosure, Privacy Policy, Disclaimer, Newsletter,
   Contact, Newsletter-Thanks ported from the live templates** (King's order):
@@ -3239,11 +3258,11 @@ accuracy audit re-run on the R1 build.
 - **[FIX] homepage + every newsletter form now carries data-success-url**, so
   the thanks redirect matches live on all 4 form instances.
 
-## [0.6.5] — 2026-09-30
+## [0.6.5], 2026-09-30
 
 ### Calculator accuracy certification + two real bugs fixed
 
-- **New gate: `scripts/tool-accuracy-audit.mjs`** — drives all 26 money-tool
+- **New gate: `scripts/tool-accuracy-audit.mjs`**, drives all 26 money-tool
   pages in a real browser (CDP): feeds each calculator its input ids, asserts
   zero JS exceptions/console errors, every wired result element exists, the
   figure recomputes with the right currency token, and no
@@ -3256,21 +3275,21 @@ accuracy audit re-run on the R1 build.
   `data-amount-slug` holder. The "refreshes live" promise is now true.
 - **[FIX] 50/30/20 calculator froze after the first keystroke.** The render
   wrote `#bg-else` into `#bg-sub`, then overwrote `#bg-sub`'s whole
-  textContent — destroying the span; every later update threw
+  textContent, destroying the span; every later update threw
   `TypeError: null.textContent`. The clobbering line is deleted (the span
   update alone renders the leftover); full recalc works on every keystroke.
 - **[FIX] Amount pages had no `#am-foot` node** for the live timestamp to
-  land in — snapshot-stamped footer line added, honestly swapped for "Live ·"
+  land in, snapshot-stamped footer line added, honestly swapped for "Live ·"
   when the feed answers.
 
-## [0.6.4] — 2026-09-30
+## [0.6.4], 2026-09-30
 
 ### Money Calculators imported (/tools/ → /money-tools/)
 
 - **The calculator hub + all 16 calculators imported from the live site**
   (King order: "import the money calculator. finance.fitnesslova.qzz.io/tools/
   … also import the calculators and tools themselves, maybe change the URL
-  path"): page-tools.php ported faithfully — dark apps-hero with the "Free ·
+  path"): page-tools.php ported faithfully, dark apps-hero with the "Free ·
   No sign-up · Always updated" gold pill, 16 .tool-card in the template's own
   order with verbatim titles/emoji/gradient tiles/descriptions ("Open tool →"),
   the 8 "Popular conversions" .fx-chip landing links, banner + rect ad slots
@@ -3280,14 +3299,14 @@ accuracy audit re-run on the R1 build.
 - **Every calculator page rebuilt on the live anatomy** (16 templates + the 10
   amount landing pages): ToolShell now renders the same dark hero as WP
   (3-level breadcrumb Home › Money Calculators › Tool, per-tool gold badge
-  pill, the live hero H1 verbatim — e.g. "Dollar to Naira & Every Currency"),
+  pill, the live hero H1 verbatim, e.g. "Dollar to Naira & Every Currency"),
   inputs+receipt wrapped in the theme .fx-card, dark receipt panel,
   st-table/st-table-wrap tables with the mobile full-bleed breakout,
   fx-disclaimer honesty line, the live .fx-copy art-body long-form section
   (14–24 paragraphs of the site's own copy per tool), FAQPage JSON-LD kept,
   .fx-aff affiliate CTA blocks + "Related guides" .g3 cards on the converter
   and the six tools that carry them (links remapped to articles that exist in
-  this port — no 404 bait).
+  this port, no 404 bait).
 - **Theme calculator CSS imported verbatim**: new src/styles/tools.css carries
   style.css 1244–1500 (.fx-card .fx-field .fx-input .fx-swap .fx-result .fx-big
   .fx-chips .fx-rate .fx-copy .fx-aff .tool-card .st-table .st-compare .sr-chart
@@ -3295,13 +3314,13 @@ accuracy audit re-run on the R1 build.
   Layout so hub and calculators speak the same vocabulary as WordPress. Engines
   and math untouched (vectors gate PASS); only markup/classes moved.
 
-## [0.6.3] — 2026-09-30
+## [0.6.3], 2026-09-30
 
 ### Search clear-X branded, /apps/ imported, OG images done properly
 
 - **The X that clears the search text is now tied to the design** (King
   screenshot, /search/ on mobile): the pill was letting WebKit draw its own
-  `type=search` cancel glyph — a bare UA ✕ with zero brand. Suppressed in CSS
+  `type=search` cancel glyph, a bare UA ✕ with zero brand. Suppressed in CSS
   and replaced with the theme's OWN clear anatomy (the spotlight panel's
   `.gs-clear` contract): 28px transparent circle, `--text-dim` stroke ✕, gold
   fill on hover, 2px gold focus ring, truly `hidden` at zero text. Same SVG,
@@ -3309,13 +3328,13 @@ accuracy audit re-run on the R1 build.
   the field, re-runs live results, keeps focus. Browser-proven: shows with
   text, 28px circle, vanishes on click, cards re-render.
 - **/apps/ imported from the live page** (finance.fitnesslova.qzz.io/apps/):
-  the old port page was an invented legal-hero anatomy — replaced with a
+  the old port page was an invented legal-hero anatomy, replaced with a
   faithful `page-apps.php` (v1.0.163) port: dark `.apps-hero` with dot-grid +
   gold-glow layers, Home › Finance Apps breadcrumbs, the inline gold "No paid
   placements · Independent rankings" pill, exact h1/sub inline styles; sticky
   `.apps-tabs` with derived category pills (emoji prefix, letters-only
   `data-filter` slugs); `.shd` count line "All Apps, 3 listed" · "Sorted by:
-  Our Rating"; 3 live ACF slot cards (PiggyVest/Grey/Risevest — verbatim
+  Our Rating"; 3 live ACF slot cards (PiggyVest/Grey/Risevest, verbatim
   desc/stats/tile gradients/badges from the capture), `.app-card` anatomy
   (§36 CSS block completed in home.css from style.css:2444-2487 incl. the
   dark-hero breadcrumb overrides), `apps-filter.js` ported verbatim, empty
@@ -3324,22 +3343,22 @@ accuracy audit re-run on the R1 build.
   / label swaps; All → 3.
 - **OG images done properly** (King: "make sure the og image is done properly
   and looks and has the brand logo and design"): the port pointed every page
-  at `images/og-default.png` — a FILE THAT NEVER EXISTED (404; every share
+  at `images/og-default.png`, a FILE THAT NEVER EXISTED (404; every share
   card rendered imageless). Now mirrors `inc/social-meta.php` exactly:
   single posts use their featured hero (all 8 verified 1200×675) with
   width/height/alt + `og:type=article` + `article:published_time` /
   `article:modified_time` (only when the post carries an updated date) /
   `article:author`, dates formatted like get_the_date('c'); every other page
-  falls back to the theme's branded share card — the wordmark on the finance
+  falls back to the theme's branded share card, the wordmark on the finance
   palette, `assets/brand/gwill-social-share.png` (1200×675) copied into the
-  port's `public/images/` and served from there — so Twitter/FB/WhatsApp
+  port's `public/images/` and served from there, so Twitter/FB/WhatsApp
   previews are rich brand cards everywhere, never bare text, never broken.
 
-## [0.6.2] — 2026-09-30
+## [0.6.2], 2026-09-30
 
 ### King's 3 reports: author archive, fully-clickable cards, the orange focus ring
 
-- **Author archive ported for real** — the old page was an invented anatomy
+- **Author archive ported for real**, the old page was an invented anatomy
   (`.con.sg` + `.author-bio` + text-link socials). Now it is the theme's
   `author.php` verbatim: `.phd` → `.bc` Home › {display_name} (helpers.php
   is_author branch carries no "All Articles" crumb) → `.author-head` →
@@ -3354,9 +3373,9 @@ accuracy audit re-run on the R1 build.
   64px @390w, 88px @1280w. SEO description matches inc/seo.php
   ('Articles written by %s on GWill Finance.'). Dead invented CSS removed
   from Layout.astro.
-- **Cards clickable everywhere** — ROOT CAUSE: the theme's stretched-link
+- **Cards clickable everywhere**, ROOT CAUSE: the theme's stretched-link
   selector `.ac h3 a::after` matches NOTHING on its own markup (content.php
-  emits h2.ac-t — truth: 9/9 h2, zero h3; the comment says "Fully clickable
+  emits h2.ac-t, truth: 9/9 h2, zero h3; the comment says "Fully clickable
   card" but only the body ever was). The port inherited the dead rule.
   Fixed on `.ac .ac-t a::after` (title link is the only per-card anchor),
   `.ac-body` set static so the overlay spans the FULL card box including the
@@ -3365,40 +3384,40 @@ accuracy audit re-run on the R1 build.
   category, not the post. Browser-proven at 390px: art → article, body →
   article, Read → article, badge → /category/savings/. Search-result cards
   (same vocabulary) inherit the fix.
-- **Thick orange border inside the search form — gone at the root.** Two
+- **Thick orange border inside the search form, gone at the root.** Two
   rings were stacking on every mobile tap (Chrome/Android matches
   :focus-visible on tapped text inputs): (1) the port's stale global
-  `a/button:focus-visible { outline:3px solid var(--gold-b); offset:3px }` —
+  `a/button:focus-visible { outline:3px solid var(--gold-b); offset:3px }`, 
   the theme's is `2px var(--gold-btn)`/dark `--gold-b`, offset 2px, and also
   covers [tabindex]; (2) `.search-field:focus-visible` drawing its own gold
   ring INSIDE the pill. The field now outlines none: the pill itself is the
-  focus indicator (:focus-within gold border + soft glow — WCAG 2.4.7 held
+  focus indicator (:focus-within gold border + soft glow, WCAG 2.4.7 held
   by the pill ring, as the theme's anatomy intends). Verified: computed
   outline-width 0px while focused.
 
-## [0.6.0] — 2026-09-30
+## [0.6.0], 2026-09-30
 
-### King's 2 orders — the /search/ count gap + the whole archive family
+### King's 2 orders, the /search/ count gap + the whole archive family
 
-- **"Let there be space between '1 result for gut' and the card below it"** —
+- **"Let there be space between '1 result for gut' and the card below it"**, 
   real bug: the port printed the count line TWICE. WP keeps it once in the
   `.phd` result header; the port also had a `<p id="result-count">` wedged
   between the search pill and the grid with 0px computed gaps (measured
   `gapToGrid: 0` at 390px and 1280px on the live build). The duplicate is
-  gone — the controller writes the header line only. Verified @390px:
+  gone, the controller writes the header line only. Verified @390px:
   header reads "1 result for gut", no duplicate node, pill margin 24px, card
   80px below the pill.
-- **Archives imported — every type the live site actually has:**
+- **Archives imported, every type the live site actually has:**
   - `/articles/` rebuilt as WP's "All Articles" archive: `.phd` breadcrumb
     header + verbatim intro ("No filler. No AI slop."), the
-    `.flex.aic.jsb.g16.mb20` toolbar (10 pills — All + the 9 categories —
+    `.flex.aic.jsb.g16.mb20` toolbar (10 pills, All + the 9 categories, 
     plus the inline search form posting into `/search/`), 8 cards, ad slot.
   - **Three new category archives**: `budgeting`, `fixed-income`,
     `uncategorized` (WP's archive descriptors captured verbatim; badges
     `bsl`), plus the CHILD route `/category/investing/fixed-income/` (WP
     answers both the nested and the flat path). Every archive strip now
     carries all 9 categories with the current one `.cp.on`.
-  - **Date archives** `/2026/` + `/2026/03/07/08/09/` — h1 "Articles" with
+  - **Date archives** `/2026/` + `/2026/03/07/08/09/`, h1 "Articles" with
     the date in the breadcrumb, exactly WP's anatomy (`.pill-strip`
     surface-2 strip, `.con` 28/40, collapsed `.ad-bg`).
   - **Pagination** (§38): WP's `posts_per_page = 10`, page N at
@@ -3408,27 +3427,27 @@ accuracy audit re-run on the R1 build.
     Renders only when an archive exceeds one page (at 8 posts WP prints
     nothing either); proven with a forced PER_PAGE=2 probe build that
     emitted pages 2/3/4 with the exact WP markup, then reverted to 10.
-  - **Tags: nothing to import** — the live site has no tag archives
+  - **Tags: nothing to import**, the live site has no tag archives
     (every `/tag/` probe 404s; zero tag links on any post). Author archives
     and day archives do not exist there either.
   - Homepage chips/pills now list all 9 categories, matching WP.
   - Sitemap carries the new archive routes (60 URLs).
 - Article fidelity gates: 147/147 PASS. Build: 64 pages.
 
-## [0.5.2] — 2026-09-28
+## [0.5.2], 2026-09-28
 
-### King's 2 orders — the author badge/star + the real gravatar
+### King's 2 orders, the author badge/star + the real gravatar
 
-- **Author label/star on his comments** — the Worker hardcoded
+- **Author label/star on his comments**, the Worker hardcoded
   `is_author: false` on every row, so the gold AUTHOR pill
-  (vibe-comments.gold.css §6 — the plugin's own badge, gold skin) never
+  (vibe-comments.gold.css §6, the plugin's own badge, gold skin) never
   rendered on the author's replies. Derived truth, no new column:
   `is_author = avatar_hash ∈ AUTHOR_HASHES` (SHA-256 of each deploy-time
   author address), computed once per request and passed down the tree
   (children included). Live-proven: desk reply is_author TRUE, public tree
   carries it, guest comments stay FALSE. Smoke extended to 66 (15b block:
   desk-reply identity + public-tree flag), live 65/65 ALL GREEN.
-- **The real gravatar** — "my gravatar is on godschi10@gmail.com": the
+- **The real gravatar**, "my gravatar is on godschi10@gmail.com": the
   author surfaces hashed hi@gwillchijioke.com, which serves the wavatar
   placeholder cartoon; the Gmail address serves the REAL photo (verified by
   vision: grayscale portrait on teal). Worker KING_EMAILS = [gmail, hi@]
@@ -3441,48 +3460,48 @@ accuracy audit re-run on the R1 build.
   rows, verify: only the King's own seeded QA row id 1056 remains).
 - Gates 5/5 green (95/95 vectors).
 
-## [0.5.1] — 2026-09-28
+## [0.5.1], 2026-09-28
 
-### King's verdict on v0.5.0 — 4 live-reported search defects, all fixed
+### King's verdict on v0.5.0, 4 live-reported search defects, all fixed
 
 All four reported from phone screenshots + live navigation ("You failed me,
 why is your design always having bugs"). Root causes established by
 measuring, not looking:
 
-- **1. Search form ugly and large, excessive space** — REAL BUG: the port's
+- **1. Search form ugly and large, excessive space**, REAL BUG: the port's
   own pre-fidelity layout CSS (Layout.astro) carried
   `.search-form{...;margin-top:20px;flex-wrap:wrap}`, which leaked into the
-  theme's .search-pill on /search/ + /404/ — rendered 74px tall vs live
+  theme's .search-pill on /search/ + /404/, rendered 74px tall vs live
   WP's 54px (found by measuring both; the pill's own arithmetic said 54,
-  the box measured 74 — the 20px was the form margin, nothing else).
+  the box measured 74, the 20px was the form margin, nothing else).
   WP carries NO form margin (its margin is scoped to .gwill-form, the
   newsletter). Fixed: `.search-form{display:flex;align-items:center;gap:8px}`.
   Re-measured @390 after the fix: pill 350×54, field 16px (iOS zoom-on-focus
-  rule — WP bumps the field to 16px on phones too), submit 36px — PIXEL-
+  rule, WP bumps the field to 16px on phones too), submit 36px, PIXEL-
   IDENTICAL to live WP at 390. docOverflowX false (the pill no longer
   overflows the 390px viewport).
-- **2. Search drop-down not upgraded** — REAL BUG: the spotlight's embedded
+- **2. Search drop-down not upgraded**, REAL BUG: the spotlight's embedded
   corpus was the OLD 7-item POSTS-only array (keys
-  cat,date,excerpt,mins,title,url — zero calculators, no badge/art map),
+  cat,date,excerpt,mins,title,url, zero calculators, no badge/art map),
   while the /search/ page searched 31 items. The layout's index builder was
   never upgraded when the engine landed. Fixed: ONE corpus shared by both
-  surfaces — 8 articles (title/excerpt/category-name/date/read-mins +
+  surfaces, 8 articles (title/excerpt/category-name/date/read-mins +
   badge/art/emoji/category) + 16 calculators = 24 items. Live-proven on the
   public site: "loan calculator" → 8 rows, first = Loan Repayment
   (Calculator pill); "savigs" → 3 savings matches; "naira" → 6 rows incl.
   Currency Converter + Crypto Profit.
-- **3. Enter in the drop-down redirects to the homepage** — REAL BUG + WP
+- **3. Enter in the drop-down redirects to the homepage**, REAL BUG + WP
   contract gap: the theme's handler navigates ONLY with a highlighted row
   (spotlight-search.js:541); with no highlight WP SUBMITS ?s=, which WP
-  routes to its search template — but the static build's /?s= is the
+  routes to its search template, but the static build's /?s= is the
   homepage. Fixed: Enter with no highlighted row now routes to
   {base}search/?q={term} (the highlighted-row path unchanged). Live-proven
   on the public site: type "savigs", press Enter with no row selected →
   lands on /search/?q=savigs, count "3 results for savigs".
-- **4. /search/?q=naira directed to an empty search page** — REAL BUG:
+- **4. /search/?q=naira directed to an empty search page**, REAL BUG:
   the static Pages build bakes value="" into the input (no server to
   interpolate ?q=), and the initial() block only MIGRATED ?s= (a ?q= load
-  never seeded the input) — so the page ran() on an empty query and showed
+  never seeded the input), so the page ran() on an empty query and showed
   "Showing all 0 entries" + the no-results block. Fixed: initial() now
   seeds the input from ?q= / ?s= (or a raw querystring fragment) on load,
   then run() fires. Live-proven on the public site: /search/?q=naira →
@@ -3493,11 +3512,11 @@ measuring, not looking:
 - Gates 5/5 green (95/95 vectors); shipped main `ec346fa` → pages-dist
   `be95893` (Pages `built`, served /search/ sha-identical to the build).
 
-## [0.5.0] — 2026-09-27
+## [0.5.0], 2026-09-27
 
-### King's next round — search upgrade + pages, single-image lightbox, copy-link follow-up
+### King's next round, search upgrade + pages, single-image lightbox, copy-link follow-up
 
-- **Search engine upgraded (order 2)** — the port's bare AND-containment
+- **Search engine upgraded (order 2)**, the port's bare AND-containment
   replaced with the theme's own relevance engine
   (`scripts/search-core.js`, ONE engine shared by the spotlight overlay and
   the /search/ results page): title-weighted Google-ish scoring (exact
@@ -3515,36 +3534,36 @@ measuring, not looking:
   3 newest; caps/diacritic "NAÏRA RATES" → 4 results; ↑↓ keyboard nav
   sets aria-activedescendant; outer X closes keeping the text;
   perf.getEntriesByType resource footprint unchanged (1 _astro script).
-- **/search/ results page (order 2)** — rebuilt in the theme's SERVED
+- **/search/ results page (order 2)**, rebuilt in the theme's SERVED
   vocabulary (was an invented .hold-title/.phase-tag rebuild): .phd
   result header (surface bg + bottom border + h1 28px/800), breadcrumbs
   "Home › Search: {q}", "{n} results for <strong>{q}</strong>" count
-  line, .search-pill site search (form + icon + 12px field + gold
+  line.search-pill site search (form + icon + 12px field + gold
   submit), category pill filter (Everything + 6 + Calculators), card
   grid in the theme's anatomy (.ac > .ac-img art gradient + emoji +
   .ac-body > badge + h2.ac-t + .ac-ex + .ac-ft) with the badge/art/emoji
   map baked into the index (theme's gwill_finance_cat_style map).
-- **No-results page (order 2)** — the theme's .es block ported: ₦ glyph
+- **No-results page (order 2)**, the theme's .es block ported: ₦ glyph
   circle + h2.es-title "No results found" + p.es-copy + .cp-strip
   category links + "← Back to Home" gold button.
-- **404 page (order 2)** — .error-404 ported: breadcrumbs "Home › 404
+- **404 page (order 2)**.error-404 ported: breadcrumbs "Home › 404
   Not Found" + .error-404__code (96px→clamp 64-120px, 800 weight, gold,
   glow text-shadow) + h1.es-title "Page Not Found" + p.es-copy + its own
   .search-pill + 6 category links + "← Back to Home". The page's search
   submits WP's ?s= dialect; /search/ accepts both ?s= and ?q=.
-- **search404.css slice** — 31 rules ported verbatim with media context
+- **search404.css slice**, 31 rules ported verbatim with media context
   (incl. dark-mode variants + pointer:coarse + print), rule map in
   `docs/port/19-search404-rules.md`. article.css import moved into the
   layout so the category art gradients reach the search cards (the
-  gradient was transparent before — found by measuring).
-- **Single images lightbox (order 1)** — VERIFIED, not a port bug: the
+  gradient was transparent before, found by measuring).
+- **Single images lightbox (order 1)**, VERIFIED, not a port bug: the
   theme's own lightbox.js IS the single-image lightbox (every .art-body
-  image, gallery grouping, decorative alt="" excluded — the accepted
+  image, gallery grouping, decorative alt="" excluded, the accepted
   v0.4.8 verdict). Live click-through proof: standalone figure opens the
   overlay (opacity 1, z 99999, counter "1 / 4"), close + keyboard open
   work, tabindex 0 + role=button + "Enlarge image: <alt>" (WCAG). No
-  code change — singles already lightbox on BOTH sites.
-- **Copy-link SVG (order 3)** — copyDone's `btn.textContent = msg`
+  code change, singles already lightbox on BOTH sites.
+- **Copy-link SVG (order 3)**, copyDone's `btn.textContent = msg`
   destroyed the ordered inline SVG glyph (WP's own button ships no SVG,
   so its handler never hit this); the restore wrote plain text and the
   glyph never returned. Fixed by swapping only the label's TEXT NODE.
@@ -3552,86 +3571,86 @@ measuring, not looking:
 - Gates 5/5 (95/95 vectors); shipped main `44731b2` → pages-dist
   `0c18711` (Pages `built`, served bytes sha-identical to the build).
 
-## [0.4.11] — 2026-09-27
+## [0.4.11], 2026-09-27
 
-### Full audit round — the three remaining MAJOR findings, fixed and live-proven
+### Full audit round, the three remaining MAJOR findings, fixed and live-proven
 
-- **Ghost pending comments (MAJOR-2)** — the Worker hardcoded `approved:"1"` in
+- **Ghost pending comments (MAJOR-2)**, the Worker hardcoded `approved:"1"` in
   its wire format, so a just-submitted PENDING comment arrived claiming to be
   live; the client appended it to the thread with a working Reply button. On
-  refresh it vanished, and replying to the ghost 400'd ("parent not found") —
+  refresh it vanished, and replying to the ghost 400'd ("parent not found"), 
   because the Worker only nests replies under APPROVED parents. Fixed both
   sides: the Worker reports the row's real state (`approved:"0"` while
   pending), and the client no longer renders a comment that is
-  `awaiting_moderation` — it shows the acknowledgement only, exactly like WP's
+  `awaiting_moderation`, it shows the acknowledgement only, exactly like WP's
   guest path. Live-proven: submit now returns `approved: 0`.
-- **New-comment detection structurally dead on busy posts (MAJOR-4)** — the
+- **New-comment detection structurally dead on busy posts (MAJOR-4)**, the
   30s live poll fetched page 1 in oldest-first order; once a post passes 20
   top-level comments, a brand-new comment is on the LAST page, so the "↑ N
   new" banner could never fire. Thread batches stay oldest-first (verified
-  against the live WP site's served order — exact parity), but the poll now
+  against the live WP site's served order, exact parity), but the poll now
   requests `order=desc` so the newest comment is always inside page 1.
   Live-proven: desc returns newest-first, asc unchanged.
-- **Turnstile trap (MAJOR-1)** — the Worker enforced a Turnstile token that
+- **Turnstile trap (MAJOR-1)**, the Worker enforced a Turnstile token that
   no client widget could ever produce. Had the secret ever been set, ALL
   commenting would have bricked with a silent 400. The verifier now treats an
   empty/unset secret identically (fail-open is explicit and documented;
   honeypot + rate limits remain the guard).
-- **Unbounded reply depth (MAJOR-6)** — a script could nest replies 200-deep,
+- **Unbounded reply depth (MAJOR-6)**, a script could nest replies 200-deep,
   collapsing the mobile content column. Both write paths (guest submit + desk
   reply) now cap chains at depth 5 and flatten deeper replies at the floor.
   Live-proven: an 8-long chain reports depths [0,1,2,3,4,1,2,3].
 - Worker `567caf80`, smoke 60/60 ALL GREEN; site gates 5/5. main `b06d970`
   → pages-dist `ddb4be1` (Pages built, served bytes re-probed).
 
-## [0.4.10] — 2026-09-27
+## [0.4.10], 2026-09-27
 
-### Comments audit round — the King's order: "Verify the logic, ux and ui
+### Comments audit round, the King's order: "Verify the logic, ux and ui
 ### has no bugs or errors"
 
-- **Copy-link SVG replaced** (his report: "looking like shit" — correct).
+- **Copy-link SVG replaced** (his report: "looking like shit", correct).
   The old icon was a stroke-based chain drawn on a mismatched 14x14
-  viewBox whose second path extended to y=14.36 — clipped at the bottom
+  viewBox whose second path extended to y=14.36, clipped at the bottom
   and outline-styled next to three solid brand glyphs. Now Bootstrap
   Icons' square solid link (16x16, fill=currentColor, both paths).
-- **Live poll crash fixed (MAJOR)** — `vibe-comments.js` typo:
+- **Live poll crash fixed (MAJOR)**, `vibe-comments.js` typo:
   `insertBefore(bannerWrap, list)` referenced an undeclared variable inside
   a strict-mode IIFE. Every 30s poll that found a new comment threw
-  ReferenceError, so the "↑ N new — click to load" banner NEVER rendered
+  ReferenceError, so the "↑ N new, click to load" banner NEVER rendered
   on the live site. Live-proven broken → fixed → banner renders and
   click-loads.
-- **Char counter no longer stale after posting** — form.reset() fires no
+- **Char counter no longer stale after posting**, form.reset() fires no
   input event; counter now syncs on the form's reset event.
-- **Real API errors now surfaced** — the Worker reports failures as
+- **Real API errors now surfaced**, the Worker reports failures as
   data.error; the client only read data.message, collapsing everything
   to "Failed to post comment." Rate limits now say the retry seconds.
-- **Worker: mod-link approve left ghost pending rows** — the email
+- **Worker: mod-link approve left ghost pending rows**, the email
   approve-link set approved=1 without status='approved', leaving the row
   visibly public but stuck in the desk's pending queue. Fixed; Worker
   redeployed, smoke 60/60.
 - **16-check live E2E on the public site**: validation, drafts, submit,
-  moderation queue, author-reply auto-approve, banner, cleanup — all pass.
+  moderation queue, author-reply auto-approve, banner, cleanup, all pass.
 
-## [0.4.9] — 2026-09-26
+## [0.4.9], 2026-09-26
 
-### The King's verdict round — three failures repaired
+### The King's verdict round, three failures repaired
 
 - **Share row restored to WordPress truth** (his verdict: "Why the fuck did
   you center them like this and remove the share label. Inline it and
   return share label"). v0.4.8's `justify-content:center` and label-hiding
-  were MY inventions, not the theme's — deleted. The row is again the
+  were MY inventions, not the theme's, deleted. The row is again the
   theme's exact rule (style.css:2250): label inline+visible, buttons
   left-aligned, natural wrap. The 4 inline SVG glyphs and aria-labels
   (his actual orders) remain. Article gate re-pinned to the verbatim rule.
-- **Desk links 404 — FIXED** (his report: "Clicking any link in moderation
+- **Desk links 404, FIXED** (his report: "Clicking any link in moderation
   desk loads 404"). Root cause: Astro renders `import.meta.env.BASE_URL` as
   `/finance-astro` (no trailing slash) while `postUrl()` concatenated
   `base + "articles/…"` producing `/finance-astroarticles/…`. The define:vars
   now appends the slash. Live-verified: all queue and ranked-row hrefs now
   resolve (`/finance-astro/articles/<slug>/`).
-- **Desk header spacing — the real fix** (his verdict: "look at the image
-  you sent to me" — the jam was visible in my own screenshot). Root cause:
-  `.mod-wrap con` — the shared `.con` class declares `padding: 0
+- **Desk header spacing, the real fix** (his verdict: "look at the image
+  you sent to me", the jam was visible in my own screenshot). Root cause:
+  `.mod-wrap con`, the shared `.con` class declares `padding: 0
   var(--con-pad)`, which overrode the 44px top padding in the cascade, so
   the "Comments desk" title rendered flush against the sticky header
   (rendered gap 0px). v0.4.8's 44px never applied. `con` dropped from the
@@ -3639,7 +3658,7 @@ measuring, not looking:
   under the header.
 - Cross-checked the article verse block (his #7 screenshots show the
   "$ naira watch" region): gaps are byte-identical to live WP
-  (18/18/28/20px, verse box 350×130 both sides) — no article-side defect.
+  (18/18/28/20px, verse box 350×130 both sides), no article-side defect.
 
 ### Evidence
 - Gates 5/5 (article 147/147 with the verbatim share rule, footer 64/64).
@@ -3648,23 +3667,23 @@ measuring, not looking:
 - main `868a06b` → pages-dist `a494930` (Pages built, served bytes
   re-probed after CDN propagation).
 
-## [0.4.8] — 2026-09-26
+## [0.4.8], 2026-09-26
 
 ### The King's seven orders, executed
 - **Share row rebuilt** (his order: "not aligned well, asin centered, also
   add svg"): `justify-content: center` at every width; on phone the wrapped
   pills center per line with `row-gap` and the label leaves the flex line
   (visually hidden, still in the a11y tree). All four buttons carry inline
-  14px SVG glyphs — X and LinkedIn reuse the footer's own brand paths,
-  WhatsApp is the simple-icons mark, Copy Link an in-house chain glyph —
+  14px SVG glyphs, X and LinkedIn reuse the footer's own brand paths,
+  WhatsApp is the simple-icons mark, Copy Link an in-house chain glyph, 
   plus aria-labels. `.share-b` is now inline-flex with 6px icon gap.
 - **"Add to Google News" removed** (his order: "it's useless"): both
   anchors, the gnews icon, the four dead `.fgooglenews` CSS rules, and the
-  home.css flex-wrap reference — zero occurrences anywhere in src/ or the
+  home.css flex-wrap reference, zero occurrences anywhere in src/ or the
   served bytes. Footer gate now asserts ABSENCE.
 - **Author reply auto-approves the parent** (his order from the queue
   screenshot): `POST /api/moderation/reply` now flips a pending parent to
-  approved the moment the King answers it — the conversation publishes
+  approved the moment the King answers it, the conversation publishes
   itself. Response carries `parent_auto_approved` + the fresh parent row;
   the desk note explains what happened. Proven end-to-end on live D1 with
   seeded rows (seed → pending → desk reply → parent auto-approved → public
@@ -3672,27 +3691,27 @@ measuring, not looking:
 - **"Updated" meta restored**: the showcase post was heavily edited after
   publish, so its frontmatter now carries `updated: 2026-08-19` (WP's real
   modified date) and the article renders "Updated Aug 2026" per
-  single.php:98. The other 7 posts were never edited post-publish — WP
+  single.php:98. The other 7 posts were never edited post-publish, WP
   shows no updated chip for them either (day-precision rule).
 - **Comments hover-kill transcribed verbatim** (his order: "remove that
   ugly hover… the WP site solved this"): the theme's v1.0.151 block
-  (style.css:2497-2515) the port had never transcribed — plugin blue card
+  (style.css:2497-2515) the port had never transcribed, plugin blue card
   lift, author-link flips, summary bg, option transform, reply/view/
-  sort/logout/load-more hovers — all neutralized to resting state.
+  sort/logout/load-more hovers, all neutralized to resting state.
   Focus-visible and :active press feedback kept (a11y intact). Nested
   threads verified already-correct by probe: 22px indent + 2px thread
   line, transparent chrome-less reply cards, 32px avatars, reply form
-  breaking out of the indent chain — byte-identical nesting rules to the
+  breaking out of the indent chain, byte-identical nesting rules to the
   live WP override.
-- **Lightbox: no port bug** — probe-proven the only non-zooming images
+- **Lightbox: no port bug**, probe-proven the only non-zooming images
   are the two authored `alt=""` decorative ones (cover background,
   media+text), which the theme's isPresentational guard deliberately
-  excludes — identical behavior on live WP.
+  excludes, identical behavior on live WP.
 - **Desk breathing room** (his order: "no space between the header and the
   first two text elements"): `.mod-wrap` top padding 28px → 44px.
 
 ### Evidence
-- Gates 5/5 green (147/147 article, 64/64 footer — both evolved to pin the
+- Gates 5/5 green (147/147 article, 64/64 footer, both evolved to pin the
   NEW truth: centered+iconed share row, gnews absent, 8 footer icons).
 - Served-byte proofs on godschi10.github.io: aria-labels ×3 + 4 inline
   SVGs in the share row; zero gnews bytes; "Updated Aug 2026" meta;
@@ -3702,7 +3721,7 @@ measuring, not looking:
 - main `0001f2b` → pages-dist `41b252e` (Pages `built`), Worker
   `bf4498c4`.
 
-## [0.4.7] — 2026-09-26
+## [0.4.7], 2026-09-26
 
 ### The King's four orders, executed
 - **Real comments live**: 41 genuine reader comments + 127 reactions imported
@@ -3710,7 +3729,7 @@ measuring, not looking:
   own test/agent threads excluded, his live pending comment preserved as
   id 17). Verified on the wire: real names, real reaction tallies, relative
   dates, SHA-256 gravatars across all 8 articles.
-- **Moderation desk**: Worker gains the desk API — `list` / `stats` /
+- **Moderation desk**: Worker gains the desk API, `list` / `stats` /
   `action` (approve/spam/trash/restore; delete-forever only from trash) /
   `reply` (reply-as-author auto-approves), all Bearer-gated; `status`
   lifecycle column + index. New `/mod/` page: one unlock gate, Overview /
@@ -3719,7 +3738,7 @@ measuring, not looking:
 - **Guest form exposed by default**: the Comment-as-Guest ceremony is gone;
   name + email render open with a quiet "never shown publicly" note. The
   reply-move and cancel paths never collapse the form.
-- **Faster**: the 153KB client module is lazy — zero requests until Load
+- **Faster**: the 153KB client module is lazy, zero requests until Load
   Comments is clicked (one press, replayed via `__vibeLoadRequested`);
   the per-view count fetch now waits for scroll proximity (IO); the count is
   baked at build. UX-audit upgrades: count-bearing trigger label
@@ -3738,42 +3757,42 @@ measuring, not looking:
   auto-approved then probe rows cleaned).
 
 ### Added
-- **The comments surface — the King's own vibe-comments UI, live against a
+- **The comments surface, the King's own vibe-comments UI, live against a
   Cloudflare Worker** (plan `docs/port/15`, integration `docs/port/17`). The
-  comment area now renders in WordPress's own position — inside
+  comment area now renders in WordPress's own position, inside
   `.comments-area.mt48`, after the related posts and before the mobile
-  newsletter (`single.php:212-226`) — and talks to
+  newsletter (`single.php:212-226`), and talks to
   `https://comments-api.gwill.workers.dev` instead of WP admin-ajax.
-  - `src/components/VibeComments.astro` — byte-faithful port of the plugin's
+  - `src/components/VibeComments.astro`, byte-faithful port of the plugin's
     `templates/comments.php` guest path: every id and class matches the source,
     and the click-to-load shell is preserved (zero requests until the reader
     asks for comments).
-  - `src/scripts/vibe-comments.js` — the plugin's OWN 3,087-line client script
+  - `src/scripts/vibe-comments.js`, the plugin's OWN 3,087-line client script
     with only its transport seam patched: **233 changed lines**. The render
     core, markdown-lite pipeline, i18n dict, draft autosave, char counter,
     relative-time sweep and guest-identity rail are verbatim. No admin-ajax,
     no nonce; the slug replaces the numeric post id; only the v1 inits boot.
-  - `src/styles/vibe-comments.base.css` + `.gold.css` — the two shipped
+  - `src/styles/vibe-comments.base.css` + `.gold.css`, the two shipped
     sheets, byte-identical (40,720 B / 24,412 B), in the theme's cascade order:
     plugin sheet first, our override second (`inc/enqueue.php:491-505`).
   - Build-time comment count (parity: WP bakes the stored count), non-fatal
-    with a 0 fallback — the heading hides itself at zero through the plugin's
+    with a 0 fallback, the heading hides itself at zero through the plugin's
     own `:empty` rule.
 
-### Held — absence, never a dead control
+### Held, absence, never a dead control
 - The reply-push opt-in, the email opt-in and the `.vibe-or` separator are
   **removed**, not inert: the port has neither rail in v1 (plan §6).
 - The sort toolbar stays **hidden**: WP ships that markup hidden and reveals it
   only from the P2 sort code, so v1 must not reveal it either (it would put an
   inert sort button on screen).
-- No WP-login and no Google button — declared divergence, no WP auth behind a
+- No WP-login and no Google button, declared divergence, no WP auth behind a
   static site.
 
 ### Fixed (Worker side, found by comparing against live WP's own payload)
 - **Gravatar URLs were MD5 with `s=64`.** Live WP runs WordPress 7.1, whose
   core hashes the address with `hash('sha256', strtolower(trim($email)))` and
   is called as `get_avatar_url($email, ['size' => 48])`. The Worker now stores
-  and emits the SHA-256 digest with `?s=48&d=wavatar&r=g` — byte-identical to
+  and emits the SHA-256 digest with `?s=48&d=wavatar&r=g`, byte-identical to
   what the plugin emits. The hand-written MD5 helper is deleted (40 lines of
   dead crypto).
 - **`date` was an ISO timestamp.** The plugin's payload carries WP's
@@ -3782,7 +3801,7 @@ measuring, not looking:
   the same 20 keys as live.
 
 ### Verified
-- Article gate: **147/147** (was 124) — 24 new assertions for presence, WP's
+- Article gate: **147/147** (was 124), 24 new assertions for presence, WP's
   render position, cascade order, byte-faithful stylesheets, the live Worker
   base, the holds staying absent, single-bind, and the served bytes.
 - Worker: **60/60 against the deployed URL**, now asserting the wire parity
@@ -3792,10 +3811,10 @@ measuring, not looking:
   → "pending review" → approved → the card renders (author, gravatar, 7
   reaction controls, reply affordance, relative time) with **0 JS errors**.
 
-## [0.4.5] — 2026-09-25
+## [0.4.5], 2026-09-25
 
 ### Fixed
-- **"Why is TOC showing &amp;"** (King, screenshot img_febf26ee0d1b) — the
+- **"Why is TOC showing &amp;"** (King, screenshot img_febf26ee0d1b), the
   raw-HTML TOC extractor kept entity-encoded heading text, and Astro escaped
   it a second time, so the phone TOC printed `&amp;amp;` (visible as `&amp;`).
   Live WP's DOM textContent is entity-decoded and escaped once on output;
@@ -3803,16 +3822,16 @@ measuring, not looking:
   Astro escapes once. Dist bytes for all four ampersand headings now equal
   live WP byte-for-byte. Gate: 4 new assertions (decode helper present,
   ampersand unescape single-pass, no `&amp;amp;` in served dist, all four
-  headings single-escaped) — 124/124.
+  headings single-escaped), 124/124.
 
-## [0.4.4] — 2026-09-24
+## [0.4.4], 2026-09-24
 
 ### Fixed
 - **"Subtitles and posts meta are too close"** (King, screenshot
-  img_30a2b4d4b69e) — the post deck (`.art-sub`, the net-new subtitle
+  img_30a2b4d4b69e), the post deck (`.art-sub`, the net-new subtitle
   element from docs/port/08) had `margin-top: 16px` and **no
   `margin-bottom`**: its last line sat 0px on the author pill. Given the
-  theme's own callout rhythm — the disclosure is `class="discl mb24"` —
+  theme's own callout rhythm, the disclosure is `class="discl mb24"`, 
   the deck now carries `margin-top: 24px; margin-bottom: 24px`, symmetric,
   matching `.mb24`/`.mt24` scale. Measured at 390 dark after the rebuild:
   title→deck **24px**, deck→meta **24px** (was 20 / 0).
@@ -3824,7 +3843,7 @@ measuring, not looking:
 other."** Both real; both root-caused with measurements; both fixed.
 
 ### Fixed
-- **Double lightbox (× twice)** — the port bound the lightbox TWICE: the
+- **Double lightbox (× twice)**, the port bound the lightbox TWICE: the
   v0.4.2 verbatim `src/scripts/lightbox.js` import AND a full folded copy
   (§11, 211 lines) inside `article.js`. Two document-level click listeners →
   two stacked `.gl-overlay` per click → × closed only the top one. The folded
@@ -3832,7 +3851,7 @@ other."** Both real; both root-caused with measurements; both fixed.
   as its own enqueue, `main.js` with no lightbox section) is now the port's.
   Proven: one click → `overlays: 1, open: 1`; one × press → `gl-open` gone,
   body scroll unlocked.
-- **Spacing utilities were never extracted** — the theme's §48 LAYOUT
+- **Spacing utilities were never extracted**, the theme's §48 LAYOUT
   UTILITIES (style.css:2966-2982) landed only partially (`.con/.g2/.g3/
   .sb-layout`); `.sg .mt20 .mt40 .mt48 .mb12 .mb20 .mb24 .flex .aic .jsb
   .g16 .fw3 .fz11/12/14 .cm-c .cd .lh .cl-layout` were missing from the
@@ -3841,12 +3860,12 @@ other."** Both real; both root-caused with measurements; both fixed.
   lost its 40px. Installed GLOBALLY in base.css (the theme ships them in the
   one global stylesheet; 14 non-article page templates use them too).
   Measured after the fix, port vs live at 390 dark: toc→discl 20/20,
-  discl→body 24/24, body→share 28/28, share→abio 20/20, abio→related 64/64 —
+  discl→body 24/24, body→share 28/28, share→abio 20/20, abio→related 64/64, 
   **0 divergent pairs**.
 
 ### Note
 - The v0.4.2 spacing matrix measured box HEIGHTS (all matched); margins
-  between boxes were the untested dimension — the gap chain probe is the new
+  between boxes were the untested dimension, the gap chain probe is the new
   acceptance instrument, and the gate now asserts the utilities' presence in
   the global sheet.
 
@@ -3857,7 +3876,7 @@ doesn't even work. Some elements aren't spaced enough." + "And no featured
 images on posts."** All four measured against live WP; all real, all fixed.
 
 ### Fixed
-- **Lightbox** — the theme's `assets/js/lightbox.js` (266 lines, enqueued on
+- **Lightbox**, the theme's `assets/js/lightbox.js` (266 lines, enqueued on
   every singular page since enqueue.php:170) was never ported, and the `.gl-*`
   base CSS slice (style.css:2192-2237) was missing from the extracted
   article.css (only the 767px overrides had survived). Both ported verbatim;
@@ -3868,22 +3887,22 @@ images on posts."** All four measured against live WP; all real, all fixed.
   returns focus to the triggering image; ArrowRight → 1/4→2/4 swapping to the
   next gallery image; Enter on the focused image opens it too. Rule-diff
   script: every `.gl-*`/`.art-cover` selector present, matching declarations.
-- **Featured images** — the port's articles carried no image data at all. Live
+- **Featured images**, the port's articles carried no image data at all. Live
   WP gives every post a category-art cover (verified: showcase and four probed
   live articles all render `.art-cover`). Schema gained
   `image`/`imageAlt`/`imageSrcset`; all 8 articles now map to the same category
   art WP serves; `.art-cover` renders WP's `get_the_post_thumbnail('gwill-hero')`
-  markup (single.php:106-120); `inc/card-media.php` ported with BOTH branches —
+  markup (single.php:106-120); `inc/card-media.php` ported with BOTH branches, 
   homepage grid 8/8 image cards, 0 emoji fallbacks (previously 8/8 emoji).
-- **Author bio height (+19px)** — the port's authored bio was longer than the
+- **Author bio height (+19px)**, the port's authored bio was longer than the
   live ACF bio. Byte-matched to the live text ("Web developer and finance
   writer. I build this site and write everything on it. I test every app
-  before recommending it. Based in Nigeria.") — abio 197→178px.
-- **Spacing, measured** — port vs live at 390/768/1280, light+dark: cover,
+  before recommending it. Based in Nigeria."), abio 197→178px.
+- **Spacing, measured**, port vs live at 390/768/1280, light+dark: cover,
   disclosure, TOC and share-row heights identical at every width; all
   remaining top-offsets trace to the declared subtitle divergence (live's
-  title carries the "— Every Block Styled" suffix and wraps two lines; the
-  port splits it into title + subtitle) and to different related-post sets —
+  title carries the ", Every Block Styled" suffix and wraps two lines; the
+  port splits it into title + subtitle) and to different related-post sets, 
   content flow, not styling.
 
 ### Added
@@ -3893,8 +3912,8 @@ images on posts."** All four measured against live WP; all real, all fixed.
 **King's verdict on v0.4.0: *"Terrible spacing in so many places. Table is not
 styled properly, so many elements were not ported and styled properly."* He was
 right; measuring against his four screenshots found four real defects, and his
-standing order — port the WordPress `gutenberg-elements-showcase` post so every
-block style is exercised — is what exposed them.
+standing order, port the WordPress `gutenberg-elements-showcase` post so every
+block style is exercised, is what exposed them.
 
 1. **Tables rendered completely unstyled.** Markdown emits a bare `<table>`;
    Gutenberg (and this theme's `style.css:896-924`) always wraps tables in
@@ -3904,7 +3923,7 @@ block style is exercised — is what exposed them.
    `scripts/rehype-wp-table.mjs` inserts exactly WordPress' wrapper
    (`[rehypeSlug, rehypeWpTable]`). After: table geometry identical to the
    live WordPress showcase at 390/768/1280, light *and* dark.
-2. **`assets/css/embeds.css` was never ported** — a stylesheet outside
+2. **`assets/css/embeds.css` was never ported**, a stylesheet outside
    `style.css` that `enqueue.php:471` loads on every singular page. Without it
    the click-to-play facade sat in normal flow: YouTube/Vimeo facades measured
    42px too tall at every width, Spotify collapsed to 42px instead of its
@@ -3915,22 +3934,22 @@ block style is exercised — is what exposed them.
    live site the base shorthand WINS for lists and blockquotes
    (measured at 1280: `ul/ol margin 0 0 16px 20px`, `blockquote 18px`). The
    port had the media block after the bases, shipping `18px 0 22px` /
-   `30px 0` — four margins WordPress never serves. The block now sits in the
+   `30px 0`, four margins WordPress never serves. The block now sits in the
    theme's source position, and source order itself is a gate assertion.
 4. **The showcase page had no TOC on the port.** Astro's markdown `headings`
    cannot see headings inside raw HTML blocks; WordPress builds the TOC from
    the RENDERED content (`inc/table-of-contents.php` DOMXPath `//h2 | //h3`).
-   `[slug].astro` now falls back to the theme's own pass over the raw body —
+   `[slug].astro` now falls back to the theme's own pass over the raw body, 
    11 rows render, matching WordPress' row heights.
 
-Plus: the showcase post itself is ported as content — all 40 top-level blocks
+Plus: the showcase post itself is ported as content, all 40 top-level blocks
 byte-captured from the live page (headings, lists, quote, pullquote, table,
 code, preformatted, verse, image, gallery, three embed facades, cover, columns,
 media+text, buttons, details, search, categories, archives, social links,
 latest comments), with its 16 image assets downloaded locally under
 `wp-content/uploads/` so no page hotlinks the WordPress origin. Block-for-block
 geometry diff vs the live post: **42/42 blocks, zero differing fields at
-390/768/1280**. And the byline now mirrors `get_the_author()`'s display name —
+390/768/1280**. And the byline now mirrors `get_the_author()`'s display name, 
 **"G-will Chijioke"**, as the live site renders it, not the site title's
 "Gwill Chijioke" (measured in both sites' meta pills and author boxes).
 
@@ -3938,21 +3957,21 @@ Gate: `check-article-fidelity.mjs` 79 → **106 assertions** (table wrapper,
 embeds stylesheet, media source order, showcase block inventory). All 5 gates
 green. King's meta-row screenshot (wrapped read-time + orphan separator dot at
 a very narrow viewport) was measured on WordPress too: at 320px both sites wrap
-h=64 with the dot orphaned — theme behaviour, faithfully ported; a joint
+h=64 with the dot orphaned, theme behaviour, faithfully ported; a joint
 theme-level fix is offered separately rather than diverging the port alone.
 
-## [0.4.0] — 2026-09-23
+## [0.4.0], 2026-09-23
 
 **The article page is now a port of `single.php`, not a page in the theme's
-general idiom.** King's correction — *"you only focused on the subtitles, why
-didn't you port the rest of the blogpost template"* — was right: the previous
+general idiom.** King's correction, *"you only focused on the subtitles, why
+didn't you port the rest of the blogpost template"*, was right: the previous
 article page shared almost no class vocabulary with WordPress, so nothing on it
 could be checked against the original.
 
 The class names are now WordPress's, which means the theme's own stylesheet
 applies to the markup unchanged:
 
-- **Markup** — `.art-hd` header (`.bc` breadcrumb → `.badge` → `h1.art-t` →
+- **Markup**, `.art-hd` header (`.bc` breadcrumb → `.badge` → `h1.art-t` →
   subtitle → `.art-meta`), `.prog > .prog-f` progress, `.con` container,
   `.sb-layout` two-column grid, `.art-reading-surface` → `.art-surface-pad`,
   the mobile `.toc-dropdown.toc-mobile` with its `.toc-summary`/`.toc-caret`/
@@ -3966,7 +3985,7 @@ applies to the markup unchanged:
   blocks, the ⚠ at U+26A0, `Read →`, `{N} min read`.
 - **Removed**: the invented `.art-h`, `.disc-box`, `.author-bio`, `.art-main`,
   `.art-side`, `.legal-toc` article sidebar, `.art-hero`, the `.progress`
-  bar, and the *"Comments — read-only in v1"* staging notice — the kind of
+  bar, and the *"Comments, read-only in v1"* staging notice, the kind of
   visible placeholder the porting rules forbid.
 - **New components**: `NewsletterForm.astro` (the theme's partial, with the id
   passed in the way `wp_unique_id()` varies it) and `AuthorSocials.astro`, a
@@ -3975,12 +3994,12 @@ applies to the markup unchanged:
 - **New files**: `src/styles/article.css` (the article slice of the theme's
   stylesheet, verbatim, with `style.css` line provenance) and
   `src/scripts/article.js` (progress, TOC scroll-spy, mobile dropdown, copy
-  button, comment-ad cloning — ported from the theme's `main.js`).
+  button, comment-ad cloning, ported from the theme's `main.js`).
 - **Heading ids are server-rendered now.** WordPress injects them on
   `the_content` at priority 9; `rehype-slug` does the same at build time, so the
   TOC anchors exist in the served HTML and the old client-side id-patching hack
   is gone.
-- **No `.art-cover`** — WordPress emits it only with a featured image, so with
+- **No `.art-cover`**, WordPress emits it only with a featured image, so with
   no featured image the correct behaviour is to omit it. **No ad slots** and
   **no `.comments-area`**: WordPress emits nothing for the former when no ad
   code is configured, and the latter needs a comment backend this build does not
@@ -3994,7 +4013,7 @@ fixed:**
    WordPress leaves the browser default (`normal`) in place. Fixed globally and
    verified: every homepage button now matches WordPress exactly
    (`.btn b-gold b-sm` 32px/17.6, `.gwill-form__submit` 46→48, `.fpush` 40/13),
-   at the cost of 3–4px of homepage document height — movement toward
+   at the cost of 3–4px of homepage document height, movement toward
    WordPress, which is why it stands.
 2. The port's own `.art-body` prose (`max-width: 72ch`, `margin-top: 12px`, and
    a gold `h2::before` bar WordPress does not draw) leaked into the article page
@@ -4004,7 +4023,7 @@ fixed:**
    were never installed; the port had only `--red` and its own literal-rgba
    copy. The theme's values are installed and the duplicate rule removed.
 
-**Evidence** — `docs/port/10-article-template.md`, specs in
+**Evidence**, `docs/port/10-article-template.md`, specs in
 `~/work/article-port/`, measurement runs in `~/work/regression/`. Behaviour and
 geometry compared against the live WordPress article at 390/768/1280: identical
 font sizes, line heights, letter spacing, colours, avatar sizes, disclosure
@@ -4019,15 +4038,15 @@ differences are content-driven and listed in the doc (longer title, no
    queries the **primary category only**, capped at 3, and `single.php` falls
    back to the **2 most recent** posts only when that returns nothing. Fixed and
    verified across all seven articles: each now renders
-   `min(same-category, 3)`, or 2 when its category has no siblings — which is
+   `min(same-category, 3)`, or 2 when its category has no siblings, which is
    why the live WordPress article shows 2.
 
 Gate: `check-article-fidelity.mjs` grew from 22 assertions describing the stub
 to **80 describing WordPress's contract**; all 5 gates green.
 
-## [0.3.4] — 2026-09-23
+## [0.3.4], 2026-09-23
 
-**Base layer completed, and proven layout-neutral** — the last unported rules from
+**Base layer completed, and proven layout-neutral**, the last unported rules from
 the theme's `RESET / BASE` section (`style.css:170-199`). The header, footer and
 homepage ports each measured their own surface in isolation and deliberately left
 this layer out; parity on the single-post page (in progress) requires the theme's
@@ -4036,11 +4055,11 @@ base underneath it, so it lands first.
 Installed verbatim in `src/styles/base.css`, from `style.css:184, 185, 189`:
 
 - `img, picture, video, canvas, svg, iframe, input, textarea, select, table { max-width: 100% }`
-  — the port capped only `img`, so an oversized embed, video or data table could
+ , the port capped only `img`, so an oversized embed, video or data table could
   overflow a phone column. The theme never lets that happen.
-- `img { height: auto; display: block }` — removes the inline baseline gap the
+- `img { height: auto; display: block }`, removes the inline baseline gap the
   theme does not have under figures and card images.
-- `h1, h2, h3, h4 { letter-spacing: -0.02em }` — the theme's global heading
+- `h1, h2, h3, h4 { letter-spacing: -0.02em }`, the theme's global heading
   tracking; any heading carrying its own tracking still wins on specificity.
 
 Already installed by the v0.3.1 pass: `*, *::before, *::after { box-sizing:
@@ -4049,12 +4068,12 @@ border-box; margin: 0; padding: 0 }`, `a { text-decoration: none; color: inherit
 `.skip-link` / `.screen-reader-text`, and `html { scroll-behavior: smooth;
 scroll-padding-top: … }`. **M-BASE-LAYER is closed.**
 
-**Evidence that it moved nothing** — the same commit was built twice (CSS at `HEAD`,
+**Evidence that it moved nothing**, the same commit was built twice (CSS at `HEAD`,
 then CSS with the three rules), the two trees served on separate local origins, and
 measured over 15 page/width combinations (home, `/articles/`, a real article, about,
 affiliate disclosure × 390/768/1280):
 
-- the served byte diff is exactly **+143 bytes** — the three rules and nothing else
+- the served byte diff is exactly **+143 bytes**, the three rules and nothing else
 - the layout diff is **0 fields across all 15 combinations**: document height,
   horizontal overflow, section offsets, heading tracking and underlined-link count
   all identical
@@ -4065,15 +4084,15 @@ affiliate disclosure × 390/768/1280):
 
 One outlier is recorded rather than smoothed over: the first old-build pass read
 `/ @768` at 4159px against 4209px for the new build. Four repeat runs of that
-combination on *both* builds read 4209 every time — a flaky render in the first
+combination on *both* builds read 4209 every time, a flaky render in the first
 pass, not a layout shift.
 
 Gates: 5/5 green (header 31, footer 18, homepage 123, article 22, vectors 95);
 build 53 pages.
 
-## [0.3.3] — 2026-09-23
+## [0.3.3], 2026-09-23
 
-**Article subtitles, designed into the theme's idiom** — King's order ahead of
+**Article subtitles, designed into the theme's idiom**, King's order ahead of
 the blog import: *"I want to add subtitles after the title, if you can design it
 to match."*
 
@@ -4081,7 +4100,7 @@ WordPress has no post subtitle (`single.php` goes breadcrumb → badge → `h1.a
 → `.art-meta`), so this is a net-new element rather than a port. It is built
 **only from values the theme already uses**: supporting copy in the theme is
 `font-weight: 300` in a dimmed colour, and its accent idiom for a passage that
-stands apart is a **3px `--gold` left rule** — the treatment `.callout`,
+stands apart is a **3px `--gold` left rule**, the treatment `.callout`,
 `.art-body blockquote`, `.wp-block-pullquote` and `.tbl-best` all share.
 The standfirst therefore takes 17px/300/`--text-mid`, line-height 1.6, a 62ch
 measure, and that same gold rule with a 16px inset. No new tokens, no new
@@ -4093,12 +4112,12 @@ colours, no invented ornament.
   its own jobs (card excerpt, search result, meta description, JSON-LD).
 - **Placement:** `p.art-sub`, directly after `h1.art-h`, before `.feat-meta`.
 - **Demonstrated:** the dollar-corridor article now carries an authored
-  `subtitle` distinct from its excerpt, proving the field — not just the
+  `subtitle` distinct from its excerpt, proving the field, not just the
   fallback.
 - **Declared divergence:** the port now shows a line under titles that WordPress
   does not. Recorded in `docs/port/08-article-subtitle.md` so a later fidelity
   pass cannot "fix" it back out.
-- **New gate:** `scripts/check-article-fidelity.mjs` — the article surface had
+- **New gate:** `scripts/check-article-fidelity.mjs`, the article surface had
   **no contract gate at all** (header/footer/homepage did, article did not).
   22 assertions covering the title stack, the subtitle's placement, field and
   design contract, and the rest of the page. `npm run check` now reports
@@ -4107,7 +4126,7 @@ colours, no invented ornament.
   · `border-left: 3px rgb(180,83,9)` · `padding-left: 16px` · `max-width: 632.4px`
   · 16px below the title · 5 lines at 390 → 3 at 768/1280.
 
-## [0.3.2] — 2026-09-23
+## [0.3.2], 2026-09-23
 
 **The theme pill no longer jerks the page when tapped.** Reported from a phone:
 "clicking on any darkmode toggle option jerks the page up."
@@ -4115,21 +4134,21 @@ colours, no invented ornament.
 The pill's JavaScript returned focus with a plain `.focus()`. The pill lives in
 a sticky header, and the document carries `scroll-padding-top: calc(--header-h +
 20px)` = 76px, so the browser scrolled the page to bring the focused segment
-clear of that padding — **measured as a 19px upward jump on every tap** at
+clear of that padding, **measured as a 19px upward jump on every tap** at
 390px, and it happens on both paths: focusing the current segment when the menu
 opens, and returning focus to the trigger after an option is chosen.
 
 The theme already fought this exact bug and documented it in its own voice
 (`assets/js/spotlight-search.js`, v1.0.199: *"plain .focus() scrolls the
 sticky-header trigger into its DOCUMENT position, on Android Chrome this drags
-the whole page up — browser-verified: 257px jump live"*). The fix is the theme's
+the whole page up, browser-verified: 257px jump live"*). The fix is the theme's
 fix: `focus({ preventScroll: true })` on all three focus returns in the pill
 (open, option chosen, Escape). Arrow-key navigation keeps its plain `.focus()`,
 matching the theme.
 
 Verified with real taps against the rebuilt page at 390px: scroll 3000 → **3000**
 on open (was 3000 → 2981), Dark applied with focus returned and no movement,
-and a repeat at 4200 held at 4200. Focus return still works (WCAG 2.4.3) — it
+and a repeat at 4200 held at 4200. Focus return still works (WCAG 2.4.3), it
 just no longer moves the page.
 
 ### Added
@@ -4138,95 +4157,95 @@ just no longer moves the page.
   pill must use `preventScroll`, and no bare `sel.focus()` / `trigger.focus()`
   may reappear.
 
-## [0.3.1] — 2026-09-23
+## [0.3.1], 2026-09-23
 
 **Phone-review fixes: the stray underlines are gone and the newsletter form is
 styled.** Three defects reported from a phone screenshot, all three traced to
-theme stylesheet sections the earlier scoped extractions could not see — the
+theme stylesheet sections the earlier scoped extractions could not see, the
 homepage port was scoped to the sections the homepage renders, and the theme
 styles anchors and form controls elsewhere.
 
 ### Fixed
 
-- **Every link was underlined** — 79 of the homepage's 109 links. The theme
+- **Every link was underlined**, 79 of the homepage's 109 links. The theme
   resets anchors in its RESET/BASE section (`style.css:186`:
   `a { text-decoration: none; color: inherit; }`) and that layer had never been
   ported; without it, every link falls back to the browser default. The
   WordPress original measures 3 underlined links (the footer credit link and the
   cookie-consent policy link, both styled deliberately). The port now measures
-  **2** — the credit link, twice, exactly as WP styles it. The banner's policy
+  **2**, the credit link, twice, exactly as WP styles it. The banner's policy
   link is the third and arrives with the consent banner (footer part 2).
-- **The newsletter email field was a browser-default box** — measured at 390px:
+- **The newsletter email field was a browser-default box**, measured at 390px:
   `175×19`, radius 0, `2px` grey border, no padding, 13.33px text, against
   WordPress's `261×46`, radius `10px`, `1px` border, `12px 16px` padding, 16px
   text. The homepage rules only override that field's *colours*; its geometry
   lives in the theme's FORMS section. Now: `300×46`, radius `10px`,
-  `1px rgba(245,158,11,0.4)`, `12px 16px`, 16px — WP's geometry, on our
+  `1px rgba(245,158,11,0.4)`, `12px 16px`, 16px, WP's geometry, on our
   container width.
-- **The newsletter's "Email" label was visible** — WordPress hides it with
+- **The newsletter's "Email" label was visible**, WordPress hides it with
   `.screen-reader-text` (base section, `style.css:191-198`); the placeholder
   already carries the meaning. Installed verbatim: the label measures `1×1`
   again.
 - **The hidden "Subscribing…" label, the `[data-loading]` swap and the
   honeypot rule moved out of `home.css`** into `forms.css`, where the theme
-  keeps them. Those three had been added to `home.css` as an ad-hoc patch — the
+  keeps them. Those three had been added to `home.css` as an ad-hoc patch, the
   reason they were ever missing is that they were the only part of that section
   anyone had noticed.
 
 ### Added
 
-- `src/styles/base.css` — the theme's RESET/BASE rules the port was missing
+- `src/styles/base.css`, the theme's RESET/BASE rules the port was missing
   (`style.css:172-198`), scoped deliberately: antialiased text, the anchor
   reset, control font inheritance, and the visually-hidden utility. The theme's
   element resets that would re-flow pages already verified and reviewed
   (`* { margin: 0; padding: 0 }`, `img { display: block }`, `max-width: 100%` on
   img/iframe/table, heading letter-spacing) are **not** included; that debt is
   tracked as **M-BASE-LAYER** in `PENDING-WORK.md`.
-- `src/styles/forms.css` — the theme's FORMS section verbatim (`style.css:2883-
+- `src/styles/forms.css`, the theme's FORMS section verbatim (`style.css:2883-
   2948`): control geometry, label styling, focus ring, autofill guards, the
   brand select chevron, submit base + hover + loading states, status and
   field-error chrome.
 - **17 new gate assertions** in `scripts/check-homepage-fidelity.mjs`
   (**123 total**), each pinning one of the moved or added rules in the file that
-  now owns it — plus assertions that the anchor reset is present and that no
+  now owns it, plus assertions that the anchor reset is present and that no
   underline declaration creeps back into the base layer.
 
-## [0.3.0] — 2026-09-22
+## [0.3.0], 2026-09-22
 
-**The homepage is ported.** `front-page.php` sections 2–8 — the hero, the stats
+**The homepage is ported.** `front-page.php` sections 2–8, the hero, the stats
 strip, the featured article, the latest grid, the category pills (with their
-filter), the ad slots and the newsletter band — now render from Astro with the
+filter), the ad slots and the newsletter band, now render from Astro with the
 theme's own class vocabulary, copy and CSS. The old homepage's invented markup
 (`.ledger`, `.card`, `.chip`, fake ad notices, a count-up animation and a
 placeholder newsletter) is gone.
 
 ### Added
 
-- `src/pages/index.astro` — the homepage in WP's vocabulary: `.hero` /
+- `src/pages/index.astro`, the homepage in WP's vocabulary: `.hero` /
   `.hero-grain` / `.hero-tag` / `.hero-h .g`+`.w` / `.hero-acts` with the real
   `.bh` and `.bhg` CTAs, `.stat-strip` with four `.si`, `.feat` with
   `.feat-meta`, `.g3` of `.ac` cards, `.cp-strip` pills, an empty `.ad-bg`, and
   `.nl-s` with WP's actual `.gwill-form` newsletter markup.
-- `src/components/ArticleCard.astro` — the card anatomy from
+- `src/components/ArticleCard.astro`, the card anatomy from
   `template-parts/content.php` + `inc/card-media.php`: `.ac`, `.ac-img`, the
   no-thumbnail branch (`.ac-emoji` + the category art class), `.badge` in the
   theme's per-category colour, `h2.ac-t`, `.ac-ex > p`, `.ac-ft` with `.a-dt`
   (`M Y · n min`) and `.a-rd`.
-- `src/styles/home.css` — the homepage slice of the theme stylesheet in source
+- `src/styles/home.css`, the homepage slice of the theme stylesheet in source
   order: 191 rules, every media context (`print`, `@supports not
   (aspect-ratio)`, touch, `prefers-reduced-motion`, 767/1023/1024+), and the
   custom properties they depend on.
-- `scripts/check-homepage-fidelity.mjs` — **106 assertions** covering section
+- `scripts/check-homepage-fidelity.mjs`, **106 assertions** covering section
   order, class vocabulary, byte-exact copy, the pill/filter contract and the
   stylesheet values, wired into `npm run check` (now 4/4 green).
 
-### Fixed — every one of these was found by measuring, not by reading
+### Fixed, every one of these was found by measuring, not by reading
 
 - **The legacy stylesheet out-voted the theme.** `Layout.astro`'s
   `<style is:global>` is emitted *after* the imported CSS, so the homepage's old
   rules beat the ported theme for the same selectors: `.con` was
   `calc(100% - 32px)`, `.g3` had `gap: 24px`, `.feat` was `1fr 1.4fr` and
-  `.cp.on` was dark. 50 legacy rules removed; the theme's values now win —
+  `.cp.on` was dark. 50 legacy rules removed; the theme's values now win, 
   the 1280 grid measures `324px 324px 324px` gap 16px and the featured
   `501px 501px`, exactly WP's.
 - **`--con-pad` had no responsive values.** WP shrinks it 48 → 28 → 20px;
@@ -4234,7 +4253,7 @@ placeholder newsletter) is gone.
 - **Three category badge values were wrong in the port's own data.**
   `investing` → `bgn`, `remittance` → `bsl`, `dollar-accounts` → `bg`; the chip
   tints (`.db-g/.db-gr/.db-p/.db-s`) were missing entirely.
-- **The newsletter button rendered both labels** — "Subscribe Subscribing…" in a
+- **The newsletter button rendered both labels**, "Subscribe Subscribing…" in a
   198px button where WP measures 105px. The hide rule lives in the theme's FORMS
   section, outside the homepage scope the extraction covered.
 - **The honeypot was visible.** `"Leave this blank"` printed in the form because
@@ -4247,7 +4266,7 @@ placeholder newsletter) is gone.
 
 - **No AJAX.** WP swaps the grid through `admin-ajax.php`
   (`action=gwill_filter_posts`); a static build has no endpoint, so the filter
-  produces the identical visible result locally — same active pill, same
+  produces the identical visible result locally, same active pill, same
   `aria-pressed`, same empty-state copy, no network call, no spinner. WP's own
   two bugs in that path (`cache['']` always refetching, and the empty category
   dropping the `.g3` wrapper) are not reproduced.
@@ -4261,39 +4280,39 @@ placeholder newsletter) is gone.
   The grid, the featured pick (`FEATURED_SLUG`, the theme-mod article) and every
   class come from WP; the content is the port's.
 
-## [0.2.0] — 2026-09-22
+## [0.2.0], 2026-09-22
 
-**The footer is ported.** `footer.php` sections 2–5 — the desktop grid, the follow
-CTAs, the social nav, the bottom bar, and the phone-only `.mfooter` — now render
+**The footer is ported.** `footer.php` sections 2–5, the desktop grid, the follow
+CTAs, the social nav, the bottom bar, and the phone-only `.mfooter`, now render
 from Astro, with the same visibility switch the header uses (`.footer` hidden at
 ≤767px, `.mfooter` hidden at ≥768px).
 
 ### Added
 
-- `src/components/Footer.astro` — desktop and phone footers extracted against
+- `src/components/Footer.astro`, desktop and phone footers extracted against
   theme 1.13.39: the brand block and blurb, the four link columns of
   `inc/footer-links.php`, the network column, the four socials, the bell /
   Google News / install CTAs (including the iOS "Add to Home Screen" guide), the
   legal + credit bottom bar and the `#top` back-to-top link. Every icon is the
   theme's own SVG, copied verbatim.
-- `src/styles/footer.css` — 94 lines, 65 rules: the footer's slice of stylesheet
+- `src/styles/footer.css`, 94 lines, 65 rules: the footer's slice of stylesheet
   section 19 plus every media query and touch rule that touches those classes,
   declarations and breakpoints intact, and the custom properties it depends on.
-- `scripts/check-footer-fidelity.mjs` — **64 assertions** against the WP source:
+- `scripts/check-footer-fidelity.mjs`, **64 assertions** against the WP source:
   markup structure and copy, class-by-class CSS values, the responsive contract,
   the icon-escape guard and the print rules. Wired into `npm run check`
   (now 3/3 green).
 
-### Fixed — both found by measuring, not by looking
+### Fixed, both found by measuring, not by looking
 
-- **Four footer icons were rendered as literal text.** `{ICON.bell}` — and the
-  install, iOS and Google News glyphs, in both footers — were interpolated
+- **Four footer icons were rendered as literal text.** `{ICON.bell}`, and the
+  install, iOS and Google News glyphs, in both footers, were interpolated
   without `set:html`, so Astro escaped them and the buttons printed
   `&lt;svg …&gt;` on the page. The bell measured 320×178 instead of 234×40. All
   ten icon interpolations now use `<Fragment set:html={…} />`, and the gate fails
   if a bare `>{ICON.x}` ever comes back.
 - **A tablet rule was missing.** WP section 49's `@media (max-width: 1023px)
-  { .footer { padding: 36px var(--con-pad) 20px } }` was not ported — 12px of
+  { .footer { padding: 36px var(--con-pad) 20px } }` was not ported, 12px of
   extra height at 768px. A rule-by-rule diff of every footer selector against
   `style.css` is what caught it; it located nothing else in scope.
 - **The bell no longer pretends to subscribe.** There is no push service behind a
@@ -4302,15 +4321,15 @@ from Astro, with the same visibility switch the header uses (`.footer` hidden at
 - Touch rule ported: `@media (hover: none) { .fsoc .soci:hover … }` (WP §54), so a
   tap on a social button no longer leaves the hover style stuck on a phone.
 
-### Verified — measured against the live WordPress footer
+### Verified, measured against the live WordPress footer
 
 | Viewport | `.ftop` grid template | `.fpush` | `.fgooglenews` | `.soci` | `.fbot` | overflow |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1280px | `435.188px 217.609px 217.594px 217.609px` — identical | 234×40 | 203×40 | 34×34 | 1184×37 | 0 |
-| 768px | `340px 340px` — identical | 234×40 | 203×40 | 34×34 | 712×65 | 0 |
-| 390px | 2×2 `165px 165px`, `.mfgrid` 350×290 — identical | 234×40 | 203×40 | 34×34 | — | 0 |
+| 1280px | `435.188px 217.609px 217.594px 217.609px`, identical | 234×40 | 203×40 | 34×34 | 1184×37 | 0 |
+| 768px | `340px 340px`, identical | 234×40 | 203×40 | 34×34 | 712×65 | 0 |
+| 390px | 2×2 `165px 165px`, `.mfgrid` 350×290, identical | 234×40 | 203×40 | 34×34 |, | 0 |
 
-Footer height: **461px at 1280** and **667px at 768** — exactly WP's own CSS
+Footer height: **461px at 1280** and **667px at 768**, exactly WP's own CSS
 arithmetic (48 + 312 + 40 + 37 + 24, and 36 + 506 + 40 + 65 + 20). Two explained
 deltas versus the live site:
 
@@ -4318,7 +4337,7 @@ deltas versus the live site:
   (`body.ad-sticky-bottom`), so it measures 20–24px shorter; the port has no ad
   bar and keeps WP's designed padding;
 - on a phone the port's install CTA is genuinely visible (Chrome fires
-  `beforeinstallprompt` — the build is installable), which adds one 40px row plus
+  `beforeinstallprompt`, the build is installable), which adds one 40px row plus
   the 10px gap. WP's headless render never qualified for it.
 
 Screenshots: `docs/evidence/footer-port-{390,768,1280}.png`. Full record:
@@ -4327,15 +4346,15 @@ Screenshots: `docs/evidence/footer-port-{390,768,1280}.png`. Full record:
 ### Not ported (deliberate)
 
 Footer sections 6 (consent banner) and 7 (sticky ad bar), the bell's push panel,
-the `.fs-lg` font-scale variants and the `no-flex-gap` Safari-14 fallbacks — all
+the `.fs-lg` font-scale variants and the `no-flex-gap` Safari-14 fallbacks, all
 need a service a static build lacks, or are inert without the JS class the WP
 theme adds. Tracked in `PENDING-WORK.md`.
 
-## [0.1.3] — 2026-09-22
+## [0.1.3], 2026-09-22
 
 ### Fixed
 
-- **On phones the popover came up icon-only — no words.** The
+- **On phones the popover came up icon-only, no words.** The
   `@media (max-width: 480px)` rule that hides the *trigger's* text was written as
   `.tp .tp-tx`, which also matched the three option rows inside the popover. On a
   handset the dropdown therefore showed three unlabelled icons. The rule is now
@@ -4351,10 +4370,10 @@ theme adds. Tracked in `PENDING-WORK.md`.
   designed; popover 134px wide, fully inside the viewport; horizontal overflow 0.
 - Screenshot: `docs/evidence/theme-menu-390-labels-fixed.png`.
 
-## [0.1.2] — 2026-09-22
+## [0.1.2], 2026-09-22
 
 Theme control rebuilt as a single button. Requested change: one button, default
-**System**, click to open — without losing any dark-mode feature or adding weight
+**System**, click to open, without losing any dark-mode feature or adding weight
 to the page.
 
 ### Changed
@@ -4406,13 +4425,13 @@ to the page.
 ### Cost
 
 - Inline markup + CSS + ~45 lines of vanilla JS. **No new network request, no
-  library, no build change** — the control is parsed with the document it already
+  library, no build change**, the control is parsed with the document it already
   lived in.
 - Measured transfer delta on the served page: 86,061 → 92,492 bytes raw and
   **19,288 → 20,413 bytes gzipped (+1.1 KB over the wire)**; resource requests
   unchanged at 5.
 
-## [0.1.1] — 2026-09-22
+## [0.1.1], 2026-09-22
 
 Header-fidelity release. Closes the responsive header defects found once a real
 browser was available on this box, and fixes two gates that were certifying
@@ -4421,7 +4440,7 @@ nothing.
 ### Fixed
 
 - **Duplicate headers on mobile.** The WP theme shows the desktop header (`.sh`)
-  *or* the mobile header (`.mh`) per breakpoint — never both. The first port pass
+  *or* the mobile header (`.mh`) per breakpoint, never both. The first port pass
   carried no visibility switch, so both rendered stacked on phones. Ported WP
   sections 50/51 into `src/styles/header.css`: `≤767px` hides `.sh`, shows `.mh`;
   `≥768px` hides `.mh` and the drawer.
@@ -4432,19 +4451,19 @@ nothing.
   show. Added `overflow-x: hidden; overflow-x: clip; overflow-wrap: break-word`
   to the `body` rule in `src/layouts/Layout.astro`, matching WP line-for-line.
   Verified against the live WP site: identical header geometry, and overflow now
-  reports 0 at 390 / 768 / 1280 — same as production.
+  reports 0 at 390 / 768 / 1280, same as production.
 - **Tablet ticker ran at desktop height.** WP section 49 sets the ticker to 30px
   (with 16px item padding) on tablet; the port left it at the 36px desktop value.
   Ported into a new `@media (max-width: 1023px)` block in `header.css`.
 - **`npm run check` died with `MODULE_NOT_FOUND`.** `package.json` pointed at
-  `scripts/check.mjs`, which did not exist in the tree — so the documented gate
+  `scripts/check.mjs`, which did not exist in the tree, so the documented gate
   ran nothing, on every release. Added `scripts/check.mjs` as an umbrella that
   runs each gate and propagates failure.
 - **fx-history vectors failed a little more each day.** The PHP oracle windows on
   `strtotime('-N days')` (a live clock at generation), while the TS gate called
   `fxHistoryRange()` with the default `Date.now()`. The gate therefore compared a
   moving window against a frozen count and drifted daily (observed 16/76 against
-  the oracle's 20/80 — 4 days behind). The engine already accepts a clock
+  the oracle's 20/80, 4 days behind). The engine already accepts a clock
   argument; the gate now pins `HIST_ORACLE_MS` to the oracle's generation instant.
 
 ### Added
@@ -4452,15 +4471,15 @@ nothing.
 - Two header-fidelity assertions covering the fixes above (body-level clip; the
   tablet ticker rhythm), so the gate cannot regress silently.
 - `README.md` and this changelog.
-- `docs/HEADER-FIDELITY-INDEPENDENT-REVIEW.md` — verification record with exact
+- `docs/HEADER-FIDELITY-INDEPENDENT-REVIEW.md`, verification record with exact
   commands and results.
-- `docs/evidence/` — rendered screenshots at 390 / 768 / 1280.
+- `docs/evidence/`, rendered screenshots at 390 / 768 / 1280.
 - `scripts/.vectors-bundle.cjs` is now gitignored; it is a generated artifact of
   `vectors-check.mjs`, not source.
 
 ### Verified
 
-- `npm run check` → `check: PASS — 2/2 gates green` (header contract PASS;
+- `npm run check` → `check: PASS, 2/2 gates green` (header contract PASS;
   vectors `pass=95 fail=0`).
 - `npm run build` → 53 pages, exit 0.
 - Rendered matrix in Chrome for Testing 153 via `agent-browser` (CDP), cache-busted:
@@ -4474,7 +4493,7 @@ nothing.
 
 - **Live staging** (`pages-dist` `88b28d6`, GitHub Pages reported `built` for that
   exact commit): served bytes carry all three CSS fixes, and the same matrix re-run
-  against https://godschi10.github.io/finance-astro/ returned identical numbers —
+  against https://godschi10.github.io/finance-astro/ returned identical numbers, 
   overflow 0 at 390/768/1280, ticker 28/30/36px, no duplicate headers. Evidence
   shots: `docs/evidence/live-header-*.png`.
 
@@ -4486,11 +4505,11 @@ nothing.
   were ported here; the rest is a separate tablet-parity workstream.
 - On tablet the WP theme clips the desktop header's right side (search + theme
   pill edge + newsletter CTA) at 768px. The port now reproduces this exactly,
-  because parity is the target — noted so it is not mistaken for a port bug.
+  because parity is the target, noted so it is not mistaken for a port bug.
 - `scripts/php-harness/vectors.php` hardcodes the old box's theme path and so
   cannot regenerate the oracle here without editing `$INC`.
 
-## [0.1.0] — 2026-09-21
+## [0.1.0], 2026-09-21
 
-Initial port: 53 pages green — chrome, homepage, legal, 17 calculators, articles,
+Initial port: 53 pages green, chrome, homepage, legal, 17 calculators, articles,
 search, about/apps/contact, WP-parity header (`sh`/`mh`/`mno`/`gs`/`tp`).

@@ -1,8 +1,8 @@
-# Search results + 404 page — theme CSS slice (source: wp-style.css, captured 2026-09-27)
+# Search results + 404 page, theme CSS slice (source: wp-style.css, captured 2026-09-27)
 
 - `.phd`  [.phd]
   - background: var(--surface); border-bottom: 1px solid var(--border); padding: 40px var(--con-pad) 32px;
-- `.phd`  [@media (max-width: 1023px) :: .phd, .about-hero]
+- `.phd`  [@media (max-width: 1023px) :: .phd.about-hero]
   - padding-left: var(--con-pad); padding-right: var(--con-pad);
 - `.phd`  [@media (max-width: 767px) :: .phd]
   - padding: 24px 20px 20px;
@@ -18,11 +18,11 @@
   - border-color: var(--gold-border); box-shadow: 0 0 0 3px rgba(217,119,6,0.08);
 - `.search-form`  [.search-form]
   - display: flex; align-items: center; gap: 8px; flex: 1;
-- `.search-form`  [@media print :: .sh, .snav, .nsearch, .msearch, .hbg, .mno, .ticker, .ticker-inner,
-  .ad-bg, .gwill-comment-ad, .share-row, .share-b, .cp-strip, .cp-scroll-btn,
-  .gconsent, .gpwa, .gwill-bell-panel, .gbp-btn, .m-nl-wrap, .article-sidebar,
-  .sw, .prog, .ftop, .fpush, .toc-list, .toc-dropdown, .legal-toc,
-  .search-form, .btt]
+- `.search-form`  [@media print :: .sh.snav.nsearch.msearch.hbg.mno.ticker.ticker-inner,
+  .ad-bg.gwill-comment-ad.share-row.share-b.cp-strip.cp-scroll-btn,
+  .gconsent.gpwa.gwill-bell-panel.gbp-btn.m-nl-wrap.article-sidebar,
+  .sw.prog.ftop.fpush.toc-list.toc-dropdown.legal-toc,
+  .search-form.btt]
   - display: none !important;
 - `.search-label`  [.search-label]
   - position: relative; flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; margin: 0;
@@ -30,11 +30,11 @@
   - color: var(--text-dim); flex-shrink: 0;
 - `.search-field`  [.search-field]
   - border: none; outline: none; font-size: 12px; color: var(--text); background: transparent; width: 100%; padding: 0; font-family: var(--font);
-- `.search-field`  [@media (max-width: 767px) :: .gs-input, .search-field,
-  .gwill-form input[type="text"], .gwill-form input[type="email"], .gwill-form input[type="tel"],
-  .gwill-form textarea, .gwill-form select,
+- `.search-field`  [@media (max-width: 767px) :: .gs-input.search-field,
+  .gwill-form input[type="text"].gwill-form input[type="email"].gwill-form input[type="tel"],
+  .gwill-form textarea.gwill-form select,
   .nl-hero-form .gwill-form input[type="email"],
-  .comment-respond input[type="text"], .comment-respond input[type="email"], .comment-respond input[type="url"],
+  .comment-respond input[type="text"].comment-respond input[type="email"].comment-respond input[type="url"],
   .comment-respond textarea,
   .art-body .wp-block-search__input]
   - font-size: 16px;

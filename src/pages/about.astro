@@ -8,7 +8,7 @@
 // "Why this blog exists" block + sidebar: .sw "Elsewhere" network links,
 // .sw "Newsletter" + the newsletter form partial keyed gwill-newsletter-1).
 // NOTE: the live "Why this blog exists" paragraph is EMPTY on the source site
-// (ACF field unset, post_content blank) — this port fills the slot with one
+// (ACF field unset, post_content blank) ;  this port fills the slot with one
 // honest in-voice paragraph instead of shipping a blank block; King may
 // replace the wording, the template position is faithful.
 import Layout from "../layouts/Layout.astro";
@@ -21,10 +21,10 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 const cards = [
   // SITE-9 (2026-10-12): "In-depth" and "tested with real money" scoped to
   // what the posts actually carry (six of ten page-1 posts are short reads;
-  // the audit's thin-posts finding) — the copy now matches the work, and the
+  // the audit's thin-posts finding) ;  the copy now matches the work, and the
   // Methodology page carries the full story of how reviews are formed.
   { emoji: "📰", title: "Finance Content", text: "Guides, comparisons, and explainers on Nigerian personal finance. Written in plain English, checked against reality." },
-  { emoji: "📱", title: "Fintech App Reviews", text: "Honest reviews of savings, investment, crypto, and payment apps. Tested before any recommendation — the Methodology page spells out how." },
+  { emoji: "📱", title: "Fintech App Reviews", text: "Honest reviews of savings, investment, crypto, and payment apps. Tested before any recommendation, and the Methodology page spells out how." },
   { emoji: "📧", title: "Weekly Newsletter", text: "Rate changes, new app reviews, and money moves worth making. Free, every week, straight to your inbox." },
   { emoji: "🌐", title: "Web Development", text: "I built this site. For WordPress projects and web dev work, see gwillchijioke.com." },
   { emoji: "🤝", title: "Brand Partnerships", text: "Sponsored content and reviews for fintech companies. Only brands I can honestly recommend, labelled as sponsored. See Contact for rates.", link: { href: `${base}editorial-policy/`, label: "Read the sponsorship policy →" } },
@@ -72,7 +72,7 @@ const cards = [
   <div class="sb-layout">
     <div style="max-width:640px">
       <h2 style="font-size:20px;font-weight:800;color:var(--text);letter-spacing:-0.03em;margin-bottom:10px">Why this blog exists</h2>
-      <p class="fz14 fw3 cm-c lh mb20">Most Nigerian finance content tells you what a bank wants you to hear. This site runs on checks instead — hands-on testing, fee tables you can verify against the provider, calculator maths proved against three independent oracle sets on every build, and a <a href={`${base}methodology/`} style="color:var(--gold-b);text-decoration:underline;text-underline-offset:3px">Methodology page</a> that says exactly how each verdict is formed. If an app wastes your money, it says so, commission or no commission. That is the whole point.</p>
+      <p class="fz14 fw3 cm-c lh mb20">Most Nigerian finance content tells you what a bank wants you to hear. This site runs on checks instead: hands-on testing, fee tables you can verify against the provider, calculator maths proved against three independent oracle sets on every build, and a <a href={`${base}methodology/`} style="color:var(--gold-b);text-decoration:underline;text-underline-offset:3px">Methodology page</a> that says exactly how each verdict is formed. If an app wastes your money, it says so, commission or no commission. That is the whole point.</p>
       <div class="ad-bg" style="margin-top:24px"></div>
     </div>
     <div>

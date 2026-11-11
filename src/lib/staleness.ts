@@ -1,21 +1,21 @@
 /* ── MAINTAINED-TABLE STALENESS (P3-6, fifth audit, v0.7.58) ────────────────
- * The audit's finding, [Certain]: the hand-maintained tables — NGX prices,
- * savings rates, transfer fees — all carry a "verified <month>" stamp and
+ * The audit's finding, [Certain]: the hand-maintained tables ; NGX prices,
+ * savings rates, transfer fees ; all carry a "verified <month>" stamp and
  * NOTHING warns when that stamp ages out. A rate table silently becomes a
  * year-old number presented with the same confidence as a fresh one, and on a
  * YMYL finance site that is worse than printing nothing.
  *
  * WHAT THIS DOES: computes, from each table's OWN recorded date, how old it is
- * today, and reports it. `npm run check` gates on the result — a table past its
+ * today, and reports it. `npm run check` gates on the result ; a table past its
  * threshold fails the gate and the build, naming itself and the edit that fixes
- * it. The alternative the audit offered — a "Stale" banner on the page — is
+ * it. The alternative the audit offered ; a "Stale" banner on the page ; is
  * NOT implemented here because a banner is advisory and this is a gate; if the
  * table has not been re-checked, it should not ship, and the gate is the only
  * place that can actually stop it.
  *
  * DATES ARE READ, NEVER INVENTED. Every entry below names the module that
  * already owns the date, so there is exactly one source of truth per table and
- * re-checking a table is a one-line edit in the module that owns it — not a
+ * re-checking a table is a one-line edit in the module that owns it ; not a
  * second edit here that can disagree with the first.
  *
  * THRESHOLD: 45 days, the figure the audit names. It is long enough that a
@@ -23,7 +23,7 @@
  * consumer-facing figure goes months past the last time a human looked at it.
  *
  * MONTH-PRECISION STAMPS: some tables record only "September 2026". A
- * month-only stamp is resolved to the LAST day of that month — the reading most
+ * month-only stamp is resolved to the LAST day of that month ; the reading most
  * favourable to the table, and therefore the honest one: we never claim a table
  * is fresher than the coarsest date it actually recorded. */
 import { MAINTAINED_VERIFIED } from "./maintained";
@@ -52,7 +52,7 @@ const MONTHS: Record<string, number> = {
 
 /** Resolve any recorded stamp to a concrete ISO date. Month-only stamps resolve
  *  to the LAST day of that month (see the header note). Returns null when the
- *  stamp is not in a shape this understands — which the gate then reports as
+ *  stamp is not in a shape this understands ; which the gate then reports as
  *  unknown rather than silently treating as fresh. */
 export function resolveVerifiedDate(stamp: string): Date | null {
   const s = stamp.trim();
@@ -64,7 +64,7 @@ export function resolveVerifiedDate(stamp: string): Date | null {
     y = Number(mt[1]); m = Number(mt[2]) - 1;
     d = new Date(Date.UTC(y, m + 1, 0)).getUTCDate(); // last day of month
   } else if ((mt = /^([A-Za-z]{3})\w*\s+(\d{4})$/.exec(s))) {
-    // "September 2026" — the MAINTAINED_VERIFIED house shape.
+    // "September 2026" ;  the MAINTAINED_VERIFIED house shape.
     if (!(mt[1] in MONTHS)) return null;
     y = Number(mt[2]); m = MONTHS[mt[1]];
     d = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
@@ -78,7 +78,7 @@ export function resolveVerifiedDate(stamp: string): Date | null {
 }
 
 /** Whole days between the stamp and `now`. Negative when the stamp is in the
- *  future, which the gate reports separately — a future date is a typo, not
+ *  future, which the gate reports separately ; a future date is a typo, not
  *  freshness. */
 export function ageInDays(verifiedOn: string, now: Date = new Date()): number | null {
   const d = resolveVerifiedDate(verifiedOn);
@@ -88,7 +88,7 @@ export function ageInDays(verifiedOn: string, now: Date = new Date()): number | 
 }
 
 export interface StalenessRow extends MaintainedTable {
-  /** null when the recorded stamp could not be parsed — reported, not assumed. */
+  /** null when the recorded stamp could not be parsed ; reported, not assumed. */
   ageDays: number | null;
   stale: boolean;
   future: boolean;
@@ -98,7 +98,7 @@ export interface StalenessRow extends MaintainedTable {
  * Every maintained table the site ships, with its own recorded date.
  * The savings-rate table is entered with its per-row provenance's month because
  * all ten rows carry the same "2026-09" and the provenance map itself throws at
- * build when a row has no date (CALC-7) — so its freshness is already enforced
+ * build when a row has no date (CALC-7) ; so its freshness is already enforced
  * per-row and is represented here at table level.
  */
 export function maintainedTables(): MaintainedTable[] {
@@ -107,7 +107,7 @@ export function maintainedTables(): MaintainedTable[] {
       id: "ngx_prices",
       label: "NGX price/dividend table (dividend-calculator)",
       verifiedOn: NGX_PRICES_VERIFIED_ON,
-      source: "src/lib/dividend.ts (NGX_PRICES_VERIFIED_ON — single source of truth)",
+      source: "src/lib/dividend.ts (NGX_PRICES_VERIFIED_ON, single source of truth)",
     },
     {
       id: "savings_rates",
@@ -131,7 +131,7 @@ export function maintainedTables(): MaintainedTable[] {
       id: "dividend_examples",
       label: "Curated NGX dividend example chips (dividend-calculator)",
       verifiedOn: dividendExamplesVerifiedOn(),
-      source: "src/data/dividend-examples.ts (dividendExamplesVerifiedOn — single source of truth)",
+      source: "src/data/dividend-examples.ts (dividendExamplesVerifiedOn, single source of truth)",
     },
     {
       id: "fx_history_seed",

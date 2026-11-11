@@ -1,4 +1,4 @@
-// Header fidelity contract check — GWill Finance WordPress → Astro port.
+// Header fidelity contract check, GWill Finance WordPress → Astro port.
 // Asserts every MUST clause from the header port spec against the built
 // layout source and the data module. Exit 0 + "header fidelity contract: PASS"
 // on full success; prints each FAIL and exits 1 otherwise.
@@ -17,7 +17,7 @@ const site = readFileSync(SITES, "utf8");
 const css = readFileSync(HEADERCSS, "utf8");
 
 // SITE-6 (the King's brand order, held-calls bundle 2026-10-11): the on-page
-// brand unifies to "GWill Finance". The lockup pin moved with it — the SITE-1
+// brand unifies to "GWill Finance". The lockup pin moved with it, the SITE-1
 // precedent (check-footer-fidelity.mjs, copyright holder): the pin guards the
 // King's corrected string, never the stale one. Do NOT "restore" ₦gwillchijioke.
 const brand = '<span class="n">₦</span><span class="nm">gwillchijioke</span>';
@@ -27,7 +27,7 @@ const placeholder = "Search savings, investing, cards";
 const tpSegs = ["dark", "system", "light"];
 const tickerVals = ["USD/NGN", "GBP/NGN", "EUR/NGN", "BTC/USD", "ETH/USD", "XAU/USD"];
 // 2026-09-30: ticker values are REWRITTEN every build by
-// scripts/fetch-snapshot.mjs from the live feeds — freezing literals here
+// scripts/fetch-snapshot.mjs from the live feeds, freezing literals here
 // would fail correct builds. Assert the anatomy instead: every pair carries
 // a properly formatted (₦/$ + thousands) value, and the generated file
 // declares itself as build-time data.
@@ -76,7 +76,7 @@ const checks = [
   ["ticker .ticker-drag>.ticker-inner + .ti", /class="ticker-drag"/.test(layout) && /class="ticker-inner"/.test(layout) && /class="ti"/.test(layout)],
   ["ticker has .t-pair/.t-rate", layout.includes("class=\"t-pair\"") && layout.includes("class=\"t-rate\"")],
   // WCAG 2.2.2 / the marquee seam: the ticker's SIX items are rendered TWICE so
-  // the loop has no visible edge. Only the first set may reach a screen reader —
+  // the loop has no visible edge. Only the first set may reach a screen reader, 
   // without aria-hidden on the duplicate, assistive tech announces all twelve,
   // which reads as a broken table of nonsense numbers. This was already correct
   // in the source when the fifth audit's P2-12 raised it (the audit predates the

@@ -1,17 +1,17 @@
 /**
- * GWill Finance — search core (SMART engine)
+ * GWill Finance ; search core (SMART engine)
  *
  * The theme's relevance engine (assets/js/spotlight-search.js v1.0.191,
  * ported from the tech theme's v1.16.80 smart dropdown), extracted into ONE
- * module shared by the spotlight overlay and the /search/ results page —
+ * module shared by the spotlight overlay and the /search/ results page; 
  * one behaviour ships in exactly one place. ES5-style internals; ESM export.
  *
  * Contract (all functions pure except highlight/escHtml):
  * - norm(): lowercase → NFD strip diacritics → punctuation→space → collapse.
  *   Matching runs on normalized text only.
  * - toks(): normalized whitespace tokens.
- * - editDist(): bounded Levenshtein — 9 when clearly too far.
- * - fuzzyOk(): len≥6 ≤2 edits / len 4–5 ≤1 / len<4 exact — MUST keep the
+ * - editDist(): bounded Levenshtein ; 9 when clearly too far.
+ * - fuzzyOk(): len≥6 ≤2 edits / len 4–5 ≤1 / len<4 exact ; MUST keep the
  *   first-letter anchor (tok[0] === word[0]): without it "battery"↔"matter"
  *   (dist 2, same length, unrelated) leaks false positives. "andriod"→
  *   "android" still passes (a==a).
@@ -21,7 +21,7 @@
  *   category +6; ALL-tokens-in-title +40, ALL-tokens-anywhere +25;
  *   ties → newer first; top N).
  * - highlight(): single-pass mark on RAW text BEFORE escaping (longest
- *   tokens first, no double-wraps) — marking escaped text hit entity
+ *   tokens first, no double-wraps) ; marking escaped text hit entity
  *   interiors (e.g. "amp" in "&amp;").
  *
  * @package GWill_Finance

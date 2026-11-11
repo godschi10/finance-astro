@@ -1,16 +1,16 @@
-// Loan-repayment engine — TS port of inc/loan-repayment.php.
+// Loan-repayment engine ;  TS port of inc/loan-repayment.php.
 // Rate AS QUOTED by the lender; reports the REAL effective APR.
 // Numerically tested against the PHP original (vectors.json).
 //
-// S3a (v0.7.60) — TWO engine behaviours, both fifth-audit P1-2:
+// S3a (v0.7.60) ;  TWO engine behaviours, both fifth-audit P1-2:
 //
 //   1. UPFRONT FEE (the optional 6th parameter, default 0). Lenders deduct a
 //      fee before disbursing, so the honest APR solves on the amount actually
 //      RECEIVED (net disbursement = amount × (1 − fee%)), while the repayment
 //      stream stays contract-sized (installment/total/interest keep their
-//      existing, fee-free meanings — the fee is a fee, not interest). A fee
+//      existing, fee-free meanings ;  the fee is a fee, not interest). A fee
 //      that eats the whole loan (net ≤ 0) has no APR to solve, and the engine
-//      says so with apr: NaN rather than a confident 0% — the page's existing
+//      says so with apr: NaN rather than a confident 0% ;  the page's existing
 //      !Number.isFinite guard turns that into the honest "Out of range".
 //      Acceptance (fifth audit Appendix A, A3 loanFeeApr): ₦100k/30d/1%-day +
 //      5% fee → APR 4442.97% (receive ₦95,000) · flat 5%/mo ×3 + 5% fee →
@@ -18,11 +18,11 @@
 //
 //   2. DAY→MONTH ROUNDING: days ÷ 30.4 rounded to the NEAREST month (minimum
 //      1), replacing ceil(days/30). The old round-UP rule billed a 31-day
-//      flat loan as TWO months — ₦10,000 interest where the calendar month is
+//      flat loan as TWO months ;  ₦10,000 interest where the calendar month is
 //      ₦5,000 (the fifth audit's worked example; a cited checker case pins
 //      the corrected ₦5,000 in vectors-check.mjs, verified 11 Oct 2026).
 //      Oracle safety, enumerated before the change: every gated loanApr
-//      vector is a 30-day or month tenor — 30/30.4 → 1, the PHP parity
+//      vector is a 30-day or month tenor ;  30/30.4 → 1, the PHP parity
 //      loan_flat_days 90d → 3 either way, and month tenors never round. No
 //      parity vector covers a 31-day flat loan, so no divergence entry.
 

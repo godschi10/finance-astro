@@ -1,4 +1,4 @@
-# 06 — Homepage port verification
+# 06, Homepage port verification
 
 Release **v0.3.0**. Source of truth: `gwill-finance-theme` **1.13.39**
 (`front-page.php`, `template-parts/content.php`, `inc/card-media.php`,
@@ -6,7 +6,7 @@ Release **v0.3.0**. Source of truth: `gwill-finance-theme` **1.13.39**
 theme (`diff -rq` against `/var/www/finance/wp-content/themes/gwill-finance-theme`
 → no differences, both 1.13.39).
 
-Live oracle: **https://finance.fitnesslova.qzz.io/** — read-only, cache-busted,
+Live oracle: **https://finance.fitnesslova.qzz.io/**, read-only, cache-busted,
 origin asserted on every load.
 
 Port under test: local preview build of `main` (53 pages) at
@@ -45,10 +45,10 @@ vocabulary, copy of the WP-owned strings, CSS and behaviour are the contract.
 
 - filter: click **Investing** → `on` count 1, `aria-pressed=true`, 1 of 7 cards
   visible, `gridHasP` true (the empty-state paragraph is not used when there are
-  hits). Clicking the already-active pill changes nothing (1 visible, 1 `on`) —
+  hits). Clicking the already-active pill changes nothing (1 visible, 1 `on`), 
   WP's `category-filter.js` rule. Clicking **All** restores 7 visible.
 - newsletter: empty submit → `"Enter a valid email address."`; valid submit →
-  `"This form isn't connected yet — the list opens at launch, so nothing was
+  `"This form isn't connected yet, the list opens at launch, so nothing was
   sent."`, and `location.pathname` unchanged (nothing navigates, nothing is sent).
 - pill strip: `.cp-strip` is wrapped in `.cp-strip-wrap`, the two
   `.cp-scroll-btn` buttons carry WP's `aria-label`s, scroll step is 70% of the
@@ -66,16 +66,16 @@ vocabulary, copy of the WP-owned strings, CSS and behaviour are the contract.
    @≤767px. The port carried only 48px → containers 64px narrow at 768 and 16px
    narrow at 390.
 3. **`Layout.astro` kept a selector-list rule** (`.cp.on,.cp[aria-pressed="true"]`)
-   that the theme never had — it survived the first cleanup pass because only one
+   that the theme never had, it survived the first cleanup pass because only one
    selector in the list was on the allow-list. Removed after measurement showed
    the dark pill again.
 4. **`--gold-input-border` was never declared**, so the newsletter input fell
    back to its initial `border-color`.
-5. **The newsletter submit's loading label was visible** — "Subscribe
+5. **The newsletter submit's loading label was visible**, "Subscribe
    Subscribing…" and a 198px button. Cause: `.gwill-form__submit-loading
    { display: none }` lives in the theme's FORMS section (style.css 2934–2937),
    outside the homepage scope the extraction was briefed on.
-6. **The honeypot was visible** — `"Leave this blank"` printed in the form.
+6. **The honeypot was visible**, `"Leave this blank"` printed in the form.
    Same cause, same block (style.css 2948).
 
 Defect 5 and 6 are recorded in `home.css` as an explicit port addition naming the
@@ -87,7 +87,7 @@ regress silently.
 - **Configured-ad state.** Live ads are all disabled, so only the empty-slot
   state could be compared. Neither WP nor the port reserves height when a slot is
   filled.
-- **Dark theme** on the homepage — measured light only (same gap as the footer
+- **Dark theme** on the homepage, measured light only (same gap as the footer
   pass). Homepage dark rules are present in `home.css`, and the token block lives
   in `Layout.astro`; the *combination* on this page has not been measured
   element-by-element.

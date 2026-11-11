@@ -15,7 +15,7 @@ export const GET: APIRoute = async ({ site }) => {
   const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   const posts = await getCollection("articles");
 
-  // Date archives — WP generates year + month archives for every date with
+  // Date archives ;  WP generates year + month archives for every date with
   // posts (no day archives: /2026/01/01/ 404s live).
   const years = new Set<string>();
   const months = new Set<string>();
@@ -37,12 +37,12 @@ export const GET: APIRoute = async ({ site }) => {
   Array.from(years).forEach((y) => {
     pagesFor(posts.filter((p) => String(p.data.pubDate.getUTCFullYear()) === y).length, y);
   });
-  // Author archive tails (2026-11-03, King: "Fix all 3 if safe" — R-3). The
+  // Author archive tails (2026-11-03, King: "Fix all 3 if safe" ;  R-3). The
   // articles archive lists /page/N/ above; author archives paginate through the
   // same PER_PAGE=10 contract (author/[slug]/[page].astro), so any author whose
   // post count exceeds posts_per_page gets identical treatment. Previously the
   // built /author/gwill-chijioke/page/2/ was indexed-reachable only through the
-  // on-page pagination nav, while its article twin was listed — an
+  // on-page pagination nav, while its article twin was listed ;  an
   // inconsistency inside this file, now closed additively (WP parity
   // emitter inc/sitemap.php remains off-box; nothing is removed here).
   AUTHORS.forEach((a) => {
@@ -58,7 +58,7 @@ export const GET: APIRoute = async ({ site }) => {
     "about/",
     "apps/",
     "contact/",
-    // SITE-9 (BATCH S4, 2026-10-12): the trust pages — methodology/sources and
+    // SITE-9 (BATCH S4, 2026-10-12): the trust pages ;  methodology/sources and
     // the editorial policy (corrections + sponsorship). The fifth audit's
     // launch checklist names both.
     "methodology/",

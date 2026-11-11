@@ -1,4 +1,4 @@
-// OG card renderer — a PURE function: (card) → SVG string at 1200×630.
+// OG card renderer, a PURE function: (card) → SVG string at 1200×630.
 // No file I/O, no child_process, no network. gen-og.mjs owns rasterising.
 //
 // LEG OG-C. Rewritten to the shipped coordinate contract:
@@ -17,7 +17,7 @@
 //      fontconfig's answer carries it. FONT resolves to Source Code Pro, which
 //      HAS U+20A6 (real glyph: 2 ink stems top and bottom, 60% mid-ink; a tofu
 //      box is 1 run across 100% of the top row with 9% mid-ink). So the naira
-//      sign is never rewritten — it bakes as the real sign, in data copy AND in
+//      sign is never rewritten, it bakes as the real sign, in data copy AND in
 //      the logo lockup. Only the arrow is swapped, and that is a copy choice.
 //      See TEXT_SWAPS for the full measurement table.
 //   3. The wrapper is pure arithmetic, not a measuring loop. Advance is exactly
@@ -30,9 +30,9 @@
 // letter-spacing on WRAPPED text because it breaks the 0.600 em identity the
 // char cap is computed from. The proofs carry -0.02em on the tool name and the
 // article title (both wrappable); here only single-line items keep their
-// tracking token — the logo lockup, whose tracking is part of the mark itself.
+// tracking token, the logo lockup, whose tracking is part of the mark itself.
 // Widest real effect: 33 chars x 52px x 0.02 = 34px of line length on a 1040px
-// measure (3.3%) — never an overflow, since tracking of this sign only ever
+// measure (3.3%), never an overflow, since tracking of this sign only ever
 // narrows the estimate.
 
 /* ── CANVAS + GRID (spec 1.1) ─────────────────────────────────────────────── */
@@ -68,7 +68,7 @@ export const TYPE = {
 export const ADVANCE = 0.600;
 
 /**
- * charsPerLine — spec 2.3: floor(1040 / (fontSize x 0.600)).
+ * charsPerLine, spec 2.3: floor(1040 / (fontSize x 0.600)).
  * 30 @56, 33 @52, 72 @24.
  */
 export function charsPerLine(fontSize) {
@@ -76,7 +76,7 @@ export function charsPerLine(fontSize) {
 }
 
 /**
- * lineHeight — spec 2.3: round(fontSize x 1.20). 67 @56, 62 @52, 29 @24.
+ * lineHeight, spec 2.3: round(fontSize x 1.20). 67 @56, 62 @52, 29 @24.
  * ARTICLE title is the one spec'd exception: 64px leading (spec 3.3), which keeps
  * a 1.23 ratio at 52px and optically matches the 64px mark column beside it.
  */
@@ -84,7 +84,7 @@ export function lineHeight(fontSize) {
   return Math.round(fontSize * 1.2);
 }
 
-/** Article title leading, spec 3.3 — not the 62px grid value. */
+/** Article title leading, spec 3.3, not the 62px grid value. */
 export const ARTICLE_TITLE_LEADING = 64;
 
 /* ── BASELINES (spec 1.3, 3.1, 3.2, 3.3) ─────────────────────────────────── */
@@ -105,7 +105,7 @@ export const BASELINES = {
   article: { headline: 252, meta: 404 },
 };
 
-/** 88 x 4, radius 2, SOLID gold — spec 4.2 (never a gradient). */
+/** 88 x 4, radius 2, SOLID gold, spec 4.2 (never a gradient). */
 export const RULE = {
   x: GRID.x,
   width: 88,
@@ -164,7 +164,7 @@ export const WORDMARK = {
   place: {
     // 316 puts the lockup optically centred (ink spans 248..333, rule 340..347)
     // and leaves the spec'd lede baseline 392 and gold rule 442 untouched below.
-    brand: { x: 80, baseline: 316, size: 88 }, // the hero — 8.12em x 88 = 715px
+    brand: { x: 80, baseline: 316, size: 88 }, // the hero, 8.12em x 88 = 715px
     tool: { x: 80, baseline: 104, size: 38 }, // header 18px -> 38px
     article: { x: 80, baseline: 104, size: 38 },
   },
@@ -178,7 +178,7 @@ export const WORDMARK = {
  * more gap between the glyph and the name:
  *   (1 + 13) x 0.57 + 0.14 = 8.12 em        // 'gwillchijioke' is THIRTEEN chars
  * `.logo::after` spans `left:0; right:0` of that same box, so the underline
- * width IS this number — the logo can never outgrow its own rule. Verified on
+ * width IS this number, the logo can never outgrow its own rule. Verified on
  * the baked card: the name's ink ends at x=387 and the rule ends at x=389.
  */
 export const WORDMARK_EM = (1 + WORDMARK.name.length) * (ADVANCE + WORDMARK.tracking) + WORDMARK.gap;
@@ -218,7 +218,7 @@ export function chipX(label) {
   return GRID.right - chipWidth(label);
 }
 
-/** Article chip colours — the site's badge palette at dark-mode values (spec 4.1). */
+/** Article chip colours, the site's badge palette at dark-mode values (spec 4.1). */
 export const CHIP_COLORS = {
   savings: "#22c55e",
   investing: "#2dd4bf",
@@ -238,7 +238,7 @@ export const chipColor = (slug) => CHIP_COLORS[String(slug)] ?? CHIP_COLORS.unca
 
 /**
  * The brief's literal value. This box has NO DejaVu Sans Mono installed, so
- * fontconfig resolves it to Source Code Pro — which is ALSO exactly 0.600 em
+ * fontconfig resolves it to Source Code Pro, which is ALSO exactly 0.600 em
  * advance, identical to the shipped JetBrains Mono's 600/1000 upem (spec 6.2).
  * The substitution is therefore metrically invisible: the bake and the browser
  * card break lines at the same characters.
@@ -250,11 +250,11 @@ export const FONT = "DejaVu Sans Mono, monospace";
 /**
  * Card text may never carry a codepoint the BAKE FACE lacks.
  *
- * The bake face is whatever fontconfig hands rsvg for FONT above — Source Code
- * Pro — and it is NOT the shipped site subset. An OG card is rasterised once and
+ * The bake face is whatever fontconfig hands rsvg for FONT above, Source Code
+ * Pro, and it is NOT the shipped site subset. An OG card is rasterised once and
  * served as a PNG; it is never laid out by a browser, so "the shipped subset has
  * no U+20A6" was never a constraint on this file. Swapping it to a plain "N"
- * turned a headline into "on a N50k Salary" — a different number, on a card the
+ * turned a headline into "on a N50k Salary", a different number, on a card the
  * King reads as his own words.
  *
  * U+20A6 is therefore NOT swapped, and that is measured, not assumed. Rendered
@@ -266,10 +266,10 @@ export const FONT = "DejaVu Sans Mono, monospace";
  *
  * Two ink stems on the top row and two on the bottom, with 60% ink across the
  * middle, is a glyph. A tofu box is ONE unbroken run across 100% of its top row
- * with under 10% mid-ink — that is the control, and the control fails.
+ * with under 10% mid-ink, that is the control, and the control fails.
  *
  * U+2192 KEEPS its swap, but for the honest reason rather than the old one: the
- * arrow renders (same test: 1% top coverage, 100% mid-ink — a solid shaft), so
+ * arrow renders (same test: 1% top coverage, 100% mid-ink, a solid shaft), so
  * this is a COPY choice, "USD/NGN" over "USD→NGN" to match the two labels the
  * rest of the site already uses. The old "U+2192 absent from the font subset"
  * claim was false and is corrected here.
@@ -382,7 +382,7 @@ function wordmarkRuleNode(x, size, baseline) {
  * on the glyph alone and still shares one y. The 0.14em gap between them is the
  * margin the header gets from `.logo .n { margin-right }`.
  *
- * Both x values are ABSOLUTE card coordinates — there is no wrapping <g>, so
+ * Both x values are ABSOLUTE card coordinates, there is no wrapping <g>, so
  * there is exactly one authority for where the lockup sits and no way to apply
  * its origin twice.
  *
@@ -418,13 +418,13 @@ function shell() {
       `<defs>`,
       `<pattern id="og-dotgrid" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="1.5" fill="${PALETTE.dot}" fill-opacity="0.035"/></pattern>`,
       `<radialGradient id="og-goldglow" cx="0.5" cy="0.5" r="0.5"><stop offset="0%" stop-color="${PALETTE.glow}" stop-opacity="0.10"/><stop offset="65%" stop-color="${PALETTE.glow}" stop-opacity="0"/></radialGradient>`,
-      // `.logo::after` — var(--gold) -> var(--green), left to right.
+      // `.logo::after`, var(--gold) -> var(--green), left to right.
       `<linearGradient id="og-lockuprule" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="${PALETTE.gold}"/><stop offset="100%" stop-color="${PALETTE.green}"/></linearGradient>`,
       glow("og-wm-glow-brand", WORDMARK.place.brand.size),
       glow("og-wm-glow-small", WORDMARK.place.tool.size),
       `</defs>`,
     ].join("\n"),
-    // No radius and no border on the card itself — platforms crop it (spec 4.5).
+    // No radius and no border on the card itself, platforms crop it (spec 4.5).
     ground: [
       `<rect x="0" y="0" width="${CANVAS.w}" height="${CANVAS.h}" fill="${PALETTE.ink}"/>`,
       `<rect x="0" y="0" width="${CANVAS.w}" height="${CANVAS.h}" fill="url(#og-dotgrid)"/>`,
@@ -459,7 +459,7 @@ function footer(tick) {
 /**
  * Render one card.
  *
- * BRAND: the headline slot IS the logo lockup — `headline` is not consumed,
+ * BRAND: the headline slot IS the logo lockup, `headline` is not consumed,
  * because the King rejected a card that printed his brand name under a mark
  * that was not his. The lockup IS the brand; the tagline and the live domain
  * carry the rest.
@@ -473,7 +473,7 @@ export function renderCard({ variant = "brand", headline = "", lede = "", meta =
   const { defs, ground } = shell();
   const body = [];
 
-  // Z1 · logo zone — always top-left, never moves (spec 1.2). On the brand card
+  // Z1 · logo zone, always top-left, never moves (spec 1.2). On the brand card
   // it is the hero at 88px; on tool/article it sits in the header's own slot.
   const place = WORDMARK.place[v];
   body.push(wordmark(place.x, place.baseline, place.size, v === "brand" ? "og-wm-glow-brand" : "og-wm-glow-small"));
@@ -521,7 +521,7 @@ export function renderCard({ variant = "brand", headline = "", lede = "", meta =
   body.push(footer(tick));
 
   // NOTE for maintainers: a CSS custom-property name contains a double hyphen, so
-  // token names must never be pasted into an XML comment in here — librsvg
+  // token names must never be pasted into an XML comment in here, librsvg
   // rejects the file outright (spec 6.5).
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${CANVAS.w}" height="${CANVAS.h}" viewBox="0 0 ${CANVAS.w} ${CANVAS.h}">
 ${defs}

@@ -1,4 +1,4 @@
-/* GWill Finance — faithful header port from the WP theme stylesheet.
+/* GWill Finance ;  faithful header port from the WP theme stylesheet.
  * Copied verbatim from wp-style.css sections 4 (TICKER), 5 (HEADER
  * desktop), 6 (SPOTLIGHT search), 7 (HEADER mobile), 8 (MOBILE NAV).
  * Uses the same CSS custom-properties already defined on :root in
@@ -747,7 +747,7 @@
 .mno-list .sub-menu a:active { color: var(--gold-b); }
 .mno-bot { padding: 16px 20px; border-top: 1px solid var(--dark-b); }
 .mno-cta { display: block; width: 100%; text-align: center; background: var(--gold); color: #ffffff; border: none; font-size: 13px; font-weight: 700; padding: 14px; border-radius: var(--r-sm); transition: background var(--t); text-decoration: none; }
-/* E26-S1 — there is no [data-theme="light"] on this site (the theme script removes the
+/* E26-S1 ;  there is no [data-theme="light"] on this site (the theme script removes the
    attribute for light; dark carries data-theme="dark"). So the base rule is the light
    (white ink on #b45309 = 5.02:1) and dark gets the dark ink (black on #f59e0b = 9.15:1). */
 [data-theme="dark"] .mno-cta { color: #0d0b08; }
@@ -755,10 +755,10 @@
 
 /* ── RESPONSIVE: header show/hide switch ─────────────
    Faithful port of wp-style.css sections 49/50/51 (the WP only shows the
-   desktop .sh OR the mobile .mh per breakpoint — never both). Without
+   desktop .sh OR the mobile .mh per breakpoint ;  never both). Without
    these rules both headers render stacked on mobile. */
 @media (max-width: 1023px) {
-  /* WP section 49 — tablet ticker rhythm (shorter strip, wider item padding).
+  /* WP section 49 ;  tablet ticker rhythm (shorter strip, wider item padding).
      Omitted in the first port pass; without it the tablet ticker ran at the
      36px desktop height and disagreed with production. */
   .ticker { height: 30px; }

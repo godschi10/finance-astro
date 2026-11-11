@@ -1,10 +1,10 @@
 ---
 /**
- * VibeComments.astro — DRAFT port of the King's own comment UI for the
+ * VibeComments.astro ; DRAFT port of the King's own comment UI for the
  * finance-astro static port.
  *
  * Source of truth: the WordPress plugins dir (vibe-comments/templates/comments.php)
- * (v3.20.28, 257 lines) as rendered live (guest path) — captured in /tmp/live-art.html.
+ * (v3.20.28, 257 lines) as rendered live (guest path) ; captured in /tmp/live-art.html.
  * Spec: docs/port/15-comments-plan.md §5 (UI port specifics) + §6 (honest holds).
  *
  * Law 0 discipline:
@@ -15,10 +15,10 @@
  *       auth-bar path renders. The WP-login <a> and the Google button are
  *       REMOVED (declared divergence: no WP auth behind a static site).
  *   - #gwill-comment-ads hidden slots ship as-is (dead until the ad system
- *     lands — honest hold, not deleted) exactly as the live page renders them.
+ *     lands ; honest hold, not deleted) exactly as the live page renders them.
  *   - <noscript> honest notice kept, count-aware as in the PHP template.
  *
- * Integration (done — kept here as the record):
+ * Integration (done ; kept here as the record):
  *   - The comments module loads as exactly ONE script (single-bind law), placed
  *     AFTER the inline `var vibeComments = {...}` serialization of VIBE_CONFIG:
  *     that is the order WP itself enqueued them.
@@ -29,7 +29,7 @@
 interface Props {
   /** Live approved-comment count for this post (vibe_comment_count parity). */
   count: number;
-  /** The Astro page slug — the Worker/D1 post key (replaces WP postId). */
+  /** The Astro page slug ; the Worker/D1 post key (replaces WP postId). */
   postSlug: string;
   /** Base URL of the comments Worker (replaces WP admin-ajax). */
   apiBase: string;
@@ -40,24 +40,24 @@ const { count, postSlug, apiBase } = Astro.props;
 /**
  * Placeholder port of the live `var vibeComments = {...}` object
  * (field-for-field reference: config-and-i18n.md in this directory).
- * ⚠ wire to Worker URL at integration — `ajaxUrl` replaces WP admin-ajax;
+ * ⚠ wire to Worker URL at integration ; `ajaxUrl` replaces WP admin-ajax;
  *   at integration this object is serialized inline BEFORE the comments
  *   module exactly the way WP served it (`//# sourceURL=vibe-comments-js-extra`).
  */
 const VIBE_CONFIG = {
-  apiBase,                                   // the live Worker (replaces WP admin-ajax)
-  postSlug,                                  // replaces WP postId ('44' live)
-  iconMode: 'auto',                          // verbatim: emoji-first, SVG fallback
-  isLoggedIn: false,                         // always false — guests only on a static site
+  apiBase,                                  // the live Worker (replaces WP admin-ajax)
+  postSlug,                                 // replaces WP postId ('44' live)
+  iconMode: 'auto',                         // verbatim: emoji-first, SVG fallback
+  isLoggedIn: false,                        // always false ;  guests only on a static site
   isAdmin: false,
-  replyPush: null,                           // plan §5: disabled on static (P3)
+  replyPush: null,                          // plan §5: disabled on static (P3)
   mentions: { enabled: false, authors: [] }, // P2: seed from content authors
-  qa: false,                                 // P3: Q&A mode
-  googleEnabled: false,                      // removed — declared divergence below
-  maxCommentLength: 2000,                    // verbatim
-  oneCommentText: '1 Comment',               // verbatim
-  manyCommentsTemplate: '%s Comments',      // verbatim
-  debug: false,                             // absent/falsy in the live object
+  qa: false,                                // P3: Q&A mode
+  googleEnabled: false,                     // removed ;  declared divergence below
+  maxCommentLength: 2000,                   // verbatim
+  oneCommentText: '1 Comment',              // verbatim
+  manyCommentsTemplate: '%s Comments',     // verbatim
+  debug: false,                            // absent/falsy in the live object
   i18n: {
     loading: 'Loading…',
     loadingDots: 'Loading...',
@@ -113,7 +113,7 @@ const VIBE_CONFIG = {
     accept: '✓ Accept',
     author: 'Author',
     pinnedBadge: 'Pinned',
-    notifyTitle: 'Reply alerts for this thread — click to switch on or off',
+    notifyTitle: 'Reply alerts for this thread: click to switch on or off',
     bellOn: 'On',
     bellOff: 'Off',
     noPushSupport: 'This browser does not support notifications.',
@@ -168,7 +168,7 @@ const noscriptNotice =
 
         <!-- Static trigger - no count, cached forever, zero staleness risk.
              UX digest #4 (NN/g progressive disclosure): the trigger's label
-             must carry strong scent — what's behind it and how much. The
+             must carry strong scent ; what's behind it and how much. The
              build-time count rides the label ("Load 6 Comments"); the module
              corrects nothing here because the count patch targets the
              heading, and a one-off drift on a cached page is cosmetic. -->
@@ -235,24 +235,24 @@ const noscriptNotice =
                 <!-- declared divergence: no WP auth behind a static site.
                      The source template's guest branch renders a WordPress
                      login link and, when configured, a Google sign-in button.
-                     Both are REMOVED here — no WP login and no Google OAuth.
+                     Both are REMOVED here ; no WP login and no Google OAuth.
                      P3 replaces them with magic-link email login; until then
                      guests only. The .vibe-auth-bar wrapper and the guest
                      toggle render exactly as live. -->
                 <!-- King's order 2026-09-26: guest is the ONLY auth path on this
-                     site, so the form is EXPOSED BY DEFAULT — no reveal
+                     site, so the form is EXPOSED BY DEFAULT ; no reveal
                      ceremony. The WP-login <a>, the Google button and the
                      .vibe-or separator stay removed (no WP auth, no Google
                      OAuth behind a static site; a separator with nothing to
                      separate is dead markup). Guests only, until P3. -->
                 <div class="vibe-auth-bar">
-                    <p class="vibe-auth-note">Comment as a guest — your email is never shown.</p>
+                    <p class="vibe-auth-note">Comment as a guest: your email is never shown.</p>
                 </div>
 
                 <form id="vibe-comment-form" class="vibe-comment-form" method="post" action="#">
                     <!-- Field name kept byte-faithful for JS parity
                          (initForm reads formData.get('comment_post_ID'));
-                         the VALUE is the Astro slug now — the Worker keys by
+                         the VALUE is the Astro slug now ; the Worker keys by
                          post_slug, not the WP numeric ID. -->
                     <input type="hidden" name="comment_post_ID" value={postSlug} />
                     <input type="hidden" name="comment_parent" id="vibe-comment-parent" value="0" />
@@ -277,10 +277,10 @@ const noscriptNotice =
                             <input type="email" id="vibe-email" name="email"
                                    required autocomplete="email"
                                    placeholder="your@email.com" />
-                            <!-- UX digest #7: explain WHY the field exists —
+                            <!-- UX digest #7: explain WHY the field exists; 
                                  an explained field reads as less intrusive
                                  than a mystery requirement. -->
-                            <p class="vibe-email-hint">Never shown publicly — moderation and your Gravatar only.</p>
+                            <p class="vibe-email-hint">Never shown publicly: moderation and your Gravatar only.</p>
                         </div>
                     </div>
 
@@ -304,7 +304,7 @@ const noscriptNotice =
                          Vibe_Comments_Reply_Push::is_available() and the email
                          opt-in behind the MailChannels rail. The port has
                          NEITHER rail in v1 (plan §5: replyPush null, P3), so
-                         both blocks are ABSENT rather than rendered dead —
+                         both blocks are ABSENT rather than rendered dead; 
                          the plugin's own gating law. They return with the P3
                          rails. -->
 
@@ -340,22 +340,22 @@ const noscriptNotice =
 </div><!-- .comments-area.mt48 -->
 
 <!--
-    The comments module — single-bind law: exactly ONE script, exactly one init
+    The comments module ; single-bind law: exactly ONE script, exactly one init
     path. WP's own enqueue order is reproduced here: the localized config object
     is printed inline first, the client module second. (`//# sourceURL` parity is
     cosmetic and dropped.)
 
     The module is the plugin's own client script with ONLY its transport seam
-    patched — see src/scripts/vibe-comments.js for the change list. Everything
+    patched ; see src/scripts/vibe-comments.js for the change list. Everything
     else, the render core included, is verbatim.
 -->
 <!-- 2026-10-03 security audit: escape "<" in the serialized config so no
      closing-tag sequence (</script>) in any config value can break out of
-     this inline script context — same pattern Layout.astro uses for its
+     this inline script context ; same pattern Layout.astro uses for its
      JSON-LD. Data is build-time today; this makes it structurally safe. -->
 <script is:inline set:html={`var vibeComments = ${JSON.stringify(VIBE_CONFIG).replace(/</g, "\\u003c")};`}></script>
 <script>
-  // King's order 2026-09-26 (faster): the client module is LAZY — fetched and
+  // King's order 2026-09-26 (faster): the client module is LAZY ;  fetched and
   // executed only when a reader clicks Load Comments. Astro hoists this
   // script into a small bundle and exposes its URL via import.meta.url; the
   // stub then injects the REAL 34KB module on demand. This also removes the
@@ -370,7 +370,7 @@ const noscriptNotice =
       window.__vibeLoaded = true;
       window.__vibeLoadRequested = true; // the module honours this on boot
       // UX digest #5: swap the button for the structural skeleton the
-      // component ships next to it — perceived work begins instantly.
+      // component ships next to it ;  perceived work begins instantly.
       if (btn) btn.style.display = "none";
       var sk = document.getElementById("vibe-comments-skeleton");
       if (sk) sk.hidden = false;

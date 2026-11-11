@@ -1,6 +1,6 @@
 ---
 title: "Risevest vs Trove: Where Should You Invest Your Dollars?"
-description: "Managed portfolios vs DIY brokerage — real returns data, not marketing copy. Which one I use for what."
+description: "Managed portfolios vs DIY brokerage: real returns data, not marketing copy. Which one I use for what."
 category: "investing"
 author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
@@ -22,7 +22,7 @@ Risevest and Trove both let Nigerians invest in US markets, but they’re built 
 
 Risevest pools your money into professionally managed portfolios. You choose a risk level, deposit, and the team does the buying, rebalancing, and re-investing. Your returns come as portfolio performance, not individual stock picks.
 
-Trove gives you a brokerage account with real US market access. You research, you buy, you sell. It’s your money and your decisions — the app is the tool, not the manager.
+Trove gives you a brokerage account with real US market access. You research, you buy, you sell. It’s your money and your decisions: the app is the tool, not the manager.
 
 ## Direct comparison
 
@@ -30,7 +30,7 @@ Trove gives you a brokerage account with real US market access. You research, yo
 
 ## My experience
 
-I put $300 into Risevest and it was genuinely boring — which is the point. Monthly statements, steady performance, zero stress. I put ₦50,000 into Trove and bought S&P 500 ETFs and a couple of individual stocks. It was exciting and instructive, and some of my picks did better than Risevest’s portfolios while others did worse.
+I put $300 into Risevest and it was genuinely boring, which is the point. Monthly statements, steady performance, zero stress. I put ₦50,000 into Trove and bought S&P 500 ETFs and a couple of individual stocks. It was exciting and instructive, and some of my picks did better than Risevest’s portfolios while others did worse.
 
 The honest summary: Risevest outperformed for me overall, but I learned more from Trove. If you’re building wealth for a goal, Risevest’s discipline wins. If you’re building financial literacy, Trove teaches you things no portfolio manager can.
 
@@ -44,4 +44,4 @@ The honest summary: Risevest outperformed for me overall, but I learned more fro
 
 ## Bottom line
 
-You’re not choosing between good and bad — you’re choosing between managed and self-directed. If that sounds like a cop-out, it’s because the apps genuinely serve different jobs. Pick the one that matches the time you’re willing to spend, and revisit the choice in a year.
+You’re not choosing between good and bad; you’re choosing between managed and self-directed. If that sounds like a cop-out, it’s because the apps genuinely serve different jobs. Pick the one that matches the time you’re willing to spend, and revisit the choice in a year.

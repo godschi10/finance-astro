@@ -1,14 +1,14 @@
 /* ═══════════════════════════════════════════════════════════════════════
-   Search results + 404 pages — the theme's own CSS slice, ported verbatim.
+   Search results + 404 pages ;  the theme's own CSS slice, ported verbatim.
    Source: gwill-finance-theme style.css (1.13.39), rules extracted with
    media context into docs/port/19-search404-rules.md (31 rules; captured
    from the live origin 2026-09-27). These pages share the theme's global
-   sheet on WP — the port installs the slice here so /search/ and /404/
+   sheet on WP ;  the port installs the slice here so /search/ and /404/
    speak the same vocabulary (.phd, .search-pill, .error-404, .es-*).
    Dark-mode variants and breakpoints ride along, exactly as WP serves them.
    ═══════════════════════════════════════════════════════════════════════ */
 
-/* ── Result header (.phd) — WP: surface bg, bottom border, 40/32 pad ── */
+/* ── Result header (.phd) ;  WP: surface bg, bottom border, 40/32 pad ── */
 .phd {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -74,7 +74,7 @@
 
 /* Brand-tied clear control (King 2026-09-30: "the x to clear the text doesn't
    look tied to our site design"). WebKit renders type=search's cancel button as
-   a bare grey glyph inside the pill — a UA control, untied to anything here.
+   a bare grey glyph inside the pill ;  a UA control, untied to anything here.
    Suppressed and replaced with the theme's OWN clear anatomy (the .gs-clear of
    the spotlight panel): 28px circle, transparent, --text-dim, gold on hover,
    14px stroke ✕, truly hidden at zero text. */
@@ -106,7 +106,7 @@
    pill as a second bright-orange outline on every mobile tap (Chrome for
    Android matches :focus-visible on tapped text fields). The pill already
    carries the WCAG 2.4.7 focus indicator: the :focus-within gold border +
-   soft glow above — the only visible focus affordance that fits the pill's
+   soft glow above ;  the only visible focus affordance that fits the pill's
    anatomy. The field itself draws nothing extra. */
 .search-field:focus-visible { outline: none; }
 .search-submit {
@@ -218,7 +218,7 @@
 
 /* ── Archive pill-strip wrapper (WP theme verbatim, top-level) ──
    WP: .pill-strip { background: var(--surface-2); border-bottom: 1px solid
-   var(--border); padding: 12px var(--con-pad); } — the strip behind the
+   var(--border); padding: 12px var(--con-pad); } ;  the strip behind the
    category pills on archive pages (all-articles sits INSIDE .con on WP's
    blog page, but the year/month/category archives wrap the strip full-width
    between .phd and .con). */
@@ -228,7 +228,7 @@
   padding: 12px var(--con-pad);
 }
 
-/* ── Archive pagination (WP theme verbatim — style.css §38 PAGINATION) ──
+/* ── Archive pagination (WP theme verbatim ;  style.css §38 PAGINATION) ──
    WP: .pagination { display:flex; align-items:center;
    justify-content:center; gap:8px; margin-top:36px; } and the .page-numbers
    chip set (36px, r-sm, border, surface; .current = solid gold). The theme
@@ -243,7 +243,7 @@
 }
 .pagination .page-numbers:hover { border-color: var(--gold-border); color: var(--gold); }
 .pagination .page-numbers.current { background: var(--gold); border-color: var(--gold); color: #fff; }
-/* WCAG 2.5.5 — touch targets grow to 44px on coarse pointers (v1.13.12). */
+/* WCAG 2.5.5 ;  touch targets grow to 44px on coarse pointers (v1.13.12). */
 @media (pointer: coarse) {
   .pagination .page-numbers { min-width: 44px; height: 44px; }
 }

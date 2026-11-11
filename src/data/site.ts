@@ -1,36 +1,36 @@
-// Static data — baked-in theme defaults (ACF absent in v1).
+// Static data ;  baked-in theme defaults (ACF absent in v1).
 // Source: gwill-finance-theme inc/finance-helpers.php, inc/footer-links.php,
 // inc/acf-field-groups.php defaults. Maintained tables (FX, transfer fees,
 // savings rates) live as dated src/data/*.ts files.
 //
 // ── Deploy coordinates: SINGLE SOURCE OF TRUTH ──
 // Canonical ORIGIN + BASE are defined ONCE here. This module is pure data
-// (zero imports — verified), so astro.config.mjs imports them with no cycle;
+// (zero imports ;  verified), so astro.config.mjs imports them with no cycle;
 // the reverse direction (site.ts importing the config) would drag
 // astro/config + rehype plugins into page bundles, so it is NOT done.
 // Env overrides for domain/base moves (defaults reproduce today's committed
 // values byte-for-byte; full move checklist lives in the sibling leg's doc):
-//   SITE_ORIGIN — default "https://godschi10.github.io" (feeds astro `site`)
-//   SITE_BASE   — default "/finance-astro" (feeds astro `base` / BASE_URL)
+//   SITE_ORIGIN ;  default "https://godschi10.github.io" (feeds astro `site`)
+//   SITE_BASE   ;  default "/finance-astro" (feeds astro `base` / BASE_URL)
 export const ORIGIN = process.env.SITE_ORIGIN ?? "https://godschi10.github.io";
 export const BASE = process.env.SITE_BASE ?? "/finance-astro";
 
-// KING PORTABILITY FIX 2026-10-04: single Worker literal — was the same URL
+// KING PORTABILITY FIX 2026-10-04: single Worker literal ;  was the same URL
 // copy-pasted in Layout.astro / [slug].astro / mod.astro (CSP keeps its own
 // explicit literal: security policy reads better explicit than interpolated).
 export const COMMENTS_API = "https://comments-api.gwill.workers.dev";
 
-// SITE-6 (2026-10-12): every profile URL lives in ONE place — the footer
+// SITE-6 (2026-10-12): every profile URL lives in ONE place ;  the footer
 // network column, the article author box, the About "Elsewhere" card and the
 // JSON-LD sameAs all read PROFILES, so a handle or domain move is a one-line
 // edit and drift dies.
-//   github  — the gwillchijioke account has no public repositories (audit
+//   github  ;  the gwillchijioke account has no public repositories (audit
 //             SITE-6, checked during the portfolio audit); the King's public
 //             work lives under godschi10. Pointed there.
-//   portfolio — tech.gwillchijioke.com is RETIRED: the King's portfolio
+//   portfolio ;  tech.gwillchijioke.com is RETIRED: the King's portfolio
 //             CHANGELOG moved every such link to androidscroll.com, so this
 //             site's references move the same way.
-//   x/instagram/linkedin/youtube — KING-HELD: the audit warns @gwill_chijioke
+//   x/instagram/linkedin/youtube ;  KING-HELD: the audit warns @gwill_chijioke
 //             (underscore) and @gwillchijioke are different accounts and says
 //             to confirm with the owner. Not confirmed yet, so these keep the
 //             handle the site has always carried (no underscore). Do NOT
@@ -64,11 +64,11 @@ export interface Category {
   slug: string;
   name: string;
   emoji: string;
-  /** Theme badge class — inc/finance-helpers.php::gwill_finance_cat_style(). */
+  /** Theme badge class ; inc/finance-helpers.php::gwill_finance_cat_style(). */
   badge: string;
-  /** Theme art tile class (card / featured image fallback) — same source. */
+  /** Theme art tile class (card / featured image fallback) ; same source. */
   art: string;
-  /** Hero chip + pill tint — gwill_finance_brand_chip_class() (default db-g). */
+  /** Hero chip + pill tint ; gwill_finance_brand_chip_class() (default db-g). */
   chip: string;
 }
 
@@ -89,7 +89,7 @@ export const CATEGORIES: Category[] = [
   { slug: "fixed-income", name: "Fixed Income", emoji: "\u{1F4C9}", badge: "bin", art: "i-inv", chip: "db-in" },
   // The theme's pill strips list Uncategorized too (homepage cp buttons + db
   // chips + every archive strip, captured live 2026-09-29). Its archive is
-  // empty on WP as well — h1 only, no grid.
+  // empty on WP as well ;  h1 only, no grid.
   { slug: "uncategorized", name: "Uncategorized", emoji: "\u{1F4C1}", badge: "bsl", art: "i-ban", chip: "db-s" },
 ];
 
@@ -126,17 +126,17 @@ export const CATEGORY_META: Record<string, { h1: string; desc?: string }> = {
   },
   remittance: {
     h1: "Remittance in Nigeria",
-    // SITE-9 (2026-10-12): the desc claimed "tested with real transfers" — the
+    // SITE-9 (2026-10-12): the desc claimed "tested with real transfers" ;  the
     // posts behind it are fee/rate/speed comparisons, not published transfer
     // logs. Reworded to the comparison that is actually there (methodology
     // page defines what "tested" means on this site).
-    desc: "Sending and receiving money across borders — Wise, Remitly, WorldRemit and SWIFT compared on fees, speed and what actually lands in the naira account.",
+    desc: "Sending and receiving money across borders: Wise, Remitly, WorldRemit and SWIFT compared on fees, speed and what actually lands in the naira account.",
   },
   "dollar-accounts": {
     h1: "Dollar Accounts in Nigeria",
-    // SITE-9 (2026-10-12): "tested with real money" scoped out — same reasoning
+    // SITE-9 (2026-10-12): "tested with real money" scoped out ;  same reasoning
     // as the remittance descriptor above.
-    desc: "Dollar account apps for Nigerians — Grey, Vance, Geegpay and Chipper Cash compared on fees, limits and virtual cards.",
+    desc: "Dollar account apps for Nigerians: Grey, Vance, Geegpay and Chipper Cash compared on fees, limits and virtual cards.",
   },
   budgeting: {
     h1: "Budgeting in Nigeria",
@@ -149,13 +149,13 @@ export const CATEGORY_META: Record<string, { h1: string; desc?: string }> = {
   uncategorized: { h1: "Uncategorized in Nigeria" },
 };
 
-// Footer link groups — faithful port of inc/footer-links.php (gwill-finance-theme
+// Footer link groups ;  faithful port of inc/footer-links.php (gwill-finance-theme
 // 1.13.39). The theme renders these in three places: the desktop footer's
 // "Articles" and "Finance Apps" columns, and the mobile footer's "Site" column.
 // hrefs are site-root-relative and get the `${base}` prefix at render time.
 //
 // NOTE on hrefs: WP links "All Articles" to its /all-articles/ permalink. That
-// path does not exist in this port (it 404s — the real route is /articles/), so
+// path does not exist in this port (it 404s ;  the real route is /articles/), so
 // the port points at its own route rather than copying a dead link.
 export interface FooterLink {
   label: string;
@@ -205,7 +205,7 @@ export const FOOTER_NETWORK: { desktop: FooterLink[]; mobile: FooterLink[] } = {
   ],
 };
 
-// NESTED nav tree — faithful port of the WP primary-navigation menu
+// NESTED nav tree ;  faithful port of the WP primary-navigation menu
 // (menu-primary-navigation / .snav-list). Parent rows with a `children`
 // array are rendered as .menu-item-has-children with a chevron caret +
 // .sub-menu dropdown (desktop) / accordion (mobile drawer). hrefs are
@@ -247,7 +247,7 @@ export const NAV: NavItem[] = [
 ];
 
 
-// The homepage's Featured Article — the port's equivalent of the theme's
+// The homepage's Featured Article ;  the port's equivalent of the theme's
 // `gwill_featured_post_id` theme mod (live: post 5, the Dollar Accounts review).
 // index.astro falls back to the newest article if this slug ever disappears.
 export const FEATURED_SLUG = "grey-vs-geegpay-dollar-account";
@@ -265,14 +265,14 @@ export const catBySlug = (slug: string): Category => {
 };
 
 // TICKER_STATIC is REWRITTEN at build time by scripts/fetch-snapshot.mjs
-// from the same feeds the calculators use — label = data-pair, value =
+// from the same feeds the calculators use ;  label = data-pair, value =
 // the rendered .t-rate. data-src lets the ported ticker-live.js refresh
 // pairs per source. Never hand-edit the values; they are generated.
 export const TICKER_STATIC = [
   { label: "USD/NGN", value: "₦1,350", src: "fx" },
   { label: "GBP/NGN", value: "₦1,805", src: "fx" },
   { label: "EUR/NGN", value: "₦1,511", src: "fx" },
-  { label: "BTC/USD", value: "$73,694", src: "btc" },
-  { label: "ETH/USD", value: "$2,050", src: "eth" },
-  { label: "XAU/USD", value: "$4,037", src: "gold" },
+  { label: "BTC/USD", value: "$74,347", src: "btc" },
+  { label: "ETH/USD", value: "$2,076", src: "eth" },
+  { label: "XAU/USD", value: "$3,989", src: "gold" },
 ];

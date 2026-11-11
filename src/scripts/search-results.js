@@ -1,10 +1,10 @@
 /**
- * GWill Finance — /search/ results page controller
+ * GWill Finance ; /search/ results page controller
  *
  * Drives the rebuilt search page (search.astro): same smart engine as the
  * spotlight (scripts/search-core.js), the theme's card anatomy via the
  * ArticleCard HTML emitted at build time is NOT available to runtime-built
- * rows — so rows are built here with the theme's own class vocabulary
+ * rows ; so rows are built here with the theme's own class vocabulary
  * (article.ac > .ac-img/.ac-emoji + .ac-body > a.badge + h2.ac-t > a +
  * .ac-ex > p + .ac-ft), matching template-parts/content.php. The badge/art/
  * emoji map comes from the embedded index (badgeClass/art/emoji per item).
@@ -24,7 +24,7 @@ import { toks, smartMatch, highlight, escHtml } from './search-core.js';
   var rawPool = [];
   try {
     // The Layout embeds ONE shared corpus (#gwill-search-index) on every
-    // page — the spotlight reads it too. Prefer it; fall back to the legacy
+    // page ;  the spotlight reads it too. Prefer it; fall back to the legacy
     // per-page #search-index if absent.
     var el = document.getElementById('gwill-search-index') || document.getElementById('search-index');
     if (el) {
@@ -37,7 +37,7 @@ import { toks, smartMatch, highlight, escHtml } from './search-core.js';
   var input = document.getElementById('search-input');
   var form = document.querySelector('.search-form');
   var grid = document.getElementById('search-results-grid');
-  // WP contract: the count line lives in the .phd HEADER (p after h1) —
+  // WP contract: the count line lives in the .phd HEADER (p after h1) ; 
   // "{n} results for <strong>{q}</strong>". One element, one line.
   var countEl = document.getElementById('search-count-p');
   var empty = document.getElementById('search-empty');
@@ -47,7 +47,7 @@ import { toks, smartMatch, highlight, escHtml } from './search-core.js';
   var cat = '';
 
   // Runtime base, read from the rendered breadcrumb link (the is:inline
-  // template-literal trap never applies to a bundled module — but the base
+  // template-literal trap never applies to a bundled module ;  but the base
   // must still be read from the DOM so sub-path deploys stay correct).
   var homeHref = '/';
   try {
@@ -63,7 +63,7 @@ import { toks, smartMatch, highlight, escHtml } from './search-core.js';
   var CAT_DEFAULT = { badge: 'bsl', art: '', emoji: '' };
 
   // theme's card anatomy: template-parts/content.php with card-media.php's
-  // emoji branch — class vocabulary + badge/art map verbatim. The badge/art/
+  // emoji branch ;  class vocabulary + badge/art map verbatim. The badge/art/
   // emoji map is baked into the index at build time (search.astro, the
   // theme's gwill_finance_cat_style map via CATEGORIES).
   function card(it, qtoks) {
@@ -127,7 +127,7 @@ import { toks, smartMatch, highlight, escHtml } from './search-core.js';
   function syncUrl(q) {
     try {
       var u = new URL(window.location.href);
-      // The form submits ?s= (WP's dialect); the page state stays ?q= —
+      // The form submits ?s= (WP's dialect); the page state stays ?q= ; 
       // accept both on load, write q on change.
       if (q) u.searchParams.set('q', q); else u.searchParams.delete('q');
       window.history.replaceState(null, '', u.toString());
@@ -136,7 +136,7 @@ import { toks, smartMatch, highlight, escHtml } from './search-core.js';
 
   // Accept ?q= (the page's dialect), ?s= (WP's) and a raw querystring
   // fragment on load. NOTE: the static Pages build bakes value="" into the
-  // input (no server) — so the ?q= load MUST seed the input here, then run().
+  // input (no server) ;  so the ?q= load MUST seed the input here, then run().
   (function initial() {
     try {
       var u = new URL(window.location.href);
@@ -164,7 +164,7 @@ import { toks, smartMatch, highlight, escHtml } from './search-core.js';
   input.addEventListener('input', run);
 
   // Branded clear control (the native type=search cancel glyph is suppressed
-  // in CSS — a UA drawing is untied to the design). Same contract as the
+  // in CSS ;  a UA drawing is untied to the design). Same contract as the
   // spotlight's .gs-clear: visible only while the field holds text, click
   // empties it, re-runs live results, keeps focus for the next query.
   var clearBtn = document.getElementById('search-clear');

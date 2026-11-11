@@ -6,29 +6,29 @@ const n = (v: number) => formatGrouped(v, 0);
 const seed = reverseGross(250000, 0.08);
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
-<ToolShell title="Net to Gross Salary Calculator (Take-Home to Salary), Nigeria - GWill Finance" description="What gross salary do you need for your target take-home? Reverse-solved through NTA 2025 PAYE with pension and reliefs." slug="gross-to-net-calculator" tool="Net to Gross (Take-Home to Salary)" lede="Start from the take-home you want, work backwards to the gross you must negotiate — pension, NHF, and rent relief accounted for." verified="Reverse-solved over NTA 2025 PAYE · 8% pension default" faqs={[
-  { q: "Why is the gross so much higher than my target?", a: "Pension (8%) comes off even in the minimum-wage exempt zone, then PAYE stacks on top. The gap is real — negotiate to the gross, not the net." },
-  { q: "Does rent lower the gross I need?", a: "Yes — 20% of annual rent (capped ₦500k) cuts taxable income, so slightly less gross reaches the same net." },
+<ToolShell title="Net to Gross Salary Calculator (Take-Home to Salary), Nigeria - GWill Finance" description="What gross salary do you need for your target take-home? Reverse-solved through NTA 2025 PAYE with pension and reliefs." slug="gross-to-net-calculator" tool="Net to Gross (Take-Home to Salary)" lede="Start from the take-home you want, work backwards to the gross you must negotiate: pension, NHF, and rent relief accounted for." verified="Reverse-solved over NTA 2025 PAYE · 8% pension default" faqs={[
+  { q: "Why is the gross so much higher than my target?", a: "Pension (8%) comes off even in the minimum-wage exempt zone, then PAYE stacks on top. The gap is real: negotiate to the gross, not the net." },
+  { q: "Does rent lower the gross I need?", a: "Yes: 20% of annual rent (capped ₦500k) cuts taxable income, so slightly less gross reaches the same net." },
 ]}
 
   badge="Reverse PAYE · NTA 2025",
-  copy={[["p", "Most salary discussions start from gross, the figure on your offer letter, and work forward to the net that arrives in your account. But when you are negotiating, planning a budget or comparing two offers, it is often more useful to start from the take-home you need and ask: what gross produces that? Because PAYE rises with gross, there is exactly one gross for any given net, and this calculator finds it precisely."],["p", "The calculator applies the current NTA 2025 schedule: a 0% band on the first ₦800,000 of annual taxable income, progressive 15% to 25% bands above that, a rent relief of 20% of annual rent (capped ₦500,000), and a complete minimum-wage exemption for those earning ₦70,000 a month or less. Because the first slice is tax-free, the relationship between gross and net is not linear, which is exactly why a simple multiplier fails and a proper solver is needed."],["p", "If an employer quotes a net figure (\"you will take home ₦X\"), this tells you what the actual gross is, and whether that is competitive. If you want a specific take-home, say, ₦300,000, this shows the gross offer you should ask for, and the tax gap between gross and net that your employer will deduct."],["p", "The gap between your gross and net is more than just PAYE. The breakdown table shows each piece: the pension contribution (8% by default), the National Housing Fund, NHIS, any life assurance and other reliefs you claim, and the rent relief that lowers your taxable income. Each deduction and relief moves the gross you need in a different direction, more deductions mean you need a higher gross for the same take-home, while more reliefs mean you need a lower one."],["p", "Under the Nigeria Tax Act 2025, you pay no income tax on an employment if your gross income from that employment is at or below the national minimum wage (NTA 2025, s.163(1)(t)). This is a different thing from the ₦800,000 zero-rate band, which applies to your chargeable income once you are taxable. Last verified 11 Oct 2026 · NTA s.163(1)(t) (nta2025.txt:4407-4408) · s.58(1) (nta2025.txt:1877-1880). Pension still comes off first, so the gross you need sits about 8.7% above the net at the default 8% pension (a ₦60,000 target needs about ₦65,217 gross) — with no PAYE on top."],["p", "This calculator works backward, net to gross. To go the other way, from a salary you have been offered to the take-home you will actually receive, use our Nigeria Tax Calculator. It also compares the old and new tax bands and shows how much the Nigeria Tax Act 2025 saves you."],["h2", "Net to gross questions"],["h3", "How do I find gross salary from net pay?"],["p", "Because PAYE rises with gross salary, the calculator binary-searches the gross that produces your target take-home under the current Nigeria Tax Act 2025 bands, so the two always agree exactly."],["h3", "What gross salary gives me ₦250,000 take home per month?"],["p", "About ₦308,192 a month before tax, assuming the default 8% pension, no NHF and no rent relief. The calculator shows the PAYE and deductions too."],["h3", "How is this different from the salary tax calculator?"],["p", "The salary tax calculator goes forward, gross in, net out. This one reverses it: you tell it the net you want, it returns the gross you must earn."],["h3", "Does rent relief change the gross I need?"],["p", "Yes. Rent relief lowers your taxable income, so with rent relief you need a slightly lower gross to hit the same take-home. Enter your annual rent to see the effect."]]},
+  copy={[["p", "Most salary discussions start from gross, the figure on your offer letter, and work forward to the net that arrives in your account. But when you are negotiating, planning a budget or comparing two offers, it is often more useful to start from the take-home you need and ask: what gross produces that? Because PAYE rises with gross, there is exactly one gross for any given net, and this calculator finds it precisely."],["p", "The calculator applies the current NTA 2025 schedule: a 0% band on the first ₦800,000 of annual taxable income, progressive 15% to 25% bands above that, a rent relief of 20% of annual rent (capped ₦500,000), and a complete minimum-wage exemption for those earning ₦70,000 a month or less. Because the first slice is tax-free, the relationship between gross and net is not linear, which is exactly why a simple multiplier fails and a proper solver is needed."],["p", "If an employer quotes a net figure (\"you will take home ₦X\"), this tells you what the actual gross is, and whether that is competitive. If you want a specific take-home, say, ₦300,000, this shows the gross offer you should ask for, and the tax gap between gross and net that your employer will deduct."],["p", "The gap between your gross and net is more than just PAYE. The breakdown table shows each piece: the pension contribution (8% by default), the National Housing Fund, NHIS, any life assurance and other reliefs you claim, and the rent relief that lowers your taxable income. Each deduction and relief moves the gross you need in a different direction, more deductions mean you need a higher gross for the same take-home, while more reliefs mean you need a lower one."],["p", "Under the Nigeria Tax Act 2025, you pay no income tax on an employment if your gross income from that employment is at or below the national minimum wage (NTA 2025, s.163(1)(t)). This is a different thing from the ₦800,000 zero-rate band, which applies to your chargeable income once you are taxable. Last verified 11 Oct 2026 · NTA s.163(1)(t) (nta2025.txt:4407-4408) · s.58(1) (nta2025.txt:1877-1880). Pension still comes off first, so the gross you need sits about 8.7% above the net at the default 8% pension (a ₦60,000 target needs about ₦65,217 gross): with no PAYE on top."],["p", "This calculator works backward, net to gross. To go the other way, from a salary you have been offered to the take-home you will actually receive, use our Nigeria Tax Calculator. It also compares the old and new tax bands and shows how much the Nigeria Tax Act 2025 saves you."],["h2", "Net to gross questions"],["h3", "How do I find gross salary from net pay?"],["p", "Because PAYE rises with gross salary, the calculator binary-searches the gross that produces your target take-home under the current Nigeria Tax Act 2025 bands, so the two always agree exactly."],["h3", "What gross salary gives me ₦250,000 take home per month?"],["p", "About ₦308,192 a month before tax, assuming the default 8% pension, no NHF and no rent relief. The calculator shows the PAYE and deductions too."],["h3", "How is this different from the salary tax calculator?"],["p", "The salary tax calculator goes forward, gross in, net out. This one reverses it: you tell it the net you want, it returns the gross you must earn."],["h3", "Does rent relief change the gross I need?"],["p", "Yes. Rent relief lowers your taxable income, so with rent relief you need a slightly lower gross to hit the same take-home. Enter your annual rent to see the effect."]]},
   disclaimer="This calculator is for informational guidance only and is not tax, payroll or financial advice. Figures follow the Nigeria Tax Act 2025 with assumed deductions, confirm your exact salary and tax with your employer or a licensed adviser.">
 <div class="fx-card">
-<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
-<!-- PERIOD TOGGLE (S5 item 5) — the WP tax tools' Monthly/Annual switch
+<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers and the receipt waits.</p>
+<!-- PERIOD TOGGLE (S5 item 5) ; the WP tax tools' Monthly/Annual switch
      (page-gross-to-net-calculator.php:60-64, and page-salary-tax-
      calculator.php:68-71 for its sibling), in the port's own segmented
      grammar (.fx-stepper/.fx-step from ToolShell, the same control the
      savings-goal mode switch uses). DISPLAY-ONLY by design: the solver and
      every input stay monthly, the per-year view is the same engine output
      annualised for reading (the engine ships no annual fields on this page,
-     so per-year = per-month × 12 — stated in the hint below). -->
+     so per-year = per-month × 12 ; stated in the hint below). -->
 <div class="fx-stepper" role="group" aria-label="Receipt period">
   <button type="button" class="fx-step active" data-gn-period="monthly" aria-pressed="true">Monthly</button>
   <button type="button" class="fx-step" data-gn-period="annual" aria-pressed="false">Annual</button>
 </div>
-<p class="hint">Receipt figures follow this period. The solver works in months — the per-year view is the same figures annualised (monthly × 12), not a second calculation.</p>
+<p class="hint">Receipt figures follow this period. The solver works in months: the per-year view is the same figures annualised (monthly × 12), not a second calculation.</p>
 <div class="tgrid c3">
 
 <div class="field" data-cur="NGN"><label for="gn-net">Target take-home ₦/mo</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="gn-net" type="text" value="250000" inputmode="decimal"></span></div>
@@ -39,7 +39,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="field" data-cur="NGN"><label for="gn-life">Life assurance monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="gn-life" type="text" value="0" inputmode="decimal"></span></div>
 <div class="field" data-cur="NGN"><label for="gn-other">Other reliefs monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="gn-other" type="text" value="0" inputmode="decimal"></span></div>
 </div>
-<!-- RENT QUICK-PICK CHIPS (S5 item 1) — adopted from
+<!-- RENT QUICK-PICK CHIPS (S5 item 1) ; adopted from
      page-gross-to-net-calculator.php:81-86, whose rent chips are exactly
      None / ₦1.2m / ₦2.4m / ₦3.6m. The port's own component (.fx-chips /
      .fx-chip + aria-pressed, tools.css:46-69): buttons, one tap writes the
@@ -86,15 +86,15 @@ const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).val
    "gross to negotiate", and each relief row additionally waits on its own
    field, because gross × 0% relief is a deduction the visitor never claimed. */
 const ALL = ["gn-net", "gn-pen", "gn-rent", "gn-nhf", "gn-nhis", "gn-life", "gn-other"];
-/* S5 item 5 — the period state. "monthly" is the shipped calculator (every
+/* S5 item 5 ; the period state. "monthly" is the shipped calculator (every
    engine output and every input is monthly); "annual" is a DISPLAY view of
-   the same numbers (per-year = per-month × 12 — the engine ships no annual
+   the same numbers (per-year = per-month × 12 ; the engine ships no annual
    fields on this page). Declared module-scope because render() reads it; the
    toggle buttons below own every write. */
 let gnPeriod: "monthly" | "annual" = "monthly";
 const per = (v: number) => (gnPeriod === "annual" ? v * 12 : v);
 const perTxt = () => (gnPeriod === "annual" ? "yr" : "mo");
-/* The row labels carry the unit, so they follow the period on every path —
+/* The row labels carry the unit, so they follow the period on every path; 
    called at the top of render() like the loan page's paintRateUnit(). */
 function paintPeriodLabels(): void {
   const s = gnPeriod === "annual" ? "/yr" : "/mo";
@@ -131,25 +131,25 @@ function render() {
   sfFig(t("gn-rel"), ["gn-net", "gn-rent"], n(per(r.relief_monthly)));
   sfFig(t("gn-ded"), ALL, n(per(r.deductions_monthly)));
   const notes: string[] = [];
-  if (!(netRaw > 0)) notes.push("Enter a target take-home above ₦0 — the gross waits until you do.");
+  if (!(netRaw > 0)) notes.push("Enter a target take-home above ₦0: the gross waits until you do.");
   if (netRaw < 0 || penRaw < 0 || rentRaw < 0) notes.push("Negative entries are treated as ₦0.");
   if (penRaw > 100) notes.push("Pension capped at 100%.");
-  // Solver ceiling, B3 (v0.7.55): the engine now REPORTS saturation itself —
+  // Solver ceiling, B3 (v0.7.55): the engine now REPORTS saturation itself ; 
   // `unreachable` is true when the capped search's net at the ₦100M/mo ceiling
-  // still sits below the target — so the page prints the honest message off the
+  // still sits below the target ;  so the page prints the honest message off the
   // engine's word instead of re-deriving it from the returned figures.
-  if (r.unreachable) notes.push("Out of range — that take-home is beyond this solver's ₦100M/month ceiling. Lower the target.");
-  else if (netRaw > 100000000) notes.push("That target looks unusually large — double-check the figure.");
-  /* #5 hard caps (v0.7.55) — the input-side inline nudge: on this page the
+  if (r.unreachable) notes.push("Out of range: that take-home is beyond this solver's ₦100M/month ceiling. Lower the target.");
+  else if (netRaw > 100000000) notes.push("That target looks unusually large: double-check the figure.");
+  /* #5 hard caps (v0.7.55) ; the input-side inline nudge: on this page the
      visitor types the fixed deductions directly, so the nudge fires when NHF +
-     NHIS + life + other already exceed the take-home being targeted — the
+     NHIS + life + other already exceed the take-home being targeted ; the
      solver will price a much higher gross to carry them. */
   const netKnown = !pmBlank(g("gn-net").value);
   const dedFixed = nhf + nhis + life + other;
   const dedWarn = t("gn-dedwarn");
   if (netKnown && dedFixed > net) {
     dedWarn.hidden = false;
-    dedWarn.textContent = `Heads-up — NHF + NHIS + life assurance + other reliefs add up to ${n(dedFixed)}/mo, above the ${n(net)}/mo take-home you're targeting. The solver will price a much higher gross to carry them; check the deduction fields.`;
+    dedWarn.textContent = `Heads-up: NHF + NHIS + life assurance + other reliefs add up to ${n(dedFixed)}/mo, above the ${n(net)}/mo take-home you're targeting. The solver will price a much higher gross to carry them; check the deduction fields.`;
   } else {
     dedWarn.hidden = true;
     dedWarn.textContent = "";
@@ -160,7 +160,7 @@ function render() {
 }
   sfEmpty(sfIsEmpty("gross-to-net-calculator", gv));
 ["gn-net", "gn-pen", "gn-rent", "gn-nhf", "gn-nhis", "gn-life", "gn-other"].forEach((id) => g(id).addEventListener("input", render));
-/* ── S5 item 1 — RENT QUICK-PICK CHIPS ───────────────────────────────────────
+/* ── S5 item 1 ; RENT QUICK-PICK CHIPS ───────────────────────────────────────
    The port's own component (.fx-chips/.fx-chip + aria-pressed,
    tools.css:46-69), values adopted from page-gross-to-net-calculator.php:81-86
    (None / ₦1.2m / ₦2.4m / ₦3.6m). One tap writes the annual-rent field and
@@ -177,10 +177,10 @@ for (const b of RENT_CHIPS) {
     g("gn-rent").dispatchEvent(new Event("input", { bubbles: true }));
   });
 }
-/* ── S5 item 5 — THE PERIOD TOGGLE ───────────────────────────────────────────
+/* ── S5 item 5 ; THE PERIOD TOGGLE ───────────────────────────────────────────
    Buttons, not radios (the savings-goal mode switch's grammar): the period is
    a VIEW of the same receipt, not a number. Reset restores the calculator's
-   seeded numbers and leaves the chosen period standing — the same reading
+   seeded numbers and leaves the chosen period standing ; the same reading
    "give me the worked example back" gets on savings-goal. */
 const GN_PERIOD_BTNS = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-gn-period]"));
 function setGnPeriod(p: "monthly" | "annual"): void {
@@ -194,7 +194,7 @@ function setGnPeriod(p: "monthly" | "annual"): void {
   render();
 }
 GN_PERIOD_BTNS.forEach((b) => b.addEventListener("click", () => setGnPeriod(b.dataset.gnPeriod as "monthly" | "annual")));
-/* ── S5 item 4 — DEEP-LINK PREFILL ?gross= ───────────────────────────────────
+/* ── S5 item 4 ; DEEP-LINK PREFILL ?gross= ───────────────────────────────────
    WP reads ?gross= on salary-tax (page-salary-tax-calculator.php:32-42):
    strip non-numeric, clamp 0–₦100M/month, silent fallback to the seed. This
    page's counterpart has no WP deep link, so the manager's item extends the
@@ -202,7 +202,7 @@ GN_PERIOD_BTNS.forEach((b) => b.addEventListener("click", () => setGnPeriod(b.da
    solver's OUTPUT, so ?gross= fills the target take-home and the gross below
    re-solves from it. Same law, same guards as the converter's F6 URL state
    (currency-converter.astro:191-237): read on load after the seed paint,
-   canonicalise debounced on change, pure garbage strips the query entirely —
+   canonicalise debounced on change, pure garbage strips the query entirely; 
    no warning, no invented figure. */
 const urlNet = (raw: string): string | null => {
   const s = raw.trim().slice(0, 40);

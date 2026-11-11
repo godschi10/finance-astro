@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* merge-proof.mjs — one-off live-DOM proof for the 50-30-20 × allocator merge.
+/* merge-proof.mjs, one-off live-DOM proof for the 50-30-20 × allocator merge.
  * Own Chrome (free CDP port, never 9222/9333), own static server on a free port,
  * 390px viewport, both themes. Prints PASS/FAIL lines + writes screenshots.
  * Outputs go to the merge-503020-2026-10-07 proof dir (research notes). */
@@ -71,7 +71,7 @@ async function ev(expression) {
   if (r.exceptionDetails) throw new Error("js: " + JSON.stringify(r.exceptionDetails).slice(0, 300));
   return r.result?.value;
 }
-const say = (ok, label, extra = "") => console.log(`${ok ? "PASS" : "FAIL"}  ${label}${extra ? " — " + extra : ""}`);
+const say = (ok, label, extra = "") => console.log(`${ok ? "PASS" : "FAIL"}  ${label}${extra ? ", " + extra : ""}`);
 
 const CHROME = process.env.CHROME_BIN || join(process.env.HOME || os.homedir(), ".cache/ms-playwright/chromium-1243/chrome-linux/chrome");
 const main = async () => {
@@ -155,7 +155,7 @@ const main = async () => {
     await ev(`document.getElementById("step2").scrollIntoView() `); await sleep(400);
     await shot("merge-step2-light-390.png");
 
-    // F1: actuals-path trap — clear, type only into Spent on needs
+    // F1: actuals-path trap, clear, type only into Spent on needs
     await ev(`try{localStorage.clear()}catch(e){};location.reload()`); await sleep(1500);
     await ev(`(()=>{const i=document.getElementById("bg-spn");i.focus();i.value="80000";i.dispatchEvent(new Event("input",{bubbles:true}));})()`);
     await sleep(800);
@@ -191,7 +191,7 @@ const main = async () => {
     const bodyText = await (await fetch(`${base}/money-tools/50-30-20-budget-calculator/`)).text();
     say(!bodyText.includes("sliders"), "F5: 'sliders' lie gone");
     say(!bodyText.includes("calculator below"), "F5: 'below' lie gone");
-    const related = await ev(`Array.from(document.querySelectorAll(".g3 .app-card a, .fx-aff a")).map(a=>a.getAttribute("href")).join(" ")`);
+    const related = await ev(`Array.from(document.querySelectorAll(".g3 .app-card a.fx-aff a")).map(a=>a.getAttribute("href")).join(" ")`);
     say(related.includes("compound-interest-calculator") && related.includes("savings-goal-calculator") && related.includes("inflation-savings-calculator"), "F5: outward links live", related.slice(0, 160));
     say(bodyText.includes('id="step2"') && bodyText.includes("Step 2 of this same calculator, below the receipt"), "F5: step1→step2 named in copy");
 

@@ -3,13 +3,13 @@
 #
 # Pipeline reality: `npm run build` renders 78 static pages to dist/ (gitignored).
 # GitHub Pages serves them from the `pages-dist` branch checkout, which lives as
-# a SEPARATE clone (default: the finance-astro-pages checkout) — this repo's
+# a SEPARATE clone (default: the finance-astro-pages checkout), this repo's
 # own branch is never pushed to Pages. This script: build → rsync → commit →
 # push → poll the Pages build → curl-probe the served bytes.
 #
 # Usage: scripts/ship-pages.sh <version> <message...>
 #   e.g. scripts/ship-pages.sh 0.7.15 "portability leg A: toolchain + manifest"
-# Commit lands as: v0.7.15 — portability leg A: toolchain + manifest
+# Commit lands as: v0.7.15, portability leg A: toolchain + manifest
 #
 # Env: PAGES_CHECKOUT (default: the finance-astro-pages checkout).
 # The MANAGER runs this. Do not run it from a worker leg.
@@ -26,7 +26,7 @@ if [[ $# -lt 2 ]]; then
 fi
 VER="${1#v}"; shift
 MSG="$*"
-SUBJECT="v${VER} — ${MSG}"
+SUBJECT="v${VER}, ${MSG}"
 
 echo "==> [1/6] preflight: repos + tools"
 command -v rsync >/dev/null || { echo "missing: rsync" >&2; exit 1; }
@@ -53,7 +53,7 @@ echo "==> [4/6] commit + push origin pages-dist"
 BEFORE="$(gh api "repos/${GH_REPO}/pages/builds/latest" --jq '.created_at' 2>/dev/null || true)"
 echo "    latest Pages build before push: ${BEFORE:-none}"
 git -C "$PAGES_CHECKOUT" add -A
-git -C "$PAGES_CHECKOUT" commit -m "$SUBJECT" || echo "    (nothing to commit — dist identical)"
+git -C "$PAGES_CHECKOUT" commit -m "$SUBJECT" || echo "    (nothing to commit, dist identical)"
 git -C "$PAGES_CHECKOUT" push origin pages-dist
 echo "    pushed"
 
@@ -61,7 +61,7 @@ echo "==> [5/6] poll Pages build (timeout 10 min)"
 deadline=$((SECONDS + 600))
 BUILD_STATUS=""
 for ((i = 1; ; i++)); do
-  INFO="$(gh api "repos/${GH_REPO}/pages/builds/latest" --jq '[.created_at, .status] | @tsv')"
+  INFO="$(gh api "repos/${GH_REPO}/pages/builds/latest" --jq '[.created_at.status] | @tsv')"
   CREATED="$(printf '%s' "$INFO" | cut -f1)"; BUILD_STATUS="$(printf '%s' "$INFO" | cut -f2)"
   echo "    poll $i: created_at=$CREATED status=$BUILD_STATUS"
   if [[ "$CREATED" > "${BEFORE:-}" && ("$BUILD_STATUS" == "built" || "$BUILD_STATUS" == "errored") ]]; then

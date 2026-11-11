@@ -1,9 +1,9 @@
-/* gwill-forms port — WP assets/js/forms.js behaviour for the static port.
+/* gwill-forms port ; WP assets/js/forms.js behaviour for the static port.
  * Attaches to every .gwill-form (newsletter partial + routed contact form),
  * POSTs FormData to the comments-api Worker (which replaces admin-ajax),
  * mirrors the loading state (aria-busy + data-loading + disabled), and on
  * success either redirects to the form's data-success-url or replaces the
- * form with the .gwill-form__success-msg node — exactly the live behaviour.
+ * form with the .gwill-form__success-msg node ; exactly the live behaviour.
  * Error strings match the Worker's {success:false,data:{message}} envelope;
  * the fallbacks match forms.js F_I18N fallbacks verbatim. */
 (() => {

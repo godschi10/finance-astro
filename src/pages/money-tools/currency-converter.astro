@@ -11,7 +11,7 @@ const converted = fxConvert(seed.amount, seed.from, seed.to, FX_SNAPSHOT.rates);
 const unit = fxConvert(1, seed.from, seed.to, FX_SNAPSHOT.rates);
 const parallel = fxParallelNgnUsd(FX_SNAPSHOT.rates.NGN, fxParallelSpread());
 /* P1-7 (v0.7.58): every surface that prints the street premium now prints the
-   DATED RANGE beside it. A single undated "4.5%" is gone from the site — the
+   DATED RANGE beside it. A single undated "4.5%" is gone from the site ; the
    arithmetic still uses one point estimate (the midpoint, FX_PARALLEL_SPREAD_
    POINT) but the reader is told what it is: an estimate, and over what range it
    was observed. */
@@ -28,28 +28,28 @@ const usdToNgn = (n: number) => (n * R.NGN).toLocaleString("en-US", { minimumFra
 const gbpToNgn = (n: number) => (n * (R.NGN / R.GBP)).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
-<ToolShell fxTicker title="Currency Converter, Daily NGN Reference Rate - GWill Finance" description="Convert USD, GBP, EUR and 13 more currencies to naira at the mid-market reference rate, plus an honest parallel-market estimate." slug="currency-converter" tool="Dollar to Naira & Every Currency" crumb="Currency Converter" lede="Sixteen currencies, one honest mid-market number. The figure below is baked from the build's daily reference snapshot and stamped with the feed's own update time." verified={`Rates: daily reference snapshot — ${FX_SNAPSHOT.as_of}`} faqs={[
-  { q: "Is this the rate my bank will give me?", a: "No. This is the mid-market rate before fees or margins. Banks and apps add their own spread — compare the final naira that lands, not headline rates." },
-  { q: "What is the parallel-market estimate?", a: `What dollars trade for between individuals outside official channels. We model it at about ${parPct}% above the official rate — the midpoint of an observed range of ${parRange}. The premium moves day to day, so treat the figure as an estimate, never as a quote.` },
-  { q: "Why does the page show a snapshot?", a: "The page carries the rate the build fetched from the FX feed, stamped with the feed's own update time — the build runs twice a day, so the figure is a daily reference rather than a per-visit refresh. There is always a correct figure even before any JavaScript runs, and the stamp tells you exactly how fresh it is." },
+<ToolShell fxTicker title="Currency Converter, Daily NGN Reference Rate - GWill Finance" description="Convert USD, GBP, EUR and 13 more currencies to naira at the mid-market reference rate, plus an honest parallel-market estimate." slug="currency-converter" tool="Dollar to Naira & Every Currency" crumb="Currency Converter" lede="Sixteen currencies, one honest mid-market number. The figure below is baked from the build's daily reference snapshot and stamped with the feed's own update time." verified={`Rates: daily reference snapshot: ${FX_SNAPSHOT.as_of}`} faqs={[
+  { q: "Is this the rate my bank will give me?", a: "No. This is the mid-market rate before fees or margins. Banks and apps add their own spread: compare the final naira that lands, not headline rates." },
+  { q: "What is the parallel-market estimate?", a: `What dollars trade for between individuals outside official channels. We model it at about ${parPct}% above the official rate: the midpoint of an observed range of ${parRange}. The premium moves day to day, so treat the figure as an estimate, never as a quote.` },
+  { q: "Why does the page show a snapshot?", a: "The page carries the rate the build fetched from the FX feed, stamped with the feed's own update time: the build runs twice a day, so the figure is a daily reference rather than a per-visit refresh. There is always a correct figure even before any JavaScript runs, and the stamp tells you exactly how fresh it is." },
 ]}
 
   badge={`Daily reference rate · updated ${FX_SNAPSHOT.as_of}`},
-  copy={[["p", `${usdToNgn(100)} Nigerian Naira, the rate above is the mid-market rate the build fetched, stamped with its update time. One hundred dollars is the benchmark conversion in Nigeria: the amount people quote when they want to know what the naira is really worth, the test size for a new remittance app, and the size of a first freelance invoice. Use the converter to check any amount in both directions.`],["p", `Saving ${ngnToUsd(1000)} at today's rate. The Naira - Dollar rate moves every day, so the amount you get depends on the day you convert and the channel you use. That is the trap this page exists to show: a naira saving toward a dollar-priced goal can quietly shrink as the rate steps, which is why dollar-denominated accounts are worth understanding.`],["p", `${gbpToNgn(50)} Nigerian Naira. Sending money from the UK? See how to receive money from abroad cheaply in our remittance guide. The pound trades at a distinctly higher naira value than the dollar, so £50 is worth noticeably more than $50, worth knowing when you compare what a UK or a US-based client will pay you.`],["p", `${ng(R.NGN)} for one US dollar at today's rate. This is the anchor figure everything else derives from. Check the rate grid above for the pound, euro, dirham, riyal, cedi and more.`],["h2", "Which currencies does the converter support?"],["p", "This converter is built for the currencies Nigerian readers actually convert, not a token list of a dozen obscure ones. You can convert naira to and from: the US dollar, the British pound, the euro, the Canadian dollar, the UAE dirham, the Saudi riyal, the Ghana cedi, the West and Central African CFA franc, the Chinese yuan, the Japanese yen, the Indian rupee, the Kenyan shilling, the Egyptian pound and the South African rand."],["p", "Every pair is computed from the same rate engine, so you never hit a stale or unsupported conversion. Naira to dollar in one direction, dollar to naira in the other, pound to naira, cedi to naira, all handled."],["h2", "Why the rate you get is never the rate on this page"],["p", "The figure here is the mid-market rate, the honest midpoint between what buyers and sellers of a currency use worldwide, before any fee. No bank, app or platform hands you the mid-market rate for free. Every channel adds a margin, and at small amounts that margin is a real slice of the total."],["h2", "Official rate versus parallel market: the gap, explained"],["p", "Nigeria runs a managed FX market, which means the rate banks and official windows offer can trail what dollars genuinely trade for between individuals. On peer-to-peer platforms, where ordinary buyers and sellers set their own prices, a dollar routinely converts to more naira than the official figure suggests. That spread is not a trick, it is the market pricing the difficulty of actually getting dollars through official channels."],["p", "This converter models both sides. Toggle to the parallel market view to see the street price, and the \"gap\" line shows you exactly what you give up by using official channels at the black-market premium. That awareness is what lets you negotiate a fair price instead of assuming the headline rate is the best you can do."],["h2", "How to get the best rate, every time"],["p", "The single most useful habit in Nigerian currency conversion is to ignore headline rates entirely and compare the final naira figure that lands in your account after every fee. Run the same amount through two or three channels and write down what actually arrives, the difference is often thousands of naira."],["h2", "Is the rate automatically updated?"],["p", "Twice a day, at build time. The page carries the rate the build fetched from the same FX feed (open.er-api.com) and stamps it with the feed's own update time — the stamp beside the number is the exact freshness of the figure, never a per-visit refresh dressed up as one. If a build cannot reach the feed, it keeps the previous snapshot and says so rather than inventing a rate. No conversion figure on this page is typed in by hand: every rate comes from the feed the build fetched, and the one maintained input on the page is the parallel-market spread estimate — a model constant, not a market number."],["p", "Use the converter above for any amount, in either direction. New to managing foreign money? Start with our best dollar account apps guide, or see how to receive money from abroad the cheapest way."]]},
+  copy={[["p", `${usdToNgn(100)} Nigerian Naira, the rate above is the mid-market rate the build fetched, stamped with its update time. One hundred dollars is the benchmark conversion in Nigeria: the amount people quote when they want to know what the naira is really worth, the test size for a new remittance app, and the size of a first freelance invoice. Use the converter to check any amount in both directions.`],["p", `Saving ${ngnToUsd(1000)} at today's rate. The Naira - Dollar rate moves every day, so the amount you get depends on the day you convert and the channel you use. That is the trap this page exists to show: a naira saving toward a dollar-priced goal can quietly shrink as the rate steps, which is why dollar-denominated accounts are worth understanding.`],["p", `${gbpToNgn(50)} Nigerian Naira. Sending money from the UK? See how to receive money from abroad cheaply in our remittance guide. The pound trades at a distinctly higher naira value than the dollar, so £50 is worth noticeably more than $50, worth knowing when you compare what a UK or a US-based client will pay you.`],["p", `${ng(R.NGN)} for one US dollar at today's rate. This is the anchor figure everything else derives from. Check the rate grid above for the pound, euro, dirham, riyal, cedi and more.`],["h2", "Which currencies does the converter support?"],["p", "This converter is built for the currencies Nigerian readers actually convert, not a token list of a dozen obscure ones. You can convert naira to and from: the US dollar, the British pound, the euro, the Canadian dollar, the UAE dirham, the Saudi riyal, the Ghana cedi, the West and Central African CFA franc, the Chinese yuan, the Japanese yen, the Indian rupee, the Kenyan shilling, the Egyptian pound and the South African rand."],["p", "Every pair is computed from the same rate engine, so you never hit a stale or unsupported conversion. Naira to dollar in one direction, dollar to naira in the other, pound to naira, cedi to naira, all handled."],["h2", "Why the rate you get is never the rate on this page"],["p", "The figure here is the mid-market rate, the honest midpoint between what buyers and sellers of a currency use worldwide, before any fee. No bank, app or platform hands you the mid-market rate for free. Every channel adds a margin, and at small amounts that margin is a real slice of the total."],["h2", "Official rate versus parallel market: the gap, explained"],["p", "Nigeria runs a managed FX market, which means the rate banks and official windows offer can trail what dollars genuinely trade for between individuals. On peer-to-peer platforms, where ordinary buyers and sellers set their own prices, a dollar routinely converts to more naira than the official figure suggests. That spread is not a trick, it is the market pricing the difficulty of actually getting dollars through official channels."],["p", "This converter models both sides. Toggle to the parallel market view to see the street price, and the \"gap\" line shows you exactly what you give up by using official channels at the black-market premium. That awareness is what lets you negotiate a fair price instead of assuming the headline rate is the best you can do."],["h2", "How to get the best rate, every time"],["p", "The single most useful habit in Nigerian currency conversion is to ignore headline rates entirely and compare the final naira figure that lands in your account after every fee. Run the same amount through two or three channels and write down what actually arrives, the difference is often thousands of naira."],["h2", "Is the rate automatically updated?"],["p", "Twice a day, at build time. The page carries the rate the build fetched from the same FX feed (open.er-api.com) and stamps it with the feed's own update time: the stamp beside the number is the exact freshness of the figure, never a per-visit refresh dressed up as one. If a build cannot reach the feed, it keeps the previous snapshot and says so rather than inventing a rate. No conversion figure on this page is typed in by hand: every rate comes from the feed the build fetched, and the one maintained input on the page is the parallel-market spread estimate: a model constant, not a market number."],["p", "Use the converter above for any amount, in either direction. New to managing foreign money? Start with our best dollar account apps guide, or see how to receive money from abroad the cheapest way."]]},
   ctas={[{ label: "Best Dollar Accounts →", href: `${base}articles/grey-vs-geegpay-dollar-account/`, ghost: false },{ label: "Receive Money Abroad", href: `${base}articles/cheapest-way-receive-dollars-nigeria/`, ghost: true }]},
   ctaTitle="Get the best dollar rate",
   ctaNote="Converting cash is the worst way to get dollars, you lose to the parallel market rate. These apps give you a real USD account at the true rate:",
-  related={[{ href: `${base}articles/grey-vs-geegpay-dollar-account/`, title: artTitle("grey-vs-geegpay-dollar-account"), excerpt: "Account opening, conversion spreads, card support, and payout speed — compared side by side." }, { href: `${base}articles/cheapest-way-receive-dollars-nigeria/`, title: artTitle("cheapest-way-receive-dollars-nigeria"), excerpt: "Wise, Grey, Geegpay, and domiciliary accounts compared on fees, speed, and exchange margins." }, { href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers", excerpt: "Card fees, failed-transfer reversals, and support tested — what digital banks actually save you." }, { href: `${base}articles/ngn-dollar-cost-averaging-guide/`, title: "Dollar-Cost Averaging Into NGX Stocks on a \u20a650k Salary", excerpt: "A step-by-step plan for buying Nigerian stocks every month without timing the market." }]}>
+  related={[{ href: `${base}articles/grey-vs-geegpay-dollar-account/`, title: artTitle("grey-vs-geegpay-dollar-account"), excerpt: "Account opening, conversion spreads, card support, and payout speed, compared side by side." }, { href: `${base}articles/cheapest-way-receive-dollars-nigeria/`, title: artTitle("cheapest-way-receive-dollars-nigeria"), excerpt: "Wise, Grey, Geegpay, and domiciliary accounts compared on fees, speed, and exchange margins." }, { href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: "Kuda vs Traditional Banks: The Real Cost of Free Transfers", excerpt: "Card fees, failed-transfer reversals, and support tested: what digital banks actually save you." }, { href: `${base}articles/ngn-dollar-cost-averaging-guide/`, title: "Dollar-Cost Averaging Into NGX Stocks on a \u20a650k Salary", excerpt: "A step-by-step plan for buying Nigerian stocks every month without timing the market." }]}>
 <div class="fx-card">
-<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
+<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers and the receipt waits.</p>
 <div class="tgrid c3">
 
 <div class="field" data-cur={seed.from}><label for="cc-amt">Amount <span data-cur-unit></span></label><span class="fi"><span class="fi-sym" aria-hidden="true">{cur[seed.from].symbol}</span><input id="cc-amt" type="text" value="100" inputmode="decimal"></span></div>
-<div class="field"><label for="cc-from">From</label><select id="cc-from">{codes.map((c) => (<option value={c} selected={c === seed.from}>{c} — {cur[c].name}</option>))}</select></div>
-<div class="field"><label for="cc-to">To</label><select id="cc-to">{codes.map((c) => (<option value={c} selected={c === seed.to}>{c} — {cur[c].name}</option>))}</select></div>
+<div class="field"><label for="cc-from">From</label><select id="cc-from">{codes.map((c) => (<option value={c} selected={c === seed.from}>{c}: {cur[c].name}</option>))}</select></div>
+<div class="field"><label for="cc-to">To</label><select id="cc-to">{codes.map((c) => (<option value={c} selected={c === seed.to}>{c}: {cur[c].name}</option>))}</select></div>
 </div>
 <div class="tgrid c3" style="margin-top:14px">
-<div class="field"><label for="cc-margin">Provider margin %</label><input id="cc-margin" type="text" value="" inputmode="decimal"><p class="hint">Optional — the spread your bank or app adds on top of this rate. Leave empty and no margin line shows.</p></div>
+<div class="field"><label for="cc-margin">Provider margin %</label><input id="cc-margin" type="text" value="" inputmode="decimal"><p class="hint">Optional: the spread your bank or app adds on top of this rate. Leave empty and no margin line shows.</p></div>
 </div>
 <div style="margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px"><button class="swapbtn" id="cc-swap" type="button" aria-label="Swap currencies">⇄</button> <span class="hint" id="cc-fresh" style="font-size:12px;color:var(--text-dim)">{FX_SNAPSHOT.as_of} (daily reference snapshot)</span> <label class="hint tgl"><input type="checkbox" id="cc-partoggle" checked> <span class="tgl-track" aria-hidden="true"><span class="tgl-thumb"></span></span> <span class="tgl-lbl">Parallel-market estimate</span></label></div>
 <div class="receipt">
@@ -59,11 +59,11 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <p class="receipt-note" id="cc-warn" hidden aria-live="polite"></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <p class="receipt-note" data-sf-fig id="cc-par">Parallel estimate ≈ ₦{fxNumber(seed.amount * parallel, 0)} (estimated, not a quote · street premium modelled at {parPct}%, range {parRange})</p>
-  {/* P2-13 — the optional provider-margin reading. Hidden by default: an
+  {/* P2-13 ; the optional provider-margin reading. Hidden by default: an
       empty field is no reading at all (Zero Law), never a ₦-same-as-hero
-      line pretending the margin was 0%. The <b> starts "—" so the un-opened
+      line pretending the margin was 0%. The <b> starts "; " so the un-opened
       state never carries a borrowed figure. */}
-  <div class="receipt-row" id="cc-margrow" hidden><span>After your provider's margin</span><b id="cc-marg">—</b></div>
+  <div class="receipt-row" id="cc-margrow" hidden><span>After your provider's margin</span><b id="cc-marg">–</b></div>
 <p class="receipt-foot" id="cc-foot">Snapshot · {FX_SNAPSHOT.as_of}</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
@@ -88,16 +88,16 @@ const warn = document.getElementById("cc-warn") as HTMLElement;
 const partoggle = document.getElementById("cc-partoggle") as HTMLInputElement;
 const amtField = amt.closest(".field") as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
-/* F6 — the unit line must reproduce its own conversion: a 0dp unit rounds away
+/* F6 ; the unit line must reproduce its own conversion: a 0dp unit rounds away
    the fraction a large conversion keeps (1000 USD → ₦1,330,998 under a "₦1,331"
    unit, a ₦2 lie). The effective per-unit rate of the shown conversion is exact
    by construction (the engine is linear); print it trimmed to the precision
    that matters instead of re-rounding the theoretical rate. */
 function moneyTrim(v: number, code: string): string {
   const sym: Record<string, string> = { NGN: "₦", USD: "$", GBP: "£", EUR: "€" };
-  /* F6, small-rate half — a fixed 6-decimal cap is a SIGNIFICANT-figure cap
+  /* F6, small-rate half ; a fixed 6-decimal cap is a SIGNIFICANT-figure cap
      in disguise once the rate dips below 1: NGN→USD printed "0.000751"
-     while the hero printed 37.57 for 50,000, and 0.000751 × 50000 = 37.55 —
+     while the hero printed 37.57 for 50,000, and 0.000751 × 50000 = 37.55; 
      the unit line stopped reproducing the conversion it sits under. Below 1
      the fraction span widens to hold 10 SIGNIFICANT digits instead
      (trailing zeros still trimmed); rates ≥ 1 keep the exact 6-decimal look
@@ -111,7 +111,7 @@ function render() {
   const a = Math.max(0, pm(amt.value) || 0);
   const f = from.value, t = to.value;
   /* THE FIELD DECLARES ITS CURRENCY (money-controls.js). The amount is in the
-     FROM currency, so that is what data-cur says — and the in-field glyph, the
+     FROM currency, so that is what data-cur says ; and the in-field glyph, the
      label's unit and the announced unit all follow it from here. The server
      seeds data-cur={seed.from} so the very first paint is right too. Declaring
      it here, in the page that owns the select, is the whole point: the glyph
@@ -123,12 +123,12 @@ function render() {
   const ue = a > 0 ? c / a : u;
   unitEl.textContent = `1 ${f} = ${moneyTrim(ue, t)}`;
   // Empty/unreadable is not a quote: say so instead of printing a confident zero.
-  // B4-FIX2 — garbage ("abc" in the amount) reads as un-entered, like a clear.
-  /* P2-13 — the warn rail is COMPOSED of parts now, because the amount and
+  // B4-FIX2 ;  garbage ("abc" in the amount) reads as un-entered, like a clear.
+  /* P2-13 ; the warn rail is COMPOSED of parts now, because the amount and
      the margin field each own their own disclosure; a single overwritten
      string would let one disclosure erase the other. */
   const warnParts: string[] = [];
-  if (pmBlank(raw)) warnParts.push("Enter an amount — an empty field is not ₦0.");
+  if (pmBlank(raw)) warnParts.push("Enter an amount: an empty field is not ₦0.");
   else if (pm(raw) < 0) warnParts.push("Negative amounts count as 0.");
   if (partoggle.checked && t === "NGN" && f !== t && rates["NGN"] > 0) {
     const p = fxParallelNgnUsd(fxConvert(1, f, "USD", rates) * rates["NGN"], fxParallelSpread());
@@ -137,8 +137,8 @@ function render() {
     sfFig(par, ["cc-amt"], `Parallel estimate ≈ ₦${fxNumber(a * p, 0)} (estimated, not a quote · street premium modelled at ${(FX_PARALLEL_SPREAD_POINT * 100).toFixed(1)}%, range ${fxParallelRangeLabel()})`);
     par.hidden = false;
   } else par.hidden = true;
-  /* P2-13 — the optional provider-margin reading. Empty field = NO reading
-     (Zero Law), so the row hides entirely and its <b> goes back to "—" —
+  /* P2-13 ; the optional provider-margin reading. Empty field = NO reading
+     (Zero Law), so the row hides entirely and its <b> goes back to "; "; 
      never a ₦-same-as-hero line pretending the margin was 0%. Filled = the
      honest after-margin figure at the provider's cut, clamped to 0–100%,
      with the clamp disclosed in the rail when it rewrote what was typed
@@ -146,7 +146,7 @@ function render() {
   const margRaw = gv("cc-margin").trim();
   if (pmBlank(margRaw)) {
     margRow.hidden = true;
-    marg.textContent = "—";
+    marg.textContent = "–";
     marg.style.color = "";
     marg.removeAttribute("data-sf-no");
     const badge = margRow.querySelector(".trust-badge[data-trust]");
@@ -166,20 +166,20 @@ amt.addEventListener("input", render);
 partoggle.addEventListener("change", render);
 from.addEventListener("change", render);
 to.addEventListener("change", render);
-/* P2-13 — the margin field owns its own re-render: the after-margin reading
+/* P2-13 ; the margin field owns its own re-render: the after-margin reading
    must repaint when the margin alone changes (the built-page probe caught its
    absence: the row only moved when another field happened to fire render). */
 document.getElementById("cc-margin")?.addEventListener("input", render);
 document.getElementById("cc-swap")?.addEventListener("click", () => {
   const v = from.value; from.value = to.value; to.value = v;
-  /* A programmatic .value write fires NO event — and money-controls.js, the
+  /* A programmatic .value write fires NO event ; and money-controls.js, the
      owner of the in-field glyph, the label's [data-cur-unit] words and the
      announced unit switch, re-syncs only at boot and on delegated
      change/input events on document. Without these dispatches the swap
      moves the figures but leaves the amount field on the OLD currency (the
      King's phone-reported bug). Dispatch user-shaped bubbling change events
      so every delegated listener hears the swap exactly as if both selects
-     were flipped by hand; render() stays (idempotent — the selects' own
+     were flipped by hand; render() stays (idempotent ; the selects' own
      change listeners re-run it too). */
   from.dispatchEvent(new Event("change", { bubbles: true }));
   to.dispatchEvent(new Event("change", { bubbles: true }));
@@ -188,14 +188,14 @@ document.getElementById("cc-swap")?.addEventListener("click", () => {
 smartFields.register(TOOL_FIELDS["currency-converter"]);
 sfBind("currency-converter", gv);
 render();
-/* ── F6 — URL STATE: ?amt=&from=&to= ─────────────────────────────────────────────
+/* ── F6 ; URL STATE: ?amt=&from=&to= ─────────────────────────────────────────────
    Read on load, AFTER the seed paint above (the SSR figure is never wrong
    on the wire), then written back debounced on every change. Guards, per the
    Zero Law's quiet sibling: an unrecognised code or a non-numeric amount
-   falls back to the SEED value for that parameter, silently — no warning,
+   falls back to the SEED value for that parameter, silently ; no warning,
    no invented figure, the visitor simply lands on the worked example.
    Length caps keep a hostile ?amt= ten-kilobyte paste from ever reaching the
-   field or the URL (40 chars amount, 8 chars a code — generous over any
+   field or the URL (40 chars amount, 8 chars a code ; generous over any
    honest use, small over any abuse).
 
    THE SHARE LINK RIDES THIS (F5): the spine's WhatsApp/copy surface reads
@@ -227,7 +227,7 @@ function syncUrl(): void {
   const t2 = (u.get("to") || "").trim().toUpperCase();
   if (validCode(t2)) { to.value = t2; to.dispatchEvent(new Event("change", { bubbles: true })); touched = true; }
   /* Canonicalise: whatever applied is written back so the URL says the TRUE
-     state; pure garbage strips its query entirely — the seed stands and no
+     state; pure garbage strips its query entirely ; the seed stands and no
      share link is ever minted from an unparsed query. */
   if (touched) syncUrlNow();
   else history.replaceState(null, "", location.pathname);
@@ -238,7 +238,7 @@ to.addEventListener("change", syncUrl);
 /* P0-2 (fifth audit, v0.7.57): the per-visit fxFetchLive() call was REMOVED.
    The free feed updates once per 24h, so a per-visit browser refetch bought
    nothing and added throttle exposure on every page view. The page now serves
-   the build snapshot honestly — the fresh stamp and the receipt foot carry the
+   the build snapshot honestly ; the fresh stamp and the receipt foot carry the
    feed's own update time and say "daily reference snapshot" / "Snapshot". The
    fetch path itself stays in src/lib/fx.ts, unwired. */
 </script>

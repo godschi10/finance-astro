@@ -1,21 +1,21 @@
-/* smart-fields.js — v0.7.20 smart fields SPINE (design spec §1–§4).
+/* smart-fields.js ; v0.7.20 smart fields SPINE (design spec §1–§4).
  *
  * Vanilla ES module, ZERO dependencies. Loaded exactly once, from
  * ToolShell.astro, so it is route-scoped to /money-tools/* and inert on every
  * other page. It only ADDS labels, badges and controls: it never rewrites an
  * element ID, never calls a page's render(), and never invents a figure.
  *
- * THREE STATES — and the state is legible BEFORE you touch a field (§1):
- *   data-sd  SAMPLE     gold pill + dashed gold underline — a scenario WE invented
- *   data-r   LAST USED  neutral pill, no underline       — YOUR number, restored, dated
- *   (none)   plain                                          — YOUR number, this session
+ * THREE STATES ; and the state is legible BEFORE you touch a field (§1):
+ *   data-sd  SAMPLE     gold pill + dashed gold underline ; a scenario WE invented
+ *   data-r   LAST USED  neutral pill, no underline       ; YOUR number, restored, dated
+ *   (none)   plain                                          ; YOUR number, this session
  * Gold means "ours" and NEVER means "yours": a restored value of your own must
  * not wear the sample gold, or the mark would lie in the other direction (§2g).
  * Tapping a SAMPLE field selects it; the first input event drops the badge, the
- * dashed rule and the hint in the SAME frame — no animation, no toast, no
- * confirm step (§3.3) — and a dismissed seed never returns this session (§3.4).
+ * dashed rule and the hint in the SAME frame ; no animation, no toast, no
+ * confirm step (§3.3) ; and a dismissed seed never returns this session (§3.4).
  *
- * API — a tool page declares metadata and nothing else:
+ * API ; a tool page declares metadata and nothing else:
  *   smartFields.register({
  *     tool:     "slug",                            // localStorage key namespacing
  *     seeds:    ["bg-inc", ...],                   // ids that wear the SAMPLE state
@@ -25,14 +25,14 @@
  *     context:  [{ field, text, src, href }],      // -> .ctx line + its sourced stamp
  *     remember: ["bg-inc", ...],                   // ids persisted per tool
  *   })
- *   smartFields.markEmpty(receipt, isEmpty)        // withhold figures as "—" (§4)
+ *   smartFields.markEmpty(receipt, isEmpty)        // withhold figures as "; " (§4)
  *   writeInto(inputEl, value)                       // THE ONLY way a tool writes an
  *                                                    // input: fires the page's own input
  *                                                    // event AND marks the id derived, so
  *                                                    // save() never persists it as the
  *                                                    // visitor's own "Last used" (HN-4)
  *
- * RESET (v0.7.22) — the button owns no markup of its own; the module binds it.
+ * RESET (v0.7.22) ; the button owns no markup of its own; the module binds it.
  * Reset means "forget me, give me the worked example back" (§2a): it drops this
  * tool's key, puts every control in the calculator back to the value the SERVER
  * sent (snapshotted in register(), before restore() can touch anything), re-runs
@@ -47,26 +47,26 @@
  * is read AND written inside try/catch for private mode, copying the only
  * tool-scoped precedent in the repo (exchange-rate-history.astro:43-49).
  *
- * CLEAR MY SAVED NUMBERS (PROC-5) — one more markup-free control, bound the
+ * CLEAR MY SAVED NUMBERS (PROC-5) ; one more markup-free control, bound the
  * same way: `<button data-sf-clear-saved>`. Reset clears ONE tool; this sweeps
  * every `gwill-sf-*` key. It exists because a shared-computer visitor's
  * question is "get my salary off this machine", and one tool's Reset cannot
  * answer a question about sixteen calculators. See clearSaved() for the scope
  * it deliberately does and does not claim. (E27-I1 amended: the sweep is
- * storage-only — it never calls reset(), never touches the visible month.)
+ * storage-only ; it never calls reset(), never touches the visible month.)
  */
 
 /* The §2g exclusion list is a LAW, not a preference: a remembered ₦90,000 annual
    rent silently inflating a rent-relief claim is a WRONG number, and this site's
    whole brand is "we don't fudge numbers". A wrong number is worse than none. */
 const NEVER = ["st-rent", "gn-rent", "st-gross"];
-const EXPIRES = 30 * 864e5; // §2g — past 30 days a LAST USED value is dropped, not offered
+const EXPIRES = 30 * 864e5; // §2g ;  past 30 days a LAST USED value is dropped, not offered
 /* PREFIX is the only place in the repo that says what a remembered number is
    called, so clearSaved() can enumerate every tool's memory WITHOUT hardcoding
    the prefix a second time. KEY stays the one way a key is ever built. */
 const PREFIX = "gwill-sf-";
 const KEY = (tool) => PREFIX + tool;
-/* ── P2-8/D5 — THE PERSISTENCE OPT-IN (adopted) ──────────────────────────────
+/* ── P2-8/D5 ; THE PERSISTENCE OPT-IN (adopted) ──────────────────────────────
    "Remember my numbers on this device" (ToolShell's .tgl, DEFAULT OFF) now
    gates BOTH storage directions: off = nothing is written and nothing is
    restored across reloads (the numbers live only in the page session);
@@ -74,14 +74,14 @@ const KEY = (tool) => PREFIX + tool;
 
    THREE DELIBERATE SCOPE DECISIONS:
    1. The consent flag lives OUTSIDE the PREFIX, on purpose. clearSaved()
-      sweeps every gwill-sf-* key — if consent sat there, "Clear my saved
+      sweeps every gwill-sf-* key ; if consent sat there, "Clear my saved
       numbers" would silently flip the visitor's own privacy choice off, and
       a shared-computer visitor who opted IN would come back to find their
-      preference reset. Consent is a preference, not a calculator number —
+      preference reset. Consent is a preference, not a calculator number; 
       the same class as the theme key, and the sweep does not touch that
       either.
    2. Opting OUT does not wipe stored numbers. The adopted decision says
-      "existing stored data remains until cleared" — the sweep button is the
+      "existing stored data remains until cleared" ; the sweep button is the
       honest way to remove them. Opt-out only stops reading and writing.
    3. Flipping ON persists the CURRENT fields immediately (save()), so "on"
       means "these numbers are now remembered", not "from your next
@@ -105,8 +105,8 @@ function bindRemember() {
 }
 /* ── A DERIVED VALUE IS NEVER THE VISITOR'S (HN-4) ───────────────────────────
    save() persisted ANY non-empty value in MEM, and restore() hands it back
-   wearing data-r "Last used". So a figure the TOOL computed — the §2(b) offer's
-   "Use this" writing budget503020(...).needs into a field — came back next
+   wearing data-r "Last used". So a figure the TOOL computed ; the §2(b) offer's
+   "Use this" writing budget503020(...).needs into a field ; came back next
    visit stamped as the visitor's own remembered number. A number no human typed
    must never be presented as the user's memory: it is the same wrong-number
    class as the §2g exclusion list, in the opposite direction, and it goes LIVE
@@ -125,7 +125,7 @@ function writeInto(el, value) {
   writing = true;
   try {
     el.value = value;
-    /* The page's own rails must recompute, so the event still fires — it just
+    /* The page's own rails must recompute, so the event still fires ; it just
        no longer counts as the visitor having typed. */
     el.dispatchEvent(new Event("input", { bubbles: true }));
   } finally { writing = false; }
@@ -138,7 +138,7 @@ const dead = new Set(); // §3.4 a dismissed seed never comes back in that sessi
 let TOOL = "", MEM = {}, OFFERS = [];
 /* ── RESET STATE (v0.7.22) ───────────────────────────────────────────────────
    SNAP is every control as the SERVER delivered it, taken in register() BEFORE
-   restore() — so it is OUR worked example, never the visitor's remembered number.
+   restore() ; so it is OUR worked example, never the visitor's remembered number.
    It is the whole calculator, not just the seeds: Reset must also hand back the
    ₦0 relief rows a visitor may have typed into (salary-tax's st-rent, gross-to-net's
    gn-nhf) and the direction selects a page remembers (cc-from, dv-stock). */
@@ -154,7 +154,7 @@ function scope() {
 }
 
 /* Snapshot the delivered state. `checked` for toggles, `value` for everything else;
-   a control with no id is left alone — nothing could address it. */
+   a control with no id is left alone ; nothing could address it. */
 function takeSnapshot() {
   SNAP = $$("input,select,textarea", scope())
     .filter((n) => n.id && !/^(hidden|submit|button|reset|image)$/.test(n.type))
@@ -165,14 +165,14 @@ function takeSnapshot() {
    The button used to be `onclick="location.reload()"`, and that is why it read as
    dead: the reload handed the page straight back to restore(), which put the
    visitor's own last-used numbers into the very fields we had just emptied. A reset
-   that goes through the memory layer cannot beat the memory layer — so it must not
+   that goes through the memory layer cannot beat the memory layer ; so it must not
    go through it. In order: drop this tool's key, put every control back to what the
    server sent, re-run the page's OWN render so the receipt repaints with the worked
    example, then re-arm the SAMPLE / LAST USED / offer state. */
 function reset() {
   resetting = true; // save() stands down for this whole pass, so memory cannot
   try { localStorage.removeItem(KEY(TOOL)); } catch {} // re-persist the seeds we are writing now
-  dead.clear(); // a dismissed seed is welcome again — Reset is the way back to it
+  dead.clear(); // a dismissed seed is welcome again ;  Reset is the way back to it
   DERIVED.clear(); // nothing here is the visitor's any more, so nothing is "derived"
 
   /* Nothing was ever registered here (no calculator called register()), so there is
@@ -190,14 +190,14 @@ function reset() {
   });
 
   /* (d) state, not storage: SAMPLE comes back gold (it is ours again) and LAST USED
-     goes away entirely — nothing here is the visitor's any more. */
+     goes away entirely ; nothing here is the visitor's any more. */
   $$(".field[data-r]").forEach((f) => mark(f, "", "", ""));
-  (CFG.seeds || []).forEach((id) => mark(wrap(id), "data-sd", "Sample", "Example — ours, not yours. Tap to replace it."));
+  (CFG.seeds || []).forEach((id) => mark(wrap(id), "data-sd", "Sample", "Example, ours, not yours. Tap to replace it."));
   $$(".offer").forEach((o) => o.remove());
   OFFERS = [];
   (CFG.derive || []).forEach(offer); // rebuilt, so a previous Clear examples can never leave it held
 
-  /* (c) THE RENDER HOOK — generic, zero page edits. Every one of these pages binds
+  /* (c) THE RENDER HOOK ; generic, zero page edits. Every one of these pages binds
      its own render() to `input` on its own fields and to `change` on its selects
      (verified in all 16), so dispatching the two events the page already listens
      for re-runs its own maths on the restored values. The page keeps every figure
@@ -213,12 +213,12 @@ function reset() {
   resetting = false;
 
   /* ── The receipt's own state ──────────────────────────────────────────────
-     The withheld state is the SPINE's own vocabulary — markEmpty() sets
-     data-sfe, and ToolShell styles it — and this page has just re-rendered
+     The withheld state is the SPINE's own vocabulary ; markEmpty() sets
+     data-sfe, and ToolShell styles it ; and this page has just re-rendered
      real figures straight over the dashes, so the spine is the right place to
      unpick it. Same for the honest lines Clear examples raised: after Reset the
-     page reads exactly as delivered. A figure still showing "—" afterwards means
-     the page's render genuinely did not finish, which would be a real bug — the
+     page reads exactly as delivered. A figure still showing "; " afterwards means
+     the page's render genuinely did not finish, which would be a real bug ; the
      honest blank's voice line now HIDES the render's children instead of
      deleting them (tool-fields.ts, speak()), so nothing it writes into can be
      destroyed by the blank. The key is already gone, so the safety reload that
@@ -226,7 +226,7 @@ function reset() {
   let unfinished = false;
   $$(".receipt[data-sfe]").forEach((r) => {
     markEmpty(r, false);
-    if ($$(".receipt-fig,.receipt-row b,[data-sf-fig]", r).some((n) => n.textContent.trim() === "—")) unfinished = true;
+    if ($$(".receipt-fig,.receipt-row b,[data-sf-fig]", r).some((n) => n.textContent.trim() === "–")) unfinished = true;
   });
   const card = $("[data-sf-card]"), foot = $("[data-sf-foot]");
   if (card) card.hidden = true;
@@ -236,7 +236,7 @@ function reset() {
 
 /* ── CLEAR MY SAVED NUMBERS (PROC-5) ──────────────────────────────────────────
  * Reset clears ONE tool. A visitor on a shared computer does not think in tools
- * — they think "get my salary off this machine" — and Reset alone cannot answer
+ * ; they think "get my salary off this machine" ; and Reset alone cannot answer
  * that, because the numbers they want gone are spread across every calculator
  * they ever opened (one key each). So this sweeps every key THIS MODULE mints.
  *
@@ -245,7 +245,7 @@ function reset() {
  * copy and no undo is precisely the failure mode this control exists to
  * prevent. The sweep drops storage keys and leaves every field untouched;
 
- * SCOPE IS HONEST AND DELIBERATE: it removes `gwill-sf-*` — calculator numbers,
+ * SCOPE IS HONEST AND DELIBERATE: it removes `gwill-sf-*` ; calculator numbers,
  * which is what this button is named for and what the privacy policy promises
  * it does. It does NOT touch the theme choice (`gwill-finance-theme-v3`), the
  * ticker cache, or a saved comment name: those are not calculator numbers, and
@@ -261,8 +261,8 @@ function clearSaved() {
     }
     keys.forEach((k) => { localStorage.removeItem(k); dropped += 1; });
   } catch {}
-  /* E27-I1 — the button is named "Clear my saved numbers"; the visible
-     month is NOT a saved number — it is what the visitor is holding right
+  /* E27-I1 ; the button is named "Clear my saved numbers"; the visible
+     month is NOT a saved number ; it is what the visitor is holding right
      now. reset() here used to fire the full Reset-to-seed handler, wiping
      everything on the page behind a button with no warning and no undo.
      The visible fields now stay exactly as they are; only the gwill-sf-*
@@ -289,16 +289,16 @@ function mark(f, attr, text, title) {
 }
 
 /* Storage. Both directions are wrapped for private mode; a value the user
-   cleared is dropped from the record rather than written as "" — so a cleared
+   cleared is dropped from the record rather than written as "" ; so a cleared
    seed can never come back wearing LAST USED. */
 function save() {
-  /* P2-8/D5: the opt-in is OFF by default — no write at all while it is off.
+  /* P2-8/D5: the opt-in is OFF by default ; no write at all while it is off.
      `resetting` stays first: during a reset, silence is the contract. */
   if (!TOOL || resetting || !rememberOn()) return;
   const v = {};
-  /* A1-F4 — an untouched seed is OURS, never memory. save() used to persist
+  /* A1-F4 ; an untouched seed is OURS, never memory. save() used to persist
      ANY non-empty remembered id, so typing into one field stored all six
-     untouched seeds with it, and the next visit wore them all as LAST USED —
+     untouched seeds with it, and the next visit wore them all as LAST USED; 
      the visitor's own numbers indistinguishable from our example. A field that
      still wears its SAMPLE badge has not been touched, so it is skipped: only
      what the visitor actually entered (badge gone, value present, not derived)
@@ -310,24 +310,24 @@ function save() {
   } catch {}
 }
 
-/* Restore. The badge is MANDATORY on every restore — that is what keeps a
+/* Restore. The badge is MANDATORY on every restore ; that is what keeps a
    remembered number from reading as data we invented. Expired past EXPIRES, so
    stale rent/gross cannot linger even where they are allowed at all. */
 function restore() {
-  /* P2-8/D5: OFF means session-only — nothing is handed back across a
+  /* P2-8/D5: OFF means session-only ; nothing is handed back across a
      reload. The stored record (if any) is left in place, unread until the
      visitor opts in or clears it. */
   if (!rememberOn()) return;
   let s = null;
   try { s = JSON.parse(localStorage.getItem(KEY(TOOL)) || "null"); } catch {}
   if (!s || !s.t) return;
-  /* F7 — expired state is indistinguishable from never-stored: drop the dead
+  /* F7 ; expired state is indistinguishable from never-stored: drop the dead
      key instead of leaving it to sit until the visitor's next keystroke
      happens to overwrite it. */
   if (Date.now() - s.t > EXPIRES) { try { localStorage.removeItem(KEY(TOOL)); } catch {} return; }
   const d = Math.floor((Date.now() - s.t) / 864e5);
   const when = d <= 0 ? "today" : d === 1 ? "yesterday" : d + " days ago";
-  /* B4-F1 — a valid-t envelope with v:null (or v absent/non-object) passed the
+  /* B4-F1 ; a valid-t envelope with v:null (or v absent/non-object) passed the
      guard above and threw on s.v[id], aborting register() so sfBind + the first
      render() never ran. Read through the honest object or an empty one. */
   const vv = (s.v && typeof s.v === "object") ? s.v : {};
@@ -336,7 +336,7 @@ function restore() {
     MEM[id].value = vv[id];
     mark(wrap(id), "data-r", "Last used", "Restored from your last visit · " + when);
   });
-  /* E27-I5 — a reload used to drop focus to BODY, orphaning a keyboard or
+  /* E27-I5 ; a reload used to drop focus to BODY, orphaning a keyboard or
      screen-reader visitor mid-entry. When a restore actually happened, put
      focus on the first restored field. preventScroll: leave the browser's
      own scroll decision alone (reload scroll heuristics are out of scope). */
@@ -346,7 +346,7 @@ function restore() {
 }
 
 /* §2(b) the derived-value offer. One action per line, and it fills THE field it
-   belongs to and nothing else — never on load, never another field. */
+   belongs to and nothing else ; never on load, never another field. */
 function offer(o) {
   const f = wrap(o.field);
   if (!f) return;
@@ -366,7 +366,7 @@ function offer(o) {
     /* BREAK-3. Inertness used to be CSS-only: `pointer-events:none` stops a real
        tap but a programmatic .click() ignores it, and the handler wrote the
        withheld figure anyway. aria-disabled is already the spine's own marker
-       for "held", so it is the right thing to test — and this only fires in the
+       for "held", so it is the right thing to test ; and this only fires in the
        state where writing was already wrong, so the released path (attribute
        absent) is byte-identical to before. */
     if (b.getAttribute("aria-disabled")) return;
@@ -405,19 +405,19 @@ function ctx(c) {
 }
 
 /* §4 the empty state. Withhold the FIGURES, keep the STRUCTURE: the labels and
-   rows stay so the receipt reads as WAITING, not broken. The "—" is dimmed and
-   never gold — a confident ₦0 is a number the user never entered, wearing the
+   rows stay so the receipt reads as WAITING, not broken. The "; " is dimmed and
+   never gold ; a confident ₦0 is a number the user never entered, wearing the
    site's most persuasive typography. */
 function markEmpty(box, isEmpty) {
   if (!box) return;
   if (!isEmpty) { box.removeAttribute("data-sfe"); return; }
   box.setAttribute("data-sfe", "");
-  $$(".receipt-fig,.receipt-row b", box).forEach((n) => { n.textContent = "—"; });
+  $$(".receipt-fig,.receipt-row b", box).forEach((n) => { n.textContent = "–"; });
 }
 
 /* The one NEW control in the spec: the bulk dismissal for the "I want the
    honest blank version" case. It appears only while at least one seed
-   survives (§2a/§3.2). Reset is untouched — its meaning changes, not its code. */
+   survives (§2a/§3.2). Reset is untouched ; its meaning changes, not its code. */
 function syncClear() {
   const b = $("[data-sf-clear]");
   if (b) b.hidden = !$(".field[data-sd]");
@@ -448,7 +448,7 @@ function register(cfg) {
   (cfg.seeds || []).forEach((id) => {
     const f = wrap(id), i = el(id);
     if (!f || !i || dead.has(id)) return;
-    mark(f, "data-sd", "Sample", "Example — ours, not yours. Tap to replace it.");
+    mark(f, "data-sd", "Sample", "Example, ours, not yours. Tap to replace it.");
     i.addEventListener("focus", () => { if (f.hasAttribute("data-sd")) i.select(); });
   });
   (cfg.context || []).forEach(ctx);
@@ -458,14 +458,14 @@ function register(cfg) {
   syncClear();
 }
 
-/* ── F5/P2-10 — THE SHARE SURFACE: Copy result + WhatsApp (items a/b/d) ──────
+/* ── F5/P2-10 ; THE SHARE SURFACE: Copy result + WhatsApp (items a/b/d) ──────
  * ONE implementation in the spine, so every ToolShell receipt inherits it.
  * The bar is injected AFTER the receipt (never inside it): the page's own
  * DOM is untouched, and the print stylesheet drops the bar with one class.
  *
  * (d) THE ZERO LAW EXTENDS TO SHARED TEXT: a receipt whose figures are
- * withheld ("—" or a demand line like "Enter a target") shares "no figures
- * yet" — never a confident ₦0. Every figure is read from the receipt AT
+ * withheld ("; " or a demand line like "Enter a target") shares "no figures
+ * yet" ; never a confident ₦0. Every figure is read from the receipt AT
  * CLICK TIME, so the shared text agrees with what is on screen; the page
  * URL is read at click time too, which is how the converter's URL-state
  * (F6) rides along in the shared link. */
@@ -486,16 +486,16 @@ function shareText(receipt) {
     const s = $("span", row), b = $("b", row);
     if (!s || !b) return;
     const v = (b.textContent || "").trim();
-    if (v && v !== "—" && /\d/.test(v)) lines.push((s.textContent || "").trim() + ": " + v);
+    if (v && v !== "–" && /\d/.test(v)) lines.push((s.textContent || "").trim() + ": " + v);
   });
   $$("[data-sf-fig]", receipt).forEach((n) => {
     if (n.hidden || n.closest("[hidden]")) return;
     const v = (n.textContent || "").trim();
-    if (v && v !== "—" && /\d/.test(v)) lines.push(v);
+    if (v && v !== "–" && /\d/.test(v)) lines.push(v);
   });
   const url = location.href;
   if (!lines.some((l) => /\d/.test(l))) {
-    return title + " — no figures yet; enter your numbers and this tool works them out.\n" + url;
+    return title + ", no figures yet; enter your numbers and this tool works them out.\n" + url;
   }
   return title + "\n" + lines.join("\n") + "\n" + url;
 }
@@ -521,7 +521,7 @@ function initShare() {
         }
       } catch {}
       if (!ok) {
-        /* Non-secure contexts have no navigator.clipboard — the same copy,
+        /* Non-secure contexts have no navigator.clipboard ; the same copy,
            through the legacy path, still never alert()s. */
         try {
           const ta = document.createElement("textarea");
@@ -547,7 +547,7 @@ function initShare() {
     wa.addEventListener("click", () => {
       /* Setting the href in the handler is enough: the default action reads
          it AFTER the handler, so the link the browser opens carries the
-         CURRENT summary — the URL-encoded receipt, exactly the wa.me form. */
+         CURRENT summary ; the URL-encoded receipt, exactly the wa.me form. */
       wa.href = "https://wa.me/?text=" + encodeURIComponent(shareText(r));
     });
     bar.appendChild(copy);
@@ -575,13 +575,13 @@ function boot() {
   if (b) b.addEventListener("click", clearExamples);
   const r = $("[data-sf-reset]");
   if (r) r.addEventListener("click", reset);
-  /* Clear my saved numbers — the shared-computer control. Bound here, like
+  /* Clear my saved numbers ; the shared-computer control. Bound here, like
      every other control: the module owns the markup-free button, the shell
      ships the one button, and no calculator page knows either exists. */
   const s = $("[data-sf-clear-saved]");
   if (s) s.addEventListener("click", () => {
     clearSaved();
-    /* A silent button reads as a dead one — and this is the one control on the
+    /* A silent button reads as a dead one ; and this is the one control on the
        page that is aimed at someone who is already slightly worried. So it says
        what it did, in its own label, and says it to assistive tech as well: the
        label swap is the confirmation, and aria-live (set on the shell's button)
@@ -592,11 +592,11 @@ function boot() {
     clearTimeout(s._sfBack);
     s._sfBack = setTimeout(() => { s.textContent = was; }, 2500);
   });
-  /* P2-8/D5 — the persistence opt-in: bind BEFORE any page's register()
+  /* P2-8/D5 ; the persistence opt-in: bind BEFORE any page's register()
      (this module evaluates before the page scripts import it), so the toggle
      already carries its stored consent state when restore() first reads it. */
   bindRemember();
-  /* F5/P2-10 — the share bar, once per receipt, after every listener above:
+  /* F5/P2-10 ; the share bar, once per receipt, after every listener above:
      the receipts are in the initial HTML, so module-eval time is soon enough. */
   initShare();
 }

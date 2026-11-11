@@ -1,4 +1,4 @@
-// Phase 3 shared content helpers — articles collection, authors, search
+// Phase 3 shared content helpers ;  articles collection, authors, search
 // index data. Single-edit data files per the maintained-data rule.
 import { getCollection, type CollectionEntry } from "astro:content";
 // SITE-6 (2026-10-12): profile URLs come from the one PROFILES table in
@@ -16,7 +16,7 @@ export const AUTHORS = [
     socials: {
       x: PROFILES.x,
       linkedin: PROFILES.linkedin,
-      // SITE-6: the author box linked github.com/gwillchijioke — an account
+      // SITE-6: the author box linked github.com/gwillchijioke ;  an account
       // with no public repositories. The King's public work is godschi10.
       github: PROFILES.github,
     },
@@ -28,11 +28,11 @@ export const authorBySlug = (slug: string) =>
     slug,
     name: "GWill Finance",
     role: "Editorial team",
-    bio: "Independent Nigerian finance guides — tested, priced in naira, free to read.",
+    bio: "Independent Nigerian finance guides: tested, priced in naira, free to read.",
     socials: {} as Record<string, string>,
   };
 
-// The real Gravatar registered to godschi10@gmail.com (King, 2026-09-28 —
+// The real Gravatar registered to godschi10@gmail.com (King, 2026-09-28 ; 
 // verified grayscale portrait). Shared by the article byline (20/48px) and the
 // author archive head (96px). Single-edit data file: one constant for the hash.
 export const GRAVATAR =
@@ -42,7 +42,7 @@ export const fmtMonthYear = (d: Date) =>
   d.toLocaleDateString("en-GB", { month: "short", year: "numeric" });
 
 /**
- * WordPress prints the article page's date with date_i18n('F Y') — the full
+ * WordPress prints the article page's date with date_i18n('F Y') ; the full
  * month name (single.php:96, "April 2026"), while the cards use date_i18n('M Y')
  * ("Apr 2026") via fmtMonthYear above. Two formatters, because the theme really
  * does print two different formats on the same page.
@@ -69,7 +69,7 @@ export function relatedTo(all: Article[], current: Article, n = 3): Article[] {
     (p) => p.data.category === current.data.category
   );
   // gwill_get_related_posts() queries the PRIMARY category only, capped at
-  // $count (3) — it never mixes other categories in. WordPress's fallback in
+  // $count (3) ;  it never mixes other categories in. WordPress's fallback in
   // single.php then takes the 2 most recent posts when no same-category post
   // exists, so the section never dies. `all` arrives sorted by date desc, which
   // is the query's own `orderby => date / order => DESC`.
@@ -80,7 +80,7 @@ export function relatedTo(all: Article[], current: Article, n = 3): Article[] {
 /**
  * SITE-3 (2026-10-11): the money-tools "Related guides" cards used to hand-list
  * their article titles inline, and three had drifted from the articles' own
- * canonical titles — a card advertising a title the linked page does not carry.
+ * canonical titles ; a card advertising a title the linked page does not carry.
  * The slug stays hand-listed in the page (it is the pointer); the title is
  * looked up from the collection at build time, so a card and its article H1
  * can never disagree again. An unknown slug THROWS: a related card pointing at
@@ -102,19 +102,19 @@ export async function articleTitleOf(): Promise<(slug: string) => string> {
 
 export { CATEGORIES, catBySlug };
 
-// Tools catalogue for search + sitemap (mirrors tools/index.astro — keep in
+// Tools catalogue for search + sitemap (mirrors tools/index.astro ;  keep in
 // sync when a tool ships).
 export const TOOLS = [
   { slug: "currency-converter", name: "Currency Converter", desc: "16 currencies to naira at the live mid-market rate, plus an honest parallel-market estimate." },
-  { slug: "money-transfer-comparator", name: "Money-Transfer Comparator", desc: "Wise, Remitly, WU, WorldRemit, LemFi — ranked by what actually lands after fee and rate." },
+  { slug: "money-transfer-comparator", name: "Money-Transfer Comparator", desc: "Wise, Remitly, WU, WorldRemit, LemFi, ranked by what actually lands after fee and rate." },
   { slug: "exchange-rate-history", name: "Exchange-Rate History", desc: "USD→NGN trend over 30 or 90 days, built from real fetched points on your device." },
-  { slug: "salary-tax-calculator", name: "Salary Tax (NTA 2025)", desc: "PAYE under the 2026 bands vs the old bands — rent relief, minimum-wage exemption, band table." },
+  { slug: "salary-tax-calculator", name: "Salary Tax (NTA 2025)", desc: "PAYE under the 2026 bands vs the old bands: rent relief, minimum-wage exemption, band table." },
   { slug: "gross-to-net-calculator", name: "Net → Gross", desc: "Start from the take-home you want; reverse-solve the gross you must negotiate." },
   { slug: "compound-interest-calculator", name: "Compound Interest", desc: "Principal plus top-ups, compounding your way to the future value, year by year." },
-  { slug: "savings-goal-calculator", name: "Savings Goal", desc: "Name the target and deadline — get the exact monthly price, plus the path." },
-  { slug: "naira-value-calculator", name: "Naira Value", desc: "What your naira still buys after N years of inflation — and what standing still costs." },
+  { slug: "savings-goal-calculator", name: "Savings Goal", desc: "Name the target and deadline: get the exact monthly price, plus the path." },
+  { slug: "naira-value-calculator", name: "Naira Value", desc: "What your naira still buys after N years of inflation, and what standing still costs." },
   { slug: "inflation-savings-calculator", name: "Inflation-Adjusted Savings Calculator", desc: "Inflate the goal first, then price nominal vs real monthly. The gap is the insight." },
-  { slug: "50-30-20-budget-calculator", name: "50/30/20 Budget", desc: "Split any income into needs, wants, savings — then check real spending against plan." },
+  { slug: "50-30-20-budget-calculator", name: "50/30/20 Budget", desc: "Split any income into needs, wants, savings, then check real spending against plan." },
   { slug: "loan-repayment-calculator", name: "Loan Repayment", desc: "Lender quote in, real cost out: installment, total interest, true effective APR." },
   { slug: "emergency-fund-calculator", name: "Emergency Fund", desc: "Runway in months, inflation-adjusted target, and the saving that closes the gap." },
   { slug: "dividend-calculator", name: "Dividend & ROI Estimator", desc: "NGX shares year by year: DRIP vs cash, yield, gain, and CAGR." },
@@ -123,8 +123,8 @@ export const TOOLS = [
 ];
 
 // Default apps directory entries (truth-theme ACF fallback: PiggyVest,
-// Grey, Risevest — honest copy, no sponsored order).
-// page-apps.php v1.0.163 ACF slots — the 3 live cards scraped from
+// Grey, Risevest ;  honest copy, no sponsored order).
+// page-apps.php v1.0.163 ACF slots ;  the 3 live cards scraped from
 // finance.fitnesslova.qzz.io/apps/ on 2026-09-30 (slot 1-3 verbatim:
 // name, cat, url, badge, art tile colours, emoji, desc, stats triplets
 // [label, value, colourHint], review permalink slug). stats colour hints

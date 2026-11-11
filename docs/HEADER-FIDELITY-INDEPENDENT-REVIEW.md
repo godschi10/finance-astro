@@ -1,4 +1,4 @@
-# Header fidelity — verification record (2026-09-22)
+# Header fidelity, verification record (2026-09-22)
 
 Scope: the WP→Astro header port on `finance-astro` (`main`), covering the
 responsive defects closed in v0.1.1. Every claim below is tied to a command that
@@ -9,7 +9,7 @@ was actually run on this box, or is explicitly marked as *not* verified.
 - Host: Oracle Linux 9.8, aarch64, 5.6 GB RAM.
 - Browser: **Google Chrome for Testing 153.0.8010.12** (arm64, the Playwright
   build shipped with the `agent-browser` CLI), driven headless over CDP on
-  `127.0.0.1:9222` via `agent-browser`. Not a synthetic/static check — a real
+  `127.0.0.1:9222` via `agent-browser`. Not a synthetic/static check, a real
   rendering engine with real layout.
 - Local preview: `python3 -m http.server 8899` serving `dist/` at the site's real
   base path `/finance-astro/`.
@@ -19,7 +19,7 @@ was actually run on this box, or is explicitly marked as *not* verified.
 
 | Command | Result |
 | --- | --- |
-| `npm run check` | `check: PASS — 2/2 gates green` · header contract `PASS` (36 assertions) · vectors `pass=95 fail=0 cases=95 vectors=95` |
+| `npm run check` | `check: PASS, 2/2 gates green` · header contract `PASS` (36 assertions) · vectors `pass=95 fail=0 cases=95 vectors=95` |
 | `npm run build` | `[build] 53 page(s) built in 11.12s` · `[build] Complete!` · exit 0 |
 | `node scripts/check-header-fidelity.mjs` | `header fidelity contract: PASS`, exit 0 |
 | `node scripts/vectors-check.mjs` | `pass=95 fail=0`, exit 0 |
@@ -51,12 +51,12 @@ the deployed staging URL).
 Pushed `main` → `1f04b92`, then rebuilt and published the staging branch
 (`pages-dist` `c9274fd..88b28d6`). Verified in this order:
 
-1. **Pages reached `built` for our exact commit** —
+1. **Pages reached `built` for our exact commit**, 
    `gh api repos/godschi10/finance-astro/pages/builds/latest` →
    `{"status":"built","commit":"88b28d63ee73d0de24b4730498d66a0dd0933bf6"}`,
    matching `git rev-parse origin/pages-dist`. The byte check is therefore gated on
    *our* deploy, not the previous one.
-2. **Served bytes carry every fix** — `curl -s https://godschi10.github.io/finance-astro/`
+2. **Served bytes carry every fix**, `curl -s https://godschi10.github.io/finance-astro/`
    → HTTP 200, 86061 bytes, containing
    `body{...overflow-x:hidden;overflow-x:clip;overflow-wrap:break-word}`,
    `@media(max-width:1023px){.ticker{height:30px}`, and
@@ -68,13 +68,13 @@ Pushed `main` → `1f04b92`, then rebuilt and published the staging branch
 
 ## Findings and dispositions
 
-### F1 — Duplicate headers on mobile — **FIXED, VERIFIED**
+### F1, Duplicate headers on mobile, **FIXED, VERIFIED**
 
 `src/styles/header.css` carried no per-breakpoint visibility switch, so `.sh` and
 `.mh` both rendered on phones. WP (sections 50/51) hides one per breakpoint.
 Fixed by porting those sections. Verified at 390px: `.sh` hidden, `.mh` flex.
 
-### F2 — 288px horizontal overflow at tablet — **FIXED, VERIFIED**
+### F2, 288px horizontal overflow at tablet, **FIXED, VERIFIED**
 
 Root cause established by measuring *both* sites rather than guessing from the
 port alone: header geometry is identical, but WP clips on `body` and the port
@@ -83,25 +83,25 @@ clipped only on `html`. Fixed in `src/layouts/Layout.astro`
 Verified: overflow 0 at 390/768/1280, matching production.
 
 > Note for future passes: a naive "elements past the viewport" scan reports ~38
-> false positives here — descendants of the ticker's `overflow: hidden`
+> false positives here, descendants of the ticker's `overflow: hidden`
 > container. Filtering out elements with a clipping ancestor is required, and
 > `overflow-x: clip` on `html` alone does *not* stop the document from
 > advertising the overflow.
 
-### F3 — Tablet ticker at desktop height — **FIXED, VERIFIED**
+### F3, Tablet ticker at desktop height, **FIXED, VERIFIED**
 
 WP section 49 sets the ticker to 30px with 16px item padding on tablet; the port
 left it at 36px. Ported into a `@media (max-width: 1023px)` block. Verified: 30px
 at 768, 36px at 1280, 28px at 390.
 
-### F4 — `npm run check` was a no-op — **FIXED, VERIFIED**
+### F4, `npm run check` was a no-op, **FIXED, VERIFIED**
 
 `package.json` declared `check: node scripts/check.mjs`; the file did not exist,
 so the documented gate exited with `MODULE_NOT_FOUND` (masked in pipelines).
 Added the umbrella runner. Verified: exit 0, and a failing gate now propagates
 exit 1 (checked by running the gates directly, which return 1 on mismatch).
 
-### F5 — Daily vector drift — **FIXED, VERIFIED**
+### F5, Daily vector drift, **FIXED, VERIFIED**
 
 `fxHistoryRange(points, days, nowMs = Date.now())` against a PHP oracle that
 windows on `strtotime('-N days')` at generation time. The gate drifted with the
@@ -117,7 +117,7 @@ and verified it reproduces exactly 20/80 (boundary band derived empirically:
   infrastructure limitation (`Context compression is temporarily paused`), not on
   the code.
 - Because no delegated artifact landed, **the parent re-verified everything
-  independently** — the commands, matrix, and live-parity probe above were run
+  independently**, the commands, matrix, and live-parity probe above were run
   directly on this box. Nothing here is inherited from an unverified claim.
 - No browser proof was claimed for anything that was not rendered in Chrome 153.
   Where evidence is instrument-only (computed styles, geometry, overflow
@@ -135,4 +135,4 @@ and verified it reproduces exactly 20/80 (boundary band derived empirically:
 - **Firefox**: authorized and viable on this box, but not installed, so no
   engine-diversity check was performed.
 - **`vectors.php` regeneration**: the generator hardcodes the old box's theme
-  path, so the oracle was not regenerated — the committed snapshot was used.
+  path, so the oracle was not regenerated, the committed snapshot was used.

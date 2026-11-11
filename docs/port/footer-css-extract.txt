@@ -115,7 +115,7 @@
 }
 
 /* L1053 */
-.fpush, .fgooglenews {
+.fpush.fgooglenews {
   font: inherit;
   font-size: 13px;
   font-weight: 700;
@@ -136,14 +136,14 @@
 }
 
 /* L1072 */
-.fpush svg, .fgooglenews svg {
+.fpush svg.fgooglenews svg {
   flex: none;
   width: 18px;
   height: 18px;
 }
 
 /* L1077 */
-.fpush:hover, .fgooglenews:hover {
+.fpush:hover.fgooglenews:hover {
   border-color: var(--gold-b);
   background: var(--gold-b);
   color: #0d0b08;
@@ -151,7 +151,7 @@
 }
 
 /* L1083 */
-.fpush:active, .fgooglenews:active {
+.fpush:active.fgooglenews:active {
   transform: translateY(0);
 }
 
@@ -163,7 +163,7 @@
 }
 
 /* L1089 */
-.fpush[disabled], .fpush[data-push-state="unsupported"] {
+.fpush[disabled].fpush[data-push-state="unsupported"] {
   opacity: 0.55;
   cursor: not-allowed;
   transform: none;
@@ -175,7 +175,7 @@
 }
 
 /* L1569 */
-.fs-lg .fpush, .fs-lg .fgooglenews, .fs-lg .btn, .fs-lg .finstall {
+.fs-lg .fpush.fs-lg .fgooglenews.fs-lg .btn.fs-lg .finstall {
   flex-wrap: wrap;
 }
 
@@ -440,7 +440,7 @@
    the wrapper is :empty → remove it entirely. Also collapses empty comment-ad
    wrappers. ⚠️ Use :has(.ad-slot) so whitespace/newline-only wrappers (HTML
    indents the PHP call, not technically :empty) are caught too. (v1.12.10) */
-.ad-bg:empty, .ad-bg:not(:has(> .ad-slot)), .gwill-comment-ad:empty {
+.ad-bg:empty.ad-bg:not(:has(> .ad-slot)).gwill-comment-ad:empty {
   display: none;
 }
 

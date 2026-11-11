@@ -1,4 +1,4 @@
-// FX-history pure math — TS port of inc/fx-history.php
+// FX-history pure math ;  TS port of inc/fx-history.php
 // gwill_fx_history_range() + gwill_fx_history_summary() (no WP, no SVG
 // templating; the chart is drawn client-side from the same numbers).
 // Tested vs PHP vectors.

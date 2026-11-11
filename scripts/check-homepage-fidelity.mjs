@@ -1,4 +1,4 @@
-// Homepage fidelity contract — GWill Finance WordPress → Astro port.
+// Homepage fidelity contract, GWill Finance WordPress → Astro port.
 //
 // Asserts the homepage port against the WP source of truth (gwill-finance-theme
 // 1.13.39: front-page.php sections 2-8, template-parts/content.php,
@@ -31,7 +31,7 @@ const layout = readFileSync(LAYOUT, "utf8");
 const strip = (s) => s.replace(/\s+/g, "").replace(/;}/g, "}");
 const css = strip(readFileSync(HOME_CSS, "utf8"));
 // The theme styles form controls in its FORMS section and resets anchors in its
-// BASE section — neither is part of the homepage-scope extraction, so both live
+// BASE section, neither is part of the homepage-scope extraction, so both live
 // in their own stylesheets. Assert them there; a rule that moved must not
 // silently vanish.
 const formsCss = strip(readFileSync(FORMS_CSS, "utf8"));
@@ -82,17 +82,17 @@ const checks = [
     has(indexTpl, '<h1 class="hero-h"><span class="g">Nigerian money.</span><br><span class="w">Explained.</span></h1>')],
   ["hero sub copy", has(indexTpl, "Savings, investing, dollar accounts, crypto, and every fintech app worth your attention. Tested by Gwill. No jargon. No AI slop.")],
   ["hero CTAs are .bh / .bhg (not .btn)", count(indexTpl, 'class="bh"') === 1 && count(indexTpl, 'class="bhg"') === 1],
-  ["primary CTA copy + target (KING FINGERPRINT FIX 2026-10-04: sentence case — 'Browse all articles')", has(indexTpl, 'class="bh" href={`${base}articles/`}>Browse all articles →</a>')],
+  ["primary CTA copy + target (KING FINGERPRINT FIX 2026-10-04: sentence case, 'Browse all articles')", has(indexTpl, 'class="bh" href={`${base}articles/`}>Browse all articles →</a>')],
   // KING OVERRIDE 2026-10-02 (v0.7.10): the hero's secondary CTA now targets
   // the money calculators, NOT the live WP target /apps/. The King's reason:
   // "that 'Finance Apps' button should be changed and linked to the finance
-  // calculators I feel they will bring more clicks from my homepage" — the 18
+  // calculators I feel they will bring more clicks from my homepage", the 18
   // calculators are the site's strongest asset and the hero should route to
   // them.
   // This is a DELIBERATE, RECORDED divergence from WP fidelity, not a port
   // defect: the live theme still sends that CTA to /apps/. Fidelity to WP was
   // the correct default; the King has now overruled it on conversion grounds.
-  // The .bhg class and the /apps/ page itself are untouched — /apps/ keeps 5
+  // The .bhg class and the /apps/ page itself are untouched, /apps/ keeps 5
   // inbound links (2 header nav + 3 footer), so it is not orphaned.
   // Copy is the site's existing vocabulary, not invented: the /money-tools/
   // hub H1 (src/pages/money-tools/index.astro:72) and the footer link
@@ -109,13 +109,13 @@ const checks = [
     indexTpl.indexOf('class="stat-strip"') > indexTpl.indexOf("</section>")],
   ["four stat cells", count(indexTpl, 'class="si"') === 4],
   // 2026-09-30 King order: "All data current seems useless, should be
-  // replaced with the number of money calculators" — the strip prints REAL
+  // replaced with the number of money calculators", the strip prints REAL
   // build-computed counts (articles, apps, calculators) instead of the
   // invented "10+/12+/2+ All data current" trio.
   ["stat numbers are computed, not frozen literals", /\{posts\.length\}/.test(indexTpl) && /\{APPS\.length\}/.test(indexTpl) && /\{importedTools\.length\}/.test(indexTpl) && has(indexTpl, '<div class="si-n">₦ 0</div>') && !has(indexTpl, "All data current") && !/si-n">1[02]\+/.test(indexTpl)],
   // SITE-2 (copy-truth leg, 2026-10-09): the calculator count's SOURCE moved.
   // It used to be a readdirSync() of src/pages/money-tools, which returned 16
-  // while /money-tools/ listed 15 cards — the extra file was budget-allocator,
+  // while /money-tools/ listed 15 cards, the extra file was budget-allocator,
   // merged into 50/30/20 on 2026-10-07, so its URL is only a pointer and it is
   // not a listed tool. The count now comes from TOOL_MANIFEST, the same list the
   // hub renders, so the stat and the cards cannot drift apart again without this
@@ -151,14 +151,14 @@ const checks = [
   ["grid is #gwill-posts-grid wrapping a .g3 (WP's structure)", has(indexTpl, '<div id="gwill-posts-grid">') && has(indexTpl, '<div class="g3">')],
   ["cards render newest-9-including-featured", has(indexRaw, "const grid = posts.slice(0, 9)")],
   ["ad slot is an EMPTY .ad-bg with WP's inline margin", has(indexTpl, '<div class="ad-bg" style="margin-top:28px"></div>')],
-  ["no ad placeholder text", !has(indexTpl, "Ad slot — fills") && !has(indexTpl, "Advertisement")],
+  ["no ad placeholder text", !has(indexTpl, "Ad slot, fills") && !has(indexTpl, "Advertisement")],
   ["no AJAX endpoint (static build: no fetch, no XHR)",
     !has(indexJs, "fetch(") && !has(indexJs, "XMLHttpRequest") && !has(indexJs, "admin-ajax.php")],
 
   // ── 8. newsletter ─────────────────────────────────────────────────────────
   ["newsletter band wrapper", has(indexTpl, '<div class="nl-s">') && has(indexTpl, '<div class="nl-copy">')],
   ["newsletter heading copy", has(indexTpl, '<h2 class="nl-h">Nigerian money news, weekly.</h2>')],
-  ["newsletter blurb is the shipped copy (KING FINGERPRINT FIX 2026-10-04: stray ⚡ removed — port-introduced decoration WP's default lacks)",
+  ["newsletter blurb is the shipped copy (KING FINGERPRINT FIX 2026-10-04: stray ⚡ removed, port-introduced decoration WP's default lacks)",
     has(indexTpl, "Rate changes, app reviews, and the financial moves worth making. Free, no spam, unsubscribe anytime.")],
   ["newsletter meta = 3 ✓ items + 2 dots", count(indexTpl, "✓ ") === 3 && count(indexTpl, 'class="dot"') === 2],
   ["form prompt copy", has(indexTpl, "Get new posts in your inbox.")],
@@ -175,7 +175,7 @@ const checks = [
   ["submit carries both WP labels", has(indexTpl, '<span class="gwill-form__submit-text">Subscribe</span>') && has(indexTpl, '<span class="gwill-form__submit-loading" aria-hidden="true">Subscribing…</span>')],
   ["status region is a live alert", has(indexTpl, '<div class="gwill-form__status" role="alert" aria-live="polite"></div>')],
   ["no 'no email field here yet' draft notice", !has(indexTpl, "No email field here yet") && !has(indexTpl, "fake control")],
-  ["homepage newsletter submits via the shared gwill-forms.js path like /newsletter/ (KING FINGERPRINT FIX 2026-10-04: the 'not connected' stub contradicted the live list — the form carries gwill-form class + data-success-url, so the stub only blocked real subscriptions; hijack deleted, shared path owns the submit)",
+  ["homepage newsletter submits via the shared gwill-forms.js path like /newsletter/ (KING FINGERPRINT FIX 2026-10-04: the 'not connected' stub contradicted the live list, the form carries gwill-form class + data-success-url, so the stub only blocked real subscriptions; hijack deleted, shared path owns the submit)",
     !has(indexJs, "nothing was sent") && has(indexTpl, 'data-success-url=')],
 
   // ── behaviour (ported from main.js / category-filter.js) ──────────────────
@@ -215,16 +215,16 @@ const checks = [
   // pastels) with five hues so each category is distinct. savings (bgn),
   // crypto (bpu) and dollar-accounts (bg) are the King's named three and are
   // UNCHANGED. The live WP theme still maps investing/banking/remittance to
-  // bgn/bsl/bsl — this is a deliberate, recorded divergence, not a port bug.
+  // bgn/bsl/bsl, this is a deliberate, recorded divergence, not a port bug.
   // Uncategorized keeps slate: it is the catch-all, and slate is its
   // semantic color, not a real category's claim.
   ["Category carries the chip class field", has(site, "chip: string;")],
-  ["savings = bgn / i-sav / db-g (King's named three — untouched)", has(site, 'slug: "savings"') && has(site, 'badge: "bgn", art: "i-sav", chip: "db-g"')],
+  ["savings = bgn / i-sav / db-g (King's named three, untouched)", has(site, 'slug: "savings"') && has(site, 'badge: "bgn", art: "i-sav", chip: "db-g"')],
   ["investing = bte / i-inv / db-te (KING OVERRIDE 2026-10-03; WP says bgn)", has(site, 'badge: "bte", art: "i-inv", chip: "db-te"')],
-  ["crypto = bpu / i-cry / db-p (King's named three — untouched)", has(site, 'badge: "bpu", art: "i-cry", chip: "db-p"')],
+  ["crypto = bpu / i-cry / db-p (King's named three, untouched)", has(site, 'badge: "bpu", art: "i-cry", chip: "db-p"')],
   ["banking = bbl / i-ban / db-bl (KING OVERRIDE 2026-10-03; WP says bsl)", has(site, 'badge: "bbl", art: "i-ban", chip: "db-bl"')],
   ["remittance = bcy / i-rem / db-cy (KING OVERRIDE 2026-10-03; WP says bsl)", has(site, 'badge: "bcy", art: "i-rem", chip: "db-cy"')],
-  ["dollar-accounts = bg / i-dol / db-gr (King's named three — untouched)", has(site, 'badge: "bg", art: "i-dol", chip: "db-gr"')],
+  ["dollar-accounts = bg / i-dol / db-gr (King's named three, untouched)", has(site, 'badge: "bg", art: "i-dol", chip: "db-gr"')],
   ["budgeting = bpk / i-dol / db-pk (KING OVERRIDE 2026-10-03)", has(site, 'badge: "bpk", art: "i-dol", chip: "db-pk"')],
   ["fixed-income = bin / i-inv / db-in (KING OVERRIDE 2026-10-03)", has(site, 'badge: "bin", art: "i-inv", chip: "db-in"')],
   ["uncategorized keeps slate = bsl / i-ban / db-s (catch-all semantic)", has(site, 'badge: "bsl", art: "i-ban", chip: "db-s"')],
@@ -296,7 +296,7 @@ const checks = [
     !has(css, ".gwill-honey{") && !has(css, ".gwill-form__submit-loading{display:none}")],
   ["loading swap rules kept for a future endpoint", has(formsCss, ".gwill-form__submit[data-loading].gwill-form__submit-text{display:none}")],
   ["touch reset for the pills (WP section 54 discipline)", has(css, "@media(hover:none)")],
-  ["reduced-motion honoured (KING CLEANUP 2026-10-04: home.css's only animation-duration:2s belonged to the deleted dead spinner/ad rules — home.css applies no animation now, and article/chrome/header/hub/vibe sheets keep their own reduced-motion blocks; this asserts the invariant instead of pinning a dead value)",
+  ["reduced-motion honoured (KING CLEANUP 2026-10-04: home.css's only animation-duration:2s belonged to the deleted dead spinner/ad rules, home.css applies no animation now, and article/chrome/header/hub/vibe sheets keep their own reduced-motion blocks; this asserts the invariant instead of pinning a dead value)",
     !has(css, "animation:") || has(css, "@media(prefers-reduced-motion:reduce)")],
   ["print rules present", has(css, "@mediaprint")],
   ["aspect-ratio fallback kept", has(css, "@supportsnot(aspect-ratio:16/9)")],

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Build-time OG card generator — writes public/images/og/*.png.
+// Build-time OG card generator, writes public/images/og/*.png.
 //
 // Leg OG-C. Wired as the FIRST step of `npm run build` so a deploy can never
 // serve a meta tag pointing at a card that was not regenerated: Astro bakes the
@@ -9,16 +9,16 @@
 // Card geometry and every coordinate live in scripts/og-card.mjs, which is a
 // literal implementation of the OG card design spec (og-card-design-spec).
 // This file only decides WHAT goes on each card, and it reads that from the real
-// sources — nothing is invented:
+// sources, nothing is invented:
 //
-//   brand   — SITE.name / SITE.tagline in src/data/site.ts
-//   tool    — the TOOLS catalogue in src/data/content.ts (15 entries): name is
+//   brand  , SITE.name / SITE.tagline in src/data/site.ts
+//   tool   , the TOOLS catalogue in src/data/content.ts (15 entries): name is
 //             the headline, desc is the descriptor. The catalogue is the source
 //             of truth because it is the same copy the search index ships.
-//   hub     — the literal title/description index.astro passes to Layout
-//   amount  — amountSeo() of the first entry in src/data/amount-pages.json
+//   hub    , the literal title/description index.astro passes to Layout
+//   amount , amountSeo() of the first entry in src/data/amount-pages.json
 //             (one shared card for the 10-slug family, as [amount].astro wires)
-//   article — title / category / readMins / pubDate frontmatter in
+//   article, title / category / readMins / pubDate frontmatter in
 //             src/content/articles/*.md
 //
 // Filenames are load-bearing: Layout.astro and each ToolShell page already point
@@ -30,7 +30,7 @@
 // Idempotent: the PNG is only rewritten when the bytes differ, so an unchanged
 // card keeps its mtime and the build stays quiet.
 //
-// Exit non-zero on ANY failure — a half-generated og/ directory would ship
+// Exit non-zero on ANY failure, a half-generated og/ directory would ship
 // broken og:image tags, which is worse than a failed build.
 import { spawnSync } from "node:child_process";
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from "node:fs";
@@ -71,7 +71,7 @@ function attr(src, name) {
 /**
  * The TOOLS catalogue out of src/data/content.ts. That file is TypeScript and
  * imports astro:content at module scope, so it cannot be imported from a plain
- * node script — but the array is a literal, so a strict per-line scan of exactly
+ * node script, but the array is a literal, so a strict per-line scan of exactly
  * the three fields we consume is honest and verifiable. The count is asserted
  * below: a silent regex miss would emit wrong copy, so it fails the build.
  */
@@ -106,7 +106,7 @@ const swapsSeen = new Map();
  * Write only when the bytes differ. Prints one line per card either way.
  * `copy` is passed through cardText() first: cardText() rewrites the arrow to a
  * slash (a copy choice, matching the site's own "USD/NGN" pair labels) and
- * deliberately does NOT rewrite the naira sign — the bake face carries U+20A6,
+ * deliberately does NOT rewrite the naira sign, the bake face carries U+20A6,
  * so "₦50k" stays "₦50k". Every substitution is logged, not hidden.
  */
 function emit(file, card, copy = {}) {
@@ -145,7 +145,7 @@ const push = (file, card, copy) => jobs.push({ file, card, copy });
 
 // ── brand ────────────────────────────────────────────────────────────────────
 // The logo lockup IS the brand line, so SITE.name is deliberately NOT passed as
-// a headline — the King rejected a card that printed "GWill Finance" under a
+// a headline, the King rejected a card that printed "GWill Finance" under a
 // mark that was not his. Tagline only; the tick counterweights on the right.
 try {
   const site = readFileSync(path.join(root, "src", "data", "site.ts"), "utf8");
@@ -163,14 +163,14 @@ try {
 // ── money tools ──────────────────────────────────────────────────────────────
 // 15 catalogue entries -> 15 pages (spec 3.2). Chip copy: EXCHANGE for the two
 // FX tools, MONEY CALCULATOR for the other 13. The right-hand tick is only
-// printed where it is literally true — the two FX cards — because the tick is a
+// printed where it is literally true, the two FX cards, because the tick is a
 // claim, not decoration.
 const FX_TOOLS = new Set(["currency-converter", "exchange-rate-history"]);
 try {
   const tools = readToolsCatalogue();
   if (tools.length !== 15) throw new Error(`expected 15 TOOLS entries in content.ts, parsed ${tools.length}`);
   // budget-allocator is a POINTER (meta-refresh + canonical to the 50/30/20
-  // page, 2026-10-07 merge), not a tool page — it ships no ToolShell, no card,
+  // page, 2026-10-07 merge), not a tool page, it ships no ToolShell, no card,
   // no catalogue row, so it is excluded from the 1:1 check by name.
   const pageSlugs = readdirSync(TOOLS_DIR)
     .filter((f) => f.endsWith(".astro"))
@@ -181,7 +181,7 @@ try {
   const orphan = catSlugs.filter((s) => !pageSlugs.includes(s));
   const orphanPage = pageSlugs.filter((s) => !catSlugs.includes(s));
   if (orphan.length || orphanPage.length) {
-    throw new Error(`catalogue and pages are not 1:1 — catalogue-only: ${orphan.join(", ") || "none"} · page-only: ${orphanPage.join(", ") || "none"}`);
+    throw new Error(`catalogue and pages are not 1:1, catalogue-only: ${orphan.join(", ") || "none"} · page-only: ${orphanPage.join(", ") || "none"}`);
   }
   for (const t of tools) {
     push(`tool-${t.slug}.png`, {
@@ -258,13 +258,13 @@ for (const { file, card, copy } of jobs) {
 }
 
 if (swapsSeen.size) {
-  console.log(`\ngen-og: copy substitutions (not codepoint fallbacks — the bake face has U+20A6):`);
+  console.log(`\ngen-og: copy substitutions (not codepoint fallbacks, the bake face has U+20A6):`);
   for (const [k, n] of swapsSeen) console.log(`  ${k} × ${n}`);
 }
 
 console.log(`\ngen-og: ${written} written, ${skipped} unchanged, ${jobs.length} cards total`);
 if (failures.length) {
-  console.error(`\ngen-og: FAIL — ${failures.length} problem(s):`);
+  console.error(`\ngen-og: FAIL, ${failures.length} problem(s):`);
   for (const f of failures) console.error(`  - ${f}`);
   process.exit(1);
 }

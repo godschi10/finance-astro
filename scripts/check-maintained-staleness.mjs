@@ -1,7 +1,7 @@
 // Maintained-table staleness gate (P3-6, fifth audit, v0.7.58).
 //
-// The audit's finding, [Certain]: the hand-maintained tables — NGX prices,
-// savings rates, transfer fees — carry a "verified <month>" stamp and NOTHING
+// The audit's finding, [Certain]: the hand-maintained tables, NGX prices,
+// savings rates, transfer fees, carry a "verified <month>" stamp and NOTHING
 // warns when it ages out. This gate is that warning, and it is deliberately a
 // BUILD-BREAKING gate rather than a page banner: the tables are the inputs a
 // YMYL reader makes a money decision on, so a table nobody has re-checked must
@@ -10,7 +10,7 @@
 //
 // To fix a failure: re-check the named table against its source and update the
 // date that module owns (the list below names the file). Do NOT edit the date
-// here to silence this — this file owns no dates; it only reads theirs.
+// here to silence this, this file owns no dates; it only reads theirs.
 //
 // Threshold: 45 days (src/lib/staleness.ts STALENESS_DAYS), the figure the
 // audit names. A month-only stamp resolves to the last day of that month.
@@ -36,14 +36,14 @@ const rows = S.stalenessReport();
 let fail = 0, pass = 0;
 const problems = [];
 
-console.log(`maintained-table staleness — threshold ${S.STALENESS_DAYS} days\n`);
+console.log(`maintained-table staleness, threshold ${S.STALENESS_DAYS} days\n`);
 for (const r of rows) {
   const age = r.ageDays === null ? "UNKNOWN (stamp not parseable)" : `${r.ageDays}d`;
   const state = r.future ? "FUTURE" : r.stale ? "STALE" : "ok";
   console.log(`  ${state.padEnd(8)} ${String(age).padStart(10)}  ${r.verifiedOn.padEnd(10)}  ${r.label}`);
-  if (r.future) problems.push(`${r.id}: verifiedOn "${r.verifiedOn}" is in the FUTURE — that is a typo, not freshness (fix ${r.source})`);
-  else if (r.ageDays === null) problems.push(`${r.id}: verifiedOn "${r.verifiedOn}" could not be parsed as a date — fix the stamp in ${r.source}`);
-  else if (r.stale) problems.push(`${r.id}: ${r.verifiedOn} is ${r.ageDays} days old (threshold ${S.STALENESS_DAYS}) — re-check and update the date in ${r.source}`);
+  if (r.future) problems.push(`${r.id}: verifiedOn "${r.verifiedOn}" is in the FUTURE, that is a typo, not freshness (fix ${r.source})`);
+  else if (r.ageDays === null) problems.push(`${r.id}: verifiedOn "${r.verifiedOn}" could not be parsed as a date, fix the stamp in ${r.source}`);
+  else if (r.stale) problems.push(`${r.id}: ${r.verifiedOn} is ${r.ageDays} days old (threshold ${S.STALENESS_DAYS}), re-check and update the date in ${r.source}`);
 }
 
 // The date resolvers themselves are gated: a resolver that silently returned
@@ -69,7 +69,7 @@ if (problems.length) {
   for (const p of problems) console.log(`FAIL  ${p}`);
 }
 
-console.log(`\nmaintained-table staleness: ${fail ? "FAIL" : "PASS"} — ${pass} unit assertion(s), ${problems.length} table(s) needing a re-check`);
+console.log(`\nmaintained-table staleness: ${fail ? "FAIL" : "PASS"}, ${pass} unit assertion(s), ${problems.length} table(s) needing a re-check`);
 if (fail) {
   console.log("\nRe-check each table above against its source and update THAT module's date.");
   console.log("Do not edit a date to silence this gate: it owns no dates, it only reads theirs.");

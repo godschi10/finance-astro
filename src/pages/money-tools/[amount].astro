@@ -5,9 +5,9 @@ import {
   amountSiblings, amountOpposite, amountSeo, amountConfig, amountFmt, amountRate,
 } from "../../lib/amount";
 import { FX_SNAPSHOT, FX_SNAPSHOT_LABEL } from "../../data/fx-snapshot";
-// Unit line via amountRate() — the converter's moneyTrim treatment (v0.7.53,
+// Unit line via amountRate() ;  the converter's moneyTrim treatment (v0.7.53,
 // F6 small-rate half) raised to lib level for this template: below 1 a rate
-// prints 10 significant digits (1 NGN = $0.000751, the true value — the old
+// prints 10 significant digits (1 NGN = $0.000751, the true value ;  the old
 // 4dp mirror of page-amount-converter.php:118-125 printed $0.0008, and the
 // {LIVE} token truncated to "$0.00"; fifth audit P1-4 #6/#7). Rates ≥ 1 keep
 // the exact 6-decimal look.
@@ -31,7 +31,7 @@ const opps = amountOpposite(slug).map((s) => ({ slug: s, h1: amountSeo(s, amount
 const equation = `${amountFmt(d.amount, d.from)} = ${amountFmt(d.converted, d.to)}`;
 const unitLine = unitLineOf(d.unit_rate, d.rev_rate, d.from, d.to);
 // Uniqueness pass (fifth audit P2-7 + Oct-8 audit P2): each page derives its
-// own neighbouring-amount ladder from the snapshot rate it already renders —
+// own neighbouring-amount ladder from the snapshot rate it already renders ; 
 // half, the page amount, double, five-fold, ten-fold. Pure arithmetic on the
 // existing unit_rate (amt × unit_rate === fxConvert(amt, from, to)); no new
 // fetches, no new engine calls, snapshot-stamped in the caption.
@@ -49,10 +49,10 @@ const ladder = [0.5, 1, 2, 5, 10].map((m) => {
 </div>
 </div>
 <!-- v0.6.8 (King: cramp on the conversion landing pages): the LIVE amount
-     template wraps this copy zone in `.fx-copy art-body` — h2 20px with 28/10
+     template wraps this copy zone in `.fx-copy art-body` ; h2 20px with 28/10
      margins, body 16px/1.8. The port had pulled it outside the wrapper with
      .95rem/10px inline overrides, so every section sat flush under the last.
-     Restored to the live anatomy (the .hr divider stays — port section-break). -->
+     Restored to the live anatomy (the .hr divider stays ; port section-break). -->
 <div class="fx-copy art-body" style="margin-top:28px">
 {sections.map((s) => (
 <div><h2>{s.h2}</h2>{s.body.map((p) => (<p set:html={p}></p>))}</div>
@@ -83,7 +83,7 @@ const ladder = [0.5, 1, 2, 5, 10].map((m) => {
 import { amountPageData, amountFmt, amountRate } from "../../lib/amount";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS } from "../../data/tool-fields";
-/* The amount family has no inputs of its own — the figure lives in the URL —
+/* The amount family has no inputs of its own ; the figure lives in the URL; 
    so the table entry is deliberately empty. register() is still called so the
    fleet contract is uniform and auditable, and so the Clear-examples control
    (which lives in ToolShell) stays hidden on a tool that has no seed. */
@@ -92,7 +92,7 @@ const holder = document.querySelector("[data-amount-slug]");
 const slug = holder && (holder as HTMLElement).dataset.amountSlug || "";
 /* P0-2 (fifth audit, v0.7.57 family): the free FX feed updates once per 24h,
    so a per-visit browser fetch added third-party calls and throttle exposure
-   for zero freshness — removed everywhere else in 4c651ff; removed here too.
+   for zero freshness ; removed everywhere else in 4c651ff; removed here too.
    The page carries the build's daily reference rate, honestly stamped. */
 (() => {
   const foot = document.getElementById("am-foot");

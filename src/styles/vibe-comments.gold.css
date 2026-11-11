@@ -417,7 +417,7 @@ Table of Contents
 
 
 /* ══ v1.13.38 (review deleg_21439e80 F5): icon-era parity with tech skin ══
-   Own-reaction tint, pill container brand-lock, and touch-gated option hover —
+   Own-reaction tint, pill container brand-lock, and touch-gated option hover ; 
    all in the finance gold, same !important fight policy as every rule here. */
 .vibe-comments-section .vibe-reaction-summary,
 .vibe-comments-section .vibe-reply-trigger {
@@ -438,12 +438,12 @@ Table of Contents
 /* v3.20.28 ALIGNMENT (King law: plugin = NEUTRAL, theme = overrides).
    King's order 2026-09-26 ("new reactions look shrunken until refresh"):
    the old .vibe-rx-mine rule below KILLED the disc background with
-   `background:none !important` — specificity-tied with the .vibe-rx-t-<type>
+   `background:none !important` ;  specificity-tied with the .vibe-rx-t-<type>
    disc rules but carrying !important, it ALWAYS won, so the reader's OWN
    fresh reaction rendered as a transparent 22px hole with only the glyph's
    inner face-dot visible (pixel-proven: like disc fragments 52px vs the
    siblings' 102px). Deleted, not neutralized: per the 9/8 King law the
-   mine-state carries NO marker at all — the summary disc renders identical
+   mine-state carries NO marker at all ;  the summary disc renders identical
    whether or not it is yours; the picker pop-up stays the only highlight.
    The .vibe-rx-mine class still ships in the DOM (the plugin emits it) and
    is now visually inert here, as on tech. */
@@ -530,7 +530,7 @@ Table of Contents
    Guest is the only auth path, so the form renders open by default. The
    auth bar becomes a single quiet note (the WP-login/Google buttons and
    .vibe-or separator are absent), and the name/email grid sits inside the
-   form card exactly where WP puts it — gold language, brand tokens only. */
+   form card exactly where WP puts it ;  gold language, brand tokens only. */
 .vibe-comments-section .vibe-auth-bar {
     margin-bottom: 1rem;
     padding: 0.625rem 0.875rem;

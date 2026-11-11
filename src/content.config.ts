@@ -4,11 +4,11 @@ import { glob } from "astro/loaders";
 // moved to Zod 4 underneath). Same validator, supported import path.
 import { z } from "astro/zod";
 
-// Phase 3: markdown article collection (WP `post` parity — no CPTs in the
+// Phase 3: markdown article collection (WP `post` parity ;  no CPTs in the
 // truth theme). Category slugs follow the six canonical brand categories;
 // unknown slugs fall back to the Finance default at render time.
 //
-// Astro 6 removed the legacy Content Collections API outright — the guide's
+// Astro 6 removed the legacy Content Collections API outright ;  the guide's
 // words: "All content collections must now use the Content Layer API
 // introduced in Astro v5.0. **No backwards compatibility support is
 // available.**" A collection with no `loader` now fails with
@@ -33,10 +33,10 @@ const articles = defineCollection({
     pubDate: z.coerce.date(),
     updated: z.coerce.date().optional(),
     // SITE-9 (2026-10-12, YMYL trust): the last date the post was editorially
-    // reviewed — rendered in the article meta row ("Reviewed …") and fed into
+    // reviewed ;  rendered in the article meta row ("Reviewed …") and fed into
     // JSON-LD/OG dateModified. Explicit frontmatter, never computed from git
     // (a build machine has no git history). Default per batch S4: the post's
-    // own last-edit date (updated ?? pubDate) — the publish/edits WERE the
+    // own last-edit date (updated ?? pubDate) ;  the publish/edits WERE the
     // review; a future review moves the field forward.
     reviewed: z.coerce.date().optional(),
     readMins: z.number(),

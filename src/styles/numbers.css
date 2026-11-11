@@ -1,8 +1,8 @@
 /* ══════════════════════════════════════════════════════════════════════════
-   NUMBERS.CSS — DESIGN-LANGUAGE.md §1 "The Number Law" (rung R1, v0.7.0)
+   NUMBERS.CSS ;  DESIGN-LANGUAGE.md §1 "The Number Law" (rung R1, v0.7.0)
    ══════════════════════════════════════════════════════════════════════════
    ADDITIVE LAYER ONLY. No WP-verbatim rule from tools.css / article.css /
-   header.css / footer.css / home.css is rewritten here — this file only ADDS
+   header.css / footer.css / home.css is rewritten here ;  this file only ADDS
    properties those files never set (font-variant-numeric), so it cannot
    invert the v0.6.8 cascade contract (tools.css → article.css) and the 6-gate
    battery is untouched. The check-css-parse gate covers this file the same as
@@ -21,7 +21,7 @@
    number rules across the verbatim sheets.
    ══════════════════════════════════════════════════════════════════════════ */
 
-/* N1 — figures that refresh or align in columns */
+/* N1 ;  figures that refresh or align in columns */
 .fxap-figure,        /* amount-page hero conversion (money feast) */
 .receipt-fig,        /* converter + calculator result figures */
 .fx-big,             /* theme's legacy result scale (kept for parity) */

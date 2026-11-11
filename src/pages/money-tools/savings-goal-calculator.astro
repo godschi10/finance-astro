@@ -5,7 +5,7 @@ import { formatGrouped } from "../../lib/format";
 const n = (v: number) => formatGrouped(v, 0);
 /* P2-1 (fifth audit): the rate field was an "Annual rate %" with no convention
    stated, while the engine divides it by 12 and compounds monthly. A reader who
-   assumed 15% EFFECTIVE is planning on 15% and the engine pays them 16.08% —
+   assumed 15% EFFECTIVE is planning on 15% and the engine pays them 16.08%; 
    they get a better answer than they budgeted for, and cannot see it. The
    effective yield is therefore stated on the receipt, not buried in a footer.
 
@@ -18,21 +18,21 @@ const seed = savingsCalculate(5000000, 500000, 0.15, 24, "monthly");
 const rows = savingsSchedule(5000000, 500000, 0.15, 24, "monthly");
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
-<ToolShell title="Savings Goal Calculator, Monthly Target - GWill Finance" description="What must you save monthly to hit your target? Exact monthly figure plus a year-by-year path from where you stand." slug="savings-goal-calculator" tool="Savings Goal Calculator" lede="Name the target and the deadline — the calculator names the monthly price. Already there? It tells you straight." verified="Annuity-solved monthly · monthly compounding default" faqs={[
-  { q: "What if I already passed the target?", a: "Monthly drops to zero and the receipt says the goal is reached. Protect the win — move the surplus to the next goal." },
-  { q: "Does a higher rate really change the monthly?", a: "Dramatically over long deadlines. Compare 0% vs 15% above — the interest pays part of your goal for you." },
-  { q: "Is the rate I type nominal or effective?", a: "Nominal, compounded monthly — the receipt states both. We divide the annual rate by 12 and compound monthly, so a typed 15% actually returns 16.08% over a full year once compounding is counted. The effective annual yield row shows that figure, and it is the one to compare against what a provider advertises." },
+<ToolShell title="Savings Goal Calculator, Monthly Target - GWill Finance" description="What must you save monthly to hit your target? Exact monthly figure plus a year-by-year path from where you stand." slug="savings-goal-calculator" tool="Savings Goal Calculator" lede="Name the target and the deadline: the calculator names the monthly price. Already there? It tells you straight." verified="Annuity-solved monthly · monthly compounding default" faqs={[
+  { q: "What if I already passed the target?", a: "Monthly drops to zero and the receipt says the goal is reached. Protect the win: move the surplus to the next goal." },
+  { q: "Does a higher rate really change the monthly?", a: "Dramatically over long deadlines. Compare 0% vs 15% above: the interest pays part of your goal for you." },
+  { q: "Is the rate I type nominal or effective?", a: "Nominal, compounded monthly: the receipt states both. We divide the annual rate by 12 and compound monthly, so a typed 15% actually returns 16.08% over a full year once compounding is counted. The effective annual yield row shows that figure, and it is the one to compare against what a provider advertises." },
 ]}
 
   badge="Compound interest · Monthly compounding",
-  copy={[["p", "The amount you need each month is not simply the gap divided by the months. Your existing savings grow with interest, and each new deposit earns interest too. This calculator solves that properly, subtracting the growth of what you already have, then spreading the rest across your timeline. The result is the honest monthly figure, not a rough guess."],["p", "Compound interest is interest earned on your interest. When your savings earn interest that stays in the account, next month you earn interest on the original amount plus the interest from the month before, so your balance accelerates over time. That acceleration is what lets a small monthly saving become a large one, and it is why starting early matters so much."],["p", "Pick a realistic rate for where your money will sit, savings accounts, fixed deposits or money-market funds. A higher assumed rate is not guaranteed, and a lower one makes your plan more conservative and safer. Ranges below are indicative, always check today's actual rates with our savings rate comparator, which tracks the best paying platforms right now:"],["p", "Most Nigerians building a mid-term goal use a money-market fund or fixed deposit, so 10-15% is a sensible planning rate. Type your instrument's actual figure directly into the rate field and the monthly amount drops further."],["p", "Your ₦2,000,000 goal set today will cost more in three years because of inflation. Saving toward today's price can leave you short. Use our inflation-adjusted savings calculator to see what you really need to save, or our naira value calculator to see how much the naira in your pocket is worth in five years."],["p", "The months control lets you price a specific deadline, a school-fee term, a project launch, a rent renewal. Adding a few months at a high interest rate can lower your monthly figure noticeably, because every extra month of compounding does real work. Run the same goal at 24 months and at 28 months to feel the difference."],["p", "One compounding mode only, and it is monthly: the annual rate you type is converted to its monthly equivalent and applied to your whole balance every month. There is no frequency selector on this calculator — the rate field and the months field are the two controls that move the answer."],["h2", "Savings goal questions"],["h3", "Does this include compound interest?"],["p", "Yes, interest is compounded monthly on your whole balance, including the interest you have already earned."],["h3", "What if I already hit my target amount?"],["p", "If what you have already saved meets or passes your goal, the monthly amount shows ₦0, you are already there."],["h3", "Can I change the timeline?"],["p", "Yes — the Months field is the timeline. Set how many months you have left to your deadline and the calculator re-solves the monthly amount up or down automatically. This calculator works in months, not years."]]},
+  copy={[["p", "The amount you need each month is not simply the gap divided by the months. Your existing savings grow with interest, and each new deposit earns interest too. This calculator solves that properly, subtracting the growth of what you already have, then spreading the rest across your timeline. The result is the honest monthly figure, not a rough guess."],["p", "Compound interest is interest earned on your interest. When your savings earn interest that stays in the account, next month you earn interest on the original amount plus the interest from the month before, so your balance accelerates over time. That acceleration is what lets a small monthly saving become a large one, and it is why starting early matters so much."],["p", "Pick a realistic rate for where your money will sit, savings accounts, fixed deposits or money-market funds. A higher assumed rate is not guaranteed, and a lower one makes your plan more conservative and safer. Ranges below are indicative, always check today's actual rates with our savings rate comparator, which tracks the best paying platforms right now:"],["p", "Most Nigerians building a mid-term goal use a money-market fund or fixed deposit, so 10-15% is a sensible planning rate. Type your instrument's actual figure directly into the rate field and the monthly amount drops further."],["p", "Your ₦2,000,000 goal set today will cost more in three years because of inflation. Saving toward today's price can leave you short. Use our inflation-adjusted savings calculator to see what you really need to save, or our naira value calculator to see how much the naira in your pocket is worth in five years."],["p", "The months control lets you price a specific deadline, a school-fee term, a project launch, a rent renewal. Adding a few months at a high interest rate can lower your monthly figure noticeably, because every extra month of compounding does real work. Run the same goal at 24 months and at 28 months to feel the difference."],["p", "One compounding mode only, and it is monthly: the annual rate you type is converted to its monthly equivalent and applied to your whole balance every month. There is no frequency selector on this calculator: the rate field and the months field are the two controls that move the answer."],["h2", "Savings goal questions"],["h3", "Does this include compound interest?"],["p", "Yes, interest is compounded monthly on your whole balance, including the interest you have already earned."],["h3", "What if I already hit my target amount?"],["p", "If what you have already saved meets or passes your goal, the monthly amount shows ₦0, you are already there."],["h3", "Can I change the timeline?"],["p", "Yes: the Months field is the timeline. Set how many months you have left to your deadline and the calculator re-solves the monthly amount up or down automatically. This calculator works in months, not years."]]},
   disclaimer="This calculator is for informational guidance only and is not financial or investment advice. Rates are not guaranteed, confirm your plan with a licensed financial adviser.">
 <div class="fx-card">
-<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
-{/* P2-5 — THE MODE TOGGLE, phone-first segmented control: target-driven
+<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers and the receipt waits.</p>
+{/* P2-5 ; THE MODE TOGGLE, phone-first segmented control: target-driven
     ("name the deadline, we name the monthly") vs time-driven ("name the
     monthly, we name the time"). Buttons, not radios: the mode is a VIEW of
-    the same goal, not a number — see the script for why Reset leaves it. */}
+    the same goal, not a number ; see the script for why Reset leaves it. */}
 <div class="fx-stepper" role="group" aria-label="Planning mode">
   <button type="button" class="fx-step active" data-sg-mode="target" aria-pressed="true">Monthly needed</button>
   <button type="button" class="fx-step" data-sg-mode="time" aria-pressed="false">Time to goal</button>
@@ -41,11 +41,11 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 
 <div class="field" data-cur="NGN"><label for="sg-target">Target ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="sg-target" type="text" value="5000000" inputmode="decimal"></span></div>
 <div class="field" data-cur="NGN"><label for="sg-cur">Have now ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="sg-cur" type="text" value="500000" inputmode="decimal"></span></div>
-<div class="field"><label for="sg-rate">Annual rate % (nominal)</label><input id="sg-rate" type="text" max="100" value="15" inputmode="decimal"><p class="hint">A nominal annual rate, compounded monthly — so 15% nominal earns more than 15% over a year once compounding is counted. The receipt shows both figures.</p></div>
+<div class="field"><label for="sg-rate">Annual rate % (nominal)</label><input id="sg-rate" type="text" max="100" value="15" inputmode="decimal"><p class="hint">A nominal annual rate, compounded monthly: so 15% nominal earns more than 15% over a year once compounding is counted. The receipt shows both figures.</p></div>
 <div class="field"><label for="sg-mo">Months</label><input id="sg-mo" type="number" min="1" max="600" step="1" value="24" inputmode="numeric"></div>
-<div class="field" data-cur="NGN" hidden><label for="sg-sav">I can save ₦/month</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="sg-sav" type="text" value="" inputmode="decimal"></span><p class="hint">The monthly amount you can actually commit — the calculator answers how long it takes.</p></div>
+<div class="field" data-cur="NGN" hidden><label for="sg-sav">I can save ₦/month</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="sg-sav" type="text" value="" inputmode="decimal"></span><p class="hint">The monthly amount you can actually commit: the calculator answers how long it takes.</p></div>
 </div>
-<!-- RATE QUICK-PICK CHIPS (S5 item 1) — adopted from
+<!-- RATE QUICK-PICK CHIPS (S5 item 1) ; adopted from
      page-savings-goal-calculator.php:66-74, whose rate chips are 4/6/8/10/
      12/15%. The port's own component, same as compound-interest and the
      inflation-savings presets (.fx-chips/.fx-chip + aria-pressed,
@@ -63,31 +63,31 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </div>
 <div class="receipt">
 <p class="receipt-lbl" id="sg-lbl">Save monthly</p>
-<p class="receipt-fig" id="sg-fig" aria-live="polite">{seed.goal_reached ? "₦0 — goal reached" : `₦${n(seed.monthly)}`}</p>
+<p class="receipt-fig" id="sg-fig" aria-live="polite">{seed.goal_reached ? "₦0: goal reached" : `₦${n(seed.monthly)}`}</p>
 <p class="receipt-sub" id="sg-sub">Total ₦{n(seed.total)} · interest ₦{n(seed.interest)}</p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Total at deadline</span><b id="sg-tot">₦{n(seed.total)}</b></div>
 <div class="receipt-row"><span>Interest earned</span><b id="sg-int">₦{n(seed.interest)}</b></div>
 <div class="receipt-row"><span>Effective annual yield</span><b id="sg-eff">{effFrom(15).toFixed(2)}%</b></div>
-<!-- U5 (audit-tail item 2, transferred to this leg by the manager) — the
+<!-- U5 (audit-tail item 2, transferred to this leg by the manager) ; the
      post-goal projection. ONE labelled row, shown ONLY when the goal is
      already reached: "If it just sits there at this rate → in 12 months".
-     The figure is the engine's own compoundGrowth(cur, 0, rate, 12) — the
+     The figure is the engine's own compoundGrowth(cur, 0, rate, 12) ; the
      existing rate continuation, no new maths and no new engine function.
-     The row ships hidden with "—" and render() resets it to exactly that on
+     The row ships hidden with "; " and render() resets it to exactly that on
      every other path (empty / zero / adversarial / reset / not-yet-reached),
      so a goal nobody reached never earns a projection. -->
-<div class="receipt-row" id="sg-postgoal-row" hidden><span>If it just sits there at this rate → in 12 months</span><b id="sg-postgoal">—</b></div>
+<div class="receipt-row" id="sg-postgoal-row" hidden><span>If it just sits there at this rate → in 12 months</span><b id="sg-postgoal">–</b></div>
 <p class="receipt-note" id="sg-warn" hidden aria-live="polite"></p>
 <p class="receipt-foot">Annuity-solved · monthly compounding</p>
 <!-- CALC-9 (v0.7.47): savingsCalculate() is an ordinary annuity, so every deposit
      is priced at the END of its month. A salary-day deposit lands at the START and
      the answer differs materially (on the audit's own figures ₦100,000 + ₦50,000 a
      month at 10% for 5 years: ₦4,036,385 end vs ₦4,068,650 start, a gap of ₦32,265).
-     A start/end toggle is a separate leg — this line removes the misunderstanding
+     A start/end toggle is a separate leg ; this line removes the misunderstanding
      now, in ordinary receipt type, once per page, reachable on a phone. -->
 <p class="receipt-foot">Deposits land at the end of each month</p>
-<p class="receipt-foot" id="sg-effnote">Your rate is a <strong>nominal</strong> annual figure compounded monthly, so it earns slightly more than the number you typed once a year of compounding is counted. The effective annual yield above is what one full year actually returns at that rate — the honest figure to compare against a provider's advertised yield.</p>
+<p class="receipt-foot" id="sg-effnote">Your rate is a <strong>nominal</strong> annual figure compounded monthly, so it earns slightly more than the number you typed once a year of compounding is counted. The effective annual yield above is what one full year actually returns at that rate: the honest figure to compare against a provider's advertised yield.</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
@@ -106,7 +106,7 @@ import { formatGrouped } from "../../lib/format";
 import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
-/* F1 — fleet-wide negative shape (the crypto tool's winner): a negative prints
+/* F1 ; fleet-wide negative shape (the crypto tool's winner): a negative prints
    −₦X (U+2212 minus before the symbol), never ₦-X. format.ts stays
    PHP-parity-pinned (it mirrors gwill_paye_number), so this is fixed per page
    on the two pages whose figures can actually go negative. */
@@ -118,12 +118,12 @@ const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).val
    "have now" cleared must not silently pay the plan as if nothing were saved. */
 const ALL = ["sg-target", "sg-cur", "sg-rate", "sg-mo"];
 /* P2-1: the effective yield depends ONLY on the rate, so it is set first and is
-   deliberately NOT gated on the goal — unlike every figure below it, it is not
+   deliberately NOT gated on the goal ; unlike every figure below it, it is not
    derived from what the visitor can clear, so withholding it would be the
    ZERO LAW over-applied (it reads nothing but sg-rate). It is also not in ALL,
    because it cannot move when the target, balance or deadline change. */
 const effFrom = (nominalPct: number) => (Math.pow(1 + nominalPct / 100 / 12, 12) - 1) * 100;
-/* P2-5 — the mode state. "target" = the shipped calculator (solve the
+/* P2-5 ; the mode state. "target" = the shipped calculator (solve the
    monthly); "time" = the reverse (solve the horizon). Declared module-scope
    because render() reads it; the buttons below own every write. */
 let sgMode: "target" | "time" = "target";
@@ -134,34 +134,34 @@ const ym = (m: number): string => {
   const ms = `${r} month${r === 1 ? "" : "s"}`;
   return y === 0 ? ms : r === 0 ? ys : `${ys} ${ms}`;
 };
-/* U5 (audit-tail item 2, transferred to this leg) — the post-goal projection
+/* U5 (audit-tail item 2, transferred to this leg) ; the post-goal projection
    painter. Shown ONLY when the goal is genuinely reached, and the figure is
-   the engine's own compoundGrowth(cur, 0, rate, 12) — the existing rate
+   the engine's own compoundGrowth(cur, 0, rate, 12) ; the existing rate
    continuation, no new maths and no new engine function. Every other state
-   withholds: the row hides and its <b> reads "—", so a goal nobody reached
+   withholds: the row hides and its <b> reads "; ", so a goal nobody reached
    never earns a projection. */
 function paintPostGoal(reached: boolean, cur: number, rate: number): void {
   const row = t("sg-postgoal-row");
   if (!reached) {
     row.hidden = true;
-    t("sg-postgoal").textContent = "—";
+    t("sg-postgoal").textContent = "–";
     return;
   }
   const g12 = compoundGrowth(cur, 0, rate, 12);
   row.hidden = false;
-  t("sg-postgoal").textContent = Number.isFinite(g12.future) ? nn(g12.future) : "—";
+  t("sg-postgoal").textContent = Number.isFinite(g12.future) ? nn(g12.future) : "–";
 }
 function render() {
-  /* Rate quick-pick chips (S5 item 1) — pressed state tracks the TYPED rate
+  /* Rate quick-pick chips (S5 item 1) ; pressed state tracks the TYPED rate
      on every path, including the early-return guards below. */
   syncRateChips();
-  /* U5 — the post-goal projection row resets to its withheld state on EVERY
+  /* U5 ; the post-goal projection row resets to its withheld state on EVERY
      path; only a genuinely reached goal fills it (below). */
   paintPostGoal(false, 0, 0);
-  /* P2-1 — effective yield first: a pure function of the rate field, so it is
+  /* P2-1 ; effective yield first: a pure function of the rate field, so it is
      never withheld by a missing TARGET or DEADLINE (only by a missing rate,
      which is the honest dependency). Going through sfFig rather than a bare
-     textContent buys two things the rest of the receipt already has: the "—"
+     textContent buys two things the rest of the receipt already has: the "; "
      withhold when the rate is cleared (printing "0.00%" for a rate nobody
      typed is a claim about nothing), and the auto-computed trust badge, so this
      row carries the same Example/Yours grammar as Total and Interest instead of
@@ -171,14 +171,14 @@ function render() {
   const target = Math.max(0, pm(g("sg-target").value) || 0);
   const cur = Math.max(0, pm(g("sg-cur").value) || 0);
   const rate = Math.max(0, pm(g("sg-rate").value) || 0) / 100;
-  /* F8 — every clamped negative says so: -x is priced as ₦0 in all four
+  /* F8 ; every clamped negative says so: -x is priced as ₦0 in all four
      inputs, so the rail names the rewrite instead of staying silent. */
   const negHit = ["sg-target", "sg-cur", "sg-rate", "sg-mo", "sg-sav"].some((id) => pm(g(id).value) < 0);
   const negSfx = negHit ? " Negative entries are treated as ₦0." : "";
-  /* M2 — THE ZERO LAW. `pm("0") || 24` short-circuited a deliberate 0 to the
+  /* M2 ; THE ZERO LAW. `pm("0") || 24` short-circuited a deliberate 0 to the
    seed, so a visitor who typed 0 months to their deadline was shown the 24-month
-   plan with the warning row hidden. Zero months is a real, meaningful answer —
-   there is no time left to save — so it is said, not swapped for a seed. The
+   plan with the warning row hidden. Zero months is a real, meaningful answer; 
+   there is no time left to save ; so it is said, not swapped for a seed. The
    engine keeps its own months >= 1 floor (a faithful, gate-verified port), so a
    zero-month deadline is answered here in the page's own words. */
 const moRawStr = g("sg-mo").value.trim();
@@ -187,33 +187,33 @@ const moZero = !pmBlank(moRawStr) && pm(moRawStr) === 0;
    typed 99999999999 built an 8.3-billion-year schedule and killed the tab (the
    suite's adversarial HANG). The engine is vectors-pinned against the PHP
    oracle, so the cap lives HERE: 1200 months = 100 years exceeds every honest
-   use, and every seed plus every pinned vectors case (max 60 months — asserted
+   use, and every seed plus every pinned vectors case (max 60 months ; asserted
    off vectors.json, not assumed) is bit-identical below it. An over-cap entry
    is priced at the cap and disclosed, never silently rewritten. */
 const moRaw = moZero ? 1 : Math.max(1, Math.trunc(pm(moRawStr) || 24));
 const moCapped = moRaw > 1200;
 const mo = moCapped ? 1200 : moRaw;
-const capSfx = moCapped ? " Horizon capped at 100 years — figures price the cap, not the entry." : "";
+const capSfx = moCapped ? " Horizon capped at 100 years: figures price the cap, not the entry." : "";
   const warn = t("sg-warn");
   const tb = document.querySelector("#sg-table tbody") as HTMLElement;
   const targetRaw = g("sg-target").value.trim();
   if (targetRaw === "" || target <= 0) {
     warn.hidden = false;
-    warn.textContent = "Enter a target greater than ₦0 — a cleared field is not a reached goal." + negSfx + capSfx;
+    warn.textContent = "Enter a target greater than ₦0: a cleared field is not a reached goal." + negSfx + capSfx;
     t("sg-fig").textContent = "Enter a target";
     t("sg-sub").textContent = sgMode === "time" ? "No time figure until the target is set." : "No monthly figure until the target is set.";
-    t("sg-tot").textContent = "—";
-    t("sg-int").textContent = "—";
+    t("sg-tot").textContent = "–";
+    t("sg-int").textContent = "–";
     tb.innerHTML = "";
     return;
   }
-  /* ── P2-5 — THE REVERSE MODE: "how long if I save ₦X/month?" ────
+  /* ── P2-5 ; THE REVERSE MODE: "how long if I save ₦X/month?" ────
      The time-driven half of the mode toggle. savingsMonthsToGoal() returns
      the exact fractional crossing; deposits land at month END (the same
      convention the target mode prices), so the first whole month that
      clears the goal is ceil(n). The HANG CAP mirrors the target mode: a
      horizon past 1200 months (100 years) is priced at the cap and DISCLOSED,
-     never silently rewritten — and it keeps savingsSchedule() cheap. The
+     never silently rewritten ; and it keeps savingsSchedule() cheap. The
      S2c disclosure (effective annual yield row + the nominal-vs-effective
      foot) is shared with the target mode: both modes price the same rate,
      so both must carry the same convention statement. */
@@ -221,11 +221,11 @@ const capSfx = moCapped ? " Horizon capped at 100 years — figures price the ca
     const savRawStr = g("sg-sav").value.trim();
     if (pmBlank(savRawStr)) {
       warn.hidden = false;
-      warn.textContent = "Enter what you can save each month — an empty field is not ₦0/month." + negSfx;
+      warn.textContent = "Enter what you can save each month: an empty field is not ₦0/month." + negSfx;
       t("sg-fig").textContent = "Enter what you can save";
       t("sg-sub").textContent = "No time figure until the monthly saving is set.";
-      t("sg-tot").textContent = "—";
-      t("sg-int").textContent = "—";
+      t("sg-tot").textContent = "–";
+      t("sg-int").textContent = "–";
       tb.innerHTML = "";
       return;
     }
@@ -233,11 +233,11 @@ const capSfx = moCapped ? " Horizon capped at 100 years — figures price the ca
     const nRaw = savingsMonthsToGoal(target, cur, rate, sav, "monthly");
     if (!Number.isFinite(nRaw)) {
       warn.hidden = false;
-      warn.textContent = `At ${nn(sav)}/month this goal is never reached — the balance never crosses the target at these figures.` + negSfx;
+      warn.textContent = `At ${nn(sav)}/month this goal is never reached: the balance never crosses the target at these figures.` + negSfx;
       t("sg-fig").textContent = "Never at this rate";
-      t("sg-sub").textContent = `You hold ${nn(cur)} against a ${nn(target)} goal — ${nn(target - cur)} still to find.`;
-      t("sg-tot").textContent = "—";
-      t("sg-int").textContent = "—";
+      t("sg-sub").textContent = `You hold ${nn(cur)} against a ${nn(target)} goal: ${nn(target - cur)} still to find.`;
+      t("sg-tot").textContent = "–";
+      t("sg-int").textContent = "–";
       tb.innerHTML = "";
       return;
     }
@@ -245,12 +245,12 @@ const capSfx = moCapped ? " Horizon capped at 100 years — figures price the ca
     if (moR <= 0) {
       warn.hidden = !negHit;
       warn.textContent = negSfx.trim();
-      t("sg-fig").textContent = "0 months — goal reached";
-      t("sg-sub").textContent = `You hold ${nn(cur)} against a ${nn(target)} goal — nothing left to save into it.`;
+      t("sg-fig").textContent = "0 months: goal reached";
+      t("sg-sub").textContent = `You hold ${nn(cur)} against a ${nn(target)} goal: nothing left to save into it.`;
       t("sg-tot").textContent = nn(cur);
       t("sg-int").textContent = nn(0);
-      /* U5 — the time mode's zero crossing is the same reached state in other
-         words (the line above just printed "0 months — goal reached"), so the
+      /* U5 ; the time mode's zero crossing is the same reached state in other
+         words (the line above just printed "0 months ; goal reached"), so the
          row appears here too, on the engine's own continuation. */
       paintPostGoal(true, cur, rate);
       tb.innerHTML = "";
@@ -258,16 +258,16 @@ const capSfx = moCapped ? " Horizon capped at 100 years — figures price the ca
     }
     const moRcapped = moR > 1200;
     if (moRcapped) moR = 1200;
-    const rCapSfx = moRcapped ? " Horizon capped at 100 years — figures price the cap, not the entry." : "";
+    const rCapSfx = moRcapped ? " Horizon capped at 100 years: figures price the cap, not the entry." : "";
     const sched = savingsSchedule(target, cur, rate, moR, "monthly");
     const schedBad = !sched.every((row) => Number.isFinite(row.balance) && Number.isFinite(row.deposited) && Number.isFinite(row.interest));
     if (!sched.length || schedBad) {
       warn.hidden = false;
-      warn.textContent = "Out of range — that goal and rate are beyond what this plan can price." + negSfx + rCapSfx;
+      warn.textContent = "Out of range: that goal and rate are beyond what this plan can price." + negSfx + rCapSfx;
       t("sg-fig").textContent = "Out of range";
-      t("sg-sub").textContent = "No confident total at this input — lower the goal or raise the monthly.";
-      t("sg-tot").textContent = "—";
-      t("sg-int").textContent = "—";
+      t("sg-sub").textContent = "No confident total at this input: lower the goal or raise the monthly.";
+      t("sg-tot").textContent = "–";
+      t("sg-int").textContent = "–";
       tb.innerHTML = "";
       return;
     }
@@ -295,9 +295,9 @@ const capSfx = moCapped ? " Horizon capped at 100 years — figures price the ca
        there is no time to save in. Say exactly that, and do not dress the
        seed's monthly figure up as this visitor's plan. */
     warn.hidden = false;
-    warn.textContent = "0 months to your deadline — there is no time left to save into it. Set a deadline above 0 months." + negSfx + capSfx;
+    warn.textContent = "0 months to your deadline: there is no time left to save into it. Set a deadline above 0 months." + negSfx + capSfx;
     t("sg-fig").textContent = "No time left";
-    t("sg-sub").textContent = `You hold ${nn(cur)} against a ${nn(target)} goal — ${nn(target - cur)} still to find.`;
+    t("sg-sub").textContent = `You hold ${nn(cur)} against a ${nn(target)} goal: ${nn(target - cur)} still to find.`;
     t("sg-tot").textContent = nn(cur);
     t("sg-int").textContent = nn(0);
     tb.innerHTML = "";
@@ -311,18 +311,18 @@ const capSfx = moCapped ? " Horizon capped at 100 years — figures price the ca
   const schedBad = !sched.every((row) => Number.isFinite(row.balance) && Number.isFinite(row.deposited) && Number.isFinite(row.interest));
   if (!Number.isFinite(r.monthly) || !Number.isFinite(r.total) || !Number.isFinite(r.interest) || schedBad) {
     warn.hidden = false;
-    warn.textContent = "Out of range — that deadline and rate are beyond what this plan can price. Try 600 months or fewer." + negSfx + capSfx;
+    warn.textContent = "Out of range: that deadline and rate are beyond what this plan can price. Try 600 months or fewer." + negSfx + capSfx;
     t("sg-fig").textContent = "Out of range";
-    t("sg-sub").textContent = "No confident total at this input — shorten the deadline or lower the rate.";
-    t("sg-tot").textContent = "—";
-    t("sg-int").textContent = "—";
+    t("sg-sub").textContent = "No confident total at this input: shorten the deadline or lower the rate.";
+    t("sg-tot").textContent = "–";
+    t("sg-int").textContent = "–";
     tb.innerHTML = "";
     return;
   }
   warn.hidden = !negHit && !moCapped;
   warn.textContent = ((negHit ? "Negative entries are treated as ₦0." : "") + capSfx).trim();
-  sfFig(t("sg-fig"), ALL, r.goal_reached ? "₦0 — goal reached" : nn(r.monthly));
-  /* U5 — the row appears exactly where the page itself declares the goal
+  sfFig(t("sg-fig"), ALL, r.goal_reached ? "₦0: goal reached" : nn(r.monthly));
+  /* U5 ; the row appears exactly where the page itself declares the goal
      reached (the engine's own goal_reached field), and nowhere else: every
      other path above returns through the reset at render()'s head. */
   paintPostGoal(r.goal_reached, cur, rate);
@@ -342,11 +342,11 @@ const capSfx = moCapped ? " Horizon capped at 100 years — figures price the ca
 }
   sfEmpty(sfIsEmpty("savings-goal-calculator", gv));
 ["sg-target", "sg-cur", "sg-rate", "sg-mo", "sg-sav"].forEach((id) => g(id).addEventListener("input", render));
-/* ── P2-5 — THE SEGMENTED CONTROL ─────────────────────────────────────────
+/* ── P2-5 ; THE SEGMENTED CONTROL ─────────────────────────────────────────
    Buttons, not radio inputs, deliberately: the mode is a VIEW of the same
    goal, not a number. Reset restores the calculator's delivered NUMBERS
    (the snapshot covers inputs only) and leaves the chosen mode standing,
-   which is the honest reading of "give me the worked example back" — the
+   which is the honest reading of "give me the worked example back" ; the
    example renders in YOUR mode. The Months field and the I-can-save field
    swap visibility with the mode, so exactly one horizon driver is visible
    at a time; both keep their values across the swap (nothing the visitor
@@ -368,7 +368,7 @@ function setSgMode(m: "target" | "time"): void {
   render();
 }
 sgModeBtns.forEach((b) => b.addEventListener("click", () => setSgMode(b.dataset.sgMode as "target" | "time")));
-/* Rate quick-pick chips (S5 item 1) — the same component compound-interest
+/* Rate quick-pick chips (S5 item 1) ; the same component compound-interest
    and inflation-savings ship: one tap writes the rate field and re-renders
    through the existing input path; aria-pressed tracks the typed value. */
 const RATE_CHIPS = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-sg-rate]"));

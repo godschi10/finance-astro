@@ -1,4 +1,4 @@
-// Emergency-fund engine — TS port of inc/emergency-fund.php
+// Emergency-fund engine ;  TS port of inc/emergency-fund.php
 // (runway, target, time-to-reach, inflation-adjusted target).
 export interface EmergencyFund {
   essentials: number;
@@ -32,10 +32,10 @@ export function emergencyFund(
 
   const runwayNow = essentials > 0 ? saved / essentials : 0;
   const target = essentials * monthsCover;
-  /* ── C1 — FIXED 2026-10-08, at the PHP source of truth FIRST. ───────────────
+  /* ── C1 ; FIXED 2026-10-08, at the PHP source of truth FIRST. ───────────────
       HALF ONE (the divisor). This used to read `target / monthlySave`, which
       divides the WHOLE target by the saving rate and so is mathematically
-      independent of what the visitor has already put away — `gap` was computed
+      independent of what the visitor has already put away ; `gap` was computed
       eight lines below and then ignored. Proven live at 390px: at saved =
       900,000 the receipt printed gap ₦0, a 100% bar, and still "11.3 months to
       reach". A fully-funded user was told they had 11 more months to go.
@@ -48,7 +48,7 @@ export function emergencyFund(
       machine ('/home/ubuntu/gwill-finance-theme/inc/') that does not exist here,
       so the generator died on require_once.
 
-      HALF TWO (the finish line) — the same line, the other half, 2026-10-09.
+      HALF TWO (the finish line) ; the same line, the other half, 2026-10-09.
       With the divisor fixed, `months_to_reach` still measured against the
       NOMINAL target: gap ÷ monthly saving. On the seed that is 450,000 ÷ 80,000
       = 5.625 months, while the page's own copy says the inflation-adjusted target
@@ -63,7 +63,7 @@ export function emergencyFund(
       Order actually followed, so the port never diverged from PHP:
         1. fixed inc/emergency-fund.php (the source of truth),
         2. made the oracle generator's path overridable + auto-detecting,
-        3. REGENERATED vectors.json by running PHP — never hand-edited,
+        3. REGENERATED vectors.json by running PHP ; never hand-edited,
         4. applied the same one-line fix here.
 
       The regenerated oracle moved exactly four fields, all in emergency_seed and
@@ -72,13 +72,13 @@ export function emergencyFund(
       suite moved, which is the proof the regeneration was surgical.
 
       Both clamps matter and both are mirrored in PHP:
-        · max(0, target - saved) — saving PAST the target means the goal is
+        · max(0, target - saved) ; saving PAST the target means the goal is
           already met; months to reach it is 0, never negative.
-        · monthlySave > 0         — no saving rate means "never", which is
+        · monthlySave > 0         ; no saving rate means "never", which is
           carried by `never` below and reported as 0 months, which is this
           engine's long-standing convention for the derived horizon fields. */
   const remaining = Math.max(0, target - saved);
-  /* The nominal figure — how long if prices stood still. It stays on the page
+  /* The nominal figure ; how long if prices stood still. It stays on the page
      beside the real answer (the visitor asked for it and it is informative), but
      it is no longer what `months_to_reach` means. */
   const monthsNominal = monthlySave > 0 ? remaining / monthlySave : 0;
@@ -92,7 +92,7 @@ export function emergencyFund(
 
        drag0 = target·ln(g)/12  the naira the finish line gains in month one.
               It grows without bound, so once `monthly <= drag0` the gap can only
-              ever widen — the fund NEVER catches up.
+              ever widen ; the fund NEVER catches up.
        nPeak = 12·ln(monthly/drag0)/ln(g)  where f peaks. At that point
               target·g^(nPeak/12) = 12·monthly/ln(g), so f peaks at
               saved + monthly·nPeak − 12·monthly/ln(g).
@@ -103,7 +103,7 @@ export function emergencyFund(
               g^(n/12) ≥ 1 at any crossing.)
 
      So a crossing exists iff nPeak ≥ nHigh, and it then lies in
-     [nLow, nHigh] — a bracket on which f is increasing (both ends sit at or
+     [nLow, nHigh] ; a bracket on which f is increasing (both ends sit at or
      before the peak), found by bisection to full double precision.
 
      Why NOT the audit's `while (n < 1200 …) n += 1` loop: its cap cannot tell
@@ -135,7 +135,7 @@ export function emergencyFund(
           } else {
             let lo = monthsNominal;
             let hi = nHigh;
-            /* f(n) — must stay byte-identical to the PHP port:
+            /* f(n) ; must stay byte-identical to the PHP port:
                saved + monthly·n − target·g^(n/12). */
             const f = (n: number) => saved + monthlySave * n - target * Math.pow(g, n / 12);
             if (f(lo) >= 0) monthsToReach = lo;

@@ -1,6 +1,6 @@
 ---
 /**
- * /mod/ — the comments moderation desk (King's order, 2026-09-26).
+ * /mod/ ; the comments moderation desk (King's order, 2026-09-26).
  *
  * Talks directly to the comments-api Worker (Bearer ADMIN_TOKEN) via the
  * /api/moderation/* endpoints. Built on the AndroidScroll-proven desk laws:
@@ -14,7 +14,7 @@
  *   - rows labelled by POST NAME with a real link (+ #comment-<id>)
  *   - trash is terminal-capable ("Delete forever", two-tap inline confirm,
  *     never native confirm()); hard delete only from trash
- *   - token persisted in sessionStorage ONLY — it dies with the tab session
+ *   - token persisted in sessionStorage ONLY ; it dies with the tab session
  *     (2026-10-03 security audit); any legacy localStorage token is wiped on
  *     boot; empty unlock reuses the saved token, never wipes it; phone-restore
  *     re-reads the jar on pageshow + visibilitychange
@@ -23,7 +23,7 @@
  *
  * v2 (2026-09-26, King: "Dashboard doesn't have to look like shit"):
  *   the v1 sheet was Astro-SCOPED but tiles/rows/cards are built at runtime
- *   by createElement — they can never carry the scope attribute, so the whole
+ *   by createElement ; they can never carry the scope attribute, so the whole
  *   data half rendered unstyled ("1PendingReview", "132Reactions", a mono
  *   wall). v2 styles the desk with ONE GLOBAL sheet so runtime rows always
  *   dress. Design language: docs/port/18-desk-design-language.md.
@@ -34,29 +34,29 @@ import { allArticles } from "../data/content";
 
 const DESK_VERSION = "desk v2 · 2026-09-26";
 
-/** slug -> post title — DERIVED from the article collection (SITE-3, 2026-10-11).
+/** slug -> post title ; DERIVED from the article collection (SITE-3, 2026-10-11).
  *  The hand-listed map this replaces had drifted from three articles' canonical
  *  titles (a desk row advertising a title its article does not carry). The
- *  collection IS the site's own inventory — never invented — and now covers
+ *  collection IS the site's own inventory ; never invented ; and now covers
  *  every post, so a row can never be labelled from a stale second list again. */
 const POST_NAMES = Object.fromEntries(
   (await allArticles()).map((p) => [p.id, p.data.title] as const)
 );
 ---
 
-<Layout title="Comments desk — GWill Finance" description="Moderation desk." noCanonical={true}>
-  <!-- 2026-10-03 security audit: frame-buster — Pages cannot set frame-ancestors.
+<Layout title="Comments desk - GWill Finance" description="Moderation desk." noCanonical={true}>
+  <!-- 2026-10-03 security audit: frame-buster ; Pages cannot set frame-ancestors.
        A crafted iframe could drive one-tap Approve/Spam/Trash on the
        auto-unlocked desk. This synchronous script breaks the page out of any
        frame BEFORE the desk markup below it is parsed. (The Layout's meta CSP
        also ships frame-ancestors 'none', but meta-delivered frame-ancestors
-       is IGNORED by browsers — THIS script is the real control.) -->
+       is IGNORED by browsers ; THIS script is the real control.) -->
   <script is:inline>
-    /* 2026-10-03 security audit: frame-buster — Pages cannot set frame-ancestors. */
+    /* 2026-10-03 security audit: frame-buster ; Pages cannot set frame-ancestors. */
     if (top !== self) { top.location = self.location; }
   </script>
   <style is:global>
-    /* ═══ DESK — one global sheet (runtime-built rows must dress) ═══ */
+    /* ═══ DESK ; one global sheet (runtime-built rows must dress) ═══ */
     .mod-wrap { max-width: 860px; margin: 0 auto; padding: 44px var(--con-pad) 64px; }
     .mod-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
     .mod-head h1 { font-size: 1.25rem; letter-spacing: -0.02em; margin: 0; }
@@ -254,7 +254,7 @@ const POST_NAMES = Object.fromEntries(
       var desk = document.getElementById("mod-desk");
       var token = null;
 
-      /* Brand reaction glyphs — the EXACT self-colored SVGs from the live
+      /* Brand reaction glyphs ; the EXACT self-colored SVGs from the live
          comment summary bubbles (vibe-comments.js REACTION_SVG). No word
          labels beside a number (no-double-glyph law). */
       var RX = {
@@ -277,7 +277,7 @@ const POST_NAMES = Object.fromEntries(
       }
 
       function readJar() {
-        /* 2026-10-03 security audit: sessionStorage ONLY — the token dies
+        /* 2026-10-03 security audit: sessionStorage ONLY ; the token dies
            with the tab session. Key name unchanged. */
         try { return sessionStorage.getItem(JAR) || ""; }
         catch (e) { return ""; }
@@ -455,7 +455,7 @@ const POST_NAMES = Object.fromEntries(
         return el;
       }
 
-      /* Action matrix — derived from row.status, never a fixed template. */
+      /* Action matrix ; derived from row.status, never a fixed template. */
       function buildActions(el, c) {
         var acts = el.querySelector(".mod-acts");
         acts.innerHTML = "";
@@ -480,7 +480,7 @@ const POST_NAMES = Object.fromEntries(
           add("Trash", "danger", "trash", function () { doAction(el, c, "trash"); });
         } else if (c.status === "trash") {
           add("Restore", "primary", "restore", function () { doAction(el, c, "restore"); });
-          /* Two-tap inline confirm — never native confirm(). */
+          /* Two-tap inline confirm ; never native confirm(). */
           var del = add("Delete forever", "danger", "delete", function () {
             if (del.dataset.armed !== "1") {
               del.dataset.armed = "1";
@@ -556,9 +556,9 @@ const POST_NAMES = Object.fromEntries(
           note.hidden = false;
           note.style.color = "";
           var autoMsg = res.data.parent_auto_approved
-            ? " — parent comment auto-approved (your reply publishes the thread)."
+            ? " Parent comment auto-approved (your reply publishes the thread)."
             : "";
-          note.textContent = "Posted as " + res.data.comment.author + " — approved and live." + autoMsg;
+          note.textContent = "Posted as " + res.data.comment.author + ", approved and live." + autoMsg;
           ta.value = "";
           t.disabled = false;
           loadStats();
@@ -763,12 +763,12 @@ const POST_NAMES = Object.fromEntries(
         clearJar();
         lock.hidden = false;
         desk.hidden = true;
-        say("Session rejected — please unlock again.", true);
+        say("Session rejected: please unlock again.", true);
       }
 
       document.getElementById("mod-unlock").addEventListener("submit", function (ev) {
         ev.preventDefault();
-        /* Empty submit reuses the saved token — never wipes it. */
+        /* Empty submit reuses the saved token ; never wipes it. */
         var t = (document.getElementById("mod-token").value || "").trim() || readJar();
         if (!t) { say("Enter the moderation token.", true); return; }
         unlock(t);
@@ -784,7 +784,7 @@ const POST_NAMES = Object.fromEntries(
       });
 
       /* Phone-restore: the OS can kill the renderer and wake the page with
-         the DOM snapshot intact — re-read the (session-scoped) jar on
+         the DOM snapshot intact ; re-read the (session-scoped) jar on
          pageshow + visibilitychange and walk straight in if it survived;
          if the tab session died with it, the gate shows, by design
          (2026-10-03 security audit). */

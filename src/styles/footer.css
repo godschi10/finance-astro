@@ -1,4 +1,4 @@
-/* Footer — faithful port of gwill-finance-theme 1.13.39 section 19 + 2b/2c
+/* Footer ;  faithful port of gwill-finance-theme 1.13.39 section 19 + 2b/2c
    (footer.php sections 2–5: desktop grid, follow CTAs, socials, bottom bar,
    mobile footer). Every declaration is copied verbatim from the theme
    stylesheet; the only omissions are the sticky-ad-bar compensation rules,
@@ -54,7 +54,7 @@
 .flegal a { color: var(--dark-dim); transition: color var(--t); }
 .flegal a:hover { color: var(--gold-b); }
 .fdot { color: var(--dark-dim); margin: 0 6px; opacity: 0.6; }
-/* E25-D6 — on the dark slab var(--dark-dim) at opacity 0.6 falls to ~2.55:1, below the AA UI floor; brighter ink scoped to dark only. The base rule stays byte-identical for the WP-verbatim gate. */
+/* E25-D6 ;  on the dark slab var(--dark-dim) at opacity 0.6 falls to ~2.55:1, below the AA UI floor; brighter ink scoped to dark only. The base rule stays byte-identical for the WP-verbatim gate. */
 [data-theme="dark"] .fdot { color: #d6cfbc; }
 .mfooter .flegal a { color: var(--dark-dim); }
 .mfooter .flegal a:hover { color: var(--gold-b); }
@@ -95,7 +95,7 @@
   .ftop, .fpush, .ad-bg--footer { display: none !important; }
 }
 
-/* E26 — AA/320px floor on the shared footer. The WP-verbatim
+/* E26 ;  AA/320px floor on the shared footer. The WP-verbatim
    rules above stay byte-identical for the footer-fidelity gate; these
    overrides raise the hit boxes without re-colouring anything. */
 .fpush { min-height: 44px; }

@@ -1,4 +1,4 @@
-/* tool-fields.ts — the per-tool smart-fields table (v0.7.20 leg C).
+/* tool-fields.ts ; the per-tool smart-fields table (v0.7.20 leg C).
  *
  * ONE table, fifteen tools plus the amount family. Every money page declares
  * what is OURS (seeds), what we can honestly DERIVE (offers), what is TRUE
@@ -7,14 +7,14 @@
  *
  * ── THE SEED RULE, made auditable ──────────────────────────────────────────
  * A field is a seed when, and only when, its rendered value is NON-ZERO and WE
- * chose it. A field that renders ₦0 is not a scenario we invented — it is an
+ * chose it. A field that renders ₦0 is not a scenario we invented ; it is an
  * honest blank that means "none of this applies to you" (rent, NHF, NHIS, life
  * assurance, flat charges), so it stays plain. Badging four ₦0s would bury the
  * one field the visitor came to change (spec §7.3, the per-field ✕ argument).
  * Consequence, and it is the point: EVERY non-zero number on every one of these
  * pages now wears SAMPLE, so no receipt figure can be mistaken for the user's.
  *
- * ── THE DIRECTION LAW (spec §2b) — why there is exactly ONE offer ──────────
+ * ── THE DIRECTION LAW (spec §2b) ; why there is exactly ONE offer ──────────
  * Derive ₦ from %. Never % from ₦. Never auto-solve the 50/30/20 split. The
  * research refuses the split because the three % seeds sum to exactly 100, so a
  * derive-on-load fires before the user touches anything. Everywhere else on
@@ -22,26 +22,26 @@
  * field: the step-2 bucket amounts are already in the page's own receipt, the
  * inflation tools' inflated goals are not the goal-in-today's-naira the field
  * holds, and the emergency target would claim the visitor has already saved the
- * finish line. Those are echoes or nothing — not offers. Shipping one offer per
+ * finish line. Those are echoes or nothing ; not offers. Shipping one offer per
  * screen that is real beats shipping four that invent.
  *
- * ── THE CONTEXT LAW (spec §2c) — NO URL, NO LINE ───────────────────────────
+ * ── THE CONTEXT LAW (spec §2c) ; NO URL, NO LINE ───────────────────────────
  * Every line below carries a real href and a visible stamp, and none of them
  * makes a claim about the USER: they are claims about the world, read-only, and
  * a .ctx is never tappable into a field. The research's median-salary CHIP is
  * refused here exactly as the designer refused it. Two candidate lines did NOT
  * ship and are recorded as refusals rather than quietly dropped: the 8%
- * statutory pension (no citable URL in repo or research — no URL, no line) and
+ * statutory pension (no citable URL in repo or research ; no URL, no line) and
  * "Lagos rent is 30–40% of take-home" (spec §2c: ships only if @builder can
  * cite it; I cannot, so it does not ship).
  *
- * ── REMEMBER — the wrong-number law (spec §2g) ─────────────────────────────
+ * ── REMEMBER ; the wrong-number law (spec §2g) ─────────────────────────────
  * The spine hard-refuses st-rent, gn-rent and st-gross. This table goes one
  * step further and never lists them either. It also never lists the payroll
  * relief/deduction fields (st-nhf, st-nhis, st-life, gn-nhf, gn-nhis, gn-life,
  * gn-other): a stale remembered NHF silently moves a take-home claim, which is
  * the same wrong-number class as a remembered rent. Everything else remembers
- * freely — the spine dates it, expires it at 30 days and marks it LAST USED.
+ * freely ; the spine dates it, expires it at 30 days and marks it LAST USED.
  */
 
 import smartFields from "../scripts/smart-fields.js";
@@ -80,20 +80,20 @@ const gv: Get = (id) => {
 
 const ngn = (v: number) => "₦" + formatGrouped(v, 0);
 
-/* The card-level posture line, spec §4.1 — one line, above the grid, .echo-
+/* The card-level posture line, spec §4.1 ; one line, above the grid, .echo-
    railed. Static markup in every page; only its `hidden` is toggled. */
-export const SF_CARD_LINE = "Nothing here is filled in for you. Enter your numbers — the receipt waits.";
+export const SF_CARD_LINE = "Nothing here is filled in for you. Enter your numbers, the receipt waits.";
 export const SF_FOOT_LINE = "Nothing entered · no figures invented";
 
 /* §4 the empty state, in one call. PROSE-vs-STRUCTURE: the labels and the rows
    stay on screen so the receipt reads as WAITING; only the figures are withheld
-   as a dimmed "—". No gold ₦0 anywhere. The page's own honest rails
+   as a dimmed "; ". No gold ₦0 anywhere. The page's own honest rails
    (.receipt-note / .bar-note) are untouched and keep saying their own words. */
 /* §4 the empty state, in one call, page-agnostic. PROSE-vs-STRUCTURE: the
    labels and the rows stay on screen so the receipt reads as WAITING; only the
-   figures are withheld as a dimmed "—". No gold ₦0 anywhere. Every receipt on
+   figures are withheld as a dimmed "; ". No gold ₦0 anywhere. Every receipt on
    the page is handled (naira-value has three), and savings-rate-comparator's
-   receipt sits outside any .fx-card — so this is document-scoped by design,
+   receipt sits outside any .fx-card ; so this is document-scoped by design,
    which is safe because exactly one tool page is ever loaded. The page's own
    honest rails (.receipt-note / .bar-note) are untouched and keep their words. */
 export function sfEmpty(isEmpty: boolean): void {
@@ -104,7 +104,7 @@ export function sfEmpty(isEmpty: boolean): void {
 /* The offer is a derived FIGURE too: left alone it reads "Plan puts needs at
    ₦0" the moment everything is cleared, which is the exact gold-family ₦0 §4.5
    forbids. The spine re-paints offer text on every input, so the honest line
-   has to be re-applied AFTER it — which is what the Clear-examples listener
+   has to be re-applied AFTER it ; which is what the Clear-examples listener
    below does. Between those moments the pill is also made inert, so it cannot
    be pressed into writing 0 into a field. */
 const OFFER_HELD = "Set an income and this figure appears here.";
@@ -118,19 +118,19 @@ function holdOffer(hold: boolean): void {
     } else {
       /* Releasing restores the BUTTON only. The offer's words belong to the
          spine's own paint(), which recomputes them from the live fields on
-         every input — a text captured while held is stale by definition, and
+         every input ; a text captured while held is stale by definition, and
          putting it back would print a figure the visitor has already changed. */
       if (b) { b.removeAttribute("aria-disabled"); b.style.pointerEvents = ""; b.style.opacity = ""; }
     }
   });
 }
 
-/* ── THE ZERO LAW — an absent input is UNKNOWN, not zero ─────────────────────
+/* ── THE ZERO LAW ; an absent input is UNKNOWN, not zero ─────────────────────
    pm() is the repo's tolerant money reader, and pm("") is 0: Number("") is 0 and
    isFinite(0) is true (pm.js). So a BLANK field reached the 50/30/20 derivation
    as 0% and the offer published "Plan puts needs at ₦0" over a LIVE gold button
    that wrote 0 into a money field. A derived zero is the exact figure §4.5
-   forbids — a number the visitor never entered, wearing the offer's own voice.
+   forbids ; a number the visitor never entered, wearing the offer's own voice.
    An offer now DECLARES the ids its figure comes from, and while any of them is
    blank it WITHHOLDS: the words name what is missing, and the button goes inert
    on the spine's own vocabulary (the same aria-disabled/pointer-events/opacity
@@ -139,7 +139,7 @@ function holdOffer(hold: boolean): void {
    "abc" as 0 exactly as it reads "". A real 0 IS a real 0: "0" has a digit, so
    a visitor who genuinely enters zero still gets the honest zero.
    B4 (2026-10-06): digit-presence alone priced "abc123" as 123 gold. Blank
-   now ALSO means dishonest — pmBlank() (pm.js) rejects anything outside the
+   now ALSO means dishonest ; pmBlank() (pm.js) rejects anything outside the
    honest-money alphabet, so garbage reads exactly as a cleared field. */
 const isBlank = (id: string): boolean => pmBlank(gv(id));
 
@@ -148,7 +148,7 @@ const isBlank = (id: string): boolean => pmBlank(gv(id));
 
    TEXT NODES ONLY, never textContent. smart-fields appends its SAMPLE / LAST
    USED badge INSIDE the label (mark(), smart-fields.js), so textContent was
-   "Needs %Last used" and the withheld sentence shipped garbled — the exact
+   "Needs %Last used" and the withheld sentence shipped garbled ; the exact
    line BREAK-1 caught on the flagship tool. Reading only the label's own text
    children skips every injected element by construction, so no badge shape
    added later can contaminate a label-derived sentence again. */
@@ -162,7 +162,7 @@ const labelOf = (id: string): string => {
 };
 
 /* One offer, one pill, addressed by the data-use attribute the SPINE wrote when
-   it built the button — so an offer rebuilt by Reset is guarded with no
+   it built the button ; so an offer rebuilt by Reset is guarded with no
    bookkeeping kept here. Nothing is created, moved, hidden or restyled: the
    pill the spine built is the pill whose words change. */
 function guardOffer(o: SfOffer, pageEmpty: boolean): void {
@@ -173,13 +173,13 @@ function guardOffer(o: SfOffer, pageEmpty: boolean): void {
   const s = b.parentElement ? b.parentElement.querySelector("span") as HTMLElement | null : null;
   const missing = o.needs.filter(isBlank);
   if (missing.length) {
-    if (s) s.textContent = "Nothing to compute yet — " + missing.map(labelOf).join(" and ") +
+    if (s) s.textContent = "Nothing to compute yet, " + missing.map(labelOf).join(" and ") +
       (missing.length > 1 ? " are empty, not zero." : " is empty, not zero.");
     b.setAttribute("aria-disabled", "true"); b.style.pointerEvents = "none"; b.style.opacity = ".45";
   } else {
     /* Release restores the BUTTON only. The words belong to the spine's own
        paint(), which recomputes them from the live fields on every input and
-       runs BEFORE this — so what is on screen is always the live figure, never
+       runs BEFORE this ; so what is on screen is always the live figure, never
        a copy captured while held. */
     b.removeAttribute("aria-disabled"); b.style.pointerEvents = ""; b.style.opacity = "";
   }
@@ -187,14 +187,14 @@ function guardOffer(o: SfOffer, pageEmpty: boolean): void {
 
 /* ── THE ZERO LAW, FLEET-WIDE (v0.7.24) ─────────────────────────────────────
    THE LAW: a figure derived from an input the visitor never entered must never
-   be printed as a gold naira amount. It reads as a dimmed "—", the vocabulary
+   be printed as a gold naira amount. It reads as a dimmed "–", the vocabulary
    D-C already established for the empty state.
 
    WHY IT IS NOT sfIsEmpty: sfIsEmpty() answers "is the WHOLE PAGE empty", and
    it withholds only then. "Income typed, one dependent field cleared" is not an
    empty page, so every partial-empty state fell through to pm("") → 0 and the
    page printed its product in full gold. That is the same lie sixteen times,
-   once per page, from sixteen render() functions — so it is fixed once here.
+   once per page, from sixteen render() functions ; so it is fixed once here.
 
    THE TEST IS "DID THE VISITOR ENTER THIS", NEVER "IS THE RESULT ZERO". A
    visitor who genuinely types 0 gets an honest ₦0 (the "0% savings is a real
@@ -204,20 +204,20 @@ function guardOffer(o: SfOffer, pageEmpty: boolean): void {
 
    THE CALL SITE, one pattern, every page:
      sfFig(t("xx-fig"), ["a", "b"], nn(plan.a * plan.b));
-   `deps` are the ids the figure is DERIVED FROM and nothing else — a row that
+   `deps` are the ids the figure is DERIVED FROM and nothing else ; a row that
    only echoes one input lists that one id. deps: [] means "this figure reads
    nothing the visitor can blank", and it always prints. Nothing is created,
    moved, hidden or restyled: the node the page's own render() already writes is
    the node whose text changes, and the withheld dash wears the SAME
-   --text-dim token the shipped [data-sfe] empty state uses — inline, so no
+   --text-dim token the shipped [data-sfe] empty state uses ; inline, so no
    stylesheet, ToolShell or gate had to be touched to get the honest colour. */
-export const SF_DASH = "—";
+export const SF_DASH = "–";
 /* Marks a figure this render deliberately withheld. paintEmpty() restores a
    captured dash on its way out of the empty state; it must not mistake a
    deliberate dash for a stale one and put an old number back under it. */
 const NO = "data-sf-no";
 
-/* Trust badge vocabulary — mirrors ToolShell's .sd badge grammar.
+/* Trust badge vocabulary ; mirrors ToolShell's .sd badge grammar.
    data-trust="example"   → gold pill "Example"       (cold, server seed)
    data-trust="computed"  → neutral pill "Computed"   (user-typed deps)
    data-trust="last-used" → neutral pill "Last used"  (restored from memory)
@@ -232,7 +232,7 @@ const TRUST_LABEL: Record<TrustKind, string> = {
 
 /* Injects a trust pill next to the figure. The pill is a sibling span so it
    never interferes with the figure's own textContent (which render() rewrites
-   on every input). The pill is removed/replaced on each call — no stale badges. */
+   on every input). The pill is removed/replaced on each call ; no stale badges. */
 function injectTrustBadge(el: HTMLElement, kind: TrustKind): void {
   if (!el) return;
   const existing = el.parentElement?.querySelector(".trust-badge[data-trust]");
@@ -278,16 +278,16 @@ export function sfFig(el: HTMLElement | null, deps: readonly string[], real: str
     el.textContent = SF_DASH;
     el.setAttribute(NO, "");
     el.style.color = "var(--text-dim)";
-    /* Withheld figures get no trust badge — they show "—" not a value. */
+    /* Withheld figures get no trust badge ; they show "; " not a value. */
     const existing = el.parentElement?.querySelector(".trust-badge[data-trust]");
     if (existing) existing.remove();
   } else {
     el.textContent = real;
     el.removeAttribute(NO);
     el.style.color = "";
-    /* Trust badge injection — opt-in via fourth arg, or auto-compute when
+    /* Trust badge injection ; opt-in via fourth arg, or auto-compute when
        omitted (trust === undefined). Pass trust=false to suppress. Never inject
-       a badge on a withheld figure (real === SF_DASH): "—" means nothing was
+       a badge on a withheld figure (real === SF_DASH): "; " means nothing was
        entered, so there is no value to label as example/computed/user. */
     if (real === SF_DASH) {
       const existing = el.parentElement?.querySelector(".trust-badge[data-trust]");
@@ -301,14 +301,14 @@ export function sfFig(el: HTMLElement | null, deps: readonly string[], real: str
 
 /* The spine's clearExamples() empties the receipt AFTER it dispatches the
    per-field `input` events, so on the last field the page has already rendered
-   with the badge still on screen — the card line would then lag the receipt by
+   with the badge still on screen ; the card line would then lag the receipt by
    one keystroke. This one delegated listener re-syncs the two halves the
    instant Clear examples is pressed. It is registered once, lazily, by the
    first sfEmpty() call, so pages with no seeds never pay for it. */
 let syncing = false;
 
 /* The spine withholds .receipt-fig and .receipt-row b. §4's rule is stricter:
-   "PROSE-vs-STRUCTURE — .receipt-fig and the row values are FIGURES → withhold."
+   "PROSE-vs-STRUCTURE ; .receipt-fig and the row values are FIGURES → withhold."
    So .receipt-sub is handled too, but per §4.4 it does NOT become a bare dash:
    it carries a rail voice so the line under the hero keeps TALKING instead of
    leaving a confident gold-family ₦0 sitting under a dimmed dash. That is
@@ -317,20 +317,20 @@ let syncing = false;
    own honest rails (warnings, comparisons) and the brief requires those keep
    working unchanged. */
 const FIGURES = ".receipt-fig, .receipt-row b, [data-sf-fig]";
-/* HN-1. This line used to read "Enter your numbers above — empty counts as
+/* HN-1. This line used to read "Enter your numbers above ; empty counts as
    ₦0." That is the exact falsehood this whole feature exists to prevent: an
    empty field is NOTHING ENTERED, never a zero. The line sat inside the rail
    built to stop the visitor thinking it, and told them the opposite in the
-   visitor's own voice. Same length, same rhythm, same slot in the sentence —
+   visitor's own voice. Same length, same rhythm, same slot in the sentence; 
    only the claim is now true. */
-const SUB_VOICE = "Enter your numbers above — an empty field is not ₦0.";
+const SUB_VOICE = "Enter your numbers above, an empty field is not ₦0.";
 const kept = new Map<Element, string>();
 
 /* ── D-B: the voice line may not DELETE the render's targets ────────────────
    A few .receipt-sub lines carry children the page's own render() writes into:
    50/30/20's #bg-else, the allocator's #al-wants / #al-sav. Writing
    `sub.textContent = SUB_VOICE` removed those nodes, and because every render
-   addresses them by id, the receipt was dead from that keystroke on — nothing
+   addresses them by id, the receipt was dead from that keystroke on ; nothing
    the visitor typed could ever bring it back. Those are the only subs at risk,
    and only they are held: their children move into a display:none holder, which
    keeps them in the document (getElementById still finds them, the render keeps
@@ -338,7 +338,7 @@ const kept = new Map<Element, string>();
    goes in beside the holder as its own element.
 
    The rest are one line of prose the page owns wholesale and rewrites on every
-   render — salary-tax's "Tax ₦…/mo", and the sibling lines under a receipt that
+   render ; salary-tax's "Tax ₦…/mo", and the sibling lines under a receipt that
    already speaks. Overwriting those destroys nothing: the page puts its own
    words straight back on its next render, which is exactly what should happen
    when it leaves the empty state. Un-holding also tolerates a held sub being
@@ -391,8 +391,8 @@ function paintEmpty(isEmpty: boolean): void {
       } else speak(n, false);
     });
     if (isEmpty) {
-      /* Capture BEFORE the spine blanks, or "—" would become the restore value. */
-      r.querySelectorAll(FIGURES).forEach((n) => { if (!kept.has(n)) kept.set(n, n.textContent || ""); n.textContent = "—"; });
+      /* Capture BEFORE the spine blanks, or "; " would become the restore value. */
+      r.querySelectorAll(FIGURES).forEach((n) => { if (!kept.has(n)) kept.set(n, n.textContent || ""); n.textContent = "–"; });
     } else {
       /* ONLY a withheld dash is put back, and only from the capture taken
          before the spine blanked it. The page's own render() rewrites these
@@ -409,7 +409,7 @@ function paintEmpty(isEmpty: boolean): void {
 
 export const TOOL_FIELDS: Record<string, SfTool> = {
 
-  /* 1 — 50/30/20. The flagship: two steps on one page. Seven step-1 worked
+  /* 1 ; 50/30/20. The flagship: two steps on one page. Seven step-1 worked
      examples plus the five step-2 needs-share seeds, all marked, all
      removable in one tap. bg-save is the user's own split and is NEVER offered
      a value (research §7.2). */
@@ -417,21 +417,21 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     tool: "50-30-20",
     seeds: ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps", "al-rent", "al-food", "al-transport", "al-data", "al-utilities"],
     derive: [{
-      /* The one blessed offer: ₦ from %. Value is budget503020(...).needs —
+      /* The one blessed offer: ₦ from %. Value is budget503020(...).needs; 
          already computed by the page's own render(), no new maths. Hidden
          until income, a split % OR an actuals figure is touched, so it never
-         fires on load — and so a visitor who types their needs budget into
+         fires on load ; and so a visitor who types their needs budget into
          `Spent on needs` meets the teaching sentence instead of silence
          (A1-F1: the hideUntil gate used to exclude the actuals fields, which
          is exactly the path where R-history says users get lost).
-         `needs` names every id the OFFERED PAGE STATE depends on — income plus
+         `needs` names every id the OFFERED PAGE STATE depends on ; income plus
          all three splits (E4 F-P2). The offered NUMBER is still income ×
          needs% only, but the union withholding sentence ("Needs % and Wants %
          … are empty, not zero") must name every missing split in ONE clause
          at the offer position, replacing the old double rail (the page's own
          sumnote saying it ~40px above). So `needs` deliberately over-names:
          while ANY of the four is blank the offer withholds instead of showing
-         beside a half-entered plan — the same all-four guard the page's own
+         beside a half-entered plan ; the same all-four guard the page's own
          live line and mini already use. wants% and savings% still do not
          enter plan.needs, so no maths moves; only the waiting voice widens.
          While any is blank this offer withholds (guardOffer), which
@@ -442,7 +442,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
       text: (): string => {
         const plan = budget503020(
           pm(gv("bg-inc")), pm(gv("bg-needs")) / 100, pm(gv("bg-wants")) / 100, pm(gv("bg-save")) / 100);
-        return `Plan puts needs at ${ngn(plan.needs)} — that is the figure to compare against.`;
+        return `Plan puts needs at ${ngn(plan.needs)}, that is the figure to compare against.`;
       },
       use: (): number => budget503020(
         pm(gv("bg-inc")), pm(gv("bg-needs")) / 100, pm(gv("bg-wants")) / 100, pm(gv("bg-save")) / 100).needs,
@@ -457,7 +457,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps", "al-rent", "al-food", "al-transport", "al-data", "al-utilities"],
   },
 
-  /* 2 — salary tax. Gross is a seed; the reliefs (rent, NHF, NHIS, life, other)
+  /* 2 ; salary tax. Gross is a seed; the reliefs (rent, NHF, NHIS, life, other)
      and the bonus are ₦0 blanks and stay plain. Gross NEVER restores (§2g) and
      neither do the reliefs or the bonus. */
   "salary-tax-calculator": {
@@ -465,10 +465,10 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     seeds: ["st-gross", "st-pension"],
     /* Statutory, sourced on the same field below, and law rather than a claim
        about the visitor: the one legal figure that can honestly be offered. */
-    derive: [{ field: "st-gross", use: 70000, text: "₦70,000 a month — the statutory minimum wage, where PAYE is nil." }],
+    derive: [{ field: "st-gross", use: 70000, text: "₦70,000 a month, the statutory minimum wage, where PAYE is nil." }],
     context: [{
       field: "st-gross",
-      text: "The statutory minimum wage is ₦70,000 a month, signed into law in July 2024. At or below it there is no PAYE to pay — pension still applies.",
+      text: "The statutory minimum wage is ₦70,000 a month, signed into law in July 2024. At or below it there is no PAYE to pay, pension still applies.",
       src: "TradingEconomics · law of Jul 2024",
       href: "https://tradingeconomics.com/nigeria/minimum-wages",
     }],
@@ -476,7 +476,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["st-gross", "st-pension"],
   },
 
-  /* 3 — gross to net. Same shape as salary tax, and the same refusals: no
+  /* 3 ; gross to net. Same shape as salary tax, and the same refusals: no
      offer (₦70,000 is a GROSS, this field is a take-home) and no pension line
      without a citation. */
   "gross-to-net-calculator": {
@@ -488,10 +488,10 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["gn-net", "gn-pen"],
   },
 
-  /* 4 — loan repayment. The design wanted the quoted rate left blank so the
+  /* 4 ; loan repayment. The design wanted the quoted rate left blank so the
      visitor pastes their own; emptying it would change the seed and therefore
      the receipt, which this leg is forbidden to do. So the rate is marked
-     SAMPLE instead — strictly more honest than shipping it unmarked. */
+     SAMPLE instead ; strictly more honest than shipping it unmarked. */
   "loan-repayment-calculator": {
     tool: "loan-repayment",
     seeds: ["ln-amt", "ln-tenor", "ln-rate"],
@@ -501,7 +501,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["ln-amt", "ln-tenor", "ln-rate"],
   },
 
-  /* 5 — emergency fund. All five fields carry our worked example, including
+  /* 5 ; emergency fund. All five fields carry our worked example, including
      the 6-month cover and the 20% inflation band, which is disclosed below
      rather than left as an unexplained constant. */
   "emergency-fund-calculator": {
@@ -510,7 +510,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     derive: [],
     context: [{
       field: "em-infl",
-      text: "NBS put national headline inflation at 15.39% in Aug 2026, but Lagos ran 23.68% — the highest of any state. We start at 24% so the default is not below what a Lagos household pays. Raise it if your own costs run hotter.",
+      text: "NBS put national headline inflation at 15.39% in Aug 2026, but Lagos ran 23.68%, the highest of any state. We start at 24% so the default is not below what a Lagos household pays. Raise it if your own costs run hotter.",
       src: "Nigerian Observer · NBS Aug 2026",
       href: "https://nigerianobservernews.com/2026/09/nigerias-inflation-rate-drops-to-15-39-in-august-nbs/",
     }],
@@ -518,7 +518,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["em-ess", "em-saved", "em-mo", "em-cover", "em-infl"],
   },
 
-  /* 6 — savings goal. */
+  /* 6 ; savings goal. */
   "savings-goal-calculator": {
     tool: "savings-goal",
     seeds: ["sg-target", "sg-cur", "sg-rate", "sg-mo"],
@@ -528,7 +528,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["sg-target", "sg-cur", "sg-rate", "sg-mo"],
   },
 
-  /* 7 — compound interest. Monthly is the default frequency; principal,
+  /* 7 ; compound interest. Monthly is the default frequency; principal,
      deposit, rate and years are all our worked example. */
   "compound-interest-calculator": {
     tool: "compound-interest",
@@ -539,14 +539,14 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["ci-prin", "ci-dep", "ci-rate", "ci-yrs"],
   },
 
-  /* 8 — inflation savings. Same disclosed 20% band as emergency fund. */
+  /* 8 ; inflation savings. Same disclosed 20% band as emergency fund. */
   "inflation-savings-calculator": {
     tool: "inflation-savings",
     seeds: ["is-target", "is-cur", "is-rate", "is-infl", "is-yrs"],
     derive: [],
     context: [{
       field: "is-infl",
-      text: "NBS put national headline inflation at 15.39% in Aug 2026, but Lagos ran 23.68% — the highest of any state. We start at 24% so the default is not below what a Lagos household pays — the gap below is priced at the rate in this field.",
+      text: "NBS put national headline inflation at 15.39% in Aug 2026, but Lagos ran 23.68%, the highest of any state. We start at 24% so the default is not below what a Lagos household pays, the gap below is priced at the rate in this field.",
       src: "Nigerian Observer · NBS Aug 2026",
       href: "https://nigerianobservernews.com/2026/09/nigerias-inflation-rate-drops-to-15-39-in-august-nbs/",
     }],
@@ -554,14 +554,14 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["is-target", "is-cur", "is-rate", "is-infl", "is-yrs"],
   },
 
-  /* 9 — naira value, three sub-tools sharing one inflation rate and horizon. */
+  /* 9 ; naira value, three sub-tools sharing one inflation rate and horizon. */
   "naira-value-calculator": {
     tool: "naira-value",
     seeds: ["nv-val", "nv-infl", "nv-yrs", "nv-pv", "nv-tgt", "nv-cur", "nv-ret"],
     derive: [],
     context: [{
       field: "nv-infl",
-      text: "NBS put national headline inflation at 15.39% in Aug 2026, but Lagos ran 23.68% — the highest of any state. We start at 24% so the default is not below what a Lagos household pays — test 25–30% if your spending is mostly food and transport.",
+      text: "NBS put national headline inflation at 15.39% in Aug 2026, but Lagos ran 23.68%, the highest of any state. We start at 24% so the default is not below what a Lagos household pays, test 25–30% if your spending is mostly food and transport.",
       src: "Nigerian Observer · NBS Aug 2026",
       href: "https://nigerianobservernews.com/2026/09/nigerias-inflation-rate-drops-to-15-39-in-august-nbs/",
     }],
@@ -569,7 +569,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["nv-val", "nv-infl", "nv-yrs", "nv-pv", "nv-tgt", "nv-cur", "nv-ret"],
   },
 
-  /* 10 — currency converter. The pair is remembered because the currency you
+  /* 10 ; currency converter. The pair is remembered because the currency you
      last converted is yours, not ours; the seeded amount is our example. */
   "currency-converter": {
     tool: "currency-converter",
@@ -580,7 +580,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["cc-amt"],
   },
 
-  /* 11 — transfer comparator. Same reasoning as the converter: direction and
+  /* 11 ; transfer comparator. Same reasoning as the converter: direction and
      send currency are remembered, the seeded amount is marked as ours. */
   "money-transfer-comparator": {
     tool: "money-transfer-comparator",
@@ -591,7 +591,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["tc-amt"],
   },
 
-  /* 12 — crypto profit. Five seeds; cp-flat renders ₦0 so it stays plain. */
+  /* 12 ; crypto profit. Five seeds; cp-flat renders ₦0 so it stays plain. */
   "crypto-profit-calculator": {
     tool: "crypto-profit",
     seeds: ["cp-inv", "cp-buy", "cp-sell", "cp-bf", "cp-sf"],
@@ -601,8 +601,8 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["cp-inv", "cp-buy", "cp-sell", "cp-bf", "cp-sf"],
   },
 
-  /* 13 — dividend estimator. The growth pair is an illustrative band, not a
-     forecast — the page's own receipt foot already says so, so no sourced
+  /* 13 ; dividend estimator. The growth pair is an illustrative band, not a
+     forecast ; the page's own receipt foot already says so, so no sourced
      claim is made here. */
   "dividend-calculator": {
     tool: "dividend",
@@ -613,7 +613,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["dv-inv", "dv-pg", "dv-dg", "dv-yrs"],
   },
 
-  /* 14 — savings rate comparator. One field, one worked example. */
+  /* 14 ; savings rate comparator. One field, one worked example. */
   "savings-rate-comparator": {
     tool: "savings-rate",
     seeds: ["sr-amt"],
@@ -623,7 +623,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["sr-amt"],
   },
 
-  /* 15 — exchange rate history. NO CHANGE, deliberately (design spec §5, row
+  /* 15 ; exchange rate history. NO CHANGE, deliberately (design spec §5, row
      15): it already carries the repo's only tool-scoped localStorage key and
      its only field is an integer day-window select, not a money input. The
      entry exists so the fleet contract stays uniform and auditable. */
@@ -632,20 +632,20 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     seeds: [], derive: [], context: [], remember: [], required: [],
   },
 
-  /* The amount family — the 79-page [amount].astro route. It has no inputs at
+  /* The amount family ; the 79-page [amount].astro route. It has no inputs at
      all (the figure lives in the URL), so there is nothing to seed, derive,
      contextualise or remember. Declared, empty and honest. */
   "amount": { tool: "amount", seeds: [], derive: [], context: [], remember: [], required: [] },
 };
 
 /* The emptiness test. The spine's clearExamples() force-marks every receipt
-   empty, so this predicate must agree with it or the page would show a "—"
+   empty, so this predicate must agree with it or the page would show a "; "
    figure with no card line. Two independent ways to be empty:
      - every REQUIRED figure is blank (nothing entered at all), or
      - every SEED is blank (the visitor asked for the honest blank version).
    The second case is the "I typed my own income, then cleared the examples"
    path: the spine blanks the receipt, so the line above the grid must appear
-   too. Tools with no seeds (exchange-rate-history, amount) are never empty —
+   too. Tools with no seeds (exchange-rate-history, amount) are never empty; 
    they have no worked example to clear, and required is empty for both. */
 export function sfIsEmpty(slug: string, get: Get): boolean {
   const t = TOOL_FIELDS[slug];
@@ -655,7 +655,7 @@ export function sfIsEmpty(slug: string, get: Get): boolean {
   /* The spine clears only the fields that still wear SAMPLE and then forces
      every receipt empty. When the visitor typed their own figure into one seed,
      that field no longer wears SAMPLE, so "no SAMPLE survives" is the honest
-     test — and it is the SAME condition the spine's own Clear-examples button
+     test ; and it is the SAME condition the spine's own Clear-examples button
      uses to hide itself.
      It must be read off VALUES, never off the DOM badge: render() runs before
      register() has marked the seeds on first paint, so a DOM read sees zero
@@ -677,7 +677,7 @@ export function sfBind(slug: string, get: Get): void {
      load chose, and Clear examples withheld their figures for good. The state
      is now judged on every input the page already listens for. This listener is
      delegated on `document`, so it runs AFTER the page's own render() (target
-     phase first, document bubble second) — the figures being judged are the
+     phase first, document bubble second) ; the figures being judged are the
      ones the page has just written, which is exactly what 50/30/20 gets by
      calling sfEmpty() at the foot of its render(). `change` is included so the
      select-driven pages (converter, transfer comparator) agree with their own
@@ -688,7 +688,7 @@ export function sfBind(slug: string, get: Get): void {
     paintEmpty(empty);
     holdOffer(empty);
     /* THE ZERO LAW. sfIsEmpty() answers "is the whole PAGE empty", and
-       "income typed, percentages cleared" is not an empty page — which is
+       "income typed, percentages cleared" is not an empty page ; which is
        exactly how the ₦0 offer got through. So each offer guards its OWN
        inputs, every time, after the spine has repainted the line. */
     (TOOL_FIELDS[slug] ? TOOL_FIELDS[slug].derive : []).forEach((o) => guardOffer(o, empty));
@@ -697,7 +697,7 @@ export function sfBind(slug: string, get: Get): void {
   document.addEventListener("change", judge);
   /* Bind this page's emptiness test to the spine's own Clear examples too: it
      blanks the fields and dispatches the input events above, and the timeout
-     puts us after the spine's paint(), which rewrites the offer line — so the
+     puts us after the spine's paint(), which rewrites the offer line ; so the
      honest offer text lands last and stays. */
   document.addEventListener("click", (e) => {
     const t = e.target as HTMLElement | null;
@@ -709,7 +709,7 @@ export function sfBind(slug: string, get: Get): void {
          only removes what still wears SAMPLE) would be left with the spine's
          dashes and no render left to answer. Press the page's own button once,
          on a field that still holds a value, and its render repaints the real
-         figures over them — the same hook Reset already uses. */
+         figures over them ; the same hook Reset already uses. */
       const cfg = TOOL_FIELDS[slug];
       const ids = cfg.required.concat(cfg.seeds).filter((x, i, a) => a.indexOf(x) === i);
       const el = document.getElementById(ids.find((x) => get(x).trim() !== "") || "");

@@ -1,4 +1,4 @@
-/* GWill Finance — Finance Apps page category pills (v1.0.163).
+/* GWill Finance ; Finance Apps page category pills (v1.0.163).
  *
  * Ported verbatim from the theme's assets/js/apps-filter.js on 2026-09-30
  * when /apps/ was imported (King order). The apps grid renders ALL cards
@@ -11,7 +11,7 @@
  *
  * The strip is NOT wrapped on this page in the live capture (no
  * cp-strip-wrap), so the optional reveal helper call is kept exactly as the
- * source has it — guarded, no-op when absent.
+ * source has it ; guarded, no-op when absent.
  */
 
 /*

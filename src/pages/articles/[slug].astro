@@ -1,35 +1,35 @@
 ---
 /**
- * Article (single post) — port of gwill-finance-theme single.php (1.13.39).
+ * Article (single post) ; port of gwill-finance-theme single.php (1.13.39).
  *
  * Class vocabulary, element order, conditionals and copy strings are the
  * theme's; the source of truth for every line is documented in
  * the article-port markup capture (file:line citations there).
  *
  * WordPress-only internals and how this port stands in for them:
- *   .art-cover        — emitted only when has_post_thumbnail() (single.php:106).
+ *   .art-cover        ; emitted only when has_post_thumbnail() (single.php:106).
  *                       Every port article now carries a featured image, so the
  *                       cover renders: WP's get_the_post_thumbnail('gwill-hero')
- *                       markup — 1200×675, eager + fetchpriority=high, srcset
+ *                       markup ; 1200×675, eager + fetchpriority=high, srcset
  *                       1200/1024/768/300 against local uploads.
  *                       exactly as WordPress omits it.
- *   ad slots          — gwill_finance_ad_slot() emits nothing when ads are off
+ *   ad slots          ; gwill_finance_ad_slot() emits nothing when ads are off
  *                       or no code is configured (single.php cond. 12-13). The
  *                       live WordPress article serves nothing at all four left
  *                       -column/comment slots, so nothing is emitted here.
- *   .comments-area    — gated on comments_open() || get_comments_number()
+ *   .comments-area    ; gated on comments_open() || get_comments_number()
  *                       (single.php:211). This is a static build with no comment
  *                       backend, and emitting a form that cannot post would be a
  *                       fake control, so the block is absent by design and
  *                       recorded in PENDING-WORK.md.
- *   avatars           — get_avatar() output baked as the author's Gravatar URL,
+ *   avatars           ; get_avatar() output baked as the author's Gravatar URL,
  *                       same hash/d=wavatar/r=g query and same srcset 2x as the
  *                       live page serves.
- *   TOC anchor ids    — WordPress injects them server-side at the_content
+ *   TOC anchor ids    ; WordPress injects them server-side at the_content
  *                       priority 9 (inc/table-of-contents.php:36-79). Here
  *                       rehype-slug does it at build time, so the ids are in the
  *                       served HTML and the TOC hrefs match by construction.
- *   .art-sub          — NOT a WordPress element. King asked for a post subtitle
+ *   .art-sub          ; NOT a WordPress element. King asked for a post subtitle
  *                       after the title; WordPress has no equivalent, so it is
  *                       designed in the theme's own idiom (see docs/port/08).
  */
@@ -44,7 +44,7 @@ import VibeComments from "../../components/VibeComments.astro";
 // into all 53.
 import "../../styles/article.css";
 import "../../styles/embeds.css";
-// Comments: the plugin's sheet FIRST, the theme's override SECOND — the order
+// Comments: the plugin's sheet FIRST, the theme's override SECOND ;  the order
 // inc/enqueue.php:491-505 guarantees (the override declares 'vibe-comments' as
 // a dependency so WP prints it last). Imported here rather than in the layout
 // because WP enqueues both only on singulars (is_singular() && !is_front_page()).
@@ -62,7 +62,7 @@ import {
 export async function getStaticPaths() {
   const posts = await allArticles();
   // Baked heading counts, fetched ONCE per build and CONCURRENT (was one serial
-  // await per page in the frontmatter — 15 round-trips, 60s worst case). Each
+  // await per page in the frontmatter ;  15 round-trips, 60s worst case). Each
   // fetch keeps its own 4s timeout and non-fatal 0 fallback; one failure never
   // fails the build. Settled results map back to slugs in order.
   const settled = await Promise.allSettled(
@@ -111,7 +111,7 @@ const authorUrl = `${base}author/${d.authorSlug}/`;
 // The Worker that replaced WordPress admin-ajax for the comments surface.
 // Single const from site.ts (was a 3× duplicated literal).
 
-// The heading count, baked at build time — parity with WP, which bakes the
+// The heading count, baked at build time ;  parity with WP, which bakes the
 // stored comment count in before rendering (comments.php:42-52). Non-fatal by
 // design: an unreachable or slow Worker degrades to 0, which renders the
 // heading empty exactly as WP does for a post with no comments, and the client
@@ -121,14 +121,14 @@ if (typeof Astro.props.commentCount === "number") {
   commentCount = Astro.props.commentCount;
 }
 
-// single.php:40 — the TOC is built from h2 + h3 in document order, and the SAME
+// single.php:40 ;  the TOC is built from h2 + h3 in document order, and the SAME
 // list gates both the mobile dropdown and the sidebar widget: they are never
 // independently present (single.php cond. 1).
 //
 // inc/table-of-contents.php:99 builds that list from the RENDERED content with
-// DOMXPath '//h2 | //h3' — every heading counts, however it was authored. Astro's
+// DOMXPath '//h2 | //h3' ;  every heading counts, however it was authored. Astro's
 // markdown `headings` only sees markdown-parsed headings, so a post whose body is
-// a byte-captured WordPress document (raw HTML blocks — the Gutenberg showcase)
+// a byte-captured WordPress document (raw HTML blocks ;  the Gutenberg showcase)
 // yields an EMPTY TOC while WordPress renders a full one. Fall back to the
 // theme's own pass over the raw body when the markdown list is empty.
 const rawHtmlToc = (body: string) => {
@@ -161,7 +161,7 @@ const rawHtmlToc = (body: string) => {
 const mdToc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 const toc = mdToc.length ? mdToc : rawHtmlToc(entry.body ?? "");
 
-// single.php:151-153 — rawurlencode() (RFC 3986: %20 for spaces, not '+'), and
+// single.php:151-153 ;  rawurlencode() (RFC 3986: %20 for spaces, not '+'), and
 // WhatsApp is built from title + one literal space + permalink before encoding.
 // King's order 2026-09-26: share buttons carry inline SVG glyphs (14px,
 // currentColor) from the same family as the footer's social icons, and the
@@ -180,12 +180,12 @@ const liUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${raw(pageUrl
 const waUrl = `https://api.whatsapp.com/send?text=${raw(`${d.title} ${pageUrl}`)}`;
 
 
-// single.php:180-202 — same-category posts first (WP: category__in, count 3,
+// single.php:180-202 ;  same-category posts first (WP: category__in, count 3,
 // date DESC), with the theme's fallback to the most recent posts. Rendered in
 // the theme's .g2 grid using the theme's own card part.
 const related = relatedTo(all, entry, 3);
 
-// single.php:161 — the author's description, falling back to the theme's own
+// single.php:161 ;  the author's description, falling back to the theme's own
 // sentence when none is set. This port has an authored description, so the
 // theme's logic prints it; the fallback is kept for completeness.
 const FALLBACK_BIO =
@@ -193,7 +193,7 @@ const FALLBACK_BIO =
 const bio = author.bio?.trim() ? author.bio : FALLBACK_BIO;
 
 // get_avatar(), single.php:92 (20px, class art-avatar) and :158 (48px, lazy).
-// 2026-09-28 King: "my gravatar is on godschi10@gmail.com" — the real photo
+// 2026-09-28 King: "my gravatar is on godschi10@gmail.com" ;  the real photo
 // lives on the Gmail address (verified: grayscale portrait on teal); the old
 // hi@gwillchijioke.com hash served the wavatar placeholder cartoon.
 const GRAVATAR =
@@ -211,13 +211,13 @@ const ytId = d.videoUrl ? (d.videoUrl.match(/(?:v=|youtu\.be\/)([\w-]{6,})/)?.[1
 const ld = (obj: unknown) => JSON.stringify(obj).replace(/</g, "\\u003c");
 // OG (LEG OG-B): every article now points at its BUILT card, not the raw hero.
 // King 2026-09-30: "make sure the og image is done properly and looks and has
-// the brand logo and design" — the hero crop is 1200×675 with no branding, so
+// the brand logo and design" ;  the hero crop is 1200×675 with no branding, so
 // scripts/gen-og.mjs renders a 1200×630 brand card per article from real
 // frontmatter (title/description/category/readMins). Layout.BRAND_SHARE is the
 // card for every OTHER page. The hero <img> below is a page element and is
-// untouched — only the share meta moved.
+// untouched ;  only the share meta moved.
 // The alt is d.title, NOT d.imageAlt: the card is typographic (no hero art
-// overlaid), so the alt must describe what is IN it — and imageAlt is a hero
+// overlaid), so the alt must describe what is IN it ;  and imageAlt is a hero
 // ART description that is wrong on 4 articles (it names a different post).
 // 'c' date format = ISO+00:00 exactly like get_the_date('c') on live.
 // Layout.astro prefixes only the origin, so the served og:image is
@@ -227,7 +227,7 @@ const isoC = (x: Date) => x.toISOString().slice(0, 19) + "+00:00"; // get_the_da
 const isoDay = (x: Date) => x.toISOString().slice(0, 10);
 const showUpdated = !!d.updated && isoDay(d.updated) !== isoDay(d.pubDate);
 // SITE-9 (2026-10-12, YMYL trust): dateModified is the LATER of the recorded
-// edit dates — `updated` (the WP field) and `reviewed` (the editorial-review
+// edit dates ;  `updated` (the WP field) and `reviewed` (the editorial-review
 // stamp, frontmatter on every post). Falls back to pubDate; a date is never
 // invented here. The visible meta row prints both "Updated" (when it exists)
 // and "Reviewed" so the reader sees the freshness story at a glance.
@@ -250,7 +250,7 @@ const articleLd = {
 <Layout title={`${d.title} - GWill Finance`} description={d.description} crumb={d.title} ogImage={ogImg} isArticle={true} publishedTime={isoC(d.pubDate)} modifiedTime={isoC(modified)} articleAuthor={d.author} forms>
 <script type="application/ld+json" set:html={ld(articleLd)}></script>
 
-<!-- single.php:43 — reading progress -->
+<!-- single.php:43 ; reading progress -->
 <div class="prog"><div class="prog-f"></div></div>
 
 <div class="con" style="padding-bottom:48px">
@@ -302,7 +302,7 @@ const articleLd = {
       </div>
 
       <div class="art-reading-surface">
-        {/* single.php:106-120 — the cover renders only when has_post_thumbnail();
+        {/* single.php:106-120 ; the cover renders only when has_post_thumbnail();
             get_the_post_thumbnail(null, 'gwill-hero') markup: 1200×675, eager,
             fetchpriority=high, full srcset, alt from gwill_featured_image_alt(). */}
         {d.image && (
@@ -322,7 +322,7 @@ const articleLd = {
           </div>
         )}
         <div class="art-surface-pad">
-          <!-- Mobile TOC dropdown (single.php:125-136) — shown by CSS on phones only -->
+          <!-- Mobile TOC dropdown (single.php:125-136) ; shown by CSS on phones only -->
           {toc.length > 0 && (
             <div class="toc-dropdown toc-mobile" id="gwill-toc-mobile">
               <button type="button" class="toc-summary" aria-expanded="false" aria-controls="gwill-toc-mobile-list">
@@ -347,7 +347,7 @@ const articleLd = {
             {ytId && (
               <div class="video-facade" data-video={ytId}>
                 <span class="video-emoji" aria-hidden="true">▶</span>
-                <p><strong>Video walkthrough</strong><br><span>Watch on YouTube — loads only when you press play.</span></p>
+                <p><strong>Video walkthrough</strong><br><span>Watch on YouTube: loads only when you press play.</span></p>
                 <button type="button" class="btn b-gold b-sm" data-play>Play video</button>
               </div>
             )}
@@ -410,7 +410,7 @@ const articleLd = {
       )}
 
       <!-- 6. comments (single.php:212-226): .comments-area.mt48 wrapping
-           comments_template() and the #gwill-comment-ads slots — the position
+           comments_template() and the #gwill-comment-ads slots ; the position
            WP renders it, between the related posts and the mobile newsletter. -->
       <VibeComments count={commentCount} postSlug={entry.id} apiBase={COMMENTS_API} />
 

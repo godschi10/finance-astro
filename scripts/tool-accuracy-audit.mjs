@@ -1,4 +1,4 @@
-// tool-accuracy-audit — REAL-BROWSER audit of every money-tool page.
+// tool-accuracy-audit, REAL-BROWSER audit of every money-tool page.
 // Asserts per page: (1) zero JS exceptions / console errors after load AND
 // after feeding inputs, (2) every getElementById target exists in the DOM,
 // (3) results recompute when inputs change, (4) no NaN/undefined/Infinity in
@@ -63,7 +63,7 @@ async function main() {
   for (const c of CASES) {
     errors.length = 0;
     await send("Page.navigate", { url: `${BASE}/money-tools/${c.slug}/` });
-    // v0.6.8: POLL readiness instead of asserting after a fixed sleep — a cold
+    // v0.6.8: POLL readiness instead of asserting after a fixed sleep, a cold
     // Chrome (just restarted / memory-starved) parses a 130KB inlined page
     // slower than 3.6s, and getElementById then reports static markup as
     // "missing" (three phantom FAILs on the v0.6.8 verification run).

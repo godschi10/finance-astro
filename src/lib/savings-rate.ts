@@ -1,4 +1,4 @@
-// Savings-rate comparator data — TS port of inc/savings-rate.php
+// Savings-rate comparator data ;  TS port of inc/savings-rate.php
 // gwill_savings_rate_data(). MAINTAINED table (verified September 2026;
 // marketing figures, indicative not live quotes). Single-edit source.
 // Tested vs PHP vectors.
@@ -43,7 +43,7 @@ export function savingsRateVerified(): string {
  * hangs off each row, keyed `${provider}|${product}`.
  *
  * WHY A MAP AND NOT FIELDS ON THE ROW: `savings_rate_data` is a vector in
- * scripts/php-harness/vectors.json — the PHP truth oracle — and
+ * scripts/php-harness/vectors.json ; the PHP truth oracle ; and
  * vectors-check.mjs compares it key-for-key. Putting `verifiedOn` on the row
  * objects would fail the parity gate on a pure metadata change, and hand-
  * editing the oracle to match TypeScript would invert the gate (PROC-1: the
@@ -51,9 +51,9 @@ export function savingsRateVerified(): string {
  * `savingsRateData()` byte-identical to what PHP produces while the
  * provenance still lives in this one file, the single-edit source.
  *
- * DATES ARE NOT INVENTED. Every row carries "2026-09" — the month this table
+ * DATES ARE NOT INVENTED. Every row carries "2026-09" ; the month this table
  * already claimed (SAVINGS_RATES_VERIFIED_ON, "September 2026"; CHANGELOG 0.6.7
- * records the ruling: "Savings-rate 'verified September 2026' STAYS — it is a
+ * records the ruling: "Savings-rate 'verified September 2026' STAYS ; it is a
  * human-maintained marketing table, the stamp is honest and not
  * build-fetchable"). The repo carries no finer date, so no finer date is
  * printed. When a row is genuinely re-checked, tighten THAT row's value to
@@ -83,13 +83,13 @@ export const SAVINGS_RATE_PROVENANCE: Record<string, SavingsRateProvenance> = {
   "Traditional bank savings|Regular savings": { verifiedOn: "2026-09" },
 };
 
-/** Provenance for one row. THROWS rather than serve a row with no date — a
+/** Provenance for one row. THROWS rather than serve a row with no date ; a
  *  silently undated row is the exact defect this map exists to end, and a
  *  static build is where it should fail, not on a visitor's screen. */
 export function savingsRateProvenance(row: SavingsRateRow): SavingsRateProvenance {
   const p = SAVINGS_RATE_PROVENANCE[`${row.provider}|${row.product}`];
   if (!p) {
-    throw new Error(`savings-rate: no verifiedOn recorded for "${row.provider} — ${row.product}". Add it to SAVINGS_RATE_PROVENANCE.`);
+    throw new Error(`savings-rate: no verifiedOn recorded for "${row.provider}: ${row.product}". Add it to SAVINGS_RATE_PROVENANCE.`);
   }
   return p;
 }

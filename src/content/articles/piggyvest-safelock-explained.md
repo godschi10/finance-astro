@@ -1,6 +1,6 @@
 ---
 title: "PiggyVest SafeLock Explained: Is It Worth It?"
-description: "Lock your money, earn more, can’t touch it early. When this trade-off makes sense — and when it doesn’t."
+description: "Lock your money, earn more, can’t touch it early. When this trade-off makes sense, and when it doesn’t."
 category: "savings"
 author: "G-will Chijioke"
 authorSlug: "gwill-chijioke"
@@ -16,7 +16,7 @@ PiggyVest SafeLock is the feature everyone talks about but few people explain pr
 
 ## What SafeLock actually is
 
-SafeLock is a fixed-term savings feature. You choose an amount and a lock period (from a few days to a year), and your money is locked — you can’t withdraw it early without forfeiting interest. In exchange, you earn a higher rate than the flexible savings account.
+SafeLock is a fixed-term savings feature. You choose an amount and a lock period (from a few days to a year), and your money is locked; you can’t withdraw it early without forfeiting interest. In exchange, you earn a higher rate than the flexible savings account.
 
 ## The numbers
 
@@ -24,7 +24,7 @@ SafeLock is a fixed-term savings feature. You choose an amount and a lock period
 
 ## When SafeLock is worth it
 
-- **Known future expenses:** rent, school fees, a trip — money you know you’ll need on a date. The lock period matches the date, and you earn more while waiting.
+- **Known future expenses:** rent, school fees, a trip: money you know you’ll need on a date. The lock period matches the date, and you earn more while waiting.
 
 - **You struggle with discipline:** if your savings mysteriously become spending, SafeLock is a self-imposed jail that works. I use it for rent money precisely because I can’t be tempted.
 
@@ -36,11 +36,11 @@ SafeLock is a fixed-term savings feature. You choose an amount and a lock period
 
 - **Short-term uncertainty:** if there’s any chance you’ll need the money before maturity, the extra 2% isn’t worth the hassle of early withdrawal (and the interest forfeit).
 
-- **Money you’re saving to invest:** if you’re waiting for an investment window, keep it flexible — locking it can make you miss the window.
+- **Money you’re saving to invest:** if you’re waiting for an investment window, keep it flexible; locking it can make you miss the window.
 
 ## What I do with it
 
-My setup: flexible savings holds my emergency fund and short-term buffer. SafeLock holds rent (locked to the quarter it’s due) and a fixed-deposit-style chunk I don’t want to touch. Everything else goes to investments. It’s the discipline feature, not the wealth feature — treat it that way and it’s excellent.
+My setup: flexible savings holds my emergency fund and short-term buffer. SafeLock holds rent (locked to the quarter it’s due) and a fixed-deposit-style chunk I don’t want to touch. Everything else goes to investments. It’s the discipline feature, not the wealth feature: treat it that way and it’s excellent.
 
 ## Bottom line
 

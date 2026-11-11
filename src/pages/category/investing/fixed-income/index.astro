@@ -2,7 +2,7 @@
 // ── FINDING A RESOLVED (Leg D4, 2026-10-05): one archive, one door ────────
 // The architecture audit parked this as "fixed-income lives at two URLs".
 // CANONICAL = /category/fixed-income/ (the FLAT path). This file is no longer
-// a second copy of the archive — it is a pointer to the canonical URL, so the
+// a second copy of the archive ;  it is a pointer to the canonical URL, so the
 // archive is rendered at exactly ONE address and the nested path carries no
 // duplicate content for a crawler to weigh.
 //
@@ -22,7 +22,7 @@
 //      of them live outside this leg's lane (components/ArticleCard.astro,
 //      pages/index.astro, pages/articles/*, pages/404.astro, pages/search.
 //      astro, pages/sitemap.xml.ts). Deleting the flat route would have left
-//      8 emitters pointing at a dead address — a 26-link dangling fan-out
+//      8 emitters pointing at a dead address ;  a 26-link dangling fan-out
 //      that cannot be repaired from src/pages/category/**.
 //   2. Conversely the nested href is emitted from ONE place, site.ts NAV,
 //      and scripts/check-header-fidelity.mjs:78 hard-asserts the literal
@@ -30,15 +30,15 @@
 //      ("nested nav: All Articles > Investing > Fixed Income"). Deleting the
 //      nested route means editing that string, and gates are not this leg's
 //      to touch. Keeping the route alive is what keeps the gate honest.
-//   3. Flat is WP's real category base — the shape the theme already emits
-//      everywhere a category is linked — so it is the stable address if the
+//   3. Flat is WP's real category base ;  the shape the theme already emits
+//      everywhere a category is linked ;  so it is the stable address if the
 //      category is ever re-parented. The nested shape bakes the parent
 //      /category/investing/ prefix into the URL and breaks on re-parent.
 //
 // So: the archive stays at the flat URL (catch-all pages/category/[slug].
 // astro, unchanged, still 200, same h1 "Fixed Income in Nigeria"), and this
 // nested URL degrades to a redirect. The nav's 2 links per page keep working
-// — they cost one hop instead of 404ing — and the sitemap still lists both
+// ;  they cost one hop instead of 404ing ;  and the sitemap still lists both
 // (sitemap.xml.ts is not this leg's file; its nested <loc> now resolves to
 // the canonical target rather than to duplicate archive HTML).
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
@@ -53,14 +53,14 @@ const label = "Fixed Income";
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex,follow" />
-    <title>{label} — GWill Finance</title>
+    <title>{label} · GWill Finance</title>
     <link rel="canonical" href={targetAbs} />
     <meta http-equiv="refresh" content={`0; url=${target}`} />
   </head>
   <body>
     <main>
       <h1>{label} has moved</h1>
-      <p>This archive now lives at one address only. Taking you there now — if nothing happens, <a href={target}>open the {label} archive</a>.</p>
+      <p>This archive now lives at one address only. Taking you there now. If nothing happens, <a href={target}>open the {label} archive</a>.</p>
     </main>
   </body>
 </html>

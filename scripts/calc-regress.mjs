@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-/* calc-regress.mjs — permanent behavioural regression suite for the 15 money tools (16→15 on the 2026-10-07 merge).
+/* calc-regress.mjs, permanent behavioural regression suite for the 15 money tools (16→15 on the 2026-10-07 merge).
  *
  * WHY THIS EXISTS: scripts/check-*.mjs pin static markup and vectors-check.mjs
- * pins the maths engines, but NOTHING asserted how the calculators behave —
+ * pins the maths engines, but NOTHING asserted how the calculators behave, 
  * Reset without reload, the Clear-examples cycle, the honest empty state, typed
  * zero vs absent, stale-figure recompute. Every leg re-proved those by hand and
  * the proof evaporated at the next ship. This runner asserts them on every
@@ -10,30 +10,30 @@
  * on any failure so it can gate a ship.
  *
  * CONTRACTS (one row each per tool, where applicable):
- *   reset      — sentinel window var survives Reset (no reload) + every control
+ *   reset     : sentinel window var survives Reset (no reload) + every control
  *                returns to its server-seeded value + figures repaint to seeded.
- *   clear      — type real values -> Clear examples -> empty -> type again ->
+ *   clear     : type real values -> Clear examples -> empty -> type again ->
  *                real figures return (this exact regression shipped twice).
- *   empty      — on a genuinely empty form, receipt figures read "—", never ₦0.
- *   zero       — a deliberately typed 0 still produces a real zero (THE ZERO
+ *   empty     : on a genuinely empty form, receipt figures read SF_DASH, never ₦0.
+ *   zero      : a deliberately typed 0 still produces a real zero (THE ZERO
  *                LAW, tool-fields.ts: entering "0" is entered; "" / "." / "abc"
  *                is absent). At least one hero figure must show a real 0.
- *   derived    — blanking one input dashes at least one dependent figure
- *                (sfFig withholds as "—", never a fabricated naira amount).
- *   adversarial— after "", "-5000", "99999999999", ".", "abc", "₦1,234.50" and
+ *   derived   : blanking one input dashes at least one dependent figure
+ *                (sfFig withholds as SF_DASH, never a fabricated naira amount).
+ *   adversarial, after "", "-5000", "99999999999", ".", "abc", "₦1,234.50" and
  *                "1,234.50" in every text field, the DOM holds no NaN/Infinity/
  *                "undefined" string anywhere in its rendered text.
- *   stale      — changing one input actually changes a dependent figure.
- *   rails      — with inputs blank, .receipt-note/.bar-note prose asserts no
+ *   stale     , changing one input actually changes a dependent figure.
+ *   rails     , with inputs blank.receipt-note/.bar-note prose asserts no
  *                naira conclusion (no ₦<digit>, no "you keep/you save" claim).
- *   console    — zero console errors / unhandled rejections while we drive.
- *   negnet     — salary-tax only (the MINOR-5 vector): gross ₦500k + NHF
+ *   console   , zero console errors / unhandled rejections while we drive.
+ *   negnet    , salary-tax only (the MINOR-5 vector): gross ₦500k + NHF
  *                ₦500k must answer "Out of range", never a negative
  *                take-home; no "₦-" figure anywhere in the rendered DOM.
  *                Other tools run no such case and print no cell for it.
- *   swap       — currency-converter only (the King's phone-reported bug):
+ *   swap      , currency-converter only (the King's phone-reported bug):
  *                one tap on #cc-swap must swap from/to AND carry the
- *                amount field with them — data-cur, in-field glyph, label
+ *                amount field with them, data-cur, in-field glyph, label
  *                unit words and the hero all follow to the swapped pair
  *                with ZERO further interaction (a programmatic value write
  *                fires no event, so the swap handler dispatches user-shaped
@@ -49,7 +49,7 @@
  * reset/adversarial/stale/console. A SKIP is never a pass and never a fail.
  *
  * HARD RULES: zero new dependencies (ws + node builtins only). One Chrome, one
- * reused tab, sequential. Deterministic waits only — every wait polls a real
+ * reused tab, sequential. Deterministic waits only, every wait polls a real
  * condition (value equality, text change, stability); there is no bare sleep.
  * Own Chrome on a free port (never :9222/:9333); browser + server die in the
  * finally even when a run crashes mid-tool.
@@ -117,12 +117,12 @@ const RAIL_CLAIM_RE = /you keep|you save|both regimes leave|best rate for you/i;
    only to DENY it ("an empty field is not ₦0"). Judging the rails against the
    sentence that teaches the honesty rule would fail every honest page. */
 const VOICE_RE = /enter your numbers above.{0,40}empty field is not ₦0\.?/i;
-/* The pages' own demand-for-input rails: "Enter a monthly gross above ₦0 —
+/* The pages' own demand-for-input rails: "Enter a monthly gross above ₦0, 
    take-home waits until you do." These name ₦0 as a THRESHOLD the visitor has
    not met, assert no figure about the visitor, and vanish the moment a value
    is typed. Failing them would punish the exact honesty the rails contract
    exists to require. A rail fails only when it prints a naira amount with NO
-   demand, denial, or emptiness word anywhere in it — i.e. a bare conclusion. */
+   demand, denial, or emptiness word anywhere in it, i.e. a bare conclusion. */
 const RAIL_HONEST_RE = /enter |waits? until|is not ₦0|not a .* goal|empty/i;
 
 const MIME = {
@@ -199,14 +199,14 @@ const SYSTEM_CHROME = [
   "/Applications/Chromium.app/Contents/MacOS/Chromium",
 ];
 async function resolveChrome() {
-  // An explicit CHROME_BIN is honoured verbatim — if it is wrong we fail loud
+  // An explicit CHROME_BIN is honoured verbatim, if it is wrong we fail loud
   // rather than silently driving some other browser than the one asked for.
   if (process.env.CHROME_BIN) return { path: process.env.CHROME_BIN, tried: [] };
   const tried = [];
   try {
     const p = (await import("playwright")).chromium.executablePath();
     if (p) { tried.push(p); if (existsSync(p)) return { path: p, tried }; }
-  } catch { /* playwright not importable here — fall through to system */ }
+  } catch { /* playwright not importable here, fall through to system */ }
   for (const p of SYSTEM_CHROME) { tried.push(p); if (existsSync(p)) return { path: p, tried }; }
   return { path: null, tried };
 }
@@ -273,15 +273,15 @@ function attachHandlers(session) {
   });
 }
 /* Hang-vs-load discriminator (run-4 lesson). A per-value timeout has TWO
-   possible authors: the page (unbounded render loop — a site bug) or the box
-   (swap-starved, 90s+ page loads — an environment wobble that run 4 showed
+   possible authors: the page (unbounded render loop, a site bug) or the box
+   (swap-starved, 90s+ page loads, an environment wobble that run 4 showed
    repeatedly). Declaring HANG on a box wobble is a false positive against the
    site, so before the verdict we ask a FRESH blank target on the SAME browser
    to evaluate 1+1. Fresh target answers => the browser is fine and the tool
    tab is truly wedged => HangError. Fresh target silent => the box/browser
    is the author => ordinary error (relaunch + retry, no verdict against the
-   page). An all-blank form ("") can never loop — it withholds without
-   calling the schedule — so a "" timeout that the probe contradicts is the
+   page). An all-blank form ("") can never loop, it withholds without
+   calling the schedule, so a "" timeout that the probe contradicts is the
    exact signature of box slowness, and is classified as such. */
 async function probeAnswers(timeoutMs = 20000) {
   const ctl = new AbortController();
@@ -305,7 +305,7 @@ async function probeAnswers(timeoutMs = 20000) {
 }
 /* A page that stops answering mid-contract. The confirmed instances are
    UNBOUNDED RENDER LOOPS: savings-goal typed 99999999999 into every field and
-   the tab never answered again — buildSchedule() in src/lib/savings.ts loops
+   the tab never answered again, buildSchedule() in src/lib/savings.ts loops
    `months` times with no cap, and the page's "Out of range" guard only checks
    savingsCalculate() finiteness, which short-circuits to finite when
    target == current. The schedule then iterates ~1e11 times. Same engine
@@ -315,7 +315,7 @@ async function probeAnswers(timeoutMs = 20000) {
    cannot be reasoned with over the same CDP connection. */
 class HangError extends Error {
   constructor(value, extra = "") {
-    super(`tab unresponsive after ${JSON.stringify(value)}${extra ? ` — ${extra}` : ""}`);
+    super(`tab unresponsive after ${JSON.stringify(value)}${extra ? `, ${extra}` : ""}`);
     this.value = value;
   }
 }
@@ -494,7 +494,7 @@ async function runTool(slug, base, fields) {
   const emptyCapable = req.length > 0;
   let emptyHero = null; // the genuinely-empty hero set: typed-0 must differ from it.
 
-  /* RESET — sentinel survives (no reload) + controls + figures back to seeded. */
+  /* RESET, sentinel survives (no reload) + controls + figures back to seeded. */
   try {
     if (!await ev(`!!document.querySelector("[data-sf-reset]")`)) {
       R.reset = rec("skip", "no [data-sf-reset] on page");
@@ -535,33 +535,33 @@ async function runTool(slug, base, fields) {
         const ids = [...new Set([...req, ...((fields[slug] || {}).seeds || [])])];
         for (const c of seed.filter((c) => ids.includes(c.id) && c.kind === "text")) await ev(setCtlExpr(c, ""));
         clearedState = await waitStable(JS_SETTLE_KEY, 800, 20000, "manual empty settle");
-        const allDash = clearedState.h.length > 0 && clearedState.h.every((t) => t === "—");
+        const allDash = clearedState.h.length > 0 && clearedState.h.every((t) => t === "–");
         const noGoldZero = clearedState.h.every((t) => !GOLD_ZERO_RE.test(t));
-        R.empty = (allDash && noGoldZero) ? rec("pass", `${clearedState.h.length} figures all "—"`)
+        R.empty = (allDash && noGoldZero) ? rec("pass", `${clearedState.h.length} figures all "–"`)
           : rec("fail", `hero=${JSON.stringify(clearedState.h).slice(0, 300)}`);
         for (const c of seed) await ev(setCtlExpr(c, c.kind === "text" ? String(c.val) : c.val));
         const back = await waitStable(JS_SETTLE_KEY, 800, 20000, "manual retype settle");
         const match = JSON.stringify(back.h) === JSON.stringify(st0.h);
         R.clear = (allDash && match)
-          ? rec("pass", `manual empty "—" then figures returned (${back.h.length})`)
+          ? rec("pass", `manual empty "–" then figures returned (${back.h.length})`)
           : rec("fail", `empty=${allDash} retypeMatch=${match} back=${JSON.stringify(back.h).slice(0, 250)}`);
       } else {
         await ev(`document.querySelector("[data-sf-clear]").click()`);
         clearedState = await waitStable(JS_SETTLE_KEY, 800, 20000, "cleared settle");
         const card = await ev(`(() => { const c = document.querySelector("[data-sf-card]"); return c ? !!c.hidden : "absent"; })()`);
-        const allDash = clearedState.h.length > 0 && clearedState.h.every((t) => t === "—");
+        const allDash = clearedState.h.length > 0 && clearedState.h.every((t) => t === "–");
         const noGoldZero = clearedState.h.every((t) => !GOLD_ZERO_RE.test(t));
-        R.empty = (allDash && noGoldZero) ? rec("pass", `${clearedState.h.length} figures all "—"`)
+        R.empty = (allDash && noGoldZero) ? rec("pass", `${clearedState.h.length} figures all "–"`)
           : rec("fail", `hero=${JSON.stringify(clearedState.h).slice(0, 300)}`);
-        /* type AGAIN from the cleared state — the twice-shipped regression. */
+        /* type AGAIN from the cleared state, the twice-shipped regression. */
         for (const c of seed) await ev(setCtlExpr(c, c.kind === "text" ? String(c.val) : c.val));
         const back = await waitStable(JS_SETTLE_KEY, 800, 20000, "retype settle");
         const match = JSON.stringify(back.h) === JSON.stringify(st0.h);
         R.clear = (allDash && match)
-          ? rec("pass", `empty "—" then figures returned (${back.h.length})`)
+          ? rec("pass", `empty "–" then figures returned (${back.h.length})`)
           : rec("fail", `empty=${allDash} retypeMatch=${match} back=${JSON.stringify(back.h).slice(0, 250)}`);
       }
-      /* RAILS — judged on the genuinely-empty figures captured above. A rail
+      /* RAILS, judged on the genuinely-empty figures captured above. A rail
          fails only for a BARE naira conclusion: ₦<digit> with no demand,
          denial, or emptiness word in the sentence (see RAIL_HONEST_RE). */
       const vis = clearedState.n.filter((t) => t && t.length).map((t) => t.replace(VOICE_RE, ""));
@@ -585,11 +585,11 @@ async function runTool(slug, base, fields) {
     await waitStable(JS_SETTLE_KEY, 800, 20000, "reseed settle");
   } catch (e) { /* reset already judged; keep going from whatever state */ }
 
-  /* TYPED ZERO — every text field "0". The page must DISTINGUISH it from
+  /* TYPED ZERO, every text field "0". The page must DISTINGUISH it from
      absent: either real zeros print (the zero law), or the heroes voice an
      explicit demand ("Enter a target") that the empty state never shows. What
      fails is a zero-state identical to the empty state (0 swallowed as
-     absent — the shipped-twice bug class in both directions), or NaN/Infinity. */
+     absent, the shipped-twice bug class in both directions), or NaN/Infinity. */
   try {
     if (!hasInputs) R.zero = rec("skip", "no text inputs");
     else if (!emptyHero) R.zero = rec("skip", "no empty baseline to distinguish from");
@@ -597,7 +597,7 @@ async function runTool(slug, base, fields) {
       for (const c of texts) await ev(setCtlExpr(c, "0"));
       const z = await waitStable(JS_SETTLE_KEY, 800, 30000, "zero settle");
       const full = await ev(JS_STATE);
-      const anyRealZero = z.h.some((t) => /0/.test(t) && t !== "—");
+      const anyRealZero = z.h.some((t) => /0/.test(t) && t !== "–");
       const distinguished = JSON.stringify(z.h) !== JSON.stringify(emptyHero);
       const bad = BAD_RE.test(full.body);
       R.zero = ((anyRealZero || distinguished) && !bad)
@@ -606,7 +606,7 @@ async function runTool(slug, base, fields) {
     }
   } catch (e) { R.zero = rec("fail", `harness: ${e.message}`); }
 
-  /* DERIVED HONESTY — blank one secondary input: a dependent must dash. */
+  /* DERIVED HONESTY, blank one secondary input: a dependent must dash. */
   try {
     if (!emptyCapable || texts.length === 0) R.derived = rec("skip", "no blankable dependency");
     else {
@@ -615,7 +615,7 @@ async function runTool(slug, base, fields) {
       const victim = texts[1] || texts[0];
       await ev(setCtlExpr(victim, ""));
       const d = await waitStable(JS_SETTLE_KEY, 800, 20000, "derived settle");
-      const dashed = d.h.filter((t) => t === "—").length;
+      const dashed = d.h.filter((t) => t === "–").length;
       const full = await ev(JS_STATE);
       const bad = BAD_RE.test(full.body);
       R.derived = (dashed >= 1 && !bad)
@@ -624,9 +624,9 @@ async function runTool(slug, base, fields) {
     }
   } catch (e) { R.derived = rec("fail", `harness: ${e.message}`); }
 
-  /* ADVERSARIAL — hostile values in every text field, DOM must stay clean.
+  /* ADVERSARIAL, hostile values in every text field, DOM must stay clean.
      A value that leaves the tab unresponsive past a 12s leash is recorded as
-     the failure it is (input-driven hang — see HangError note above), the
+     the failure it is (input-driven hang, see HangError note above), the
      browser is relaunched, and the tool CONTINUES on a fresh tab so one hung
      page cannot eat the contracts below it. Remaining hostile values are
      listed untested in the detail line. */
@@ -680,7 +680,7 @@ async function runTool(slug, base, fields) {
     R.adversarial = rec("fail", `harness: ${e.message}`);
   }
 
-  /* STALE RECOMPUTE — one input changes => a dependent figure changes. */
+  /* STALE RECOMPUTE, one input changes => a dependent figure changes. */
   try {
     if (!hasInputs) R.stale = rec("skip", "no text inputs");
     else {
@@ -700,13 +700,13 @@ async function runTool(slug, base, fields) {
     }
   } catch (e) { R.stale = rec("fail", `harness: ${e.message}`); }
 
-  /* NEGNET (salary-tax only) — the MINOR-5 vector: NHF at/above gross. The
+  /* NEGNET (salary-tax only), the MINOR-5 vector: NHF at/above gross. The
      engine computes net = gross − deductions unfloored, and before the guard
      the receipt printed the negative straight (₦500k gross + ₦500k NHF →
      "₦-40,030/mo" in the hero and both comparison cells). The fleet guard
      must answer instead: hero reads "Out of range", the warn rail names it,
      and zero "₦-" text renders anywhere on the page. Tool-specific by
-     design — the sibling engines floor their own outputs, so no other tool
+     design, the sibling engines floor their own outputs, so no other tool
      gets a cell here (the table prints "?" and counts nothing). */
   if (slug === "salary-tax-calculator") {
     try {
@@ -725,17 +725,17 @@ async function runTool(slug, base, fields) {
     } catch (e) { R.negnet = rec("fail", `harness: ${e.message}`); }
   }
 
-  /* SWAP (currency-converter only) — the King's own phone report: "when I
+  /* SWAP (currency-converter only), the King's own phone report: "when I
      swap currency with the swap icon below it doesn't change the currency
      instantly." The swap handler writes select values PROGRAMMATICALLY,
-     which fires no event — and money-controls.js (owner of the in-field
+     which fires no event, and money-controls.js (owner of the in-field
      glyph, the label's [data-cur-unit] words and the announced switch)
      re-syncs only at boot and on delegated change/input on document, so
      before the fix the figures moved while the field stayed on the OLD
      currency. One tap must move everything with ZERO further interaction.
-     The expected hero is derived from the page's OWN printed unit rate —
+     The expected hero is derived from the page's OWN printed unit rate, 
      the engine is linear, so the swapped pair's conversion is the
-     reciprocal of the printed pair-rate — never from a hardcoded rate. */
+     reciprocal of the printed pair-rate, never from a hardcoded rate. */
   if (slug === "currency-converter") {
     try {
       await ev(`document.querySelector("[data-sf-reset]").click()`);
@@ -749,12 +749,12 @@ async function runTool(slug, base, fields) {
           unit: (fld.querySelector("[data-cur-unit]") || { textContent: null }).textContent,
           unitLine: document.getElementById("cc-unit").textContent,
           hero: document.getElementById("cc-fig").textContent,
-          toName: opt ? opt.text.split("—").pop().trim() : "" }; })()`;
+          toName: opt ? opt.text.split(/[:\u2013\u2014,]/).pop().trim() : "" }; })()`;
       const pre = await waitStable(SWAP_STATE, 800, 20000, "swap pre-state");
       await ev(`document.getElementById("cc-swap").click()`);
       const post = await waitStable(SWAP_STATE, 800, 20000, "swap settle");
-      /* The page's own printed pair-rate — "1 USD = ₦1,330.995081" →
-         1330.995081 — and the symbol it prints for the TO currency, which
+      /* The page's own printed pair-rate, "1 USD = ₦1,330.995081" →
+         1330.995081, and the symbol it prints for the TO currency, which
          is the NEW from-currency after the swap. */
       const rate = Number(pre.unitLine.replace(/^[^=]*=\s*/, "").replace(/[^\d.]/g, ""));
       const preSym = (pre.unitLine.match(/=\s*([^\d.,-]+)/) || [])[1] || "";
@@ -772,7 +772,7 @@ async function runTool(slug, base, fields) {
     } catch (e) { R.swap = rec("fail", `harness: ${e.message}`); }
   }
 
-  /* CONSOLE — any error/rejection captured while driving this tool fails it. */
+  /* CONSOLE, any error/rejection captured while driving this tool fails it. */
   const errs = cap.filter((m) => m.type === "error" || m.type === "exception");
   R.console = errs.length === 0
     ? rec("pass", "no console errors")
@@ -785,7 +785,7 @@ async function main() {
   const t0 = Date.now();
   const root = process.env.CALC_REGRESS_ROOT || join(repo, "dist");
   if (!existsSync(join(root, "money-tools"))) {
-    console.error(`calc-regress: FAIL — no money-tools/ under ${root}. Run \`npm run build\` first (this suite never builds for you).`);
+    console.error(`calc-regress: FAIL, no money-tools/ under ${root}. Run \`npm run build\` first (this suite never builds for you).`);
     process.exit(2);
   }
   const slugsAll = await toolSlugs();
@@ -847,7 +847,7 @@ async function main() {
           break;
         } catch (e) {
           err = e;
-          process.stdout.write(`(tab stuck: ${e.message.slice(0, 60)} — relaunching…) `);
+          process.stdout.write(`(tab stuck: ${e.message.slice(0, 60)}, relaunching…) `);
           try { await relaunchBrowser(); }
           catch (re) { err = new Error(`${e.message} + relaunch failed: ${re.message}`); break; }
         }

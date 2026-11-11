@@ -1,4 +1,4 @@
-/* tools.css — verbatim port of the theme's calculator vocabulary from
+/* tools.css ;  verbatim port of the theme's calculator vocabulary from
  * gwill-finance-theme style.css (finance.fitnesslova.qzz.io), lines 1244-1500.
  * Imported in Layout.astro so every /tools/ hub + calculator page gets the
  * same classes the live WP templates print (fx-card / fx-field / fx-input /
@@ -57,12 +57,12 @@
 }
 .fx-chip:hover { background: var(--gold-b); color: #0d0b08; border-color: var(--gold-b); }
 /* P1-3 (fifth audit, v0.7.58): the inflation presets on the inflation-savings
-   page are a STATEFUL chip group, not a row of quick-fills — the chip matching
+   page are a STATEFUL chip group, not a row of quick-fills ;  the chip matching
    the figure in the field is aria-pressed, and a visitor who types their own
    rate releases all of them. `.tp-seg[aria-pressed=true]` in header.css is the
    same grammar for the theme picker; without a pressed state here the chips
    would look identical whether or not one was active, which makes the
-   accessibility state invisible. Additive only — the .fx-chip rules above are
+   accessibility state invisible. Additive only ;  the .fx-chip rules above are
    untouched, so the budget page's quick-fill chips (which never set
    aria-pressed) are unaffected. */
 .fx-chip[aria-pressed="true"] { background: var(--gold-b); color: #0d0b08; border-color: var(--gold-b); }

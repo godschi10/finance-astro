@@ -1,4 +1,4 @@
-// 50/30/20 budget engine — TS port of inc/budget-503020.php.
+// 50/30/20 budget engine ;  TS port of inc/budget-503020.php.
 
 export interface Budget503020 {
   income: number;
@@ -76,5 +76,5 @@ export function budget503020Compare(
   };
 }
 
-// KING FINGERPRINT FIX 2026-10-04: single seed convention — consts everywhere.
+// KING FINGERPRINT FIX 2026-10-04: single seed convention ;  consts everywhere.
 export const BUDGET_SEED_INCOME = 250000;

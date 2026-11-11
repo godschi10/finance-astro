@@ -1,5 +1,5 @@
 ---
-// Shared calculator shell — faithful port of the live calculator page
+// Shared calculator shell ;  faithful port of the live calculator page
 // skeleton (finance.fitnesslova.qzz.io/tools/*, page-*.php templates).
 // Anatomy copied from the live HTML on 2026-09-30 (King order: "import the
 // money calculator /tools/ page … and the calculators themselves"):
@@ -8,8 +8,8 @@
 //      Tool), per-tool gold badge pill, h1 + lede, verbatim inline styles.
 //   2. .con (margin-top:32; padding-bottom:48): slot (inputs → .fx-card,
 //      receipt → .fx-result/.receipt, tables → .st-table-wrap), optional
-//      .fx-disclaimer, .fx-copy art-body (Why + FAQ), FAQPage/WebApplication
-//      JSON-LD (mirrors the live ld+json graph), .fx-aff CTA row, Related
+//      .fx-disclaimer.fx-copy art-body (Why + FAQ), FAQPage/WebApplication
+//      JSON-LD (mirrors the live ld+json graph).fx-aff CTA row, Related
 //      guides (.g3 of .app-card, live anatomy: inline-styled title+excerpt).
 // The theme class vocabulary (fx-card/fx-field/st-table/sr-chart/fx-rate…)
 // is ported verbatim in styles/tools.css; pages slot real markup in.
@@ -30,14 +30,14 @@ interface Props {
   badge?: string;            // gold pill (live: "Live rates · updated …", "NTA 2025 · …")
   faqs?: Faq[];
   rawFaq?: boolean;
-  copy?: [string, string][]; // [tag "h2"|"h3"|"p", text] — live .fx-copy art-body
+  copy?: [string, string][]; // [tag "h2"|"h3"|"p", text] ;  live .fx-copy art-body
   ctas?: Cta[];              // .fx-aff button row
   ctaNote?: string;          // paragraph above the .fx-aff buttons
   ctaTitle?: string;         // .shd stitle above .fx-aff (live: "Get the best dollar rate")
   related?: Related[];       // "Related guides" .g3 of .app-card
   relatedTitle?: string;     // live: "Related guides"
   disclaimer?: string;       // .fx-disclaimer (live: rate-source honesty note)
-  ogImage?: { url: string; width: number; height: number; alt?: string } | null; // per-tool share card (passed straight to Layout). OMIT it and the card is derived from the one manifest — see ogCardFor() below. Pass `null` to force NO card.
+  ogImage?: { url: string; width: number; height: number; alt?: string } | null; // per-tool share card (passed straight to Layout). OMIT it and the card is derived from the one manifest ;  see ogCardFor() below. Pass `null` to force NO card.
   fxTicker?: boolean;      // P2-12 ticker scope, forwarded to Layout: FX tools pass true for the full crypto+metals set.
 }
 const {
@@ -47,12 +47,12 @@ const {
   related = [], relatedTitle = "Related guides", disclaimer = "", ogImage, fxTicker = false,
 } = Astro.props;
 /* The share card, from ONE source (v0.7.21 leg D2). All sixteen tool pages used
-   to hand-write the same shape — url images/og/tool-<slug>.png, 1200x630, alt =
-   the hero H1 — which is three copies of one fact and one rename away from a
+   to hand-write the same shape ; url images/og/tool-<slug>.png, 1200x630, alt =
+   the hero H1 ; which is three copies of one fact and one rename away from a
    broken card. It is now derived from the manifest the hub also reads.
    The sentinels matter: `undefined` (prop omitted) means "derive", an explicit
    `null` still means "no card at all", and that is how [amount].astro keeps its
-   ONE shared tool-amount.png across all 79 amount routes — a slug the manifest
+   ONE shared tool-amount.png across all 79 amount routes ; a slug the manifest
    does not know returns null and the page's own prop wins untouched.
    `base` is prefixed HERE, not in the manifest: the manifest stays base-agnostic
    (a plain node script may read it), and Layout concatenates ogImage.url onto
@@ -98,13 +98,13 @@ if (faqs.length) graph.push({
     <button class="btn b-ghost b-sm" type="button" data-sf-clear hidden>Clear examples</button>
     <button class="btn b-ghost b-sm" type="button" data-sf-reset>Reset</button>
     <button class="btn b-ghost b-sm sf-forge" type="button" data-sf-clear-saved aria-live="polite">Clear my saved numbers</button>
-    {/* ── P2-8/D5 (adopted) — the persistence opt-in. DEFAULT OFF: no number
+    {/* ── P2-8/D5 (adopted) ; the persistence opt-in. DEFAULT OFF: no number
         is written to or read from storage until the visitor says so. The
         spine (smart-fields.js) binds it and gates BOTH storage directions on
         it; the consent flag itself is a preference key outside the
         gwill-sf-* sweep, so Clear my saved numbers cannot flip the privacy
         choice. Opting out leaves stored numbers in place until cleared. */}
-    <label class="tgl" data-sf-remember title="Off by default — nothing is kept between visits unless you switch this on">
+    <label class="tgl" data-sf-remember title="Off by default: nothing is kept between visits unless you switch this on">
       <input type="checkbox" id="sf-remember">
       <span class="tgl-track" aria-hidden="true"><span class="tgl-thumb"></span></span>
       <span class="tgl-lbl">Remember my numbers on this device</span>
@@ -116,17 +116,17 @@ if (faqs.length) graph.push({
       was hand-edited, and smart-fields.js was not forked for it.
 
       WHY IT SITS HERE AND NOT IN THE FOOTER: these numbers are the
-      calculator's own memory, so the sentence belongs with the calculator — and
+      calculator's own memory, so the sentence belongs with the calculator ; and
       directly below the two buttons that actually clear it. A reader told about
       storage by text nowhere near its control is not really told at all.
 
       WHY IT NAMES Reset SPECIFICALLY: clearSaved() sweeps EVERY gwill-sf-* key
       across the site, but Reset alone clears only THIS calculator. "Reset
       clears them" would be the safe half-truth; naming the button that clears
-      all of them is the whole truth — and both buttons are right here.
+      all of them is the whole truth ; and both buttons are right here.
 
       P2-8/D5: the middle sentence is now CONDITIONAL, because the opt-in
-      above is OFF by default — a notice that says "this calculator remembers
+      above is OFF by default ; a notice that says "this calculator remembers
       your figures" over a toggle that says otherwise would be the exact
       half-truth the notice exists to prevent. */}
   <p class="sf-mem">
@@ -139,7 +139,7 @@ if (faqs.length) graph.push({
       {copy.map(([tag, text]) => tag === "h2" ? <h2>{text}</h2> : tag === "h3" ? <h3>{text}</h3> : <p>{text}</p>)}
     </div>
   )}
-  {/* A16-F5 — the label sat on a role-less div and never reached the tree.
+  {/* A16-F5 ; the label sat on a role-less div and never reached the tree.
       role="region" makes it a real landmark, and aria-labelledby names it with
       the heading the visitor can actually see. */}
   {faqs.length > 0 && (
@@ -189,12 +189,12 @@ if (faqs.length) graph.push({
 [data-theme="dark"] .field input,[data-theme="dark"] .field select{background:#1c1a15}
 .field input:focus,.field select:focus{outline:2px solid var(--gold-b);outline-offset:1px;border-color:var(--gold-b)}
 .field .hint{font-size:12px;color:var(--text-dim);margin-top:4px}
-/* v0.7.20 smart fields — the three-state contract. Additive after .field/.hint:
+/* v0.7.20 smart fields ; the three-state contract. Additive after .field/.hint:
    these are NEW class hooks + NEW state attributes only. No verbatim rule from
    tools.css / numbers.css / the dark receipt is rewritten. Focus gold stays
-   owned by .field input:focus (line 133) — deliberately not restated here. */
+   owned by .field input:focus (line 133) ; deliberately not restated here. */
 
-/* — state 1: SAMPLE. A scenario we invented. Gold + dashed = provisional,
+/* ; state 1: SAMPLE. A scenario we invented. Gold + dashed = provisional,
      the same grammar the receipt's dashed gold rule already teaches. */
 .field[data-sd] label{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .field[data-sd] input{border-bottom:2px dashed var(--gold-b)}
@@ -203,7 +203,7 @@ if (faqs.length) graph.push({
   color:var(--gold);background:var(--gold-muted);border:1px solid var(--gold-border);
   border-radius:var(--pill);padding:3px 8px;white-space:nowrap;flex:0 0 auto;
 }
-/* — state 2: LAST USED. YOUR number, dated. Deliberately NEUTRAL: gold means
+/* ; state 2: LAST USED. YOUR number, dated. Deliberately NEUTRAL: gold means
      "a scenario we invented", so restoring your own rent must not wear gold.
      Same shape, ink tokens, hairline border. */
 .field[data-r] label{display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -213,7 +213,7 @@ if (faqs.length) graph.push({
   border-radius:var(--pill);padding:3px 8px;white-space:nowrap;flex:0 0 auto;
 }
 
-/* — trust badges for receipt figures. Mirrors .sd pill grammar: same size,
+/* ; trust badges for receipt figures. Mirrors .sd pill grammar: same size,
    same radius, same weight. Gold = our example; neutral = computed/last-used/yours.
    Injected as sibling spans by sfFig() in tool-fields.ts. */
 .trust-badge{
@@ -230,34 +230,34 @@ if (faqs.length) graph.push({
   color:var(--text-dim);background:var(--surface-2);border:1px solid var(--border);
 }
 
-/* — §3 the honest control row (PROC-5). The three buttons ship as .btn .b-sm,
+/* ; §3 the honest control row (PROC-5). The three buttons ship as .btn .b-sm,
    which computes to ~27px tall: below the 44px touch minimum the rest of the
-   site keeps (details.faq summary, .tgl, .offer b all sit at 44). Lifting the
-   WHOLE row rather than only the new button is deliberate — a 44px button
+   site keeps (details.faq summary.tgl.offer b all sit at 44). Lifting the
+   WHOLE row rather than only the new button is deliberate ; a 44px button
    beside two 27px ones in the same row reads as a styling accident, and these
    three do the same job with the same reach. */
 .sf-ctrls .btn{min-height:44px;align-items:center}
-/* — the on-device storage notice. Same texture as .fx-disclaimer above (11px,
+/* ; the on-device storage notice. Same texture as .fx-disclaimer above (11px,
    1.7 line, --text-dim, hairline rule over it) so it reads as the calculator's
    own footnote rather than as an interjection. max-width 720px matches it. */
 .sf-mem{font-size:11px;line-height:1.7;color:var(--text-dim);max-width:720px;margin-top:14px;padding-top:16px;border-top:1px solid var(--border-dim)}
 .sf-mem strong{color:var(--text-mid);font-weight:700}
 
-/* — the derived-value offer. One action per line, and it is unambiguous. */
+/* ; the derived-value offer. One action per line, and it is unambiguous. */
 .offer{font-size:12px;color:var(--text-mid);margin-top:8px;display:flex;
   align-items:baseline;gap:8px;flex-wrap:wrap}
 .offer b{font-size:9px;font-weight:800;letter-spacing:.12em;background:var(--gold-b);
   color:#0d0b08;border-radius:var(--pill);padding:7px 11px;min-height:44px;
   display:inline-flex;align-items:center;cursor:pointer;flex:0 0 auto}
 
-/* — split preset chips active state */
+/* ; split preset chips active state */
 .fx-chip.active{
   background:var(--gold-b);
   color:#0d0b08;
   border-color:var(--gold-b);
 }
 
-/* — stepper pills */
+/* ; stepper pills */
 .fx-stepper{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .fx-step{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
   color:var(--text-dim);background:var(--surface-2);border:1px solid var(--border);
@@ -265,7 +265,7 @@ if (faqs.length) graph.push({
 .fx-step.active{color:#0d0b08;background:var(--gold-b);border-color:var(--gold-b)}
 .fx-step[data-step="2"]:not(.active){opacity:1;pointer-events:none}
 
-/* — the share bar (F5/P2-10). Injected by the spine after every .receipt;
+/* ; the share bar (F5/P2-10). Injected by the spine after every .receipt;
    same 44px touch minimum as the control row it sits under, same ghost-button
    grammar. Shown on screen, dropped by the print block below. */
 .sf-share{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
@@ -273,21 +273,21 @@ if (faqs.length) graph.push({
 
 /* ── F5/P2-10(c) THE PRINT STYLESHEET ─────────────────────────────────────
    Printing the receipt CLEAN means two jobs, and both are precise:
-   1. STRIP THE CHROME — by the class names Layout actually renders:
+   1. STRIP THE CHROME ; by the class names Layout actually renders:
       nav.ticker (market ticker), header.sh (desktop nav), header.mh (mobile
       nav), div#mobile-nav.mno, div.gs (the search panel), footer.footer,
       footer.mfooter, plus this shell's own web furniture: the .ad-bg boxes,
       the .sf-ctrls button row (and the opt-in toggle inside it), the .sf-share
       bar, the .fx-aff CTA row, the .g3 related-guides grid and the .slink
-      back-link. The breadcrumb goes too — the receipt says what it is.
-   2. REPAPER THE RECEIPT — the slip is dark (#0d0b08) with light ink in BOTH
+      back-link. The breadcrumb goes too ; the receipt says what it is.
+   2. REPAPER THE RECEIPT ; the slip is dark (#0d0b08) with light ink in BOTH
       themes, and browsers strip backgrounds when printing, so the shipped
       light-on-dark ink would print INVISIBLE on white paper. The receipt is
       repainted ink-on-paper: same rows, same labels, real borders, no shadow.
       !important because the hero's colors are inline (inline styles beat
       stylesheet rules) and the dark-theme receipt lift must not win on paper.
    Scope: these rules ship inside ToolShell, so they fire on /money-tools/*
-   only — the one place the receipt vocabulary exists. */
+   only ; the one place the receipt vocabulary exists. */
 @media print{
   .ticker,.sh,.mh,.mno,.gs,.footer,.mfooter{display:none!important}
   .ad-bg,.sf-ctrls,.sf-share,.fx-aff,.g3,.slink,.gwill-breadcrumbs{display:none!important}
@@ -305,28 +305,28 @@ if (faqs.length) graph.push({
   [data-sfe] .receipt-fig,[data-sfe] .receipt-row b{color:#555!important}
 }
 
-/* — the echo. A number the tool ALREADY computes, surfaced at the field.
+/* ; the echo. A number the tool ALREADY computes, surfaced at the field.
      Non-interactive by design: if it needs an action it is an .offer. */
 .echo{font-size:12px;color:var(--text-dim);margin-top:6px;
   border-left:2px solid var(--border-dim);padding-left:10px}
 
-/* — the sourced context line + its birth certificate (N6). */
+/* ; the sourced context line + its birth certificate (N6). */
 .ctx{font-size:12px;color:var(--text-mid);margin-top:10px}
 .ctx-src{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
   color:var(--text-dim);margin-top:2px;display:block}
 
-/* — dark-mode receipt lift. ToolShell's .receipt hardcodes #0d0b08, which is
+/* ; dark-mode receipt lift. ToolShell's .receipt hardcodes #0d0b08, which is
      IDENTICAL to --bg in dark: the slip dissolves into the page. r7.css
      already made this exact fix for .feat. Same token, same reason. */
 [data-theme="dark"] .receipt{background:var(--surface-3);border:1px solid var(--border)}
 
-/* — §4 the honest empty state. markEmpty() writes "—" into the figures and sets
-     [data-sfe]; the withheld "—" must NOT wear gold, or withholding the hero
+/* ; §4 the honest empty state. markEmpty() writes "; " into the figures and sets
+     [data-sfe]; the withheld "; " must NOT wear gold, or withholding the hero
      would still hand over the site's most persuasive typography to a number
      the user never entered. Token-only, same ladder as every rule above. */
 [data-sfe] .receipt-fig,[data-sfe] .receipt-row b{color:var(--text-dim)}
 .receipt{--receipt-ink:#f0ede6;background:#0d0b08;color:var(--receipt-ink);border-radius:16px;padding:18px;margin-top:18px;box-shadow:var(--sh-md)}
-/* E23-R2 — the 10px CAPS #6d6658 tier was 3.46:1 on the receipt's black —
+/* E23-R2 ; the 10px CAPS #6d6658 tier was 3.46:1 on the receipt's black; 
    under AA, letter-spaced caps, stripping ascender/descender shape. The hint
    text is already sentence case in the markup; let it read as it was written,
    at 12px, on a >=4.5:1 tier. */
@@ -341,7 +341,7 @@ if (faqs.length) graph.push({
 .receipt-row b{font-variant-numeric:tabular-nums;white-space:nowrap}
 .hr{border-top:1px solid var(--border-dim);margin:26px 0 0}
 /* v0.7.0: tool-body section heading ("Year by year", "Full table"). The class
-   shipped in 8 calculator pages with NO rule anywhere — those h2s rendered as
+   shipped in 8 calculator pages with NO rule anywhere ; those h2s rendered as
    the browser default. Texture is the tool pages' OWN .fx-copy h2
    (styles/tools.css:60) verbatim, so one page never carries two heading
    scales (this and the FAQ "Questions" h2 sit on the same page). */
@@ -349,7 +349,7 @@ if (faqs.length) graph.push({
 .st-wrap{overflow-x:auto;margin:18px calc(-1 * 16px) 0;padding:0 16px}
 @media(min-width:768px){.st-wrap{margin-left:0;margin-right:0;padding:0}}
 /* v0.6.8: table type + cells match the theme's OWN st-table anatomy
-   (12px rows, 10px/14px cell padding) — the port had shrunk it to .75rem/10px. */
+   (12px rows, 10px/14px cell padding) ; the port had shrunk it to .75rem/10px. */
 table.st{width:100%;min-width:560px;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
 table.st th{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border)}
 table.st td{padding:12px 14px;border-bottom:1px solid var(--border-dim);color:var(--text-mid)}
@@ -357,13 +357,13 @@ table.st td.n,table.st th.n{text-align:right}
 table.st tr.win td{background:var(--gold-muted);border-left:3px solid var(--gold-b)}
 .btag{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.12em;background:var(--gold-b);color:#0d0b08;border-radius:100px;padding:2px 8px;margin-left:8px;vertical-align:middle}
 
-  /* — verdict badge: green=good, red=action needed, amber=warning, neutral=info
-     E10 / A10-C6 — the --action badge was white-on-var(--red) in BOTH themes.
+  /* ; verdict badge: green=good, red=action needed, amber=warning, neutral=info
+     E10 / A10-C6 ; the --action badge was white-on-var(--red) in BOTH themes.
      Light passes (--red #b91c1c → 6.47:1) but dark flips --red to #f87171,
      where white text measures 2.77:1 and FAILS WCAG AA for 11px type. The fix
      is the same red the brand already uses, with the ink swapped to the theme's
      own dark in dark mode: #0d0b08 on #f87171 = 7.11:1. Same hue, same badge,
-     same border — only the ink that could not be read changes. Both themes now
+     same border ; only the ink that could not be read changes. Both themes now
      pass (light 6.47:1, dark 7.11:1). */
   .verdict-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:var(--pill);padding:4px 10px;white-space:nowrap}
   .verdict-badge--good{color:var(--green);background:var(--green-muted);border:1px solid var(--green-border)}
@@ -372,14 +372,14 @@ table.st tr.win td{background:var(--gold-muted);border-left:3px solid var(--gold
   .verdict-badge--warn{color:var(--amber);background:var(--amber-muted);border:1px solid var(--amber-border)}
   .verdict-badge--info{color:var(--text-dim);background:var(--surface-2);border:1px solid var(--border)}
 
-  /* — E10 / A10-C8+C9 — the actuals-mirror rows. They had a hardcoded inline
+  /* ; E10 / A10-C8+C9 ; the actuals-mirror rows. They had a hardcoded inline
      color:#e8e4dc, which read only because the receipt card happens to be dark
      in BOTH themes; a light receipt card would have silently broken it. The
      rows now carry their own class and no colour of their own, so they take
      the receipt's ink (--receipt-ink, the token .receipt already paints itself
      with) and follow whatever the receipt surface becomes.
        row label + plan figure  = --receipt-ink  (16.81:1 light / 14.87:1 dark)
-       "you spent N" + "— add yours" = --dark-dim (5.41:1 light / 4.78:1 dark)
+       "you spent N" + "; add yours" = --dark-dim (5.41:1 light / 4.78:1 dark)
      Both clear AA for this text size in both themes. */
   .actuals-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;font-size:.85rem;padding:7px 0;border-top:1px solid rgba(245,158,11,.12)}
   .actuals-row:first-child{border-top:none}
@@ -391,17 +391,17 @@ table.st tr.win td{background:var(--gold-muted);border-left:3px solid var(--gold
     .actuals-row>span:first-child{flex:1 1 auto}
   }
 
-  /* — verdict banner: plain-language sentences above receipt */
+  /* ; verdict banner: plain-language sentences above receipt */
   .verdict-banner{margin:12px 0;padding:12px 16px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border);display:none;flex-direction:column;gap:8px}
   .verdict-banner.active{display:flex}
   .verdict-banner__item{display:flex;align-items:flex-start;gap:8px;line-height:1.5}
   .verdict-banner__item .verdict-badge{flex-shrink:0;margin-top:2px}
 
-  /* — next-action CTA section */
+  /* ; next-action CTA section */
   .next-actions{margin:16px 0;display:flex;flex-wrap:wrap;gap:8px}
   .next-actions .btn{min-height:44px}
 
-  /* — jargon tooltip glossary */
+  /* ; jargon tooltip glossary */
   .jargon{position:relative;text-decoration:underline dotted;text-underline-offset:2px;cursor:help}
   .jargon::after{content:attr(data-tip);position:absolute;bottom:125%;left:50%;transform:translateX(-50%);background:#1a1814;color:#f0ede6;font-size:12px;font-weight:400;letter-spacing:0;text-transform:none;text-decoration:none;padding:8px 12px;border-radius:8px;white-space:nowrap;max-width:280px;opacity:0;visibility:hidden;transition:opacity .15s,visibility .15s;z-index:10;box-shadow:var(--sh-lg);border:1px solid var(--border)}
   .jargon::before{content:"";position:absolute;bottom:110%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#1a1814;opacity:0;visibility:hidden;transition:opacity .15s,visibility .15s;z-index:10}
@@ -417,17 +417,17 @@ table.st tr.win td{background:var(--gold-muted);border-left:3px solid var(--gold
 details.faq{border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-top:12px;background:var(--surface)}
 details.faq summary{font-weight:700;cursor:pointer;min-height:44px}
 /* v0.6.8 (King: cramp in conversions landing pages): answers read at FULL
-   body size (1rem/1.8 — same texture as the article copy above) with a real
+   body size (1rem/1.8 ; same texture as the article copy above) with a real
    12px seat under the question. .9rem + 8px was the visible jam. */
 details.faq p{margin-top:12px;font-size:1rem;line-height:1.8;color:var(--text-mid)}
 .swapbtn{width:44px;height:44px;border-radius:50%;border:1px solid var(--gold-b);background:var(--surface);color:var(--gold);font-size:18px;line-height:1}
 .b-lg{min-height:44px;padding:10px 16px;font-size:14px}
 .swapbtn:hover{transform:rotate(180deg);transition:transform var(--t-md)}
-/* v0.7.0: .tgl — the calculators' gold switch. The native checkbox shipped
+/* v0.7.0: .tgl ; the calculators' gold switch. The native checkbox shipped
    with no class and no rule, so it painted the browser's blue box on a black
    card. The real <input> stays in the markup (page scripts read .checked) but
    is visually replaced by track + thumb; it stretches over the whole label so
-   the touch target is the site's own 44px minimum — same rule as
+   the touch target is the site's own 44px minimum ; same rule as
    details.faq summary above. Off = border-tone track + mid ink; on = gold track
    + ink thumb (the .btag / .b-gold inverse already in the theme). --border (not
    --surface-2) is the off track: --surface-2 sat too close to the dark card. */
@@ -447,7 +447,7 @@ details.faq p{margin-top:12px;font-size:1rem;line-height:1.8;color:var(--text-mi
 .prog i{display:block;height:100%;background:var(--green-btn)}
 </style>
 <script>
-// v0.7.20 smart-fields SPINE — loaded HERE and nowhere else, so it is
+// v0.7.20 smart-fields SPINE ;  loaded HERE and nowhere else, so it is
 // route-scoped to /money-tools/* (ToolShell has no other consumer) and is
 // inert on every other page. One import, one instance: a tool page that wants
 // badges calls smartFields.register({...}) from its OWN script, after this

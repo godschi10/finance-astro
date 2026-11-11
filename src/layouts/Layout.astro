@@ -2,29 +2,29 @@
 import { NAV, TICKER_STATIC, catBySlug, COMMENTS_API, SITE, type NavItem } from "../data/site";
 import { FX_SNAPSHOT, FX_SNAPSHOT_TS } from "../data/fx-snapshot";
 import { TOOLS, allArticles as allPosts, fmtMonthYear } from "../data/content";
-import "../styles/base.css"; // WP stylesheet section 2 (RESET/BASE) — the anchor reset
+import "../styles/base.css"; // WP stylesheet section 2 (RESET/BASE) ;  the anchor reset
 import "../styles/header.css";
 import Footer from "../components/Footer.astro";
 import FormsScript from "../components/FormsScript.astro";
 import "../styles/footer.css";
 import "../styles/home.css"; // WP stylesheet sections the homepage renders
-import "../styles/search404.css"; // WP slice — /search/ + /404/ vocabulary (.phd, .search-pill, .error-404, .es-*)
+import "../styles/search404.css"; // WP slice ;  /search/ + /404/ vocabulary (.phd.search-pill.error-404.es-*)
 import "../styles/tools.css"; // verbatim theme calculator vocabulary (style.css 1244-1500, hx/fxap blocks) for /money-tools/ pages
 import "../styles/article.css"; // category art gradients (.i-sav etc.) + card rules the search cards reuse
 // ORDER IS THE CASCADE CONTRACT (v0.6.8): in WP's style.css .art-body is served
-// AFTER .fx-copy — on <div class="fx-copy art-body"> the ART-BODY typography wins
+// AFTER .fx-copy ;  on <div class="fx-copy art-body"> the ART-BODY typography wins
 // (live measures 16px/1.8 copy + 20px h2 at 390px). Importing article last
 // reproduces that winner exactly; importing it first silently shrank every
 // calculator's copy to 15px/27px (King: "not enough space between text or
 // elements especially in all calculators"). Do not re-swap.
-import "../styles/forms.css"; // WP stylesheet section 46 (FORMS) — control geometry
+import "../styles/forms.css"; // WP stylesheet section 46 (FORMS) ;  control geometry
 import "../styles/pages.css"; // §34/35/43/44/45 verbatim blocks: about cards, legal, newsletter pages
-import "../styles/numbers.css"; // DESIGN-LANGUAGE §1 Number Law (R1) — ADDITIVE only: tabular-nums where money figures refresh/align. Never rewrites a verbatim rule; import last by design.
-import "../styles/controls.css"; // DESIGN-LANGUAGE §6 money-form controls (R2) — ADDITIVE only: F3 ₦-in-field (.fi), F2 dip, F4 phone targets, button press. No WP rule rewritten; focus gold stays owned by ToolShell/Layout. Imported after numbers.css by design (R1 → R2).
-import "../styles/hub.css"; // DESIGN-LANGUAGE plan §P0-1/§P0-2 hub+hero (R5) — ADDITIVE only: ledger rule placement, hero spacing/type per plan (home-scoped via .hero:has(.hero-cats)), stamp-corner ink tile + wordmark, featured gold bar, hover de-bloom, M3 motion. The plan-sanctioned sheen-kill subtractions were made IN PLACE in home.css/article.css (commented with citation). Imported after numbers.css by design (R1 → R5; R2 controls + R3 ladder + R4 anatomy reverted by King order).
-import "../styles/chrome.css"; // DESIGN-LANGUAGE plan §P1-4 chrome (R6) — ADDITIVE only: gold hairline under sticky headers (border-color only), nav 13px/700, ticker mono, SIGNATURE live dot (.tl flow child of .ticker — outside .ticker-drag so the marquee seam stays identical), drawer 15px/14×20, search input 48px phone + kbd footer desktop-only. header.css untouched (gate anchors). Imported after hub.css by design (R1 → … → R5 → R6).
+import "../styles/numbers.css"; // DESIGN-LANGUAGE §1 Number Law (R1) ;  ADDITIVE only: tabular-nums where money figures refresh/align. Never rewrites a verbatim rule; import last by design.
+import "../styles/controls.css"; // DESIGN-LANGUAGE §6 money-form controls (R2) ;  ADDITIVE only: F3 ₦-in-field (.fi), F2 dip, F4 phone targets, button press. No WP rule rewritten; focus gold stays owned by ToolShell/Layout. Imported after numbers.css by design (R1 → R2).
+import "../styles/hub.css"; // DESIGN-LANGUAGE plan §P0-1/§P0-2 hub+hero (R5) ;  ADDITIVE only: ledger rule placement, hero spacing/type per plan (home-scoped via .hero:has(.hero-cats)), stamp-corner ink tile + wordmark, featured gold bar, hover de-bloom, M3 motion. The plan-sanctioned sheen-kill subtractions were made IN PLACE in home.css/article.css (commented with citation). Imported after numbers.css by design (R1 → R5; R2 controls + R3 ladder + R4 anatomy reverted by King order).
+import "../styles/chrome.css"; // DESIGN-LANGUAGE plan §P1-4 chrome (R6) ;  ADDITIVE only: gold hairline under sticky headers (border-color only), nav 13px/700, ticker mono, SIGNATURE live dot (.tl flow child of .ticker ;  outside .ticker-drag so the marquee seam stays identical), drawer 15px/14×20, search input 48px phone + kbd footer desktop-only. header.css untouched (gate anchors). Imported after hub.css by design (R1 → … → R5 → R6).
 // r8.css (R8, 2026-11-03, King-sanctioned "fix all 3 if safe"): a11y hit-area +
-// iOS-zoom corrections. Same ADDITIVE charter as the layers above — the verbatim
+// iOS-zoom corrections. Same ADDITIVE charter as the layers above ;  the verbatim
 // sheets and the byte-locked vibe plugin sheet are untouched; every rule adds a
 // property the verbatim never sets or wins by one specificity step
 // (element-qualified selectors), so import order provably does not matter.
@@ -38,7 +38,7 @@ import "../styles/r8.css";
 // that renders it. Note the R1 → … → R6 → R7 order the sheet's header asks for is
 // NOT preserved by import placement: Astro emits a page's own stylesheet BEFORE the
 // layout's, so r7 leads the cascade block rather than trailing it. That is
-// harmless — see the measured cascade note in src/pages/index.astro, where r7 is
+// harmless ;  see the measured cascade note in src/pages/index.astro, where r7 is
 // now imported, proving every one of its rules wins on specificity alone.
 // Shared chrome: head, self-hosted fonts, finance tokens (light + dark),
 // skip-link, ticker, desktop nav + mobile drawer, footer. Staging-safe SEO:
@@ -55,12 +55,12 @@ interface Props {
   publishedTime?: string;
   modifiedTime?: string;
   articleAuthor?: string;
-  /** Route renders a .gwill-form (newsletter/contact) — ships gwill-forms.js. */
+  /** Route renders a .gwill-form (newsletter/contact) ; ships gwill-forms.js. */
   forms?: boolean;
   /** P2-12 ticker scope (fifth audit): BTC/ETH/XAU only help on FX pages. FX
       pages (converter, rate history, transfer comparator) pass true and get
       the full crypto+metals set; every other page shows the USD/GBP/EUR→NGN
-      reference pairs only. TICKER_STATIC itself keeps all six — the header
+      reference pairs only. TICKER_STATIC itself keeps all six ; the header
       fidelity gate reads it and ticker-live.js refreshes per data-src. */
   fxTicker?: boolean;
 }
@@ -74,15 +74,15 @@ const isHome = pagePath === base;
 const canonical = `${origin}${pagePath}`;
 const ogUrl = noCanonical ? homeUrl : canonical;
 // social-meta.php gwill_social_meta_image(): the post's featured image first,
-// then the theme's branded 1200×630 share card (public/images/og/brand.png —
+// then the theme's branded 1200×630 share card (public/images/og/brand.png ; 
 // written by `npm run gen:og`, the wordmark logo on the finance palette) so
 // every non-article page still shares as a rich card, never a bare-text one.
-const BRAND_SHARE = { url: `${homeUrl}images/og/brand.png`, width: 1200, height: 630, alt: "GWill Finance — Nigerian money. Explained." };
+const BRAND_SHARE = { url: `${homeUrl}images/og/brand.png`, width: 1200, height: 630, alt: "GWill Finance: Nigerian money. Explained." };
 const og = ogImage ? { ...ogImage, url: ogImage.url.startsWith("http") ? ogImage.url : `${origin}${ogImage.url}` } : BRAND_SHARE;
 const ogAbs = og.url;
 const ogAlt = og.alt || title;
 const siteName = "GWill Finance";
-// SITE-6 (2026-10-12): sameAs reads the one PROFILES table (site.ts) — the
+// SITE-6 (2026-10-12): sameAs reads the one PROFILES table (site.ts) ;  the
 // github entry moves to godschi10 (the account with the public work) with it.
 const sameAs = [SITE.socials.x, SITE.socials.github, SITE.socials.linkedin];
 const showBreadcrumbs = !noCanonical && !isHome && crumb !== "";
@@ -91,7 +91,7 @@ const website = { "@context": "https://schema.org", "@type": "WebSite", name: si
 const organization = { "@context": "https://schema.org", "@type": "Organization", name: siteName, url: homeUrl, logo: `${homeUrl}icons/icon.svg`, sameAs };
 const breadcrumb = { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: homeUrl }, { "@type": "ListItem", position: 2, name: crumb }] };
 const fontFaces = [400, 700, 800].map((weight) =>
-  // E24-C8 — size-adjust kills the mono↔fallback reflow seam at swap time; zero bytes.
+  // E24-C8 ;  size-adjust kills the mono↔fallback reflow seam at swap time; zero bytes.
   `@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:${weight};font-display:swap;size-adjust:100%;src:url("${base}fonts/jetbrains-mono-latin-${weight}-normal.woff2") format("woff2")}`
 ).join("\n");
 
@@ -105,7 +105,7 @@ const hasKids = (n: NavItem) => !!n.children && n.children.length > 0;
 // Desktop .snav-list (top-level parent rows get menu-item-has-children +
 // a server-rendered .nav-caret-desktop ⌄ like the WP nav; children render
 // as .sub-menu dropdowns, nested one level deep exactly like the WP menu).
-// COSMETIC-1: these strings are the <li> ROWS ONLY — the <ul class="snav-list">
+// COSMETIC-1: these strings are the <li> ROWS ONLY ;  the <ul class="snav-list">
 // itself is the static element in the markup below (set:html). A generated
 // <ul> here used to nest <ul> directly inside <ul> on every page, which
 // browsers silently reparent; the outer list owns the rows, one <li> level.
@@ -124,7 +124,7 @@ const desktopNavHtml = NAV.map(desktopNavItem).join("");
 // .nav-caret handle buttons are injected by JS exactly like WP main.js
 // (split-tap accordion: tap ⌄ toggles the sibling .sub-menu, tap the row
 // text navigates). Sub-menu ul.sub-menu markup is server-rendered.
-// COSMETIC-1: rows only — the <ul class="mno-list"> is the static element
+// COSMETIC-1: rows only ;  the <ul class="mno-list"> is the static element
 // below, so no second <ul> nests inside it (same fix as the desktop nav).
 const mobileNavItem = (n: NavItem): string => {
   const kids = hasKids(n);
@@ -138,12 +138,12 @@ const mobileNavHtml = NAV.map(mobileNavItem).join("");
 
 const newsletterHref = `${base}#newsletter`;
 
-// Spotlight search index: ONE corpus shared with the /search/ results page —
+// Spotlight search index: ONE corpus shared with the /search/ results page ; 
 // every article (title/excerpt/category-name/date/read-mins, badge/art/emoji
 // for the engine's map) AND every calculator. The old 7-item POSTS-only array
 // left the calculators unsearchable in the spotlight (the /search/ page
-// searched 31 items; the drop-down only 7 — found by probing the built page).
-const posts = await allPosts(); // async getCollection — Layout renders after the await
+// searched 31 items; the drop-down only 7 ;  found by probing the built page).
+const posts = await allPosts(); // async getCollection ;  Layout renders after the await
 const searchIndex = [
   ...posts.map((p) => {
     const c = catBySlug(p.data.category);
@@ -201,24 +201,24 @@ const searchBase = `${base}search/`;
 <!-- 2026-10-03 security audit: Referrer-Policy. strict-origin-when-cross-origin
      (not no-referrer): it matches the referrerPolicy the site's own video
      facades already set on their embed iframes (article.js), keeps useful
-     same-origin referrers, and sends cross-origin sites the origin only —
+     same-origin referrers, and sends cross-origin sites the origin only; 
      never article paths or query strings. -->
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<!-- 2026-10-27 security audit F-08: Permissions-Policy via meta — forward-declaration / placeholder ONLY (not an active control).
+<!-- 2026-10-27 security audit F-08: Permissions-Policy via meta ; forward-declaration / placeholder ONLY (not an active control).
      Inert on GitHub Pages because Pages cannot send response headers (this <meta> has no effect in Chromium; no meta mechanism exists per W3C Permissions-Policy §6).
      It takes effect only once the apex domain is served behind a proxy that CAN send real Permissions-Policy headers (M-01).
      Does NOT disable anything today. Clipboard remains allowed because navigator.clipboard.writeText() is used for
      share/copy actions (article.js, smart-fields.js, money tools). Value kept narrow as chosen. -->
 <meta name="permissions-policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), midi=(), magnetometer=(), gyroscope=(), accelerometer=()">
-<!-- E24-C2 — the fold's body weight (400) is what every in-fold element paints; it
+<!-- E24-C2 ; the fold's body weight (400) is what every in-fold element paints; it
      landed ~285ms after the preloaded 700/800 pair in every run. Preload 400+800;
-     700 stays available on first use (its consumers — ticker rates, chips,
-     buttons — force it before the figure anyway). -->
+     700 stays available on first use (its consumers ; ticker rates, chips,
+     buttons ; force it before the figure anyway). -->
 <link rel="preload" href={`${base}fonts/jetbrains-mono-latin-400-normal.woff2`} as="font" type="font/woff2" crossorigin>
 <link rel="preload" href={`${base}fonts/jetbrains-mono-latin-800-normal.woff2`} as="font" type="font/woff2" crossorigin>
 <title>{title}</title>
 <meta name="description" content={description}>
-<meta name="deployment" content="GitHub Pages staging — not production">
+<meta name="deployment" content="GitHub Pages staging, not production">
 {!noCanonical && <link rel="canonical" href={canonical}>}
 <link rel="icon" type="image/svg+xml" href={`${base}icons/icon.svg`}>
 <link rel="manifest" href={`${base}manifest.webmanifest`}>
@@ -243,7 +243,7 @@ const searchBase = `${base}search/`;
 {isHome && <script type="application/ld+json" set:html={ld(organization)}></script>}
 {showBreadcrumbs && <script type="application/ld+json" set:html={ld(breadcrumb)}></script>}
 <script is:inline>
-/* GWill Finance — first-paint theme restore + tri-state pill (WP finance-home.html). */
+/* GWill Finance ; first-paint theme restore + tri-state pill (WP finance-home.html). */
 (function(){
 	// ── Part A: read persisted choice + paint before first paint ──
 	var K = 'gwill-finance-theme-v3';
@@ -338,13 +338,13 @@ const searchBase = `${base}search/`;
 					// preventScroll, not a plain focus(): the pill lives in a sticky
 					// header and the menu opens near the top of the viewport, so a
 					// plain focus() scrolls the segment clear of the document's
-					// `scroll-padding-top` (--header-h + 20px) — browser-measured as
+					// `scroll-padding-top` (--header-h + 20px) ;  browser-measured as
 					// a 19px upward jump at 390px, on every tap. The theme hit this
 					// exact bug with its search trigger and fixed it the same way
 					// (assets/js/spotlight-search.js: html { scroll-padding-top }
 					// v1.0.199, "plain .focus() scrolls the sticky-header trigger
 					// into its DOCUMENT position, on Android Chrome this drags the
-					// whole page up — browser-verified 257px jump").
+					// whole page up ;  browser-verified 257px jump").
 					if (sel) sel.focus({ preventScroll: true });
 				}
 			});
@@ -440,7 +440,7 @@ const searchBase = `${base}search/`;
   --text:#0d0d0d;--text-mid:#3a3a3a;--text-dim:#6b6b6b;
   --art-copy:#262626;--art-dim:#3a3a3a;
   --gold:#b45309;--gold-b:#f59e0b;--gold-btn:#b45309;
-  /* E25-D2 — the verdict-badge--warn rule has reference these since the E10
+  /* E25-D2 ; the verdict-badge--warn rule has reference these since the E10
      round; the tokens never existed. Light-theme warning: dark brown ink on
      cream, 6.37:1. */
   --amber:#92400e;--amber-muted:#fef3c7;--amber-border:#fde68a;
@@ -471,7 +471,7 @@ const searchBase = `${base}search/`;
   --border:#211f1a;--border-dim:#1d1a16;
   --text-mid:#c4b89a;--text-dim:#8f8575;
   --gold:#f59e0b;--gold-btn:#b45309;
-  /* E25-D2 — dark-theme warning: light-gold ink on a tinted black ground,
+  /* E25-D2 ; dark-theme warning: light-gold ink on a tinted black ground,
      9+:1 composited. */
   --amber:#fcd34d;--amber-muted:rgba(252,211,77,.10);--amber-border:rgba(252,211,77,.28);
   --gold-muted:rgba(245,158,11,.08);--gold-border:rgba(245,158,11,.25);
@@ -538,14 +538,14 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible,summary:focus-visi
 .hold ul{margin-top:12px;padding-left:20px;color:var(--text-mid);font-size:15px;display:flex;flex-direction:column;gap:6px}
 .phase-tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);background:var(--gold-muted);border:1px solid var(--gold-border);border-radius:var(--pill);padding:4px 12px;margin-bottom:12px}
 .sg .crumbs a{color:var(--gold)}
-/* Phase 3 — articles, search, forms */
-/* Article single — the article page's own rules now live in
+/* Phase 3 ; articles, search, forms */
+/* Article single ; the article page's own rules now live in
    src/styles/article.css, copied verbatim from the theme (see
    docs/port/10-article-template.md). What remains here is either shared with
    other pages or port-only:
-     .art-sub          — the post subtitle: no WordPress equivalent exists, so
+     .art-sub          ; the post subtitle: no WordPress equivalent exists, so
                          it is designed in the theme's idiom (docs/port/08).
-     .video-facade — used by the article + about pages. The invented
+     .video-facade ; used by the article + about pages. The invented
                          .author-bio/.author-mark/.author-role/.author-text/
                          .author-socials block was removed with the v0.6.2
                          author-archive fix: the real theme vocabulary
@@ -558,7 +558,7 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible,summary:focus-visi
 .video-facade{position:relative;display:grid;place-items:center;gap:12px;text-align:center;background:var(--dark);color:#f0ede6;border-radius:var(--r-lg);margin-top:20px;padding:48px 20px;min-height:220px;overflow:hidden}
 .video-facade p{font-size:14px;color:#c4b89a}
 .video-emoji{font-size:40px;color:var(--gold-b);line-height:1}
-/* Search + forms — WP carries NO form margin; the old port's margin-top:20px
+/* Search + forms ; WP carries NO form margin; the old port's margin-top:20px
    leaked into the theme's .search-pill (rendered 74px vs WP's 54px, found by
    measuring). WP's flex-wrap:wrap is also wrong for the pill (the label +
    button row never wraps inside a 420px pill; it only squeezed the field). */
@@ -593,7 +593,7 @@ main{display:block;min-width:0}
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <div id="top"></div>
-<nav class="ticker" data-ts={FX_SNAPSHOT_TS} aria-label="Market ticker — live BTC/ETH/gold, daily reference FX"><span class="tl" title={`Daily reference rate (FX) · updated ${FX_SNAPSHOT.as_of} · FX pairs are the daily reference rate; BTC/ETH/gold refresh live on visit`}><span class="tl-dot" aria-hidden="true"></span><span class="tl-tx">LIVE</span></span><div class="ticker-drag"><div class="ticker-inner">
+<nav class="ticker" data-ts={FX_SNAPSHOT_TS} aria-label="Market ticker: live BTC/ETH/gold, daily reference FX"><span class="tl" title={`Daily reference rate (FX) · updated ${FX_SNAPSHOT.as_of} · FX pairs are the daily reference rate; BTC/ETH/gold refresh live on visit`}><span class="tl-dot" aria-hidden="true"></span><span class="tl-tx">LIVE</span></span><div class="ticker-drag"><div class="ticker-inner">
 {/* P2-12 scope: FX pages (fxTicker) render all six pairs; every other page
     renders the USD/GBP/EUR→NGN reference pairs only. Both sets are duplicated
     for the marquee seam, and only the first set reaches screen readers. */}
@@ -604,7 +604,7 @@ main{display:block;min-width:0}
 <a class="logo" href={homeUrl}><span class="n">₦</span><span class="nm">gwillchijioke</span></a>
 <nav class="snav" aria-label="Primary Navigation">
 <ul class="snav-list" set:html={desktopNavHtml}></ul>
-<div class="tp" data-theme-group data-current="system" data-open="false"><!-- A16-F8 — the trigger promised menu semantics while what opens is a role="group" of toggle buttons. aria-expanded already carries the state; the promise is gone. --><button type="button" class="tp-btn" data-theme-trigger aria-expanded="false" aria-label="Theme: System" title="Theme"><span class="tp-ico" aria-hidden="true"><svg data-theme-ico="system" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><svg data-theme-ico="light" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M1.5 12H4M20 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"/></svg><svg data-theme-ico="dark" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span><span class="tp-tx tp-lab">System</span><svg class="tp-caret" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="tp-menu" data-theme-menu hidden role="group" aria-label="Theme choices"><button type="button" class="tp-seg" data-theme-set="system" aria-pressed="true" aria-label="System (follow my device)" title="Follow my device"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span class="tp-tx">System</span></button><button type="button" class="tp-seg" data-theme-set="light" aria-pressed="false" aria-label="Light" title="Always light"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M1.5 12H4M20 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"/></svg><span class="tp-tx">Light</span></button><button type="button" class="tp-seg" data-theme-set="dark" aria-pressed="false" aria-label="Dark" title="Always dark"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span class="tp-tx">Dark</span></button></div></div>
+<div class="tp" data-theme-group data-current="system" data-open="false"><!-- A16-F8 ; the trigger promised menu semantics while what opens is a role="group" of toggle buttons. aria-expanded already carries the state; the promise is gone. --><button type="button" class="tp-btn" data-theme-trigger aria-expanded="false" aria-label="Theme: System" title="Theme"><span class="tp-ico" aria-hidden="true"><svg data-theme-ico="system" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><svg data-theme-ico="light" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M1.5 12H4M20 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"/></svg><svg data-theme-ico="dark" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span><span class="tp-tx tp-lab">System</span><svg class="tp-caret" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="tp-menu" data-theme-menu hidden role="group" aria-label="Theme choices"><button type="button" class="tp-seg" data-theme-set="system" aria-pressed="true" aria-label="System (follow my device)" title="Follow my device"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span class="tp-tx">System</span></button><button type="button" class="tp-seg" data-theme-set="light" aria-pressed="false" aria-label="Light" title="Always light"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M1.5 12H4M20 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"/></svg><span class="tp-tx">Light</span></button><button type="button" class="tp-seg" data-theme-set="dark" aria-pressed="false" aria-label="Dark" title="Always dark"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span class="tp-tx">Dark</span></button></div></div>
 <button class="nsearch" type="button" aria-label="Search the site" aria-expanded="false" aria-controls="gwill-search-panel" data-gwill-search-toggle>
 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
 </button>
@@ -661,7 +661,7 @@ main{display:block;min-width:0}
 <Footer />
 <script type="application/json" id="gwill-search-index" set:html={searchIndexJson}></script>
 <script is:inline>
-/* GWill Finance — mobile nav (main.js) + spotlight search (spotlight-search.js), ported. */
+/* GWill Finance ; mobile nav (main.js) + spotlight search (spotlight-search.js), ported. */
 (function(){
 'use strict';
 /* ── 1. Mobile nav overlay: open/close + split-tap submenu accordion ──
@@ -825,7 +825,7 @@ if (window.matchMedia && window.matchMedia('(hover: none)').matches) {
 <script>
   import "../scripts/spotlight-search.js";
   import "../scripts/ticker-live.js";
-  import "../scripts/money-controls.js"; // R2 money-form behaviors (₦-in-field, blur grouping) — inert outside money-tools (selector-gated)
+  import "../scripts/money-controls.js"; // R2 money-form behaviors (₦-in-field, blur grouping) ;  inert outside money-tools (selector-gated)
 </script>
 {forms && <FormsScript />}
 </body>

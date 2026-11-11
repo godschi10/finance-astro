@@ -1,4 +1,4 @@
-// Inflation-adjusted savings-goal engine — TS port of inc/inflation-savings.php.
+// Inflation-adjusted savings-goal engine ;  TS port of inc/inflation-savings.php.
 // Inflates the target, solves monthly under both views; the gap is the insight.
 import { savingsCalculate, depositsPerMonth } from "./savings";
 

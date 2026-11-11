@@ -2,14 +2,14 @@
 
 Static port of the **GWill Finance** WordPress theme (the Nigerian personal-finance
 blog) to [Astro](https://astro.build). Same gold-on-dark identity, same header
-contract, same calculator engines — served as a static bundle instead of PHP.
+contract, same calculator engines, served as a static bundle instead of PHP.
 
 **Live (staging branch):** https://godschi10.github.io/finance-astro/
 **WP original (parity target):** https://finance.fitnesslova.qzz.io/
 
 ## Source of truth
 
-The WordPress theme is maintained in its own repository, `gwill-finance-theme` —
+The WordPress theme is maintained in its own repository, `gwill-finance-theme`, 
 it is not part of this repo. This repo is a **static port** of it, not a redesign:
 where the two disagree, the WP theme wins unless the CHANGELOG records a
 deliberate, reasoned divergence.
@@ -30,13 +30,13 @@ non-zero if any of them fail, so a green build alone never means "shippable".
 
 | Gate | What it proves |
 | --- | --- |
-| `scripts/check-css-parse.mjs` | Every stylesheet must parse clean (postcss, zero warnings) — plus the `.art-body`/`.fx-copy` cascade anchors and the Layout import order that keeps them winning. |
-| `scripts/check-header-fidelity.mjs` | Every MUST clause of the WP header port spec — brand, theme pill, search spotlight, ticker, nav nesting, the **responsive show/hide contract**, and the theme pill's **focus-return discipline** (a plain `.focus()` in a sticky header drags the page up on tap). |
-| `scripts/check-footer-fidelity.mjs` | The footer port: WP `footer.php` sections 2–5 plus the footer slice of stylesheet section 19 — markup and copy, class-by-class CSS values, the responsive contract (`≤767px` phone / `≥768px` desktop), the icon-escape guard, and the print rules. 64 assertions. |
-| `scripts/check-homepage-fidelity.mjs` | The homepage port: WP `front-page.php` sections 2–8, `template-parts/content.php`, `inc/card-media.php`, the homepage slice of the stylesheet, plus the BASE and FORMS sections in their own files — section order, class vocabulary, byte-exact copy, the pill-strip/filter contract, the static-build divergences, the anchor reset, and the control geometry measurement had to fight for. 123 assertions. |
-| `scripts/check-article-fidelity.mjs` | The ported single-post page (`single.php`): the title stack in WordPress's order (`.art-hd` → `.bc` breadcrumb → `.badge` → `h1.art-t` → the **net-new subtitle** → `.art-meta` in its `F Y` / `N min read` / conditional-updated shape), the page scaffolding (`.prog`, `.con`, `.sb-layout`, `.art-reading-surface`), the mobile TOC dropdown, the byte-exact disclosure and share row with all four controls, the `.abio` author box and its generated social icons, the `.mt40`/`.g2` related block, both newsletter blocks, the sidebar's three `.sw` cards, plus the rules that keep it honest — the theme's stylesheet is installed verbatim, the forbidden staging notice stays out, heading ids are server-rendered, the port's own prose no longer leaks into the article page, markdown tables get Gutenberg's `<figure class="wp-block-table">` wrapper, the embed facade stylesheet ships with the article, the ≥1024 media block keeps the theme's source order, and the Gutenberg showcase carries every block class. 106 assertions. |
-| `scripts/vectors-check.mjs` | Every TypeScript calculator engine reproduces the PHP engine's numbers, vector-for-vector, against three independent oracle sets: the PHP truth oracle (`scripts/php-harness/vectors.json`, 95 vectors), an independent law-derived set (`scripts/independent-vectors.json` — computed from the statute and standard maths, not the PHP engine, so a wrong rule shared by both cannot hide), and the fifth audit's statute-derived Appendix A set (`scripts/appendix-a-vectors.json`). Deliberate divergences are declared in the checker and the CHANGELOG, never silent. |
-| `scripts/check-maintained-staleness.mjs` | P3-6 (fifth audit, v0.7.58): the hand-maintained tables — NGX prices, savings rates, transfer fees, street premium — must be re-checked inside 45 days, or the build fails. |
+| `scripts/check-css-parse.mjs` | Every stylesheet must parse clean (postcss, zero warnings), plus the `.art-body`/`.fx-copy` cascade anchors and the Layout import order that keeps them winning. |
+| `scripts/check-header-fidelity.mjs` | Every MUST clause of the WP header port spec, brand, theme pill, search spotlight, ticker, nav nesting, the **responsive show/hide contract**, and the theme pill's **focus-return discipline** (a plain `.focus()` in a sticky header drags the page up on tap). |
+| `scripts/check-footer-fidelity.mjs` | The footer port: WP `footer.php` sections 2–5 plus the footer slice of stylesheet section 19, markup and copy, class-by-class CSS values, the responsive contract (`≤767px` phone / `≥768px` desktop), the icon-escape guard, and the print rules. 64 assertions. |
+| `scripts/check-homepage-fidelity.mjs` | The homepage port: WP `front-page.php` sections 2–8, `template-parts/content.php`, `inc/card-media.php`, the homepage slice of the stylesheet, plus the BASE and FORMS sections in their own files, section order, class vocabulary, byte-exact copy, the pill-strip/filter contract, the static-build divergences, the anchor reset, and the control geometry measurement had to fight for. 123 assertions. |
+| `scripts/check-article-fidelity.mjs` | The ported single-post page (`single.php`): the title stack in WordPress's order (`.art-hd` → `.bc` breadcrumb → `.badge` → `h1.art-t` → the **net-new subtitle** → `.art-meta` in its `F Y` / `N min read` / conditional-updated shape), the page scaffolding (`.prog`, `.con`, `.sb-layout`, `.art-reading-surface`), the mobile TOC dropdown, the byte-exact disclosure and share row with all four controls, the `.abio` author box and its generated social icons, the `.mt40`/`.g2` related block, both newsletter blocks, the sidebar's three `.sw` cards, plus the rules that keep it honest, the theme's stylesheet is installed verbatim, the forbidden staging notice stays out, heading ids are server-rendered, the port's own prose no longer leaks into the article page, markdown tables get Gutenberg's `<figure class="wp-block-table">` wrapper, the embed facade stylesheet ships with the article, the ≥1024 media block keeps the theme's source order, and the Gutenberg showcase carries every block class. 106 assertions. |
+| `scripts/vectors-check.mjs` | Every TypeScript calculator engine reproduces the PHP engine's numbers, vector-for-vector, against three independent oracle sets: the PHP truth oracle (`scripts/php-harness/vectors.json`, 95 vectors), an independent law-derived set (`scripts/independent-vectors.json`, computed from the statute and standard maths, not the PHP engine, so a wrong rule shared by both cannot hide), and the fifth audit's statute-derived Appendix A set (`scripts/appendix-a-vectors.json`). Deliberate divergences are declared in the checker and the CHANGELOG, never silent. |
+| `scripts/check-maintained-staleness.mjs` | P3-6 (fifth audit, v0.7.58): the hand-maintained tables, NGX prices, savings rates, transfer fees, street premium, must be re-checked inside 45 days, or the build fails. |
 
 All seven are wrapped by `scripts/check.mjs`.
 
@@ -44,11 +44,11 @@ All seven are wrapped by `scripts/check.mjs`.
 
 ```
 src/layouts/Layout.astro      # chrome: <head>, tokens, header, footer, inline scripts
-src/layouts/Layout.astro:548/:559  # desktop (.sh) + mobile (.mh) headers (WP header.php) — inline in Layout, no Header.astro exists
+src/layouts/Layout.astro:548/:559  # desktop (.sh) + mobile (.mh) headers (WP header.php), inline in Layout, no Header.astro exists
 src/components/Footer.astro   # desktop + phone footers (WP footer.php sections 2–5)
 src/components/ArticleCard.astro  # WP card anatomy (inc/card-media.php + template-parts/content.php)
 src/components/NewsletterForm.astro  # WP template-parts/forms/contact-newsletter.php, id passed in like wp_unique_id()
-src/components/AuthorSocials.astro   # GENERATED from inc/author.php — the article author box's icon row
+src/components/AuthorSocials.astro   # GENERATED from inc/author.php, the article author box's icon row
 src/pages/index.astro         # homepage (WP front-page.php sections 2–8)
 src/pages/articles/[slug].astro  # article page (WP single.php), on WP's class vocabulary
 src/scripts/article.js        # article behaviours ported from the theme's main.js
@@ -56,11 +56,11 @@ src/styles/article.css        # the article slice of the theme stylesheet, verba
 src/styles/prose.css.retired  # retired 2026-09-30: about/contact are faithful live-template ports and no longer import it
 src/styles/header.css         # header/ticker/search/theme-pill styles + responsive blocks
 src/styles/home.css           # homepage slice of the theme stylesheet, source order kept
-src/styles/search404.css      # WP slice — /search/ + /404/ vocabulary (.phd, .search-pill, .error-404, .es-*), 31 rules verbatim
+src/styles/search404.css      # WP slice, /search/ + /404/ vocabulary (.phd.search-pill.error-404.es-*), 31 rules verbatim
 src/scripts/search-core.js    # the smart search engine (ONE copy shared by the overlay + /search/): scoring, fuzzy, diacritics, highlight
 src/scripts/spotlight-search.js  # the header spotlight panel over the embedded JSON index (theme spotlight-search.js port)
 src/scripts/search-results.js # the /search/ results page controller (same engine, theme card anatomy)
-src/styles/base.css           # WP stylesheet section 2 (RESET/BASE): full base layer — `*` reset, anchor reset, replaced-element max-width, img block, heading tracking, control fonts, hidden utility
+src/styles/base.css           # WP stylesheet section 2 (RESET/BASE): full base layer, `*` reset, anchor reset, replaced-element max-width, img block, heading tracking, control fonts, hidden utility
 src/styles/forms.css          # WP stylesheet section 46 (FORMS): control geometry, labels, submit/status chrome
 src/styles/footer.css         # footer grid, CTAs, socials, bottom bar + responsive/touch blocks
 src/lib/                      # calculator engines (TS ports of inc/*.php)
@@ -82,19 +82,19 @@ Two consequences worth knowing before you touch either side:
 1. **The oracle is a snapshot of a live clock.** `gwill_fx_history_range()` windows
    on `strtotime('-N days')`, so its point counts encode the instant it was
    generated. The TS gate therefore pins `HIST_ORACLE_MS` in `vectors-check.mjs` to
-   that instant — regenerate `vectors.json` and you must bump that constant in the
+   that instant, regenerate `vectors.json` and you must bump that constant in the
    same change.
 2. **`vectors.php` expects the theme's `inc/` on disk.** Its `$INC` path is
    machine-specific; adjust it when running the generator on a new box.
 
 ## Deploy
 
-Two branches, both on `origin` (GitHub — no GitLab remote exists for this repo):
+Two branches, both on `origin` (GitHub, no GitLab remote exists for this repo):
 
-- `main` — source of truth.
-- `pages-dist` — the built `dist/` mirror that GitHub Pages serves. Rebuilding and
+- `main`, source of truth.
+- `pages-dist`, the built `dist/` mirror that GitHub Pages serves. Rebuilding and
   pushing it **is** the staging deploy; keep `public/.nojekyll` in place or Pages
   skips the underscore-prefixed `_astro/` assets.
 
-Verify a deploy against the served bytes and the Pages build for *your* commit —
+Verify a deploy against the served bytes and the Pages build for *your* commit, 
 a green push is not a live fix.

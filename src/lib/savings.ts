@@ -1,4 +1,4 @@
-// Savings-goal + compound-interest engines — TS ports of inc/savings-goal.php
+// Savings-goal + compound-interest engines ;  TS ports of inc/savings-goal.php
 // and inc/compound-interest.php. The two share savingsPeriodicRate so the
 // sibling tools stay consistent. Tested vs PHP vectors.
 
@@ -55,36 +55,36 @@ export function savingsCalculate(
   return { monthly, total, interest, goal_reached: false };
 }
 
-/* ── P2-2 (fifth audit) — step-up deposits, the A7-verified solver ──────────
+/* ── P2-2 (fifth audit) ; step-up deposits, the A7-verified solver ──────────
  * The "deposit grows %/yr" feature on the Inflation Savings page: the visitor
  * promises to RAISE their deposit by a fixed percentage each year, and the
  * question becomes "what can I START at?" The deposit is level within each
- * year and steps up at each yearly anniversary — the same end-of-month
+ * year and steps up at each yearly anniversary ; the same end-of-month
  * convention savingsCalculate prices (last deposit earns nothing).
  *
  * THE MATHS WAS DERIVED AND VERIFIED AGAINST THE A7 VECTOR ROWS BEFORE THIS
- * ENGINE CODE WAS WRITTEN (scripts/appendix-a-vectors.json stepUpDeposits —
+ * ENGINE CODE WAS WRITTEN (scripts/appendix-a-vectors.json stepUpDeposits; 
  * the prior leg's dying wish, honoured):
  *   context: ₦10M goal, ₦1M saved, 15% return, 60 months, 24% inflation,
  *   so target' = 10,000,000 × 1.24^5 = ₦29,316,250.62
  *   with i = 0.15/12 = 0.0125 exactly (savingsPeriodicRate is exact for
- *   "monthly" — (1+EAR)^(1/12) with EAR=(1+r/12)^12 telescopes to r/12):
+ *   "monthly" ; (1+EAR)^(1/12) with EAR=(1+r/12)^12 telescopes to r/12):
  *     start = (target' − current·(1+i)^n) / (s₁₂ · Σ_{y<Y} (1+g)^y·(1+i)^(n−12(y+1)))
  *   where s₁₂ = ((1+i)^12 − 1)/i, Y = ceil(n/12).
  *   Rows reproduced EXACTLY (all five, ±₦0): 0% → 307188 · 10% → 258803 ·
- *   15% → 237452 · 20% → 217855 · 24% → 203364 — and at g=0 the block sum
+ *   15% → 237452 · 20% → 217855 · 24% → 203364 ; and at g=0 the block sum
  *   telescopes to the level formula, agreeing with the gated engine to float
- *   path noise (Δ 5.8e-11 on the seed; both print ₦307,188 — the 0% row is
+ *   path noise (Δ 5.8e-11 on the seed; both print ₦307,188 ; the 0% row is
  *   v1's already-gated nairaValue[2].monthly 307188).
  *
  * UNITS follow the engine's own convention: rates and growth arrive as
  * DECIMALS (0.15 = 15%/yr, 0.10 = 10%/yr), exactly like annualRate in
  * savingsCalculate(). The caller inflates the target when it wants tomorrow's
- * money — this function is inflation-agnostic on purpose (the same solver
+ * money ; this function is inflation-agnostic on purpose (the same solver
  * prices a nominal goal).
  *
  * Returns NaN when the deposit stream cannot price the goal (absurd growth ×
- * horizon overflowing the block sum) — the page voices "Out of range" on it,
+ * horizon overflowing the block sum) ; the page voices "Out of range" on it,
  * never a confident number. 0 when the existing balance alone compounds past
  * the target. */
 export function savingsStepUpStart(
@@ -127,8 +127,8 @@ export function savingsStepUpStart(
   return Number.isFinite(monthly) ? monthly : NaN;
 }
 
-/* ── P2-5 (fifth audit) — the reverse solver: months to a goal ─────────────
- * "How long if I save ₦X/month?" — the time-driven half of the Savings Goal
+/* ── P2-5 (fifth audit) ; the reverse solver: months to a goal ─────────────
+ * "How long if I save ₦X/month?" ; the time-driven half of the Savings Goal
  * mode toggle. Same convention as savingsCalculate: end-of-month deposits,
  * monthly rate i = r/12 (exact for "monthly"), so the balance after n months
  * is C·(1+i)^n + X·((1+i)^n − 1)/i and the horizon is the exact real root of
@@ -136,11 +136,11 @@ export function savingsStepUpStart(
  *   i > 0, X > 0:  n = ln((T·i + X)/(C·i + X)) / ln(1+i)
  *   i > 0, X = 0:  n = ln(T/C) / ln(1+i)   (the balance alone)
  *   i = 0:         n = (T − C)/X           (or never, at X = 0)
- * Returned FRACTIONAL (the exact crossing, e.g. 46.2) — the ceil to whole
+ * Returned FRACTIONAL (the exact crossing, e.g. 46.2) ; the ceil to whole
  * months is a DISPLAY decision the page owns (deposits land at month end, so
  * the first whole month that clears the goal is ceil(n)). Infinity means
  * "never": no deposits and nothing compounding toward the goal. 0 means the
- * goal is already met — nothing to save. */
+ * goal is already met ; nothing to save. */
 export function savingsMonthsToGoal(
   target: number,
   current: number,

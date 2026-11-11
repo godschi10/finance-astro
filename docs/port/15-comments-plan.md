@@ -1,4 +1,4 @@
-# 15 — Comments for the static port: the plan (awaiting King's approval)
+# 15, Comments for the static port: the plan (awaiting King's approval)
 
 > King's order: "port comments, make serious plans for comments let's give it
 > a custom comment, but for our custom Cloudflare comments style. Let's plan
@@ -31,10 +31,10 @@ inventing a new design.
   reactions, can_edit, is_edited, owns, …}` (class-ajax-handler.php:1273+).
 - **Config object** `var vibeComments = {…}` (iconMode, nonce, ajaxUrl,
   postId, replyPush.publicKey, mentions.authors, maxCommentLength:2000,
-  full i18n dict) — served inline before the script.
+  full i18n dict), served inline before the script.
 - **Style layers**: plugin base `public/css/vibe-comments.css` (40,720 bytes)
   + theme override `assets/css/vibe-comments.css` (24,412 bytes, enqueued
-  only when the plugin is active — enqueue.php:491-505). The override IS the
+  only when the plugin is active, enqueue.php:491-505). The override IS the
   gold skin: `--vibe-primary:#d97706`, hover `#b45309`, light `--vibe-bg:
   #ffffff`, dark `#f59e0b` on `#131210`, borders `#5e5748`, radius 10px.
 - **Client JS**: `public/js/vibe-comments.js` (151,632 bytes): comment card
@@ -43,7 +43,7 @@ inventing a new design.
   sort (Newest/Oldest/Top), relative time, markdown-lite renderer with
   escapeHtml at every sink.
 
-## 1. Architecture — two layers, honest about the split
+## 1. Architecture, two layers, honest about the split
 
 ```
 Static port (GitHub Pages)              Cloudflare (the custom backend)
@@ -62,11 +62,11 @@ Static port (GitHub Pages)              Cloudflare (the custom backend)
 
 - **UI = port** (Law 0): the King's own gold-skinned vibe design, byte-faithful.
 - **Backend = custom on Cloudflare**: this IS the "custom Cloudflare comments"
-  half — a Worker + D1 replacing admin-ajax/PHP/WP-DB, zero external
+  half, a Worker + D1 replacing admin-ajax/PHP/WP-DB, zero external
   dependencies (plugin law #1 holds: no Disqus, no SaaS, no third-party
   comment services).
 
-## 2. Worker API v1 — mapped from the 14 actions
+## 2. Worker API v1, mapped from the 14 actions
 
 | WP action | v1 Worker endpoint | Notes |
 |---|---|---|
@@ -79,20 +79,20 @@ Static port (GitHub Pages)              Cloudflare (the custom backend)
 | vibe_edit_comment | P2 | edit window ships in phase 2 |
 | vibe_search_comments, toggle_notify, google_auth, session_state, pin, accept_answer | P2/P3 | search+sort P2; no WP users → login paths P3 |
 
-**D1 schema** (mirrors the plugin's commentmeta semantics — state lives on the
+**D1 schema** (mirrors the plugin's commentmeta semantics, state lives on the
 comment, nothing third-party stored):
 
 ```sql
 CREATE TABLE comments (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  post_slug TEXT NOT NULL,          -- the Astro slug is the post key
-  parent_id INTEGER DEFAULT 0,      -- 0 = top-level
+  post_slug TEXT NOT NULL,         -- the Astro slug is the post key
+  parent_id INTEGER DEFAULT 0,     -- 0 = top-level
   author TEXT NOT NULL,
-  email_hash TEXT NOT NULL,         -- SHA-256(email+salt); email NEVER stored raw
-  content_md TEXT NOT NULL,         -- stored markdown-lite, rendered client-side
-  approved INTEGER DEFAULT 0,      -- moderation queue
-  spam_score INTEGER DEFAULT 0,    -- ported scorer, display-only
-  guest_token TEXT,                 -- SHA-256(IP+UA+salt+day): ownership rail
+  email_hash TEXT NOT NULL,        -- SHA-256(email+salt); email NEVER stored raw
+  content_md TEXT NOT NULL,        -- stored markdown-lite, rendered client-side
+  approved INTEGER DEFAULT 0,     -- moderation queue
+  spam_score INTEGER DEFAULT 0,   -- ported scorer, display-only
+  guest_token TEXT,                -- SHA-256(IP+UA+salt+day): ownership rail
   created_at INTEGER NOT NULL,
   edited_at INTEGER
 );
@@ -105,18 +105,18 @@ CREATE TABLE reactions (
 );
 ```
 
-**KV**: `rl:<ip>` submit counter (the plugin's live law is ~1/min per IP —
+**KV**: `rl:<ip>` submit counter (the plugin's live law is ~1/min per IP, 
 kept); no other state.
 
-## 3. Antispam — the plugin's philosophy, Cloudflare's tools
+## 3. Antispam, the plugin's philosophy, Cloudflare's tools
 
-1. **Honeypot `vibe_hp`** — verbatim (template line 211).
-2. **Rate limit** — 1 submit/min/IP, 10/hour/IP (KV).
-3. **Cloudflare Turnstile** (managed, free) — the one place "Cloudflare
+1. **Honeypot `vibe_hp`**, verbatim (template line 211).
+2. **Rate limit**, 1 submit/min/IP, 10/hour/IP (KV).
+3. **Cloudflare Turnstile** (managed, free), the one place "Cloudflare
    comments" buys real protection at zero dependency cost; hidden widget on
-   the form, token verified Worker-side. *King decision 3 — can be declined;
+   the form, token verified Worker-side. *King decision 3, can be declined;
    honeypot+ratelimit still hold.*
-4. **Spam scorer** — port `class-spam-score.php` (pure heuristics, stateless)
+4. **Spam scorer**, port `class-spam-score.php` (pure heuristics, stateless)
    to the Worker; flags for moderation, never auto-acts (plugin law).
 
 ## 4. Moderation + identity
@@ -125,7 +125,7 @@ kept); no other state.
   email hashed at rest, never rendered, never shared.
 - **Approve-first by default** (WP parity: comments held for moderation).
   The King gets an email per submission (Worker + MailChannels, free) with
-  one-click Approove/Delete links signed by HMAC token — or a minimal admin
+  one-click Approove/Delete links signed by HMAC token, or a minimal admin
   page on the Worker guarded by `ADMIN_TOKEN`. *King decision 2.*
 - Guest token (SHA-256 of IP+UA+salt+day) = the plugin's `_vibe_owner` rail:
   powers reaction ownership now, the 5-min edit window in P2.
@@ -137,17 +137,17 @@ kept); no other state.
   `is_user_logged_in()` always false → auth-bar renders "Comment as Guest"
   only; WP-login/Google buttons honestly removed (declared divergence:
   no WP behind a static site). `#gwill-comment-ads` hidden slots ship as-is
-  (dead until the ad system lands — honest hold, not deleted).
+  (dead until the ad system lands, honest hold, not deleted).
 - **CSS**: BOTH stylesheets verbatim, in the same cascade order the theme
   enqueues (plugin base first, gold override second). The 40KB base +
-  24KB override ride on the article page only (not every page — lazy import),
+  24KB override ride on the article page only (not every page, lazy import),
   so the 54-page inline bundle grows only where comments live.
 - **JS**: port the render core from `vibe-comments.js` (card builder,
   reaction picker with emoji-first+SVG fallback, relative time, markdown-lite
   with escapeHtml at every sink, i18n dict verbatim); swap the transport
   layer (XHR→admin-ajax) for `fetch()`→Worker with the SAME payload shapes.
   Config object `vibeComments` ported field-for-field: `ajaxUrl` → Worker
-  URL, `replyPush` disabled (no push rail on static yet — P3), `mentions`
+  URL, `replyPush` disabled (no push rail on static yet, P3), `mentions`
   seeded from content authors, `maxCommentLength: 2000`, i18n unchanged.
 - **Single-bind law** (the × -twice lesson): the comments script ships as
   exactly ONE module; the gate asserts one init path.
@@ -155,13 +155,13 @@ kept); no other state.
 ## 6. Honest holds (never fake controls)
 
 - Reactions and replies are REAL in v1 (Worker-backed). Push notify, email
-  notify, mentions, search, edit, Q&A: not in v1 — their opt-in UI is not
+  notify, mentions, search, edit, Q&A: not in v1, their opt-in UI is not
   rendered rather than rendered-dead (the plugin hides unavailable rails the
   same way: `Vibe_Comments_Reply_Push::is_available()` gates its block).
 - Comment-ad slots: hidden markup shipped, no clone behaviour until the ad
   system port (open-hold dependency).
 - Worker unreachable → the list/form show the plugin's own honest error
-  strings ("Could not load comments." / "Try again") — no silent failure.
+  strings ("Could not load comments." / "Try again"), no silent failure.
 
 ## 7. Phases
 
@@ -180,14 +180,14 @@ kept); no other state.
 
 1. Markup parity: ported template renders every template id/class
    (`vibe-comments-section`, `vibe-load-comments-btn`, `vibe-comment-list`,
-   form fields, honeypot, counter) — counted, not grepped.
+   form fields, honeypot, counter), counted, not grepped.
 2. Style: both CSS files verbatim-diffed (rule-by-rule, media contexts
    included); gold tokens present (`--vibe-primary:#d97706`, dark `#f59e0b`).
 3. Config: `vibeComments` object field-for-field vs the captured live one.
 4. Single-bind: exactly one comments script import; no folded copy anywhere.
 5. No dead controls: every rendered control maps to a Worker endpoint;
    P2/P3 features absent from markup, not hidden.
-6. E2E: real input on the deployed Pages URL — load → guest submit →
+6. E2E: real input on the deployed Pages URL, load → guest submit →
    moderation approve → visible; reaction toggles and re-toggles.
 
 ## 9. Ops (Cloudflare free tier, fits easily)
@@ -195,7 +195,7 @@ kept); no other state.
 - Workers free: 100k req/day; D1 free: 5M reads/100k writes per day;
   KV free: 100k reads/day; Turnstile: free; MailChannels via Workers: free.
   A finance blog's comments sit orders of magnitude below all of these.
-- Deploy: `wrangler deploy` from the VPS (wrangler not yet installed — npm
+- Deploy: `wrangler deploy` from the VPS (wrangler not yet installed, npm
   install at implementation); secrets `ADMIN_TOKEN`, `TURNSTILE_SECRET`,
   `EMAIL_HMAC_KEY`, `SALT` via `wrangler secret put`; D1 backup via
   `wrangler d1 export`.
@@ -205,11 +205,11 @@ kept); no other state.
 
 1. **Worker domain**: `comments-api.<account>.workers.dev` (free, zero DNS,
    recommended to start) or a route on a King-owned domain?
-2. **Moderation**: approve-first (recommended — WP parity, spam stays off
+2. **Moderation**: approve-first (recommended, WP parity, spam stays off
    the page) or instant-publish?
 3. **Turnstile**: on (recommended, free, no dependency violation) or
    honeypot+ratelimit only?
 4. **Reactions in v1**: ship the 4 (like/heart/fire/laugh, emoji-first +
    SVG fallback, exactly as live) or hold for P2?
 5. **Phase cut**: confirm P1 floor above (list/replies/guest-form/reactions/
-   moderation/antispam) — anything the King wants pulled forward?
+   moderation/antispam), anything the King wants pulled forward?

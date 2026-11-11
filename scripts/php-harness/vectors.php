@@ -4,7 +4,7 @@ error_reporting( E_ALL & ~E_DEPRECATED );
 require __DIR__ . '/stubs.php';
 // The theme root. This used to be hardcoded to an author-machine path,
 // a path from the original author's machine that does not exist here, so the
-// oracle generator died on require_once and could not be regenerated at all —
+// oracle generator died on require_once and could not be regenerated at all, 
 // which is exactly why the C1 emergency-fund bug sat unfixed: regenerating
 // vectors.json was impossible without first fixing this. Now overridable, and
 // the fallback auto-detects the checkout on this box.
@@ -146,7 +146,7 @@ $base_ts = strtotime( '2026-06-01' );
 for ( $i = 0; $i < 100; $i++ ) {
 	$pts[] = array( 'date' => gmdate( 'Y-m-d', $base_ts + $i * 86400 ), 'ngn' => 1400.0 + $i * 1.5 + ( $i % 7 ) * 2.0 );
 }
-$HIST_ORACLE_MS = 1791449911; // 2026-10-08T08:58:31Z — MUST mirror HIST_ORACLE_MS in scripts/vectors-check.mjs
+$HIST_ORACLE_MS = 1791449911; // 2026-10-08T08:58:31Z, MUST mirror HIST_ORACLE_MS in scripts/vectors-check.mjs
 $rec( 'fxhist_summary', gwill_fx_history_summary( $pts ) );
 $rec( 'fxhist_range_count', count( gwill_fx_history_range( $pts, 30, $HIST_ORACLE_MS ) ) );
 $rec( 'fxhist_range90_count', count( gwill_fx_history_range( $pts, 90, $HIST_ORACLE_MS ) ) );

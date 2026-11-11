@@ -1,4 +1,4 @@
-// Footer fidelity contract — GWill Finance WordPress → Astro port.
+// Footer fidelity contract, GWill Finance WordPress → Astro port.
 //
 // Asserts the footer port against the WP source of truth (gwill-finance-theme
 // 1.13.39, footer.php sections 2–5 + section 19 of the stylesheet). Every CSS
@@ -22,7 +22,7 @@ const footerRaw = readFileSync(FOOTER, "utf8");
 const site = readFileSync(SITE, "utf8");
 const css = readFileSync(CSSFILE, "utf8").replace(/\s+/g, " ").trim();
 
-// Markup only — the frontmatter comments and the inline <script> legitimately
+// Markup only, the frontmatter comments and the inline <script> legitimately
 // repeat some attribute names (e.g. the note explaining the dropped WP id).
 const footer = footerRaw.slice(
   footerRaw.indexOf('<footer class="footer">'),
@@ -44,7 +44,7 @@ const checks = [
   ["desktop grid .ftop + brand column", count(footer, 'class="ftop"') === 1 && count(footer, 'class="fcol fcol--brand"') === 1],
   // SITE-6 (the King's brand order, 2026-10-12): the lockup pin guards the
   // corrected brand string (the SITE-1 precedent below). The .fnet network
-  // line is NOT part of this change — it names the gwillchijioke.com DOMAIN
+  // line is NOT part of this change, it names the gwillchijioke.com DOMAIN
   // family, not the brand, and stays verbatim.
   ["brand lockup .flogo .n + .nm (both footers)", count(footer, 'class="flogo"') === 2 && count(footer, '<span class="n">₦</span><span class="nm">gwillchijioke</span>') === 2],
   ["blurb .ftag in both footers (mobile keeps WP inline size)", count(footer, 'class="ftag"') === 2 && has(footer, 'style="margin-top:4px;font-size:11px"')],
@@ -57,19 +57,19 @@ const checks = [
   ["follow CTA row .ffollow x2", count(footer, 'class="ffollow"') === 2],
   ["push bell button x2", count(footer, "data-push-bell") === 2 && has(footer, "Notify me of new posts")],
   ["bell uses WP-faithful copy but NOT the duplicate WP id", !has(footer, 'id="gwill-bell"')],
-  // King's order 2026-09-26: "Remove that add to Google widget, it's useless" —
+  // King's order 2026-09-26: "Remove that add to Google widget, it's useless", 
   // the fgooglenews anchors and gnews icon are GONE from both footers.
   ["Google News widget REMOVED (King 2026-09-26)", !footer.includes("fgooglenews") && !footer.includes("Add to Google News") && !footer.includes("publishercenter.google.com")],
   ["install buttons x2 each (desktop+mobile)", count(footer, "data-install-app") === 2 && count(footer, "data-install-ios") === 2],
   ["install buttons start hidden (WP contract)", count(footer, "hidden") >= 4],
   ["install labels + states from WP", has(footer, 'data-label-alt="Install not available"') && has(footer, 'data-label-done="App installed"')],
-  ["iOS button dashed variant + guide text (KING FINGERPRINT FIX 2026-10-04: ⌫ is the delete key, not the Share icon — wording fixed)", count(footer, 'class="finstall finstall--ios"') === 2 && has(footerRaw, "Tap Share, then “Add to Home Screen”")],
+  ["iOS button dashed variant + guide text (KING FINGERPRINT FIX 2026-10-04: ⌫ is the delete key, not the Share icon, wording fixed)", count(footer, 'class="finstall finstall--ios"') === 2 && has(footerRaw, "Tap Share, then “Add to Home Screen”")],
 
   // ── columns + bottom bar ──────────────────────────────────────────────────
   ["column titles: Articles / Finance Apps / Network (desktop)", ["Articles", "Finance Apps", "Network"].every((t) => has(footerRaw, t))],
   ["mobile grid .mfgrid adds the Site column", count(footer, 'class="mfgrid"') === 1 && has(footerRaw, "Site")],
   ["empty footer ad wrapper collapses (WP v1.12.10)", count(footer, 'class="ad-bg ad-bg--footer"') === 1 && css.includes(".ad-bg--footer:empty")],
-  // SITE-6 (2026-10-12): one author form everywhere — the hyphenated byline
+  // SITE-6 (2026-10-12): one author form everywhere, the hyphenated byline
   // form "G-will Chijioke" (already pinned on the credit link below). The
   // copyright's unhyphenated "Gwill Chijioke" was the audit's variance finding.
   ["desktop bottom bar .fbot", count(footer, 'class="fbot"') === 1 && has(footer, "G-will Chijioke")],
@@ -77,7 +77,7 @@ const checks = [
   ["legal row: Privacy · Disclaimer · Affiliates", ["Privacy", "Disclaimer", "Affiliates"].every((t) => has(footerRaw, t)) && has(footer, 'class="fdot"')],
   ["back-to-top link x2 (mobile keeps WP inline colour)", count(footer, "Back to top ↑") === 2 && has(footer, 'style="color:var(--dark-dim)"')],
   // SITE-1 (copy-truth leg, 2026-10-09): the assertion below used to demand
-  // `&copy; {year} {copyrightHost}` — the WP `home_url()` origin pasted after a
+  // `&copy; {year} {copyrightHost}`, the WP `home_url()` origin pasted after a
   // copyright symbol. That is what made the footer print its own URL as the
   // rights holder ("© 2026 https://godschi10.github.io", and at launch
   // "© 2026 https://gwillchijioke.com"). The holder is the brand (SITE.name),
@@ -92,10 +92,10 @@ const checks = [
   ["articles group = WP set", ["All Articles", "Savings", "Investing", "Crypto"].every((t) => has(site, t))],
   ["apps group = WP set", ["Dollar Accounts", "Finance Apps", "Banking", "Remittance"].every((t) => has(site, t))],
   ["site group = WP set", ["Money Calculators", "About", "Contact"].every((t) => has(site, t))],
-  // SITE-6 (2026-10-12): tech.gwillchijioke.com is RETIRED — the King's
+  // SITE-6 (2026-10-12): tech.gwillchijioke.com is RETIRED, the King's
   // portfolio CHANGELOG moved every such link to androidscroll.com; the
   // network column pin moved with it. The gwillchijioke.com family itself
-  // (the .fnet line) stays — that is the launching domain, not a stale link.
+  // (the .fnet line) stays, that is the launching domain, not a stale link.
   ["network column differs per footer (WP footer.php 72-80 vs 137-143)", has(site, "FOOTER_NETWORK") && has(site, "desktop:") && has(site, "mobile:") && has(site, "androidscroll.com")],
   ["no dead /all-articles/ link anywhere", !has(site, 'href: "/all-articles/"')],
 

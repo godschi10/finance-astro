@@ -1,9 +1,9 @@
-// Article-surface gate — the ported single-post page.
+// Article-surface gate, the ported single-post page.
 //
 // Why this gate exists: the header, footer and homepage each had a contract gate;
 // the article page had none, so nothing stopped a template edit from silently
 // dropping a required element. It was rewritten when the page became a real port
-// of the theme's single.php — the assertions now describe WORDPRESS's contract
+// of the theme's single.php, the assertions now describe WORDPRESS's contract
 // (class vocabulary, element order, byte-exact copy, conditionals) rather than
 // the invented stub that preceded it, plus the rules that keep the port honest:
 // the theme's stylesheet is not reinterpreted, and forbidden staging artefacts
@@ -245,7 +245,7 @@ const checks = [
     // rehype plugins only run when the unified() processor is pinned explicitly.
     // The old assertion matched the literal substring
     //   "markdown: { rehypePlugins: [rehypeSlug, rehypeWpTable]"
-    // which the v7 config no longer contains — it is now
+    // which the v7 config no longer contains, it is now
     //   "markdown: { processor: unified(), rehypePlugins: [rehypeSlug, rehypeWpTable] }".
     // That was a source-text match, not the semantic claim its own name made, so
     // it is STRENGTHENED here rather than reworded: it still pins the config, but
@@ -280,7 +280,7 @@ const checks = [
   ["JSON-LD escaping is applied", /replace\(\/<\/g, "\\\\u003c"\)/.test(tpl)],
 
   // ── the King's v0.4.1 verdict: lightbox, covers, cards (v0.4.2) ─────────
-  // King: "lightbox doesn't even work." — the theme ships assets/js/lightbox.js
+  // King: "lightbox doesn't even work.", the theme ships assets/js/lightbox.js
   // (266 lines, enqueued on every singular page, enqueue.php:170-192); the port
   // shipped neither the JS nor the .gl-* base CSS. Both branches now a contract:
   ["the lightbox module is ported and wired beside article.js",
@@ -298,7 +298,7 @@ const checks = [
     /\.art-body \.wp-block-image img \{ cursor: zoom-in; \}/.test(c)],
   ["the lightbox mobile overrides match the theme (style.css:2243-2248)",
     /@media \(max-width: 767px\) \{\s*\.gl-nav \{ width: 36px/.test(c)],
-  // King: "no featured images on posts." — single.php:106 emits .art-cover when
+  // King: "no featured images on posts.", single.php:106 emits .art-cover when
   // has_post_thumbnail(); live posts ALL carry a cover (category art). The port
   // omitted the element wholesale.
   ["every article carries a featured image in frontmatter",
@@ -377,7 +377,7 @@ for (const cls of ["wp-block-quote", "wp-block-pullquote", "wp-block-table",
     t.includes("const decode = (s: string) =>")]);
   checks.push(["decode() unescapes the ampersand entity (single pass)",
     t.includes(".replace(/" + amp + "/g, \"" + A + "\")")]);
-  checks.push(["served TOC single-escapes — no " + dbl + " anywhere",
+  checks.push(["served TOC single-escapes, no " + dbl + " anywhere",
     dist.includes('<a href="#5-images-gallery">5. Images ' + amp + " gallery</a>") &&
     !dist.includes("5. Images " + dbl + " gallery")]);
   checks.push(["served TOC carries all four ampersand headings",
@@ -390,7 +390,7 @@ for (const cls of ["wp-block-quote", "wp-block-pullquote", "wp-block-table",
 // The page carries the King's own comment UI, wired to the Cloudflare Worker
 // that replaced admin-ajax. What this block protects: the surface is present,
 // in WordPress's own position, wired to the live API, riding the plugin's own
-// stylesheets in the theme's cascade order — and that every P2/P3 hold stayed
+// stylesheets in the theme's cascade order, and that every P2/P3 hold stayed
 // ABSENT (absence, never a dead control), plus the single-bind law.
 {
   const v = flat(vibe);
@@ -414,11 +414,11 @@ for (const cls of ["wp-block-quote", "wp-block-pullquote", "wp-block-table",
     // the 10 verified-dead rules pruned by royal order (vibe-badge/awaiting/
     // user-bar/logout/google/closed/new-banner-btn/push-label + 2 orphans);
     // the 4 .vibe-rx-t-* rules are untouched (live via JS composition). This pin
-    // exists to force manager review of exactly this kind of change — reviewed.
+    // exists to force manager review of exactly this kind of change, reviewed.
     Buffer.byteLength(read("src/styles/vibe-comments.base.css"), "utf8") === 38197 &&
     Buffer.byteLength(read("src/styles/vibe-comments.gold.css"), "utf8") > 24412 &&
     read("src/styles/vibe-comments.gold.css").includes("vibe-auth-note")]);
-  checks.push(["the live Worker base is wired, not a placeholder (KING PORTABILITY FIX 2026-10-04: single COMMENTS_API const in site.ts — was a 3× duplicated literal; CSP keeps its own explicit literal)",
+  checks.push(["the live Worker base is wired, not a placeholder (KING PORTABILITY FIX 2026-10-04: single COMMENTS_API const in site.ts, was a 3× duplicated literal; CSP keeps its own explicit literal)",
     siteTs.includes('export const COMMENTS_API = "https://comments-api.gwill.workers.dev"') &&
     t.includes("apiBase={COMMENTS_API}")]);
   checks.push(["heading count baked at build time with a non-fatal 0 fallback",
@@ -434,7 +434,7 @@ for (const cls of ["wp-block-quote", "wp-block-pullquote", "wp-block-table",
     !v.includes('id="vibe-guest-toggle"')]);
   checks.push(["reaction labels come from the plugin i18n dict, not new copy",
     v.includes("reactLike: 'Like'") && v.includes("reactFire: 'Fire'")]);
-  // P2/P3 holds — absence, never a rendered-dead control
+  // P2/P3 holds, absence, never a rendered-dead control
   checks.push(["push opt-in NOT rendered (P3 hold is absence)",
     !v.includes("vibe-reply-push-optin")]);
   checks.push(["email opt-in NOT rendered (P3 hold is absence)",
@@ -444,7 +444,7 @@ for (const cls of ["wp-block-quote", "wp-block-pullquote", "wp-block-table",
     !v.includes('<a class="vibe-btn vibe-btn-wp"')]);
   checks.push(["auth-bar separator removed with the buttons it separated",
     !v.includes('class="vibe-or"')]);
-  // single-bind law + the transport seam — the module is LAZY (King's order
+  // single-bind law + the transport seam, the module is LAZY (King's order
   // 2026-09-26): the stub loads it by ?url on Load-Comments click, so the
   // single-bind contract is now "one lazy ?url import + one inline stub",
   // and no eager import of the big module anywhere on the page.
@@ -455,7 +455,7 @@ for (const cls of ["wp-block-quote", "wp-block-pullquote", "wp-block-table",
   checks.push(["the module is the plugin's own client script, not a rewrite",
     vjs.includes("getGuestId") && vjs.includes("escapeHtml") &&
     vjs.includes("renderMarkdown")]);
-  checks.push(["transport talks to the Worker — no admin-ajax, no action=, no nonce",
+  checks.push(["transport talks to the Worker, no admin-ajax, no action=, no nonce",
     vjs.includes("/comments?post=") && vjs.includes("/count?post=") &&
     !vjs.includes("admin-ajax") && !vjs.includes("action=vibe_") && !vjs.includes("nonce=")]);
   // served bytes
@@ -481,5 +481,5 @@ for (const [name, ok] of checks) {
     console.log(`  FAIL  ${flat(name)}`);
   }
 }
-console.log(`\narticle gate: ${fail === 0 ? "PASS" : "FAIL"} — ${pass}/${checks.length} assertions`);
+console.log(`\narticle gate: ${fail === 0 ? "PASS" : "FAIL"}, ${pass}/${checks.length} assertions`);
 process.exit(fail === 0 ? 0 : 1);

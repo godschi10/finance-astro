@@ -7,11 +7,11 @@ import { AUTHORS, authorBySlug, allArticles, fmtMonthYear, GRAVATAR } from "../.
 import { paginate } from "../../lib/pagination";
 
 // Faithful port of the theme's author.php (gwill-finance-theme 1.13.39, v1.0.217
-// profile redesign) — King order 2026-09-30: "You didn't port author archive".
+// profile redesign) ;  King order 2026-09-30: "You didn't port author archive".
 // The old page invented its own .con.sg/.author-bio anatomy; this is the
 // template's real markup:
 //   .phd: gwill_breadcrumbs() is_author branch = Home › {display_name}
-//     (inc/helpers.php:521-529 — author archives carry NO "All Articles" crumb)
+//     (inc/helpers.php:521-529 ;  author archives carry NO "All Articles" crumb)
 //     + .author-head > .author-av > get_avatar($author_id, 96, lazy)
 //                    > .author-id > h1 {display_name} + p {bio}
 //                                   + .abio-s.author-socials > a.abio-si
@@ -20,7 +20,7 @@ import { paginate } from "../../lib/pagination";
 //     Next →) when the author exceeds posts_per_page
 //   empty state: .page-surface > h2 style="margin-top:0" "No posts from this
 //     author yet"
-// SEO description — inc/seo.php:149-154: 'Articles written by %1$s on %2$s.'
+// SEO description ;  inc/seo.php:149-154: 'Articles written by %1$s on %2$s.'
 // Gravatar: the real photo registered to godschi10@gmail.com (King, 2026-09-28),
 // same hash constant as the article byline (data/content.ts).
 export async function getStaticPaths() {

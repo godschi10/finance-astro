@@ -4,14 +4,14 @@
  *
  * S2b (fifth audit P0-2, v0.7.57) REMOVED the live price fetch: the FX feed
  * (open.er-api.com) updates once per 24h, so refetching FX per visit bought
- * nothing and added throttle exposure. That reasoning was HALF RIGHT —
+ * nothing and added throttle exposure. That reasoning was HALF RIGHT; 
  * re-verified 2026-10-27: Coinbase BTC/ETH spot and gold-api XAU ARE genuinely
  * live (updated seconds before the probe), only FX is once-daily. So section 2
  * is restored: BTC/ETH/XAU refresh per visit, FX re-reads the same daily feed
  * at its next 00:02 UTC window. The label itself: the King ordered the plan's
- * LIVE signature restored 2026-11-03 ("used to be a live moving strip — get it
+ * LIVE signature restored 2026-11-03 ("used to be a live moving strip ; get it
  * back"); the 0.7.57 exact-stamp long label is retired from the strip. HONESTY
- * MOVED, not deleted (S2b's feed facts stand — FX IS once-daily): the .tl
+ * MOVED, not deleted (S2b's feed facts stand ; FX IS once-daily): the .tl
  * carries the full "Daily reference rate (FX) · updated <stamp>" as its
  * title/tooltip, the nav aria-label says which sources are live vs daily, and
  * every rate page still stamps the snapshot with the "Daily reference rate ·
@@ -233,13 +233,13 @@ Table of Contents
 				setTimeout( run, 500 );
 			}
 
-			/* E27-I3 — an interruption (phone lock, tab switch, backgrounded for
+			/* E27-I3 ; an interruption (phone lock, tab switch, backgrounded for
 			   hours) used to resume to exactly the rates it froze at: there is no
 			   visibilitychange/pageshow listener anywhere on this page (census: 0),
 			   and the 60 s cache TTL is only honored at load. One listener now
 			   re-invokes the SAME revalidator when the visitor comes back to a
 			   visible tab and the snapshot is older than 15 minutes. No prompt,
-			   no banner — the calculator's figures never read the ticker, and
+			   no banner ; the calculator's figures never read the ticker, and
 			   run() itself keeps its 60 s guard for repeat flips. */
 			var RESUME_AFTER = 15 * 60 * 1000;
 			var resume = function () {

@@ -1,19 +1,19 @@
 ---
-// Footer — faithful port of gwill-finance-theme 1.13.39 (footer.php sections 2–5).
+// Footer ;  faithful port of gwill-finance-theme 1.13.39 (footer.php sections 2–5).
 //
 // Two footers live in the DOM, exactly as in WP: `.footer` (desktop grid) and
 // `.mfooter` (phone). CSS swaps them at 767/768px, the same contract the header
 // uses for .sh / .mh. Markup order, class names and copy strings are copied from
 // the live theme; the only deliberate deviations are noted inline:
 //   1. hrefs point at this port's real routes (WP's /all-articles/ permalink is
-//      not a route here — that would be a 404).
+//      not a route here ;  that would be a 404).
 //   2. The push bell carries data-push-bell instead of the WP id="gwill-bell",
 //      because both footers render one and duplicate ids are invalid HTML.
 import { SITE, FOOTER_GROUPS, FOOTER_NETWORK } from "../data/site";
 
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 const year = new Date().getFullYear();
-// SITE-1 (copy-truth leg, 2026-10-09): this used to be SITE.origin — a faithful
+// SITE-1 (copy-truth leg, 2026-10-09): this used to be SITE.origin ;  a faithful
 // copy of WP's `home_url()`, which prints the site's own host so a migrated
 // site shows its new domain. Served, that read "© 2026 https://godschi10.github.io,
 // Gwill Chijioke", and at launch it would have read "© 2026 https://gwillchijioke.com".
@@ -128,7 +128,7 @@ const LEGAL = [
     <span class="fcredit">
       Designed &amp; built by <a class="fcredit-link" href="https://gwillchijioke.com" target="_blank" rel="noopener noreferrer">G-will Chijioke</a>
     </span>
-    <!-- FX feed attribution (free feed tier requirement) — carried by both
+    <!-- FX feed attribution (free feed tier requirement) ; carried by both
          footers; the CSS swaps these blocks by viewport, so both need it. -->
     <span class="frates">Rates by <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer">Exchange Rate API</a></span>
     <span class="fbot-right">
@@ -207,7 +207,7 @@ const LEGAL = [
     <span class="mfcredit">
       Designed &amp; built by <a class="fcredit-link" href="https://gwillchijioke.com" target="_blank" rel="noopener noreferrer">G-will Chijioke</a>
     </span>
-    <!-- FX feed attribution (free feed tier requirement) — carried by both
+    <!-- FX feed attribution (free feed tier requirement) ; carried by both
          footers; the CSS swaps these blocks by viewport, so both need it. -->
     <span class="frates">Rates by <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer">Exchange Rate API</a></span>
     <span class="flegal">
@@ -225,11 +225,11 @@ const LEGAL = [
 </footer>
 
 <script is:inline>
-  /* Footer follow-CTAs — port of the theme's install/push behaviour.
+  /* Footer follow-CTAs ; port of the theme's install/push behaviour.
      Native install (Chromium) reveals the button only when the browser says the
      app is installable; iOS gets the Home-Screen guide instead (no install API).
      Push needs a server, so the bell takes the theme's own "unsupported"
-     treatment until a push service exists — see PUSH_ENDPOINT below. */
+     treatment until a push service exists ; see PUSH_ENDPOINT below. */
   (function () {
     "use strict";
     var appBtns = document.querySelectorAll("[data-install-app]");
@@ -291,7 +291,7 @@ const LEGAL = [
     var PUSH_ENDPOINT = "";
     var canPush = !!PUSH_ENDPOINT && "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
     var NOTE =
-      "Notifications aren't available yet — nothing was turned on.";
+      "Notifications aren't available yet: nothing was turned on.";
     document.querySelectorAll("[data-push-bell]").forEach(function (bell) {
       bell.addEventListener("click", function () {
         if (canPush) return;

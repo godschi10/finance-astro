@@ -12,11 +12,11 @@ imageAlt: "How to Buy Crypto P2P in Nigeria Without Getting Scammed"
 imageSrcset: "/wp-content/uploads/2026/03/crypto.png 1200w, /wp-content/uploads/2026/03/crypto-300x169.png 300w, /wp-content/uploads/2026/03/crypto-1024x576.png 1024w, /wp-content/uploads/2026/03/crypto-768x432.png 768w"
 ---
 
-P2P is how Nigeria buys crypto — bank transfer on one side, USDT on the other, platform escrow in the middle. The system is safe when you respect it and expensive when you improvise. Every scam story I have heard breaks at least one of the rules below.
+P2P is how Nigeria buys crypto: bank transfer on one side, USDT on the other, platform escrow in the middle. The system is safe when you respect it and expensive when you improvise. Every scam story I have heard breaks at least one of the rules below.
 
 ## Never leave escrow
 
-The marketplace holds the seller's crypto the moment you open the order. Your naira goes directly to the seller's verified bank account, you tap "Paid," the seller confirms, escrow releases. Anyone who suggests Telegram, WhatsApp side-deals, or "send first, I release after" is not offering a discount — they are describing a theft.
+The marketplace holds the seller's crypto the moment you open the order. Your naira goes directly to the seller's verified bank account, you tap "Paid," the seller confirms, escrow releases. Anyone who suggests Telegram, WhatsApp side-deals, or "send first, I release after" is not offering a discount; they are describing a theft.
 
 ## The five-minute verification checklist
 
@@ -28,12 +28,12 @@ The marketplace holds the seller's crypto the moment you open the order. Your na
 
 ## Red flags that mean cancel immediately
 
-Price more than 2% better than every other merchant. Pressure to release before confirming receipt. Requests to split payment across multiple accounts. A merchant who goes silent the moment you ask a verification question. Cancel the order, report, re-list — the two minutes you lose are the cheapest insurance in crypto.
+Price more than 2% better than every other merchant. Pressure to release before confirming receipt. Requests to split payment across multiple accounts. A merchant who goes silent the moment you ask a verification question. Cancel the order, report, re-list: the two minutes you lose are the cheapest insurance in crypto.
 
 ## Video walkthrough
 
-No companion video for this guide yet — the checklist above is the full flow: opening escrow, verifying the merchant, and the exact moment to tap release. Work through it once before your first trade.
+No companion video for this guide yet; the checklist above is the full flow: opening escrow, verifying the merchant, and the exact moment to tap release. Work through it once before your first trade.
 
 ## After the trade
 
-Move holdings off the marketplace into a wallet you control if you are holding longer than a week. Enable every security feature the platform offers — authenticator app, withdrawal whitelist, anti-phishing code. And size your first three trades small: ₦10,000 tuition beats ₦500,000 tuition.
+Move holdings off the marketplace into a wallet you control if you are holding longer than a week. Enable every security feature the platform offers: authenticator app, withdrawal whitelist, anti-phishing code. And size your first three trades small: ₦10,000 tuition beats ₦500,000 tuition.

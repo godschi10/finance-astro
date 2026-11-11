@@ -17,7 +17,7 @@ import { paginate } from "../../lib/pagination";
 //     the port's static search route is /search/), then .g3 of .ac cards,
 //     then nav.navigation.pagination + div style="margin-top:28px" ad slot.
 // WP paginates at posts_per_page = 10; page N lives at /articles/page/N/.
-// Static index route (no dynamic segment) — the collection is loaded directly.
+// Static index route (no dynamic segment) ;  the collection is loaded directly.
 const posts = await allArticles();
 const pages = paginate(posts);
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;

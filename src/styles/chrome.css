@@ -1,6 +1,6 @@
 /* ─────────────────────────────────────────────────────────────
-   chrome.css — DESIGN-LANGUAGE plan §P1-4 (R6: ticker/header/search
-   + the live dot). ADDITIVE only: header.css is untouched by design —
+   chrome.css ;  DESIGN-LANGUAGE plan §P1-4 (R6: ticker/header/search
+   + the live dot). ADDITIVE only: header.css is untouched by design ; 
    its media-query regexes are header-fidelity gate anchors (tablet 30px
    strip, 767px show/hide switch), so every elevation here rides later
    cascade with equal-or-higher specificity. No !important. No WP rule
@@ -8,17 +8,17 @@
    Imported after hub.css by design (R1 → … → R5 → R6).
    ───────────────────────────────────────────────────────────── */
 
-/* ── RETRACTED (v0.7.8): the one gold rule in chrome — a gold-tinted
+/* ── RETRACTED (v0.7.8): the one gold rule in chrome ;  a gold-tinted
       hairline under BOTH sticky bars. The King ordered it removed: it sat
       directly above the article reading-progress bar (.prog, position:
-      sticky; top: var(--header-h) — article.css:81), and two adjacent
+      sticky; top: var(--header-h) ;  article.css:81), and two adjacent
       horizontal rules under the header read as a double edge competing for
-      attention. The rules are DELETED, not neutralised — no
+      attention. The rules are DELETED, not neutralised ;  no
       `border-bottom: none`, no border-bottom-color override, no !important.
       header.css's verbatim `border-bottom: 1px solid var(--border)` (:62
       .sh + :599 .mh) is therefore back in sole charge: the header still
       carries its NEUTRAL theme 1px edge (that is the theme's own rule, not
-      an addition here) — only the gold tint is gone. ── */
+      an addition here) ;  only the gold tint is gone. ── */
 
 /* ── Type: nav links 13px/700. Weight lifts at ALL widths (hierarchy is
       the point: links and CTA stop competing at one weight); the 13px
@@ -30,11 +30,11 @@
 }
 
 /* ── Type: ticker 11px mono (font-family on the strip; .t-pair/.t-rate
-      carry explicit 10px/11px sizes and inherit the family — sizes are
+      carry explicit 10px/11px sizes and inherit the family ;  sizes are
       plan-correct already: rate line = 11px). ── */
 .ticker { font-family: var(--font-mono); }
 
-/* ── SIGNATURE (one per rung): "the live dot" — 6px solid green pulsing
+/* ── SIGNATURE (one per rung): "the live dot" ;  6px solid green pulsing
       dot (2s) + LIVE in 9px uppercase 0.14em gold, pinned BEFORE the
       first ticker item as a flow child of .ticker (outside .ticker-drag
       → zero marquee-seam impact; halves stay identical). Appears once,
@@ -77,11 +77,11 @@
   .tl-dot { animation: none; }
 }
 
-/* ── Marquee room (2026-11-03, King: "live moving strip back" — retire the
+/* ── Marquee room (2026-11-03, King: "live moving strip back" ;  retire the
       0.7.57 long strip label): .ticker-drag is the marquee stage; it must
       always own the width the .tl label leaves and be ABLE to shrink
       (min-width:0) so no future label length can pinch the sliding strip to
-      zero — the long 0.7.57 exact-stamp label overflowed 390px and did
+      zero ;  the long 0.7.57 exact-stamp label overflowed 390px and did
       exactly that on phones. Order-independent: adds only properties
       header.css never sets (.ticker-drag there carries will-change alone). ── */
 .ticker-drag { flex: 1 1 auto; min-width: 0; }
@@ -91,7 +91,7 @@
 .mno-list > li > a { font-size: 15px; padding: 14px 20px; }
 
 /* ── Search panel: input 48px phone; kbd footer desktop-only (the
-      markup stays — header fidelity asserts the kbd hints exist; this
+      markup stays ;  header fidelity asserts the kbd hints exist; this
       only hides .gs-foot below 768px). ── */
 @media (max-width: 767px) {
   .gs-input {

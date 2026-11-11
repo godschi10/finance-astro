@@ -5,7 +5,7 @@ import { fxNumber } from "../../lib/fx";
 import { FX_SNAPSHOT } from "../../data/fx-snapshot";
 import { FX_HISTORY_SEED } from "../../data/fx-history-seed";
 /* Build-time seed (F3/F03/#7/F12): the trend now paints from real, dated,
-   sourced reference points on first paint — the site's own committed USD/NGN
+   sourced reference points on first paint ; the site's own committed USD/NGN
    snapshots (never invented history), which your device's live fetches then
    extend forward. The engine path is unchanged; only the seeded POINTS change
    (the fx_history_* frozen-clock vectors pin the ENGINE, not this page). */
@@ -20,13 +20,13 @@ const seedSubLine = seed.change === 0
   : `${seed.direction === "up" ? "▲" : "▼"} ₦${fxNumber(Math.abs(seed.change), 0)} (${seed.change_pct.toFixed(1)}%) across the window · low ₦${fxNumber(seed.min, 0)} · high ₦${fxNumber(seed.max, 0)}`;
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
-<ToolShell fxTicker title="Dollar to Naira Trend - GWill Finance" description="USD to NGN trend over 30 days, 90 days or 12 months — windows that fill in as your device collects live feed points. No invented history, nothing backfilled." slug="exchange-rate-history" tool="$ USD to Naira Rate History" crumb="Rate History Chart" lede="The dollar-naira rate steps, it does not drift. Watch the window below — it opens seeded from this site's own recorded snapshots, then fills with the live rate your device fetches on each visit. Every point is real and timestamped; nothing is backfilled or invented." verified={`Build-seeded from recorded snapshots through ${FX_SNAPSHOT.as_of} · your device adds the live rate each visit`} faqs={[
-  { q: "Where does the history come from?", a: "The chart is seeded at build time from this site's own recorded USD/NGN snapshots — real, dated reference points captured from the same live feed the converter uses, with nothing invented. On each visit your browser fetches the current rate and adds today's point in this browser's storage, extending the seed forward. That device-collected part lives only in this browser, so it does not follow you to a new phone, another browser or a private window; the seed is the same everywhere and regenerates at build." },
-  { q: "Which windows can I view?", a: "30 days, 90 days, or 12 months — the windows that matter for sending, pricing, and holding decisions. You can pick any window from the very first visit; it draws the build-time seeded points plus the ones your device has recorded on top, and device points older than 12 months age out automatically." },
+<ToolShell fxTicker title="Dollar to Naira Trend - GWill Finance" description="USD to NGN trend over 30 days, 90 days or 12 months: windows that fill in as your device collects live feed points. No invented history, nothing backfilled." slug="exchange-rate-history" tool="$ USD to Naira Rate History" crumb="Rate History Chart" lede="The dollar-naira rate steps, it does not drift. Watch the window below: it opens seeded from this site's own recorded snapshots, then fills with the live rate your device fetches on each visit. Every point is real and timestamped; nothing is backfilled or invented." verified={`Build-seeded from recorded snapshots through ${FX_SNAPSHOT.as_of} · your device adds the live rate each visit`} faqs={[
+  { q: "Where does the history come from?", a: "The chart is seeded at build time from this site's own recorded USD/NGN snapshots: real, dated reference points captured from the same live feed the converter uses, with nothing invented. On each visit your browser fetches the current rate and adds today's point in this browser's storage, extending the seed forward. That device-collected part lives only in this browser, so it does not follow you to a new phone, another browser or a private window; the seed is the same everywhere and regenerates at build." },
+  { q: "Which windows can I view?", a: "30 days, 90 days, or 12 months: the windows that matter for sending, pricing, and holding decisions. You can pick any window from the very first visit; it draws the build-time seeded points plus the ones your device has recorded on top, and device points older than 12 months age out automatically." },
 ]}
 
   badge="USD to Naira trend · build-seeded · extends on your device",
-  copy={[["h2", "How to read the USD to naira trend"],["p", "The line above plots the number of naira one $ buys on each recorded day. When the line rises, the naira is weakening (your naira buys fewer USD); when it falls, the naira is strengthening. The stat strip summarises the change: the 30-day figure tells you whether the last month has moved in your favour or against it."],["p", "A falling USD-to-naira line is good news if you buy foreign currency for tuition, travel or imports, you need fewer naira. It is bad news if you earn naira and hold foreign savings, or if you run a business that imports. The converse is true when the line climbs. The trend is how you size the risk before you move money."],["h2", "Why the naira moves in steps, not smoothly"],["p", "The official USD/NGN rate does not drift continuously, it adjusts in steps around FX-policy decisions, currency-supply changes and market demand. That is why the chart shows distinct points joined by straight lines rather than a smoothed curve: each point is a real recorded rate for that date, and the gaps between them are exactly where the market held steady before stepping again."],["p", "This is why the daily movement can look small while a month or a quarter shows a meaningful shift. A 30-day view smooths out the daily noise; a 90-day or 1-year view reveals the underlying direction. For someone planning a large transfer or a dollar-denominated purchase, the longer window is the one that matters, the daily spread is noise, but the trend decides your cost."],["h2", "Official rate vs the street rate in the trend"],["p", "This chart tracks the official mid-market rate. When USD is the base, the parallel (street) rate trades at a spread above it, use the converter's \"Parallel market\" toggle to see that estimate alongside. Tracking both over time is how experienced Nigerians read where the real cost of foreign exchange is heading."],["p", "The gap between the official and parallel rate is the practical cost of limited dollar supply. A widening gap usually signals tighter supply or higher demand; a narrowing gap suggests the market is easing. If you plan to convert naira in the near term, checking both the trend and the current spread tells you whether to move now or wait."],["h2", "How to use the history chart to time a transfer"],["p", "Read the 30-day change first: is the naira gaining or losing ground against this currency? Then switch to the 90-day or 12-month view to confirm the trend is real and not a short-term wobble — those windows only draw the days your device has actually recorded, so they fill in the longer you keep visiting. Finally, compare against the parallel rate in the converter. Nobody can call the exact bottom, but the combination of a real trend and a realistic spread tells you whether converting today is a fair deal or an expensive one."],["h2", "Rate history questions"],["h3", "Is this the rate my bank will give me?"],["p", "No, this is the official mid-market rate. Banks, bureaux and platforms add a margin on top, and the parallel market trades higher. Use the main converter to get the live figure."]]},
+  copy={[["h2", "How to read the USD to naira trend"],["p", "The line above plots the number of naira one $ buys on each recorded day. When the line rises, the naira is weakening (your naira buys fewer USD); when it falls, the naira is strengthening. The stat strip summarises the change: the 30-day figure tells you whether the last month has moved in your favour or against it."],["p", "A falling USD-to-naira line is good news if you buy foreign currency for tuition, travel or imports, you need fewer naira. It is bad news if you earn naira and hold foreign savings, or if you run a business that imports. The converse is true when the line climbs. The trend is how you size the risk before you move money."],["h2", "Why the naira moves in steps, not smoothly"],["p", "The official USD/NGN rate does not drift continuously, it adjusts in steps around FX-policy decisions, currency-supply changes and market demand. That is why the chart shows distinct points joined by straight lines rather than a smoothed curve: each point is a real recorded rate for that date, and the gaps between them are exactly where the market held steady before stepping again."],["p", "This is why the daily movement can look small while a month or a quarter shows a meaningful shift. A 30-day view smooths out the daily noise; a 90-day or 1-year view reveals the underlying direction. For someone planning a large transfer or a dollar-denominated purchase, the longer window is the one that matters, the daily spread is noise, but the trend decides your cost."],["h2", "Official rate vs the street rate in the trend"],["p", "This chart tracks the official mid-market rate. When USD is the base, the parallel (street) rate trades at a spread above it, use the converter's \"Parallel market\" toggle to see that estimate alongside. Tracking both over time is how experienced Nigerians read where the real cost of foreign exchange is heading."],["p", "The gap between the official and parallel rate is the practical cost of limited dollar supply. A widening gap usually signals tighter supply or higher demand; a narrowing gap suggests the market is easing. If you plan to convert naira in the near term, checking both the trend and the current spread tells you whether to move now or wait."],["h2", "How to use the history chart to time a transfer"],["p", "Read the 30-day change first: is the naira gaining or losing ground against this currency? Then switch to the 90-day or 12-month view to confirm the trend is real and not a short-term wobble: those windows only draw the days your device has actually recorded, so they fill in the longer you keep visiting. Finally, compare against the parallel rate in the converter. Nobody can call the exact bottom, but the combination of a real trend and a realistic spread tells you whether converting today is a fair deal or an expensive one."],["h2", "Rate history questions"],["h3", "Is this the rate my bank will give me?"],["p", "No, this is the official mid-market rate. Banks, bureaux and platforms add a margin on top, and the parallel market trades higher. Use the main converter to get the live figure."]]},
   disclaimer="Seed points are recorded build-time from an open FX feed; live points are fetched and kept on this device only. They are not a quote and do not constitute financial advice. Confirm the live rate before any transaction.">
 <div class="fx-card">
 <div class="tgrid c2">
@@ -51,7 +51,7 @@ import { FX_HISTORY_SEED } from "../../data/fx-history-seed";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS } from "../../data/tool-fields";
 const KEY = "gwill-fx-pts";
-// Build-time seed — real, dated, sourced reference points (the site's own
+// Build-time seed ;  real, dated, sourced reference points (the site's own
 // committed USD/NGN snapshots). First paint draws these; this device's live
 // fetches layer on top. Never invented history.
 const SEED_PTS = [...FX_HISTORY_SEED].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
@@ -68,7 +68,7 @@ function save(pts: Pt[]) { try { localStorage.setItem(KEY, JSON.stringify(pts.sl
 function draw(pts: Pt[]) {
   const box = document.getElementById("xh-chart") as HTMLElement;
   if (pts.length < 2) {
-    box.innerHTML = `<p class="receipt-note">Not enough history points yet — visit again and the trend starts here.</p>`;
+    box.innerHTML = `<p class="receipt-note">Not enough history points yet: visit again and the trend starts here.</p>`;
     return;
   }
   const w = 640, h = 220, pt = 24, pb = 28, pl = 52, pr = 16;
@@ -99,8 +99,8 @@ async function render() {
     }
   } catch { /* stored points stand; the build-time seed still shows */ }
   /* Merge the build-time seed (real, dated, sourced) with this device's
-     collected points — the device wins on a shared date (the fresher live
-     value) — so first paint shows a real trend and later visits extend it
+     collected points ; the device wins on a shared date (the fresher live
+     value) ; so first paint shows a real trend and later visits extend it
      forward. No invented points anywhere. */
   const byDate = new Map<string, Pt>();
   for (const p of SEED_PTS) byDate.set(p.date, { date: p.date, ngn: p.ngn });
@@ -118,7 +118,7 @@ async function render() {
     ? s.change === 0
       ? `– No movement across the window · holding ₦${fxNumber(s.current, 0)}`
       : `${arrow} ₦${fxNumber(Math.abs(s.change), 0)} (${s.change_pct.toFixed(1)}%) across the window · low ₦${fxNumber(s.min, 0)} · high ₦${fxNumber(s.max, 0)}`
-    : "Seeded from recorded snapshots — the live rate adds on each visit";
+    : "Seeded from recorded snapshots: the live rate adds on each visit";
   (document.getElementById("xh-foot") as HTMLElement).textContent = deviceCount
     ? `${win.length} points · ${deviceCount} collected on this device`
     : `Build-time reference points · through ${FX_SNAPSHOT.as_of}`;
@@ -127,7 +127,7 @@ async function render() {
 document.getElementById("xh-days")?.addEventListener("change", render);
 /* Design spec §5 row 15: NO CHANGE to this tool's behaviour. It already owns the
    repo's only tool-scoped localStorage key and its only control is an integer
-   day-window select, not a money input — so the table entry is empty and
+   day-window select, not a money input ; so the table entry is empty and
    register() seeds nothing, remembers nothing and leaves Clear examples hidden. */
 smartFields.register(TOOL_FIELDS["exchange-rate-history"]);
 render();

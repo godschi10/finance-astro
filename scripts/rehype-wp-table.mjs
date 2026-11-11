@@ -1,6 +1,6 @@
 /**
  * WordPress/Gutenberg wraps every content table in `<figure class="wp-block-table">`
- * — style.css:896-924 styles that wrapper (border, radius, overflow, thin gold
+ *, style.css:896-924 styles that wrapper (border, radius, overflow, thin gold
  * scrollbar) and the ≤767 full-bleed rule targets it as a DIRECT child of
  * `.art-body`. Markdown pipe tables emit a bare `<table>`, so every table in the
  * port rendered unstyled: no border, no radius, zero cell padding (measured on

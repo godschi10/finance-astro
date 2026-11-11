@@ -1,17 +1,17 @@
 /* ══════════════════════════════════════════════════════════════════════════
-   PROSE — the port's own .art-body typography, for the pages that are not
+   PROSE: the port's own .art-body typography, for the pages that are not
    ported article pages (about, contact).
 
    WHY THIS FILE EXISTS
    These rules used to sit in Layout.astro, which meant they applied to every
-   page — including the ported article page, where they contradicted the theme:
+   page, including the ported article page, where they contradicted the theme:
    they added `max-width: 72ch` and `margin-top: 12px` to `.art-body p`, and a
    48x3px gold `::before` bar above every `.art-body h2` that WordPress does not
    draw. The article page must get the theme's typography and nothing else, so
    the port's own version moves here and is imported only by the pages that were
    using it.
 
-   The declarations are a verbatim move from Layout.astro — nothing about about
+   The declarations are a verbatim move from Layout.astro; nothing about about
    or contact should change because of this file's existence.
    ══════════════════════════════════════════════════════════════════════════ */
 

@@ -1,4 +1,4 @@
-// Crypto-profit engine — TS port of inc/crypto-profit.php (P2P-aware,
+// Crypto-profit engine ;  TS port of inc/crypto-profit.php (P2P-aware,
 // naira-denominated). Tested against the PHP vectors.
 export interface CryptoProfit {
   invest: number;
@@ -60,7 +60,7 @@ export function cryptoProfit(
   };
 }
 
-/* D2 (v0.7.55): cryptoUsdt() removed — dead code in the Astro port (no page
+/* D2 (v0.7.55): cryptoUsdt() removed ; dead code in the Astro port (no page
    imported it; the P2P framing copy on the money-transfer pages covers the
    need). The PHP parity oracle still carries a crypto_usdt vector;
    vectors-check.mjs records that as a declared removal, never silently. */

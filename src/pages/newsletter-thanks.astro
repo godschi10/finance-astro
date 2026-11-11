@@ -1,15 +1,15 @@
 ---
 // Port of the live /newsletter-thanks/ page (WordPress "Default" template +
 // page content), captured 2026-09-30. Anatomy mirrored: .phd (breadcrumb +
-// h1 "You're subscribed") → .con (banner ad, .page-surface carrying the
-// page's post_content VERBATIM — "You're on the list. 🎉" + two paragraphs
+// h1 "You're subscribed") → .con (banner ad.page-surface carrying the
+// page's post_content VERBATIM ;  "You're on the list. 🎉" + two paragraphs
 // whose /all-articles/ and /apps/ links resolve to THIS port's articles/ and
 // apps/ pages, no dead hrefs → leaderboard ad). Reached only by a real
 // successful newsletter submit (the form's data-success-url), like the live.
 import Layout from "../layouts/Layout.astro";
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
-<Layout title="You're subscribed - GWill Finance" description="Newsletter confirmation — check your inbox to confirm your email." crumb="You're subscribed" noCanonical={true}>
+<Layout title="You're subscribed - GWill Finance" description="Newsletter confirmation: check your inbox to confirm your email." crumb="You're subscribed" noCanonical={true}>
 <div class="phd">
   <nav class="gwill-breadcrumbs" aria-label="Breadcrumb">
     <ol class="gwill-breadcrumbs__list">
@@ -23,7 +23,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   <div class="ad-bg"></div>
   <div class="page-surface">
     <h2>You're on the list. 🎉</h2>
-    <p>Check your inbox to confirm your email. The first digest lands next week — rate changes, app reviews, and money moves, tested and explained.</p>
+    <p>Check your inbox to confirm your email. The first digest lands next week: rate changes, app reviews, and money moves, tested and explained.</p>
     <p>While you wait, browse the <a href={`${base}articles/`}>latest articles</a> or check the <a href={`${base}apps/`}>finance apps I recommend</a>.</p>
   </div>
   <div class="ad-bg" style="margin-top:28px"></div>

@@ -2,12 +2,12 @@
 // Port of template-contact.php (Template Name: Contact), imported from the
 // live https://finance.fitnesslova.qzz.io/contact/ capture 2026-09-30.
 // Anatomy mirrored: .phd (breadcrumb + h1 + the template's default hero sub)
-// → .con (banner ad, .cl-layout: left .page-surface with the routed form
+// → .con (banner ad.cl-layout: left .page-surface with the routed form
 // partial (contact-routed.php, fields/options/hint verbatim), right sidebar
 // .sw "Contact Details" (✉ hi@gwillchijioke.com / ⏱ Response within 48 hours
-// / 📍 Nigeria — the live rendered values), .sw "Work With Me" (pitch + the
+// / 📍 Nigeria ;  the live rendered values).sw "Work With Me" (pitch + the
 // four green ✓ offers + red ✗ "Paid \"positive review\" deals", inline styles
-// verbatim from the template), .sw "Newsletter" + form partial keyed
+// verbatim from the template).sw "Newsletter" + form partial keyed
 // gwill-newsletter-2 like the live page → leaderboard ad).
 // The form is REAL in this port: the WP admin-ajax leg is replaced by the
 // comments-api Worker /forms endpoint (gwill-forms.js), so submissions are
@@ -50,7 +50,7 @@ const noStyle = "display:flex;gap:8px;align-items:center;padding:10px 12px;backg
       </div>
       <div class="sw">
         <div class="sw-t">Work With Me</div>
-        <p class="fz12 fw3 cm-c lh mb12">I'm open to sponsored content and brand partnerships for fintech companies whose products I can honestly recommend. Sponsored posts are labelled as sponsored — see the <a href={`${base}editorial-policy/`} style="color:var(--gold-b);text-decoration:underline;text-underline-offset:3px">editorial policy</a>.</p>
+        <p class="fz12 fw3 cm-c lh mb12">I'm open to sponsored content and brand partnerships for fintech companies whose products I can honestly recommend. Sponsored posts are labelled as sponsored: see the <a href={`${base}editorial-policy/`} style="color:var(--gold-b);text-decoration:underline;text-underline-offset:3px">editorial policy</a>.</p>
         <div style="display:flex;flex-direction:column;gap:8px">
           {offers.map((o) => (<div style={offerStyle}><span>✓</span>{o}</div>))}
           <div style={noStyle}><span>✗</span>Paid "positive review" deals</div>

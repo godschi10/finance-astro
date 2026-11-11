@@ -4,19 +4,19 @@ import { inflationAdjustedGoal } from "../../lib/inflation";
 import { formatGrouped } from "../../lib/format";
 const n = (v: number) => formatGrouped(v, 0);
 /* HN-2. The field opens at 24%, not 20%: NBS put Lagos at 23.68% headline in
-   Aug 2026 — the highest of any state — while national headline was 15.39%. A
+   Aug 2026 ; the highest of any state ; while national headline was 15.39%. A
    20% default is 3.68 points UNDER what the largest readership pays, and
    calling that "cautious" was the dishonest part. The lib's inflation-savings
    engine takes inflation as an argument (there is no seed constant here), so
    the SSR receipt and the field agree at 24% with no gate touched.
 
-   ⚠ UNRESOLVED RULING — DO NOT "FIX" THIS WITHOUT THE KING (v0.7.58). The
+   ⚠ UNRESOLVED RULING ; DO NOT "FIX" THIS WITHOUT THE KING (v0.7.58). The
    audit master list records a King's ruling for P1-3: "default → National 15.39%
    (D1 adopted)". That ruling is NOT recorded in this CHANGELOG and is NOT
    reflected here: the field still opens at 24% and the comment above defends it.
    Either the ruling was never applied, or it was deliberately reversed after the
    list was written. Batch S2c could not settle it from the repo and left the
-   default EXACTLY as HN-2 set it — overwriting a default the King may not have
+   default EXACTLY as HN-2 set it ; overwriting a default the King may not have
    overruled is not a builder's call. What S2c did add, which does not touch the
    default: the National/Food/Lagos preset buttons and the dated NBS source. If
    the ruling stands, changing `value="24"` to `value="15.39"` here and the
@@ -24,24 +24,24 @@ const n = (v: number) => formatGrouped(v, 0);
 const seed = inflationAdjustedGoal(10000000, 1000000, 0.15, 0.24, 5, 0, "monthly", "monthly");
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
-<ToolShell title="Inflation-Adjusted Savings Calculator, Real Goal Top-Up - GWill Finance" description="Saving ₦10m in 5 years? Inflation moves the goalpost. See the nominal monthly, the real monthly, and the gap." slug="inflation-savings-calculator" tool="Inflation-Adjusted Savings Calculator" crumb="Inflation-Adjusted Savings Calculator" lede="A fixed goal is a shrinking goal. This inflates your target first, then prices both monthlies — the gap is the insight." verified="Target inflated at your rate · gap is the monthly truth" faqs={[
+<ToolShell title="Inflation-Adjusted Savings Calculator, Real Goal Top-Up - GWill Finance" description="Saving ₦10m in 5 years? Inflation moves the goalpost. See the nominal monthly, the real monthly, and the gap." slug="inflation-savings-calculator" tool="Inflation-Adjusted Savings Calculator" crumb="Inflation-Adjusted Savings Calculator" lede="A fixed goal is a shrinking goal. This inflates your target first, then prices both monthlies: the gap is the insight." verified="Target inflated at your rate · gap is the monthly truth" faqs={[
   { q: "Why save for an inflated target?", a: "Because the house, fees, or capital you are saving toward inflates too. Saving the nominal figure guarantees arriving short." },
   { q: "How is this different from the naira-value tool?", a: "That shows what money loses. This solves what you must save monthly so inflation does not win." },
 ]}
 
   badge="Inflation-aware · Real terms",
-  copy={[["p", "Set a target today and you are pricing it in today's naira. But inflation is the silent tax on money held over time, the same car, school fees or deposit that costs ₦2,000,000 now will cost noticeably more in three years. If you save toward today's price, you arrive at your deadline short of the real amount. This calculator inflates the target by your chosen inflation rate so you see the true figure."],["p", "The two rows show the same goal two ways. The nominal row is what most calculators give you, the monthly amount to hit today's price. The inflation-adjusted row is what you actually need, and the gap between them is the extra you must save each month to win. That gap is the real, honest cost of not planning for inflation."],["p", "Nigerian inflation is far below where it was a few years ago: the NBS put national headline inflation at 15.39% in August 2026, with food at 19.57% and Lagos, the highest state, at 23.68%. The preset buttons above set any of those in one tap, and the field opens at the Lagos figure because that is what the largest readership actually pays. Use your own state's reading if it differs: it is far better to over-save now and end up ahead than to under-save and fall short. This calculator also lets you compare your earning rate against inflation, if your interest is below inflation, you are losing real value even as the balance grows."],["p", "The number that matters is the gap between what you earn and what inflation erodes. If your money earns 10% while inflation is 24%, your balance grows on paper but you lose buying power every year. To genuinely beat inflation, your return must be above it. This is why parking savings in a low-yield account quietly loses value, the calculator shows the honest monthly amount you need to reach your goal in real terms."],["p", "A worked example: the default shows a ₦10,000,000 goal with ₦1,000,000 already saved, at 15% earning and 24% inflation over 5 years. Ignoring inflation, the monthly need is about ₦89,109. But the true future cost of the goal is ₦29,316,251, so you really need about ₦307,188 a month. That ₦218,079 gap is the real, honest cost of not planning for inflation."],["p", "Use this with our savings goal calculator to solve the monthly amount toward a future target, and the compound-interest calculator to see how a principal and monthly contributions grow. To understand how much your naira will buy in future years, the naira value calculator shows the purchasing-power decay directly."],["h2", "Inflation and savings questions"],["h3", "Why does inflation change my savings target?"],["p", "A goal priced in today's naira will cost more in the future. A ₦10,000,000 goal at 24% annual inflation costs about ₦29,316,251 in five years, so saving toward today's price leaves you short."],["h3", "How much should I save monthly to beat inflation?"],["p", "For a ₦10,000,000 target (₦1,000,000 already saved, 15% earning rate, 24% inflation over 5 years) you need about ₦307,188 monthly, versus ₦89,109 if you ignored inflation."],["h3", "What inflation rate should I use?"],["p", "The NBS put national headline inflation at 15.39% in August 2026, food at 19.57%, and Lagos — the highest state — at 23.68%. Use your own state's reading where you have one; the presets above set the national, food and Lagos figures. This page opens at the Lagos number because that is what the largest readership pays, not because it is the national average."],["h3", "Does my interest rate beat inflation?"],["p", "If your earning rate is below inflation, you are losing real value even as the balance grows. For a plan to win, your return must beat inflation, another reason to compare the two figures here."]]},
+  copy={[["p", "Set a target today and you are pricing it in today's naira. But inflation is the silent tax on money held over time, the same car, school fees or deposit that costs ₦2,000,000 now will cost noticeably more in three years. If you save toward today's price, you arrive at your deadline short of the real amount. This calculator inflates the target by your chosen inflation rate so you see the true figure."],["p", "The two rows show the same goal two ways. The nominal row is what most calculators give you, the monthly amount to hit today's price. The inflation-adjusted row is what you actually need, and the gap between them is the extra you must save each month to win. That gap is the real, honest cost of not planning for inflation."],["p", "Nigerian inflation is far below where it was a few years ago: the NBS put national headline inflation at 15.39% in August 2026, with food at 19.57% and Lagos, the highest state, at 23.68%. The preset buttons above set any of those in one tap, and the field opens at the Lagos figure because that is what the largest readership actually pays. Use your own state's reading if it differs: it is far better to over-save now and end up ahead than to under-save and fall short. This calculator also lets you compare your earning rate against inflation, if your interest is below inflation, you are losing real value even as the balance grows."],["p", "The number that matters is the gap between what you earn and what inflation erodes. If your money earns 10% while inflation is 24%, your balance grows on paper but you lose buying power every year. To genuinely beat inflation, your return must be above it. This is why parking savings in a low-yield account quietly loses value, the calculator shows the honest monthly amount you need to reach your goal in real terms."],["p", "A worked example: the default shows a ₦10,000,000 goal with ₦1,000,000 already saved, at 15% earning and 24% inflation over 5 years. Ignoring inflation, the monthly need is about ₦89,109. But the true future cost of the goal is ₦29,316,251, so you really need about ₦307,188 a month. That ₦218,079 gap is the real, honest cost of not planning for inflation."],["p", "Use this with our savings goal calculator to solve the monthly amount toward a future target, and the compound-interest calculator to see how a principal and monthly contributions grow. To understand how much your naira will buy in future years, the naira value calculator shows the purchasing-power decay directly."],["h2", "Inflation and savings questions"],["h3", "Why does inflation change my savings target?"],["p", "A goal priced in today's naira will cost more in the future. A ₦10,000,000 goal at 24% annual inflation costs about ₦29,316,251 in five years, so saving toward today's price leaves you short."],["h3", "How much should I save monthly to beat inflation?"],["p", "For a ₦10,000,000 target (₦1,000,000 already saved, 15% earning rate, 24% inflation over 5 years) you need about ₦307,188 monthly, versus ₦89,109 if you ignored inflation."],["h3", "What inflation rate should I use?"],["p", "The NBS put national headline inflation at 15.39% in August 2026, food at 19.57%, and Lagos (the highest state) at 23.68%. Use your own state's reading where you have one; the presets above set the national, food and Lagos figures. This page opens at the Lagos number because that is what the largest readership pays, not because it is the national average."],["h3", "Does my interest rate beat inflation?"],["p", "If your earning rate is below inflation, you are losing real value even as the balance grows. For a plan to win, your return must beat inflation, another reason to compare the two figures here."]]},
   disclaimer="This calculator is for informational guidance only and is not financial, tax or investment advice. Inflation and interest rates are not guaranteed, confirm your plan with a licensed financial adviser.">
 <div class="fx-card">
-<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
+<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers and the receipt waits.</p>
 <div class="tgrid c3">
 
 <div class="field" data-cur="NGN"><label for="is-target">Goal today ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="is-target" type="text" value="10000000" inputmode="decimal"></span></div>
 <div class="field" data-cur="NGN"><label for="is-cur">Have now ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="is-cur" type="text" value="1000000" inputmode="decimal"></span></div>
-<div class="field"><label for="is-rate">Return %/yr</label><input id="is-rate" type="text" max="100" value="15" inputmode="decimal"><p class="hint">The rate you type is a nominal annual rate applied monthly — the effective annual yield of 15% nominal is 16.08%.</p></div>
-<div class="field"><label for="is-infl">Inflation %/yr</label><input id="is-infl" type="text" max="100" value="24" inputmode="decimal"><p class="hint">Opens at 24% — the Lagos reading, the highest state. The preset buttons below set the NBS national, food and Lagos figures in one tap.</p></div>
+<div class="field"><label for="is-rate">Return %/yr</label><input id="is-rate" type="text" max="100" value="15" inputmode="decimal"><p class="hint">The rate you type is a nominal annual rate applied monthly: the effective annual yield of 15% nominal is 16.08%.</p></div>
+<div class="field"><label for="is-infl">Inflation %/yr</label><input id="is-infl" type="text" max="100" value="24" inputmode="decimal"><p class="hint">Opens at 24%: the Lagos reading, the highest state. The preset buttons below set the NBS national, food and Lagos figures in one tap.</p></div>
 <div class="field"><label for="is-yrs">Years</label><input id="is-yrs" type="number" min="1" max="50" step="1" value="5" inputmode="numeric"></div>
-<div class="field"><label for="is-step">Deposit grows %/yr</label><input id="is-step" type="text" value="" inputmode="decimal"><p class="hint">Optional — you raise your deposit by this % each year, so the STARTING monthly is lower. Leave empty for a level deposit.</p></div>
+<div class="field"><label for="is-step">Deposit grows %/yr</label><input id="is-step" type="text" value="" inputmode="decimal"><p class="hint">Optional: you raise your deposit by this % each year, so the STARTING monthly is lower. Leave empty for a level deposit.</p></div>
 </div>
 <div class="fx-chips" style="margin-top:0" role="group" aria-label="Inflation rate presets, NBS August 2026">
 <span class="hint">Inflation presets (NBS, Aug 2026):</span>
@@ -57,10 +57,10 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 <div class="receipt-row"><span>Nominal monthly</span><b id="is-nom">₦{n(seed.nominal_monthly)}</b></div>
 <div class="receipt-row"><span>Real monthly</span><b id="is-real">₦{n(seed.real_monthly)}</b></div>
 <div class="receipt-row"><span>Monthly gap</span><b id="is-gap">₦{n(seed.gap_monthly)}</b></div>
-{/* P2-2 — the step-up reading. Hidden until the growth field is filled
+{/* P2-2 ; the step-up reading. Hidden until the growth field is filled
     (empty = level deposit = the rows above already say it); the <b> starts
-    "—" so the hidden row never carries a borrowed figure. */}
-<div class="receipt-row" id="is-steprow" hidden><span id="is-steplbl">Starting monthly (deposit grows)</span><b id="is-stepfig">—</b></div>
+    "; " so the hidden row never carries a borrowed figure. */}
+<div class="receipt-row" id="is-steprow" hidden><span id="is-steplbl">Starting monthly (deposit grows)</span><b id="is-stepfig">–</b></div>
 <p class="receipt-note" id="is-warn" hidden aria-live="polite"></p>
 <p class="receipt-foot">The gap is the monthly truth</p>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
@@ -81,7 +81,7 @@ const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).val
 /* THE ZERO LAW: inflationAdjustedGoal() reads all five typed inputs. */
 const ALL = ["is-target", "is-cur", "is-rate", "is-infl", "is-yrs"];
 function render() {
-  /* M2 — THE ZERO LAW. A typed 0 horizon short-circuited to the 5-year seed, so
+  /* M2 ; THE ZERO LAW. A typed 0 horizon short-circuited to the 5-year seed, so
    "cost of this goal over 0 years" was answered with a 5-year plan. Zero years
    is honest and meaningful: no time passes, inflation moves the goal by nothing,
    so the nominal and inflation-adjusted figures are the same figure. The engine
@@ -98,33 +98,33 @@ function render() {
     yrsEff,
     0, "monthly", "monthly",
   );
-  /* ── P2-2 — STEP-UP DEPOSITS, the A7-verified solve ────────────────
+  /* ── P2-2 ; STEP-UP DEPOSITS, the A7-verified solve ────────────────
      The "deposit grows %/yr" field. savingsStepUpStart() (src/lib/savings.ts)
      prices the STARTING monthly against the same inflated target the rows
      above use (r.real_target), at the same end-of-month convention. Its maths
      was derived and verified against ALL FIVE appendix-a stepUpDeposits rows
-     BEFORE the engine code was written — 0% reproduces the gated 307188
+     BEFORE the engine code was written ; 0% reproduces the gated 307188
      baseline exactly, 10/15/20/24% reproduce 258803/237452/217855/203364.
      Empty field = null = the row hides (a level deposit is the rows above,
      stated once). Absurd growth returns NaN and takes the out-of-range
-     voice with everything else — never a confident number. */
+     voice with everything else ; never a confident number. */
   const stepRawStr = g("is-step").value.trim();
   const stepBlank = pmBlank(stepRawStr);
   const stepG = stepBlank ? 0 : Math.max(0, pm(stepRawStr) || 0); // %/yr, negatives priced at 0 (F8 rail below)
   const stepX = stepBlank ? null : savingsStepUpStart(r.real_target, Math.max(0, pm(g("is-cur").value) || 0), Math.max(0, pm(g("is-rate").value) || 0) / 100, yrsEff * 12, stepG / 100, "monthly");
   const warn = t("is-warn");
-  /* F8 — every clamped negative says so: -x is priced as ₦0 in all five
+  /* F8 ; every clamped negative says so: -x is priced as ₦0 in all five
      inputs, so the rail names the rewrite instead of staying silent. */
   const negHit = ["is-target", "is-cur", "is-rate", "is-infl", "is-yrs", "is-step"].some((id) => pm(g(id).value) < 0);
   const negSfx = negHit ? " Negative entries are treated as ₦0." : "";
   if (!Number.isFinite(r.nominal_monthly) || !Number.isFinite(r.real_monthly) || !Number.isFinite(r.gap_monthly) || !Number.isFinite(r.real_target) || (stepX !== null && !Number.isFinite(stepX))) {
     warn.hidden = false;
-    warn.textContent = "Out of range — that inflation and horizon are beyond what this plan can price. Try 50 years or less." + negSfx;
+    warn.textContent = "Out of range: that inflation and horizon are beyond what this plan can price. Try 50 years or less." + negSfx;
     t("is-fig").textContent = "Out of range";
-    t("is-sub").textContent = "No confident total at this input — lower the inflation rate or shorten the horizon.";
-    t("is-nom").textContent = "—";
-    t("is-real").textContent = "—";
-    t("is-gap").textContent = "—";
+    t("is-sub").textContent = "No confident total at this input: lower the inflation rate or shorten the horizon.";
+    t("is-nom").textContent = "–";
+    t("is-real").textContent = "–";
+    t("is-gap").textContent = "–";
     paintStep(null, 0);
     return;
   }
@@ -133,9 +133,9 @@ function render() {
   if (yrsZero) {
     /* 0 years: no time passes, so inflation lifts the goal by ₦0 and the whole
        gap between the nominal and the adjusted figure is ₦0. Both are the same
-       real number — that IS the answer, and it is worth stating plainly. */
+       real number ; that IS the answer, and it is worth stating plainly. */
     warn.hidden = false;
-    warn.textContent = "0 years — no time passes, so inflation moves your goal by ₦0. The gap below is real and it is ₦0." + negSfx;
+    warn.textContent = "0 years: no time passes, so inflation moves your goal by ₦0. The gap below is real and it is ₦0." + negSfx;
     const tgt = Math.max(0, pm(g("is-target").value) || 0);
     sfFig(t("is-fig"), ALL, nn(r.nominal_monthly));
     sfFig(t("is-sub"), ALL, `Goal grows ${nn(tgt)} → ${nn(tgt)} · nominal monthly only ${nn(r.nominal_monthly)}`);
@@ -143,7 +143,7 @@ function render() {
     sfFig(t("is-real"), ALL, nn(r.nominal_monthly));
     sfFig(t("is-gap"), ALL, nn(0));
     /* 0 years: the horizon is one year, so a step-up never steps inside it
-       — the starting monthly IS the level figure. Honest, so it shows. */
+       ; the starting monthly IS the level figure. Honest, so it shows. */
     paintStep(stepX, stepG);
     return;
   }
@@ -155,9 +155,9 @@ function render() {
   paintStep(stepX, stepG);
   syncPresets();
 }
-/* P2-2 — the step-up row's one painter. null = no reading (empty field, or
-   an out-of-range input): the row hides and its <b> returns to "—", the
-   same withheld grammar the empty state uses — never a borrowed figure.
+/* P2-2 ; the step-up row's one painter. null = no reading (empty field, or
+   an out-of-range input): the row hides and its <b> returns to "; ", the
+   same withheld grammar the empty state uses ; never a borrowed figure.
    A real solve shows the starting monthly, gated on every figure it reads
    (all five plan fields + the growth field itself) and labelled with the
    growth it was priced at. */
@@ -165,7 +165,7 @@ function paintStep(stepX: number | null, gDisp: number): void {
   const row = t("is-steprow"), b = t("is-stepfig");
   if (stepX === null || !Number.isFinite(stepX)) {
     row.hidden = true;
-    b.textContent = "—";
+    b.textContent = "–";
     b.style.color = "";
     b.removeAttribute("data-sf-no");
     const badge = row.querySelector(".trust-badge[data-trust]");
@@ -183,7 +183,7 @@ function paintStep(stepX: number | null, gDisp: number): void {
  *
  * WHAT THIS DELIBERATELY DOES NOT DO: change the default. The field still opens
  * at 24% (the Lagos reading) because HN-2 chose it, and the master list records
- * a King's ruling — "P1-3 default → National 15.39% (D1 adopted)" — that the
+ * a King's ruling ; "P1-3 default → National 15.39% (D1 adopted)" ; that the
  * CHANGELOG does NOT record as applied. Overruling a default that may still
  * stand is the King's call, not this batch's, so the presets are added and the
  * default is left exactly where HN-2 put it. See the note at the seed.

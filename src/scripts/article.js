@@ -1,5 +1,5 @@
 /**
- * GWill Finance — article (single post) page behaviours.
+ * GWill Finance ; article (single post) page behaviours.
  *
  * A faithful port of everything the WordPress theme runs on a single post.
  * Every block below cites its provenance as `file:line` against the theme
@@ -22,14 +22,14 @@
  *
  * End state this must produce (390/768/1280):
  *   #gwill-toc-mobile      class "toc-dropdown toc-mobile toc-scrolled-end"
- *   .toc-summary[aria-expanded]="false"     — CHANGED from the oracle's
+ *   .toc-summary[aria-expanded]="false"     ; CHANGED from the oracle's
  *                          "true" by the King's order 2026-10-06,
  *                          "Make TOC default closed". This is the only
  *                          intentional parity break on this page; everything
  *                          else below is still the 04-live-oracle.md
  *                          measurement (390/768/1280).
  *   #gwill-toc-mobile-list display:none at rest (display:flex once opened)
- *   .toc-i.cur             ABSENT at scrollY 0 — all five items are plain `.toc-i`
+ *   .toc-i.cur             ABSENT at scrollY 0 ; all five items are plain `.toc-i`
  *                          (oracle §B11 + "Oddities" #6: PHP ships `cur` on the
  *                          first item, the scroll-spy's initial call removes it,
  *                          because every heading's offsetTop is already > 120)
@@ -38,7 +38,7 @@
  * Two theme quirks are reproduced on purpose and documented inline where they
  * live: the brace nesting that gates table wiring on #gwill-toc-mobile
  * (main.js:258-374, section 3 below) and the comment-ad double-insert guard
- * that cannot line up past the first ad (main.js:592, section 10 below — it
+ * that cannot line up past the first ad (main.js:592, section 10 below ; it
  * makes the insert pass non-terminating from 11 main comments up, in the theme
  * too; measured, and left untouched so the port stays behaviourally identical).
  *
@@ -46,9 +46,9 @@
  * safe on a page where any of these elements are absent.
  *
  * NOT ported here, deliberately (see the notes at the foot of the file):
- *   - CSS-only behaviours (smooth scroll + scroll-padding-top, .toc-bar/.toc-g
- *     choice, mobile table overflow, print hiding) — no JS in the theme.
- *   - Code-block copy buttons — they do not exist in the theme (NOT FOUND).
+ *   - CSS-only behaviours (smooth scroll + scroll-padding-top.toc-bar/.toc-g
+ *     choice, mobile table overflow, print hiding) ; no JS in the theme.
+ *   - Code-block copy buttons ; they do not exist in the theme (NOT FOUND).
  *   - The site shell in main.js §1-§4 / §9-§10 / §13-§15 / §16 (mobile nav,
  *     consent-gated sticky ad, category pills, font-scale .fs-lg), which is
  *     page chrome shared by every template, not an article behaviour.
@@ -80,13 +80,13 @@
 	// localises them.
 	const I18N = (typeof window.GwillMain !== 'undefined' && window.GwillMain.i18n) || {};
 	// (GwillLightbox i18n is consumed by scripts/lightbox.js, which
-	// [slug].astro imports beside this module — not by this file.)
+	// [slug].astro imports beside this module ;  not by this file.)
 
 	// ── 2. Reading progress bar (main.js:244-254) ───────────────────
 	// Fills .prog-f, the INNER element; .prog (the sticky track) is never
 	// touched by JS. Geometry is the whole DOCUMENT scroll range, not the
-	// article element's. One style write per scroll event — the theme has no
-	// rAF, no debounce, no throttle (main.js:252 is a bare listener) — and
+	// article element's. One style write per scroll event ;  the theme has no
+	// rAF, no debounce, no throttle (main.js:252 is a bare listener) ;  and
 	// no reduced-motion guard: the smoothing is purely the CSS
 	// `transition: width 120ms linear` (style.css:1965). At scrollY 0 the
 	// width is 0%, at the bottom 100%; the bar is never hidden by JS.
@@ -106,13 +106,13 @@
 	// ── 3. Mobile TOC dropdown (main.js:256-300) ────────────────────
 	// Closed by default (King's order 2026-10-06, "Make TOC default closed"),
 	// remembers the visitor's explicit choice. Visibility is 100% CSS off the
-	// `toc-open` class (style.css:2415-2416, ported to article.css:812-813) —
+	// `toc-open` class (style.css:2415-2416, ported to article.css:812-813) ; 
 	// no `hidden` attribute, no inline display, no <details>.
 	const tocDrop = document.getElementById('gwill-toc-mobile');
 
 	// ── QUIRK, reproduced exactly ───────────────────────────────────
 	// In the theme, `if (tocDrop) {` opens at main.js:258 and closes at
-	// main.js:374 — which means the table wiring (§6b), the feature chips
+	// main.js:374 ;  which means the table wiring (§6b), the feature chips
 	// (§6b) and the sidebar TOC scrollbar fade (§6c) all sit INSIDE that
 	// guard: on a page without #gwill-toc-mobile the theme wires none of them
 	// either. The nesting is deliberate here, not an accident of the port;
@@ -129,18 +129,18 @@
 		};
 
 		// Server-rendered default vs JS default. THE KING'S ORDER, verbatim:
-		// "Make TOC default closed" (2026-10-06) — this is the ONE deliberate
+		// "Make TOC default closed" (2026-10-06) ;  this is the ONE deliberate
 		// break from WordPress parity on this page. The theme opens unless the
 		// visitor stored 'closed' (main.js:262-266) and single.php:126
 		// hard-codes aria-expanded="true", so the live oracle measured
 		// `toc-open` + aria-expanded="true" at every width (04-live-oracle.md
-		// §B5 — the end state this file's header used to claim).
+		// §B5 ;  the end state this file's header used to claim).
 		//
 		// FOUC KILLED, NOT MOVED. The mismatch used to be: the server
 		// announced "expanded" while the `toc-open` class was absent until
 		// this deferred module ran, so between first paint and script
 		// execution the panel was COLLAPSED and announced expanded. Both
-		// sides now agree on closed — [slug].astro renders
+		// sides now agree on closed ;  [slug].astro renders
 		// aria-expanded="false", and the class starts absent, which is
 		// already what the CSS reads (article.css:813,
 		// `.toc-dropdown:not(.toc-open) .toc-list { display:none }`). First
@@ -151,13 +151,13 @@
 		// explicit open still persists (`TOC_KEY` = 'open', written by the
 		// click handler below) and is honoured on return. A server render
 		// cannot know that preference, so a returning opener gets one closed
-		// frame before this call opens it — inherent to localStorage, and
+		// frame before this call opens it ;  inherent to localStorage, and
 		// never announced as expanded while closed.
 		try {
 			const savedToc = localStorage.getItem(TOC_KEY);
 			setToc(savedToc === 'open'); // default CLOSED (King's order)
 		} catch (e) {
-			setToc(false); // private mode / storage disabled — closed
+			setToc(false); // private mode / storage disabled ;  closed
 		}
 
 		if (tocBtn) {
@@ -172,7 +172,7 @@
 		// `toc-scrolled-end` when within 2px of the list's end, and the
 		// inverted `toc-idle` scrollbar rule (CSS defaults to a visible gold
 		// bar; .toc-idle, added 1500ms after the first user scroll, fades it).
-		// On load only the scrolled-end state is evaluated — the idle timer is
+		// On load only the scrolled-end state is evaluated ;  the idle timer is
 		// deliberately NOT started, so a JS-less page and a fresh page both
 		// keep the scrollbar visible (main.js:295-299).
 		const tocList = tocDrop.querySelector('.toc-list');
@@ -225,7 +225,7 @@
 		// Turns "★ 4.5 / 5", "✓ Yes", "✗ No" cell text into chips and
 		// highlights the best row. `.st-table` is the tools-page table; the
 		// theme scans it in the same pass, which is a harmless no-op on an
-		// article. Runs once at parse — there is no observer, so tables
+		// article. Runs once at parse ;  there is no observer, so tables
 		// injected later are not decorated (main.js:445 in the spec).
 		const gwillExposeTableFeatures = (tbl) => {
 			const rows = tbl.querySelectorAll('tr');
@@ -252,7 +252,7 @@
 			});
 			if (bestEl && !bestEl.classList.contains('tbl-best')) { bestEl.classList.add('tbl-best'); }
 		};
-		Array.prototype.forEach.call(document.querySelectorAll('.wp-block-table, .st-table'), gwillExposeTableFeatures);
+		Array.prototype.forEach.call(document.querySelectorAll('.wp-block-table.st-table'), gwillExposeTableFeatures);
 
 		// ── 6. Desktop sidebar TOC scrollbar fade (main.js:360-373) ──
 		// Same inverted pattern as the tables: visible until the user scrolls,
@@ -272,14 +272,14 @@
 	}
 
 	// ── 7. TOC scroll-spy (main.js:376-394) ─────────────────────────
-	// Plain scroll maths, NOT an IntersectionObserver — the theme has no
+	// Plain scroll maths, NOT an IntersectionObserver ;  the theme has no
 	// IntersectionObserver anywhere in assets/js/. Gated on more than one
 	// link: a one-heading article gets no spy at all. The offset is a
 	// hard-coded `window.scrollY + 120` proxy for "just below the sticky
 	// header"; it does not read --header-h (64px) and is not responsive.
 	// The winner is the LAST link in document order whose target heading
 	// has `offsetTop <= pos` (later matches overwrite `current`), compared
-	// with offsetTop — not getBoundingClientRect().
+	// with offsetTop ;  not getBoundingClientRect().
 	// The class is toggled on every `.toc-i` in the document, and the
 	// initial call is what removes PHP's server-rendered `cur` on the first
 	// item: at scrollY 0 every heading's offsetTop is already past 120, so
@@ -306,7 +306,7 @@
 	// ── 8. Copy-link share button (main.js:396-437) ─────────────────
 	// Only the fourth control in the share row is scripted. The other three
 	// (X, LinkedIn, WhatsApp) are plain `<a target="_blank"
-	// rel="noopener noreferrer">` with pre-built URLs and need NO JS —
+	// rel="noopener noreferrer">` with pre-built URLs and need NO JS ; 
 	// deliberately no handlers are added for them here (spec 03 §4: "no JS
 	// handler"). The selector set is generic (`[data-copy]`), matching the
 	// theme, so any template that renders one gets the behaviour.
@@ -316,7 +316,7 @@
 	// 50ms later so copying the same link twice re-announces.
 	let copyStatus = null;
 	// 2026-09-27 (King's order 3): the port adds an inline SVG glyph to every
-	// share control — WP's own button ships none, which is why the theme's
+	// share control ;  WP's own button ships none, which is why the theme's
 	// `btn.textContent = msg` never hit this. Setting textContent on the
 	// BUTTON destroys the SVG child node, so "✓ Copied" showed bare and the
 	// restore wrote plain text: the glyph never came back. Swap only the
@@ -326,7 +326,7 @@
 			const n = btn.childNodes[i];
 			if (n.nodeType === 3 && n.textContent.trim()) { n.textContent = msg; return; }
 		}
-		btn.textContent = msg; // no glyph markup (WP parity path) — safe
+		btn.textContent = msg; // no glyph markup (WP parity path) ;  safe
 	};
 	const copyDone = (btn, ok) => {
 		const msg = ok ? (I18N.copied || '✓ Copied') : (I18N.copyFailed || 'Copy failed');
@@ -501,7 +501,7 @@
 		gwillCommentAdInsert();
 	}
 
-	// ── 11. Image lightbox — REMOVED: the theme enqueues assets/js/lightbox.js
+	// ── 11. Image lightbox ;  REMOVED: the theme enqueues assets/js/lightbox.js
 	// as its own file (enqueue.php:169-193); the verbatim port src/scripts/lightbox.js
 	// is imported beside this module in [slug].astro. One script, one overlay,
 	// exactly the theme's architecture. (A folded copy here previously bound a
@@ -510,7 +510,7 @@
 	// ── 12. Embed facades (embeds.js, whole file) ───────────────────
 	// The theme only enqueues embeds.js when the post actually has a
 	// core/embed block (`is_singular() && has_block('core/embed')`,
-	// enqueue.php:464-487) — it is ABSENT on the reference article. The port
+	// enqueue.php:464-487) ;  it is ABSENT on the reference article. The port
 	// mirrors that by doing nothing unless `.gwill-embed` facades are
 	// present, so it is inert on an article without embeds.
 	//
@@ -737,27 +737,27 @@
 	/*
 	 * ── 13. NOT PORTED / NOT FOUND ──────────────────────────────────
 	 *
-	 * CSS-only on this page — deliberately NO JS written for them:
+	 * CSS-only on this page ; deliberately NO JS written for them:
 	 *   - Smooth scrolling + the sticky-header offset: `html { scroll-behavior:
 	 *     smooth; scroll-padding-top: calc(var(--header-h, 64px) + 20px) }`
 	 *     (style.css:172 → 84px desktop / 76px ≤767px, style.css:2986).
 	 *     There is no click handler on TOC anchors anywhere in the theme's JS
 	 *     (spec 03 §2d, §9). `prefers-reduced-motion: reduce` turns it off in
-	 *     CSS (style.css:3189) — so there is no JS reduced-motion guard to port
+	 *     CSS (style.css:3189) ; so there is no JS reduced-motion guard to port
 	 *     either.
 	 *   - `.toc-bar` vs `.toc-g` (h2 tick vs h3 spacer) is chosen by PHP in
 	 *     single.php:255-268; JS never adds, removes or swaps them.
 	 *   - Heading ids and the TOC list itself are PHP
-	 *     (inc/table-of-contents.php) — nothing to do in JS.
+	 *     (inc/table-of-contents.php) ; nothing to do in JS.
 	 *   - Mobile table overflow: `.art-body .wp-block-table { overflow-x: auto }`
 	 *     + `table { width: max-content; min-width: 100% }` (style.css:901-904),
 	 *     `.sb-layout > div { min-width: 0 }` (style.css:2970) and
 	 *     `html { overflow-x: hidden; overflow-x: clip }` (style.css:172).
 	 *   - The mobile-TOC caret rotation, the bottom fade and the print-hide
-	 *     lists are all CSS (style.css:2352, :2365-2370, :3457).
+	 *     lists are all CSS (style.css:2352:2365-2370:3457).
 	 *   - Firefox-Android scrollbar blowout is CSS (style.css:2379-2408).
 	 *   - Comment-thread indentation on phones is CSS in
-	 *     assets/css/vibe-comments.css:233-278 — no theme JS participates.
+	 *     assets/css/vibe-comments.css:233-278 ; no theme JS participates.
 	 *
 	 * NOT FOUND in the theme (so nothing was written):
 	 *   - No code-block copy button and no syntax highlighter. The only
@@ -766,7 +766,7 @@
 	 *   - No IntersectionObserver, no rAF/debounce on the progress bar or the
 	 *     TOC scroll-spy, no hide/show of the progress bar at either end, no
 	 *     reduced-motion guard on either (spec 03 §9).
-	 *   - No theme-side comment sort / Load More / reply logic — that is the
+	 *   - No theme-side comment sort / Load More / reply logic ; that is the
 	 *     VibeComments plugin script (v3.20.28), not part of this port.
 	 *
 	 * Site shell, out of scope for article.js (shared by every template; the
@@ -783,11 +783,11 @@
 	 *                      `preventScroll` focus (main.js:467).
 	 *   - main.js:611-741  category pill scroll buttons and arrow-key
 	 *                      navigation (listing pages only).
-	 *   - main.js:742-767  `gwillFontScaleCheck()` — the `.fs-lg` ≥20px
+	 *   - main.js:742-767  `gwillFontScaleCheck()` ; the `.fs-lg` ≥20px
 	 *                      font-scale probe, which belongs with the shared
 	 *                      base layer, not with one page.
 	 *   - The dark-mode boot / theme pill is an inline `<head>` script
 	 *     (inc/darkmode.php:51-169) and the flex-gap probe is inline in
-	 *     header.php:37-47 — both are head bootstraps, not article JS.
+	 *     header.php:37-47 ; both are head bootstraps, not article JS.
 	 */
 })();

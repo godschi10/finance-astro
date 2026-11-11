@@ -1,7 +1,7 @@
-// PAYE salary-tax engine — TS port of inc/salary-tax.php.
+// PAYE salary-tax engine ;  TS port of inc/salary-tax.php.
 // Nigeria Tax Act 2025 (in force 1 Jan 2026) vs the old PITA bands (the
 // Personal Income Tax Act, Cap. P8 LFN 2004, REPEALED from that commencement by
-// NTA 2025 s.196(g) — priced for comparison only, never as live PAYE).
+// NTA 2025 s.196(g) ;  priced for comparison only, never as live PAYE).
 // Numerically tested against the PHP originals (docs/PHASE2-TEST-VECTORS.md).
 
 export interface PayeBand {
@@ -91,7 +91,7 @@ export function payeCalculate(
   } else {
     /* PITA CRA (old regime): the higher of ₦200,000 or 1% of gross, PLUS 20%
        of gross (PITA CRA definition). The missing max() floor understated
-       old-regime relief above ₦1,666,666.67/mo gross — the divergence the
+       old-regime relief above ₦1,666,666.67/mo gross ; the divergence the
        PROC-1 independent oracle caught on its first run (tax[10]: ₦5M/mo was
        priced ₦96,000/yr heavy). Fixed 11 Oct 2026 per the manager's order;
        see CHANGELOG 0.7.55 Divergences for the deliberate TS-vs-PHP split. */
@@ -225,12 +225,12 @@ export function payeBonusTax(
   // Bonus is pure additional income: NOT pensioned. Tax at the marginal rate
   // by adding the full bonus to base taxable and taking the tax difference.
   const base = payeCalculate(monthlyGross, pensionRate, nhfMonthly, annualRent, true, nhisMonthly, lifeMonthly, otherMonthly);
-  /* B2 (fixed 11 Oct 2026) — the old `!base.exempt` gate returned an
+  /* B2 (fixed 11 Oct 2026) ; the old `!base.exempt` gate returned an
      unconditional ₦0 for a minimum-wage earner's bonus. NTA ss.4(2)(a) (a
      bonus is employment income), 26(2) (a one-off bonus is income of the day
      it is paid) and 163(1)(t) (the exemption tests GROSS income): a bonus
      lifting gross above the national minimum wage defeats the exemption, and
-     the amount flows through the band table — the first ₦800,000 of
+     the amount flows through the band table ; the first ₦800,000 of
      chargeable income is still 0% (research deliverable claim 4, verified
      11 Oct 2026). The marginal-rate machinery already prices exactly that:
      tax on base.taxable + bonus, minus the (₦0) base tax. */

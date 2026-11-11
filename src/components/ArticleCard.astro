@@ -9,7 +9,7 @@ interface Props {
   date: string;
   readMins: number;
   author?: string;
-  /** Featured image (has_post_thumbnail()) — the thumbnail branch of card-media.php. */
+  /** Featured image (has_post_thumbnail()) ; the thumbnail branch of card-media.php. */
   image?: string;
   imageAlt?: string;
   imageSrcset?: string;
@@ -19,7 +19,7 @@ interface Props {
 // card media. With a featured image (has_post_thumbnail()) the theme emits
 // `<a class="ac-img" href … tabindex="-1" aria-hidden="true"><img … class=
 // "attachment-medium size-medium wp-post-image" loading="lazy" … srcset 300w +
-// 768w … sizes="(min-width: 768px) 350px, 100vw"></a>` — ported here. Without
+// 768w … sizes="(min-width: 768px) 350px, 100vw"></a>` ;  ported here. Without
 // one it emits the category art gradient + emoji fallback (the old port state).
 //
 // Class vocabulary, the badge/art/emoji map and the copy are the theme's:
@@ -32,7 +32,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 const url = `${base}articles/${slug}/`;
 // F-01: frontmatter media paths are base-less ("/wp-content/..."); prefix the
 // render-time base here so base moves stay config-only. Absolute URLs pass
-// through untouched (never the case today — all 15 heroes are local).
+// through untouched (never the case today ;  all 15 heroes are local).
 const withBase = (p: string) => (p.startsWith("/") ? `${base}${p.slice(1)}` : p);
 // card-media.php: 300w default + 768w candidate (gwill_finance_card_img_srcset)
 const cardSrcset = imageSrcset
@@ -42,7 +42,7 @@ const cardSrcset = imageSrcset
 <article id={`post-${slug}`} class={`ac category-${category}`} data-cat={category}>
   {image ? (
     <a class="ac-img" style="position:relative;z-index:2" href={url} tabindex="-1" aria-hidden="true">
-      <!-- position:relative + z-index:2: the title's stretched overlay covers the card (fully-clickable), the image link stays its own clickable anchor. Astro 7's Rust compiler rejects an HTML comment inside a ternary branch (it parses the branch as JSX), so the note moved one element in — comments are inert, the rendered DOM and served bytes are unchanged. -->
+      <!-- position:relative + z-index:2: the title's stretched overlay covers the card (fully-clickable), the image link stays its own clickable anchor. Astro 7's Rust compiler rejects an HTML comment inside a ternary branch (it parses the branch as JSX), so the note moved one element in ; comments are inert, the rendered DOM and served bytes are unchanged. -->
       <img
         width="300"
         height="169"

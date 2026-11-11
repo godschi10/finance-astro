@@ -33,29 +33,29 @@ Precedent port: `/home/ubuntu/portfolio-astro` (static Astro, `output:"static"`,
 | `page-amount-converter.php` | ONE template serving 8 amount SEO pages | `src/pages/tools/<amount>.astro` ×8 (static, R5) |
 | `template-parts/content.php`, `grid-loop.php`, `category-pills.php`, `content-none.php`, `forms/contact-newsletter.php`, `forms/contact-routed.php` | Card/loop/pill/form partials | Astro components |
 
-Provisioned pages (self-provisioning, `inc/setup.php`): `home`, `all-articles`, `about`, `apps`, `contact`, `newsletter`, `site-settings` (hidden), `404-settings` (hidden), `newsletter-thanks`, `privacy-policy`, `disclaimer`, `affiliate-disclosure` — all under `/tools/*` calculators are child pages of `tools`.
+Provisioned pages (self-provisioning, `inc/setup.php`): `home`, `all-articles`, `about`, `apps`, `contact`, `newsletter`, `site-settings` (hidden), `404-settings` (hidden), `newsletter-thanks`, `privacy-policy`, `disclaimer`, `affiliate-disclosure`, all under `/tools/*` calculators are child pages of `tools`.
 
 ## 2. Content model: CPTs / taxonomies / menus / widgets / shortcodes
 
 - **CPTs: NONE.** Only built-in `post` + `page`. No migration of CPT registrations needed.
 - **Taxonomies: NONE custom.** Only built-in `category` (+ tags unused in templates). Six brand categories, canonical order: `savings 🐷` / `investing 📈` / `crypto ₿` / `banking 🏦` / `remittance ✈️` / `dollar-accounts 💵`. Style map in `inc/finance-helpers.php::gwill_finance_cat_style()` → badge (`bgn/bg/bpu/bsl/brd`) + art gradient (`i-sav/i-inv/i-cry/i-ban/i-rem/i-dol`) + emoji. Fallback `💰/bsl/i-dol` for uncategorized.
 - **Menus:** `primary` (desktop `.snav-list` + mobile drawer `.mno-list`, depth 3) and `footer` (currently rendered via `gwill_finance_footer_links('articles'|'apps')` groups + hardcoded Network column). Fallback `gwill_finance_default_nav()` when no menu assigned.
-- **Widgets/sidebars: NONE.** Zero `register_sidebar()` calls (verified by theme's own cleanup audits). Sidebar content on single posts (TOC + ad + digest + also-read) is hardcoded template logic, not widgets — easy to port as components.
+- **Widgets/sidebars: NONE.** Zero `register_sidebar()` calls (verified by theme's own cleanup audits). Sidebar content on single posts (TOC + ad + digest + also-read) is hardcoded template logic, not widgets, easy to port as components.
 - **Shortcodes: NONE.** `add_shortcode` absent. Content uses Gutenberg blocks (all styled in `.art-body`).
 - **Post meta:** `_gwill_video_url` (YouTube URL replaces featured image on single view); featured image size `gwill-hero` 1200×675 soft-crop; video embeds use click-to-play facades (`inc/embed-facades.php`).
 
 ## 3. ACF field groups (8, code-registered in `inc/acf-field-groups.php`, ~113 KB)
 
-All optional — every `get_field` call falls back to a hardcoded default (`gwill_fh()`/`gwill_fs()` helpers). Astro port = bake defaults into `src/data/*.ts`, no CMS needed for v1.
+All optional, every `get_field` call falls back to a hardcoded default (`gwill_fh()`/`gwill_fs()` helpers). Astro port = bake defaults into `src/data/*.ts`, no CMS needed for v1.
 
-1. `group_gwill_404_settings` — 404 title/copy/button label (page `404-settings`).
-2. `group_gwill_about_page` — hero subtitle/bio, What-I-Do cards.
-3. `group_gwill_apps_page` — hero copy + **9 App Card slots** (`gwill_app_slot_1..9`: name/cat/url/badge/art/emoji/desc/review-slug/stats `Label|Value|Colour` lines). Legacy pipe-parser textarea `gwill_apps_list` + hardcoded 3-app fallback (PiggyVest, Grey, Risevest).
-4. `group_gwill_contact_page` — hero subtitle, contact details, work-with-me blocks.
-5. `group_gwill_home_hero` — hero tag/headline/sub/CTAs/topics label.
-6. `group_gwill_home_stats` — 4 stat numbers + labels (defaults: `10+` guides, `12+` apps, current year, `₦ 0` free).
-7. `group_gwill_newsletter_page` — hero + benefit list + value pitch.
-8. `group_gwill_site_settings` — the big one: footer about/blurb, 5 social URLs (X/IG/LinkedIn/YT/GitHub), `gwill_blog_sub`, `gwill_cat_archive_suffix` ("in Nigeria"), newsletter master/visibility toggles (`gwill_newsletter_master`, `gwill_nl_show_home`, `gwill_nl_header_cta`, `gwill_nl_footer_link`), newsletter titles/blurbs, parallel-spread option.
+1. `group_gwill_404_settings`, 404 title/copy/button label (page `404-settings`).
+2. `group_gwill_about_page`, hero subtitle/bio, What-I-Do cards.
+3. `group_gwill_apps_page`, hero copy + **9 App Card slots** (`gwill_app_slot_1..9`: name/cat/url/badge/art/emoji/desc/review-slug/stats `Label|Value|Colour` lines). Legacy pipe-parser textarea `gwill_apps_list` + hardcoded 3-app fallback (PiggyVest, Grey, Risevest).
+4. `group_gwill_contact_page`, hero subtitle, contact details, work-with-me blocks.
+5. `group_gwill_home_hero`, hero tag/headline/sub/CTAs/topics label.
+6. `group_gwill_home_stats`, 4 stat numbers + labels (defaults: `10+` guides, `12+` apps, current year, `₦ 0` free).
+7. `group_gwill_newsletter_page`, hero + benefit list + value pitch.
+8. `group_gwill_site_settings`, the big one: footer about/blurb, 5 social URLs (X/IG/LinkedIn/YT/GitHub), `gwill_blog_sub`, `gwill_cat_archive_suffix` ("in Nigeria"), newsletter master/visibility toggles (`gwill_newsletter_master`, `gwill_nl_show_home`, `gwill_nl_header_cta`, `gwill_nl_footer_link`), newsletter titles/blurbs, parallel-spread option.
 
 ## 4. Token inventory (theme.json + style.css :root, ~3,470 lines / ~200 KB)
 
@@ -74,7 +74,7 @@ Single font: **JetBrains Mono** (self-hosted woff2, latin + latin-ext, `assets/c
 
 Layout: `contentSize 1200px`, `wideSize 1440px`; radii `--r-sm 6px / --r-md 10px / --r-lg 16px / --r-xl 24px / --pill 100px`; shadows `sh-sm/sh-md/sh-gold`; transitions `160ms/240ms`; `--header-h 64px`, `--con-pad 48px`. Type scale: h1 `clamp(1.75rem,4vw,2.5rem)` → h6 `1rem` uppercase; base `1rem/1.6`. Brand: `₦` gold + `gwillchijioke` wordmark (never shortened), gold→green gradient underline; `theme-color #0d0b08`; gold-on-dark scrollbar; grain-textured hero.
 
-## 5. Homepage spec (front-page.php, section order — replicate exactly)
+## 5. Homepage spec (front-page.php, section order, replicate exactly)
 
 1. **Ticker** (`gwill_finance_ticker()`, in header): marquee `USD/NGN, GBP/NGN, EUR/NGN, BTC/USD, ETH/USD, XAU/USD`; server-rendered static values + `ticker-live.js` async refresh (8s abort, 60s client cache); pause-on-hover, press-drag scrub.
 2. **Hero** (`.hero` + `.hero-grain`): tag `₦ Nigerian Finance · Honest Guides`; H1 "Nigerian money. / Explained."; sub "Savings, investing, dollar accounts, crypto… Tested by Gwill. No jargon. No AI slop."; CTAs [Browse All Articles →] (gold) + [Finance Apps] (ghost); topic chips (6 brand categories).
@@ -91,12 +91,12 @@ Layout: `contentSize 1200px`, `wideSize 1440px`; radii `--r-sm 6px / --r-md 10px
 - **home.php / archive.php / author.php / search.php**: shared `.phd` breadcrumb hero + pills + `.g3` card grid (`content.php` cards: art tile, badge, title, excerpt, meta) + `the_posts_pagination` (mid_size 2, ← Prev/Next →) + leaderboard ads. Search adds: result-count line, Google-style "Showing results for X / search instead for Y" (score ≥ 0.6), `<mark>` term highlight, "People also searched" chips, no-results "Did you mean" card.
 - **page-apps.php**: dark trust hero → category tabs (derived from cards present) → app-card grid (badge, gradient art, emoji, desc, stats, review link, outbound URL) → ads. Data: 9 ACF slots → pipe textarea → 3 hardcoded defaults.
 - **page-about / contact / newsletter / legal**: dark hero + content + sidebar variants; contact = routed admin-ajax form (`inc/forms.php`, needs SMTP/Brevo constants); newsletter = Brevo capture; legal = sticky TOC + gold-dot blocks.
-- **Card media system** (`inc/card-media.php` + `assets/featured-templates/*.svg`): posts without thumbnails get category SVG/gradient/emoji art — reproduce as static assets.
+- **Card media system** (`inc/card-media.php` + `assets/featured-templates/*.svg`): posts without thumbnails get category SVG/gradient/emoji art, reproduce as static assets.
 - **PWA/push**: `manifest.webmanifest` route + `/sw.js` (site-root published) + VAPID web-push + install prompt. Astro: keep manifest + static `sw.js`; push needs a server leg (see R2).
 
-## 7. Finance engines (17 calculators + amount pages — the heart of the port)
+## 7. Finance engines (17 calculators + amount pages, the heart of the port)
 
-Pattern per tool: `inc/<name>.php` pure-PHP engine (server-renders REAL numbers for crawlers) + `page-*.php` template + `assets/js/<name>.js` client mirror (same math, no round-trip) + WebApplication+FAQPage JSON-LD + title/meta override. **Port each engine to a shared `src/lib/<name>.ts` used for both SSG pre-render and client interactivity** — this preserves the crawlable-numbers SEO property.
+Pattern per tool: `inc/<name>.php` pure-PHP engine (server-renders REAL numbers for crawlers) + `page-*.php` template + `assets/js/<name>.js` client mirror (same math, no round-trip) + WebApplication+FAQPage JSON-LD + title/meta override. **Port each engine to a shared `src/lib/<name>.ts` used for both SSG pre-render and client interactivity**, this preserves the crawlable-numbers SEO property.
 
 | # | Tool | Route slug | Engine notes |
 |---|---|---|---|
@@ -137,7 +137,7 @@ Zero WP CSS (`inc/wp-css-off.php`); exactly 2 global stylesheets (fonts + style)
 ## 10. Plugins: REQUIRED vs optional
 
 - **Required: NONE.** Zero required plugins, zero external services at runtime (fonts self-hosted).
-- **Optional:** ACF Free (editable fields; all defaults hardcoded — Astro replaces with data files); vibe-comments (post comments, styled by `assets/css/vibe-comments.css`); Brevo SMTP + `GWILL_*` wp-config constants (form/newsletter delivery);SEO/security/caching plugins explicitly NOT needed (theme owns SEO/sitemap/security headers; recommends Limit Login Attempts only).
+- **Optional:** ACF Free (editable fields; all defaults hardcoded, Astro replaces with data files); vibe-comments (post comments, styled by `assets/css/vibe-comments.css`); Brevo SMTP + `GWILL_*` wp-config constants (form/newsletter delivery);SEO/security/caching plugins explicitly NOT needed (theme owns SEO/sitemap/security headers; recommends Limit Login Attempts only).
 
 ## 11. Demo content
 
@@ -149,15 +149,15 @@ No XML export. Provisioning (`inc/setup.php`) creates the 12 pages + 6 categorie
 
 ## 13. Ranked conversion risks
 
-1. **Comments have no static equivalent** — vibe-comments/WP comments need a replacement (giscus/utterances/Staticman or deferred; ship v1 read-only with "closed" note).
-2. **Forms + newsletter need a server leg** — admin-ajax contact router + Brevo capture must become a serverless endpoint; secrets move off wp-config. Ship static UI first, wire endpoint in leg 2.
-3. **Live FX rates at build time go stale** — `gwill_fx_rates()` transient (30 min) becomes: SSG with build-time rate + client-side live refresh from open.er-api.com (same keyless source). Decide staleness label + fallback ₦1340 handling.
-4. **Web-push/VAPID + `/sw.js` publishing are server features** — keep manifest + static SW for installability; push subscription endpoint must be rebuilt or cut.
-5. **Calculator parity ×17** — each PHP engine + JS mirror must be re-derived in TS and numerically tested (salary-tax NTA bands + old-vs-new are the highest-stakes math; property-test against PHP outputs).
-6. **Amount-page SEO cluster** — 8 near-duplicate pages risk thin-content flags; keep unique sections/FAQs per page and canonical discipline from `inc/amount-pages.php`.
-7. **Maintained tables rot** — transfer fees, savings rates (verified 2026-09-01), parallel spread are manual-update data; port as dated `src/data/*.ts` with visible verified-stamps and an owner checklist.
-8. **Spotlight search parity** — WP REST + 500-title index + fuzzy suggest becomes a static index; keep highlighting, accept weaker did-you-mean or ship a static correction list.
-9. **Dark-mode tri-state + ticker + facades JS** — small but behavior-rich (`main.js`, `ticker-live.js`, `embeds.js`, `darkmode`); port as framework-free scripts, preserve no-flash + reduced-motion.
-10. **Ad slots + consent + sticky footer bar** — Customizer ad-code textareas become config; empty-slot wireframe placeholders must be preserved or explicitly removed (affects layout widths).
-11. **200 KB style.css → Astro styles** — full token + 75-section cascade port; risk of dropping edge cases (Gutenberg `.art-body` block styles, coarse-pointer ergonomics, Fenix scrollbar rule). Port `interior.css`-style per portfolio precedent and visually QA every page type.
-12. **i18n strings** — `gwill-finance` domain + `.pot` dropped in v1; hardcode English, note re-add path (astro-i18n) for v2.
+1. **Comments have no static equivalent**, vibe-comments/WP comments need a replacement (giscus/utterances/Staticman or deferred; ship v1 read-only with "closed" note).
+2. **Forms + newsletter need a server leg**, admin-ajax contact router + Brevo capture must become a serverless endpoint; secrets move off wp-config. Ship static UI first, wire endpoint in leg 2.
+3. **Live FX rates at build time go stale**, `gwill_fx_rates()` transient (30 min) becomes: SSG with build-time rate + client-side live refresh from open.er-api.com (same keyless source). Decide staleness label + fallback ₦1340 handling.
+4. **Web-push/VAPID + `/sw.js` publishing are server features**, keep manifest + static SW for installability; push subscription endpoint must be rebuilt or cut.
+5. **Calculator parity ×17**, each PHP engine + JS mirror must be re-derived in TS and numerically tested (salary-tax NTA bands + old-vs-new are the highest-stakes math; property-test against PHP outputs).
+6. **Amount-page SEO cluster**, 8 near-duplicate pages risk thin-content flags; keep unique sections/FAQs per page and canonical discipline from `inc/amount-pages.php`.
+7. **Maintained tables rot**, transfer fees, savings rates (verified 2026-09-01), parallel spread are manual-update data; port as dated `src/data/*.ts` with visible verified-stamps and an owner checklist.
+8. **Spotlight search parity**, WP REST + 500-title index + fuzzy suggest becomes a static index; keep highlighting, accept weaker did-you-mean or ship a static correction list.
+9. **Dark-mode tri-state + ticker + facades JS**, small but behavior-rich (`main.js`, `ticker-live.js`, `embeds.js`, `darkmode`); port as framework-free scripts, preserve no-flash + reduced-motion.
+10. **Ad slots + consent + sticky footer bar**, Customizer ad-code textareas become config; empty-slot wireframe placeholders must be preserved or explicitly removed (affects layout widths).
+11. **200 KB style.css → Astro styles**, full token + 75-section cascade port; risk of dropping edge cases (Gutenberg `.art-body` block styles, coarse-pointer ergonomics, Fenix scrollbar rule). Port `interior.css`-style per portfolio precedent and visually QA every page type.
+12. **i18n strings**, `gwill-finance` domain + `.pot` dropped in v1; hardcode English, note re-add path (astro-i18n) for v2.

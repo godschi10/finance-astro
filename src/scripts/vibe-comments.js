@@ -408,7 +408,7 @@
                     if (note) {
                         note.textContent = permission === 'denied'
                             ? str('pushBlocked', 'Notifications are blocked for this site in your browser settings.')
-                            : 'Notifications stayed off — turn them on in your browser settings to retry.';
+                            : 'Notifications stayed off: turn them on in your browser settings to retry.';
                         note.hidden = false;
                     }
                     return;
@@ -1305,7 +1305,7 @@
         // v3.18.0 consent law - the Notify toggle: the comment's author can
         // flip reply-email consent anytime, no window. Strangers never see it.
         const notifyBtnHtml = comment.owns
-            ? '<button type="button" class="vibe-notify-btn" data-comment-id="' + cid + '" data-on="' + (comment.notify_on ? '1' : '0') + '" title="' + str('notifyTitle', 'Reply alerts for this thread — click to switch on or off') + '">'
+            ? '<button type="button" class="vibe-notify-btn" data-comment-id="' + cid + '" data-on="' + (comment.notify_on ? '1' : '0') + '" title="' + str('notifyTitle', 'Reply alerts for this thread: click to switch on or off') + '">'
                 + bellIcon(comment.notify_on ? str('bellOn', 'On') : str('bellOff', 'Off'))
               + '</button>'
             : '';
@@ -1668,7 +1668,7 @@
         cancelBtn.style.display = 'inline-flex';
 
         if (!config.isLoggedIn && guestFields) {
-            // Guest form is exposed by default (King's order 2026-09-26) —
+            // Guest form is exposed by default (King's order 2026-09-26) ; 
             // moving the form to a reply must never collapse it.
             guestFields.style.display = 'grid';
         }
@@ -1706,7 +1706,7 @@
         cancelBtn.style.display = 'none';
 
         if (guestFields && !config.isLoggedIn) {
-            // Exposed by default — cancelling a reply keeps the form open.
+            // Exposed by default ;  cancelling a reply keeps the form open.
             guestFields.style.display = 'grid';
         }
 
@@ -1933,7 +1933,7 @@
                 if (result.success && result.data) {
                     // 2026-09-27 audit (MAJOR-2): a comment awaiting moderation is
                     // NOT rendered into the thread. The old code appended it as a
-                    // live node (ghost) — it vanished on refresh and its Reply
+                    // live node (ghost) ;  it vanished on refresh and its Reply
                     // button 400'd ("parent not found") because the Worker only
                     // nests replies under APPROVED parents. WP's guest path shows
                     // the acknowledgement only; the comment appears once approved.
@@ -1986,8 +1986,8 @@
                     // collapsed to the generic "Failed to post comment.".
                     if (!msg && d.error) {
                         msg = d.error === 'rate limited'
-                            ? (d.retry ? 'Posting too fast — try again in ' + Math.ceil(d.retry) + 's.'
-                                       : 'Posting too fast — wait a moment and try again.')
+                            ? (d.retry ? 'Posting too fast: try again in ' + Math.ceil(d.retry) + 's.'
+                                       : 'Posting too fast. Wait a moment and try again.')
                             : d.error;
                     }
                     if (!msg) msg = str('postFailed', 'Failed to post comment.');
@@ -2239,7 +2239,7 @@
                 });
 
                 // PORT SEAM (v1 bootstrap law): the sort/search toolbar is held
-                // for P2 — initSortToggle() and initSearch() are deliberately NOT
+                // for P2 ;  initSortToggle() and initSearch() are deliberately NOT
                 // invoked, so revealing the toolbar here would put an inert sort
                 // button on screen. WP ships this markup hidden (comments.php:
                 // style="display:none") and reveals it only from the sort code,
@@ -2430,14 +2430,14 @@
 
     /**
      * Guest identity persistence: name + id via localStorage, email via
-     * sessionStorage (2026-10-03 security audit — email is PII).
+     * sessionStorage (2026-10-03 security audit ; email is PII).
      * ─────────────────────────────────────────────
      * Three independent pieces of guest state are stored:
      *
      *   vibe_guest_name   - display name, pre-filled in the comment form.
      *   vibe_guest_email  - email, pre-filled in the comment form. PII:
      *                       session-scoped (sessionStorage) since the
-     *                       2026-10-03 security audit — it dies with the
+     *                       2026-10-03 security audit ; it dies with the
      *                       tab, never remembered forever; any legacy
      *                       localStorage copy is wiped on first read.
      *   vibe_gid          - stable random UUID used as the reaction identity
@@ -2509,7 +2509,7 @@
                 localStorage.setItem('vibe_guest_name', author.value.trim());
             }
             if (email && email.value.trim()) {
-                /* 2026-10-03 security audit: email is PII — session-scoped
+                /* 2026-10-03 security audit: email is PII ; session-scoped
                    storage only, dies with the tab (name stays remembered).
                    Also wipe any legacy localStorage copy from the old
                    forever-persistence scheme. */
@@ -2525,7 +2525,7 @@
         var name   = '';
         try {
             name           = localStorage.getItem('vibe_guest_name')  || '';
-            /* 2026-10-03 security audit: email is PII — read from the
+            /* 2026-10-03 security audit: email is PII ; read from the
                session-scoped store; wipe any legacy localStorage copy so the
                pre-audit forever-email dies on this visit. */
             localStorage.removeItem('vibe_guest_email');
@@ -2570,7 +2570,7 @@
         var author = document.getElementById('vibe-author');
         var email  = document.getElementById('vibe-email');
         if (author) { author.addEventListener('blur', saveGuestIdentity); }
-        if (email)  { email.addEventListener('blur',  saveGuestIdentity); }
+        if (email)  { email.addEventListener('blur', saveGuestIdentity); }
     }
 
     function initGuestToggle() {
@@ -2711,7 +2711,7 @@
         const modes = [
             { id: 'newest', label: '\u2193', title: str('sortNewest', 'Newest first') },
             { id: 'oldest', label: '\u2191', title: str('sortOldest', 'Oldest first') },
-            { id: 'top',    label: '\u2b50', title: str('sortTop', 'Most reacted') },
+            { id: 'top',   label: '\u2b50', title: str('sortTop', 'Most reacted') },
         ];
         let idx = 0;  // current mode index - reassigned on each click
 

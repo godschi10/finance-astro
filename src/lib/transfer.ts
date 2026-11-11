@@ -1,4 +1,4 @@
-// Money-transfer comparator engine — TS port of inc/transfer-comparator.php.
+// Money-transfer comparator engine ;  TS port of inc/transfer-comparator.php.
 // Nigeria-first "who actually gets you the most naira" tool: fee AND rate
 // markup combined per provider, sorted best-first. The fee table is
 // MAINTAINED (verified September 2026); the FX base is injected by the
@@ -33,7 +33,7 @@ export function transferProviders(direction: string): TransferProvider[] {
     { id: "wise", name: "Wise", flat: 0.0, pct: 0.006, markup: 0.0, note: "Mid-market rate on the dollar you receive" },
     { id: "bank", name: "Bank (domiciliary)", flat: 0.0, pct: 0.01, markup: 0.025, note: "Official channel; documentation needed" },
     /* P1-7 (v0.7.58): the street premium used to be a hardcoded -0.045 HERE,
-       duplicated from fx.ts's 1.045 with nothing keeping the two in step — two
+       duplicated from fx.ts's 1.045 with nothing keeping the two in step ; two
        copies of one maintained figure, which is exactly how they drift. It now
        reads FX_PARALLEL_SPREAD_POINT, so the comparator's P2P row and the
        converter's parallel estimate are arithmetically the same number by
@@ -127,11 +127,11 @@ export function transferQuote(
     /* P0-1 (fifth audit A5, [Certain], v0.7.57): a NEGATIVE markup is the
        parallel-market street premium. The street quotes a HIGHER ₦-per-$ rate
        than the official mid, so selling naira means the payout DIVIDES by
-       (mid-rate × (1 + premium)) and lands BELOW the official-rate payout —
+       (mid-rate × (1 + premium)) and lands BELOW the official-rate payout; 
        ₦100,000 ÷ (₦1,331 × 1.045) ≈ $71.90, never $78.51. The old
        `mid * (1 - p.markup)` multiplied the premium INTO the payout,
        overstating P2P by ~6.9–9.1% and inverting the ranking. A positive
-       markup stays a multiplier (provider rate markup on the payout side —
+       markup stays a multiplier (provider rate markup on the payout side; 
        all to-nigeria rows). */
     const effRate = p.markup < 0 ? mid / (1 - p.markup) : mid * (1 - p.markup);
     return {

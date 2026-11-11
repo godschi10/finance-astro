@@ -1,12 +1,12 @@
 ---
-// Port of page-tools.php (gwill-finance-theme, "Finance Tools" template) —
+// Port of page-tools.php (gwill-finance-theme, "Finance Tools" template) ; 
 // the Money Calculators hub, imported from the live
 // https://finance.fitnesslova.qzz.io/tools/ capture 2026-09-30 (King order:
 // "import the money calculator … maybe change the URL path to /money-tools/").
 // Port URL: /money-tools/ (live path stays /tools/). Anatomy mirrored exactly:
 //   2. .apps-hero: dot-grid + gold-glow layers, breadcrumb (Home › Money
 //      Calculators), gold badge pill "Free · no sign-up · always updated" (sentence case since v0.7.14),
-//      h1 "Money Calculators", lede — inline styles verbatim from the template.
+//      h1 "Money Calculators", lede ;  inline styles verbatim from the template.
 //   3. .con > .ad-bg + .shd ("All tools" · "More added regularly") + .g3 of
 //      16 .tool-card (per gwill_tools_card(): gradient icon tile
 //      --tile/--tile-b, title, "Free · no sign-up" badge, desc, foot
@@ -26,7 +26,7 @@ import { amountSlugs } from "../../lib/amount";
 import { TOOL_MANIFEST } from "../../data/tool-manifest";
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 
-// page-tools.php gwill_tools_card() arguments, template order, verbatim — but no
+// page-tools.php gwill_tools_card() arguments, template order, verbatim ;  but no
 // longer a SECOND hand-kept list of the money tools (v0.7.21 leg D2; fifteen since the 2026-10-07 merge). This
 // page used to carry its own tools[] literal, which meant a slug lived in three
 // places (here, data/content.ts TOOLS, data/tool-fields.ts TOOL_FIELDS) and a
@@ -34,7 +34,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 // reads the one manifest, in the same template order, with the same copy.
 const tools = TOOL_MANIFEST;
 
-// page-tools.php $amount_slugs — the live hub prints exactly these 8 chips
+// page-tools.php $amount_slugs ;  the live hub prints exactly these 8 chips
 // (resolved against the port's own amount registry so links never 404).
 const AMOUNT_CHIPS: [string, string][] = [
   ["100-dollars-to-naira", "100 Dollars to Naira"],
@@ -65,7 +65,7 @@ const breadcrumb = { "@context": "https://schema.org", "@type": "BreadcrumbList"
     </nav>
     <div style="display:inline-flex;align-items:center;gap:8px;font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold-b);background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);padding:4px 12px;border-radius:var(--pill);margin-bottom:16px">Free · no sign-up · rates live, tables dated</div>
     <h1 style="font-size:34px;font-weight:800;letter-spacing:-0.04em;color:#f0ede6;line-height:1.1;margin-bottom:10px">Money Calculators</h1>
-    <p style="font-size:14px;font-weight:300;color:var(--dark-dim);line-height:1.75">Free tools to work out your money — live exchange rates, taxes, savings goals and more. Every one is built for Nigerians. Exchange rates refresh on every build and again in your browser; the comparison tables are checked by hand and show the date they were verified.</p>
+    <p style="font-size:14px;font-weight:300;color:var(--dark-dim);line-height:1.75">Free tools to work out your money: live exchange rates, taxes, savings goals and more. Every one is built for Nigerians. Exchange rates refresh on every build and again in your browser; the comparison tables are checked by hand and show the date they were verified.</p>
   </div>
 </div>
 <div class="con" style="margin-top:32px;padding-bottom:48px">

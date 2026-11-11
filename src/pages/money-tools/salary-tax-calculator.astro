@@ -8,7 +8,7 @@ const seed = payeCalculate(300000, 0.08, 0, 0, true);
 const cmp = payeCompare(300000, 0.08, 0, 0);
 const bands = payeBandBreakdown(seed.taxable, payeBands2026());
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
-// Related-guide card titles derive from the article records (SITE-3) — an
+// Related-guide card titles derive from the article records (SITE-3) ;  an
 // unknown slug throws at build rather than shipping a stale card.
 const artTitle = await articleTitleOf();
 // Crossover-aware winner: the old bands beat the new ones well below executive
@@ -22,56 +22,56 @@ const saveTxt = tie
   : newWins
     ? `You keep ₦${n(cmp.save_monthly)}/mo more under the new bands.`
     : `The old bands save you ₦${n(-cmp.save_monthly)}/mo vs the new bands.`;
-/* S5 item 2 — the quick-check worked answers. Same engine, same 8%-pension /
+/* S5 item 2 ; the quick-check worked answers. Same engine, same 8%-pension /
    no-rent basis as the copy prose below (and as WP's server-computed answers
    at page-salary-tax-calculator.php:245-268), but computed HERE from the
    port's own payeCalculate() so the figures can never drift from the maths:
    nothing is hand-typed. These are labelled reference answers, not the
-   visitor's receipt — the receipt above still waits on his own numbers. */
+   visitor's receipt ; the receipt above still waits on his own numbers. */
 const wk = [300000, 500000, 1000000].map((gross) => ({ gross, r: payeCalculate(gross, 0.08, 0, 0, true) }));
-/* Chip labels: ₦300k / ₦500k / ₦1m — the same shorthand the copy prose and
+/* Chip labels: ₦300k / ₦500k / ₦1m ; the same shorthand the copy prose and
    WP's chips use. */
 const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` : `₦${gross / 1000}k`);
 ---
-<ToolShell title="Nigeria Tax Calculator 2026, NTA 2025 vs Old Bands - GWill Finance" description="Nigerian PAYE under the NTA 2025 bands (in force 1 Jan 2026) vs the old PITA bands, for comparison only (repealed 1 Jan 2026): rent relief, minimum-wage exemption, old-vs-new comparison." slug="salary-tax-calculator" tool="Nigeria Tax Calculator 2026" crumb="Nigeria Tax Calculator" lede="2026 bands (0% under ₦800k, then 15–25%) against the repealed 7–24% PITA bands, for comparison — with 20% rent relief and the ₦70k minimum-wage exemption." verified="NTA 2025 bands · rent relief capped ₦500k · exemption ≤ ₦70,000/mo" faqs={[
+<ToolShell title="Nigeria Tax Calculator 2026, NTA 2025 vs Old Bands - GWill Finance" description="Nigerian PAYE under the NTA 2025 bands (in force 1 Jan 2026) vs the old PITA bands, for comparison only (repealed 1 Jan 2026): rent relief, minimum-wage exemption, old-vs-new comparison." slug="salary-tax-calculator" tool="Nigeria Tax Calculator 2026" crumb="Nigeria Tax Calculator" lede="2026 bands (0% under ₦800k, then 15–25%) against the repealed 7–24% PITA bands, for comparison, with 20% rent relief and the ₦70k minimum-wage exemption." verified="NTA 2025 bands · rent relief capped ₦500k · exemption ≤ ₦70,000/mo" faqs={[
   { q: "Who pays zero PAYE?", a: "You pay no income tax on an employment if your gross income from that employment is at or below the national minimum wage (Nigeria Tax Act 2025, s.163(1)(t)). This is a different thing from the ₦800,000 zero-rate band, which applies to your chargeable income once you are taxable. Last verified 11 Oct 2026 · NTA s.163(1)(t) (nta2025.txt:4407-4408) · s.58(1) (nta2025.txt:1877-1880)" },
   { q: "How does rent relief work?", a: "20% of annual rent reduces taxable income, capped at ₦500,000 a year. Keep rent receipts." },
-  { q: "How is a bonus taxed?", a: "A bonus is employment income, taxed on the day it is paid (NTA 2025 ss.4(2)(a), 26(2)). Enter it in the bonus field and we add it to your regular chargeable income and charge only the extra tax, so a bonus pays at your marginal band rate rather than the top one. If the bonus lifts your gross above the national minimum wage, the minimum-wage exemption falls away (s.163(1)(t)) — the first ₦800,000 of chargeable income is still taxed at 0%." },
-  { q: "Old vs new — who wins?", a: "The new bands win for most salaries, especially with rent relief. Without rent, the old bands come out slightly ahead for gross pay of roughly ₦325k–₦535k a month (by at most about ₦1,000 a month), and again for very high earners. Note the old row is for comparison only — the Personal Income Tax Act it came from was repealed on 1 Jan 2026 (NTA 2025 s.196(g)), so no one is actually paid on it. Enter your salary and the comparison card shows your actual winner." },
+  { q: "How is a bonus taxed?", a: "A bonus is employment income, taxed on the day it is paid (NTA 2025 ss.4(2)(a), 26(2)). Enter it in the bonus field and we add it to your regular chargeable income and charge only the extra tax, so a bonus pays at your marginal band rate rather than the top one. If the bonus lifts your gross above the national minimum wage, the minimum-wage exemption falls away (s.163(1)(t)): the first ₦800,000 of chargeable income is still taxed at 0%." },
+  { q: "Old vs new: who wins?", a: "The new bands win for most salaries, especially with rent relief. Without rent, the old bands come out slightly ahead for gross pay of roughly ₦325k–₦535k a month (by at most about ₦1,000 a month), and again for very high earners. Note the old row is for comparison only: the Personal Income Tax Act it came from was repealed on 1 Jan 2026 (NTA 2025 s.196(g)), so no one is actually paid on it. Enter your salary and the comparison card shows your actual winner." },
 ]}
 
   badge="NTA 2025 · In force since 1 Jan 2026",
   ctaTitle="What next",
-  ctaNote="If you rent, add your annual rent above — 20% comes off taxable income, capped at ₦500,000 a year. Then confirm the pension basis and rent relief with payroll or HR: this is guidance, not tax advice.",
+  ctaNote="If you rent, add your annual rent above: 20% comes off taxable income, capped at ₦500,000 a year. Then confirm the pension basis and rent relief with payroll or HR: this is guidance, not tax advice.",
   ctas={[{ label: "Work backwards from take-home", href: `${base}money-tools/gross-to-net-calculator/` }, { label: "Plan this take-home 50-30-20", href: `${base}money-tools/50-30-20-budget-calculator/`, ghost: true }]},
-  copy={[["p", "₦243,820 a month, that is the new take-home under the Nigeria Tax Act 2025 for a ₦300,000 gross salary at the minimum 8% pension. Use the calculator with your own numbers and rent to get an estimate."],["p", "₦394,700 a month on a ₦500,000 gross at the minimum pension. Add your annual rent above to see how rent relief reduces your taxable income further."],["p", "₦771,900 a month on a ₦1,000,000 gross at the minimum pension. The old-vs-new comparison card above shows your exact savings under the new law."],["p", "Your annual gross is reduced by pension, NHF, NHIS, life assurance and rent relief (20% of annual rent, capped at ₦500,000). What remains is your taxable income, which is taxed on graduated bands, 0% on the first ₦800,000, then 15% up to ₦3,000,000, 18% up to ₦12,000,000, 21% up to ₦25,000,000, 23% up to ₦50,000,000 and 25% above that."],["p", "The Nigeria Tax Act 2025 replaces the old Consolidated Relief Allowance (₦200,000 + 20% of gross) with a rent relief of 20% of your annual rent, capped at ₦500,000. If you pay ₦2,400,000 a year in rent, you get ₦480,000 off your taxable income. Enter your annual rent above to see the effect."],["p", "The Nigeria Tax Act 2025 (NTA 2025), in force since 1 January 2026, is the biggest change to personal income tax in Nigeria in decades. It was designed to leave the lowest earners completely untaxed, widen the tax-free threshold for everyone, and simplify how allowances work, and for most workers it results in more take-home pay."],["h3", "The new 0% band, most people now start at zero"],["p", "Under the old law, tax started from the first naira of taxable income at 7%. NTA 2025 sets a 0% band on the first ₦800,000 of annual taxable income, so a big slice of every salary is now completely tax-free before any higher bands apply. You pay no income tax on an employment if your gross income from that employment is at or below the national minimum wage (Nigeria Tax Act 2025, s.163(1)(t)). This is a different thing from the ₦800,000 zero-rate band, which applies to your chargeable income once you are taxable. Last verified 11 Oct 2026 · NTA s.163(1)(t) (nta2025.txt:4407-4408) · s.58(1) (nta2025.txt:1877-1880)"],["h3", "Rent relief replaces the old allowance"],["p", "The old Consolidated Relief Allowance, the flat ₦200,000 plus 20% of gross income that everyone claimed, is gone. In its place is a rent relief worth 20% of your annual rent, capped at ₦500,000. That is a real shift: someone who pays no rent (living rent-free or in staff quarters) no longer gets an automatic allowance, while tenants get a deduction that scales with what they actually pay. This is one of the biggest reasons your take-home under the new law can differ from the old figures."],["h3", "Wider bands, higher top rate"],["p", "The tax bands are now far wider, 15% on income up to ₦3,000,000, 18% up to ₦12,000,000, 21% up to ₦25,000,000, 23% up to ₦50,000,000 and 25% above that, so your effective rate stays lower for longer. Only the very highest earners reach the new 25% top rate (up from 24% before)."],["p", "Type your salary and rent into the calculator above and compare the old and new rows to see exactly what the law change means for your personal take-home, every figure is computed live from the official bands."],["h3", "Nigerian tax calculator questions"],["h3", "What changed in the Nigeria Tax Act 2025?"],["p", "The first ₦800,000 of annual income is now tax-free (0% band). The old Consolidated Relief Allowance (CRA) is replaced by a rent relief of 20% of annual rent, capped at ₦500,000. Employees earning ₦70,000 a month or less pay zero PAYE. The top rate is now 25% instead of 24%."],["h3", "How do I claim rent relief?"],["p", "Enter your annual rent in the calculator. The relief is automatically applied, 20% of your annual rent, up to ₦500,000. Your employer would normally adjust your PAYE for this in the official filing."],["h3", "Did the NRS replace the FIRS — and when do the new tax rules start?"],["p", "The Nigeria Revenue Service (NRS) replaced the Federal Inland Revenue Service under the Nigeria Revenue Service (Establishment) Act 2025, which took effect on 26 June 2025. The new tax rules themselves — the Nigeria Tax Act 2025 — take effect from 1 January 2026. Last verified 11 Oct 2026 · NRS (Establishment) Act 2025 gazette (Official Gazette No. 117, 26 Jun 2025), commencement bracket at the long title (nrsact.txt:94) · NTA gazette commencement bracket \"[1st January, 2026]\" (nta-nrs.txt:256) · Aluko & Oyebode transition overview (aluko-oyebode.com/wp-content/uploads/2026/07/OVERVIEW-OF-THE-GENERAL-TRANSITION-GUIDELINES-FOR-THE-NEW-TAX-ACTS-2025.pdf)"],["h3", "What pension rate should I use?"],["p", "Your pension contribution is a minimum of 8% of your monthly emoluments — that is your basic salary plus your housing and transport allowances — while your employer adds a minimum of 10%, under the Pension Reform Act 2014. Deductions you claim must be made in writing to your tax authority. Last verified 11 Oct 2026 · PenCom FAQ (pencom.gov.ng/wp-content/uploads/2018/04/FAQ-CPS-reviewed.-17-Apr.-2018.pdf) · NTA s.31 (nta2025.txt:1325-1327)"],["h3", "What is the NHF limit?"],["p", "The National Housing Fund contribution is 2.5% of your basic monthly salary, uncapped — the NHF Act sets no ceiling on the amount (confirm the figure your payroll applies). Last verified 11 Oct 2026 · NHF Act ss.4(a), 9(1) (nhfact.txt:94-96, 144-146) · NTA s.30(2)(a)(i) (nta2025.txt:1309)"]]},
-  related={[{ href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: artTitle("kuda-vs-traditional-banks-charges"), excerpt: "Card fees, failed-transfer reversals, and support tested — what digital banks actually save you." }]},
+  copy={[["p", "₦243,820 a month, that is the new take-home under the Nigeria Tax Act 2025 for a ₦300,000 gross salary at the minimum 8% pension. Use the calculator with your own numbers and rent to get an estimate."],["p", "₦394,700 a month on a ₦500,000 gross at the minimum pension. Add your annual rent above to see how rent relief reduces your taxable income further."],["p", "₦771,900 a month on a ₦1,000,000 gross at the minimum pension. The old-vs-new comparison card above shows your exact savings under the new law."],["p", "Your annual gross is reduced by pension, NHF, NHIS, life assurance and rent relief (20% of annual rent, capped at ₦500,000). What remains is your taxable income, which is taxed on graduated bands, 0% on the first ₦800,000, then 15% up to ₦3,000,000, 18% up to ₦12,000,000, 21% up to ₦25,000,000, 23% up to ₦50,000,000 and 25% above that."],["p", "The Nigeria Tax Act 2025 replaces the old Consolidated Relief Allowance (₦200,000 + 20% of gross) with a rent relief of 20% of your annual rent, capped at ₦500,000. If you pay ₦2,400,000 a year in rent, you get ₦480,000 off your taxable income. Enter your annual rent above to see the effect."],["p", "The Nigeria Tax Act 2025 (NTA 2025), in force since 1 January 2026, is the biggest change to personal income tax in Nigeria in decades. It was designed to leave the lowest earners completely untaxed, widen the tax-free threshold for everyone, and simplify how allowances work, and for most workers it results in more take-home pay."],["h3", "The new 0% band, most people now start at zero"],["p", "Under the old law, tax started from the first naira of taxable income at 7%. NTA 2025 sets a 0% band on the first ₦800,000 of annual taxable income, so a big slice of every salary is now completely tax-free before any higher bands apply. You pay no income tax on an employment if your gross income from that employment is at or below the national minimum wage (Nigeria Tax Act 2025, s.163(1)(t)). This is a different thing from the ₦800,000 zero-rate band, which applies to your chargeable income once you are taxable. Last verified 11 Oct 2026 · NTA s.163(1)(t) (nta2025.txt:4407-4408) · s.58(1) (nta2025.txt:1877-1880)"],["h3", "Rent relief replaces the old allowance"],["p", "The old Consolidated Relief Allowance, the flat ₦200,000 plus 20% of gross income that everyone claimed, is gone. In its place is a rent relief worth 20% of your annual rent, capped at ₦500,000. That is a real shift: someone who pays no rent (living rent-free or in staff quarters) no longer gets an automatic allowance, while tenants get a deduction that scales with what they actually pay. This is one of the biggest reasons your take-home under the new law can differ from the old figures."],["h3", "Wider bands, higher top rate"],["p", "The tax bands are now far wider, 15% on income up to ₦3,000,000, 18% up to ₦12,000,000, 21% up to ₦25,000,000, 23% up to ₦50,000,000 and 25% above that, so your effective rate stays lower for longer. Only the very highest earners reach the new 25% top rate (up from 24% before)."],["p", "Type your salary and rent into the calculator above and compare the old and new rows to see exactly what the law change means for your personal take-home, every figure is computed live from the official bands."],["h3", "Nigerian tax calculator questions"],["h3", "What changed in the Nigeria Tax Act 2025?"],["p", "The first ₦800,000 of annual income is now tax-free (0% band). The old Consolidated Relief Allowance (CRA) is replaced by a rent relief of 20% of annual rent, capped at ₦500,000. Employees earning ₦70,000 a month or less pay zero PAYE. The top rate is now 25% instead of 24%."],["h3", "How do I claim rent relief?"],["p", "Enter your annual rent in the calculator. The relief is automatically applied, 20% of your annual rent, up to ₦500,000. Your employer would normally adjust your PAYE for this in the official filing."],["h3", "Did the NRS replace the FIRS, and when do the new tax rules start?"],["p", "The Nigeria Revenue Service (NRS) replaced the Federal Inland Revenue Service under the Nigeria Revenue Service (Establishment) Act 2025, which took effect on 26 June 2025. The new tax rules themselves (the Nigeria Tax Act 2025) take effect from 1 January 2026. Last verified 11 Oct 2026 · NRS (Establishment) Act 2025 gazette (Official Gazette No. 117, 26 Jun 2025), commencement bracket at the long title (nrsact.txt:94) · NTA gazette commencement bracket \"[1st January, 2026]\" (nta-nrs.txt:256) · Aluko & Oyebode transition overview (aluko-oyebode.com/wp-content/uploads/2026/07/OVERVIEW-OF-THE-GENERAL-TRANSITION-GUIDELINES-FOR-THE-NEW-TAX-ACTS-2025.pdf)"],["h3", "What pension rate should I use?"],["p", "Your pension contribution is a minimum of 8% of your monthly emoluments (that is your basic salary plus your housing and transport allowances), while your employer adds a minimum of 10%, under the Pension Reform Act 2014. Deductions you claim must be made in writing to your tax authority. Last verified 11 Oct 2026 · PenCom FAQ (pencom.gov.ng/wp-content/uploads/2018/04/FAQ-CPS-reviewed.-17-Apr.-2018.pdf) · NTA s.31 (nta2025.txt:1325-1327)"],["h3", "What is the NHF limit?"],["p", "The National Housing Fund contribution is 2.5% of your basic monthly salary, uncapped: the NHF Act sets no ceiling on the amount (confirm the figure your payroll applies). Last verified 11 Oct 2026 · NHF Act ss.4(a), 9(1) (nhfact.txt:94-96, 144-146) · NTA s.30(2)(a)(i) (nta2025.txt:1309)"]]},
+  related={[{ href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: artTitle("kuda-vs-traditional-banks-charges"), excerpt: "Card fees, failed-transfer reversals, and support tested: what digital banks actually save you." }]},
   disclaimer="This calculator is for informational guidance only and is not tax, financial or investment advice. Tax rules and personal circumstances vary, confirm your figures with a licensed tax professional.">
 <div class="fx-card">
-<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers — the receipt waits.</p>
-<!-- PERIOD TOGGLE (S5 item 5) — the WP tax tools' Monthly/Annual switch
+<p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers and the receipt waits.</p>
+<!-- PERIOD TOGGLE (S5 item 5) ; the WP tax tools' Monthly/Annual switch
      (page-salary-tax-calculator.php:68-71, with the label-flip JS at
      assets/js/salary-tax.js:331-345), in the port's own segmented grammar
      (.fx-stepper/.fx-step, the control the savings-goal mode switch uses).
      DISPLAY-ONLY: the engine and every input stay monthly, and the per-year
      view reads the engine's OWN annual fields where they exist (net_annual,
-     tax_annual, save_annual — they do on this page), so no figure is a
+     tax_annual, save_annual ; they do on this page), so no figure is a
      multiplied guess. -->
 <div class="fx-stepper" role="group" aria-label="Receipt period">
   <button type="button" class="fx-step active" data-st-period="monthly" aria-pressed="true">Monthly</button>
   <button type="button" class="fx-step" data-st-period="annual" aria-pressed="false">Annual</button>
 </div>
-<p class="hint">Receipt figures follow this period. The calculator itself works in months — the per-year view reads the engine's own annual figures.</p>
+<p class="hint">Receipt figures follow this period. The calculator itself works in months: the per-year view reads the engine's own annual figures.</p>
 <div class="tgrid c3">
 
-<div class="field" data-cur="NGN"><label for="st-gross">Monthly gross ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-gross" type="text" value="300000" inputmode="decimal"></span><p class="hint">The monthly pay the 2026 bands are worked out from — before pension and tax come off.</p></div>
-<div class="field"><label for="st-pension">Pension %</label><input id="st-pension" type="text" max="100" value="8" inputmode="decimal"><p class="hint">Pension contributions are calculated on your <strong>monthly emoluments</strong> — your basic salary plus your housing and transport allowances — per the Pension Reform Act 2014: a minimum of 8% by you and 10% by your employer. Only the portion you actually contribute is deductible under the Nigeria Tax Act 2025. <em>Last verified 11 Oct 2026 · NTA s.30(2)(a)(iii) (nta2025.txt:1312) · <a href="https://www.pencom.gov.ng/wp-content/uploads/2018/04/FAQ-CPS-reviewed.-17-Apr.-2018.pdf">PenCom FAQ on the CPS</a></em></p></div>
+<div class="field" data-cur="NGN"><label for="st-gross">Monthly gross ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-gross" type="text" value="300000" inputmode="decimal"></span><p class="hint">The monthly pay the 2026 bands are worked out from: before pension and tax come off.</p></div>
+<div class="field"><label for="st-pension">Pension %</label><input id="st-pension" type="text" max="100" value="8" inputmode="decimal"><p class="hint">Pension contributions are calculated on your <strong>monthly emoluments</strong> (your basic salary plus your housing and transport allowances) per the Pension Reform Act 2014: a minimum of 8% by you and 10% by your employer. Only the portion you actually contribute is deductible under the Nigeria Tax Act 2025. <em>Last verified 11 Oct 2026 · NTA s.30(2)(a)(iii) (nta2025.txt:1312) · <a href="https://www.pencom.gov.ng/wp-content/uploads/2018/04/FAQ-CPS-reviewed.-17-Apr.-2018.pdf">PenCom FAQ on the CPS</a></em></p></div>
 <div class="field" data-cur="NGN"><label for="st-rent">Annual rent ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-rent" type="text" value="0" inputmode="decimal"></span></div>
 <div class="field" data-cur="NGN"><label for="st-nhf">NHF monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-nhf" type="text" value="0" inputmode="decimal"></span></div>
-<div class="field" data-cur="NGN"><label for="st-nhis">NHIS monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-nhis" type="text" value="0" inputmode="decimal"></span><p class="hint">Leave at ₦0 if your payslip doesn't show it — when filled, it comes off taxable income.</p></div>
-<div class="field" data-cur="NGN"><label for="st-life">Life assurance monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-life" type="text" value="0" inputmode="decimal"></span><p class="hint">Leave at ₦0 if your payslip doesn't show it — when filled, it comes off taxable income.</p></div>
+<div class="field" data-cur="NGN"><label for="st-nhis">NHIS monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-nhis" type="text" value="0" inputmode="decimal"></span><p class="hint">Leave at ₦0 if your payslip doesn't show it: when filled, it comes off taxable income.</p></div>
+<div class="field" data-cur="NGN"><label for="st-life">Life assurance monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-life" type="text" value="0" inputmode="decimal"></span><p class="hint">Leave at ₦0 if your payslip doesn't show it: when filled, it comes off taxable income.</p></div>
 <div class="field" data-cur="NGN"><label for="st-other">Other reliefs monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-other" type="text" value="0" inputmode="decimal"></span><p class="hint">Anything else your payroll deducts that reduces taxable income under the Nigeria Tax Act 2025 s.30(2)(a). Same field as our Net to Gross calculator, so both tools answer identically. Leave at ₦0 if none. <em>Last verified 11 Oct 2026 · NTA s.30(2)(a) (nta2025.txt:1307-1318)</em></p></div>
-<div class="field" data-cur="NGN"><label for="st-bonus">Bonus / 13th month ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-bonus" type="text" value="0" inputmode="decimal"></span><p class="hint">A one-off bonus or 13th-month payment, taxed on the day it is paid. It is added on top of your regular chargeable income and only the extra tax is charged, so it is taxed at your marginal band rate — not at the top rate. <em>Last verified 11 Oct 2026 · NTA ss.4(2)(a), 26(2), 163(1)(t) (nta2025.txt:377-381, 1174-1180, 4407-4408)</em></p></div>
+<div class="field" data-cur="NGN"><label for="st-bonus">Bonus / 13th month ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-bonus" type="text" value="0" inputmode="decimal"></span><p class="hint">A one-off bonus or 13th-month payment, taxed on the day it is paid. It is added on top of your regular chargeable income and only the extra tax is charged, so it is taxed at your marginal band rate, not at the top rate. <em>Last verified 11 Oct 2026 · NTA ss.4(2)(a), 26(2), 163(1)(t) (nta2025.txt:377-381, 1174-1180, 4407-4408)</em></p></div>
 </div>
 <p class="hint" id="st-dedwarn" hidden></p>
 <div class="receipt">
@@ -86,19 +86,19 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
 <div class="receipt-row"><span>PAYE tax (annual)</span><b id="st-tax">₦{n(seed.tax_annual)}</b></div>
 </div>
 <p class="receipt-foot">NTA 2025 bands · rent relief cap ₦500k · pension figured on the gross you type</p>
-<p class="receipt-foot">A bonus counts as employment income and is taxed on the day it is paid. <strong>If a bonus takes your gross pay above the national minimum wage, the minimum-wage exemption falls away</strong> and the bonus runs through the normal band table — the first ₦800,000 of chargeable income is still taxed at 0%. <em>Last verified 11 Oct 2026 · NTA ss.4(2)(a), 26(2), 163(1)(t) (nta2025.txt:377-381, 1174-1180, 4407-4408)</em></p>
+<p class="receipt-foot">A bonus counts as employment income and is taxed on the day it is paid. <strong>If a bonus takes your gross pay above the national minimum wage, the minimum-wage exemption falls away</strong> and the bonus runs through the normal band table: the first ₦800,000 of chargeable income is still taxed at 0%. <em>Last verified 11 Oct 2026 · NTA ss.4(2)(a), 26(2), 163(1)(t) (nta2025.txt:377-381, 1174-1180, 4407-4408)</em></p>
 <div class="receipt-foot" id="st-bonus-block">
-<p class="receipt-row"><span>Bonus PAYE (one-off)</span><b id="st-bonus-tax">—</b></p>
-<p class="receipt-row"><span>Bonus take-home</span><b id="st-bonus-net">—</b></p>
-<p class="receipt-row"><span>Effective rate on the bonus</span><b id="st-bonus-rate">—</b></p>
-<p class="receipt-foot" style="font-weight:400">Taxed at the marginal band rate on top of your regular pay — the bonus is added to your chargeable income and only the difference in tax is charged. These three cells wait on your bonus figure and print "—" until you enter one, rather than a gold ₦0 for a bonus you never claimed.</p>
+<p class="receipt-row"><span>Bonus PAYE (one-off)</span><b id="st-bonus-tax">–</b></p>
+<p class="receipt-row"><span>Bonus take-home</span><b id="st-bonus-net">–</b></p>
+<p class="receipt-row"><span>Effective rate on the bonus</span><b id="st-bonus-rate">–</b></p>
+<p class="receipt-foot" style="font-weight:400">Taxed at the marginal band rate on top of your regular pay: the bonus is added to your chargeable income and only the difference in tax is charged. These three cells wait on your bonus figure and print "–" until you enter one, rather than a gold ₦0 for a bonus you never claimed.</p>
 </div>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
 </div>
 <div class="hr"></div>
-<h2 class="tool-h2">Quick check — salary after tax</h2>
-<!-- QUICK-CHECK CHIPS (S5 item 2) — adopted from page-salary-tax-calculator
+<h2 class="tool-h2">Quick check: salary after tax</h2>
+<!-- QUICK-CHECK CHIPS (S5 item 2) ; adopted from page-salary-tax-calculator
      .php:217-224, whose chips jump to pre-computed worked answers. The port's
      figures already existed in the prose below but had no anchors and no way
      in; these chips do both halves through the form's OWN path: one tap
@@ -120,19 +120,19 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
 ))}
 </tbody>
 </table></div>
-<p class="bar-note">Worked at the minimum 8% pension with no rent — reference answers, not your receipt. Tap a chip to load that salary into the calculator above and watch the receipt recompute.</p>
+<p class="bar-note">Worked at the minimum 8% pension with no rent: reference answers, not your receipt. Tap a chip to load that salary into the calculator above and watch the receipt recompute.</p>
 <div class="hr"></div>
 <h2 class="tool-h2">Old vs new bands</h2>
 <div class="st-table-wrap"><table class="st-table" id="st-cmp">
 <thead><tr><th>Regime</th><th class="n">Tax /yr</th><th class="n" id="st-cmp-net-h">Take-home /mo</th></tr></thead>
 <tbody>
 <tr id="st-row-new" class={newWins ? "win" : ""}><td>New (2026)<span class="btag" id="st-tag-new" style={newWins ? "" : "display:none"}>Best</span></td><td class="n" id="st-new-tax">₦{n(cmp.new.tax_annual)}</td><td class="n" id="st-new-net">₦{n(cmp.new.net_monthly)}</td></tr>
-<tr id="st-row-old" class={oldWins ? "win" : ""}><td>Old (PITA, for comparison only — repealed 1 Jan 2026)<span class="btag" id="st-tag-old" style={oldWins ? "" : "display:none"}>Best</span></td><td class="n" id="st-old-tax">₦{n(cmp.old.tax_annual)}</td><td class="n" id="st-old-net">₦{n(cmp.old.net_monthly)}</td></tr>
+<tr id="st-row-old" class={oldWins ? "win" : ""}><td>Old (PITA, for comparison only, repealed 1 Jan 2026)<span class="btag" id="st-tag-old" style={oldWins ? "" : "display:none"}>Best</span></td><td class="n" id="st-old-tax">₦{n(cmp.old.tax_annual)}</td><td class="n" id="st-old-net">₦{n(cmp.old.net_monthly)}</td></tr>
 </tbody>
 </table></div>
 <p class="bar-note" id="st-save">{saveTxt}</p>
 <p class="bar-note" id="st-warn" hidden></p>
-<p class="receipt-foot">The old row is shown <strong>for comparison only</strong>. The Personal Income Tax Act, Cap. P8 LFN 2004 (PITA) was repealed from the commencement of the Nigeria Tax Act 2025 on 1 Jan 2026 — it no longer applies to anyone's PAYE. It is priced here so you can see what the change is worth on your own salary. <em>Verified 11 Oct 2026 · NTA 2025 s.196(g) (nta2025.txt:5342, 5355) · commencement 1 Jan 2026 (nta-nrs.txt:256)</em></p>
+<p class="receipt-foot">The old row is shown <strong>for comparison only</strong>. The Personal Income Tax Act, Cap. P8 LFN 2004 (PITA) was repealed from the commencement of the Nigeria Tax Act 2025 on 1 Jan 2026: it no longer applies to anyone's PAYE. It is priced here so you can see what the change is worth on your own salary. <em>Verified 11 Oct 2026 · NTA 2025 s.196(g) (nta2025.txt:5342, 5355) · commencement 1 Jan 2026 (nta-nrs.txt:256)</em></p>
 <div class="hr"></div>
 <h2 class="tool-h2">2026 band breakdown</h2>
 <div class="st-table-wrap"><table class="st-table" id="st-bands">
@@ -159,9 +159,9 @@ const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).val
 /* THE ZERO LAW: every figure below declares the ids it is derived from, so a
    relief the visitor never entered cannot print itself as a gold ₦0 deduction. */
 const ALL = ["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life", "st-other"];
-/* S5 item 5 — the period state. "monthly" is the shipped calculator (every
+/* S5 item 5 ; the period state. "monthly" is the shipped calculator (every
    input and the engine's core output); "annual" is a DISPLAY view that reads
-   the engine's OWN annual fields (net_annual, tax_annual, save_annual — the
+   the engine's OWN annual fields (net_annual, tax_annual, save_annual ; the
    engine returns all three), so no figure here is a multiplied guess.
    Declared module-scope because render() reads it; the toggle buttons below
    own every write. */
@@ -192,24 +192,24 @@ function render() {
      ZERO LAW), so an uncleared bonus prints no bonus figures at all. */
   const bonus = Math.max(0, pm(g("st-bonus").value) || 0);
   const r = payeCalculate(gross, pen, nhf, rent, true, nhis, life, other);
-  /* MINOR-5 — the engine's net is deliberately unfloored and the NHF field has
+  /* MINOR-5 ; the engine's net is deliberately unfloored and the NHF field has
      no max: ₦500k gross + ₦500k NHF used to print a −₦40,000/mo take-home, a
      number no payslip can show. Mirrors the emergency-fund guard (v0.7.16):
      the take-home figures answer "Out of range" rather than a negative, and
-     the rail below names the fields to check — never a silent clamp. */
+     the rail below names the fields to check ; never a silent clamp. */
   const netBad = (v: number) => !Number.isFinite(v) || v < 0;
   const netTxt = (v: number) => netBad(v) ? "Out of range" : n(v);
   sfFig(t("st-fig"), ALL, netTxt(perNet(r)));
   sfFig(t("st-sub"), ALL, `Tax ${n(stPeriod === "annual" ? r.tax_annual : r.tax_monthly)}/${stPeriod === "annual" ? "yr" : "mo"} · taxable ${n(r.taxable)}/yr${r.exempt ? " · EXEMPT (minimum wage)" : ""}`);
   sfFig(t("st-pen"), ["st-gross", "st-pension"], n(r.pension_annual));
   /* Other-reliefs receipt row (P1-6 parity tail): mirrors the Net to Gross
-     page's gn-other2 row — the row rides its own field, annualised the same
+     page's gn-other2 row ; the row rides its own field, annualised the same
      way the engine annualises it (otherMonthly × 12). */
   sfFig(t("st-other2"), ["st-other"], n(r.other_annual));
   sfFig(t("st-rel"), ["st-rent"], n(r.relief_annual));
   sfFig(t("st-tax"), ALL, n(r.tax_annual));
   /* BONUS BLOCK (P1-6 tail). The engine is payeBonusTax(gross, bonus, pen, nhf,
-     rent, nhis, life, other) — the same marginal-band machinery the vector gate
+     rent, nhis, life, other) ; the same marginal-band machinery the vector gate
      already asserts (paye_bonus, paye_bonus_exempt_base). Nothing here restates a
      rate: the effective rate is READ BACK off the engine's own tax/bonus, never
      computed from a band I typed. A ₦0 bonus hides the whole block rather than
@@ -219,13 +219,13 @@ function render() {
      const below: `grossKnown` is declared later in this function, so touching
      it here is a temporal-dead-zone ReferenceError that aborts render() and
      leaves every figure below it stale. (The behavioural suite caught exactly
-     that on the first run of this block — rails + console, both salary-tax.)
+     that on the first run of this block ; rails + console, both salary-tax.)
 
-     These cells WITHHOLD as "—" via sfFig instead of hiding a wrapper: an
+     These cells WITHHOLD as "; " via sfFig instead of hiding a wrapper: an
      `hidden` ancestor does not stop a `.receipt-row b` from carrying text, and
      the behavioural suite scrapes exactly those (the first run shipped a stale
      "0.0%" through a hidden div and failed reset + clear). The house ZERO LAW
-     is "—", not "hidden" — the row is always there, the figure is not. */
+     is "; ", not "hidden" ; the row is always there, the figure is not. */
   const BONUS_DEPS = ["st-gross", "st-bonus", "st-pension", "st-nhf", "st-rent", "st-nhis", "st-life", "st-other"];
   const bonusOn = bonus > 0 && !pmBlank(g("st-gross").value);
   if (bonusOn) {
@@ -234,9 +234,9 @@ function render() {
     sfFig(t("st-bonus-net"), BONUS_DEPS, n(bt.net));
     sfFig(t("st-bonus-rate"), BONUS_DEPS, (bt.rate * 100).toFixed(1) + "%");
   } else {
-    sfFig(t("st-bonus-tax"), BONUS_DEPS, "—");
-    sfFig(t("st-bonus-net"), BONUS_DEPS, "—");
-    sfFig(t("st-bonus-rate"), BONUS_DEPS, "—");
+    sfFig(t("st-bonus-tax"), BONUS_DEPS, "–");
+    sfFig(t("st-bonus-net"), BONUS_DEPS, "–");
+    sfFig(t("st-bonus-rate"), BONUS_DEPS, "–");
   }
   const c = payeCompare(gross, pen, nhf, rent, nhis, life, other);
   sfFig(t("st-new-tax"), ALL, n(c.new.tax_annual));
@@ -249,47 +249,47 @@ function render() {
   (document.getElementById("st-tag-new") as HTMLElement).style.display = nw ? "" : "none";
   (document.getElementById("st-tag-old") as HTMLElement).style.display = ow ? "" : "none";
   /* BREAK-4. This rail used to assert "Both regimes leave you with the same
-     take-home" whenever the two comparisons tied — INCLUDING while gross was
+     take-home" whenever the two comparisons tied ; INCLUDING while gross was
      blank, because gross=0 makes them tie at ₦0. That is a conclusion about a
      comparison the visitor never made, with no user data behind it: the exact
      HN-3 class this whole leg exists to prevent, sitting in a prose rail the
      honesty pass deliberately did not touch. It is now honestly conditional:
      with no gross entered it withholds the claim and says what is missing, and
      the tie sentence only ever prints on a gross the visitor actually typed. */
-  /* B4-FIX2 — entered means honest, not merely digit-bearing: "abc123" in
+  /* B4-FIX2 ; entered means honest, not merely digit-bearing: "abc123" in
      gross must read as un-entered (the demand line below), never as ₦123 of
      comparison prose. pmBlank() is the fleet's one entered-test (pm.js). */
   const grossKnown = !pmBlank(g("st-gross").value);
-  /* MINOR-5 — with deductions above gross there is no take-home for either
+  /* MINOR-5 ; with deductions above gross there is no take-home for either
      regime, so the tie/winner prose withholds rather than concluding over
      the "Out of range" cells beside it. */
   const cmpBad = netBad(c.new.net_monthly) || netBad(c.old.net_monthly);
-  /* S5 item 5 — the winner sentence follows the chosen period off the
+  /* S5 item 5 ; the winner sentence follows the chosen period off the
      engine's own save figures (save_annual in the per-year view,
      save_monthly in the per-month view; the engine returns both). */
   const saveFig = stPeriod === "annual" ? c.save_annual : c.save_monthly;
   const saveUnit = stPeriod === "annual" ? "yr" : "mo";
   t("st-save").textContent = !grossKnown
-    ? "Old vs new bands compared on your gross — enter it above."
+    ? "Old vs new bands compared on your gross: enter it above."
     : cmpBad
-      ? "Out of range — deductions exceed the gross you entered, so neither regime has a take-home to compare."
+      ? "Out of range: deductions exceed the gross you entered, so neither regime has a take-home to compare."
       : (!nw && !ow)
       ? "Both regimes leave you with the same take-home."
       : nw
         ? `You keep ${n(saveFig)}/${saveUnit} more under the new bands.`
         : `The old bands save you ${n(-saveFig)}/${saveUnit} vs the new bands.`;
   const notes: string[] = [];
-  if (!(grossRaw > 0)) notes.push("Enter a monthly gross above ₦0 — take-home waits until you do.");
+  if (!(grossRaw > 0)) notes.push("Enter a monthly gross above ₦0: take-home waits until you do.");
   if (grossRaw < 0 || penRaw < 0 || rentRaw < 0 || nhfRaw < 0) notes.push("Negative entries are treated as ₦0.");
-  if (penRaw > 100) notes.push("Pension capped at 100% — at 100% there is no take-home.");
-  if (grossRaw > 100000000) notes.push("That gross looks unusually large — double-check the figure.");
-  if (nhfRaw > 15000) notes.push("The National Housing Fund contribution is 2.5% of your basic monthly salary, uncapped — the NHF Act sets no ceiling on the amount (confirm the figure your payroll applies). Last verified 11 Oct 2026 · NHF Act ss.4(a), 9(1) (nhfact.txt:94-96, 144-146) · NTA s.30(2)(a)(i) (nta2025.txt:1309)");
-  if (netBad(r.net_monthly)) notes.push("Out of range — pension, NHF, NHIS, life assurance and other reliefs add up to more than your gross, so no take-home can print. Check the monthly deduction fields against your payslip.");
-  if (rentRaw * 0.2 > 500000) notes.push("Rent relief capped at ₦500,000/yr — the excess changes nothing.");
+  if (penRaw > 100) notes.push("Pension capped at 100%: at 100% there is no take-home.");
+  if (grossRaw > 100000000) notes.push("That gross looks unusually large: double-check the figure.");
+  if (nhfRaw > 15000) notes.push("The National Housing Fund contribution is 2.5% of your basic monthly salary, uncapped: the NHF Act sets no ceiling on the amount (confirm the figure your payroll applies). Last verified 11 Oct 2026 · NHF Act ss.4(a), 9(1) (nhfact.txt:94-96, 144-146) · NTA s.30(2)(a)(i) (nta2025.txt:1309)");
+  if (netBad(r.net_monthly)) notes.push("Out of range: pension, NHF, NHIS, life assurance and other reliefs add up to more than your gross, so no take-home can print. Check the monthly deduction fields against your payslip.");
+  if (rentRaw * 0.2 > 500000) notes.push("Rent relief capped at ₦500,000/yr: the excess changes nothing.");
   const w = t("st-warn");
   w.hidden = notes.length === 0;
   w.textContent = notes.join(" ");
-  /* #5 hard caps (v0.7.55) — the INPUT-side inline nudge the fresh audit asked
+  /* #5 hard caps (v0.7.55) ; the INPUT-side inline nudge the fresh audit asked
      for, sitting with the fields it talks about. The v0.7.52 Out-of-range guard
      above stays untouched on the receipt rail; this fires earlier, at the
      moment pension + NHF + NHIS + life assurance outrun the gross they come
@@ -298,17 +298,17 @@ function render() {
   const dedWarn = t("st-dedwarn");
   if (grossKnown && dedTotal > gross) {
     dedWarn.hidden = false;
-    dedWarn.textContent = `Heads-up — pension + NHF + NHIS + life assurance + other reliefs add up to ${n(dedTotal)}/mo, above the ${n(gross)}/mo gross you entered. At this level there is no take-home; check the deduction fields.`;
+    dedWarn.textContent = `Heads-up: pension + NHF + NHIS + life assurance + other reliefs add up to ${n(dedTotal)}/mo, above the ${n(gross)}/mo gross you entered. At this level there is no take-home; check the deduction fields.`;
   } else {
     dedWarn.hidden = true;
     dedWarn.textContent = "";
   }
   const tb = document.querySelector("#st-bands tbody") as HTMLElement;
   tb.innerHTML = "";
-  /* B4-FIX3 — the breakdown is exemption-blind: at gross ≤ ₦70,000/mo PAYE is
+  /* B4-FIX3 ; the breakdown is exemption-blind: at gross ≤ ₦70,000/mo PAYE is
      ₦0 EXEMPT while the rows printed real ₦6,000-class charges. Every number
      stays true (slices are the correct bands maths); the TAX column withholds
-     as "—" under exemption and the line below names why, so the column sums
+     as "; " under exemption and the line below names why, so the column sums
      to the PAYE above it instead of to a tax nobody pays. */
   const bandsNote = t("st-bands-note");
   for (const b of payeBandBreakdown(r.taxable, payeBands2026())) {
@@ -317,19 +317,19 @@ function render() {
     (tr.children[0] as HTMLElement).textContent = "₦" + formatGrouped(b.low, 0) + (b.high === null ? "+" : ` – ₦${formatGrouped(b.high, 0)}`);
     (tr.children[1] as HTMLElement).textContent = (b.rate * 100).toFixed(0) + "%";
     (tr.children[2] as HTMLElement).textContent = n(b.slice);
-    (tr.children[3] as HTMLElement).textContent = r.exempt ? "—" : n(b.tax);
+    (tr.children[3] as HTMLElement).textContent = r.exempt ? "–" : n(b.tax);
     tb.appendChild(tr);
   }
   bandsNote.hidden = !r.exempt;
-  bandsNote.textContent = r.exempt ? "EXEMPT (minimum wage) — no PAYE is due, so band taxes are withheld. Slices show the pre-exemption bands maths." : "";
+  bandsNote.textContent = r.exempt ? "EXEMPT (minimum wage): no PAYE is due, so band taxes are withheld. Slices show the pre-exemption bands maths." : "";
 }
   sfEmpty(sfIsEmpty("salary-tax-calculator", gv));
 ["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life", "st-other", "st-bonus"].forEach((id) => g(id).addEventListener("input", render));
-/* ── S5 item 2 — QUICK-CHECK CHIPS ──────────────────────────────────────────
+/* ── S5 item 2 ; QUICK-CHECK CHIPS ──────────────────────────────────────────
    WP's chips (page-salary-tax-calculator.php:217-224) jump to pre-computed
    worked answers. Here each chip does both halves through the form's OWN
-   path: it writes the gross field — the receipt re-renders exactly as a
-   keystroke would, SAMPLE badge clearing included — then scrolls to the
+   path: it writes the gross field ; the receipt re-renders exactly as a
+   keystroke would, SAMPLE badge clearing included ; then scrolls to the
    matching worked row below. The worked figures themselves are rendered
    server-side from the engine (see the frontmatter `wk`), never hand-typed.
    aria-pressed tracks the TYPED gross, so the chip releases the moment the
@@ -347,7 +347,7 @@ for (const b of QC_CHIPS) {
     if (target) target.scrollIntoView({ behavior: "smooth", block: "center" });
   });
 }
-/* ── S5 item 5 — THE PERIOD TOGGLE ──────────────────────────────────────────
+/* ── S5 item 5 ; THE PERIOD TOGGLE ──────────────────────────────────────────
    The savings-goal mode switch's grammar (buttons, not radios): the period is
    a VIEW of the same receipt, not a number. Reset restores the seeded numbers
    and leaves the chosen period standing. */
@@ -363,14 +363,14 @@ function setStPeriod(p: "monthly" | "annual"): void {
   render();
 }
 ST_PERIOD_BTNS.forEach((b) => b.addEventListener("click", () => setStPeriod(b.dataset.stPeriod as "monthly" | "annual")));
-/* ── S5 item 4 — DEEP-LINK PREFILL ?gross= ──────────────────────────────────
+/* ── S5 item 4 ; DEEP-LINK PREFILL ?gross= ──────────────────────────────────
    WP reads ?gross= on this very page (page-salary-tax-calculator.php:32-42):
    strip non-numeric, clamp 0–₦100M/month, silent fallback to the seed on
-   garbage. The law is ported with the port's own reader (pm/pmBlank — the
+   garbage. The law is ported with the port's own reader (pm/pmBlank ; the
    same honest-money alphabet every field uses) and the converter's F6 URL
    mechanics (currency-converter.astro:191-237): read on load AFTER the seed
    paint, canonicalise debounced on change, pure garbage strips the query
-   entirely — no warning, no invented figure, the share link rides the state. */
+   entirely ; no warning, no invented figure, the share link rides the state. */
 const urlGross = (raw: string): string | null => {
   const s = raw.trim().slice(0, 40);
   if (s === "" || pmBlank(s)) return null;

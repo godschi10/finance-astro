@@ -1,4 +1,4 @@
-// Dividend/ROI estimator — TS port of inc/dividend-estimator.php (NGX,
+// Dividend/ROI estimator ;  TS port of inc/dividend-estimator.php (NGX,
 // forward DRIP/cash total-return projection). Tested vs PHP vectors.
 // This table's own frozen verification stamp. Only this table's data may be
 // re-verified independently; do not reuse the retiring PHP theme's shared
@@ -60,19 +60,19 @@ export interface DividendProjection {
   yearly: DividendYear[];
 }
 
-/* S3a (v0.7.60) — the WHT parameter (fifth audit P1-1 [Certain]): dividends on
+/* S3a (v0.7.60) ; the WHT parameter (fifth audit P1-1 [Certain]): dividends on
    Nigerian shares carry 10% withholding tax, final for most resident
    individuals. `whtPct` is in PERCENT (10 = 10%), defaults to 0 at the
-   function level — so every pre-S3a call site (the PHP parity vectors, the
+   function level ; so every pre-S3a call site (the PHP parity vectors, the
    v1 independent oracle's gated gross row, the appendix-a cross-note) calls
    without the parameter and stays green byte-for-byte. With a WHT set, each
    year's dividend is taxed BEFORE it is received: the net is what the
    shareholder pockets in cash mode and what DRIP actually reinvests, so
    cash_total (and every downstream gain/CAGR) is NET of WHT. `yield` stays
-   the GROSS starting yield on the entered dps — the page nets it for display
+   the GROSS starting yield on the entered dps ; the page nets it for display
    when its WHT toggle is on. Acceptance (fifth audit Appendix A, A4
    dividendWht): GTCO seed, 10% WHT → end 1,173,810 · net dividends 310,727 ·
-   CAGR 18.61% — now GATED in vectors-check.mjs (the checker calls with
+   CAGR 18.61% ; now GATED in vectors-check.mjs (the checker calls with
    whtPct=10). */
 export function dividendProject(
   investment: number,

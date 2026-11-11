@@ -12,12 +12,12 @@ import { allArticles, fmtMonthYear } from "../../data/content";
 //     h1 "{Cat} in Nigeria" + p archive intro (verbatim WP copy)
 //   .pill-strip (bg surface-2, border-bottom, 12px con-pad): .cp-strip
 //     "All" → /articles/ + 6 categories + Budgeting + Fixed Income +
-//     Uncategorized, .cp.on on the current category
+//     Uncategorized.cp.on on the current category
 //   .con style="margin-top:28px;padding-bottom:40px": .ad-bg (collapses
 //     when empty, v1.12.10) + .g3 of .ac cards
 // Empty category: no grid (Uncategorized serves h1 only + pills + ad).
 // WP's child category /category/fixed-income/ ALSO answers at the flat
-// path — both routes are built below (fixed-income.astro re-exports this).
+// path ;  both routes are built below (fixed-income.astro re-exports this).
 export async function getStaticPaths() {
   const posts = await allArticles();
   return CATEGORIES.map((c) => ({
@@ -43,7 +43,7 @@ const cat = catBySlug(slug ?? "");
 const meta = CATEGORY_META[slug ?? ""] ?? { h1: `${cat.name} in Nigeria` };
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 // WP archive pill strip: "All" + the 9 categories (CATEGORIES carries
-// Budgeting, Fixed Income and Uncategorized — captured live 2026-09-29).
+// Budgeting, Fixed Income and Uncategorized ;  captured live 2026-09-29).
 const pillCats = CATEGORIES;
 ---
 <Layout title={`${cat.name} - GWill Finance`} description={meta.desc ?? `Every ${cat.name.toLowerCase()} guide for Nigerians: tested, priced in naira, free to read.`} crumb={cat.name}>
@@ -70,7 +70,7 @@ const pillCats = CATEGORIES;
 <section class="con" style="margin-top:28px;padding-bottom:40px">
   <div class="ad-bg"></div>
   {posts.length === 0 ? (
-    <p class="card-meta">No guides here yet — the next batch lands in this category first.</p>
+    <p class="card-meta">No guides here yet: the next batch lands in this category first.</p>
   ) : (
     <div class="g3">
       {posts.map((p) => (

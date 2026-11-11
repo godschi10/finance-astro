@@ -8,7 +8,7 @@ import ArticleCard from "../components/ArticleCard.astro";
 //
 // CASCADE, measured not assumed (2026-10-05): Astro emits a page's OWN stylesheet
 // BEFORE the layout's, so this sheet now leads the cascade block instead of trailing
-// it — the reverse of what the Layout import comment assumed. That is safe here
+// it ;  the reverse of what the Layout import comment assumed. That is safe here
 // because r7.css is order-independent by construction (its own header: "every rule
 // here is a NEW selector-or-combinator at equal-or-higher specificity than the
 // verbatim rule it corrects"), and the build proves it: for every real element
@@ -23,7 +23,7 @@ import { TOOL_MANIFEST } from "../data/tool-manifest";
 
 // Faithful port of front-page.php (gwill-finance-theme 1.13.39), sections 2-8.
 // Section 1 (template bootstrap) has no markup; the stray unmatched </div> at
-// front-page.php:117 is deliberately NOT reproduced — it is a theme bug that the
+// front-page.php:117 is deliberately NOT reproduced ;  it is a theme bug that the
 // browser's parser drops, and the live DOM has exactly 5 children in <main>.
 //
 // Featured: the theme picks a fixed post (theme mod gwill_featured_post_id,
@@ -37,18 +37,18 @@ const fcat = catBySlug(featured.data.category);
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 // 2026-09-30 King order: the stats strip must print REAL current counts, not
 // invented ones ("2+ All data current" was fabricated). Counts are computed
-// from the actual site content at BUILD time — articles from the content
-// collection, apps from APPS data, calculators from the tool manifest — so they
+// from the actual site content at BUILD time ;  articles from the content
+// collection, apps from APPS data, calculators from the tool manifest ;  so they
 // can never drift out of date again.
 //
 // SITE-2 (copy-truth leg, 2026-10-09): the calculator count used to come from a
 // readdirSync() of src/pages/money-tools, which returned 16 while /money-tools/
-// listed 15 cards. The extra file was budget-allocator.astro — merged into
+// listed 15 cards. The extra file was budget-allocator.astro ;  merged into
 // 50-30-20 on 2026-10-07 (the King's "2" MERGE order), so its URL is now only a
 // pointer page, not a listed tool. Counting the directory therefore advertised
 // a tool the hub does not show. The count now comes from TOOL_MANIFEST, the ONE
 // list the hub renders in its print order, which already excludes the merged
-// allocator — so the stat and the cards cannot disagree again without this
+// allocator ;  so the stat and the cards cannot disagree again without this
 // same list changing on both.
 const importedTools = TOOL_MANIFEST;
 const furl = `${base}articles/${featured.id}/`;
@@ -174,7 +174,7 @@ Email				</label>
 (function(){
 "use strict";
 try{
-// ── 1. pill-strip chrome — port of main.js §13/14/15, behaviour 1:1 ───────
+// ── 1. pill-strip chrome ;  port of main.js §13/14/15, behaviour 1:1 ───────
 var supportsScrollOptions=(function(){
 try{
 var p=document.createElement("div");
@@ -239,7 +239,7 @@ window.addEventListener("load",function(){update();window.gwillRevealStripActive
 setTimeout(function(){update();window.gwillRevealStripActive(strip);},300);
 update();
 window.gwillRevealStripActive(strip);
-// ── 2. arrow-key navigation — main.js §15 ────────────────────────────────
+// ── 2. arrow-key navigation ;  main.js §15 ────────────────────────────────
 strip.addEventListener("keydown",function(e){
 if(e.key!=="ArrowLeft"&&e.key!=="ArrowRight")return;
 var pills=Array.prototype.filter.call(strip.querySelectorAll(".cp"),function(p){return !p.disabled;});
@@ -256,7 +256,7 @@ if(nx)nx.focus();
 // WP swaps the grid through admin-ajax (action=gwill_filter_posts). A static
 // build has no endpoint, so the identical visible result is produced locally:
 // same active-pill state, same empty state and copy, no network call, no
-// spinner. Same rules as category-filter.js — clicking the active pill does
+// spinner. Same rules as category-filter.js ;  clicking the active pill does
 // nothing, and the result replaces the grid body.
 var fstrip=document.querySelector("[data-gwill-filter]");
 if(fstrip){
@@ -291,15 +291,15 @@ window.gwillRevealStripActive(fstrip);
 });
 }
 
-// ── 4. card image fade-in — category-filter.js adds .gwill-img-in ─────────
+// ── 4. card image fade-in ;  category-filter.js adds .gwill-img-in ─────────
 Array.prototype.forEach.call(document.querySelectorAll("#gwill-posts-grid img"),function(img){
 var done=function(){img.classList.add("gwill-img-in");};
 if(img.complete)done();else{img.addEventListener("load",done);img.addEventListener("error",done);}
 });
 
-// ── 5. newsletter — shared gwill-forms.js path ─────────────────────────────
+// ── 5. newsletter ;  shared gwill-forms.js path ─────────────────────────────
 // KING FINGERPRINT FIX 2026-10-04: the old inline stub ("This form isn't
-// connected yet…") contradicted the live list — /newsletter/ subscribes for
+// connected yet…") contradicted the live list ;  /newsletter/ subscribes for
 // real through gwill-forms.js, and this form carries the same gwill-form class
 // + data-success-url, so the stub only blocked real subscriptions. Deleted the
 // hijack; the shared path owns the submit now (same "Subscribing…" →
@@ -308,7 +308,7 @@ if(img.complete)done();else{img.addEventListener("load",done);img.addEventListen
 })();
 
 // ── 6. M3 (DESIGN-LANGUAGE): hub cards once-in-view translateY(6px)+fade ──
-// 0.55s, fires once. .m3-armed is added HERE (by JS) — no-JS never arms and
+// 0.55s, fires once. .m3-armed is added HERE (by JS) ;  no-JS never arms and
 // cards stay fully visible. Armed only when IntersectionObserver exists; a 2s
 // safety reveals only cards STRANDED IN VIEWPORT (below-fold keeps its scroll
 // reveal). Article prose never animates (fidelity-protected).

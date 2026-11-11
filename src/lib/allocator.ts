@@ -1,4 +1,4 @@
-// Budget allocator engine — TS port of inc/budget-allocator.php.
+// Budget allocator engine ;  TS port of inc/budget-allocator.php.
 // 50/30/20 split with the needs slice drilled into Nigerian naira buckets.
 
 export interface NeedsBucket {
@@ -75,6 +75,6 @@ export function budgetAllocator(
   };
 }
 
-// KING FINGERPRINT FIX 2026-10-04: single seed convention — consts everywhere
+// KING FINGERPRINT FIX 2026-10-04: single seed convention ;  consts everywhere
 // (five *_SEED consts already; these three were lone seed functions).
 export const BUDGET_SEED_INCOME = 250000;

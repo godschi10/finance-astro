@@ -1,4 +1,4 @@
-// Shared number formatting — mirrors gwill_paye_number() / gwill_fx_number().
+// Shared number formatting ;  mirrors gwill_paye_number() / gwill_fx_number().
 export function formatGrouped(n: number, dec = 0): string {
   const r = roundHalfAway(n, dec);
   const fixed = r.toFixed(dec);

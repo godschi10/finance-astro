@@ -1,9 +1,9 @@
-/* pages.css — verbatim WordPress theme blocks for the static content pages
+/* pages.css ;  verbatim WordPress theme blocks for the static content pages
  * (About / Legal / Newsletter), imported AFTER the other stylesheets so these
  * real definitions win over the earlier shared-list partials. Source ranges
  * from the captured live style.css (finance.fitnesslova.qzz.io, 2026-09-30):
  * §35 about-cards / §43 legal / §44-45 newsletter. */
-/* ══ §43 LEGAL PAGES — page-legal.php dark hero + TOC + gold-dot body (style.css 2621-2739) ══ */
+/* ══ §43 LEGAL PAGES ;  page-legal.php dark hero + TOC + gold-dot body (style.css 2621-2739) ══ */
 .page-surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 40px 44px; box-shadow: var(--sh-sm); }
 
 /* ── 43. LEGAL PAGES (page-legal.php, v1.0.115 dark-hero redesign) ─── */
@@ -124,7 +124,7 @@
 /* ── 44. NEWSLETTER PAGE (page-newsletter.php) ───── */
 /* ── 45. NEWSLETTER PAGE (v1.0.114 redesign) ─────── */
 
-/* ══ §44 NEWSLETTER PAGE — page-newsletter.php dark hero + editorial (style.css 2740-2866) ══ */
+/* ══ §44 NEWSLETTER PAGE ;  page-newsletter.php dark hero + editorial (style.css 2740-2866) ══ */
 /* Dark hero, same grain + gold-bleed pattern as the About page */
 .nl-hero {
   background: var(--dark); padding: 64px 0 56px;
@@ -253,7 +253,7 @@
 .page-surface h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.03em; margin: 28px 0 10px; color: var(--text); }
 .page-surface h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; color: var(--text); }
 
-/* ══ §35/36 ABOUT PAGE — sidebar item, about-cards, network tiles, what-i-do band (style.css 2424-2452) ══ */
+/* ══ §35/36 ABOUT PAGE ;  sidebar item, about-cards, network tiles, what-i-do band (style.css 2424-2452) ══ */
 .soci { width: 36px; height: 36px; border-radius: var(--r-sm); background: var(--surface-2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--text-mid); }
 .contact-sidebar-item { display: flex; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-dim); font-size: 12px; font-weight: 300; color: var(--text-mid); }
 .contact-sidebar-item:last-child { border-bottom: none; }
@@ -287,7 +287,7 @@
 .ci { width: 32px; height: 32px; border-radius: var(--r-sm); background: var(--gold-muted); border: 1px solid var(--gold-border); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
 
 /* ── §31 ABOUT HERO base (style.css 2333-2345, verbatim; the port only had
-   the phone override — the dark band + dot grid + gold bleed base was missing) ── */
+   the phone override ;  the dark band + dot grid + gold bleed base was missing) ── */
 .about-hero { background: var(--dark); padding: 56px var(--con-pad); position: relative; overflow: hidden; }
 .about-hero::before {
   content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0;

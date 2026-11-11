@@ -2,10 +2,10 @@
 // Port of page-legal.php (Template Name: Legal) for the Disclaimer page,
 // imported from the live https://finance.fitnesslova.qzz.io/disclaimer/
 // capture 2026-09-30. Anatomy mirrored: .legal-hero (hero-grain, breadcrumb,
-// "Legal" label, hero title, .legal-updated stamp = date_i18n('F Y') at build
+// "Legal" label, hero title.legal-updated stamp = date_i18n('F Y') at build
 // time like live) → .legal-section > .legal-layout (banner ad first spanning
-// the grid, .legal-toc sticky "On this page" with the live anchor ids,
-// .legal-body carrying the page's post_content VERBATIM — headings keep the
+// the grid.legal-toc sticky "On this page" with the live anchor ids,
+// .legal-body carrying the page's post_content VERBATIM ;  headings keep the
 // live wp-block ids so the TOC anchors match the source exactly).
 import Layout from "../layouts/Layout.astro";
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
@@ -42,13 +42,13 @@ const toc = [
       </ol>
     </nav>
     <div class="legal-body">
-      <p>Everything on this site is written by a real person who tests apps and moves real money — but it is general information, not professional financial advice.</p>
+      <p>Everything on this site is written by a real person who tests apps and moves real money, but it is general information, not professional financial advice.</p>
       <h2 id="not-financial-advice">Not financial advice</h2>
-      <p>Articles on this site share personal experience, comparisons, and opinions about Nigerian finance products. They are not a recommendation to buy, sell, or invest in anything. Your situation is yours alone — do your own research, and consider a licensed financial advisor for decisions involving significant money.</p>
+      <p>Articles on this site share personal experience, comparisons, and opinions about Nigerian finance products. They are not a recommendation to buy, sell, or invest in anything. Your situation is yours alone: do your own research, and consider a licensed financial advisor for decisions involving significant money.</p>
       <h2 id="information-accuracy">Information accuracy</h2>
       <p>Rates, fees, and product features change. Every article states when it was last updated, and links to official sources where possible. Still, always confirm current terms on the provider's own site before committing money.</p>
       <h2 id="no-liability">No liability</h2>
-      <p>To the fullest extent permitted by law, the author is not liable for any loss or damage arising from decisions made based on content on this site. Money moves carry risk — including loss of capital. Only risk what you can afford to lose.</p>
+      <p>To the fullest extent permitted by law, the author is not liable for any loss or damage arising from decisions made based on content on this site. Money moves carry risk, including loss of capital. Only risk what you can afford to lose.</p>
       <h2 id="external-links">External links</h2>
       <p>Links to third-party sites are provided for convenience. This site has no control over their content and accepts no responsibility for them.</p>
       <p><em>Last updated: August 2026.</em></p>

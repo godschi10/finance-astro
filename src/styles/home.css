@@ -15,9 +15,9 @@
    ==========================================================================
    ADDENDUM LEGEND (groups marked [A1]-[A4] are outside the primary token
    list but style markup the homepage actually renders):
-     [A1] AD SLOT COMPONENT — gwill_finance_ad_slot('leaderboard') runs at front-page.php lines 116 and 192, and the 'feed' slot is injected inside the .g3 latest-articles grid (inc/category-filter.php + template-parts/grid-loop.php). This is the subtree those render.
-     [A2] PILLS SCROLLER CHROME — main.js gwillStripReady() wraps every .cp-strip (the homepage pills) in .cp-strip-wrap and injects .cp-scroll-btn / .cp-scroll-prev / .cp-scroll-next + has-overflow.
-     [A3] GLOBAL FOCUS RING — style.css section 53: a:focus-visible /
+     [A1] AD SLOT COMPONENT ;  gwill_finance_ad_slot('leaderboard') runs at front-page.php lines 116 and 192, and the 'feed' slot is injected inside the .g3 latest-articles grid (inc/category-filter.php + template-parts/grid-loop.php). This is the subtree those render.
+     [A2] PILLS SCROLLER CHROME ;  main.js gwillStripReady() wraps every .cp-strip (the homepage pills) in .cp-strip-wrap and injects .cp-scroll-btn / .cp-scroll-prev / .cp-scroll-next + has-overflow.
+     [A3] GLOBAL FOCUS RING ;  style.css section 53: a:focus-visible /
           button:focus-visible / [tabindex]:focus-visible. Element-based, so
           no homepage class token matches it, but it paints every homepage
           link and button.
@@ -96,7 +96,7 @@
 .ac:hover { border-color: var(--gold-border); transform: translateY(-3px); box-shadow: var(--sh-gold); }
 .ac-img { width: 100%; min-height: 150px; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--border-dim); font-size: 28px; position: relative; overflow: hidden; }
 /* SANCTIONED SUBTRACTION (plan §P0-2, kill the white-sheen gloss): was
-   .ac-img::after { content:''; ...; background: linear-gradient(135deg, rgba(255,255,255,0.45), transparent); ... } — removed 2026-10-01 R5. */
+   .ac-img::after { content:''; ...; background: linear-gradient(135deg, rgba(255,255,255,0.45), transparent); ... } ;  removed 2026-10-01 R5. */
 
 /* --------------------------------------------------------------------------
    SOURCE: style.css line 762  ·  SECTION 13. ARTICLE CARD
@@ -121,12 +121,12 @@
 .a-dt { font-size: 10px; color: var(--text-dim); font-weight: 300; }
 .a-rd { font-size: 10px; color: var(--gold); font-weight: 700; }
 /* Port fix (King 2026-09-30): the theme's template-parts/content.php emits
-   <h2 class="ac-t"> (finance-home.html truth: 9/9 h2, zero h3) — the WP
+   <h2 class="ac-t"> (finance-home.html truth: 9/9 h2, zero h3) ;  the WP
    stylesheet's `.ac h3 a::after` stretched-link therefore matches NOTHING on
    the live site's article cards, and the port inherited the dead selector.
    The King wants the whole card clickable: target the real markup. .ac-body is
    static (theme truth has it relative, but WP's own overlay there only
-   covered the body — with position:static the inset:0 overlay spans the
+   covered the body ;  with position:static the inset:0 overlay spans the
    full .ac box INCLUDING the art strip, which is what the theme comment
    'Fully clickable card' always meant). The badge is lifted
    to z-index:2 below so a click on the category pill opens the category
@@ -142,8 +142,8 @@
 .feat-img { display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--border); font-size: 40px; min-height: 260px; position: relative; overflow: hidden; }
 /* SANCTIONED SUBTRACTIONS (plan §P0-2): "Kill the ::after white-sheen
    gradient on .ac-img/.feat-img (generic gloss = slop)."
-   .feat-img::after (was rgba(255,255,255,0.4) sheen) — removed here.
-   .ac-img::after   (was rgba(255,255,255,0.45) sheen) — removed at its
+   .feat-img::after (was rgba(255,255,255,0.4) sheen) ;  removed here.
+   .ac-img::after   (was rgba(255,255,255,0.45) sheen) ;  removed at its
    own site above. Photo sizing kept: */
 .feat-img img { width: 100%; height: 100%; object-fit: cover; }
 .feat-emoji { position: relative; z-index: 1; font-size: 56px; }
@@ -294,7 +294,7 @@
 /* --------------------------------------------------------------------------
    SOURCE: style.css lines 2444-2487  ·  SECTION 36. APP CARDS (Finance Apps page)
    Complete block ported 2026-09-30 when /apps/ was imported from the live
-   page (King order: "Import finance.fitnesslova.qzz.io/apps/ page") — hero,
+   page (King order: "Import finance.fitnesslova.qzz.io/apps/ page") ;  hero,
    sticky tabs, card anatomy, empty state, plus the dark-hero breadcrumb
    overrides from the §25 cluster (style.css:1985-1998).
    -------------------------------------------------------------------------- */
@@ -860,8 +860,8 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 :root { --gold-input-border: rgba(245,158,11,0.4); }
 
 /* --------------------------------------------------------------------------
-   The form-control rules that used to live here — the hidden "Subscribing…"
-   label, the [data-loading] swap and the off-screen honeypot — have MOVED to
+   The form-control rules that used to live here ;  the hidden "Subscribing…"
+   label, the [data-loading] swap and the off-screen honeypot ;  have MOVED to
    src/styles/forms.css, which installs the theme's whole FORMS section
    (style.css 2883-2948). Keeping them here while the rest of that section was
    missing is exactly how the newsletter field ended up rendering as a

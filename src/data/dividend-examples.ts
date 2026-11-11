@@ -1,11 +1,11 @@
-// Curated dated NGX dividend examples (#10, fifth audit) — worked-example CHIPS
+// Curated dated NGX dividend examples (#10, fifth audit) ;  worked-example CHIPS
 // for the Dividend & ROI estimator. MAINTAINED DATA, single-sourced: each
 // example's share PRICE and DIVIDEND-PER-SHARE are read from the SAME maintained
 // NGX table the tool's dropdown reads (src/lib/dividend.ts ngxDividendStocks(),
 // verified 2026-09-01), so a chip can never print a figure the maintained table
 // does not also carry and no quoted price is invented. The GROWTH figures are
-// the tool's own default assumptions (10%/8%), labelled illustrative — never a
-// forecast — and the projection the page shows is net of the 10% WHT the page's
+// the tool's own default assumptions (10%/8%), labelled illustrative ;  never a
+// forecast ;  and the projection the page shows is net of the 10% WHT the page's
 // toggle defaults to.
 //
 // Honesty contract (same as the fx-history seed and the parallel-premium
@@ -19,9 +19,9 @@ import { ngxDividendStocks } from "../lib/dividend";
 export interface DividendExample {
   name: string;
   ticker: string;
-  /** Indicative share price, ₦ — from the maintained NGX table (not a live quote). */
+  /** Indicative share price, ₦ ; from the maintained NGX table (not a live quote). */
   price: number;
-  /** Dividend per share, ₦ — from the maintained NGX table. */
+  /** Dividend per share, ₦ ; from the maintained NGX table. */
   dps: number;
   /** Illustrative investment the chip loads, ₦ (matches the page's seed amount). */
   investment: number;
@@ -60,7 +60,7 @@ const BASES: ExampleBase[] = [
   { name: "Dangote Cement", ticker: "DANGCEM", investment: 500000, priceGrowthPct: 10, divGrowthPct: 8, years: 5 },
 ];
 
-/** Resolve the curated examples against the maintained NGX table — price and
+/** Resolve the curated examples against the maintained NGX table ; price and
  *  DPS are READ from it (one source of truth), never duplicated as literals, so
  *  a chip and the dropdown can never disagree. Throws at build if a named
  *  ticker leaves the table (rather than shipping a chip with no real figures). */

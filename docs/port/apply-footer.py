@@ -20,13 +20,13 @@ EDITS.append((
 
 # ── 2. the footer-only brand CSS (now unused: the WP footer uses .flogo) ─────
 EDITS.append((
-    """/* Header chrome lives in src/styles/header.css (WP port) — .sh/.mh/.mno/.gs/.ticker/.tp/.ncta/.nsearch. .brand + .wordmark remain here for the FOOTER brand only. */
+    """/* Header chrome lives in src/styles/header.css (WP port).sh/.mh/.mno/.gs/.ticker/.tp/.ncta/.nsearch. .brand + .wordmark remain here for the FOOTER brand only. */
 .brand{display:inline-flex;align-items:center;gap:8px;margin-right:auto;min-height:48px;text-decoration:none;flex-shrink:0}
 .brand-naira{color:var(--gold);font-weight:800;font-size:22px;line-height:1}
 .wordmark{position:relative;font-weight:800;font-size:clamp(18px,2.6vw,22px);letter-spacing:-.03em;white-space:nowrap}
 .wordmark::after{content:"";position:absolute;bottom:-6px;left:0;right:0;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--gold-b),var(--green));opacity:.8}""",
     """/* Header chrome lives in src/styles/header.css and the footer chrome in
-   src/styles/footer.css — both are WP ports. The old placeholder footer classes
+   src/styles/footer.css, both are WP ports. The old placeholder footer classes
    (.footer-grid/.flink-list/.socials/.footer-bottom/.brand/.wordmark) were removed
    with it; nothing referenced them. */""",
 ))
@@ -80,6 +80,6 @@ if removed.count("<footer") != 1:
 s = s[:start] + "<Footer />" + s[end:]
 
 open(P, "w", encoding="utf-8").write(s)
-print(f"OK — {len(EDITS)} CSS/import edits + markup swap")
+print(f"OK, {len(EDITS)} CSS/import edits + markup swap")
 print(f"placeholder footer markup removed: {len(removed)} chars, {removed.count(chr(10)) + 1} lines")
 print(f"file: {len(orig)} -> {len(s)} chars")

@@ -1,16 +1,16 @@
 /**
- * GWill Finance, Spotlight Search (SMART) — static port
+ * GWill Finance, Spotlight Search (SMART) ; static port
  *
  * Ported from gwill-finance-theme assets/js/spotlight-search.js (v1.0.191).
  * The relevance engine (norm/fuzzy/scoring/highlight) lives in
- * scripts/search-core.js — ONE engine shared with the /search/ results page.
+ * scripts/search-core.js ; ONE engine shared with the /search/ results page.
  *
  * Static-site transport: the searchable corpus is embedded as
  * <script type="application/json" id="gwill-search-index"> by the layout
- * (title/excerpt/url/date/mins/cat per post), parsed here at runtime — no
+ * (title/excerpt/url/date/mins/cat per post), parsed here at runtime ; no
  * REST endpoint, no network per keystroke after parse. Same UI/UX contract
- * as the theme: combobox input, .gs-row role=option, arrow-key nav with
- * aria-activedescendant, view-all footer → {base}search/?q=, .gs-state rows,
+ * as the theme: combobox input.gs-row role=option, arrow-key nav with
+ * aria-activedescendant, view-all footer → {base}search/?q=.gs-state rows,
  * close() keeps the typed text, in-field x is the only text clearer,
  * focus returns with preventScroll (theme v1.0.199 rule).
  *
@@ -49,7 +49,7 @@ import { norm, toks, smartMatch, highlight, escHtml } from './search-core.js';
   var sel = -1;
   var data = [];
   var lastTrigger = null;
-  var DEBOUNCE = 120;  // matching is local — respond almost instantly
+  var DEBOUNCE = 120;  // matching is local ;  respond almost instantly
   var MIN_CHARS = 2;
   var MAX_RESULTS = 8;
 
@@ -186,7 +186,7 @@ import { norm, toks, smartMatch, highlight, escHtml } from './search-core.js';
         return;
       }
       // WP contract (spotlight-search.js:537-545): with no highlighted row,
-      // Enter submits — WP routes ?s= to its search template. The static
+      // Enter submits ;  WP routes ?s= to its search template. The static
       // build's /?s= is the homepage, so route it to the /search/ page.
       var v2 = input.value.trim();
       if (v2.length) {

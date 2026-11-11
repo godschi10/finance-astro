@@ -1,4 +1,4 @@
-// FX currency-converter engine — TS port of inc/currency.php.
+// FX currency-converter engine ;  TS port of inc/currency.php.
 // USD-anchored rates (units per 1 USD). Numerically tested vs PHP vectors.
 import { formatGrouped } from "./format";
 
@@ -32,17 +32,17 @@ export function fxCurrencies(): Record<string, FxCurrency> {
 export const FX_DEFAULT_NGN_USD = 1340.0;
 
 /* ── PARALLEL-MARKET SPREAD (P1-7, fifth audit) ─────────────────────────────
- * Until v0.7.58 this was a bare `1.045` — an undated constant with no source,
+ * Until v0.7.58 this was a bare `1.045` ; an undated constant with no source,
  * sitting at/above the TOP of the observed range and described in page copy as
  * "roughly 4.5% above official". The audit's finding was that the figure is a
  * RANGE that moves, and a site that prints one undated number for it is
  * asserting a precision it does not have.
  *
  * WHAT IS RECORDED HERE, EXACTLY:
- *   · the OBSERVED RANGE — 2.2% to 4.4% — and the observations behind it, as
+ *   · the OBSERVED RANGE ; 2.2% to 4.4% ; and the observations behind it, as
  *     dated points (see FX_PARALLEL_OBSERVATIONS). These are the figures the
  *     audit recorded from published street quotes, Jul–Oct 2026.
- *   · a POINT ESTIMATE used for arithmetic only — the midpoint of that range,
+ *   · a POINT ESTIMATE used for arithmetic only ; the midpoint of that range,
  *     3.3%. It is OUR estimate, not a quoted rate, and nothing on the site
  *     presents it as one: every surface that prints it also prints the range
  *     and the date.
@@ -74,14 +74,14 @@ export const FX_PARALLEL_OBSERVATIONS: FxParallelObservation[] = [
 /** The observed range the premium moved across, Jul–Oct 2026. */
 export const FX_PARALLEL_SPREAD_RANGE = { low: 0.022, high: 0.044 };
 
-/** Date the range above was last re-checked — printed on every consumer. */
+/** Date the range above was last re-checked ; printed on every consumer. */
 export const FX_PARALLEL_VERIFIED_ON = "2026-10-11";
 
 /** Point estimate for arithmetic ONLY: the midpoint of the observed range. */
 export const FX_PARALLEL_SPREAD_POINT = 0.033;
 
 /** Parallel-market spread multiplier (official × this). D4 (v0.7.55): the old
- * comment promised WP admin-tunability that does not exist in the Astro port —
+ * comment promised WP admin-tunability that does not exist in the Astro port; 
  * this is a BUILD-TIME constant; changing it means editing this file and
  * rebuilding, nothing else reads it. */
 export const FX_PARALLEL_SPREAD = 1 + FX_PARALLEL_SPREAD_POINT;
@@ -152,7 +152,7 @@ export function fxConvert(
   base = base.toUpperCase();
   quote = quote.toUpperCase();
   // Positivity (not <= 0): a corrupt/zero feed rate, or NaN which slips
-  // past every <= comparison, degrades to 0 here — never NaN into the UI.
+  // past every <= comparison, degrades to 0 here ;  never NaN into the UI.
   if (!(base in rates) || !(quote in rates) || !(rates[base] > 0) || !(rates[quote] > 0)) return 0;
   if (base === quote) return amount;
   return amount * (rates[quote] / rates[base]);

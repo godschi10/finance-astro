@@ -5,7 +5,7 @@ import ArchivePagination from "../../../../components/ArchivePagination.astro";
 import { AUTHORS, allArticles, fmtMonthYear } from "../../../../data/content";
 import { paginate } from "../../../../lib/pagination";
 
-// /author/{slug}/page/N/ — WP's paginated author archive. Emits pages 2..N
+// /author/{slug}/page/N/ ;  WP's paginated author archive. Emits pages 2..N
 // only when the author exceeds posts_per_page (10); page 1 is
 // /author/{slug}/. Mirrors articles/page/[page].astro, keyed by slug+page.
 export async function getStaticPaths() {
