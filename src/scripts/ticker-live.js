@@ -232,6 +232,30 @@ Table of Contents
 			} else {
 				setTimeout( run, 500 );
 			}
+
+			/* E27-I3 — an interruption (phone lock, tab switch, backgrounded for
+			   hours) used to resume to exactly the rates it froze at: there is no
+			   visibilitychange/pageshow listener anywhere on this page (census: 0),
+			   and the 60 s cache TTL is only honored at load. One listener now
+			   re-invokes the SAME revalidator when the visitor comes back to a
+			   visible tab and the snapshot is older than 15 minutes. No prompt,
+			   no banner — the calculator's figures never read the ticker, and
+			   run() itself keeps its 60 s guard for repeat flips. */
+			var RESUME_AFTER = 15 * 60 * 1000;
+			var resume = function () {
+				try {
+					if ( document.visibilityState && document.visibilityState !== 'visible' ) { return; }
+					var t = 0, c = null;
+					try { c = JSON.parse( localStorage.getItem( CACHE_KEY ) || 'null' ); } catch ( e2 ) {}
+					if ( c && c.ts ) { t = c.ts; }
+					var srv = ticker ? parseInt( ticker.getAttribute( 'data-ts' ) || '0', 10 ) : 0;
+					if ( srv && srv * 1000 > t ) { t = srv * 1000; }
+					if ( t && ( Date.now() - t ) < RESUME_AFTER ) { return; }
+					run();
+				} catch ( e3 ) {}
+			};
+			document.addEventListener( 'visibilitychange', resume );
+			window.addEventListener( 'pageshow', function ( ev ) { if ( ev && ev.persisted ) { resume(); } } );
 		}
 	}
 } )();

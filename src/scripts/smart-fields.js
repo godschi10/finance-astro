@@ -49,11 +49,11 @@
  *
  * CLEAR MY SAVED NUMBERS (PROC-5) — one more markup-free control, bound the
  * same way: `<button data-sf-clear-saved>`. Reset clears ONE tool; this sweeps
- * every `gwill-sf-*` key and then calls reset(), so the field-restoring logic
- * still exists exactly once. It exists because a shared-computer visitor's
+ * every `gwill-sf-*` key. It exists because a shared-computer visitor's
  * question is "get my salary off this machine", and one tool's Reset cannot
  * answer a question about sixteen calculators. See clearSaved() for the scope
- * it deliberately does and does not claim.
+ * it deliberately does and does not claim. (E27-I1 amended: the sweep is
+ * storage-only — it never calls reset(), never touches the visible month.)
  */
 
 /* The §2g exclusion list is a LAW, not a preference: a remembered ₦90,000 annual
@@ -238,14 +238,12 @@ function reset() {
  * Reset clears ONE tool. A visitor on a shared computer does not think in tools
  * — they think "get my salary off this machine" — and Reset alone cannot answer
  * that, because the numbers they want gone are spread across every calculator
- * they ever opened (one key each). So this sweeps every key THIS MODULE mints
- * and then hands the current page back to reset().
-
- * IT REUSES THE MACHINERY, it does not reimplement it: reset() is the single
- * implementation of "drop the key, put the delivered values back, re-render, "
- * and it stands down through the same `resetting` flag, so no listener can
- * re-persist the seeds mid-sweep. There is deliberately no second copy of the
- * field-restoring logic here.
+ * they ever opened (one key each). So this sweeps every key THIS MODULE mints.
+ *
+ * THE VISIBLE FORM IS NOT SWEPT (E27-I1 amended). The visitor's in-flight
+ * figures are not "saved numbers"; wiping them behind a button with no warning
+ * copy and no undo is precisely the failure mode this control exists to
+ * prevent. The sweep drops storage keys and leaves every field untouched;
 
  * SCOPE IS HONEST AND DELIBERATE: it removes `gwill-sf-*` — calculator numbers,
  * which is what this button is named for and what the privacy policy promises
@@ -263,7 +261,13 @@ function clearSaved() {
     }
     keys.forEach((k) => { localStorage.removeItem(k); dropped += 1; });
   } catch {}
-  reset(); // this page's own key, snapshot restore and repaint — the real thing
+  /* E27-I1 — the button is named "Clear my saved numbers"; the visible
+     month is NOT a saved number — it is what the visitor is holding right
+     now. reset() here used to fire the full Reset-to-seed handler, wiping
+     everything on the page behind a button with no warning and no undo.
+     The visible fields now stay exactly as they are; only the gwill-sf-*
+     keys are swept. The announcement rides the button's own aria-live
+     label swap in boot(). */
   return dropped;
 }
 
@@ -332,6 +336,13 @@ function restore() {
     MEM[id].value = vv[id];
     mark(wrap(id), "data-r", "Last used", "Restored from your last visit · " + when);
   });
+  /* E27-I5 — a reload used to drop focus to BODY, orphaning a keyboard or
+     screen-reader visitor mid-entry. When a restore actually happened, put
+     focus on the first restored field. preventScroll: leave the browser's
+     own scroll decision alone (reload scroll heuristics are out of scope). */
+  const first = $$('.field[data-r] input,.field[data-r] select,.field[data-r] textarea', scope())[0]
+             || $$('.field[data-r] input,.field[data-r] select,.field[data-r] textarea')[0];
+  if (first) { try { first.focus({ preventScroll: true }); } catch {} }
 }
 
 /* §2(b) the derived-value offer. One action per line, and it fills THE field it
