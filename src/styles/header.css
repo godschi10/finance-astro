@@ -293,7 +293,8 @@
   gap: 8px;
   width: 100%;
   text-align: left;
-  padding: 8px 10px;
+  padding: 6px 10px;
+  min-height: 44px;
   border-radius: var(--r-sm);
   cursor: pointer;
   color: var(--text-mid);
@@ -314,10 +315,10 @@
 [data-theme="dark"] .tp-seg:hover { background: rgba(245,158,11,.1); }
 [data-theme="dark"] .tp-seg[aria-pressed="true"] { background: var(--gold-b); color: var(--dark); }
 .tp--m { margin-left: 4px; }
-.tp--m .tp-btn { padding: 5px 8px; }
+.tp--m .tp-btn { padding: 5px 8px; min-height: 44px; min-width: 44px; }
 @media (max-width: 480px) {
   .tp-btn .tp-tx { display: none; }
-  .tp-btn { padding: 5px 8px; }
+  .tp-btn { padding: 5px 8px; min-height: 44px; min-width: 44px; }
   .tp-menu { min-width: 134px; }
 }
 .ncta {
@@ -601,7 +602,7 @@
   z-index: 100;
   box-shadow: var(--sh-sm);
 }
-.mlogo { display: inline-flex; align-items: baseline; font-weight: 800; font-size: 16px; letter-spacing: -0.03em; position: relative; text-decoration: none; }
+.mlogo { display: inline-flex; align-items: baseline; font-weight: 800; font-size: 16px; letter-spacing: -0.03em; position: relative; text-decoration: none; padding-block: 9px; min-height: 44px; }
 .mlogo .n { color: var(--gold); text-shadow: 0 0 10px var(--gold-glow); margin-right: 0.12em; }
 .mlogo .nm { color: var(--text); }
 .mlogo::after {
@@ -695,8 +696,10 @@
 .mno-list > li:not(.menu-item-has-children) > a:active::after { color: var(--gold-b); transform: translateX(2px); }
 .mno-list .nav-caret {
   margin-left: auto;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   flex: none;
   display: flex;
   align-items: center;
@@ -743,7 +746,11 @@
 .mno-list .sub-menu a::before { content: '◆'; font-size: 7px; color: var(--gold); margin-right: 10px; opacity: 0.8; }
 .mno-list .sub-menu a:active { color: var(--gold-b); }
 .mno-bot { padding: 16px 20px; border-top: 1px solid var(--dark-b); }
-.mno-cta { display: block; width: 100%; text-align: center; background: var(--gold); color: #0d0b08; border: none; font-size: 13px; font-weight: 700; padding: 14px; border-radius: var(--r-sm); transition: background var(--t); text-decoration: none; }
+.mno-cta { display: block; width: 100%; text-align: center; background: var(--gold); color: #ffffff; border: none; font-size: 13px; font-weight: 700; padding: 14px; border-radius: var(--r-sm); transition: background var(--t); text-decoration: none; }
+/* E26-S1 — there is no [data-theme="light"] on this site (the theme script removes the
+   attribute for light; dark carries data-theme="dark"). So the base rule is the light
+   (white ink on #b45309 = 5.02:1) and dark gets the dark ink (black on #f59e0b = 9.15:1). */
+[data-theme="dark"] .mno-cta { color: #0d0b08; }
 .mno-cta:hover { background: var(--gold-b); }
 
 /* ── RESPONSIVE: header show/hide switch ─────────────

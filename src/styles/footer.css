@@ -94,3 +94,12 @@
 @media print {
   .ftop, .fpush, .ad-bg--footer { display: none !important; }
 }
+
+/* E26 — AA/320px floor on the shared footer. The WP-verbatim
+   rules above stay byte-identical for the footer-fidelity gate; these
+   overrides raise the hit boxes without re-colouring anything. */
+.fpush { min-height: 44px; }
+.fl { display: flex; align-items: center; min-height: 44px; padding-block: 6px; }
+.fcredit-link { display: inline-flex; align-items: center; min-height: 24px; padding-block: 6px; }
+.fsoc .soci { width: 44px; height: 44px; }
+.ftoplink { display: inline-flex; align-items: center; min-height: 24px; padding-block: 6px; }

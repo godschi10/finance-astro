@@ -126,7 +126,7 @@
 .gwill-breadcrumbs__list { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 11px; font-weight: 300; color: var(--text-dim); margin: 0; padding: 0; list-style: none; }
 .gwill-breadcrumbs__item { display: inline-flex; align-items: center; gap: 6px; }
 .gwill-breadcrumbs__item + .gwill-breadcrumbs__item::before { content: '›'; opacity: 0.5; }
-.gwill-breadcrumbs__item a { color: var(--text-dim); text-decoration: none; transition: color var(--t); }
+.gwill-breadcrumbs__item a { color: var(--text-dim); text-decoration: none; transition: color var(--t); padding-block: 4px; display: inline-flex; align-items: center; min-height: 24px; }
 .gwill-breadcrumbs__item a:hover { color: var(--gold); }
 .gwill-breadcrumbs__item--current { opacity: 1; }
 

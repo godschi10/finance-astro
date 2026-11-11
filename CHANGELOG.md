@@ -1,3 +1,19 @@
+## [0.7.87] - 2026-11-11 — A26 the 320 × 568 pass: the old phone, the one header control nobody ever raised, and a D1 regression closed
+
+**A26** (320 px old-phone audit, live site): **FAIL — 0 HIGH, 4 MEDIUM, 11 LOW.** The calculator card survives 320 × 568 whole — no horizontal overflow in either theme, every card control already at the 44 px floor, ticker legible (5.41/16.81/9.15), receipt clean at 30.4 px, inputs 16 px with the ₦ glyph inset correctly. What breaks is the chrome. E26 closes it:
+
+- **MEDIUM — S1 (regression I introduced in v0.7.86):** the D1 black-ink flip assumed the dark theme's `--gold:#f59e0b` (9.15:1 ✓) but the light theme's gold is `#b45309`, where black ink reads **3.91:1** and worse than the 5.02:1 the control had before the fix. The rule is re-split properly: the base rule carries the light ink (white, 5.02:1) and `[data-theme="dark"]` carries the dark ink (#0d0b08, 9.15:1). **Note for the record:** the first E26 patch wrote a `[data-theme="light"] .mno-cta` override — dead on arrival, because this site never renders `data-theme="light"` (the theme script only sets or removes `data-theme="dark"`). The acceptance test caught it failing live; the dead rule is gone from the build.
+- **MEDIUM — S2:** the ≤480 px theme-picker trigger rendered at **28 px** — the one header control E20/E25 never raised; both markup places now carry `min-height:44px;min-width:44px`.
+- **MEDIUM — S3:** the theme-menu items (System / Light / Dark) rendered at **~30 px** — the only way to reach a theme from a 320 px phone; `.tp-seg` now `min-height:44px`.
+- **MEDIUM — S4:** the drawer sub-menu carets rendered at **32 × 32**; now 44 × 44.
+- **LOW — S5:** the "Paid weekly or in cash?" disclosure was 20.47 px tall — tap target now 44 px.
+- **LOW — S6–S13 (shared chrome, both colours):** `.fpush` (min-height 44), footer sitemap `.fl` rows (44), `.fcredit-link` and `.ftoplink` (24 hit boxes), `.soci` icons 34→44, breadcrumb links 24 hit boxes, `.mlogo` wordmark 44 min-height, "read the source" link 24 hit box — all as **additive overrides** after the WP-verbatim base strings (the footer-fidelity gate still passes 7/7 unedited).
+- **LOW — S14:** the ToolShell hero glow was a hard-coded 360 × 360 — now `min(360px,100vw)` so it never exceeds the viewport.
+
+**S15** is recorded report-only (the `.fpush` subscribe rail measures 0 × 0 in both themes below 1024 px — it is `display:none` until the push service worker confirms support; the additive 44 px floor above rides it for when it appears, and no code path changed).
+
+Verified: check 7/7 · build 84 · calc-regress 130 pass / 0 fail / 7 skip · 320 × 568 + 390 × 844 screenshots light/dark (drawer CTA 5.02:1 white-on-#b45309 light, 9.15:1 dark) · console 0 · 15/15 acceptance checks at live target after byte-identical deploy.
+
 ## [0.7.86] - 2026-11-11 — A25 the night-use pass: nine night failures closed, AA floors kept exactly where the light render already held
 
 **A25** (night-use audit, live site): **FAIL — 3 HIGH, 2 MEDIUM, 4 LOW.** Every figure-bearing surface in the dark render already passed AA with headroom (receipt 8.09:1, inputs 15.59:1, verdict banner 15.59:1, ticker rates 16.81:1, SAMPLE badges 7.74:1). The nine findings sit on rails, affordances and seams — exactly where a night reader's eyes go when the figures feel off. All nine are closed here; none held. The light render is untouched beyond the brightening cases below (all additive).
@@ -929,9 +945,9 @@ conditional to match, and the privacy policy's "every calculator remembers" sent
 in this ship's policy fold.
 
 
-## [0.7.59] — 2026-10-11 — S2c completion (DSH twin): ticker scope, rate-convention disclosures, last name unification, progress basis
+## [0.7.59] — 2026-10-11 — S2c completion (sibling seat): ticker scope, rate-convention disclosures, last name unification, progress basis
 
-The DSH twin's S2c leg, run AFTER the sibling's 0.7.58 had already landed on origin/main. The sibling's entry
+The sibling seat's S2c leg, run AFTER the sibling's 0.7.58 had already landed on origin/main. The sibling's entry
 below stands unmodified; this entry closes the items that leg did not reach, plus one receipt row it omitted.
 No oracle count moved; every gate re-run and observed by this leg (outputs in the leg report).
 
@@ -977,7 +993,7 @@ HTML (the seed's winner is the new regime); quoted from the built page in the le
 
 ## [0.7.58] — 2026-10-11 — BATCH S2c: reversed calculator says what it does, repealed regime labelled, street premium dated
 
-The fifth audit's S2c queue, run after the DSH twin stopped. Every item verified against source or statute,
+The fifth audit's S2c queue, run after the sibling seat stopped. Every item verified against source or statute,
 none taken on trust.
 
 **P1-8 — the reversed calculator now says so.** The page titled "Gross to Net" solves **net → gross**: its own
