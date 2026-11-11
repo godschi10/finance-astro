@@ -1,3 +1,18 @@
+## [0.7.90] - 2026-11-11 — A29 the FAQ-as-help pass: four new answers, the debt question every borrower needs, and a schema that finally resolves
+
+**A29** (FAQ-as-help audit, live v0.7.89): **FAIL — 0 HIGH, 3 MEDIUM, 7 LOW.** The page's built-in help desk turned out honest to machines — all four shipped rows byte-matched the FAQPage JSON-LD, the `@id` resolved (A28-C9 held), tab/Enter worked, the 44 px floor held, no false statement shipped anywhere. What failed was the desk's job for the page's own median reader (Guardian-cited ₦120k–₦150k formal pay). E29 closes it:
+
+- **MEDIUM — Q1:** the page asserted both placements of debt repayment in different places with no resolvable statement. Now: FAQ row *"Where do my loan repayments go — the 50 or the 20?"* — minimums in needs, anything extra in the 20%. The article, the lede-adjacent copy and both h3 answers were re-aligned to it ("20% savings and any extra debt payments" everywhere).
+- **MEDIUM — Q2:** nothing in the FAQ told the stranded reader what to do below the 20% line — the one mercy sentence sat 8 screens down invisible. Now: *"What if I can't save 20% this month?"* — 10% beats 0; the 60/20/20 and 70/15/15 chips do it in one tap; grow it as costs free up.
+- **MEDIUM — Q3:** FAQ 1 answered only the weekly-cash reader (weeks × 4); the months-average method for commission/overtime/bonus readers sat unnamed in the article eight screens down. FAQ 1 now names both; schema regenerated from the same source.
+- **LOW — Q4/Q5/Q10:** + three rows — "What about my children and school fees?" (they are needs) · "Do my splits have to add to 100%?" (the leftover is real; the receipt prints it) · "Are these my numbers, and is anything sent to me?" (all six disclosures gathered into one honest answer). FAQ grew 4 → 9 rows; the FAQPage JSON-LD grew with the array (byte-verified: 9 mainEntity, byte-true names, `@id=#fx-faq-h`).
+- **LOW — Q7:** FAQ 4's answer tail ("tunable. One tool, one journey — no second page.") replaced with the page's own register: *"each share editable, and the naira always adds back up."*
+- **LOW — Q8:** the UA focus ring reached FAQ rows (1 px); `summary:focus-visible` now rides the page's global 2 px gold ring, both themes.
+- **LOW — Q9:** no in-page signpost pointed at the FAQ. One link now sits above the tool: *"Questions answered below ↓"* → `#fx-faq-h`.
+- **PARKED (named, not counted):** Q6 (FAQ 1 answer is hand-duplicated byte-identical into the inline weekly disclosure — a deliberate A23-R9 twin, not drift yet; the extraction-to-one-string rides a future ToolShell copy pass). A21-F4 (salary framing) persists as a seam. **The Guardian citation itself is unverifiable from this box** (403 + Cloudflare challenge both ways) — recorded, not filed.
+
+Verified: check 7/7 · build 84 · calc-regress 130 pass / 0 fail / 7 skip · **9/9 E29 acceptance** (rows byte-true both surfaces · schema-@id resolves · summary ring rule in served bytes · signpost present · all rows ≥44 px · Enter toggles) · console 0 · 390 px screenshots light + dark (FAQ rows, the two new rows open). E26 15/15 and E27 7/7 carry forward.
+
 ## [0.7.89] - 2026-11-11 — A28 the cross-tool pass: two HIGHs parked for the King, the copy + schema fixes that needed no word
 
 **A28** (cross-tool handoff audit, live v0.7.88): **FAIL — 2 HIGH, 1 MEDIUM, 9 LOW.** The suite chemistry measured mostly true: one shared ticker cache (byte-identical blob in-session), theme rail carries across the handoff, breadcrumb honest, hub lists the tool with a true descriptor, 35/37 unique hrefs HTTP 200, newsletter chain alive end-to-end (nonce 200 / thanks 200). The two HIGHs are named and **PARKED for the King**, nothing shipped on them without the word:
