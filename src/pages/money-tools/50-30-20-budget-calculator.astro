@@ -330,6 +330,12 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
 @media (max-width:420px){
 #bg-fig .fig-sep{display:none}
 #bg-fig .fig-amt{display:block}
+/* v0.7.92 ; the stacked figures inherited .receipt-fig's line-height:1.1, so
+   three 30px amounts sat ~3px apart with nothing between them ; the 6px gap
+   gives each stacked amount its own breathing room on a phone. General
+   sibling (~) because the aria-hidden .fig-sep spans stay in the DOM between
+   the amounts and break adjacency (+). */
+#bg-fig .fig-amt ~ .fig-amt{margin-top:6px}
 }
 /* E20-NEW6 ; the chip rows are a 34–36px tap target on a 320px phone. The
    page's own floor is 44px (every primary control on this page is already

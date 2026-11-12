@@ -110,19 +110,19 @@ export function autoClaim(slug: string): { badge: string; chip: string } {
 export const CATEGORY_META: Record<string, { h1: string; desc?: string }> = {
   savings: {
     h1: "Savings in Nigeria",
-    desc: "Honest, tested guides to Nigerian savings apps \u2014 PiggyVest, Cowrywise, SafeLock and more. Real rates, real withdrawal experience, no hype.",
+    desc: "Honest, tested guides to Nigerian savings apps: PiggyVest, Cowrywise, SafeLock and more. Real rates, real withdrawal experience, no hype.",
   },
   investing: {
     h1: "Investing in Nigeria",
-    desc: "Nigerian investing explained without jargon \u2014 Risevest, Trove, Bamboo, mutual funds and what beginners should actually do with their money.",
+    desc: "Nigerian investing explained without jargon: Risevest, Trove, Bamboo, mutual funds and what beginners should actually do with their money.",
   },
   crypto: {
     h1: "Crypto in Nigeria",
-    desc: "Crypto in Nigeria after the SEC rules \u2014 what is legal, what still works, and where Nigerians actually trade in 2026.",
+    desc: "Crypto in Nigeria after the SEC rules: what is legal, what still works, and where Nigerians actually trade in 2026.",
   },
   banking: {
     h1: "Banking in Nigeria",
-    desc: "Nigerian banking apps compared honestly \u2014 Kuda, Moniepoint and more, tested for daily use, fees and reliability.",
+    desc: "Nigerian banking apps compared honestly: Kuda, Moniepoint and more, tested for daily use, fees and reliability.",
   },
   remittance: {
     h1: "Remittance in Nigeria",
@@ -140,11 +140,11 @@ export const CATEGORY_META: Record<string, { h1: string; desc?: string }> = {
   },
   budgeting: {
     h1: "Budgeting in Nigeria",
-    desc: "Budgeting guides for Nigerians \u2014 how to track spending, save more and make every naira work harder.",
+    desc: "Budgeting guides for Nigerians: how to track spending, save more and make every naira work harder.",
   },
   "fixed-income": {
     h1: "Fixed Income in Nigeria",
-    desc: "Treasury bills, fixed deposits, bonds and other predictable Nigerian investment options \u2014 explained without the broker jargon.",
+    desc: "Treasury bills, fixed deposits, bonds and other predictable Nigerian investment options, explained without the broker jargon.",
   },
   uncategorized: { h1: "Uncategorized in Nigeria" },
 };
@@ -270,9 +270,9 @@ export const catBySlug = (slug: string): Category => {
 // pairs per source. Never hand-edit the values; they are generated.
 export const TICKER_STATIC = [
   { label: "USD/NGN", value: "₦1,350", src: "fx" },
-  { label: "GBP/NGN", value: "₦1,805", src: "fx" },
-  { label: "EUR/NGN", value: "₦1,511", src: "fx" },
-  { label: "BTC/USD", value: "$74,347", src: "btc" },
-  { label: "ETH/USD", value: "$2,076", src: "eth" },
-  { label: "XAU/USD", value: "$3,989", src: "gold" },
+  { label: "GBP/NGN", value: "₦1,794", src: "fx" },
+  { label: "EUR/NGN", value: "₦1,500", src: "fx" },
+  { label: "BTC/USD", value: "$73,364", src: "btc" },
+  { label: "ETH/USD", value: "$2,043", src: "eth" },
+  { label: "XAU/USD", value: "$3,937", src: "gold" },
 ];

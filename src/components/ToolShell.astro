@@ -372,6 +372,18 @@ table.st tr.win td{background:var(--gold-muted);border-left:3px solid var(--gold
   .verdict-badge--warn{color:var(--amber);background:var(--amber-muted);border:1px solid var(--amber-border)}
   .verdict-badge--info{color:var(--text-dim);background:var(--surface-2);border:1px solid var(--border)}
 
+  /* ; v0.7.92 ; phone spacing: a nowrap verdict pill inside .receipt-row starved
+     the row label to one word per line and pushed past the receipt padding
+     (measured live at 390px: "What that APR says" collapsed to four stacked
+     words while the EXPENSIVE pill overran the slip edge). At <=480px the
+     verdict row stacks: label on its own line, pill below with normal
+     wrapping. Badge type, tokens and desktop/tablet layout are NOT touched;
+     additive media rule only. */
+  @media (max-width:480px){
+    .receipt-row:has(.verdict-badge){flex-direction:column;align-items:flex-start;gap:6px}
+    .receipt-row .verdict-badge{white-space:normal;max-width:100%}
+  }
+
   /* ; E10 / A10-C8+C9 ; the actuals-mirror rows. They had a hardcoded inline
      color:#e8e4dc, which read only because the receipt card happens to be dark
      in BOTH themes; a light receipt card would have silently broken it. The
