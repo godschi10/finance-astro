@@ -47,10 +47,26 @@ export const pm = (v) => {
 
 /* The honest-money alphabet, shared by pm() above and every entered-test in
  * the fleet (tool-fields.ts isBlank, the zero-horizon flags, cover default,
- * grossKnown, warn demand-lines). One predicate, one meaning of "entered". */
+ * grossKnown, warn demand-lines). One predicate, one meaning of "entered".
+ *
+ * A30 (2026-11-12): the comma is a thousands separator, never a decimal
+ * comma. The old strip read "50,5" as 505 ; savings priced ₦179,909 monthly
+ * and the converter ₦681,660 from a decimal-comma entry while the flagship's
+ * E13 malformed rail honestly dashed the same text: one input, two verdicts.
+ * A comma must now sit in a full 1-3 + 3-digit group chain ("50,000",
+ * "1,234.5", "1,349.822603", "1,234,567"); any other comma shape ("50,5",
+ * "1,23", "5,", ",500", "1.234.567,89") is not honest money and reads as
+ * BLANK, the same state a cleared field yields, so every calculator lands on
+ * its own honest dash instead of a silently wrong figure. Grouped pastes
+ * keep working (every 3-digit group chain passes; spaces and ₦/$/%/+ marks
+ * are stripped before the shape test). */
 export const pmHonest = (v) => {
   const s = String(v).replace(/[\u200B-\u200F\uFEFF]/g, "").trim();
   if (/[^\d\s,.+\-₦$%eE]/.test(s)) return false;
+  if (s.includes(",")) {
+    const skeleton = s.replace(/[\s₦$%+]/g, "");
+    if (!/^[+-]?\d{1,3}(,\d{3})+(\.\d+)?$/.test(skeleton)) return false;
+  }
   if (!/[eE]/.test(s)) return true;
   return /^[+-]?(\d[\d\s,.]*|\.\d[\d\s,.]*)[eE][+-]?\d+$/.test(s);
 };

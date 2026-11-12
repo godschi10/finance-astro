@@ -324,9 +324,16 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
    so CSS alone could not stop an amount wrapping mid-line and leaving a "·" at
    the line end. The server renders three .fig-amt spans with aria-hidden .fig-sep
    separators, and a page-local splitFig() re-splits every later write. Amounts
-   never wrap; on a phone the separators are hidden and each amount takes its own
-   line. Font size/weight/colour and the 800 display are NOT touched. */
-#bg-fig .fig-amt{white-space:nowrap}
+   never wrap for realistic magnitudes (every real naira figure fits its line);
+   on a phone the separators are hidden and each amount takes its own line.
+   Font size/weight/colour and the 800 display are NOT touched.
+   A30 (v0.7.93): white-space:nowrap alone let an absurd entry (income
+   999999999999999, ₦500,000,000,000,000 buckets) overflow the receipt slip by
+   54px with the digits clipped at the card edge (measured live at 390px;
+   scrollWidth 342 vs 270). The spans now break at digit boundaries ONLY when a
+   span is wider than the slip (overflow-wrap:anywhere), so real figures still
+   render on one unbroken line and absurd ones stay inside the card. */
+#bg-fig .fig-amt{white-space:normal;overflow-wrap:anywhere}
 @media (max-width:420px){
 #bg-fig .fig-sep{display:none}
 #bg-fig .fig-amt{display:block}

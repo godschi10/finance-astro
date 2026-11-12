@@ -108,7 +108,7 @@ function parseToolFields() {
   return out;
 }
 
-const ADV = ["", "-5000", "99999999999", ".", "abc", "₦1,234.50", "1,234.50"];
+const ADV = ["", "-5000", "99999999999", ".", "abc", "₦1,234.50", "1,234.50", "50,5", "1,349.822603"];
 const BAD_RE = /NaN|Infinity|undefined/;
 const GOLD_ZERO_RE = /^[₦$£€]?\s*0(\.0+)?$/;
 const RAIL_MONEY_RE = /₦\s*[\d,]/;

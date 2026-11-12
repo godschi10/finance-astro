@@ -5,6 +5,10 @@ import { dividendExamples } from "../../data/dividend-examples";
 import { formatGrouped } from "../../lib/format";
 import { articleTitleOf } from "../../data/content";
 const n = (v: number) => formatGrouped(v, 0);
+/* A30 (v0.7.93): the SSR seed's CAGR takes the same guard the client writes
+   use (the client <script> defines its own twin), so the seed row can never
+   print e-notation either. Byte-identical to toFixed(1) for the seed's 18.61%. */
+const pctCagr = (v: number) => formatGrouped(v, 1);
 /* S3a item 3 (v0.7.60, fifth audit P1-1 [Certain]): dividends on Nigerian
    shares carry 10% WHT, final for most resident individuals ; the PAGE
    defaults the toggle ON, so the server-rendered receipt is the NET (A4)
@@ -83,7 +87,7 @@ const artTitle = await articleTitleOf();
      the server renders "Dividends (reinvested)"; the client swaps it when
      "Take cash" is chosen. Item 3: the figures are NET of the 10% WHT the
      page's toggle defaults to. -->
-<p class="receipt-sub" id="dv-sub">Dividends (reinvested) ₦{n(seed.cash_total)} · gain ₦{n(seed.gain)} · CAGR {(seed.cagr * 100).toFixed(1)}%</p>
+<p class="receipt-sub" id="dv-sub">Dividends (reinvested) ₦{n(seed.cash_total)} · gain ₦{n(seed.gain)} · CAGR {pctCagr(seed.cagr)}</p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row"><span>Shares held</span><b id="dv-sh">{n(seed.shares, 2)}</b></div>
 <!-- S3a item 6 (CALC-4a, minimal): the year-1 convention disclosed in one
@@ -121,6 +125,13 @@ import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
 import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
 const nn = (v: number, d = 0) => "₦" + formatGrouped(v, d);
+/* A30 (v0.7.93): CAGR goes through formatGrouped like every other figure on
+   this receipt, so the >=1e21 e-notation guard applies (growth rate 1e9
+   printed "CAGR 7.169764164205265e+21%"; the naira figures beside it already
+   expanded into full digit runs). Below the break formatGrouped(v, 1) is
+   byte-identical to toFixed(1); grouping only reaches percents >= 1,000,
+   magnitudes no realistic CAGR has. */
+const pctCagr = (v: number) => formatGrouped(v, 1);
 const stocks = ngxDividendStocks();
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
@@ -212,7 +223,7 @@ function render() {
     const inv = Math.max(0, pm(g("dv-inv").value) || 0);
     t("dv-lbl").textContent = "Portfolio end value";
     sfFig(t("dv-fig"), deps, nn(inv));
-    sfFig(t("dv-sub"), deps, `${divLbl} ${nn(0)} · gain ${nn(0)} · CAGR ${(0).toFixed(1)}%`);
+    sfFig(t("dv-sub"), deps, `${divLbl} ${nn(0)} · gain ${nn(0)} · CAGR ${pctCagr(0)}`);
     sfFig(t("dv-sh"), deps, formatGrouped(s.price > 0 ? inv / s.price : 0, 2));
     sfFig(t("dv-yld"), yldDeps, (r.yield * (1 - wht / 100) * 100).toFixed(2) + "%");
     sfFig(t("dv-cash"), deps, nn(0));
@@ -226,7 +237,7 @@ function render() {
     warn.textContent = "Years doesn't hold a number we can read: enter a number of years, like 5." + negSfx;
     t("dv-lbl").textContent = drip ? "Portfolio end value" : "Total value incl. cash dividends";
     sfFig(t("dv-fig"), deps, drip ? nn(r.end_value) : nn(r.end_value + r.cash_total));
-    sfFig(t("dv-sub"), deps, `${divLbl} ${nn(r.cash_total)} · gain ${nn(r.gain)} · CAGR ${(r.cagr * 100).toFixed(1)}%`);
+    sfFig(t("dv-sub"), deps, `${divLbl} ${nn(r.cash_total)} · gain ${nn(r.gain)} · CAGR ${pctCagr(r.cagr)}`);
     sfFig(t("dv-sh"), deps, formatGrouped(r.shares, 2));
     sfFig(t("dv-yld"), yldDeps, (r.yield * (1 - wht / 100) * 100).toFixed(2) + "%");
     sfFig(t("dv-cash"), deps, nn(r.cash_total));
@@ -241,7 +252,7 @@ function render() {
     warn.textContent = "₦0 invested: no shares are bought, so no dividends and no growth. The projection starts when an investment is entered." + negSfx;
     t("dv-lbl").textContent = drip ? "Portfolio end value" : "Total value incl. cash dividends";
     sfFig(t("dv-fig"), deps, nn(0));
-    sfFig(t("dv-sub"), deps, `${divLbl} ${nn(0)} · gain ${nn(0)} · CAGR ${(0).toFixed(1)}%`);
+    sfFig(t("dv-sub"), deps, `${divLbl} ${nn(0)} · gain ${nn(0)} · CAGR ${pctCagr(0)}`);
     sfFig(t("dv-sh"), deps, formatGrouped(0, 2));
     sfFig(t("dv-yld"), yldDeps, (r.yield * (1 - wht / 100) * 100).toFixed(2) + "%");
     sfFig(t("dv-cash"), deps, nn(0));
@@ -250,7 +261,7 @@ function render() {
   }
   t("dv-lbl").textContent = drip ? "Portfolio end value" : "Total value incl. cash dividends";
   sfFig(t("dv-fig"), deps, drip ? nn(r.end_value) : nn(r.end_value + r.cash_total));
-  sfFig(t("dv-sub"), deps, `${divLbl} ${nn(r.cash_total)} · gain ${nn(r.gain)} · CAGR ${(r.cagr * 100).toFixed(1)}%`);
+  sfFig(t("dv-sub"), deps, `${divLbl} ${nn(r.cash_total)} · gain ${nn(r.gain)} · CAGR ${pctCagr(r.cagr)}`);
   sfFig(t("dv-sh"), deps, formatGrouped(r.shares, 2));
   /* F4 ; starting yield is dps ÷ price from the stock table (custom stock:
      the entered figures): it never reads dividend growth, so clearing dv-dg

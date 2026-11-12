@@ -167,7 +167,11 @@ function render() {
      row carries the same Example/Yours grammar as Total and Interest instead of
      being the one bare number on the panel. */
   const ratePct = Math.max(0, pm(g("sg-rate").value) || 0);
-  sfFig(t("sg-eff"), ["sg-rate"], effFrom(ratePct).toFixed(2) + "%");
+  /* A30 (v0.7.93): the yield goes through formatGrouped like every other
+     figure on this receipt, so the >=1e21 e-notation guard applies here too
+     (rate 99999 printed "1.294016159715512e+25%"); below the break
+     formatGrouped(n, 2) is byte-identical to toFixed(2). */
+  sfFig(t("sg-eff"), ["sg-rate"], formatGrouped(effFrom(ratePct), 2) + "%");
   const target = Math.max(0, pm(g("sg-target").value) || 0);
   const cur = Math.max(0, pm(g("sg-cur").value) || 0);
   const rate = Math.max(0, pm(g("sg-rate").value) || 0) / 100;
