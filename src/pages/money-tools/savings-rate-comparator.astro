@@ -37,7 +37,13 @@ const artTitle = await articleTitleOf();
 <div class="receipt">
 <p class="receipt-lbl">Top payer · <span id="sr-top">{rows[0].provider} {rows[0].product}</span></p>
 <p class="receipt-fig" id="sr-fig" aria-live="polite">{rows[0].rate.toFixed(1)}%</p>
-<p class="receipt-sub" id="sr-sub">on ₦500,000 ≈ ₦{(500000 * rows[0].rate / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })} a year</p>
+<!-- A31 (v0.7.94): the best rate never changes with the amount, so the fig's
+     polite region announced nothing when the visitor typed. The amount-driven
+     headline below is this receipt's live region instead (fleet grammar: one
+     polite headline; the ten row cells stay silent). Without it a screen-reader
+     user typed an amount and heard nothing while "on ₦412,345 ≈ ₦115,457 a
+     year" and the eligibility note changed on screen. -->
+<p class="receipt-sub" id="sr-sub" aria-live="polite">on ₦500,000 ≈ ₦{(500000 * rows[0].rate / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })} a year</p>
 <div class="receipt-div" aria-hidden="true"></div>
 <p class="receipt-note">Indicative marketing rates; confirm before you lock funds.</p>
 <p class="receipt-note" id="sr-warn" hidden aria-live="polite"></p>
@@ -60,7 +66,7 @@ const artTitle = await articleTitleOf();
 </div>
 <div class="hr"></div>
 <h2 class="tool-h2">Full table</h2>
-<div class="st-wrap"><table class="st">
+<div class="st-wrap" tabindex="0" role="region" aria-label="Full savings rates table (scrollable)"><table class="st">
 <thead><tr><th>Provider</th><th>Product</th><th class="n">Rate %/yr</th><th class="n">Min ₦</th><th>Verified</th></tr></thead>
 <tbody>
 {rows.map((r, i) => {

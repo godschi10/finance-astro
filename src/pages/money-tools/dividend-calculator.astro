@@ -129,7 +129,7 @@ const nn = (v: number, d = 0) => "₦" + formatGrouped(v, d);
    this receipt, so the >=1e21 e-notation guard applies (growth rate 1e9
    printed "CAGR 7.169764164205265e+21%"; the naira figures beside it already
    expanded into full digit runs). r.cagr is a FRACTION (0.1861 = 18.61%):
-   callers pass cagr * 100 and this helper formats the PERCENT value — the
+   callers pass cagr * 100 and this helper formats the PERCENT value; the
    first cut passed the raw fraction and the live seed row printed "CAGR 0.2%"
    (incident 2026-11-12, caught on served bytes, repaired same hour). Below the
    break formatGrouped(v, 1) is byte-identical to toFixed(1); grouping only
