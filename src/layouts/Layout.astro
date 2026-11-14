@@ -628,7 +628,17 @@ main{display:block;min-width:0}
     for the marquee seam, and only the first set reaches screen readers. */}
 {TICKER_STATIC.filter((t) => fxTicker || t.src === "fx").map((t) => (<div class="ti" data-src={t.src} data-pair={t.label}><span class="t-pair">{t.label}</span><span class="t-rate">{t.value}</span></div>))}
 {TICKER_STATIC.filter((t) => fxTicker || t.src === "fx").map((t) => (<div class="ti" aria-hidden="true" data-src={t.src} data-pair={t.label}><span class="t-pair">{t.label}</span><span class="t-rate">{t.value}</span></div>))}
-</div></div></nav>
+</div></div>
+<!-- A33 (v0.7.96): persistent pause control (WCAG 2.2.2, Level A). Measured:
+     the marquee pauses on hover (desktop) and while press-dragged, and the
+     global prefers-reduced-motion rule makes it static, but a touch user had
+     no way to stop it for good and no element inside the strip was focusable
+     (zero focusables measured). The default stays moving: the King ordered
+     the live moving strip back (2026-11-03), so this only adds a way to
+     hold it still. Wired in ticker-live.js against the .is-paused hook that
+     already existed in header.css. -->
+<button type="button" class="tk-pause" aria-pressed="false" aria-label="Pause market ticker"><svg class="tk-ico-pause" viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg><svg class="tk-ico-play" viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></button>
+</nav>
 <header class="sh">
 <a class="logo" href={homeUrl}><span class="n">₦</span><span class="nm">gwillchijioke</span></a>
 <nav class="snav" aria-label="Primary Navigation">

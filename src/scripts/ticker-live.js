@@ -58,6 +58,13 @@ Table of Contents
 				if ( pointerId !== null ) {
 					return;
 				}
+				// A33 (v0.7.96): the pause button is not a drag handle ; its
+				// pointerdown must not start a drag, because setPointerCapture
+				// below would retarget its click to .ticker and the toggle
+				// listener would never fire (proven by the A33 battery).
+				if ( e.target && e.target.closest && e.target.closest( '.tk-pause' ) ) {
+					return;
+				}
 				pointerId = e.pointerId;
 				startX = e.clientX;
 				frozenTx = readFrozen();
@@ -84,7 +91,13 @@ Table of Contents
 				}
 				pointerId = null;
 				ticker.classList.remove( 'is-dragging' );
-				ticker.classList.remove( 'is-paused' );
+				// A33 (v0.7.96): a button-set pause must survive the drag
+				// release ; only clear is-paused when the button did not
+				// set it (buttonPaused lives in the section below, same
+				// function scope).
+				if ( ! buttonPaused ) {
+					ticker.classList.remove( 'is-paused' );
+				}
 				// Glide the manual offset back to 0, then hand over to the loop.
 				dragEl.classList.add( 'gwill-returning' );
 				applyDrag( 0 );
@@ -98,6 +111,35 @@ Table of Contents
 			ticker.addEventListener( 'pointerup', onUp );
 			ticker.addEventListener( 'pointercancel', onUp );
 		}
+	}
+
+	// ── 1b. Persistent pause control (A33, v0.7.96 ; WCAG 2.2.2) ──
+	// The .tk-pause button (last flow child of .ticker) holds the loop
+	// still for good: touch users get a persistent pause, keyboard users
+	// get a focusable one (the strip itself had ZERO focusable elements,
+	// measured A33). Default stays MOVING (King's order 2026-11-03):
+	// pressing pauses, pressing again resumes. Drives header.css's
+	// pre-existing .is-paused hook ; buttonPaused is read by the drag
+	// handler's onUp above (same function scope) so a drag release never
+	// clears a button-set pause, and a button resume never interrupts a
+	// live drag.
+	var pauseBtn = ticker ? ticker.querySelector( '.tk-pause' ) : null;
+	var buttonPaused = false;
+	if ( pauseBtn ) {
+		var setButtonPaused = function ( paused ) {
+			buttonPaused = paused;
+			if ( paused ) {
+				ticker.classList.add( 'is-paused' );
+			} else if ( pointerId === null || pointerId === undefined ) {
+				// Not mid-drag: the drag's own onUp owns is-paused then.
+				ticker.classList.remove( 'is-paused' );
+			}
+			pauseBtn.setAttribute( 'aria-pressed', paused ? 'true' : 'false' );
+			pauseBtn.setAttribute( 'aria-label', paused ? 'Resume market ticker' : 'Pause market ticker' );
+		};
+		pauseBtn.addEventListener( 'click', function () {
+			setButtonPaused( ! buttonPaused );
+		} );
 	}
 
 	/* S2b/P0-2 (fifth audit, v0.7.57) wording rule SUPERSEDED by King's order
