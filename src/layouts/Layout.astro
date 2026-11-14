@@ -430,6 +430,35 @@ const searchBase = `${base}search/`;
 		}
 	});
 })();
+
+/* A32 (v0.7.95): font-scale detector ; the .fs-lg rules in home.css shipped
+   dead because nothing ever flipped the class (no detector was ever wired).
+   Firefox Android applies the OS font scale to page text and ignores
+   text-size-adjust by engine design, so the graceful layer must engage
+   there instead. Measured on the ROOT element: body sets its own 16px,
+   which would freeze the measurement; html inherits the browser default,
+   which is exactly what the OS scale raises. ~16px normal, >=20px = 125%+
+   OS scale. Re-checked on load, fonts, resize, orientation and after
+   first paint (400/1200ms) so cached layouts settle before the flip. */
+(function(){
+	var d = document, de = d.documentElement;
+	function fschk(){
+		var s = 16;
+		try { s = parseFloat(getComputedStyle(de).fontSize) || 16; } catch(e) {}
+		de.classList.toggle('fs-lg', s >= 20);
+	}
+	function settle(){
+		fschk();
+		if (d.fonts && d.fonts.ready && d.fonts.ready.then) d.fonts.ready.then(fschk);
+		setTimeout(fschk, 400);
+		setTimeout(fschk, 1200);
+	}
+	if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', settle);
+	else settle();
+	window.addEventListener('load', fschk);
+	window.addEventListener('resize', fschk);
+	window.addEventListener('orientationchange', fschk);
+})();
 </script>
 <style is:inline set:html={fontFaces}></style>
 <style is:global>
@@ -483,7 +512,7 @@ const searchBase = `${base}search/`;
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{overflow-x:hidden;overflow-x:clip;scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 20px);background:var(--bg)}
+html{overflow-x:hidden;overflow-x:clip;scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 20px);background:var(--bg);-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;text-size-adjust:100%}
 body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%;overflow-x:hidden;overflow-x:clip;overflow-wrap:break-word}
 img{max-width:100%;height:auto}
 a{color:inherit}
