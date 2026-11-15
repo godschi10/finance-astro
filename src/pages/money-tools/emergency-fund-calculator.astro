@@ -89,7 +89,7 @@ import { emergencyFund } from "../../lib/emergency";
 import { formatGrouped } from "../../lib/format";
 import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig, sfNegative, sfTooLarge } from "../../data/tool-fields";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
 /* The rate the visitor typed, as they typed it ; rounded for display, never
    rounded to zero (a 0.004% entry would otherwise read "at 0% inflation"). */
@@ -161,7 +161,14 @@ function render() {
   const mtrBad = !Number.isFinite(monthsToFinish) || monthsToFinish > 12000;
   const tgtBad = !Number.isFinite(target) || !Number.isFinite(gap) || !Number.isFinite(realTarget) || realTarget > 1e15;
   const p = Math.min(100, Math.round(progress));
-  sfFig(t("em-fig"), ["em-ess", "em-saved"], r.runway_now.toFixed(1) + " months");
+  /* A34 (F1): the runway figure prints unconditionally, so a 42-digit saved
+     amount used to reach the receipt as raw e-notation ("6.666e+36 months"),
+     machine-speak on the page. formatGrouped is the A30 guard: below 1e21 it
+     is the old toFixed(1) path byte for byte, above it the same value is
+     expanded and grouped, and a non-finite overflow reads as 0 (the pm()
+     convention), never "Infinity". The months-to-finish figures beside it
+     need no guard: the >12000 check above already holds them to 4 digits. */
+  sfFig(t("em-fig"), ["em-ess", "em-saved"], formatGrouped(r.runway_now, 1) + " months");
   sfFig(t("em-sub"), FIVE, `Target ${fz(target)} · gap ${fz(gap)} · real (inflated) target ${fz(realTarget)}${capBinds ? " at the 50-year planning cap" : ""}`);
   /* A typed 0 cover is an honest ZERO months and must not borrow the "save
      something monthly" dash ; that dash means monthlySave is 0, a different
@@ -217,7 +224,13 @@ function render() {
   if (cover === 0) notes.push("Cover of 0 months means no target to save toward: your runway above is the figure that still applies.");
   else if (mtrBad || tgtBad) notes.push("Out of range: lower the target; fewer months' cover, lower inflation, or a larger monthly saving.");
   else if (pmBlank(coverRaw)) notes.push("Cover defaults to 6 months: set your own if needed.");
-  if (essRaw < 0 || savedRaw < 0 || moRaw < 0 || inflRaw < 0) notes.push("Negative entries are treated as ₦0.");
+  /* A34: the negative line names the field(s) (sfNegative), and an absurd
+     entry gets the fleet's too-large sentence instead of a bare giant
+     figure: about ₦1bn for a monthly flow, about ₦1tn for the saved sum. */
+  const emNeg = sfNegative(["em-ess", "em-saved", "em-mo", "em-cover", "em-infl"]);
+  if (emNeg) notes.push(emNeg);
+  const emHuge = sfTooLarge([["em-ess", 1e9], ["em-saved", 1e12], ["em-mo", 1e9]]);
+  if (emHuge) notes.push(emHuge);
   const w = t("em-warn");
   w.hidden = notes.length === 0;
   w.textContent = notes.join(" ");

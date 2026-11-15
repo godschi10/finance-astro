@@ -76,7 +76,7 @@ import { reverseGross } from "../../lib/gross-to-net";
 import { formatGrouped } from "../../lib/format";
 import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig, sfNegative } from "../../data/tool-fields";
 const n = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
@@ -132,7 +132,11 @@ function render() {
   sfFig(t("gn-ded"), ALL, n(per(r.deductions_monthly)));
   const notes: string[] = [];
   if (!(netRaw > 0)) notes.push("Enter a target take-home above ₦0: the gross waits until you do.");
-  if (netRaw < 0 || penRaw < 0 || rentRaw < 0) notes.push("Negative entries are treated as ₦0.");
+  /* A34: the negative line now names the field(s) (sfNegative) instead of a
+     bare fleet line; the too-large and solver-ceiling lines below keep their
+     own voice. */
+  const gnNeg = sfNegative(["gn-net", "gn-pen", "gn-rent"]);
+  if (gnNeg) notes.push(gnNeg);
   if (penRaw > 100) notes.push("Pension capped at 100%.");
   // Solver ceiling, B3 (v0.7.55): the engine now REPORTS saturation itself ; 
   // `unreachable` is true when the capped search's net at the ₦100M/mo ceiling

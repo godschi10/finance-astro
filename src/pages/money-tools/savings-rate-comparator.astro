@@ -80,19 +80,29 @@ const artTitle = await articleTitleOf();
 </ToolShell>
 <script>
 import { savingsRateData } from "../../lib/savings-rate";
-import { pm } from "../../scripts/pm";
+import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig, sfNegative, sfTooLarge, labelOf } from "../../data/tool-fields";
 const rows = [...savingsRateData()].sort((a, b) => b.rate - a.rate);
 const max = Math.max(...rows.map((r) => r.rate));
 const amt = document.getElementById("sr-amt") as HTMLInputElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
 function render() {
   /* F8 ; a typed negative is clamped to a 0 test amount above; say so in this
-     rail (which nothing else writes to) instead of pricing -x as ₦0 silently. */
-  const srNeg = pm(amt.value) < 0;
-  (document.getElementById("sr-warn") as HTMLElement).hidden = !srNeg;
-  (document.getElementById("sr-warn") as HTMLElement).textContent = srNeg ? "Negative entries are treated as ₦0." : "";
+     rail (which nothing else writes to) instead of pricing -x as ₦0 silently.
+     A34: the line names the field (sfNegative), a blank-equivalent read
+     ("50,5") gets the junk clause instead of silence (F4: the sfFig machinery
+     already withholds those figures as "; " ; now the page says why), and an
+     absurd amount gets the fleet's too-large sentence. */
+  const srRaw = amt.value.trim();
+  const srNeg = sfNegative(["sr-amt"]);
+  const srJunk = srRaw !== "" && pmBlank(srRaw)
+    ? `"${labelOf("sr-amt")}" reads "${srRaw}": not a number. Every figure that depends on it is held back as "–", not guessed. Retype it as a plain number.`
+    : "";
+  const srHuge = sfTooLarge([["sr-amt", 1e12]]);
+  const srWarn = document.getElementById("sr-warn") as HTMLElement;
+  srWarn.hidden = !(srNeg || srJunk || srHuge);
+  srWarn.textContent = [srNeg, srJunk, srHuge].filter(Boolean).join(" ");
   const a = Math.max(0, pm(amt.value) || 0);
   const fmt = (n: number) => "₦" + Math.round(n).toLocaleString("en-US");
   const top = rows[0];

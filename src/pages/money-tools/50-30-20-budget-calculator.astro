@@ -375,7 +375,7 @@ import { budgetAllocator } from "../../lib/allocator";
 import { formatGrouped } from "../../lib/format";
 import { pm, pmBlank, pmHonest } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig, SF_DASH } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig, SF_DASH, sfNegative } from "../../data/tool-fields";
 /* F1 ; fleet-wide negative shape (the crypto tool's winner): a negative prints
    −₦X (U+2212 minus before the symbol), never ₦-X. format.ts stays
    PHP-parity-pinned (it mirrors gwill_paye_number), so this is fixed per page
@@ -761,8 +761,10 @@ const ownVoice = (ids: string[], allPhrase: string, nonePhrase: string): string 
 const cap = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
 function render() {
   /* F8 ; every clamped negative says so: -x is priced as ₦0 in all seven
-     inputs, so the rail names the rewrite instead of staying silent. */
-  const bgNeg = ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps"].some((id) => pm(g(id).value) < 0);
+     inputs, so the rail names the rewrite instead of staying silent.
+     A34: the line now names the field(s) (sfNegative), so a negative split
+     says which box was at fault, in the same words every tool uses. */
+  const bgNeg = sfNegative(STEP1_IDS);
   /* Recovery soft spot 1 (A4): 999999999 income printed ₦500,000,000 plan
      figures with no line saying the number is absurd ; figures were the only
      signal. The honest line reuses the fleet's own too-large vocabulary
@@ -770,9 +772,7 @@ function render() {
      the figure", same ₦100M threshold), so no new clause family is invented. */
   const bgHuge = pm(g("bg-inc").value) > 100000000;
   t("bg-warn").hidden = !(bgNeg || bgHuge);
-  t("bg-warn").textContent = (bgNeg ? "Negative entries are treated as ₦0." : "")
-    + ((bgNeg && bgHuge) ? " " : "")
-    + (bgHuge ? "That income looks unusually large: double-check the figure." : "");
+  t("bg-warn").textContent = [bgNeg, bgHuge ? "That income looks unusually large: double-check the figure." : ""].filter(Boolean).join(" ");
   /* ── E13 ; the three input-health rails, in the order the orders that asked
      for them came in. The malformed line is the confirmed CRITICAL: without
      it a verdict was computed from "12.5.5". Computed once here and then read

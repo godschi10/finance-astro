@@ -47,7 +47,7 @@
 import smartFields from "../scripts/smart-fields.js";
 import { pm, pmBlank } from "../scripts/pm.js";
 import { budget503020 } from "../lib/budget";
-import { formatGrouped } from "../lib/format";
+import { formatGrouped, naira } from "../lib/format";
 
 /* One small helper, used by the one offer and by nothing else. Browser-only
    module: it is imported exclusively by client scripts, so `document` is
@@ -152,13 +152,56 @@ const isBlank = (id: string): boolean => pmBlank(gv(id));
    line BREAK-1 caught on the flagship tool. Reading only the label's own text
    children skips every injected element by construction, so no badge shape
    added later can contaminate a label-derived sentence again. */
-const labelOf = (id: string): string => {
+export const labelOf = (id: string): string => {
   const l = document.querySelector('label[for="' + id + '"]');
   if (!l) return id;
   let t = "";
   l.childNodes.forEach((n) => { if (n.nodeType === 3) t += n.textContent || ""; });
   t = t.trim();
   return t || id;
+};
+
+/* ── A34 (2026-11-15): the fleet's error-voice sentences ───────────────────
+   Two lines any tool rail can drop in, so the words around a negative or
+   absurd entry are the SAME words on every page:
+
+   · sfNegative(ids) names each negative input in the label the visitor
+     actually reads and states the treatment in plain words. It replaces the
+     old per-page "Negative entries are treated as ₦0." line, which never
+     said WHICH entry was at fault (WCAG 3.3.1: the offending field is
+     identified), and retires currency's divergent "count as 0." variant,
+     which said the same fact in different words.
+   · sfTooLarge(specs) names each input past its domain threshold with its
+     formatted value and asks for a re-check. The sentence is the flagship's
+     own too-large vocabulary (bg-warn, salary-tax: "That gross looks
+     unusually large: double-check the figure."), reused verbatim so no new
+     clause family is invented. Thresholds are per field and deliberately
+     generous: about ₦1bn for a monthly flow, about ₦1tn for a one-time
+     amount, and the tool's own stated ceiling for rates and fees.
+
+   Both return "" when nothing applies, so a rail composes
+   [neg, huge].filter(Boolean).join(" ") with no empty-slot spacing.
+   Written for textContent (never innerHTML): only page-authored labels and
+   naira-formatted values are echoed, never raw visitor input. */
+export const sfNegative = (ids: readonly string[]): string => {
+  const bad = ids.filter((id) => pm(gv(id)) < 0);
+  if (!bad.length) return "";
+  const named = bad.slice(0, 3).map((id) => '"' + labelOf(id) + '"');
+  const more = bad.length - named.length;
+  return (named.length > 1
+    ? named.join(", ") + " are negative: they are treated as ₦0."
+    : named[0] + " is negative: it is treated as ₦0.")
+    + (more ? ` ${more} more field${more > 1 ? "s" : ""} ${more > 1 ? "are" : "is"} in the same state.` : "");
+};
+
+export const sfTooLarge = (specs: ReadonlyArray<readonly [string, number]>): string => {
+  const bad = specs.filter(([id, huge]) => pm(gv(id)) > huge).map(([id]) => id);
+  if (!bad.length) return "";
+  const named = bad.slice(0, 3);
+  const more = bad.length - named.length;
+  return named.map((id) => `"${labelOf(id)}" reads ${naira(pm(gv(id)))}`).join(", ") + "."
+    + " That looks unusually large: double-check the figure."
+    + (more ? ` ${more} more figure${more > 1 ? "s" : ""} ${more > 1 ? "are" : "is"} past the same line.` : "");
 };
 
 /* One offer, one pill, addressed by the data-use attribute the SPINE wrote when

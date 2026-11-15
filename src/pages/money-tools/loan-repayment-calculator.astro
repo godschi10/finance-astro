@@ -146,7 +146,7 @@ import { loanRepayment } from "../../lib/loan";
 import { formatGrouped } from "../../lib/format";
 import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig, sfNegative, sfTooLarge } from "../../data/tool-fields";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
 /* CALC-10 (v0.7.47): the SAME Intl grouping the server-rendered receipt uses, so
    the figure a visitor watches repaint while typing is shaped exactly like the one
@@ -221,12 +221,13 @@ function feePctOf(): number {
   return Math.max(0, pm(raw));
 }
 function render() {
-  /* F8 ; every clamped negative says so: -x is priced as ₦0 in all four
-     inputs (the engine clamps again inside, so the clamp cannot go ; it is
-     disclosed instead, in this rail which nothing else writes to). */
-  const lnNeg = ["ln-amt", "ln-tenor", "ln-rate", "ln-fee"].some((id) => pm(g(id).value) < 0);
-  t("ln-warn").hidden = !lnNeg;
-  t("ln-warn").textContent = lnNeg ? "Negative entries are treated as ₦0." : "";
+  /* A34: the negative line names the field(s) (sfNegative), and an absurd
+     entry gets the fleet's too-large sentence instead of a bare giant
+     figure: about ₦1tn for the amount and the tenor count. */
+  const lnNeg = sfNegative(["ln-amt", "ln-tenor", "ln-rate", "ln-fee"]);
+  const lnHuge = sfTooLarge([["ln-amt", 1e12], ["ln-tenor", 1e12]]);
+  t("ln-warn").hidden = !(lnNeg || lnHuge);
+  t("ln-warn").textContent = [lnNeg, lnHuge].filter(Boolean).join(" ");
   /* M2 ; THE ZERO LAW. `Math.max(1, pm(v) || 1)` short-circuited a typed 0 to
      the 1-day/1-month seed, so a 0-day loan was quoted as a 1-day loan ; a
      confident figure about a loan nobody borrowed. Zero tenor is meaningless as

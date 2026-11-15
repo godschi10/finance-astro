@@ -74,7 +74,7 @@ import { fxConvert, fxParallelNgnUsd, fxParallelSpread, fxParallelRangeLabel, FX
 import { FX_SNAPSHOT } from "../../data/fx-snapshot";
 import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig, sfNegative, sfTooLarge } from "../../data/tool-fields";
 const rates = FX_SNAPSHOT.rates;
 const amt = document.getElementById("cc-amt") as HTMLInputElement;
 const from = document.getElementById("cc-from") as HTMLSelectElement;
@@ -129,7 +129,13 @@ function render() {
      string would let one disclosure erase the other. */
   const warnParts: string[] = [];
   if (pmBlank(raw)) warnParts.push("Enter an amount: an empty field is not ₦0.");
-  else if (pm(raw) < 0) warnParts.push("Negative amounts count as 0.");
+  /* A34: the fleet's one negative sentence now names the field; the page's
+     own "Negative amounts count as 0." variant is retired for it. */
+  else if (pm(raw) < 0) warnParts.push(sfNegative(["cc-amt"]));
+  /* A34: an absurd amount gets the fleet's too-large sentence instead of a
+     bare giant figure on the hero and the parallel line alike. */
+  const ccHuge = sfTooLarge([["cc-amt", 1e12]]);
+  if (ccHuge) warnParts.push(ccHuge);
   if (partoggle.checked && t === "NGN" && f !== t && rates["NGN"] > 0) {
     const p = fxParallelNgnUsd(fxConvert(1, f, "USD", rates) * rates["NGN"], fxParallelSpread());
     /* THE ZERO LAW: a parallel estimate off an un-entered amount is ₦0 with a

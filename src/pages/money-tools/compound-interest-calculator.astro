@@ -80,7 +80,7 @@ import { compoundGrowth, compoundSchedule } from "../../lib/savings";
 import { formatGrouped } from "../../lib/format";
 import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig, sfNegative, sfTooLarge } from "../../data/tool-fields";
 const nn = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
@@ -95,9 +95,13 @@ function render() {
   const d = Math.max(0, pm(g("ci-dep").value) || 0);
   const rate = Math.max(0, pm(g("ci-rate").value) || 0) / 100;
   /* F8 ; every clamped negative says so: -x is priced as ₦0 in all four
-     inputs, so the rail names the rewrite instead of staying silent. */
-  const negHit = ["ci-prin", "ci-dep", "ci-rate", "ci-yrs"].some((id) => pm(g(id).value) < 0);
-  const negSfx = negHit ? " Negative entries are treated as ₦0." : "";
+     inputs, so the rail names the rewrite instead of staying silent.
+     A34: the line now names the field(s) (sfNegative), and an absurd entry
+     gets the fleet's too-large sentence instead of a bare giant figure. */
+  const neg = sfNegative(["ci-prin", "ci-dep", "ci-rate", "ci-yrs"]);
+  const negSfx = neg ? " " + neg : "";
+  const huge = sfTooLarge([["ci-prin", 1e12], ["ci-dep", 1e12]]);
+  const hugeSfx = huge ? " " + huge : "";
   /* M2 ; THE ZERO LAW. A typed 0 used to short-circuit to the 5-year seed, so
    "how much if I save for 0 years" was silently answered with a 5-year plan.
    Zero years is the honest and meaningful answer ; nothing compounds, nothing is
@@ -127,7 +131,7 @@ const capSfx = yrsCapped ? " Horizon capped at 100 years: figures price the cap,
   const tb = document.querySelector("#ci-table tbody") as HTMLElement;
   if (!Number.isFinite(r.future) || !Number.isFinite(r.interest) || !Number.isFinite(r.deposited)) {
     warn.hidden = false;
-    warn.textContent = "Out of range: that horizon and rate are beyond what this projection can price. Try 50 years or fewer." + negSfx + capSfx;
+    warn.textContent = "Out of range: that horizon and rate are beyond what this projection can price. Try 50 years or fewer." + negSfx + capSfx + hugeSfx;
     t("ci-fig").textContent = "Out of range";
     t("ci-sub").textContent = "No confident total at this input: shorten the horizon or lower the rate.";
     t("ci-dep2").textContent = "–";
@@ -135,13 +139,13 @@ const capSfx = yrsCapped ? " Horizon capped at 100 years: figures price the cap,
     tb.innerHTML = "";
     return;
   }
-  warn.hidden = !negHit && !yrsCapped;
-  warn.textContent = ((negHit ? "Negative entries are treated as ₦0." : "") + capSfx).trim();
+  warn.hidden = !(neg || yrsCapped || huge);
+  warn.textContent = (negSfx + capSfx + hugeSfx).trim();
   if (yrsZero) {
     /* 0 years: no compounding period has elapsed, so the deposit is the
        principal and interest is a real, earned ₦0 ; not a missing figure. */
     warn.hidden = false;
-    warn.textContent = "0 years: no time passes, so nothing compounds. You keep exactly what you put in." + negSfx + capSfx;
+    warn.textContent = "0 years: no time passes, so nothing compounds. You keep exactly what you put in." + negSfx + capSfx + hugeSfx;
     sfFig(t("ci-fig"), ALL, nn(p));
     sfFig(t("ci-sub"), ALL, `You put in ${nn(p)} · interest earned ${nn(0)}`);
     sfFig(t("ci-dep2"), ALL, nn(p));

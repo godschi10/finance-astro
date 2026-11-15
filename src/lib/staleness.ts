@@ -26,10 +26,11 @@
  * month-only stamp is resolved to the LAST day of that month ; the reading most
  * favourable to the table, and therefore the honest one: we never claim a table
  * is fresher than the coarsest date it actually recorded. */
-import { MAINTAINED_VERIFIED } from "./maintained";
 import { NGX_PRICES_VERIFIED_ON } from "./dividend";
 import { dividendExamplesVerifiedOn } from "../data/dividend-examples";
 import { FX_PARALLEL_VERIFIED_ON, FX_PARALLEL_SPREAD_RANGE } from "./fx";
+import { TRANSFER_FEES_VERIFIED_ON } from "./transfer";
+import { savingsRateTableVerifiedOn } from "./savings-rate";
 
 /** Days after which a maintained table must have been re-checked. */
 export const STALENESS_DAYS = 45;
@@ -96,10 +97,15 @@ export interface StalenessRow extends MaintainedTable {
 
 /**
  * Every maintained table the site ships, with its own recorded date.
- * The savings-rate table is entered with its per-row provenance's month because
- * all ten rows carry the same "2026-09" and the provenance map itself throws at
- * build when a row has no date (CALC-7) ; so its freshness is already enforced
- * per-row and is represented here at table level.
+ * A34 (2026-11-15): the two entries below used to break the registry's own
+ * rule ("dates are READ, never invented; one source of truth per table"):
+ * transfer_fees read the SHARED MAINTAINED_VERIFIED string instead of
+ * transfer.ts's own stamp (the shared string is the retiring PHP port's
+ * parity value, and maintained.ts itself says never to use it for a table
+ * whose own stamp is newer), and savings_rates hardcoded "2026-09" here
+ * instead of reading the per-row provenance it points at. Both now read
+ * their module's own recorded date, so a re-check is the one-line edit in
+ * the module that owns it and nothing here can disagree with it.
  */
 export function maintainedTables(): MaintainedTable[] {
   return [
@@ -112,14 +118,14 @@ export function maintainedTables(): MaintainedTable[] {
     {
       id: "savings_rates",
       label: "Savings-rate marketing table (savings-rate-comparator)",
-      verifiedOn: "2026-09",
+      verifiedOn: savingsRateTableVerifiedOn(),
       source: "src/lib/savings-rate.ts (SAVINGS_RATE_PROVENANCE, per row)",
     },
     {
       id: "transfer_fees",
       label: "Transfer provider fee + markup table (money-transfer-comparator)",
-      verifiedOn: MAINTAINED_VERIFIED,
-      source: "src/lib/maintained.ts (MAINTAINED_VERIFIED) + src/lib/transfer.ts",
+      verifiedOn: TRANSFER_FEES_VERIFIED_ON,
+      source: "src/lib/transfer.ts (TRANSFER_FEES_VERIFIED_ON, single source of truth)",
     },
     {
       id: "parallel_premium",

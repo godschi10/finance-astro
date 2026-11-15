@@ -123,7 +123,7 @@ import { dividendProject, ngxDividendStocks } from "../../lib/dividend";
 import { formatGrouped } from "../../lib/format";
 import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig, sfNegative, sfTooLarge } from "../../data/tool-fields";
 const nn = (v: number, d = 0) => "₦" + formatGrouped(v, d);
 /* A30 (v0.7.93): CAGR goes through formatGrouped like every other figure on
    this receipt, so the >=1e21 e-notation guard applies (growth rate 1e9
@@ -178,6 +178,13 @@ function render() {
      horizon is priced here rather than smuggled past it. */
   const yrsRawStr = g("dv-yrs").value.trim();
   const yrsZero = !pmBlank(yrsRawStr) && pm(yrsRawStr) === 0;
+  /* A34 (F6): the engine caps the horizon at 40 years (dividendProject:
+     Math.min(40, ...)), and the cap used to bind silently: 1e9 years and
+     42 digits priced the same 40-year plan with no word anywhere. The
+     figure keeps pricing the cap, and the rail now says so, in the same
+     sentence shape compound and savings-goal use for their own caps. */
+  const yrsCapped = !yrsZero && Math.trunc(pm(yrsRawStr) || 5) > 40;
+  const capSfx = yrsCapped ? " Horizon capped at 40 years: figures price the cap, not the entry." : "";
   /* B4 (v0.7.55) ; garbage in Years used to fall through `|| 5` and silently
      price the 5-year seed. pmBlank() names the garbage; nothing is priced
      until Years holds a number. */
@@ -200,12 +207,18 @@ function render() {
   const warn = t("dv-warn");
   /* F8 ; every clamped negative says so: -x is priced as ₦0 in all six
      inputs, so the rail names the rewrite instead of staying silent. */
-  const negHit = ["dv-inv", "dv-pg", "dv-dg", "dv-yrs", "dv-cprice", "dv-cdps"].some((id) => pm(g(id).value) < 0);
-  const negSfx = negHit ? " Negative entries are treated as ₦0." : "";
+  /* A34: the negative line names the field(s) (sfNegative), and an absurd
+     entry gets the fleet's too-large sentence instead of a bare giant
+     figure; price growth past the tool's own stated 100% ceiling is named
+     with it. */
+  const neg = sfNegative(["dv-inv", "dv-pg", "dv-dg", "dv-yrs", "dv-cprice", "dv-cdps"]);
+  const negSfx = neg ? " " + neg : "";
+  const huge = sfTooLarge([["dv-inv", 1e12], ["dv-pg", 100]]);
+  const hugeSfx = huge ? " " + huge : "";
   const tb = document.querySelector("#dv-table tbody") as HTMLElement;
   if (!Number.isFinite(r.end_value) || !Number.isFinite(r.cash_total) || !Number.isFinite(r.gain)) {
     warn.hidden = false;
-    warn.textContent = "Out of range: that growth is beyond what this projection can price. Try 100% or less." + negSfx;
+    warn.textContent = "Out of range: that growth is beyond what this projection can price. Try 100% or less." + negSfx + capSfx + hugeSfx;
     t("dv-lbl").textContent = "Portfolio end value";
     t("dv-fig").textContent = "Out of range";
     t("dv-sub").textContent = "No confident total at this input: lower the growth rates.";
@@ -215,14 +228,14 @@ function render() {
     tb.innerHTML = "";
     return;
   }
-  warn.hidden = !negHit;
-  warn.textContent = negHit ? "Negative entries are treated as ₦0." : "";
+  warn.hidden = !(neg || yrsCapped || huge);
+  warn.textContent = (negSfx + capSfx + hugeSfx).trim();
   if (yrsZero) {
     /* 0 years: the holding period has not started, so there is no growth and
        no dividend yet. The portfolio is worth exactly the investment ; a real
        answer, not a missing one. */
     warn.hidden = false;
-    warn.textContent = "0 years: no holding period yet, so no price growth and no dividends. The portfolio is worth what you put in." + negSfx;
+    warn.textContent = "0 years: no holding period yet, so no price growth and no dividends. The portfolio is worth what you put in." + negSfx + capSfx + hugeSfx;
     const inv = Math.max(0, pm(g("dv-inv").value) || 0);
     t("dv-lbl").textContent = "Portfolio end value";
     sfFig(t("dv-fig"), deps, nn(inv));
@@ -237,7 +250,7 @@ function render() {
     /* B4 ; the honest read: Years holds no readable number, so nothing is
        priced and the demand-line names it (the amount fields' blank pattern). */
     warn.hidden = false;
-    warn.textContent = "Years doesn't hold a number we can read: enter a number of years, like 5." + negSfx;
+    warn.textContent = "Years doesn't hold a number we can read: enter a number of years, like 5." + negSfx + capSfx + hugeSfx;
     t("dv-lbl").textContent = drip ? "Portfolio end value" : "Total value incl. cash dividends";
     sfFig(t("dv-fig"), deps, drip ? nn(r.end_value) : nn(r.end_value + r.cash_total));
     sfFig(t("dv-sub"), deps, `${divLbl} ${nn(r.cash_total)} · gain ${nn(r.gain)} · CAGR ${pctCagr(r.cagr * 100)}%`);
@@ -252,7 +265,7 @@ function render() {
        zero law ; never dashed), and the zero table is gated off like the
        empty state instead of printing five rows of dressed-up nothing. */
     warn.hidden = false;
-    warn.textContent = "₦0 invested: no shares are bought, so no dividends and no growth. The projection starts when an investment is entered." + negSfx;
+    warn.textContent = "₦0 invested: no shares are bought, so no dividends and no growth. The projection starts when an investment is entered." + negSfx + capSfx + hugeSfx;
     t("dv-lbl").textContent = drip ? "Portfolio end value" : "Total value incl. cash dividends";
     sfFig(t("dv-fig"), deps, nn(0));
     sfFig(t("dv-sub"), deps, `${divLbl} ${nn(0)} · gain ${nn(0)} · CAGR ${pctCagr(0)}%`);

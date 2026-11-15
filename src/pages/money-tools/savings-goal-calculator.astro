@@ -105,7 +105,7 @@ import { savingsCalculate, savingsSchedule, savingsMonthsToGoal, compoundGrowth 
 import { formatGrouped } from "../../lib/format";
 import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig, sfNegative, sfTooLarge } from "../../data/tool-fields";
 /* F1 ; fleet-wide negative shape (the crypto tool's winner): a negative prints
    −₦X (U+2212 minus before the symbol), never ₦-X. format.ts stays
    PHP-parity-pinned (it mirrors gwill_paye_number), so this is fixed per page
@@ -175,10 +175,14 @@ function render() {
   const target = Math.max(0, pm(g("sg-target").value) || 0);
   const cur = Math.max(0, pm(g("sg-cur").value) || 0);
   const rate = Math.max(0, pm(g("sg-rate").value) || 0) / 100;
-  /* F8 ; every clamped negative says so: -x is priced as ₦0 in all four
-     inputs, so the rail names the rewrite instead of staying silent. */
-  const negHit = ["sg-target", "sg-cur", "sg-rate", "sg-mo", "sg-sav"].some((id) => pm(g(id).value) < 0);
-  const negSfx = negHit ? " Negative entries are treated as ₦0." : "";
+  /* F8 ; every clamped negative says so: -x is priced as ₦0 in all five
+     inputs, so the rail names the rewrite instead of staying silent.
+     A34: the line now names the field(s) (sfNegative), and an absurd entry
+     gets the fleet's too-large sentence instead of a bare giant figure. */
+  const neg = sfNegative(["sg-target", "sg-cur", "sg-rate", "sg-mo", "sg-sav"]);
+  const negSfx = neg ? " " + neg : "";
+  const huge = sfTooLarge([["sg-target", 1e12], ["sg-cur", 1e12], ["sg-sav", 1e12]]);
+  const hugeSfx = huge ? " " + huge : "";
   /* M2 ; THE ZERO LAW. `pm("0") || 24` short-circuited a deliberate 0 to the
    seed, so a visitor who typed 0 months to their deadline was shown the 24-month
    plan with the warning row hidden. Zero months is a real, meaningful answer; 
@@ -203,7 +207,7 @@ const capSfx = moCapped ? " Horizon capped at 100 years: figures price the cap, 
   const targetRaw = g("sg-target").value.trim();
   if (targetRaw === "" || target <= 0) {
     warn.hidden = false;
-    warn.textContent = "Enter a target greater than ₦0: a cleared field is not a reached goal." + negSfx + capSfx;
+    warn.textContent = "Enter a target greater than ₦0: a cleared field is not a reached goal." + negSfx + capSfx + hugeSfx;
     t("sg-fig").textContent = "Enter a target";
     t("sg-sub").textContent = sgMode === "time" ? "No time figure until the target is set." : "No monthly figure until the target is set.";
     t("sg-tot").textContent = "–";
@@ -225,7 +229,7 @@ const capSfx = moCapped ? " Horizon capped at 100 years: figures price the cap, 
     const savRawStr = g("sg-sav").value.trim();
     if (pmBlank(savRawStr)) {
       warn.hidden = false;
-      warn.textContent = "Enter what you can save each month: an empty field is not ₦0/month." + negSfx;
+      warn.textContent = "Enter what you can save each month: an empty field is not ₦0/month." + negSfx + hugeSfx;
       t("sg-fig").textContent = "Enter what you can save";
       t("sg-sub").textContent = "No time figure until the monthly saving is set.";
       t("sg-tot").textContent = "–";
@@ -237,7 +241,7 @@ const capSfx = moCapped ? " Horizon capped at 100 years: figures price the cap, 
     const nRaw = savingsMonthsToGoal(target, cur, rate, sav, "monthly");
     if (!Number.isFinite(nRaw)) {
       warn.hidden = false;
-      warn.textContent = `At ${nn(sav)}/month this goal is never reached: the balance never crosses the target at these figures.` + negSfx;
+      warn.textContent = `At ${nn(sav)}/month this goal is never reached: the balance never crosses the target at these figures.` + negSfx + hugeSfx;
       t("sg-fig").textContent = "Never at this rate";
       t("sg-sub").textContent = `You hold ${nn(cur)} against a ${nn(target)} goal: ${nn(target - cur)} still to find.`;
       t("sg-tot").textContent = "–";
@@ -247,8 +251,8 @@ const capSfx = moCapped ? " Horizon capped at 100 years: figures price the cap, 
     }
     let moR = Math.ceil(nRaw);
     if (moR <= 0) {
-      warn.hidden = !negHit;
-      warn.textContent = negSfx.trim();
+      warn.hidden = !(neg || huge);
+      warn.textContent = (negSfx + hugeSfx).trim();
       t("sg-fig").textContent = "0 months: goal reached";
       t("sg-sub").textContent = `You hold ${nn(cur)} against a ${nn(target)} goal: nothing left to save into it.`;
       t("sg-tot").textContent = nn(cur);
@@ -267,7 +271,7 @@ const capSfx = moCapped ? " Horizon capped at 100 years: figures price the cap, 
     const schedBad = !sched.every((row) => Number.isFinite(row.balance) && Number.isFinite(row.deposited) && Number.isFinite(row.interest));
     if (!sched.length || schedBad) {
       warn.hidden = false;
-      warn.textContent = "Out of range: that goal and rate are beyond what this plan can price." + negSfx + rCapSfx;
+      warn.textContent = "Out of range: that goal and rate are beyond what this plan can price." + negSfx + rCapSfx + hugeSfx;
       t("sg-fig").textContent = "Out of range";
       t("sg-sub").textContent = "No confident total at this input: lower the goal or raise the monthly.";
       t("sg-tot").textContent = "–";
@@ -276,8 +280,8 @@ const capSfx = moCapped ? " Horizon capped at 100 years: figures price the cap, 
       return;
     }
     const last = sched[sched.length - 1];
-    warn.hidden = !negHit && !moRcapped;
-    warn.textContent = ((negHit ? "Negative entries are treated as ₦0." : "") + rCapSfx).trim();
+    warn.hidden = !(neg || moRcapped || huge);
+    warn.textContent = (negSfx + rCapSfx + hugeSfx).trim();
     sfFig(t("sg-fig"), ["sg-target", "sg-cur", "sg-rate", "sg-sav"], `${moR} months`);
     sfFig(t("sg-sub"), ["sg-target", "sg-cur", "sg-rate", "sg-sav"], `${ym(moR)} · total ${nn(last.balance)} · interest ${nn(last.interest)}`);
     sfFig(t("sg-tot"), ["sg-target", "sg-cur", "sg-rate", "sg-sav"], nn(last.balance));
@@ -299,7 +303,7 @@ const capSfx = moCapped ? " Horizon capped at 100 years: figures price the cap, 
        there is no time to save in. Say exactly that, and do not dress the
        seed's monthly figure up as this visitor's plan. */
     warn.hidden = false;
-    warn.textContent = "0 months to your deadline: there is no time left to save into it. Set a deadline above 0 months." + negSfx + capSfx;
+    warn.textContent = "0 months to your deadline: there is no time left to save into it. Set a deadline above 0 months." + negSfx + capSfx + hugeSfx;
     t("sg-fig").textContent = "No time left";
     t("sg-sub").textContent = `You hold ${nn(cur)} against a ${nn(target)} goal: ${nn(target - cur)} still to find.`;
     t("sg-tot").textContent = nn(cur);
@@ -315,7 +319,7 @@ const capSfx = moCapped ? " Horizon capped at 100 years: figures price the cap, 
   const schedBad = !sched.every((row) => Number.isFinite(row.balance) && Number.isFinite(row.deposited) && Number.isFinite(row.interest));
   if (!Number.isFinite(r.monthly) || !Number.isFinite(r.total) || !Number.isFinite(r.interest) || schedBad) {
     warn.hidden = false;
-    warn.textContent = "Out of range: that deadline and rate are beyond what this plan can price. Try 600 months or fewer." + negSfx + capSfx;
+    warn.textContent = "Out of range: that deadline and rate are beyond what this plan can price. Try 600 months or fewer." + negSfx + capSfx + hugeSfx;
     t("sg-fig").textContent = "Out of range";
     t("sg-sub").textContent = "No confident total at this input: shorten the deadline or lower the rate.";
     t("sg-tot").textContent = "–";
@@ -323,8 +327,8 @@ const capSfx = moCapped ? " Horizon capped at 100 years: figures price the cap, 
     tb.innerHTML = "";
     return;
   }
-  warn.hidden = !negHit && !moCapped;
-  warn.textContent = ((negHit ? "Negative entries are treated as ₦0." : "") + capSfx).trim();
+  warn.hidden = !(neg || moCapped || huge);
+  warn.textContent = (negSfx + capSfx + hugeSfx).trim();
   sfFig(t("sg-fig"), ALL, r.goal_reached ? "₦0: goal reached" : nn(r.monthly));
   /* U5 ; the row appears exactly where the page itself declares the goal
      reached (the engine's own goal_reached field), and nowhere else: every

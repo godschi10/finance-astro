@@ -5,9 +5,13 @@
 // caller (live rates client-side, snapshot at build time). Tested vs PHP vectors.
 import { fxCurrencies, FX_DEFAULT_NGN_USD, FX_PARALLEL_SPREAD_POINT } from "./fx";
 
-// This table's own frozen verification stamp. The fee/markup model was not
-// re-verified with the NGX table on 2026-10-24, so it keeps its honest stamp.
-export const TRANSFER_FEES_VERIFIED_ON = "September 2026";
+// This table's own verification stamp. The fee/markup model was re-checked
+// live on 2026-11-15 (the maintained-staleness gate's 45-day line): Wise's
+// no-markup/mid-market claim and LemFi's zero-fee model held; Remitly and
+// Western Union now lead with $0-fee headlines on the USD→NGN corridor (the
+// margin sits in the rate); WorldRemit's flat fee moved $1.99 → ~$2.99. Day
+// precision, because the re-check was a single dated sweep.
+export const TRANSFER_FEES_VERIFIED_ON = "2026-11-15";
 
 export interface TransferProvider {
   id: string;
@@ -22,10 +26,10 @@ export interface TransferProvider {
 export function transferProviders(direction: string): TransferProvider[] {
   if ("to-nigeria" === direction) {
     return [
-      { id: "wise", name: "Wise", flat: 1.99, pct: 0.0033, markup: 0.0, note: "Mid-market rate, fee shown upfront" },
-      { id: "remitly", name: "Remitly", flat: 1.99, pct: 0.005, markup: 0.015, note: "Low fee but a rate markup" },
-      { id: "western-union", name: "Western Union", flat: 1.99, pct: 0.005, markup: 0.02, note: "Cash pickup; rate margin is wider" },
-      { id: "worldremit", name: "WorldRemit", flat: 1.99, pct: 0.005, markup: 0.018, note: "Mobile-wallet payout; rate markup" },
+      { id: "wise", name: "Wise", flat: 1.99, pct: 0.0033, markup: 0.0, note: "Mid-market rate, fee shown upfront; cost varies by funding method" },
+      { id: "remitly", name: "Remitly", flat: 0.0, pct: 0.0, markup: 0.015, note: "No-fee headline; the margin sits in the rate" },
+      { id: "western-union", name: "Western Union", flat: 0.0, pct: 0.0, markup: 0.02, note: "No-fee offer, limited time; margin in the exchange rate" },
+      { id: "worldremit", name: "WorldRemit", flat: 2.99, pct: 0.0, markup: 0.018, note: "Mobile-wallet payout; rate markup" },
       { id: "lemfi", name: "LemFi", flat: 0.0, pct: 0.0, markup: 0.01, note: "Zero explicit fee; margin in the rate" },
     ];
   }

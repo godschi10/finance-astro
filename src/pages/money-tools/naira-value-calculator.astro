@@ -125,7 +125,7 @@ import { nairaValue, nairaValueHistory, nairaValuePv, nairaValueSave } from "../
 import { formatGrouped } from "../../lib/format";
 import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig, sfNegative, labelOf } from "../../data/tool-fields";
 /* F2 ; toFixed() returns raw exponential notation at |v| >= 1e21, which is
    finite, so the finiteness guard let ₦2.19…e+23 reach the DOM. The page-local
    nn() withholds those as "; " (the page's own vocabulary); the Too-large note
@@ -155,12 +155,20 @@ function render() {
   let yrs = yrsZero ? 1 : Math.max(1, Math.trunc(pm(yrsRawStr) || 5));
   // Clamp + warn, never silent: absurd inputs say so instead of printing ₦Infinity.
   const notes: string[] = [];
+  /* A34 (F4): a blank-equivalent read ("50,5") used to stay silent where a
+     true blank got the Enter-an-amount line, because the check keyed on the
+     raw string. Keying on pmBlank covers every dishonest alphabet the fleet
+     rejects, and the clause says what was typed and what it did to the
+     figures (the nn() figures above already withhold as "; "). */
   if (rawV === "") notes.push("Enter an amount: an empty field is not ₦0.");
+  else if (pmBlank(rawV)) notes.push(`"${labelOf("nv-val")}" reads "${rawV}": not a number. Every figure that depends on it is held back as "–", not guessed. Retype it as a plain number.`);
   if (inflPct > 200) { inflPct = 200; notes.push("Inflation capped at 200%/yr for display."); }
   if (yrs > 100) { yrs = 100; notes.push("Horizon capped at 100 years."); }
   /* F8 ; every clamped negative says so: this page reinterprets -x as ₦0 in
-     seven inputs, so the rail names the rewrite instead of staying silent. */
-  if (["nv-val", "nv-infl", "nv-yrs", "nv-pv", "nv-tgt", "nv-cur", "nv-ret"].some((id) => pm(g(id).value) < 0)) notes.push("Negative entries are treated as ₦0.");
+     seven inputs, so the rail names the rewrite instead of staying silent.
+     A34: the line now names the field(s) (sfNegative). */
+  const nvNeg = sfNegative(["nv-val", "nv-infl", "nv-yrs", "nv-pv", "nv-tgt", "nv-cur", "nv-ret"]);
+  if (nvNeg) notes.push(nvNeg);
   const infl = inflPct / 100;
   const r = nairaValue(v, infl, yrs, 0);
   const w = t("nv-warn");

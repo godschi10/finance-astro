@@ -51,7 +51,7 @@ import { cryptoProfit } from "../../lib/crypto";
 import { formatGrouped } from "../../lib/format";
 import { pm } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig, sfNegative, sfTooLarge } from "../../data/tool-fields";
 const nn = (v: number, d = 0) => "₦" + formatGrouped(v, d);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
@@ -81,9 +81,14 @@ function render() {
   /* F8 ; every clamped negative says so: -x is priced as ₦0 in all six
      inputs (the engine clamps again inside, so the clamp cannot go ; it is
      disclosed instead, in this rail which nothing else writes to). */
-  const cpNeg = ["cp-inv", "cp-buy", "cp-sell", "cp-bf", "cp-sf", "cp-flat"].some((id) => pm(g(id).value) < 0);
-  t("cp-warn").hidden = !cpNeg;
-  t("cp-warn").textContent = cpNeg ? "Negative entries are treated as ₦0." : "";
+  /* A34: the negative line names the field(s) (sfNegative), and an absurd
+     entry gets the fleet's too-large sentence instead of a bare giant
+     figure. Fee percentages carry their own ceiling: past 100% a fee takes
+     more than the trade itself, so the line fires there too. */
+  const cpNeg = sfNegative(["cp-inv", "cp-buy", "cp-sell", "cp-bf", "cp-sf", "cp-flat"]);
+  const cpHuge = sfTooLarge([["cp-inv", 1e12], ["cp-buy", 1e12], ["cp-sell", 1e12], ["cp-bf", 100], ["cp-sf", 100], ["cp-flat", 1e12]]);
+  t("cp-warn").hidden = !(cpNeg || cpHuge);
+  t("cp-warn").textContent = [cpNeg, cpHuge].filter(Boolean).join(" ");
   const r = cryptoProfit(
     Math.max(0, pm(g("cp-inv").value) || 0),
     Math.max(0, pm(g("cp-buy").value) || 0),

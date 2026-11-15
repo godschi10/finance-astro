@@ -74,7 +74,7 @@ import { fxNumber, fxCurrencies } from "../../lib/fx";
 import { FX_SNAPSHOT } from "../../data/fx-snapshot";
 import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig, sfNegative, sfTooLarge } from "../../data/tool-fields";
 const rates = FX_SNAPSHOT.rates;
 const asOf = FX_SNAPSHOT.as_of;
 const amt = document.getElementById("tc-amt") as HTMLInputElement;
@@ -115,10 +115,14 @@ function render() {
   const top = ranked ? q.rows[0] : undefined;
   const warn = document.getElementById("tc-warn") as HTMLElement;
   /* F8 ; a typed negative is clamped to a 0 transfer above; say so instead of
-     calling it "zero sends nothing", which describes a 0 the visitor entered. */
-  const negHit = pm(amt.value) < 0;
-  warn.hidden = ranked && !negHit;
-  warn.textContent = negHit ? "Negative entries are treated as ₦0." : pmBlank(raw) ? "Enter an amount: every provider shows 0 until you do." : "Zero sends nothing: no winner on a 0 transfer.";
+     calling it "zero sends nothing", which describes a 0 the visitor entered.
+     A34: the line now names the field (sfNegative), an absurd amount gets the
+     fleet's too-large sentence, and the blank/zero disclosures keep their
+     seats when neither fires. */
+  const mtNeg = sfNegative(["tc-amt"]);
+  const mtHuge = sfTooLarge([["tc-amt", 1e12]]);
+  warn.hidden = ranked && !(mtNeg || mtHuge);
+  warn.textContent = [mtNeg, mtHuge].filter(Boolean).join(" ") || (pmBlank(raw) ? "Enter an amount: every provider shows 0 until you do." : "Zero sends nothing: no winner on a 0 transfer.");
   (document.getElementById("tc-fig") as HTMLElement).textContent = top ? `${sym}${fxNumber(top.received, top.received < 100 ? 2 : 0)}` : "–";
   (document.getElementById("tc-sub") as HTMLElement).textContent = top ? `${top.name} · mid-market ₦${fxNumber(ngnFace(q.mid), 2)} / ${fsym}` : "Enter an amount above zero to rank providers";
   /* P0-1 (v0.7.57) ; the disclosure rides any P2P win, server and client alike:
