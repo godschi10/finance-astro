@@ -1,3 +1,15 @@
+## [0.7.98] - 2026-11-17: A35 empty-state voice, one voice on a figure we do not trust
+
+**A35** (empty-state voice audit on live v0.7.97): **FAIL, 1 HIGH, 3 MEDIUM, 4 LOW.** The cold/waiting rails were honest and owned, and the junk path was already the model (field-named, withheld verdict, next step). What failed was the too-large / 42-digit path: the warn said "double-check the figure" while the plan and the SAVE GAP verdict still asserted a precise shortfall and a next action on that same figure.
+
+- **HIGH H1:** a too-large or e-notation income now joins the junk verdict, so the banner withholds with the existing CANNOT SCORE grammar and routes back to the field. The grouped naira figure and the "looks unusually large" line stay (A34 bar).
+- **MEDIUM M1 + LOW L3:** the buckets hint switches to "Type an income above and the buckets appear here." when the mirror is withheld, instead of describing a mirror that is not on screen. Valid state keeps its original wording.
+- **MEDIUM M2:** live regions now carry concise accessible names; no announcement text is duplicated into the name.
+- **MEDIUM M3:** the step-2 mini-plan line is gated on a valid income, so a blank or unreadable income no longer prints a sample figure as a claim.
+- **LOW L1:** a treated-zero or negative income drops the "Plan now" verb while keeping the warn and the honest figures.
+
+HELD on scope: L2 (two adjacent honesty rails, cosmetic) and L4 (42-digit readability, A36's lane). A34 regression strings all preserved in served bytes. Gates: check 7/7 · build 84 · test:calc 130 pass / 0 fail / 7 skip · browser contract 0 page/console errors, 0 failed URLs · 320/390 light+dark no overflow · U+2014 0 in src and dist.
+
 ## [0.7.91] - 2026-11-11 — The no-em-dashes release (King's decree)
 
 The King's decree, 2026-11-11: **"No em Dashes site wide should also follow".** Every em dash (U+2014) has been removed from every file under `src/`, `scripts/`, `docs/`, the repo root, the CI workflow and `public/`. **0 U+2014 remain** anywhere in the tree.

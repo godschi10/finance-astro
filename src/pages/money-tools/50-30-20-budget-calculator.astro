@@ -65,7 +65,7 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
      hydration: #bg-live used to appear at boot and push the card +41px (CLS
      0.0635). The text is the same string render() computes from the seed, so
      its identical-rewrite guard stays silent. aria-live stays. -->
-<p class="receipt-note" id="bg-live" aria-live="polite">{liveSeed}</p>
+<p class="receipt-note" id="bg-live" aria-live="polite" aria-label="Plan summary">{liveSeed}</p>
 <!-- E18-F4 ; JS-off used to be a silent dead end: the example figures painted
      correctly and typing did nothing. One muted line, not a warning box; the
      browser hides it entirely when scripting is on. -->
@@ -152,15 +152,15 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
      prose. .receipt-note is carried for the fleet's rail vocabulary; the
      inline colour is --text-mid because these three sit on --surface, not on
      the dark receipt slip, where #c4b89a would be unreadable in light. -->
-<p class="receipt-note" id="bg-junk" hidden role="status" style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
-<p class="receipt-note" id="bg-range" hidden style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
-<p class="receipt-note" id="bg-big" hidden style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
+<p class="receipt-note" id="bg-junk" hidden role="status" aria-label="Income health rail" style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
+<p class="receipt-note" id="bg-range" hidden role="status" aria-label="Split range rail" style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
+<p class="receipt-note" id="bg-big" hidden role="status" aria-label="Large amount rail" style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
 <!-- E22-L2 ; the too-small twin of #bg-big. A ×1,000 unit slip (typing 100 for
      ₦100,000) priced the whole plan at ₦50 figures and scolded the visitor
      ₦184,920 over, with no hint the unit was the problem. The page guards
      absurdly LARGE figures and accepted absurdly small ones silently. This
      rail asks ; it never refuses, never re-prices, never clamps. -->
-<p class="receipt-note" id="bg-low" hidden role="status" style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
+<p class="receipt-note" id="bg-low" hidden role="status" aria-label="Small income rail" style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
 <!-- A23-R9 ; the only instruction for a reader with no fixed monthly pay sat
      twelve screens down behind a tap, and "needs half" was used four times with
      no local gloss. This disclosure sits directly under the income field; the
@@ -197,19 +197,19 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
 <!-- A16-F2 ; the honesty rails are visible prose, so they must be audible
      prose. role="status" gives each an implicit polite live region, and the
      writes below are guarded so a re-render of identical text stays silent. -->
-<p class="receipt-note" id="bg-seedwarn" hidden role="status"></p>
+<p class="receipt-note" id="bg-seedwarn" hidden role="status" aria-label="Sample disclosure"></p>
 <div class="receipt">
 <p class="receipt-lbl">Plan buckets</p>
 <p class="receipt-fig" id="bg-fig"><span class="fig-amt">₦{n(seed.needs)}</span><span class="fig-sep" aria-hidden="true"> · </span><span class="fig-amt">₦{n(seed.wants)}</span><span class="fig-sep" aria-hidden="true"> · </span><span class="fig-amt">₦{n(seed.savings)}</span></p>
 <p class="receipt-sub" id="bg-sub">Needs · wants · savings: leftover <span id="bg-else">₦{n(seed.else)}</span></p>
-<p class="receipt-sub" id="bg-sumnote" role="status"></p>
-<p class="receipt-note" id="bg-warn" hidden aria-live="polite"></p>
+<p class="receipt-sub" id="bg-sumnote" role="status" aria-label="Split total"></p>
+<p class="receipt-note" id="bg-warn" hidden aria-live="polite" aria-label="Income warning"></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div class="receipt-row" data-goto="bg-spn" tabindex="0" role="button" style="cursor:pointer;min-height:44px;display:flex;align-items:center" title="See the field behind this figure"><span>Needs left <span aria-hidden="true">›</span></span><b id="bg-rn">₦{n(chk.needs_remaining)}</b></div>
 <div class="receipt-row" data-goto="bg-spw" tabindex="0" role="button" style="cursor:pointer;min-height:44px;display:flex;align-items:center" title="See the field behind this figure"><span>Wants left <span aria-hidden="true">›</span></span><b id="bg-rw">₦{n(chk.wants_remaining)}</b></div>
 <div class="receipt-row" data-goto="bg-sps" tabindex="0" role="button" style="cursor:pointer;min-height:44px;display:flex;align-items:center" title="See the field behind this figure"><span>Savings left to save <span aria-hidden="true">›</span></span><b id="bg-rs">₦{n(chk.savings_remaining)}</b></div>
-<p class="receipt-note" id="bg-pasted" hidden role="status"></p>
-<p class="receipt-note" id="bg-whatnow" hidden role="status"></p>
+<p class="receipt-note" id="bg-pasted" hidden role="status" aria-label="Plan note"></p>
+<p class="receipt-note" id="bg-whatnow" hidden role="status" aria-label="Next step"></p>
 <p class="receipt-foot hint">Plan vs actual: leftover = income your splits didn't assign</p>
 <p class="receipt-foot hint">Wants left = plan wants minus spent on wants</p>
 <p class="receipt-foot hint">Savings left to save = plan savings minus put to savings</p>
@@ -217,7 +217,7 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
 </div>
 <!-- Next-action CTAs after Step 1 -->
 <div class="next-actions" id="bg-next" hidden></div>
-<p class="receipt-note"><a href="#step2">See where the needs money goes ↓</a> · <button type="button" class="btn b-ghost b-lg" id="bg-copy" style="min-height:44px">Copy example plan</button><span id="bg-copywhy" data-trust="example">: this copies our example.</span><span id="bg-copied" role="status" hidden>: copied.</span></p>
+<p class="receipt-note"><a href="#step2">See where the needs money goes ↓</a> · <button type="button" class="btn b-ghost b-lg" id="bg-copy" style="min-height:44px">Copy example plan</button><span id="bg-copywhy" data-trust="example">: this copies our example.</span><span id="bg-copied" role="status" aria-label="Copy status" hidden>: copied.</span></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <!-- A16-F7 ; this is a section of the page, so it must be h2: the outline read
      h1 → h3 → h2, a skipped level. Every metric the h3 computed is pinned
@@ -258,8 +258,8 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
      here prices a bucket at ₦0 and then prints a confident "UNDER ₦48,000"
      for it ; the exact lie step 1 was caught telling, five fields further
      down the same page. -->
-<p class="receipt-note" id="al-junk" hidden role="status" style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
-<p class="receipt-note" id="al-actual-hint">Optional: score only the buckets you know. A blank bucket keeps its plan amount: our example figure rides there until you type your own spend.</p>
+<p class="receipt-note" id="al-junk" hidden role="status" aria-label="Step 2 health rail" style="color:var(--text-mid);border-left:2px solid var(--red);padding-left:10px;margin:12px 0 0"></p>
+<p class="receipt-note" id="al-actual-hint" aria-label="Buckets hint">Optional: score only the buckets you know. A blank bucket keeps its plan amount: our example figure rides there until you type your own spend.</p>
 <!-- E12-10 ; the five actuals faced a blank naira grid with no affordance.
      Same vocabulary as the income chips above: one tap writes THAT bucket's
      plan amount, clearly labelled, and routes through the same disclosure
@@ -272,7 +272,7 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
   <button type="button" class="btn b-ghost b-xs" data-fill-actual="utilities">Use plan: bills</button>
 </div>
 <!-- Verdict banner (plain-language) -->
-<div class="verdict-banner" id="al-verdict" aria-live="polite"></div>
+<div class="verdict-banner" id="al-verdict" aria-live="polite" aria-label="Verdict"></div>
 <div class="receipt">
 <p class="receipt-lbl" aria-live="polite">Needs budget (<span data-sf-fig id="al-pct">50%</span> of income): <span data-sf-fig id="al-needs">₦{n(al.needs)}</span></p>
 <div id="al-rows">
@@ -280,12 +280,12 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
 <div class="receipt-row"><span>{b.label}</span><b data-al-amt={b.id}>₦{n(b.amount)}</b></div>
 ))}
 </div>
-<p class="receipt-note" id="al-warn" hidden aria-live="polite"></p>
-<p class="receipt-note" id="al-sharesum" hidden role="status"></p>
+<p class="receipt-note" id="al-warn" hidden aria-live="polite" aria-label="Needs warning"></p>
+<p class="receipt-note" id="al-sharesum" hidden role="status" aria-label="Shares total"></p>
 <!-- The aggregate needs-vs-plan line keeps MF-4's own element (id al-needsline).
      It was merged into al-actuals in E9 and destroyed by the same innerHTML
      overwrite; its own node is the fix. -->
-<p class="receipt-note" id="al-needsline" hidden role="status"></p>
+<p class="receipt-note" id="al-needsline" hidden role="status" aria-label="Needs spend"></p>
 <div class="receipt-div" aria-hidden="true"></div>
 <!-- E10 (A10-C1/C8) ; the mirror panel gets its own heading (five unlabelled
      rows told a first-time visitor nothing) and its OWN disclosure element.
@@ -296,12 +296,12 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
      badge rides inside the panel, so ownership travels with the numbers instead
      of decaying at the section boundary. -->
 <p class="receipt-lbl" id="al-mirror-h" hidden>Plan vs what you actually spent, bucket by bucket <span class="trust-badge" data-trust="sample" id="al-mirror-badge" hidden>Sample</span></p>
-<p class="receipt-note" id="al-mirror-own" hidden role="status"></p>
+<p class="receipt-note" id="al-mirror-own" hidden role="status" aria-label="Mirror ownership"></p>
 <div class="actuals-rows" id="al-actuals" hidden></div>
-<p class="receipt-note" id="al-onplan" hidden role="status"></p>
+<p class="receipt-note" id="al-onplan" hidden role="status" aria-label="On plan"></p>
 <!-- E11-8: the aggregate-vs-buckets reconciliation line. Hidden until the
      visitor has scored at least one bucket AND entered a needs total. -->
-<p class="receipt-note" id="al-reconcile" hidden role="status"></p>
+<p class="receipt-note" id="al-reconcile" hidden role="status" aria-label="Reconcile"></p>
 <p class="receipt-note" id="al-reconcile-fix" hidden><a class="btn b-ghost b-xs" id="al-reconcile-go" href="#bg-spn" data-goto="bg-spn">Correct the needs total</a></p>
 <p class="receipt-foot hint">Variance = what you entered, minus that bucket's plan</p>
 <p class="receipt-foot">Shares of needs: naira follows instantly</p>
@@ -1014,7 +1014,10 @@ function render() {
     if (live.textContent) live.textContent = "";
     live.hidden = true;
   } else {
-    const liveTxt = `Plan now: ${nn(plan.needs)} needs · ${nn(plan.wants)} wants · ${nn(plan.savings)} savings`;
+    /* E35 L1 ; a treated-zero plan has no "Plan now" verb. */
+    const liveTxt = inc <= 0
+      ? `${nn(plan.needs)} needs · ${nn(plan.wants)} wants · ${nn(plan.savings)} savings`
+      : `Plan now: ${nn(plan.needs)} needs · ${nn(plan.wants)} wants · ${nn(plan.savings)} savings`;
     /* A16-F3 ; this labelled line is the polite region now. Unhide BEFORE the
        write so the insertion is announced, and skip identical rewrites so a
        keystroke that leaves the plan unchanged stays silent. */
@@ -1099,7 +1102,11 @@ function render() {
      live line two screens up; rent is the actionable one here. Same guard as
      the live line: no figures on an empty page. */
   const mini = t("bg-mini");
-  if (empty || !splitsSet || planJunked) { mini.hidden = true; mini.textContent = ""; }
+  /* E35 M3 ; gate the mini-plan line on a VALID income. Blank, junk,
+     too-large and negative incomes all withhold it instead of presenting
+     a sample figure as a claim beside an unreadable or treated-zero income. */
+  const validIncome = inc > 0 && !empty && splitsSet && !planJunked && !bgHuge;
+  if (!validIncome) { mini.hidden = true; mini.textContent = ""; }
   else {
     mini.hidden = false;
     /* E14: a junk share is priced from the reader's number, so "rent of needs"
@@ -1160,6 +1167,18 @@ function render() {
   const am = t("al-needsline");
   /* F-P1/F-P5 gates, verbatim as before ; the plan is what both halves read. */
   const planComplete = PLAN_IDS.every((id) => !pmBlank(g(id).value));
+  /* E35 M1+L3 ; gate the buckets hint on the mirror predicate: when the
+     mirror is withheld, say what to do instead of describing a mirror that
+     is not on screen. Valid state keeps the original wording. */
+  const hintEl = t("al-actual-hint");
+  /* Mirror predicate (same as the withheld-mirror gate below): the hint
+     switches to the blank-state line only when the mirror is actually
+     withheld, so it never describes a mirror that is not on screen. */
+  if (empty || !planComplete || planJunked) {
+    railText(hintEl, "Type an income above and the buckets appear here.");
+  } else {
+    railText(hintEl, "Optional: score only the buckets you know. A blank bucket keeps its plan amount: our example figure rides there until you type your own spend.");
+  }
   const step1Touched = planTouched || !sd("bg-spn");
   /* E14 ; "12.5.5" in "Spent on needs" read as ₦0 and the line printed "You
      spent ₦0 vs ₦150,000 plan on needs ; within plan" while the verdict above
@@ -1546,7 +1565,11 @@ function render() {
      dishonesty. So instead of either, the banner says the month is NOT
      scored and routes to the box. It never asserts a conclusion built from a
      number nobody entered ; that is the whole point of the rail above. */
-  const junkVerdict = junkStep1.concat(shareIds.filter((id) => malformedOf(id)));
+  /* E35 H1 ; a too-large / e-notation income is not a figure the plan can
+   honestly score against, so it joins the junk verdict and withholds the
+   banner with the same CANNOT SCORE grammar and next step. The grouped
+   figure and the "looks unusually large" line stay (A34 bar). */
+const junkVerdict = Array.from(new Set(junkStep1.concat(shareIds.filter((id) => malformedOf(id))).concat(bgHuge ? ["bg-inc"] : [])));
   if (!empty && junkVerdict.length) {
     verdictItems.push(`<div class="verdict-banner__item"><span class="verdict-badge verdict-badge--warn">CANNOT SCORE</span> ${nameList(junkVerdict)} ${junkVerdict.length > 1 ? "are" : "is"} not a figure we can read, so nothing below is a verdict about your money. Fix the field and this scores itself.${goTo(junkVerdict[0])}</div>`);
   }
