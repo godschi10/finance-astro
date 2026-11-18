@@ -1,3 +1,14 @@
+## [0.7.99] - 2026-11-18: A36 numbers readable in use
+
+**A36** (numbers formatting in use on live v0.7.98): **PASS, no CRITICAL or HIGH.** The ₦2,931,625-scale plan, decimals, sub-1% rates and all receipt sums read correctly at 1280/390/320 in both themes. Two code items from the audit were closed:
+
+- **MEDIUM M1:** the visual figure receipt is now hidden from assistive tech so the already-named "Plan summary" live region is the single announcement of the three amounts. The AX tree no longer repeats each grouped figure twice.
+- **LOW L1:** grouped figures now carry wrap opportunities at comma boundaries, so breaks land between digit groups instead of inside them. The grouped text stays byte-identical: no e-notation, no rounding, no abbreviation. At a 42-digit input the receipt figure drops from 17 to 16 visual lines at 320 (14 to 13 at 390) with no horizontal overflow.
+
+**LOW L2** (clipboard read blocked by headless focus) is a verification limit only, documented, no code change. Honest residual: at absurd 42-digit inputs the "Plan now" sentence still wraps mid-number; the receipt figure itself now breaks at commas only. Carried forward, not hidden.
+
+Gates: check 7/7 · build 84 · test:calc 130 pass / 0 fail / 7 skip · CDP AX probe no doubled figures · 320/390 light+dark no overflow · U+2014 0 in src and dist · E35 and A34 strings preserved.
+
 ## [0.7.98] - 2026-11-17: A35 empty-state voice, one voice on a figure we do not trust
 
 **A35** (empty-state voice audit on live v0.7.97): **FAIL, 1 HIGH, 3 MEDIUM, 4 LOW.** The cold/waiting rails were honest and owned, and the junk path was already the model (field-named, withheld verdict, next step). What failed was the too-large / 42-digit path: the warn said "double-check the figure" while the plan and the SAVE GAP verdict still asserted a precise shortfall and a next action on that same figure.

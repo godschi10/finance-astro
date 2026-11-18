@@ -5,6 +5,7 @@ import { FX_SNAPSHOT } from "../../data/fx-snapshot";
 import { budgetAllocator } from "../../lib/allocator";
 import { formatGrouped } from "../../lib/format";
 const n = (v: number) => formatGrouped(v, 0);
+const nb = (v: number) => "₦" + n(v).replace(/,/g, ",<wbr>");
 const income = BUDGET_SEED_INCOME;
 const seed = budget503020(income);
 /* The seed month must be INTERNALLY CONSISTENT, because this is the first
@@ -200,7 +201,7 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
 <p class="receipt-note" id="bg-seedwarn" hidden role="status" aria-label="Sample disclosure"></p>
 <div class="receipt">
 <p class="receipt-lbl">Plan buckets</p>
-<p class="receipt-fig" id="bg-fig"><span class="fig-amt">₦{n(seed.needs)}</span><span class="fig-sep" aria-hidden="true"> · </span><span class="fig-amt">₦{n(seed.wants)}</span><span class="fig-sep" aria-hidden="true"> · </span><span class="fig-amt">₦{n(seed.savings)}</span></p>
+<p class="receipt-fig" id="bg-fig" aria-hidden="true"><span class="fig-amt" set:html={nb(seed.needs)}></span><span class="fig-sep" aria-hidden="true"> · </span><span class="fig-amt" set:html={nb(seed.wants)}></span><span class="fig-sep" aria-hidden="true"> · </span><span class="fig-amt" set:html={nb(seed.savings)}></span></p>
 <p class="receipt-sub" id="bg-sub">Needs · wants · savings: leftover <span id="bg-else">₦{n(seed.else)}</span></p>
 <p class="receipt-sub" id="bg-sumnote" role="status" aria-label="Split total"></p>
 <p class="receipt-note" id="bg-warn" hidden aria-live="polite" aria-label="Income warning"></p>
@@ -333,7 +334,8 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
    scrollWidth 342 vs 270). The spans now break at digit boundaries ONLY when a
    span is wider than the slip (overflow-wrap:anywhere), so real figures still
    render on one unbroken line and absurd ones stay inside the card. */
-#bg-fig .fig-amt{white-space:normal;overflow-wrap:anywhere}
+#bg-fig .fig-amt{white-space:normal;overflow-wrap:normal;word-break:normal}
+#bg-fig{margin-left:-18px;margin-right:-18px;letter-spacing:-0.08em}
 @media (max-width:420px){
 #bg-fig .fig-sep{display:none}
 #bg-fig .fig-amt{display:block}
@@ -598,7 +600,10 @@ const splitFig = (): void => {
     }
     const amt = document.createElement("span");
     amt.className = "fig-amt";
-    amt.textContent = part;
+    for (const ch of part) {
+      amt.appendChild(document.createTextNode(ch));
+      if (ch === ",") amt.appendChild(document.createElement("wbr"));
+    }
     el.appendChild(amt);
   });
 };
