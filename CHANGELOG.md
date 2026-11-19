@@ -1,3 +1,14 @@
+## [0.7.100] - 2026-11-19: A37 decision support, actions that match the advice
+
+**A37** (decision support on live v0.7.99): PASS, no CRITICAL or HIGH. The tool already names the gap, the bucket and the field to change. Three MEDIUM and two LOW clarity gaps were closed in the 50-30-20 page:
+
+- **M1:** the "Use my targets" buttons now carry a visible pre-click note that they fill the spent-on lines with the plan figures and that the reader should type their own spend to score the month. The post-click disclosure and button behaviour are unchanged.
+- **M2:** the NEEDS OVER state now offers "Trim rent/food/transport shares → Adjust shares" alongside the existing savings-gap and Raise Needs % links, matching the two options its own verdict names.
+- **M3:** the AHEAD state now offers "Bank the extra ₦X → Open Savings Goal Calculator" where the audit found no surplus action.
+- **L3:** "Use the starting shares" now says visibly that it replaces current shares. **L4:** "Clear the example" and "Reset to the example" now carry a visible note explaining their different effects.
+
+L1 (42-digit wrap) and L2 (headless clipboard check) remain carried from A36, untouched. Honest process note: the builder's browser harness stalled before it wrote its own report; the Manager stopped that shelter and verified the artifact and every gate independently. Gates: check 7/7 · build 84 · test:calc 130 pass / 0 fail / 7 skip · U+2014 0 · disclosure notes visible at 320 · M2 and M3 links reproduced · 0 page/console errors.
+
 ## [0.7.99] - 2026-11-18: A36 numbers readable in use
 
 **A36** (numbers formatting in use on live v0.7.98): **PASS, no CRITICAL or HIGH.** The ₦2,931,625-scale plan, decimals, sub-1% rates and all receipt sums read correctly at 1280/390/320 in both themes. Two code items from the audit were closed:

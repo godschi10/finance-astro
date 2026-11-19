@@ -88,9 +88,10 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
      the page still has exactly one clear() and one reset(). 44px minimum, the
      site's own tap floor. -->
 <div class="fx-chips" style="margin-top:0" id="bg-examplectl" role="group" aria-label="Leave the worked example">
-  <button type="button" class="btn b-ghost b-sm" id="bg-clear-example" style="min-height:44px" hidden>Clear the example</button>
-  <button type="button" class="btn b-ghost b-sm" id="bg-reset-example" style="min-height:44px">Reset to the example</button>
+  <button type="button" class="btn b-ghost b-sm" id="bg-clear-example" style="min-height:44px" hidden aria-describedby="bg-clear-reset-note">Clear the example</button>
+  <button type="button" class="btn b-ghost b-sm" id="bg-reset-example" style="min-height:44px" aria-describedby="bg-clear-reset-note">Reset to the example</button>
 </div>
+<p class="receipt-note" id="bg-clear-reset-note">Clear removes saved numbers and spends; Reset restores the sample and spends.</p>
 <div class="tgrid c3" id="bg-top">
 <!-- E18-F3 ; the seven seeded fields ship the post-hydration chrome in SSR: the
      data-sd state attr plus the exact <span class="sd"> mark() re-creates. Every
@@ -191,10 +192,11 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
      replace skipped it). A 390px phone has no hover path at all, so the gloss
      was dead where it matters. All three now say it, visibly, on every device. -->
 <div class="quick-fills" id="bg-actuals-fills" style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
-  <button type="button" class="btn b-ghost b-xs" data-fill-from-plan="bg-spn" title="Use my targets: put what you spent on needs straight from the plan's needs target">Use my targets: needs</button>
-  <button type="button" class="btn b-ghost b-xs" data-fill-from-plan="bg-spw" title="Use my targets: put what you spent on wants straight from the plan's wants target">Use my targets: wants</button>
-  <button type="button" class="btn b-ghost b-xs" data-fill-from-plan="bg-sps" title="Use my targets: put what you saved straight from the plan's savings target">Use my targets: savings</button>
+  <button type="button" class="btn b-ghost b-xs" data-fill-from-plan="bg-spn" title="Use my targets: put what you spent on needs straight from the plan's needs target" aria-describedby="bg-targets-note">Use my targets: needs</button>
+  <button type="button" class="btn b-ghost b-xs" data-fill-from-plan="bg-spw" title="Use my targets: put what you spent on wants straight from the plan's wants target" aria-describedby="bg-targets-note">Use my targets: wants</button>
+  <button type="button" class="btn b-ghost b-xs" data-fill-from-plan="bg-sps" title="Use my targets: put what you saved straight from the plan's savings target" aria-describedby="bg-targets-note">Use my targets: savings</button>
 </div>
+<p class="receipt-note" id="bg-targets-note">These fill the spent-on lines with the plan's figures. Type what you really spent to score your month.</p>
 <!-- A16-F2 ; the honesty rails are visible prose, so they must be audible
      prose. role="status" gives each an implicit polite live region, and the
      writes below are guarded so a re-render of identical text stays silent. -->
@@ -240,8 +242,9 @@ const liveSeed = `Plan now: ₦${n(seed.needs)} needs · ₦${n(seed.wants)} wan
 </div>
 <!-- Apply defaults button -->
 <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
-  <button type="button" class="btn b-ghost b-sm" data-apply-defaults aria-label="Use the starting needs shares (rent 40%, food 25%, transport 15%, data 10%, bills 7%)">Use the starting shares</button>
+  <button type="button" class="btn b-ghost b-sm" data-apply-defaults aria-label="Use the starting needs shares (rent 40%, food 25%, transport 15%, data 10%, bills 7%)" aria-describedby="bg-shares-note">Use the starting shares</button>
 </div>
+<p class="receipt-note" id="bg-shares-note">This replaces your current shares with rent 40%, food 25%, transport 15%, data 10%, bills 7%.</p>
 <!-- E10 (A10-C1/C3) ; the mirror's own inputs. The old panel had no
      per-bucket actual field anywhere: it MANUFACTURED one by rescaling the
      single "Spent on needs" figure, so all five variance badges always agreed
@@ -1676,6 +1679,11 @@ const junkVerdict = Array.from(new Set(junkStep1.concat(shareIds.filter((id) => 
     }
     if (c.needs_remaining < 0) {
       bgNextItems.push(`<a class="btn b-ghost" href="#bg-top" style="flex:1;text-align:center;text-decoration:none" data-goto="bg-needs">Needs too high → Raise Needs %</a>`);
+      bgNextItems.push(`<a class="btn b-ghost" href="#bg-top" style="flex:1;text-align:center;text-decoration:none" data-goto="al-rent">Trim rent/food/transport shares → Adjust shares</a>`);
+    }
+    if (c.savings_remaining < 0) {
+      const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+      bgNextItems.push(`<a class="btn b-ghost" href="${base}money-tools/savings-goal-calculator/" style="flex:1;text-align:center;text-decoration:none" target="_blank" rel="noopener">Bank the extra ${nn(-c.savings_remaining)} → Open Savings Goal Calculator</a>`);
     }
     if (total !== 100) {
       bgNextItems.push(`<a class="btn b-ghost" href="#bg-top" style="flex:1;text-align:center;text-decoration:none" data-goto="bg-needs">Splits at ${total}% → Adjust splits to 100%</a>`);
