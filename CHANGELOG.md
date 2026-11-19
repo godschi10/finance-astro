@@ -1,3 +1,11 @@
+## [0.7.101] - 2026-11-19: A39 UX parity contracts in the gate chain
+
+**A39** (suite-vs-human parity): FAIL on process, no shipped-page defect. The suite had 277 numeric engine rows and 130 browser behaviour checks but no assertion for the UX grammar the human audits won. A new self-contained harness, `scripts/ux-parity.mjs`, now pins 31 assertions over the built dist: the three E37 disclosure notes, CANNOT SCORE gating on too-large and junk, no e-notation on 42-digit input, field-named negative warn with no "Plan now", NEEDS OVER with all three next links, AHEAD with the Bank-the-extra link, exactly one named "Plan now" AX node with no duplicated figure, and no horizontal overflow at 320/390. Added as `npm run check:ux` without touching an existing gate. A deliberate fail-proof scratch copy with one inverted assertion produced 30/31 PASS, 1 FAIL and exit 1, proving the gate can fail.
+
+Process note: the first native builder leg died on NVIDIA NIM 429 with zero code changes (incident posted); the same brief was re-dispatched on Nous and finished with full proofs. First native researcher leg produced the contract inventory, then looped on a CSS probe; Manager stopped it and verified the artifact independently.
+
+Gates: check 7/7 · check:ux 31/31 · build 84 · test:calc 130 pass / 0 fail / 7 skip · U+2014 0 in src and scripts · git diff additive only.
+
 ## [0.7.100] - 2026-11-19: A37 decision support, actions that match the advice
 
 **A37** (decision support on live v0.7.99): PASS, no CRITICAL or HIGH. The tool already names the gap, the bucket and the field to change. Three MEDIUM and two LOW clarity gaps were closed in the 50-30-20 page:
