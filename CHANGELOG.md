@@ -1,3 +1,13 @@
+## [0.7.102] - 2026-11-20: E40 leg 1, site-wide honesty fixes
+
+King's ruling: "Fix all findings before moving to the next." First of several bounded E40 legs.
+
+- **Ticker:** the visible "LIVE" over daily FX rates is now "FX DAILY". The tooltip and nav aria-label already disclosed that BTC/ETH/gold refresh on visit and FX is a daily reference; they are unchanged. Phone-first proven at 320/390 light and dark: no overflow, label unclipped, marquee still moving (2.70–3.82 px per 2 s).
+- **Inert "Notify me of new posts":** both dead bell buttons removed. The footer gate now asserts zero bells and no such string.
+- **Dead gwillchijioke.com refs:** the network line is now "Part of the G-Will network" and both credit names are unlinked plain text. The footer gate pins the new honest markup and explicitly rejects the old dead href. Three footer assertions were re-pinned, including the icon-count from >=8 to exactly 6 with an explicit no-bell-site check; no other invariant was weakened.
+
+Recorded deviations: two residual gwillchijioke.com hrefs remain in the Network column sourced from `src/data/site.ts` (outside this leg's authorization); stale non-served comments and a now-no-op bell handler were left for a later leg. Gates: check 7/7 · check:ux 31/31 · build 84 · test:calc 130 pass / 0 fail / 7 skip · U+2014 0 · served-byte and browser probes 18/18, 0 console/page errors, 0 failed URLs.
+
 ## [0.7.101] - 2026-11-19: A39 UX parity contracts in the gate chain
 
 **A39** (suite-vs-human parity): FAIL on process, no shipped-page defect. The suite had 277 numeric engine rows and 130 browser behaviour checks but no assertion for the UX grammar the human audits won. A new self-contained harness, `scripts/ux-parity.mjs`, now pins 31 assertions over the built dist: the three E37 disclosure notes, CANNOT SCORE gating on too-large and junk, no e-notation on 42-digit input, field-named negative warn with no "Plan now", NEEDS OVER with all three next links, AHEAD with the Bank-the-extra link, exactly one named "Plan now" AX node with no duplicated figure, and no horizontal overflow at 320/390. Added as `npm run check:ux` without touching an existing gate. A deliberate fail-proof scratch copy with one inverted assertion produced 30/31 PASS, 1 FAIL and exit 1, proving the gate can fail.

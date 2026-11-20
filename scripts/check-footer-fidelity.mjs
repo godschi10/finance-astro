@@ -48,14 +48,14 @@ const checks = [
   // family, not the brand, and stays verbatim.
   ["brand lockup .flogo .n + .nm (both footers)", count(footer, 'class="flogo"') === 2 && count(footer, '<span class="n">₦</span><span class="nm">gwillchijioke</span>') === 2],
   ["blurb .ftag in both footers (mobile keeps WP inline size)", count(footer, 'class="ftag"') === 2 && has(footer, 'style="margin-top:4px;font-size:11px"')],
-  ["network line .fnet", count(footer, 'class="fnet"') === 1 && has(footer, "Part of the gwillchijioke.com network")],
+  ["network line .fnet", count(footer, 'class="fnet"') === 1 && has(footer, "Part of the G-Will network") && !has(footer, "Part of the gwillchijioke.com network")],
   ["social nav .fsoc x2 (desktop + mobile, mobile keeps WP inline margin)", count(footer, 'class="fsoc"') === 2 && has(footer, 'style="margin:16px 0"')],
   ["social icon links .soci (mapped, 4 per footer source)", count(footer, 'class="soci"') === 2],
   ["social set = x/instagram/linkedin/youtube (no github in WP footer)", ["x:", "instagram:", "linkedin:", "youtube:"].every((k) => has(footerRaw, k)) && !has(footerRaw, "github:")],
 
   // ── follow CTAs ───────────────────────────────────────────────────────────
   ["follow CTA row .ffollow x2", count(footer, 'class="ffollow"') === 2],
-  ["push bell button x2", count(footer, "data-push-bell") === 2 && has(footer, "Notify me of new posts")],
+  ["push bell REMOVED (no dead UI, King-ordered E40 leg 1)", count(footer, "data-push-bell") === 0 && !has(footer, "Notify me of new posts")],
   ["bell uses WP-faithful copy but NOT the duplicate WP id", !has(footer, 'id="gwill-bell"')],
   // King's order 2026-09-26: "Remove that add to Google widget, it's useless", 
   // the fgooglenews anchors and gnews icon are GONE from both footers.
@@ -73,7 +73,7 @@ const checks = [
   // form "G-will Chijioke" (already pinned on the credit link below). The
   // copyright's unhyphenated "Gwill Chijioke" was the audit's variance finding.
   ["desktop bottom bar .fbot", count(footer, 'class="fbot"') === 1 && has(footer, "G-will Chijioke")],
-  ["credit: 'Designed & built by' + linked name in both footers", count(footer, "Designed &amp; built by") === 2 && count(footer, 'class="fcredit-link"') === 2 && has(footer, ">G-will Chijioke</a>")],
+  ["credit: 'Designed & built by' + unlinked name in both footers", count(footer, "Designed &amp; built by") === 2 && count(footer, 'class="fcredit-link"') === 2 && has(footer, ">G-will Chijioke</a>") && !has(footer, 'href="https://gwillchijioke.com"')],
   ["legal row: Privacy · Disclaimer · Affiliates", ["Privacy", "Disclaimer", "Affiliates"].every((t) => has(footerRaw, t)) && has(footer, 'class="fdot"')],
   ["back-to-top link x2 (mobile keeps WP inline colour)", count(footer, "Back to top ↑") === 2 && has(footer, 'style="color:var(--dark-dim)"')],
   // SITE-1 (copy-truth leg, 2026-10-09): the assertion below used to demand
@@ -126,7 +126,10 @@ const checks = [
   ["desktop/tablet: .mfooter hidden at ≥768px", css.includes("@media (min-width: 768px) { .mfooter { display: none; } }")],
   ["touch: hover style must not stick after a tap (WP section 54)", css.includes("@media (hover: none) { .fsoc .soci:hover { border-color: var(--dark-b); color: var(--dark-dim); transform: none; } }")],
   ["bell explains itself when there is no push backend (KING FINGERPRINT FIX 2026-10-04: dev-speak replaced with plain words)", has(footerRaw, "Notifications aren't available yet")],
-  ["every icon is rendered as markup, never escaped text", !/>\{ICON\./.test(footerRaw) && (footerRaw.match(/set:html=\{ICON/g) || []).length >= 8],
+  // E40 leg 1: both bell buttons were deleted, so their two icon render sites
+  // went with them. Re-pinned to the 6 honest remaining sites (no weakening of
+  // the "icons are markup" invariant) plus an explicit no-bell-site check.
+  ["every icon is rendered as markup, never escaped text (bell sites removed, 6 remain)", !/>\{ICON\./.test(footerRaw) && (footerRaw.match(/set:html=\{ICON/g) || []).length === 6 && !has(footerRaw, "set:html={ICON.bell}")],
   ["print: drop the grid + CTA row", css.includes("@media print { .ftop, .fpush, .ad-bg--footer { display: none !important; } }")],
 ];
 
