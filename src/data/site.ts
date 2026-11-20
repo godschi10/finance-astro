@@ -192,14 +192,12 @@ export const FOOTER_GROUPS: Record<"articles" | "apps" | "site", FooterLink[]> =
 // portfolio CHANGELOG moved every such link; the checker pin moved with it).
 export const FOOTER_NETWORK: { desktop: FooterLink[]; mobile: FooterLink[] } = {
   desktop: [
-    { label: "gwillchijioke.com", href: PROFILES.site, external: true },
     { label: "androidscroll.com", href: PROFILES.portfolio, external: true },
     { label: "About", href: "/about/" },
     { label: "Contact", href: "/contact/" },
     { label: "Newsletter", href: "/newsletter/" },
   ],
   mobile: [
-    { label: "gwillchijioke.com", href: PROFILES.site, external: true },
     { label: "androidscroll.com", href: PROFILES.portfolio, external: true },
     { label: "Newsletter", href: "/newsletter/" },
   ],
@@ -269,10 +267,10 @@ export const catBySlug = (slug: string): Category => {
 // the rendered .t-rate. data-src lets the ported ticker-live.js refresh
 // pairs per source. Never hand-edit the values; they are generated.
 export const TICKER_STATIC = [
-  { label: "USD/NGN", value: "₦1,350", src: "fx" },
-  { label: "GBP/NGN", value: "₦1,788", src: "fx" },
-  { label: "EUR/NGN", value: "₦1,495", src: "fx" },
-  { label: "BTC/USD", value: "$68,837", src: "btc" },
-  { label: "ETH/USD", value: "$1,947", src: "eth" },
-  { label: "XAU/USD", value: "$3,880", src: "gold" },
+  { label: "USD/NGN", value: "₦1,353", src: "fx" },
+  { label: "GBP/NGN", value: "₦1,775", src: "fx" },
+  { label: "EUR/NGN", value: "₦1,486", src: "fx" },
+  { label: "BTC/USD", value: "$57,930", src: "btc" },
+  { label: "ETH/USD", value: "$1,588", src: "eth" },
+  { label: "XAU/USD", value: "$3,514", src: "gold" },
 ];

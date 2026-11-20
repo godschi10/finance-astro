@@ -125,7 +125,7 @@ const checks = [
   ["phone: .footer hidden / .mfooter shown at ≤767px", /@media \(max-width: 767px\) \{ .*\.mfooter \{ display: block; \} \.footer \{ display: none; \} \}/.test(css)],
   ["desktop/tablet: .mfooter hidden at ≥768px", css.includes("@media (min-width: 768px) { .mfooter { display: none; } }")],
   ["touch: hover style must not stick after a tap (WP section 54)", css.includes("@media (hover: none) { .fsoc .soci:hover { border-color: var(--dark-b); color: var(--dark-dim); transform: none; } }")],
-  ["bell explains itself when there is no push backend (KING FINGERPRINT FIX 2026-10-04: dev-speak replaced with plain words)", has(footerRaw, "Notifications aren't available yet")],
+  ["bell push residue REMOVED (E40 leg 2: no dead handler, no stale NOTE)", !has(footerRaw, "Notifications aren't available yet")],
   // E40 leg 1: both bell buttons were deleted, so their two icon render sites
   // went with them. Re-pinned to the 6 honest remaining sites (no weakening of
   // the "icons are markup" invariant) plus an explicit no-bell-site check.

@@ -1,3 +1,12 @@
+## [0.7.103] - 2026-11-20: E40 leg 2, residual dead refs and dead code
+
+King's fix-all ruling continues. Leg 1 recorded two residuals; both are now closed.
+
+- Both `{ label: "gwillchijioke.com", href: PROFILES.site }` entries removed from the desktop and mobile Network columns in `src/data/site.ts`; every other link kept. Served home, money-tool and category pages now contain zero `href="https://gwillchijioke.com"`.
+- The stale bell SVG, comments and the entire no-op `[data-push-bell]` handler removed from `src/components/Footer.astro`; the one footer assertion pinning "Notifications aren't available yet" re-pinned to require its absence. No dead control, no dead copy.
+
+Gates: check 7/7 (footer 64 checks) · check:ux 31/31 · build 84 · test:calc 130 pass / 0 fail / 7 skip · U+2014 0 · served-byte counts gwill=0 / notif=0 on three page types · 0 console/page errors, 0 failed URLs. Environment note: Chromium 1254 needed an explicit CHROME_BIN path in this leg; no repo change for it.
+
 ## [0.7.102] - 2026-11-20: E40 leg 1, site-wide honesty fixes
 
 King's ruling: "Fix all findings before moving to the next." First of several bounded E40 legs.
