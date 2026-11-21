@@ -173,13 +173,22 @@ async function main() {
     check("too-large/verdict CANNOT SCORE", has(v2, "CANNOT SCORE"), v2);
     check("too-large/verdict no SAVE GAP", !has(v2, "SAVE GAP"), v2);
 
-    /* 3. 42-DIGIT income: same grammar plus no e-notation */
-    await fresh({ "bg-inc": "1" + "0".repeat(41) });
+    /* 3. 42-DIGIT income: same warn/verdict grammar, but every derived figure
+          is withheld with the site's own dash and the typed value stays put. */
+    const typed42 = "1" + "0".repeat(41);
+    await fresh({ "bg-inc": typed42 });
     const w3 = await text("bg-warn"), v3 = await text("al-verdict"), f3 = await text("bg-fig");
+    const l3 = await text("bg-live");
+    const i3 = await page.evaluate(() => {
+      const el = document.getElementById("bg-inc");
+      return el ? (el).value : "";
+    });
     check("42-digit/warn substring", has(w3, "looks unusually large"), w3);
     check("42-digit/verdict CANNOT SCORE", has(v3, "CANNOT SCORE"), v3);
     check("42-digit/verdict no SAVE GAP", !has(v3, "SAVE GAP"), v3);
-    check("42-digit/fig no e-notation", !/e[+-]/i.test(f3), f3.slice(0, 120));
+    check("42-digit/fig withheld dash", f3 === "–", "fig=" + f3.slice(0, 120));
+    check("42-digit/live no grouped figure", l3 === "" && !/\d{1,3}(,\d{3}){2,}/.test(l3), "live=" + l3.slice(0, 120));
+    check("42-digit/typed income still in field", i3 === typed42, "inc=" + i3.slice(0, 60));
 
     /* 4. NEGATIVE income */
     await fresh({ "bg-inc": "-5000" });

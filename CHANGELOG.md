@@ -1,3 +1,13 @@
+## [0.7.104] - 2026-11-21: E40 leg 3, extreme figures withheld
+
+King's fix-all ruling continues; this closes A36 L1 (carried from A35 L4).
+
+At an absurd income (the existing `bgHuge` predicate, > ₦100,000,000) every derived naira figure on the 50-30-20 page is now withheld with the site's own `–` sign instead of printing unreadable 42-digit numbers. The typed value stays in the input so the reader can correct it; the "looks unusually large" warn and the CANNOT SCORE verdict are unchanged. The copy handler refuses to export withheld figures. Ordinary and 15-digit too-large states keep their grouped figures and comma-boundary wrapping. A proof of defect was captured first: on the stale build the two new assertions failed (31/33, exit 1); after the fix the same harness passed 33/33.
+
+`scripts/ux-parity.mjs` now asserts the withheld glyph, an empty and hidden `#bg-live`, no grouped figure in it, and that the typed 42-digit value remains in `#bg-inc`. Gates: check 7/7 · check:ux 33/33 · build 84 · test:calc 130 pass / 0 fail / 7 skip · U+2014 0 · browser proof at 320/390 with one line rect, no overflow, 0 console/page errors.
+
+Recorded deviation: `bgHuge` also covers the 1e15 too-large input, so its figures are withheld too; the warn and CANNOT SCORE assertions are unchanged and still pass.
+
 ## [0.7.103] - 2026-11-20: E40 leg 2, residual dead refs and dead code
 
 King's fix-all ruling continues. Leg 1 recorded two residuals; both are now closed.

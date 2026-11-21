@@ -779,6 +779,12 @@ function render() {
      verbatim (salary-tax "That gross looks unusually large ; double-check
      the figure", same ₦100M threshold), so no new clause family is invented. */
   const bgHuge = pm(g("bg-inc").value) > 100000000;
+  /* E40 L3 ; an absurd income makes every figure derived from it untrustworthy.
+     Withhold them with the site's own dash (SF_DASH, U+2013), the same glyph the
+     blank and junk rails already use. The warn and the CANNOT SCORE verdict above
+     still carry the explanation, and the typed income stays in its field so the
+     reader can correct it. */
+  const withheld = (v: string): string => bgHuge ? SF_DASH : v;
   t("bg-warn").hidden = !(bgNeg || bgHuge);
   t("bg-warn").textContent = [bgNeg, bgHuge ? "That income looks unusually large: double-check the figure." : ""].filter(Boolean).join(" ");
   /* ── E13 ; the three input-health rails, in the order the orders that asked
@@ -815,9 +821,9 @@ function render() {
   const planWantsD = Math.round(plan.wants);
   const planSavingsD = Math.round(plan.savings);
   const leftoverD = Math.round(inc) - (planNeedsD + planWantsD + planSavingsD);
-  sfFigJ(t("bg-fig"), PLAN_IDS, `${nn(planNeedsD)} · ${nn(planWantsD)} · ${nn(planSavingsD)}`);
+  sfFigJ(t("bg-fig"), PLAN_IDS, withheld(`${nn(planNeedsD)} · ${nn(planWantsD)} · ${nn(planSavingsD)}`));
   splitFig();
-  sfFigJ(t("bg-else"), PLAN_IDS, nn(leftoverD));
+  sfFigJ(t("bg-else"), PLAN_IDS, withheld(nn(leftoverD)));
   /* B4-FIX2 ; a split the visitor never entered cannot print a gold bucket:
      garbage ("abc" in a split) reads as un-entered, exactly like a cleared
      field, so the demand line below matches the blank state. */
@@ -887,9 +893,9 @@ function render() {
   const rowDash = junkStep1.length > 0 ? "–" : null;
   /* E19-C8/C9 ; "Needs left" is a whole-naira figure: a half-naira residue is
      rounding, and "−₦0" would claim a shortfall that is not there. */
-  sfFig(t("bg-rn"), ["bg-inc", "bg-needs", "bg-spn"], rowDash ?? nn(Math.round(c.needs_remaining)));
-  sfFig(t("bg-rw"), ["bg-inc", "bg-wants", "bg-spw"], rowDash ?? nn(c.wants_remaining));
-  sfFig(t("bg-rs"), ["bg-inc", "bg-save", "bg-sps"], rowDash ?? nn(c.savings_remaining));
+  sfFig(t("bg-rn"), ["bg-inc", "bg-needs", "bg-spn"], rowDash ?? withheld(nn(Math.round(c.needs_remaining))));
+  sfFig(t("bg-rw"), ["bg-inc", "bg-wants", "bg-spw"], rowDash ?? withheld(nn(c.wants_remaining)));
+  sfFig(t("bg-rs"), ["bg-inc", "bg-save", "bg-sps"], rowDash ?? withheld(nn(c.savings_remaining)));
   /* STEP 2 ; the needs half, itemised. Same income, same split: the needs
      figure feeding these buckets IS plan.needs, so step 1 → step 2 is one
      continuous journey ; change income or split and both steps move. */
@@ -911,7 +917,7 @@ function render() {
      leaves the whole itemised step reading from the reader's number instead of
      the one on screen. They read planJunked through sfFigJ, the same predicate
      the receipt above does. */
-  sfFigJ(t("al-needs"), ["bg-inc", "bg-needs"], nn(r2.needs));
+  sfFigJ(t("al-needs"), ["bg-inc", "bg-needs"], withheld(nn(r2.needs)));
   /* T3 ; the step-2 label names the LIVE split, never a fixed "half": at a
      60/20/20 split "Needs half: ₦150,000" was a live lie. Same live-span
      pattern E2 used for the intro (sfFig withholds as "; " while blank). */
@@ -921,9 +927,9 @@ function render() {
   /* F-A2-1 ; the step-2 intro names live figures, never the seed's. sfFig
      withholds them as "; " while the inputs are blank, exactly like the
      receipt, so no ₦0 is ever printed in prose. */
-  sfFigJ(t("bg-step2-needs"), ["bg-inc", "bg-needs"], nn(r2.needs));
+  sfFigJ(t("bg-step2-needs"), ["bg-inc", "bg-needs"], withheld(nn(r2.needs)));
   const rentAmt = r2.buckets.find((b) => b.id === "rent")?.amount ?? 0;
-  sfFigJ(t("bg-step2-rent"), ["bg-inc", "bg-needs", "al-rent"], nn(rentAmt));
+  sfFigJ(t("bg-step2-rent"), ["bg-inc", "bg-needs", "al-rent"], withheld(nn(rentAmt)));
   const shareSum = Object.values(shares).reduce((a, b) => a + b, 0);
   const planned = r2.needs * shareSum;
   /* A junk share is priced from the reader's number too, so "buckets add to
@@ -958,7 +964,7 @@ function render() {
        rides on LAST USED shares, the warn says so instead of greeting the
        returner with a warning new visitors never see. The maths never moves. */
     const memSfx = shareIds.some((id) => hasBadge(id, "data-r")) ? " Includes shares from your last visit; trim any bucket to fit." : "";
-    t("al-warn").textContent = `Over by ${nn(planned - r2.needs)}: buckets add to ${(shareSum * 100).toFixed(0)}% of needs. Trim shares to 100% or less.` + memSfx + alNegSfx;
+    t("al-warn").textContent = `Over by ${withheld(nn(planned - r2.needs))}: buckets add to ${(shareSum * 100).toFixed(0)}% of needs. Trim shares to 100% or less.` + memSfx + alNegSfx;
   } else if (negClampIds.length || negActIds.length) {
     t("al-warn").hidden = false;
     t("al-warn").textContent = (negClampClause + negActClause).trim();
@@ -984,7 +990,7 @@ function render() {
     /* The residual "Other needs" row is what is left of needs after every
        named share, so it waits on ALL of them, not on one. */
     const shown = b.id === "other" ? otherAdj : Math.round(b.amount);
-    sfFigJ(amt, b.id === "other" ? ["bg-inc", "bg-needs"].concat(shareIds) : ["bg-inc", "bg-needs", "al-" + b.id], nn(shown));
+    sfFigJ(amt, b.id === "other" ? ["bg-inc", "bg-needs"].concat(shareIds) : ["bg-inc", "bg-needs", "al-" + b.id], withheld(nn(shown)));
     div.appendChild(lab); div.appendChild(amt); box.appendChild(div);
   }
   /* E10 ; the five needs-share fields decide what "Other needs" IS, so they
@@ -1003,7 +1009,7 @@ function render() {
     const lab = document.createElement("span"); lab.textContent = "Other needs";
     const amt = document.createElement("b");
     amt.setAttribute("data-al-amt", "other");
-    sfFigJ(amt, ["bg-inc", "bg-needs"].concat(shareIds), nn(r2.needs - planned));
+    sfFigJ(amt, ["bg-inc", "bg-needs"].concat(shareIds), withheld(nn(r2.needs - planned)));
     div.appendChild(lab); div.appendChild(amt); box.appendChild(div);
   }
   sfEmpty(empty);
@@ -1018,7 +1024,10 @@ function render() {
      somewhere a visitor could see it and the page never said a word; the what-
      now, the verdict and the three receipt rows already stood down on this
      predicate, and this was the last one that did not. */
-  if (empty || !splitsSet || planJunked) {
+  /* E40 L3 ; an unreadable income has no readable summary either. Withhold the
+     labelled "Plan now" line exactly as blank/junk do: hidden and emptied, so no
+     stale grouped triple sits in the live region behind `hidden`. */
+  if (empty || !splitsSet || planJunked || bgHuge) {
     if (live.textContent) live.textContent = "";
     live.hidden = true;
   } else {
@@ -1089,7 +1098,7 @@ function render() {
      and how to fix it; this line would only have repeated it in a voice the
      numbers cannot support. */
   const step1Junked = junkStep1.length > 0;
-  if (!empty && !step1Junked && splitsSet && planTotal > 0 && (overNW.length || savOver > 0)) {
+  if (!empty && !step1Junked && !bgHuge && splitsSet && planTotal > 0 && (overNW.length || savOver > 0)) {
     const bits: string[] = [];
     if (overNW.length) {
       const nm = overNW.map((o) => o.name).join(" and ");
@@ -1192,7 +1201,7 @@ function render() {
      spent ₦0 vs ₦150,000 plan on needs ; within plan" while the verdict above
      said CANNOT SCORE for the very same field. One screen, two owners. */
   const spendJunked = junkIn(["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn"]);
-  if (!empty && planComplete && planTotal > 0 && !pmBlank(g("bg-spn").value) && !spendJunked && step1Touched) {
+  if (!empty && !bgHuge && planComplete && planTotal > 0 && !pmBlank(g("bg-spn").value) && !spendJunked && step1Touched) {
     const spent = Math.max(0, pm(g("bg-spn").value) || 0);
     /* E19-C8 ; compare the DISPLAYED figures: 125,001 against 125,001 is
        within plan, and the residue that produced the "₦1 over" claim never
@@ -1334,7 +1343,7 @@ function render() {
   /* E14 ; with a junk plan id there is no plan column to score against, so the
      whole panel withholds instead of pricing "Rent / housing ₦56" off a figure
      the visitor never typed. Same predicate, same empty-state treatment. */
-  if (empty || !planComplete || planJunked) {
+  if (empty || !planComplete || planJunked || bgHuge) {
     headEl.hidden = true; badgeEl.hidden = true; ownEl.hidden = true;
     rowsEl.hidden = true; rowsEl.innerHTML = "";
     t("al-reconcile").hidden = true; railText(t("al-reconcile") as HTMLElement, "");
@@ -1523,7 +1532,7 @@ function render() {
   const exactPct = shareSum * 100;
   const exactRemainder = (1 - shareSum) * 100;
   const sumEl = t("al-sharesum");
-  if (empty || !planComplete || !sharesSet || planJunked || shareJunked) {
+  if (empty || !planComplete || !sharesSet || planJunked || shareJunked || bgHuge) {
     sumEl.hidden = true; railText(sumEl, "");
   } else if (planned > r2.needs) {
     sumEl.hidden = false;
@@ -2067,7 +2076,10 @@ if (copyBtn) copyBtn.addEventListener("click", async () => {
      verdict is CANNOT SCORE), so the clipboard must not be the one place those
      exact figures still travel. Same refusal voice, same reason: nothing to
      copy yet. */
-  if (sfIsEmpty("50-30-20-budget-calculator", gv) || planIds.some((id) => pmBlank(g(id).value)) || junkIn(planIds)) {
+  /* E40 L3 ; the clipboard must not be the one place a figure the page has
+     withheld still travels. Same ₦100M predicate as bgHuge in render(), read
+     from the field itself so the handler needs no render-local state. */
+  if (sfIsEmpty("50-30-20-budget-calculator", gv) || planIds.some((id) => pmBlank(g(id).value)) || junkIn(planIds) || pm(g("bg-inc").value) > 100000000) {
     announceDone(": nothing to copy yet; enter your numbers above.");
     return;
   }
