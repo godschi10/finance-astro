@@ -164,7 +164,7 @@ async function main() {
     check("seed/shares-note visible", await visible("bg-shares-note"));
     check("seed/shares-note substring", has(await text("bg-shares-note"), "replaces your current shares"));
     check("seed/clear-reset-note visible", await visible("bg-clear-reset-note"));
-    check("seed/clear-reset-note substring", has(await text("bg-clear-reset-note"), "Clear removes saved numbers"));
+    check("seed/clear-reset-note substring", has(await text("bg-clear-reset-note"), "Clear examples removes saved numbers"));
 
     /* 2. TOO-LARGE income */
     await fresh({ "bg-inc": "1000000000000000" });

@@ -1,3 +1,15 @@
+## [0.7.105] - 2026-11-21: E40 leg 4, A28 site polish and a gate correction
+
+King's fix-all ruling continues. Three LOW items from A28 are closed:
+
+- **C5:** the Fixed Income footer link points at the canonical `/category/fixed-income/` instead of the nested path that served a meta-refresh interstitial.
+- **C12:** the two orphaned quick-convert pages (`100-pounds-to-naira`, `500-euros-to-naira`) are added to the hub rail; the 15 tool cards are untouched.
+- **C11:** control labels unified to "Clear examples" / "Reset" suite-wide, including the E37 disclosure note.
+
+**Gate correction:** `check-header-fidelity.mjs` hard-asserted the old nested path as a raw string. The builder's first pass satisfied that assertion with a comment while the live link was correct — a gate passing for the wrong reason. The Manager corrected the assertion to check the actual `href:` value and the absence of the nested href, removed the comment workaround, and aligned `check:ux`'s clear-note substring with the canonical label. No other invariant weakened.
+
+Gates: check 7/7 · check:ux 33/33 · build 84 · test:calc 130 pass / 0 fail / 7 skip · U+2014 0 · served proofs: canonical href ×1, nested href ×0, both convert pages on the hub, zero old labels. Native Hermes builder used; Manager re-ran every gate after the correction.
+
 ## [0.7.104] - 2026-11-21: E40 leg 3, extreme figures withheld
 
 King's fix-all ruling continues; this closes A36 L1 (carried from A35 L4).

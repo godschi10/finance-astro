@@ -89,7 +89,7 @@ const checks = [
   ["ticker all 6 rates well-formed (generated per build)", ["USD/NGN","GBP/NGN","EUR/NGN","BTC/USD","ETH/USD","XAU/USD"].every((p) => pairRx(p).test(site))],
   ["ticker marked generated + layout carries data-ts stamp", /REWRITTEN at build time by scripts\/fetch-snapshot\.mjs/.test(site) && /data-ts=\{FX_SNAPSHOT_TS\}/.test(layout)],
   ["newsletter CTA links to ${base}#newsletter", layout.includes("newsletterHref") && layout.includes("${base}#newsletter")],
-  ["nested nav: All Articles > Investing > Fixed Income", site.includes("All Articles") && site.includes("Investing") && site.includes("Fixed Income") && site.includes("category/investing/fixed-income/")],
+  ["nested nav: All Articles > Investing > Fixed Income (canonical flat href)", site.includes("All Articles") && site.includes("Investing") && site.includes("Fixed Income") && site.includes('href: "/category/fixed-income/"') && !site.includes('href: "/category/investing/fixed-income/"')],
   ["mobile accordion sub-menu class", /\bsub-menu\b/.test(layout)],
   ["header.css ticker/theme/search rules present", css.includes(".ticker") && css.includes(".tp-seg") && css.includes(".gs-row") && css.includes(".snav-list")],
   ["header.css imported", layout.includes("header.css")],

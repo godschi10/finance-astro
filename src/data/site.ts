@@ -226,7 +226,9 @@ export const NAV: NavItem[] = [
         label: "Investing",
         href: "/category/investing/",
         children: [
-          { label: "Fixed Income", href: "/category/investing/fixed-income/" },
+          // A28 C5: Fixed Income links to the canonical flat archive; the old
+          // nested path served a meta-refresh "has moved" interstitial.
+          { label: "Fixed Income", href: "/category/fixed-income/" },
         ],
       },
       { label: "Crypto", href: "/category/crypto/" },
@@ -270,7 +272,7 @@ export const TICKER_STATIC = [
   { label: "USD/NGN", value: "₦1,353", src: "fx" },
   { label: "GBP/NGN", value: "₦1,775", src: "fx" },
   { label: "EUR/NGN", value: "₦1,486", src: "fx" },
-  { label: "BTC/USD", value: "$57,930", src: "btc" },
-  { label: "ETH/USD", value: "$1,588", src: "eth" },
-  { label: "XAU/USD", value: "$3,514", src: "gold" },
+  { label: "BTC/USD", value: "$60,055", src: "btc" },
+  { label: "ETH/USD", value: "$1,684", src: "eth" },
+  { label: "XAU/USD", value: "$3,539", src: "gold" },
 ];
