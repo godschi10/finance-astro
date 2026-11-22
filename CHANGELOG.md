@@ -1,3 +1,13 @@
+## [0.7.107] - 2026-11-22: E40 leg 6, CSS leaves the inline path
+
+King's fix-all ruling continues. A24-C1 is closed as far as the codebase honestly allows.
+
+`build.inlineStylesheets` changed from `'always'` to `'auto'`. The full cascade is no longer inlined into all 84 pages; it ships as external, cacheable CSS. Measured on home: HTML 201,791 → 79,642 B, inline style 123,054 → 1,440 B. Full-DOM computed-style parity: 0 diffs across 13 page types, and the 14-route fleet gate passes 14/14.
+
+**Honest limit:** the per-route rule split itself was attempted and reverted. `search404.css` classes appear in 82/84 pages; `article.css` must follow `tools.css` on money tools and is also used by category pages that do not import it; `forms.css` duplicates selectors with `article.css` and flips the cascade on contact when moved. All six candidate sheets are coupled, so a safe per-route split would require rewriting the cascade — outside this leg. The cacheable external sheet is the deliverable; the rule-level split is recorded as a limit, not claimed.
+
+Manager corrected `check-article-fidelity.mjs` to accept the plugin stylesheet inline OR via a linked CSS asset, asserting the same `.vibe-comment-body` selector with the site base prefix handled. Gates: check 7/7 · check:ux 33/33 · build 84 · test:calc 130 pass / 0 fail / 7 skip · U+2014 0 · fleet 14/14. Native builder hit its iteration cap before the report; Manager took over verification and recorded the gap.
+
 ## [0.7.106] - 2026-11-22: E40 leg 5, search index moved off every route
 
 King's fix-all ruling continues; this closes A24-C4.

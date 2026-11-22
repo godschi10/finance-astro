@@ -26,7 +26,12 @@ export default defineConfig({
   // That template line belongs to the sibling consumer leg; until it owns the
   // slash, the setting stays unset to preserve byte-identical output.
   compressHTML: true,
-  build: { inlineStylesheets: 'always' },
+  // E40 leg 6 (A24-C1): emit CSS as external, cacheable assets instead of
+  // inlining the full ~123 KB cascade into all 84 pages. 'auto' keeps only
+  // tiny sheets inline; the site's combined sheet is far past that threshold
+  // so every route gets one external <link rel=stylesheet>. Cascade order is
+  // unchanged (a single sheet per route), so visual parity holds.
+  build: { inlineStylesheets: 'auto' },
   // WordPress injects heading ids server-side on the_content at priority 9
   // (inc/table-of-contents.php), and the article page's TOC anchors depend on
   // them. rehype-slug does the same job at build time, so the ids are in the

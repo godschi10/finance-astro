@@ -462,8 +462,15 @@ for (const cls of ["wp-block-quote", "wp-block-pullquote", "wp-block-table",
   checks.push(["served page carries the comments surface",
     dist.includes('id="vibe-comments"') && dist.includes('id="vibe-comment-list"') &&
     dist.includes('id="vibe-load-comments-btn"')]);
-  checks.push(["served page inlines the plugin stylesheet",
-    dist.includes(".vibe-comment-body")]);
+  checks.push(["served page ships the plugin stylesheet (inline or linked)",
+    dist.includes(".vibe-comment-body") || (() => {
+      const links = [...dist.matchAll(/href="([^"]+\.css)"/g)]
+        .map((m) => m[1].replace(/^\//, "").replace(/^finance-astro\//, ""));
+      return links.some((h) => {
+        try { return readFileSync(join(root, "dist", h), "utf8").includes(".vibe-comment-body"); }
+        catch { return false; }
+      });
+    })()]);
   checks.push(["served page serializes the config object for the module",
     dist.includes("var vibeComments =") && dist.includes('"apiBase"')]);
   checks.push(["served page keeps the honeypot and the char counter",
