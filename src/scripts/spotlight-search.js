@@ -5,11 +5,11 @@
  * The relevance engine (norm/fuzzy/scoring/highlight) lives in
  * scripts/search-core.js ; ONE engine shared with the /search/ results page.
  *
- * Static-site transport: the searchable corpus is embedded as
- * <script type="application/json" id="gwill-search-index"> by the layout
- * (title/excerpt/url/date/mins/cat per post), parsed here at runtime ; no
- * REST endpoint, no network per keystroke after parse. Same UI/UX contract
- * as the theme: combobox input.gs-row role=option, arrow-key nav with
+ * Static-site transport: the searchable corpus is a shared JSON asset served
+ * at {base}search-index.json (built by src/data/search-index.ts). It is fetched
+ * lazily on the first search interaction and cached ;  no REST endpoint, no
+ * network per keystroke after load. Same UI/UX contract as the theme:
+ * combobox input.gs-row role=option, arrow-key nav with
  * aria-activedescendant, view-all footer → {base}search/?q=.gs-state rows,
  * close() keeps the typed text, in-field x is the only text clearer,
  * focus returns with preventScroll (theme v1.0.199 rule).
@@ -23,10 +23,11 @@ import { norm, toks, smartMatch, highlight, escHtml } from './search-core.js';
   'use strict';
 
   var INDEX = [];
-  try {
-    var idxEl = document.getElementById('gwill-search-index');
-    if (idxEl) INDEX = JSON.parse(idxEl.textContent || '[]');
-  } catch (e) { INDEX = []; }
+  var indexPromise = null;
+  // E40 leg 5: the corpus is no longer inlined on every page. Fetch the shared
+  // JSON asset lazily, on the first search interaction only, and cache the
+  // promise so focus + input + open share ONE request. An empty/failed fetch
+  // leaves INDEX empty: the existing no-match empty state renders, no throw.
 
   // Runtime base, read from the rendered form action (the is:inline
   // template-literal trap: ${} is never interpolated in inline scripts).
@@ -36,6 +37,15 @@ import { norm, toks, smartMatch, highlight, escHtml } from './search-core.js';
     if (form) INDEX_BASE = form.getAttribute('action') || '';
   } catch (e) {}
   if (!INDEX_BASE) INDEX_BASE = '/finance-astro/';
+
+  function ensureIndex() {
+    if (indexPromise) return indexPromise;
+    indexPromise = fetch(INDEX_BASE + 'search-index.json')
+      .then(function (r) { if (!r.ok) throw new Error('search index ' + r.status); return r.json(); })
+      .then(function (rows) { INDEX = Array.isArray(rows) ? rows : []; })
+      .catch(function () { INDEX = []; });
+    return indexPromise;
+  }
 
   var toggles = document.querySelectorAll('[data-gwill-search-toggle]');
   var panel = document.getElementById('gwill-search-panel');
@@ -132,6 +142,7 @@ import { norm, toks, smartMatch, highlight, escHtml } from './search-core.js';
     toggles.forEach(function (t) { t.setAttribute('aria-expanded', 'true'); });
     input.setAttribute('aria-expanded', 'true');
     syncClear();
+    ensureIndex();
     setTimeout(function () { input.focus(); }, 80);
   }
 
@@ -195,7 +206,10 @@ import { norm, toks, smartMatch, highlight, escHtml } from './search-core.js';
     }
   });
 
+  input.addEventListener('focus', function () { ensureIndex(); });
+
   input.addEventListener('input', function () {
+    ensureIndex();
     clearTimeout(timer);
     syncClear();
     var v = this.value.trim();
@@ -205,7 +219,7 @@ import { norm, toks, smartMatch, highlight, escHtml } from './search-core.js';
       if (v.length) showState('Keep typing, at least 2 characters…');
       return;
     }
-    timer = setTimeout(function () { renderResults(v); }, DEBOUNCE);
+    timer = setTimeout(function () { ensureIndex().then(function () { renderResults(v); }); }, DEBOUNCE);
   });
 
   syncClear();

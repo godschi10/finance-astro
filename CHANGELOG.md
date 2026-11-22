@@ -1,3 +1,11 @@
+## [0.7.106] - 2026-11-22: E40 leg 5, search index moved off every route
+
+King's fix-all ruling continues; this closes A24-C4.
+
+The 10,993 B search corpus was embedded as inline JSON in the Layout on all 84 routes. It now lives in a static `search-index.json` asset built from one shared module; the spotlight fetches it lazily on first interaction and the search page fetches it before rendering, both with graceful empty-state fallback. Measured: home HTML 212,849 → 201,791 B (−11,058 B), zero inline index occurrences dist-wide, asset HTTP 200 with the same 32 rows (17 articles + 15 tools). Search is unchanged: spotlight "dollar account" returns the same 6 titles, `/search/?q=budget` returns the same 2 cards. Zero asset requests at load, one after interaction.
+
+Gates: check 7/7 · check:ux 33/33 · build 84 · test:calc 130 pass / 0 fail / 7 skip · U+2014 0 · 0 console/page errors, 0 failed URLs. Native Hermes builder used; Manager re-ran every gate.
+
 ## [0.7.105] - 2026-11-21: E40 leg 4, A28 site polish and a gate correction
 
 King's fix-all ruling continues. Three LOW items from A28 are closed:

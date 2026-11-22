@@ -1,7 +1,6 @@
 ---
-import { NAV, TICKER_STATIC, catBySlug, COMMENTS_API, SITE, type NavItem } from "../data/site";
+import { NAV, TICKER_STATIC, COMMENTS_API, SITE, type NavItem } from "../data/site";
 import { FX_SNAPSHOT, FX_SNAPSHOT_TS } from "../data/fx-snapshot";
-import { TOOLS, allArticles as allPosts, fmtMonthYear } from "../data/content";
 import "../styles/base.css"; // WP stylesheet section 2 (RESET/BASE) ;  the anchor reset
 import "../styles/header.css";
 import Footer from "../components/Footer.astro";
@@ -138,45 +137,6 @@ const mobileNavHtml = NAV.map(mobileNavItem).join("");
 
 const newsletterHref = `${base}#newsletter`;
 
-// Spotlight search index: ONE corpus shared with the /search/ results page ; 
-// every article (title/excerpt/category-name/date/read-mins, badge/art/emoji
-// for the engine's map) AND every calculator. The old 7-item POSTS-only array
-// left the calculators unsearchable in the spotlight (the /search/ page
-// searched 31 items; the drop-down only 7 ;  found by probing the built page).
-const posts = await allPosts(); // async getCollection ;  Layout renders after the await
-const searchIndex = [
-  ...posts.map((p) => {
-    const c = catBySlug(p.data.category);
-    return {
-      title: p.data.title,
-      excerpt: p.data.description,
-      url: `${base}articles/${p.id}/`,
-      date: fmtMonthYear(p.data.pubDate),
-      mins: p.data.readMins,
-      cat: c?.name ?? "Finance",
-      category: p.data.category,
-      badge: c?.badge ?? "bsl",
-      art: c?.art ?? "",
-      emoji: c?.emoji ?? "",
-      kind: "article",
-    };
-  }),
-  ...TOOLS.map((t) => ({
-    title: t.name,
-    excerpt: t.desc,
-    url: `${base}money-tools/${t.slug}/`,
-    date: "",
-    mins: 1,
-    cat: "Calculator",
-    category: "tools",
-    badge: "bsl",
-    art: "",
-    emoji: "",
-    kind: "tool",
-  })),
-];
-const searchIndexJson = JSON.stringify(searchIndex).replace(/</g, "\\u003c");
-const searchBase = `${base}search/`;
 ---
 <!doctype html>
 <html lang="en" data-forms-api={COMMENTS_API}>
@@ -698,7 +658,6 @@ main{display:block;min-width:0}
 <slot />
 </main>
 <Footer />
-<script type="application/json" id="gwill-search-index" set:html={searchIndexJson}></script>
 <script is:inline>
 /* GWill Finance ; mobile nav (main.js) + spotlight search (spotlight-search.js), ported. */
 (function(){

@@ -7,7 +7,7 @@
  * rows ; so rows are built here with the theme's own class vocabulary
  * (article.ac > .ac-img/.ac-emoji + .ac-body > a.badge + h2.ac-t > a +
  * .ac-ex > p + .ac-ft), matching template-parts/content.php. The badge/art/
- * emoji map comes from the embedded index (badgeClass/art/emoji per item).
+ * emoji map comes from the shared JSON index (badge/art/emoji per item).
  *
  * WP contracts ported: header count line "{n} results for <strong>{q}</strong>",
  * breadcrumb "Search: {q}", URL state ?q=, category pill filter
@@ -22,17 +22,27 @@ import { toks, smartMatch, highlight, escHtml } from './search-core.js';
   'use strict';
 
   var rawPool = [];
-  try {
-    // The Layout embeds ONE shared corpus (#gwill-search-index) on every
-    // page ;  the spotlight reads it too. Prefer it; fall back to the legacy
-    // per-page #search-index if absent.
-    var el = document.getElementById('gwill-search-index') || document.getElementById('search-index');
-    if (el) {
-      var raw = JSON.parse(el.textContent || '[]');
-      if (raw && raw.articles && raw.tools) rawPool = raw.articles.concat(raw.tools);
-      else if (raw && typeof raw.length === 'number') rawPool = raw;
-    }
-  } catch (e) {}
+
+  function adoptRaw(raw) {
+    if (raw && raw.articles && raw.tools) rawPool = raw.articles.concat(raw.tools);
+    else if (raw && typeof raw.length === 'number') rawPool = raw;
+  }
+
+  // E40 leg 5: the shared corpus is no longer inlined on every page. Keep the
+  // legacy per-page #search-index fallback when a page still ships one, else
+  // fetch the shared JSON asset before the first render. An empty/failed fetch
+  // degrades to an empty pool (the page's own no-results block shows).
+  function loadIndex() {
+    try {
+      var el = document.getElementById('search-index');
+      if (el) adoptRaw(JSON.parse(el.textContent || '[]'));
+    } catch (e) {}
+    if (rawPool.length) return Promise.resolve();
+    return fetch(homeHref + 'search-index.json')
+      .then(function (r) { if (!r.ok) throw new Error('search index ' + r.status); return r.json(); })
+      .then(function (rows) { adoptRaw(rows); })
+      .catch(function () { rawPool = []; });
+  }
 
   var input = document.getElementById('search-input');
   var form = document.querySelector('.search-form');
@@ -179,5 +189,5 @@ import { toks, smartMatch, highlight, escHtml } from './search-core.js';
     input.addEventListener('input', syncClear);
     syncClear();
   }
-  run();
+  loadIndex().then(function () { run(); });
 })();
