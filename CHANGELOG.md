@@ -1,3 +1,11 @@
+## [0.7.108] - 2026-11-23: Salary-tax E2, field comprehension
+
+First round on the salary-tax tool. A2 returned FAIL (3 HIGH, 3 MEDIUM, 2 LOW), re-proved by the Manager on the live site; E2 closes all eight findings.
+
+Malformed (`12.5.5`), negative and absurd (`999999999`) gross now withhold every derived figure with `–`, suppress EXEMPT and the tie/savings verdict, and print a field-named CANNOT SCORE rail with a concrete fix. The typed value stays visible. Valid `300000` still computes ₦243,820 take-home and the normal verdict. All eight fields show a visible SAMPLE badge on cold load and a one-line legend in words; the badge drops on first input. NHF and NHIS are expanded at field, the rent hint says "per year, not per month", the period hint is scoped to the receipt, "marginal band rate" is glossed in place, and the gross hint names the payslip figure. The clear-button copy now matches its behaviour. The minimal spine touch adds the six zero-valued salary-tax fields to the existing seed list so the shared marker contract applies; no spine function was rewritten.
+
+Recorded deviations: pre-existing sub-44px header/chip controls (27–36 px) are out of this round's authorized files; `abc` keeps the fleet's honest blank path; LAST-USED date stays HELD. Gates: check 7/7 · check:ux 33/33 · build 84 · test:calc 130 pass / 0 fail / 7 skip · U+2014 0 · 0 console/page errors · phone-first 320/390 light+dark no overflow.
+
 ## [0.7.107] - 2026-11-22: E40 leg 6, CSS leaves the inline path
 
 King's fix-all ruling continues. A24-C1 is closed as far as the codebase honestly allows.

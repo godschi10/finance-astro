@@ -61,17 +61,18 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
   <button type="button" class="fx-step active" data-st-period="monthly" aria-pressed="true">Monthly</button>
   <button type="button" class="fx-step" data-st-period="annual" aria-pressed="false">Annual</button>
 </div>
-<p class="hint">Receipt figures follow this period. The calculator itself works in months: the per-year view reads the engine's own annual figures.</p>
+<p class="hint">Only the receipt below follows this period; the calculator itself works in months and the per-year view reads the engine's own annual figures.</p>
+<p class="hint" id="st-legend">Marked <strong>Sample</strong> means the figure is our worked example, not your own: type over any field and its Sample marker disappears. Clear examples removes only what is still ours; numbers you typed stay.</p>
 <div class="tgrid c3">
 
-<div class="field" data-cur="NGN"><label for="st-gross">Monthly gross ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-gross" type="text" value="300000" inputmode="decimal"></span><p class="hint">The monthly pay the 2026 bands are worked out from: before pension and tax come off.</p></div>
+<div class="field" data-cur="NGN"><label for="st-gross">Monthly gross ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-gross" type="text" value="300000" inputmode="decimal"></span><p class="hint">Enter the monthly gross pay from your payslip (basic salary plus housing and transport allowances), before pension and tax come off. The 2026 bands are worked out from this figure.</p></div>
 <div class="field"><label for="st-pension">Pension %</label><input id="st-pension" type="text" max="100" value="8" inputmode="decimal"><p class="hint">Pension contributions are calculated on your <strong>monthly emoluments</strong> (your basic salary plus your housing and transport allowances) per the Pension Reform Act 2014: a minimum of 8% by you and 10% by your employer. Only the portion you actually contribute is deductible under the Nigeria Tax Act 2025. <em>Last verified 11 Oct 2026 · NTA s.30(2)(a)(iii) (nta2025.txt:1312) · <a href="https://www.pencom.gov.ng/wp-content/uploads/2018/04/FAQ-CPS-reviewed.-17-Apr.-2018.pdf">PenCom FAQ on the CPS</a></em></p></div>
-<div class="field" data-cur="NGN"><label for="st-rent">Annual rent ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-rent" type="text" value="0" inputmode="decimal"></span></div>
-<div class="field" data-cur="NGN"><label for="st-nhf">NHF monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-nhf" type="text" value="0" inputmode="decimal"></span></div>
-<div class="field" data-cur="NGN"><label for="st-nhis">NHIS monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-nhis" type="text" value="0" inputmode="decimal"></span><p class="hint">Leave at ₦0 if your payslip doesn't show it: when filled, it comes off taxable income.</p></div>
+<div class="field" data-cur="NGN"><label for="st-rent">Annual rent ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-rent" type="text" value="0" inputmode="decimal"></span><p class="hint">Per year, not per month: enter the total rent you pay in a year. 20% of it comes off your taxable income, capped at ₦500,000 a year.</p></div>
+<div class="field" data-cur="NGN"><label for="st-nhf">NHF monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-nhf" type="text" value="0" inputmode="decimal"></span><p class="hint">National Housing Fund (NHF): a long-term housing savings deduction from your salary, usually 2.5% of basic monthly pay. It comes off your taxable income. Enter the monthly amount your payslip shows.</p></div>
+<div class="field" data-cur="NGN"><label for="st-nhis">NHIS monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-nhis" type="text" value="0" inputmode="decimal"></span><p class="hint">National Health Insurance Scheme (NHIS): a health insurance deduction that comes off your taxable income. Enter the monthly amount your payslip shows; leave at ₦0 if your payslip does not show it.</p></div>
 <div class="field" data-cur="NGN"><label for="st-life">Life assurance monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-life" type="text" value="0" inputmode="decimal"></span><p class="hint">Leave at ₦0 if your payslip doesn't show it: when filled, it comes off taxable income.</p></div>
 <div class="field" data-cur="NGN"><label for="st-other">Other reliefs monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-other" type="text" value="0" inputmode="decimal"></span><p class="hint">Anything else your payroll deducts that reduces taxable income under the Nigeria Tax Act 2025 s.30(2)(a). Same field as our Net to Gross calculator, so both tools answer identically. Leave at ₦0 if none. <em>Last verified 11 Oct 2026 · NTA s.30(2)(a) (nta2025.txt:1307-1318)</em></p></div>
-<div class="field" data-cur="NGN"><label for="st-bonus">Bonus / 13th month ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-bonus" type="text" value="0" inputmode="decimal"></span><p class="hint">A one-off bonus or 13th-month payment, taxed on the day it is paid. It is added on top of your regular chargeable income and only the extra tax is charged, so it is taxed at your marginal band rate, not at the top rate. <em>Last verified 11 Oct 2026 · NTA ss.4(2)(a), 26(2), 163(1)(t) (nta2025.txt:377-381, 1174-1180, 4407-4408)</em></p></div>
+<div class="field" data-cur="NGN"><label for="st-bonus">Bonus / 13th month ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-bonus" type="text" value="0" inputmode="decimal"></span><p class="hint">A one-off bonus or 13th-month payment, taxed on the day it is paid. It is added on top of your regular chargeable income and only the extra tax is charged, so it is taxed at your marginal band rate (the rate on the last naira you earn, not your average rate), not at the top rate. <em>Last verified 11 Oct 2026 · NTA ss.4(2)(a), 26(2), 163(1)(t) (nta2025.txt:377-381, 1174-1180, 4407-4408)</em></p></div>
 </div>
 <p class="hint" id="st-dedwarn" hidden></p>
 <div class="receipt">
@@ -144,7 +145,7 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
 </tbody>
 </table></div>
 <p class="bar-note" id="st-bands-note" hidden></p>
-<p class="bar-note">Clear examples empties every field so you can start blank; Reset brings back the worked example.</p>
+<p class="bar-note">Clear examples removes the worked-example values; numbers you typed in stay as they are. Reset brings back the worked example.</p>
 </ToolShell>
 <script>
 import { payeCalculate, payeCompare, payeBandBreakdown, payeBands2026, payeBonusTax } from "../../lib/salary-tax";
@@ -174,7 +175,22 @@ function paintPeriod(): void {
 function render() {
   paintPeriod();
   syncQcChips();
-  const grossRaw = pm(g("st-gross").value);
+  const grossTxt = g("st-gross").value;
+  const grossRaw = pm(grossTxt);
+  /* E2 H1/H3 ; an ENTERED gross that is not a usable number must withhold every
+     derived figure and never print a conclusion. Three shapes reach here:
+       "12.5.5"   -> honest alphabet, but Number() is NaN, so pm() reads 0 ;
+       "-5000"    -> negative, clamped away by Math.max below ;
+       "999999999"-> past the tool's own ₦100m deep-link ceiling.
+     A genuine "0" is entered and stays honest: no bad state, no withheld figure. */
+  const grossEntered = !pmBlank(grossTxt);
+  const grossClean = String(grossTxt).replace(/[\u200B-\u200F\uFEFF]/g, "").replace(/[^\d.eE-]/g, "");
+  const grossMalformed = grossEntered && /\d/.test(grossTxt) && !Number.isFinite(Number(grossClean));
+  const grossNegative = grossEntered && grossRaw < 0;
+  const grossAbsurd = grossEntered && grossRaw > 100000000;
+  const grossBad = grossMalformed || grossNegative || grossAbsurd;
+  /* One withheld dep id: every sfFig below dashes while the gross is bad. */
+  const HOLD = grossBad ? ["__st_hold__"] : [];
   const penRaw = pm(g("st-pension").value);
   const rentRaw = pm(g("st-rent").value);
   const nhfRaw = pm(g("st-nhf").value);
@@ -199,15 +215,15 @@ function render() {
      the rail below names the fields to check ; never a silent clamp. */
   const netBad = (v: number) => !Number.isFinite(v) || v < 0;
   const netTxt = (v: number) => netBad(v) ? "Out of range" : n(v);
-  sfFig(t("st-fig"), ALL, netTxt(perNet(r)));
-  sfFig(t("st-sub"), ALL, `Tax ${n(stPeriod === "annual" ? r.tax_annual : r.tax_monthly)}/${stPeriod === "annual" ? "yr" : "mo"} · taxable ${n(r.taxable)}/yr${r.exempt ? " · EXEMPT (minimum wage)" : ""}`);
-  sfFig(t("st-pen"), ["st-gross", "st-pension"], n(r.pension_annual));
+  sfFig(t("st-fig"), [...ALL, ...HOLD], netTxt(perNet(r)));
+  sfFig(t("st-sub"), [...ALL, ...HOLD], `Tax ${n(stPeriod === "annual" ? r.tax_annual : r.tax_monthly)}/${stPeriod === "annual" ? "yr" : "mo"} · taxable ${n(r.taxable)}/yr${r.exempt && !grossBad ? " · EXEMPT (minimum wage)" : ""}`);
+  sfFig(t("st-pen"), ["st-gross", "st-pension", ...HOLD], n(r.pension_annual));
   /* Other-reliefs receipt row (P1-6 parity tail): mirrors the Net to Gross
      page's gn-other2 row ; the row rides its own field, annualised the same
      way the engine annualises it (otherMonthly × 12). */
-  sfFig(t("st-other2"), ["st-other"], n(r.other_annual));
-  sfFig(t("st-rel"), ["st-rent"], n(r.relief_annual));
-  sfFig(t("st-tax"), ALL, n(r.tax_annual));
+  sfFig(t("st-other2"), ["st-other", ...HOLD], n(r.other_annual));
+  sfFig(t("st-rel"), ["st-rent", ...HOLD], n(r.relief_annual));
+  sfFig(t("st-tax"), [...ALL, ...HOLD], n(r.tax_annual));
   /* BONUS BLOCK (P1-6 tail). The engine is payeBonusTax(gross, bonus, pen, nhf,
      rent, nhis, life, other) ; the same marginal-band machinery the vector gate
      already asserts (paye_bonus, paye_bonus_exempt_base). Nothing here restates a
@@ -226,8 +242,8 @@ function render() {
      the behavioural suite scrapes exactly those (the first run shipped a stale
      "0.0%" through a hidden div and failed reset + clear). The house ZERO LAW
      is "; ", not "hidden" ; the row is always there, the figure is not. */
-  const BONUS_DEPS = ["st-gross", "st-bonus", "st-pension", "st-nhf", "st-rent", "st-nhis", "st-life", "st-other"];
-  const bonusOn = bonus > 0 && !pmBlank(g("st-gross").value);
+  const BONUS_DEPS = ["st-gross", "st-bonus", "st-pension", "st-nhf", "st-rent", "st-nhis", "st-life", "st-other", ...HOLD];
+  const bonusOn = bonus > 0 && !pmBlank(g("st-gross").value) && !grossBad;
   if (bonusOn) {
     const bt = payeBonusTax(gross, bonus, pen, nhf, rent, nhis, life, other);
     sfFig(t("st-bonus-tax"), BONUS_DEPS, n(bt.tax));
@@ -239,11 +255,11 @@ function render() {
     sfFig(t("st-bonus-rate"), BONUS_DEPS, "–");
   }
   const c = payeCompare(gross, pen, nhf, rent, nhis, life, other);
-  sfFig(t("st-new-tax"), ALL, n(c.new.tax_annual));
-  sfFig(t("st-new-net"), ALL, netTxt(perNet(c.new)));
-  sfFig(t("st-old-tax"), ALL, n(c.old.tax_annual));
-  sfFig(t("st-old-net"), ALL, netTxt(perNet(c.old)));
-  const nw = c.save_annual > 0.5, ow = c.save_annual < -0.5;
+  sfFig(t("st-new-tax"), [...ALL, ...HOLD], n(c.new.tax_annual));
+  sfFig(t("st-new-net"), [...ALL, ...HOLD], netTxt(perNet(c.new)));
+  sfFig(t("st-old-tax"), [...ALL, ...HOLD], n(c.old.tax_annual));
+  sfFig(t("st-old-net"), [...ALL, ...HOLD], netTxt(perNet(c.old)));
+  const nw = !grossBad && c.save_annual > 0.5, ow = !grossBad && c.save_annual < -0.5;
   (document.getElementById("st-row-new") as HTMLElement).className = nw ? "win" : "";
   (document.getElementById("st-row-old") as HTMLElement).className = ow ? "win" : "";
   (document.getElementById("st-tag-new") as HTMLElement).style.display = nw ? "" : "none";
@@ -269,7 +285,9 @@ function render() {
      save_monthly in the per-month view; the engine returns both). */
   const saveFig = stPeriod === "annual" ? c.save_annual : c.save_monthly;
   const saveUnit = stPeriod === "annual" ? "yr" : "mo";
-  t("st-save").textContent = !grossKnown
+  t("st-save").textContent = grossBad
+    ? "CANNOT SCORE. Monthly gross ₦: enter a plain number above ₦0. No verdict is shown until you do."
+    : !grossKnown
     ? "Old vs new bands compared on your gross: enter it above."
     : cmpBad
       ? "Out of range: deductions exceed the gross you entered, so neither regime has a take-home to compare."
@@ -279,16 +297,26 @@ function render() {
         ? `You keep ${n(saveFig)}/${saveUnit} more under the new bands.`
         : `The old bands save you ${n(-saveFig)}/${saveUnit} vs the new bands.`;
   const notes: string[] = [];
-  if (!(grossRaw > 0)) notes.push("Enter a monthly gross above ₦0: take-home waits until you do.");
-  /* A34: the negative line now names the field(s) (sfNegative) instead of a
-     bare fleet line; the too-large and cap lines below keep their own voice. */
-  const stNeg = sfNegative(["st-gross", "st-pension", "st-rent", "st-nhf"]);
-  if (stNeg) notes.push(stNeg);
-  if (penRaw > 100) notes.push("Pension capped at 100%: at 100% there is no take-home.");
-  if (grossRaw > 100000000) notes.push("That gross looks unusually large: double-check the figure.");
-  if (nhfRaw > 15000) notes.push("The National Housing Fund contribution is 2.5% of your basic monthly salary, uncapped: the NHF Act sets no ceiling on the amount (confirm the figure your payroll applies). Last verified 11 Oct 2026 · NHF Act ss.4(a), 9(1) (nhfact.txt:94-96, 144-146) · NTA s.30(2)(a)(i) (nta2025.txt:1309)");
-  if (netBad(r.net_monthly)) notes.push("Out of range: pension, NHF, NHIS, life assurance and other reliefs add up to more than your gross, so no take-home can print. Check the monthly deduction fields against your payslip.");
-  if (rentRaw * 0.2 > 500000) notes.push("Rent relief capped at ₦500,000/yr: the excess changes nothing.");
+  if (grossBad) {
+    /* E2 H1/H3 ; one rail, the field named and the fix concrete. The absurd
+       case keeps its existing "double-check" warn verbatim above this line. */
+    if (grossAbsurd) notes.push("That gross looks unusually large: double-check the figure.");
+    const why = grossNegative ? "a negative entry has no take-home to price."
+      : grossMalformed ? "that is not a figure we can read has no take-home to price."
+      : "a figure this large has no take-home we will price.";
+    notes.push(`Monthly gross ₦ ${why} Enter a plain number above ₦0 at a realistic monthly salary. No figures or verdict are shown until you do.`);
+  } else {
+    if (!(grossRaw > 0)) notes.push("Enter a monthly gross above ₦0: take-home waits until you do.");
+    /* A34: the negative line names the field(s) (sfNegative) instead of a
+       bare fleet line; the too-large and cap lines keep their own voice. */
+    const stNeg = sfNegative(["st-gross", "st-pension", "st-rent", "st-nhf"]);
+    if (stNeg) notes.push(stNeg);
+    if (penRaw > 100) notes.push("Pension capped at 100%: at 100% there is no take-home.");
+    if (grossRaw > 100000000) notes.push("That gross looks unusually large: double-check the figure.");
+    if (nhfRaw > 15000) notes.push("The National Housing Fund contribution is 2.5% of your basic monthly salary, uncapped: the NHF Act sets no ceiling on the amount (confirm the figure your payroll applies). Last verified 11 Oct 2026 · NHF Act ss.4(a), 9(1) (nhfact.txt:94-96, 144-146) · NTA s.30(2)(a)(i) (nta2025.txt:1309)");
+    if (netBad(r.net_monthly)) notes.push("Out of range: pension, NHF, NHIS, life assurance and other reliefs add up to more than your gross, so no take-home can print. Check the monthly deduction fields against your payslip.");
+    if (rentRaw * 0.2 > 500000) notes.push("Rent relief capped at ₦500,000/yr: the excess changes nothing.");
+  }
   const w = t("st-warn");
   w.hidden = notes.length === 0;
   w.textContent = notes.join(" ");
@@ -299,7 +327,7 @@ function render() {
      off, so the visitor fixes the inputs instead of reading a broken receipt. */
   const dedTotal = gross * pen + nhf + nhis + life + other;
   const dedWarn = t("st-dedwarn");
-  if (grossKnown && dedTotal > gross) {
+  if (grossKnown && !grossBad && dedTotal > gross) {
     dedWarn.hidden = false;
     dedWarn.textContent = `Heads-up: pension + NHF + NHIS + life assurance + other reliefs add up to ${n(dedTotal)}/mo, above the ${n(gross)}/mo gross you entered. At this level there is no take-home; check the deduction fields.`;
   } else {
@@ -319,12 +347,12 @@ function render() {
     tr.innerHTML = `<td></td><td class="n"></td><td class="n"></td><td class="n"></td>`;
     (tr.children[0] as HTMLElement).textContent = "₦" + formatGrouped(b.low, 0) + (b.high === null ? "+" : ` – ₦${formatGrouped(b.high, 0)}`);
     (tr.children[1] as HTMLElement).textContent = (b.rate * 100).toFixed(0) + "%";
-    (tr.children[2] as HTMLElement).textContent = n(b.slice);
-    (tr.children[3] as HTMLElement).textContent = r.exempt ? "–" : n(b.tax);
+    (tr.children[2] as HTMLElement).textContent = grossBad ? "–" : n(b.slice);
+    (tr.children[3] as HTMLElement).textContent = (grossBad || r.exempt) ? "–" : n(b.tax);
     tb.appendChild(tr);
   }
-  bandsNote.hidden = !r.exempt;
-  bandsNote.textContent = r.exempt ? "EXEMPT (minimum wage): no PAYE is due, so band taxes are withheld. Slices show the pre-exemption bands maths." : "";
+  bandsNote.hidden = grossBad || !r.exempt;
+  bandsNote.textContent = r.exempt && !grossBad ? "EXEMPT (minimum wage): no PAYE is due, so band taxes are withheld. Slices show the pre-exemption bands maths." : "";
 }
   sfEmpty(sfIsEmpty("salary-tax-calculator", gv));
 ["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life", "st-other", "st-bonus"].forEach((id) => g(id).addEventListener("input", render));

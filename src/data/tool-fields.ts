@@ -500,12 +500,12 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     required: ["bg-inc", "bg-needs", "bg-wants", "bg-save", "bg-spn", "bg-spw", "bg-sps", "al-rent", "al-food", "al-transport", "al-data", "al-utilities"],
   },
 
-  /* 2 ; salary tax. Gross is a seed; the reliefs (rent, NHF, NHIS, life, other)
-     and the bonus are ₦0 blanks and stay plain. Gross NEVER restores (§2g) and
-     neither do the reliefs or the bonus. */
+  /* 2 ; salary tax. E2 H2 marks all eight fields SAMPLE (ours) on cold load so
+     every seeded value is visibly disclosed; the marker drops on first input.
+     Gross NEVER restores (§2g) and neither do the reliefs or the bonus. */
   "salary-tax-calculator": {
     tool: "salary-tax",
-    seeds: ["st-gross", "st-pension"],
+    seeds: ["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life", "st-other", "st-bonus"],
     /* Statutory, sourced on the same field below, and law rather than a claim
        about the visitor: the one legal figure that can honestly be offered. */
     derive: [{ field: "st-gross", use: 70000, text: "₦70,000 a month, the statutory minimum wage, where PAYE is nil." }],
