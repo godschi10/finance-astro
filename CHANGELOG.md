@@ -1,3 +1,14 @@
+## [0.7.109] - 2026-11-23: Salary-tax E4, receipt comprehension
+
+A3 returned FAIL (1 HIGH, 2 MEDIUM, 3 LOW), re-proved by the Manager on live; E4 closes all six.
+
+- **H1:** the cold worked example now says "Ours, not yours" where the figures print — in the receipt, the comparison row and the verdict — and the marker disappears once the visitor types. Arithmetic unchanged.
+- **M1:** `#st-fig`'s announcement is now a named polite live paragraph, "Take-home: ₦243,820 a month", with no duplicated bare figure in the AX tree.
+- **M2:** the period hint now names exactly which elements follow the Monthly/Annual toggle, matching observed behaviour.
+- **L1:** the bonus "waiting" sentence hides once a usable bonus is entered. **L2:** parser-blank gross shapes no longer leave two relief rows printing ₦0 beside a withheld headline. **L3:** PAYE, taxable income and relief are glossed where they print in the receipt.
+
+Gates: check 7/7 · check:ux 33/33 · build 84 · test:calc 130 pass / 0 fail / 7 skip · U+2014 0 · 0 console/page errors · phone-first 320/390 light+dark no overflow. LAST-USED date stays HELD; sub-44px header/chip controls remain pre-existing and out of scope. Native Hermes researcher and builder used; Manager re-ran gates and the AX/ownership probes.
+
 ## [0.7.108] - 2026-11-23: Salary-tax E2, field comprehension
 
 First round on the salary-tax tool. A2 returned FAIL (3 HIGH, 3 MEDIUM, 2 LOW), re-proved by the Manager on the live site; E2 closes all eight findings.

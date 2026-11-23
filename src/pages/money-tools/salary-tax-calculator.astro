@@ -61,7 +61,7 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
   <button type="button" class="fx-step active" data-st-period="monthly" aria-pressed="true">Monthly</button>
   <button type="button" class="fx-step" data-st-period="annual" aria-pressed="false">Annual</button>
 </div>
-<p class="hint">Only the receipt below follows this period; the calculator itself works in months and the per-year view reads the engine's own annual figures.</p>
+<p class="hint">Only the take-home figure and its label, the tax line under it, the verdict and the comparison table's take-home column follow this period. The four annual rows in the receipt (pension, other reliefs, rent relief and PAYE tax) stay annual in both views. The calculator itself works in months; the per-year view reads the engine's own annual figures.</p>
 <p class="hint" id="st-legend">Marked <strong>Sample</strong> means the figure is our worked example, not your own: type over any field and its Sample marker disappears. Clear examples removes only what is still ours; numbers you typed stay.</p>
 <div class="tgrid c3">
 
@@ -77,22 +77,24 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
 <p class="hint" id="st-dedwarn" hidden></p>
 <div class="receipt">
 <p class="receipt-lbl" id="st-lbl">Take-home monthly</p>
-<p class="receipt-fig" id="st-fig" aria-live="polite">₦{n(seed.net_monthly)}</p>
-<p class="receipt-sub" id="st-sub">Tax ₦{n(seed.tax_monthly)}/mo · taxable ₦{n(seed.taxable)}/yr{seed.exempt ? " · EXEMPT (minimum wage)" : ""}</p>
+<p class="receipt-fig" id="st-fig" aria-live="polite" aria-label={`Take-home: ₦${n(seed.net_monthly)} a month`}><span id="st-fig-v" aria-hidden="true">₦{n(seed.net_monthly)}</span></p>
+<p class="receipt-sub" id="st-sub">Tax ₦{n(seed.tax_monthly)}/mo · taxable income (after deductions) ₦{n(seed.taxable)}/yr{seed.exempt ? " · EXEMPT (minimum wage)" : ""}</p>
+<p class="receipt-foot st-own" id="st-own-rec" data-own>Ours, not yours: our worked example, not your salary.</p>
 <div class="receipt-div" aria-hidden="true"></div>
 <div id="st-rows">
 <div class="receipt-row"><span>Pension (annual)</span><b id="st-pen">₦{n(seed.pension_annual)}</b></div>
-<div class="receipt-row"><span>Other reliefs (annual)</span><b id="st-other2">₦{n(seed.other_annual)}</b></div>
-<div class="receipt-row"><span>Rent relief (annual)</span><b id="st-rel">₦{n(seed.relief_annual)}</b></div>
-<div class="receipt-row"><span>PAYE tax (annual)</span><b id="st-tax">₦{n(seed.tax_annual)}</b></div>
+<div class="receipt-row"><span>Other reliefs (deductions that lower taxable income, annual)</span><b id="st-other2">₦{n(seed.other_annual)}</b></div>
+<div class="receipt-row"><span>Rent relief (rent deduction, annual)</span><b id="st-rel">₦{n(seed.relief_annual)}</b></div>
+<div class="receipt-row"><span>PAYE tax (Pay As You Earn income tax, annual)</span><b id="st-tax">₦{n(seed.tax_annual)}</b></div>
 </div>
 <p class="receipt-foot">NTA 2025 bands · rent relief cap ₦500k · pension figured on the gross you type</p>
 <p class="receipt-foot">A bonus counts as employment income and is taxed on the day it is paid. <strong>If a bonus takes your gross pay above the national minimum wage, the minimum-wage exemption falls away</strong> and the bonus runs through the normal band table: the first ₦800,000 of chargeable income is still taxed at 0%. <em>Last verified 11 Oct 2026 · NTA ss.4(2)(a), 26(2), 163(1)(t) (nta2025.txt:377-381, 1174-1180, 4407-4408)</em></p>
 <div class="receipt-foot" id="st-bonus-block">
-<p class="receipt-row"><span>Bonus PAYE (one-off)</span><b id="st-bonus-tax">–</b></p>
+<p class="receipt-row"><span>Bonus PAYE (Pay As You Earn, one-off)</span><b id="st-bonus-tax">–</b></p>
 <p class="receipt-row"><span>Bonus take-home</span><b id="st-bonus-net">–</b></p>
 <p class="receipt-row"><span>Effective rate on the bonus</span><b id="st-bonus-rate">–</b></p>
-<p class="receipt-foot" style="font-weight:400">Taxed at the marginal band rate on top of your regular pay: the bonus is added to your chargeable income and only the difference in tax is charged. These three cells wait on your bonus figure and print "–" until you enter one, rather than a gold ₦0 for a bonus you never claimed.</p>
+<p class="receipt-foot" style="font-weight:400" id="st-bonus-note">Taxed at the marginal band rate on top of your regular pay: the bonus is added to your chargeable income and only the difference in tax is charged.</p>
+<p class="receipt-foot" style="font-weight:400" id="st-bonus-wait">These three cells wait on your bonus figure and print "–" until you enter one, rather than a gold ₦0 for a bonus you never claimed.</p>
 </div>
 <p class="receipt-foot" data-sf-foot hidden>Nothing entered · no figures invented</p>
 </div>
@@ -127,11 +129,11 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
 <div class="st-table-wrap"><table class="st-table" id="st-cmp">
 <thead><tr><th>Regime</th><th class="n">Tax /yr</th><th class="n" id="st-cmp-net-h">Take-home /mo</th></tr></thead>
 <tbody>
-<tr id="st-row-new" class={newWins ? "win" : ""}><td>New (2026)<span class="btag" id="st-tag-new" style={newWins ? "" : "display:none"}>Best</span></td><td class="n" id="st-new-tax">₦{n(cmp.new.tax_annual)}</td><td class="n" id="st-new-net">₦{n(cmp.new.net_monthly)}</td></tr>
+<tr id="st-row-new" class={newWins ? "win" : ""}><td>New (2026)<span class="btag" id="st-tag-new" style={newWins ? "" : "display:none"}>Best</span> <span class="st-own" id="st-own-cmp" data-own>Ours, not yours.</span></td><td class="n" id="st-new-tax">₦{n(cmp.new.tax_annual)}</td><td class="n" id="st-new-net">₦{n(cmp.new.net_monthly)}</td></tr>
 <tr id="st-row-old" class={oldWins ? "win" : ""}><td>Old (PITA, for comparison only, repealed 1 Jan 2026)<span class="btag" id="st-tag-old" style={oldWins ? "" : "display:none"}>Best</span></td><td class="n" id="st-old-tax">₦{n(cmp.old.tax_annual)}</td><td class="n" id="st-old-net">₦{n(cmp.old.net_monthly)}</td></tr>
 </tbody>
 </table></div>
-<p class="bar-note" id="st-save">{saveTxt}</p>
+<p class="bar-note" id="st-save">{saveTxt} <span class="st-own" id="st-own-save" data-own>Ours, not yours: our worked example, not your figures.</span></p>
 <p class="bar-note" id="st-warn" hidden></p>
 <p class="receipt-foot">The old row is shown <strong>for comparison only</strong>. The Personal Income Tax Act, Cap. P8 LFN 2004 (PITA) was repealed from the commencement of the Nigeria Tax Act 2025 on 1 Jan 2026: it no longer applies to anyone's PAYE. It is priced here so you can see what the change is worth on your own salary. <em>Verified 11 Oct 2026 · NTA 2025 s.196(g) (nta2025.txt:5342, 5355) · commencement 1 Jan 2026 (nta-nrs.txt:256)</em></p>
 <div class="hr"></div>
@@ -157,6 +159,45 @@ const n = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+/* E4 M1 ; #st-fig stays the ONE polite live region. Its visible amount lives
+   in an aria-hidden span, so AX exposes one named paragraph carrying the
+   figure ("Take-home: ₦… a month") instead of a bare StaticText that reads
+   the same number twice. The span is rebuilt if the empty-state painter ever
+   replaces the paragraph's text. */
+const figBox = t("st-fig");
+function figValue(): HTMLElement {
+  let v = document.getElementById("st-fig-v") as HTMLElement | null;
+  if (!v) {
+    figBox.textContent = "";
+    v = document.createElement("span");
+    v.id = "st-fig-v";
+    v.setAttribute("aria-hidden", "true");
+    figBox.appendChild(v);
+  }
+  return v;
+}
+/* E4 H1 ; "ours" means the figures still come from our delivered worked
+   example. Every marker stands down the moment any seed field holds a value
+   other than the server seed, so no marker claims our example over a figure
+   the visitor typed. Value-based, so badge paint order cannot make it stale. */
+const OWN = "Ours, not yours: our worked example, not your salary.";
+const OWN_SHORT = "Ours, not yours.";
+const SEED_VALUES: Record<string, string> = {
+  "st-gross": "300000", "st-pension": "8", "st-rent": "0", "st-nhf": "0",
+  "st-nhis": "0", "st-life": "0", "st-other": "0", "st-bonus": "0",
+};
+function ownershipIsOurs(): boolean {
+  return Object.keys(SEED_VALUES).every((id) => {
+    const raw = g(id).value;
+    return !pmBlank(raw) && Math.abs(pm(raw) - Number(SEED_VALUES[id])) < 0.000000001;
+  });
+}
+function paintOwnership(ours: boolean): void {
+  const rec = document.getElementById("st-own-rec") as HTMLElement | null;
+  const cmp = document.getElementById("st-own-cmp") as HTMLElement | null;
+  if (rec) { rec.textContent = ours ? OWN : ""; rec.hidden = !ours; }
+  if (cmp) { cmp.textContent = ours ? OWN_SHORT : ""; cmp.hidden = !ours; }
+}
 /* THE ZERO LAW: every figure below declares the ids it is derived from, so a
    relief the visitor never entered cannot print itself as a gold ₦0 deduction. */
 const ALL = ["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life", "st-other"];
@@ -215,14 +256,20 @@ function render() {
      the rail below names the fields to check ; never a silent clamp. */
   const netBad = (v: number) => !Number.isFinite(v) || v < 0;
   const netTxt = (v: number) => netBad(v) ? "Out of range" : n(v);
-  sfFig(t("st-fig"), [...ALL, ...HOLD], netTxt(perNet(r)));
-  sfFig(t("st-sub"), [...ALL, ...HOLD], `Tax ${n(stPeriod === "annual" ? r.tax_annual : r.tax_monthly)}/${stPeriod === "annual" ? "yr" : "mo"} · taxable ${n(r.taxable)}/yr${r.exempt && !grossBad ? " · EXEMPT (minimum wage)" : ""}`);
+  const fv = figValue();
+  sfFig(fv, [...ALL, ...HOLD], netTxt(perNet(r)));
+  figBox.setAttribute("aria-label", `Take-home: ${(fv.textContent || "").trim()} ${stPeriod === "annual" ? "a year" : "a month"}`);
+  sfFig(t("st-sub"), [...ALL, ...HOLD], `Tax ${n(stPeriod === "annual" ? r.tax_annual : r.tax_monthly)}/${stPeriod === "annual" ? "yr" : "mo"} · taxable income (after deductions) ${n(r.taxable)}/yr${r.exempt && !grossBad ? " · EXEMPT (minimum wage)" : ""}`);
   sfFig(t("st-pen"), ["st-gross", "st-pension", ...HOLD], n(r.pension_annual));
   /* Other-reliefs receipt row (P1-6 parity tail): mirrors the Net to Gross
      page's gn-other2 row ; the row rides its own field, annualised the same
      way the engine annualises it (otherMonthly × 12). */
-  sfFig(t("st-other2"), ["st-other", ...HOLD], n(r.other_annual));
-  sfFig(t("st-rel"), ["st-rent", ...HOLD], n(r.relief_annual));
+  /* E4 L2 ; both relief rows read the gross-dependent withheld path too. A
+     gross the parser cannot read ("abc", "12,") makes the headline dash, and
+     these two used to keep printing ₦0 because their own fields held "0".
+     Adding st-gross dashes them with the headline; the typed value stays. */
+  sfFig(t("st-other2"), ["st-gross", "st-other", ...HOLD], n(r.other_annual));
+  sfFig(t("st-rel"), ["st-gross", "st-rent", ...HOLD], n(r.relief_annual));
   sfFig(t("st-tax"), [...ALL, ...HOLD], n(r.tax_annual));
   /* BONUS BLOCK (P1-6 tail). The engine is payeBonusTax(gross, bonus, pen, nhf,
      rent, nhis, life, other) ; the same marginal-band machinery the vector gate
@@ -254,6 +301,11 @@ function render() {
     sfFig(t("st-bonus-net"), BONUS_DEPS, "–");
     sfFig(t("st-bonus-rate"), BONUS_DEPS, "–");
   }
+  /* E4 L1 ; the waiting sentence belongs to the empty state only. Once the
+     bonus has a usable value the three cells carry real figures and the line
+     that says they wait would be a stale lie; the explanation above stays. */
+  const waitLine = document.getElementById("st-bonus-wait") as HTMLElement | null;
+  if (waitLine) waitLine.hidden = bonusOn;
   const c = payeCompare(gross, pen, nhf, rent, nhis, life, other);
   sfFig(t("st-new-tax"), [...ALL, ...HOLD], n(c.new.tax_annual));
   sfFig(t("st-new-net"), [...ALL, ...HOLD], netTxt(perNet(c.new)));
@@ -285,6 +337,12 @@ function render() {
      save_monthly in the per-month view; the engine returns both). */
   const saveFig = stPeriod === "annual" ? c.save_annual : c.save_monthly;
   const saveUnit = stPeriod === "annual" ? "yr" : "mo";
+  /* E4 H1 ; the three ours-not-yours markers are a view of the delivered
+     example, not a permanent caption. Once any seed field is the visitor's,
+     paintOwnership clears the receipt and comparison markers and no marker is
+     appended to the verdict. */
+  const ours = ownershipIsOurs();
+  paintOwnership(ours);
   t("st-save").textContent = grossBad
     ? "CANNOT SCORE. Monthly gross ₦: enter a plain number above ₦0. No verdict is shown until you do."
     : !grossKnown
@@ -296,6 +354,14 @@ function render() {
       : nw
         ? `You keep ${n(saveFig)}/${saveUnit} more under the new bands.`
         : `The old bands save you ${n(-saveFig)}/${saveUnit} vs the new bands.`;
+  if (ours) {
+    const sm = document.createElement("span");
+    sm.id = "st-own-save";
+    sm.className = "st-own";
+    sm.setAttribute("data-own", "");
+    sm.textContent = " Ours, not yours: our worked example, not your figures.";
+    t("st-save").appendChild(sm);
+  }
   const notes: string[] = [];
   if (grossBad) {
     /* E2 H1/H3 ; one rail, the field named and the fix concrete. The absurd
