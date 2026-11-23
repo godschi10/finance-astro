@@ -133,8 +133,13 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
 <tr id="st-row-old" class={oldWins ? "win" : ""}><td>Old (PITA, for comparison only, repealed 1 Jan 2026)<span class="btag" id="st-tag-old" style={oldWins ? "" : "display:none"}>Best</span></td><td class="n" id="st-old-tax">₦{n(cmp.old.tax_annual)}</td><td class="n" id="st-old-net">₦{n(cmp.old.net_monthly)}</td></tr>
 </tbody>
 </table></div>
-<p class="bar-note" id="st-save">{saveTxt} <span class="st-own" id="st-own-save" data-own>Ours, not yours: our worked example, not your figures.</span></p>
-<p class="bar-note" id="st-warn" hidden></p>
+<p class="bar-note" id="st-save" aria-label="New versus old bands verdict">{saveTxt} <span class="st-own" id="st-own-save" data-own>Ours, not yours: our worked example, not your figures.</span></p>
+<!-- E5 M1/M2/M3 ; ONE named live recovery notice. It moves into the offending
+     field's own wrapper while an error is up (see placeWarn in the script), so
+     the fix is where the visitor is typing, not thousands of pixels below it.
+     The text and the focus control live inside it so no second live region is
+     needed and nothing is announced twice. -->
+<p class="bar-note" id="st-warn" role="alert" aria-live="assertive" aria-atomic="true" aria-label="Calculator recovery notice" hidden><span id="st-warn-text"></span><button type="button" id="st-fix-btn" class="st-fix-btn" hidden></button></p>
 <p class="receipt-foot">The old row is shown <strong>for comparison only</strong>. The Personal Income Tax Act, Cap. P8 LFN 2004 (PITA) was repealed from the commencement of the Nigeria Tax Act 2025 on 1 Jan 2026: it no longer applies to anyone's PAYE. It is priced here so you can see what the change is worth on your own salary. <em>Verified 11 Oct 2026 · NTA 2025 s.196(g) (nta2025.txt:5342, 5355) · commencement 1 Jan 2026 (nta-nrs.txt:256)</em></p>
 <div class="hr"></div>
 <h2 class="tool-h2">2026 band breakdown</h2>
@@ -154,7 +159,7 @@ import { payeCalculate, payeCompare, payeBandBreakdown, payeBands2026, payeBonus
 import { formatGrouped } from "../../lib/format";
 import { pm, pmBlank } from "../../scripts/pm";
 import smartFields from "../../scripts/smart-fields";
-import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig, sfNegative } from "../../data/tool-fields";
+import { TOOL_FIELDS, sfEmpty, sfIsEmpty, sfBind, sfFig, sfNegative, labelOf } from "../../data/tool-fields";
 const n = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
@@ -187,10 +192,9 @@ const SEED_VALUES: Record<string, string> = {
   "st-nhis": "0", "st-life": "0", "st-other": "0", "st-bonus": "0",
 };
 function ownershipIsOurs(): boolean {
-  return Object.keys(SEED_VALUES).every((id) => {
-    const raw = g(id).value;
-    return !pmBlank(raw) && Math.abs(pm(raw) - Number(SEED_VALUES[id])) < 0.000000001;
-  });
+  /* E5 M4 : exact seed strings, not parsed numbers. Any typed-but-unreadable
+     value stands all three markers down (regression against E4 H1). */
+  return Object.keys(SEED_VALUES).every((id) => g(id).value === SEED_VALUES[id]);
 }
 function paintOwnership(ours: boolean): void {
   const rec = document.getElementById("st-own-rec") as HTMLElement | null;
@@ -201,6 +205,57 @@ function paintOwnership(ours: boolean): void {
 /* THE ZERO LAW: every figure below declares the ids it is derived from, so a
    relief the visitor never entered cannot print itself as a gold ₦0 deduction. */
 const ALL = ["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life", "st-other"];
+/* E5 H1–H4 ; the seven detail inputs get the gross grammar too. Three shapes
+   are withheld: digits that are not a readable number (12.5.5, 1.2.3), any
+   minus (a negative deduction is never ₦0 and is never priced), and an absurd
+   one-off bonus. A value with no honest digits ("abc", ".", "") is parser-blank
+   and goes through sfFig's own blank path plus a field-named demand line. The
+   raw text is NEVER rewritten : only derived cells and notices react. */
+const DETAIL = ["st-pension", "st-rent", "st-nhf", "st-nhis", "st-life", "st-other", "st-bonus"];
+const BONUS_CEIL = 100000000;
+interface DetailState { id: string; malformed: boolean; minus: boolean; blank: boolean; absurd: boolean; }
+const detailClean = (txt: string): string => String(txt).replace(/[\u200B-\u200F\uFEFF]/g, "").replace(/[^\d.eE-]/g, "");
+function detailStateOf(id: string): DetailState {
+  const txt = g(id).value;
+  const blank = pmBlank(txt);
+  const clean = detailClean(txt);
+  const malformed = !blank && /\d/.test(txt) && !Number.isFinite(Number(clean));
+  const minus = !blank && /-/.test(clean);
+  const absurd = id === "st-bonus" && !blank && !malformed && !minus && pm(txt) > BONUS_CEIL;
+  return { id, malformed, minus, blank, absurd };
+}
+/* One line per offending field : the literal field id, the label the visitor
+   reads, and the concrete fix. No ₦ verdict rides in it. */
+function detailFix(s: DetailState): string {
+  const who = `#${s.id} (${labelOf(s.id)})`;
+  if (s.minus) return `${who} has a minus sign: digits only, no minus. Enter a positive number.`;
+  if (s.malformed) return `${who} is not a figure we can read. Enter a plain number with at most one decimal point.`;
+  if (s.absurd) return `${who} looks unusually large for a one-off amount. Enter a plausible bonus (digits only).`;
+  return `${who}: enter a plain number.`;
+}
+/* E5 M1–M3 ; #st-warn is the ONE named live notice. While an error is up it is
+   moved into the offending field's own wrapper, so its message and its fix
+   control sit where the visitor is typing instead of thousands of pixels
+   below ; it moves back when the input is corrected. The fix control focuses
+   and selects the offender (M2). Typing focus is never stolen. */
+const warnBox = t("st-warn");
+const warnText = t("st-warn-text");
+const fixBtn = t("st-fix-btn") as HTMLButtonElement;
+const warnHomeParent = warnBox.parentNode as Node;
+const warnHomeNext = warnBox.nextElementSibling;
+let stOffender: string | null = null;
+function placeWarn(id: string | null): void {
+  const field = id ? g(id).closest(".field") : null;
+  const parent = field || warnHomeParent;
+  const before = field ? field.querySelector(".hint") : warnHomeNext;
+  if (parent) parent.insertBefore(warnBox, before || null);
+}
+fixBtn.addEventListener("click", () => {
+  if (!stOffender) return;
+  const el = g(stOffender);
+  el.focus();
+  if (typeof el.select === "function") el.select();
+});
 /* S5 item 5 ; the period state. "monthly" is the shipped calculator (every
    input and the engine's core output); "annual" is a DISPLAY view that reads
    the engine's OWN annual fields (net_annual, tax_annual, save_annual ; the
@@ -230,8 +285,18 @@ function render() {
   const grossNegative = grossEntered && grossRaw < 0;
   const grossAbsurd = grossEntered && grossRaw > 100000000;
   const grossBad = grossMalformed || grossNegative || grossAbsurd;
-  /* One withheld dep id: every sfFig below dashes while the gross is bad. */
-  const HOLD = grossBad ? ["__st_hold__"] : [];
+  /* E5 H1/H2/H4 ; detail errors join the same withheld state as a bad gross.
+     Parser-blank details already dash through sfFig's blank deps, and the
+     sentinel makes the hold uniform for digit-bearing garbage and minus signs. */
+  const dStates = DETAIL.map(detailStateOf);
+  const dBad = dStates.filter((s) => s.malformed || s.minus || s.absurd);
+  const dBlank = dStates.filter((s) => s.blank);
+  /* An absurd bonus gates only its own three cells ; it does not move the
+     regular take-home, which is not derived from the bonus. Malformed and
+     minus values withhold the whole receipt. */
+  const dHold = dStates.filter((s) => s.malformed || s.minus);
+  /* One withheld dep id: every sfFig below dashes while any input is bad. */
+  const HOLD = grossBad || dHold.length > 0 || dBlank.length > 0 ? ["__st_hold__"] : [];
   const penRaw = pm(g("st-pension").value);
   const rentRaw = pm(g("st-rent").value);
   const nhfRaw = pm(g("st-nhf").value);
@@ -290,7 +355,11 @@ function render() {
      "0.0%" through a hidden div and failed reset + clear). The house ZERO LAW
      is "; ", not "hidden" ; the row is always there, the figure is not. */
   const BONUS_DEPS = ["st-gross", "st-bonus", "st-pension", "st-nhf", "st-rent", "st-nhis", "st-life", "st-other", ...HOLD];
-  const bonusOn = bonus > 0 && !pmBlank(g("st-gross").value) && !grossBad;
+  /* E5 H3 ; the bonus gets its own plausibility gate. An absurd one-off never
+     prints a precise PAYE, net or rate, even when the rest of the receipt is
+     otherwise usable ; detailFix names #st-bonus and asks for a real amount. */
+  const bonusAbsurd = dStates.some((s) => s.id === "st-bonus" && s.absurd);
+  const bonusOn = bonus > 0 && !pmBlank(g("st-gross").value) && !grossBad && !bonusAbsurd;
   if (bonusOn) {
     const bt = payeBonusTax(gross, bonus, pen, nhf, rent, nhis, life, other);
     sfFig(t("st-bonus-tax"), BONUS_DEPS, n(bt.tax));
@@ -332,6 +401,9 @@ function render() {
      regime, so the tie/winner prose withholds rather than concluding over
      the "Out of range" cells beside it. */
   const cmpBad = netBad(c.new.net_monthly) || netBad(c.old.net_monthly);
+  /* E5 M5 ; an "Out of range" verdict refuses a take-home, so the relief row
+     may not print a precise naira amount beside that refusal. */
+  if (cmpBad) sfFig(t("st-other2"), ["st-gross", "st-other", "__st_range__"], n(r.other_annual));
   /* S5 item 5 ; the winner sentence follows the chosen period off the
      engine's own save figures (save_annual in the per-year view,
      save_monthly in the per-month view; the engine returns both). */
@@ -343,8 +415,21 @@ function render() {
      appended to the verdict. */
   const ours = ownershipIsOurs();
   paintOwnership(ours);
+  /* E5 H1/H2/H3 ; a bad or unreadable detail withholds the verdict too. A
+     CANNOT SCORE sentence carries the fix but no ₦ conclusion ; a parser-blank
+     detail dashes the line beside the other withheld cells. Gross keeps its
+     shipped grammar verbatim. */
+  const detailBad = dBad.length > 0;
+  const detailBlankOnly = !detailBad && grossKnown && dBlank.length > 0;
+  const detailVerdict = detailBad
+    ? `CANNOT SCORE. ${detailFix(dBad[0])} No verdict is shown until you do.`
+    : detailBlankOnly
+    ? "–"
+    : "";
   t("st-save").textContent = grossBad
     ? "CANNOT SCORE. Monthly gross ₦: enter a plain number above ₦0. No verdict is shown until you do."
+    : detailVerdict
+    ? detailVerdict
     : !grossKnown
     ? "Old vs new bands compared on your gross: enter it above."
     : cmpBad
@@ -371,21 +456,53 @@ function render() {
       : grossMalformed ? "that is not a figure we can read has no take-home to price."
       : "a figure this large has no take-home we will price.";
     notes.push(`Monthly gross ₦ ${why} Enter a plain number above ₦0 at a realistic monthly salary. No figures or verdict are shown until you do.`);
+  } else if (detailBad || detailBlankOnly) {
+    /* E5 H1/H2/H4 ; name each offending field with its concrete fix. The
+       gross demand line is held back here so Clear cannot blame gross for a
+       detail value that is still bad (M6). Cap rails stay on the normal path. */
+    for (const s of (detailBad ? dBad : dBlank).slice(0, 3)) {
+      notes.push(detailFix(s) + (s.blank ? " No verdict is shown until you do." : " No figures or verdict are shown until you do."));
+    }
   } else {
     if (!(grossRaw > 0)) notes.push("Enter a monthly gross above ₦0: take-home waits until you do.");
     /* A34: the negative line names the field(s) (sfNegative) instead of a
-       bare fleet line; the too-large and cap lines keep their own voice. */
-    const stNeg = sfNegative(["st-gross", "st-pension", "st-rent", "st-nhf"]);
+       bare fleet line; the too-large and cap lines keep their own voice.
+       E5 H4: the three detail negatives now have their own withhold-and-fix
+       rail above, so only gross is named here. */
+    const stNeg = sfNegative(["st-gross"]);
     if (stNeg) notes.push(stNeg);
-    if (penRaw > 100) notes.push("Pension capped at 100%: at 100% there is no take-home.");
+    /* E5 L1 ; the cap rail now carries the fix, not just the fact. */
+    if (penRaw > 100) notes.push("Pension capped at 100%: at 100% there is no take-home. Enter 100 or less.");
     if (grossRaw > 100000000) notes.push("That gross looks unusually large: double-check the figure.");
+    /* E5 L2 ; the refusal leads, the Act citation follows it. */
+    if (netBad(r.net_monthly)) notes.push("Out of range: pension, NHF, NHIS, life assurance and other reliefs add up to more than your gross, so no take-home can print. Check #st-nhf and the monthly deduction fields against your payslip.");
     if (nhfRaw > 15000) notes.push("The National Housing Fund contribution is 2.5% of your basic monthly salary, uncapped: the NHF Act sets no ceiling on the amount (confirm the figure your payroll applies). Last verified 11 Oct 2026 · NHF Act ss.4(a), 9(1) (nhfact.txt:94-96, 144-146) · NTA s.30(2)(a)(i) (nta2025.txt:1309)");
-    if (netBad(r.net_monthly)) notes.push("Out of range: pension, NHF, NHIS, life assurance and other reliefs add up to more than your gross, so no take-home can print. Check the monthly deduction fields against your payslip.");
-    if (rentRaw * 0.2 > 500000) notes.push("Rent relief capped at ₦500,000/yr: the excess changes nothing.");
+    if (rentRaw * 0.2 > 500000) notes.push("Rent relief capped at ₦500,000/yr: the excess changes nothing. Enter your annual rent; capped relief is ₦500,000.");
   }
-  const w = t("st-warn");
-  w.hidden = notes.length === 0;
-  w.textContent = notes.join(" ");
+  /* E5 M1/M2/M3 ; one named live notice, moved to the offending field. The
+     aria-invalid flag and the focus control follow that same field. */
+  const invalidIds = grossBad ? ["st-gross"]
+    : detailBad ? dBad.map((s) => s.id)
+    : detailBlankOnly ? dBlank.map((s) => s.id)
+    : [];
+  /* M3 also covers the impossible-combo rail: a valid but absurd deduction is
+     not an aria-invalid syntax error, yet its notice must still sit at the
+     field that caused it. Pick the largest deduction contributor ; the rail
+     itself still names #st-nhf as L2 requires. */
+  const rangeNow = netBad(r.net_monthly) || cmpBad;
+  const rangeOffender = rangeNow
+    ? ([{ id: "st-pension", v: gross * pen }, { id: "st-nhf", v: nhf }, { id: "st-nhis", v: nhis },
+       { id: "st-life", v: life }, { id: "st-other", v: other }, { id: "st-rent", v: rent * 0.2 }]
+        .sort((a, b) => b.v - a.v)[0] || { id: "" }).id
+    : "";
+  for (const id of [...DETAIL, "st-gross"]) g(id).removeAttribute("aria-invalid");
+  for (const id of invalidIds) g(id).setAttribute("aria-invalid", "true");
+  stOffender = notes.length ? (invalidIds[0] || rangeOffender || null) : null;
+  fixBtn.hidden = !stOffender;
+  fixBtn.textContent = stOffender ? `Go to ${labelOf(stOffender)}` : "";
+  placeWarn(stOffender);
+  warnBox.hidden = notes.length === 0;
+  warnText.textContent = notes.join(" ");
   /* #5 hard caps (v0.7.55) ; the INPUT-side inline nudge the fresh audit asked
      for, sitting with the fields it talks about. The v0.7.52 Out-of-range guard
      above stays untouched on the receipt rail; this fires earlier, at the

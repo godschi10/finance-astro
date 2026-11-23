@@ -1,3 +1,15 @@
+## [0.7.110] - 2026-11-23: Salary-tax E5, error recovery
+
+A4 returned FAIL (4 HIGH, 6 MEDIUM, 2 LOW plus an E4 regression), re-proved by the Manager on live; E5 closes all of it.
+
+- Malformed (`12.5.5`, `1.2.3`) and minus-signed entries in all seven detail fields now withhold every derived figure with `–`, print a field-named CANNOT SCORE notice with a concrete fix, and keep the raw typed text. Parser-blank detail (`abc`) dashes the verdict too — no two-voice ₦ sentence.
+- The bonus gets a plausibility gate using the gross CANNOT SCORE grammar: `999999999` no longer prints ₦248m figures, while `500000` still computes ₦90,000 / ₦410,000 / 18.0%.
+- The recovery notice is a named assertive live alert, marks the offending input `aria-invalid=true`, sits at the field (gap reduced from ~3,768 px to 0), and carries a Tab-reachable "Go to <field>" button that focuses that field.
+- "Ours, not yours" is computed from exact typed strings against the eight seeds, so typed-but-unreadable values stand all three markers down. Cold seed still shows three; typed `450000` shows none.
+- An "Out of range" result no longer prints ₦60,000,000 in `st-other2`; the notice names `#st-nhf` first and keeps the Act citation after. Cap rails gained concrete fix clauses; Clear no longer blames an untouched field.
+
+Gates: check 7/7 · check:ux 33/33 · build 84 · test:calc 130 pass / 0 fail / 7 skip · U+2014 0 · 0 console/page errors · phone-first 320/390 light+dark no overflow. LAST-USED date stays HELD; sub-44px site chrome/chips remain out of scope. Native Hermes researcher and builder used; Manager re-ran gates, the 50-state matrix probe and the AX/focus probe.
+
 ## [0.7.109] - 2026-11-23: Salary-tax E4, receipt comprehension
 
 A3 returned FAIL (1 HIGH, 2 MEDIUM, 3 LOW), re-proved by the Manager on live; E4 closes all six.
