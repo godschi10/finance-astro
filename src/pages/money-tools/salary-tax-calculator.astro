@@ -61,6 +61,17 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
   <button type="button" class="fx-step active" data-st-period="monthly" aria-pressed="true">Monthly</button>
   <button type="button" class="fx-step" data-st-period="annual" aria-pressed="false">Annual</button>
 </div>
+<!-- E7 F6 ; compact in-card jump row. Four 44px targets in the lower third of
+     the viewport at scroll 0, so a one-handed edit no longer starts with a
+     long hunt. Each button scrolls its own control into view; none writes a
+     figure, changes state, or steals focus except Gross, which focuses the
+     field a thumb just chose. Gaps are wider than the 8px touch-slop floor. -->
+<div class="st-jump" role="group" aria-label="Jump to calculator controls">
+  <button type="button" class="st-jump-btn" data-st-jump="gross">Gross</button>
+  <button type="button" class="st-jump-btn" data-st-jump="period">Period</button>
+  <button type="button" class="st-jump-btn" data-st-jump="result">Result</button>
+  <button type="button" class="st-jump-btn" data-st-jump="clear">Clear</button>
+</div>
 <p class="hint">Only the take-home figure and its label, the tax line under it, the verdict and the comparison table's take-home column follow this period. The four annual rows in the receipt (pension, other reliefs, rent relief and PAYE tax) stay annual in both views. The calculator itself works in months; the per-year view reads the engine's own annual figures.</p>
 <p class="hint" id="st-legend">Marked <strong>Sample</strong> means the figure is our worked example, not your own: type over any field and its Sample marker disappears. Clear examples removes only what is still ours; numbers you typed stay.</p>
 <p class="hint" id="st-rule">Fill all eight fields - type 0 for anything you do not have.</p>
@@ -156,6 +167,35 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
 <p class="bar-note" id="st-bands-note" hidden></p>
 <p class="bar-note">Clear examples removes the worked-example values; numbers you typed in stay as they are. Reset brings back the worked example.</p>
 </ToolShell>
+<style>
+/* E7 F1 ; the Go-to-field control is a BUTTON, not a sentence, so it takes a
+   real 44x44 hit box in all three states (blank, gross-only, error). It stays
+   inline with the notice text and keeps its name, aria-invalid and focus-on-
+   field behaviour byte-identical; only its box and paint change. [hidden] is
+   restated because display:inline-flex would otherwise beat the UA hide. */
+.st-fix-btn{
+  display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;
+  min-width:44px;min-height:44px;padding:8px 14px;
+  font-size:12px;font-weight:700;line-height:1.25;color:var(--gold-b);
+  background:var(--surface-2);border:1px solid var(--border);border-radius:10px;
+  cursor:pointer;touch-action:manipulation;
+}
+.st-fix-btn[hidden]{display:none}
+/* E7 F6 ; the four jump targets. 44px each, 16px gap, never a figure write. */
+.st-jump{display:flex;flex-wrap:wrap;gap:16px;margin-top:56px;margin-bottom:8px}
+/* E7 F6 ; take the jump row's height back out of the page's vertical rhythm.
+   Page-local only: section spacing, never a control, figure or notice string. */
+.tool-h2{margin:18px 0 8px}
+.hr{margin:14px 0 0}
+.st-wrap{margin-top:12px}
+.receipt{margin-top:14px}
+.st-jump-btn{
+  min-width:44px;min-height:44px;padding:8px 8px;
+  font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text-mid);background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--pill);cursor:pointer;touch-action:manipulation;
+}
+</style>
 <script>
 import { payeCalculate, payeCompare, payeBandBreakdown, payeBands2026, payeBonusTax } from "../../lib/salary-tax";
 import { formatGrouped } from "../../lib/format";
@@ -258,6 +298,28 @@ fixBtn.addEventListener("click", () => {
   el.focus();
   if (typeof el.select === "function") el.select();
 });
+/* E7 F5 ; on a shortened visual viewport the browser scrolls only the focused
+   field into view, leaving the recovery notice and its Go-to button below the
+   fold. Re-scroll to the notice (the field sits directly above it, so both stay
+   in view) when a keyboard-like shrink happens or an offender is focused in a
+   short viewport. No second live region, no state change, no focus steal. The
+   emulation limit stands: a real OS keyboard was never raised. */
+function keepRecoveryInView(): void {
+  const vv = window.visualViewport;
+  if (!vv || vv.height >= 600) return;
+  if (warnBox.hidden || !stOffender) return;
+  const field = g(stOffender);
+  if (document.activeElement !== field) return;
+  requestAnimationFrame(() => {
+    warnBox.scrollIntoView({ block: "nearest", behavior: "instant" });
+    /* nearest leaves sub-pixel rounding at the fold; give the last row 8px. */
+    const over = warnBox.getBoundingClientRect().bottom - (vv.height - 8);
+    if (over > 0) window.scrollBy({ top: over, behavior: "instant" });
+  });
+}
+for (const id of ["st-gross", ...DETAIL]) g(id).addEventListener("focus", keepRecoveryInView);
+window.addEventListener("resize", keepRecoveryInView);
+if (window.visualViewport) window.visualViewport.addEventListener("resize", keepRecoveryInView);
 /* S5 item 5 ; the period state. "monthly" is the shipped calculator (every
    input and the engine's core output); "annual" is a DISPLAY view that reads
    the engine's OWN annual fields (net_annual, tax_annual, save_annual ; the
@@ -594,6 +656,26 @@ function setStPeriod(p: "monthly" | "annual"): void {
   render();
 }
 ST_PERIOD_BTNS.forEach((b) => b.addEventListener("click", () => setStPeriod(b.dataset.stPeriod as "monthly" | "annual")));
+/* E7 F6 ; the in-card jump row. These buttons only move the viewport. Gross
+   also focuses the field it names, so a thumb that chose Gross can type at
+   once; the other three leave focus alone. Instant, so no smooth-scroll race
+   with the next tap. */
+const JUMP_TARGETS: Record<string, string> = {
+  gross: "#st-gross", period: ".fx-stepper", result: "#st-fig", clear: ".sf-ctrls",
+};
+document.querySelectorAll<HTMLButtonElement>("[data-st-jump]").forEach((b) => {
+  b.addEventListener("click", () => {
+    const key = b.dataset.stJump || "";
+    const el = document.querySelector(JUMP_TARGETS[key]) as HTMLElement | null;
+    if (!el) return;
+    el.scrollIntoView({ block: "center", behavior: "instant" });
+    if (key === "gross") {
+      const input = el as HTMLInputElement;
+      input.focus();
+      input.select();
+    }
+  });
+});
 /* ── S5 item 4 ; DEEP-LINK PREFILL ?gross= ──────────────────────────────────
    WP reads ?gross= on this very page (page-salary-tax-calculator.php:32-42):
    strip non-numeric, clamp 0–₦100M/month, silent fallback to the seed on

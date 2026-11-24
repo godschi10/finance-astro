@@ -1,3 +1,15 @@
+## [0.7.112] - 2026-11-24: Salary-tax E7, mobile thumb flow
+
+A7 returned FAIL (2 HIGH, 3 MEDIUM, 1 LOW); E7 closes the six touch/reach issues and documents the seventh.
+
+- The Go-to-field recovery button is now a real 44 px hit box in blank, gross-only and error states, with its alert name, `aria-invalid` and focus behaviour unchanged.
+- The control row, period steps and share bar use 24 px gaps instead of 8 px. A real +5 px touch miss from Copy result now stays on Copy instead of opening WhatsApp; a miss from Monthly stays on Monthly and a miss from Clear stays on Clear.
+- At a shortened visual viewport the focused field, recovery notice and Go-to button are scrolled into view together when the field is focused; no second live region.
+- A compact in-card jump row (Gross / Period / Result / Clear) gives four 44 px targets in the one-handed arc at scroll 0, cutting the first-hunt travel.
+- F7's small page-coordinate shift after Clear/Reset is accepted as intentional reflow: the notice is inserted directly above the control cluster, and the wider gaps plus the in-arc jump row remove the mis-tap path. No real OS keyboard was raised; the short-viewport proof is CDP emulation.
+
+The native builder's gateway disconnected after code and gates landed and before its report was written. The shelter was stopped deliberately; the Manager verified the diff, all four gates and every touch/geometry probe personally and wrote the leg report under his own signature. Gates: check 7/7 · check:ux 33/33 · build 84 · test:calc 130 pass / 0 fail / 7 skip · U+2014 0 · E6/A6 regression intact.
+
 ## [0.7.111] - 2026-11-24: Salary-tax E6, blank-to-first-figure guidance
 
 A5 returned FAIL (1 HIGH, 1 MEDIUM, 2 LOW), re-proved by the Manager on live; E6 closes all four.
