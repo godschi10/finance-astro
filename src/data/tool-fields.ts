@@ -111,16 +111,16 @@ const OFFER_HELD = "Set an income and this figure appears here.";
 function holdOffer(hold: boolean): void {
   document.querySelectorAll(".offer").forEach((p) => {
     const s = p.querySelector("span");
-    const b = p.querySelector("b");
+    const b = p.querySelector("button");
     if (hold) {
       if (s) s.textContent = OFFER_HELD;
-      if (b) { b.setAttribute("aria-disabled", "true"); b.style.pointerEvents = "none"; b.style.opacity = ".45"; }
+      if (b) { b.disabled = true; b.setAttribute("aria-disabled", "true"); b.style.pointerEvents = "none"; b.style.opacity = ".45"; }
     } else {
       /* Releasing restores the BUTTON only. The offer's words belong to the
          spine's own paint(), which recomputes them from the live fields on
          every input ; a text captured while held is stale by definition, and
          putting it back would print a figure the visitor has already changed. */
-      if (b) { b.removeAttribute("aria-disabled"); b.style.pointerEvents = ""; b.style.opacity = ""; }
+      if (b) { b.disabled = false; b.removeAttribute("aria-disabled"); b.style.pointerEvents = ""; b.style.opacity = ""; }
     }
   });
 }
@@ -211,20 +211,20 @@ export const sfTooLarge = (specs: ReadonlyArray<readonly [string, number]>): str
 function guardOffer(o: SfOffer, pageEmpty: boolean): void {
   if (!o.needs || !o.needs.length) return; // a constant offer has nothing to wait for
   if (pageEmpty) return;                   // OFFER_HELD already owns the empty page
-  const b = document.querySelector('.offer b[data-use="' + o.field + '"]') as HTMLElement | null;
+  const b = document.querySelector('.offer button[data-use="' + o.field + '"]') as HTMLButtonElement | null;
   if (!b) return;
   const s = b.parentElement ? b.parentElement.querySelector("span") as HTMLElement | null : null;
   const missing = o.needs.filter(isBlank);
   if (missing.length) {
     if (s) s.textContent = "Nothing to compute yet, " + missing.map(labelOf).join(" and ") +
       (missing.length > 1 ? " are empty, not zero." : " is empty, not zero.");
-    b.setAttribute("aria-disabled", "true"); b.style.pointerEvents = "none"; b.style.opacity = ".45";
+    b.disabled = true; b.setAttribute("aria-disabled", "true"); b.style.pointerEvents = "none"; b.style.opacity = ".45";
   } else {
     /* Release restores the BUTTON only. The words belong to the spine's own
        paint(), which recomputes them from the live fields on every input and
        runs BEFORE this ; so what is on screen is always the live figure, never
        a copy captured while held. */
-    b.removeAttribute("aria-disabled"); b.style.pointerEvents = ""; b.style.opacity = "";
+    b.disabled = false; b.removeAttribute("aria-disabled"); b.style.pointerEvents = ""; b.style.opacity = "";
   }
 }
 

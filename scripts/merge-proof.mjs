@@ -166,7 +166,7 @@ const main = async () => {
     await ev(`try{localStorage.clear()}catch(e){};location.reload()`); await sleep(1500);
     await ev(`(()=>{const i=document.getElementById("bg-needs");i.value="60";i.dispatchEvent(new Event("input",{bubbles:true}));})()`);
     await sleep(800);
-    await ev(`document.querySelector('.offer b[data-use="bg-spn"]').click()`);
+    await ev(`document.querySelector('.offer button[data-use="bg-spn"]').click()`);
     await sleep(800);
     const pasted = await ev(`(()=>{const n=document.getElementById("bg-pasted");return n.hidden? "HIDDEN" : n.textContent})()`);
     const needsLeft = await ev(`document.getElementById("bg-rn").textContent`);

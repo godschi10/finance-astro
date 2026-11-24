@@ -1926,7 +1926,7 @@ const disclosePlanWrite = () => {
   if (note.textContent !== txt) note.textContent = txt;
 };
 document.addEventListener("click", (e) => {
-  const u = (e.target as HTMLElement).closest?.('.offer b[data-use="bg-spn"]');
+  const u = (e.target as HTMLElement).closest?.('.offer button[data-use="bg-spn"]');
   if (!u || u.getAttribute("aria-disabled")) return;
   disclosePlanWrite();
 });

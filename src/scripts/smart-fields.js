@@ -350,15 +350,15 @@ function restore() {
 function offer(o) {
   const f = wrap(o.field);
   if (!f) return;
-  const p = document.createElement("p"), s = document.createElement("span"), b = document.createElement("b");
+  const p = document.createElement("p"), s = document.createElement("span"), b = document.createElement("button");
   p.className = "offer";
+  b.type = "button";
   b.setAttribute("data-use", o.field);
   b.textContent = "Use this";
-  /* KEYBOARD (50/30/20 A3 gap): the pill is a <b>, reachable by mouse/touch
-     only. Tabbable + button-roled, Enter/Space reusing the click path above
-     (which owns the aria-disabled inertness guard), so key users get MF-7. */
-  b.setAttribute("tabindex", "0");
-  b.setAttribute("role", "button");
+  /* E6 F4 ; a native <button> is already focusable and button-roled, so the old
+     tabindex/role stand-ins are gone. The keydown path stays verbatim: it still
+     reuses the click handler below (which owns the aria-disabled inertness
+     guard), and preventDefault keeps Enter/Space to a single activation. */
   b.addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); b.click(); }
   });

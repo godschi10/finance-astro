@@ -1,3 +1,14 @@
+## [0.7.111] - 2026-11-24: Salary-tax E6, blank-to-first-figure guidance
+
+A5 returned FAIL (1 HIGH, 1 MEDIUM, 2 LOW), re-proved by the Manager on live; E6 closes all four.
+
+- A visible line now states the rule before any figure: "Fill all eight fields - type 0 for anything you do not have." The missing-field notice prints a remaining count and names every missing field, so the scope is never hidden.
+- A figure-adjacent "Next: plan this take-home with the 50-30-20 budget, or work back from take-home." sits 98 px below the headline at 390 px. The stale "add your annual rent above" command is rewritten to describe the deduction.
+- In the blank state the single owned demand now sits exactly at the first field (0 px gap at 390 px), with no second live announcement.
+- The shared derived-value offer is a real `<button type="button">` with native disabled plus `aria-disabled`, keeping its text, `data-use`, inertness guard and keyboard path. Selectors in ToolShell CSS, `tool-fields.ts` and the 50-30-20 disclosure were updated with it. The one-off `merge-proof.mjs` selector was repaired by the Manager after the worker flagged it; baseline and fixed proof runs show identical pre-existing FAIL lines and the same passing "Use this" path, so no regression.
+
+Gates: check 7/7 · check:ux 33/33 · build 84 · test:calc 130 pass / 0 fail / 7 skip · U+2014 0 · 0 console/page errors · phone-first 320/390 light+dark no overflow. LAST-USED date stays HELD; sub-44px site chrome/chips remain out of scope. Native Hermes researcher and builder used; Manager re-ran gates, the blank/gross-only probe, the geometry/CTA/offer probes and the merge proof against a clean-HEAD baseline.
+
 ## [0.7.110] - 2026-11-23: Salary-tax E5, error recovery
 
 A4 returned FAIL (4 HIGH, 6 MEDIUM, 2 LOW plus an E4 regression), re-proved by the Manager on live; E5 closes all of it.
