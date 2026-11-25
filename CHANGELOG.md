@@ -1,3 +1,14 @@
+## [0.7.115] - 2026-11-25: Salary-tax E10, worked example teaches
+
+A10 returned FAIL (1 HIGH, 3 MEDIUM, 2 LOW); E10 closes all six.
+
+- A seed teaching line now states exactly what the worked example includes — gross ₦300,000, pension 8% (statutory minimum), every other field ₦0 — and tells the visitor to add rent, NHF, NHIS, life assurance or a bonus to see those mechanics move the answer.
+- A "last change" line names the field the visitor edited and its effect, e.g. "Annual rent ₦2,400,000: rent relief ₦480,000, take-home +₦6,780/mo" and "NHF monthly ₦5,000: take-home -₦4,250/mo". It stays silent on cold load, Clear, Reset and invalid states.
+- The "Why ₦300,000" note now says 8% is the statutory pension minimum and the zero details are placeholders, not claims about the visitor's payslip.
+- The comparison note states the seed's ₦347/mo is the minimum-case gap and grows with rent relief and higher salaries.
+
+Gates: check 7/7 · check:ux 33/33 · build 84 · test:calc 131 pass / 0 fail / 7 skip · U+2014 0 · E9 first-use expansions, E8 reconciliation and trust panel intact · phone 390 no overflow. Three intermediate defects (missing base path, double-₦, gate class) were found and fixed by the builder before the final gate run. Native Hermes builder delivered the leg with a full report.
+
 ## [0.7.114] - 2026-11-25: Salary-tax E9, jargon sweep
 
 A9 returned FAIL (1 HIGH, 4 MEDIUM, 3 LOW); E9 closes all eight copy findings without touching a formula or gate.

@@ -95,10 +95,12 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
      These are the public documents verified in the E8a source map. Section
      numbers stay as text and follow the printed gazette numbering. -->
 <div class="st-trust" id="st-trust">
+<p class="st-trust-line st-seed-teach" id="st-seed-teach"><strong>What this example includes:</strong> gross ₦300,000 a month, pension at 8% (the statutory minimum), and ₦0 in every other field: rent, NHF, NHIS, life assurance, other reliefs and bonus. Add your annual rent to see rent relief cut your taxable income and move your take-home, or fill NHF, NHIS or life assurance to see a deduction move it. The bonus is left at ₦0 here, so no separate bonus tax shows; enter a bonus and it is taxed on its own at your marginal band.</p>
+<p class="st-trust-line st-last-change" id="st-last-change" hidden></p>
 <p class="st-trust-line"><strong>Sources:</strong> <a href="https://nass.gov.ng/documents/download/11249">Nigeria Tax Act 2025 gazette</a> (ss.4(2)(a), 26(2), 162(1)(t), 195(g)) and the <a href="https://nipc.gov.ng/assets/resources/nigeria-tax-act-2025/nigeria-tax-act-2025-gazette.pdf">gazette copy with the band table</a> (s.58 and Fourth Schedule); <a href="https://repo.podus.ai/laws/nigeria-tax-act/section/30/">s.30(2)(a)</a> (rent (vi), pension (iii), NHF (i), NHIS (ii), life (v)) and <a href="https://repo.podus.ai/laws/nigeria-tax-act/section/31/">s.31</a> (reliefs claimed in writing); <a href="https://nipc.gov.ng/assets/resources/nigeria-revenue-service-establishment-act-2025/nigeria-revenue-service-establishment-act-2025-gazette.pdf">NRS (Establishment) Act 2025</a>; <a href="https://fmbn.gov.ng/backend/storage/uploads/37UNgpzsyASabzhQCnHuyzFtIpnsfmW2ODvAmQSG.pdf">NHF Act</a>; <a href="https://www.pencom.gov.ng/wp-content/uploads/2018/04/FAQ-CPS-reviewed.-17-Apr.-2018.pdf">PenCom FAQ</a>; <a href="https://fctirs.gov.ng/wp-content/uploads/2023/07/Personal-Income-Tax-Act.pdf">PITA, old bands only</a>. <a href="https://aluko-oyebode.com/wp-content/uploads/2026/07/OVERVIEW-OF-THE-GENERAL-TRANSITION-GUIDELINES-FOR-THE-NEW-TAX-ACTS-2025.pdf">Aluko &amp; Oyebode</a> is further reading, not authority for a section number.</p>
 <p class="st-trust-line"><strong>Minimum wage:</strong> no PAYE on an employment at or below the national minimum wage, currently ₦70,000 a month, per the <a href="https://fmino.gov.ng/federal-government-inaugurates-committee-on-consequential-salaries-adjustments/">Federal Ministry of Information and National Orientation</a>; the exemption itself is s.162(1)(t) of the gazette.</p>
 <p class="st-trust-line"><strong>Method and disclaimer:</strong> an estimate for guidance, not tax advice. We apply the 2026 bands to the annual gross you enter, subtract the deductions you enter, and show annual figures in the receipt. The full disclaimer and article follow below.</p>
-<p class="st-trust-line"><strong>Why ₦300,000:</strong> it is our worked example because it clears the ₦800,000 zero-rate band and reaches the 15% band, so the receipt shows a non-zero tax line without any deduction we invented. Type over it with your own pay.</p>
+<p class="st-trust-line"><strong>Why ₦300,000:</strong> it is our worked example because it clears the ₦800,000 zero-rate band and reaches the 15% band, so the receipt shows a non-zero tax line without any deduction we invented. The 8% pension is the statutory minimum employee contribution. The ₦0 in every other field is a placeholder, not a claim about your payslip. Type over it with your own pay.</p>
 <p class="st-trust-line"><strong>Estimate, not your payslip:</strong> PAYE is withheld when income is paid, so a one-off bonus is taxed on its payment day; allowances and bonuses change which bands apply; NHF, NHIS, life assurance and other reliefs are written up by your payroll; and a second employer is assessed separately, so this one-employer estimate will not match a two-job payslip.</p>
 <p class="st-trust-line st-trust-checked"><strong>Last checked 25 Nov 2026</strong> against the public sources linked above.</p>
 </div>
@@ -164,6 +166,7 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
 </tbody>
 </table></div>
 <p class="bar-note" id="st-save" aria-label="New versus old bands verdict">{saveTxt} <span class="st-own" id="st-own-save" data-own>Ours, not yours: our worked example, not your figures.</span></p>
+<p class="receipt-foot" id="st-gap-note">At the seed, the new bands win by ₦347 a month, the minimum-case gap; that gap grows with rent relief and higher salaries.</p>
 <!-- E5 M1/M2/M3 ; ONE named live recovery notice. It moves into the offending
      field's own wrapper while an error is up (see placeWarn in the script), so
      the fix is where the visitor is typing, not thousands of pixels below it.
@@ -220,6 +223,13 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
 .st-trust-line strong{color:#f0ede6}
 .st-trust-line a{color:var(--gold-b);text-decoration:underline;text-underline-offset:2px}
 .st-trust-checked{color:#a9a18d}
+/* E10 H1/L2/M1 ; the seed-assumption line and the on-edit "last change"
+   line sit first in the trust block beside the figure. One step up from the
+   11px citation lines so both read at 320px, with a left rule marking the
+   live line as a response to the visitor's own edit. */
+.st-seed-teach,.st-last-change{font-size:12px;line-height:1.6;color:#e8e0cc}
+.st-seed-teach strong,.st-last-change strong{color:#f5c26b}
+.st-last-change{font-weight:700;border-left:2px solid var(--gold-b);padding-left:8px;margin-top:8px}
 @media print{.st-trust-line,.st-trust-line strong,.st-trust-line a{color:#333!important}}
 </style>
 <script>
@@ -232,6 +242,82 @@ const n = (v: number) => "₦" + formatGrouped(v, 0);
 const g = (id: string) => document.getElementById(id) as HTMLInputElement;
 const t = (id: string) => document.getElementById(id) as HTMLElement;
 const gv = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+/* E10 M1 ; the "last change" teaching line. It stays silent on cold load,
+   on Clear and on Reset, and prints only after a field is really edited.
+   Every figure comes from THIS render's own engine result (stSnapshot), so
+   nothing is read from a cached or stale value. The spine's bulk Clear/Reset
+   passes are suppressed by a capture-phase click flag: their synthetic
+   input burst must not claim a change the visitor never made. */
+type LcSnap = {
+  r: ReturnType<typeof payeCalculate>;
+  gross: number; pen: number; rent: number; nhf: number;
+  nhis: number; life: number; other: number; bonus: number; bad: boolean;
+};
+let lcBlocked = false;
+let stSnapshot: LcSnap | null = null;
+const lcBox = t("st-last-change");
+function hideLastChange(): void {
+  if (!lcBox) return;
+  lcBox.hidden = true;
+  lcBox.textContent = "";
+}
+function lcDelta(v: number): string {
+  if (Math.abs(v) < 0.5) return "take-home unchanged";
+  return `take-home ${v > 0 ? "+" : "-"}₦${formatGrouped(Math.abs(v), 0)}/mo`;
+}
+function paintLastChange(id: string): void {
+  const s = stSnapshot;
+  if (!s || !lcBox || s.bad) { hideLastChange(); return; }
+  const { r, gross, pen, rent, nhf, nhis, life, other, bonus } = s;
+  /* The comparison engine run holds every OTHER field at its current value
+     and puts only the edited field back to the seed, so the line states the
+     marginal effect the engine actually made, never a remembered figure. */
+  const base = () => payeCalculate(
+    id === "st-gross" ? 300000 : gross,
+    id === "st-pension" ? 0.08 : pen,
+    id === "st-nhf" ? 0 : nhf,
+    id === "st-rent" ? 0 : rent,
+    true,
+    id === "st-nhis" ? 0 : nhis,
+    id === "st-life" ? 0 : life,
+    id === "st-other" ? 0 : other);
+  const eff = () => lcDelta(r.net_monthly - base().net_monthly);
+  let line = "";
+  if (id === "st-bonus") {
+    /* A bonus is a separate one-off: it does not move regular take-home, so
+       the line reports its own PAYE and net rather than inventing a delta. */
+    const bt = payeBonusTax(gross, bonus, pen, nhf, rent, nhis, life, other);
+    line = `Bonus ${n(bonus)}: bonus PAYE ${n(bt.tax)}, bonus take-home ${n(bt.net)} (taxed separately at your marginal band).`;
+  } else if (id === "st-rent") {
+    line = `Annual rent ${n(rent)}: rent relief ${n(r.relief_annual - base().relief_annual)}, ${eff()}.`;
+  } else if (id === "st-nhf") {
+    line = `NHF monthly ${n(nhf)}: ${eff()}.`;
+  } else if (id === "st-nhis") {
+    line = `NHIS monthly ${n(nhis)}: ${eff()}.`;
+  } else if (id === "st-life") {
+    line = `Life assurance monthly ${n(life)}: ${eff()}.`;
+  } else if (id === "st-other") {
+    line = `Other reliefs monthly ${n(other)}: ${eff()}.`;
+  } else if (id === "st-pension") {
+    line = `Pension ${g("st-pension").value}%: ${eff()}.`;
+  } else if (id === "st-gross") {
+    line = `Monthly gross ${n(gross)}: ${eff()}.`;
+  }
+  if (!line) { hideLastChange(); return; }
+  lcBox.textContent = line;
+  lcBox.hidden = false;
+}
+/* Capture runs before the spine's own button handlers, so lcBlocked is up
+   before clearExamples()/reset() dispatch their synthetic input events. */
+document.addEventListener("click", (e) => {
+  const el = e.target as HTMLElement | null;
+  if (!el || !el.closest || !el.closest("[data-sf-clear], [data-sf-reset]")) return;
+  lcBlocked = true;
+  hideLastChange();
+  /* The clear hook also fires one delayed input event; keep the block up
+     through that burst, then release it for the visitor's next real edit. */
+  setTimeout(() => { lcBlocked = false; }, 50);
+}, true);
 /* E4 M1 ; #st-fig stays the ONE polite live region. Its visible amount lives
    in an aria-hidden span, so AX exposes one named paragraph carrying the
    figure ("Take-home: ₦… a month") instead of a bare StaticText that reads
@@ -653,6 +739,10 @@ function render() {
   }
   bandsNote.hidden = grossBad || !r.exempt;
   bandsNote.textContent = r.exempt && !grossBad ? "EXEMPT (minimum wage): no PAYE is due, so band taxes are withheld. Slices show the pre-exemption bands maths." : "";
+  /* E10 M1 ; the fresh snapshot the on-edit line reads. `bad` carries every
+     withheld state, so an invalid or blank field can never produce a claim. */
+  stSnapshot = { r, gross, pen, rent, nhf, nhis, life, other, bonus,
+    bad: grossBad || dBad.length > 0 || dBlank.length > 0 || netBad(r.net_monthly) };
 }
   sfEmpty(sfIsEmpty("salary-tax-calculator", gv));
 ["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life", "st-other", "st-bonus"].forEach((id) => g(id).addEventListener("input", render));
@@ -754,5 +844,13 @@ function syncUrl(): void {
 g("st-gross").addEventListener("input", syncUrl);
 smartFields.register(TOOL_FIELDS["salary-tax-calculator"]);
 sfBind("salary-tax-calculator", gv);
+/* E10 M1 ; attached AFTER register so the cold-load restore() burst cannot
+   print a change nobody made. Registered after the page's own render listener,
+   so stSnapshot is already fresh when this one paints. */
+["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life", "st-other", "st-bonus"].forEach((id) =>
+  g(id).addEventListener("input", () => {
+    if (lcBlocked) { hideLastChange(); return; }
+    paintLastChange(id);
+  }));
 render();
 </script>
