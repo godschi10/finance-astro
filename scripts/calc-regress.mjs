@@ -31,6 +31,13 @@
  *                ₦500k must answer "Out of range", never a negative
  *                take-home; no "₦-" figure anywhere in the rendered DOM.
  *                Other tools run no such case and print no cell for it.
+ *   recon     , salary-tax only (E8b H1): every deduction the engine subtracts
+ *                must be printed in the receipt, so the sum of the receipt's
+ *                deduction rows equals grossAnnual minus the taxable income
+ *                the receipt states. Asserted at a zero-deduction state and at
+ *                a non-zero set (gross 500000, pension 8, rent 2400000,
+ *                NHF 5000, NHIS 2000, life 1000). Pre-fix the NHF/NHIS/life
+ *                rows are absent, so the non-zero sum comes up short.
  *   swap      , currency-converter only (the King's phone-reported bug):
  *                one tap on #cc-swap must swap from/to AND carry the
  *                amount field with them, data-cur, in-field glyph, label
@@ -725,6 +732,62 @@ async function runTool(slug, base, fields) {
     } catch (e) { R.negnet = rec("fail", `harness: ${e.message}`); }
   }
 
+  /* ── E8b H1 ; RECEIPT RECONCILIATION (salary-tax only) ───────────────────
+     The engine's taxable line is grossAnnual − pension − NHF − NHIS − life
+     − other − rentRelief. The receipt must therefore print ALL of those
+     deductions, or its own rows cannot add up to the taxable figure it
+     states. Two served-dist states: a clean zero case and a non-zero set
+     (gross 500000, pension 8, rent 2400000, NHF 5000, NHIS 2000, life 1000).
+     The non-zero case is the gate: pre-fix it has only 3 deduction rows and
+     comes up ₦96,000 short, so this contract FAILS before the page fix. */
+  if (slug === "salary-tax-calculator") {
+    const RECON_SNAP = `(() => {
+      const rows = Array.from(document.querySelectorAll("#st-rows .receipt-row")).map((r) => ({
+        label: ((r.querySelector("span") || {}).textContent || "").trim(),
+        value: ((r.querySelector("b") || {}).textContent || "").trim(),
+        hidden: !!r.hidden,
+      }));
+      const sub = ((document.getElementById("st-sub") || {}).textContent || "").trim();
+      const m = sub.match(/taxable income \\(after deductions\\)\\s*₦([\\d,]+)\\/yr/);
+      return { rows, sub, taxable: m ? Number(m[1].replace(/,/g, "")) : null };
+    })()`;
+    const RECON_DED_RE = /^(Pension|NHF|NHIS|Life assurance|Other reliefs|Rent relief)/i;
+    const reconMoney = (s) => {
+      const v = Number(String(s).replace(/[^0-9.]/g, ""));
+      return Number.isFinite(v) ? v : 0;
+    };
+    const reconState = async (name, values) => {
+      await ev(`document.querySelector("[data-sf-reset]").click()`);
+      await waitStable(JS_SETTLE_KEY, 800, 20000, `${name} recon base`);
+      for (const [id, value] of Object.entries(values)) await ev(setCtlExpr({ id, kind: "text" }, value));
+      await waitStable(JS_SETTLE_KEY, 800, 20000, `${name} recon settle`);
+      const snap = await ev(RECON_SNAP);
+      const ded = snap.rows.filter((r) => RECON_DED_RE.test(r.label));
+      const rowsText = snap.rows.map((r) => `${r.label}=${r.value}${r.hidden ? " (hidden)" : ""}`).join(" | ");
+      const sum = ded.reduce((a, r) => a + reconMoney(r.value), 0);
+      const grossAnnual = 500000 * 12;
+      const expected = grossAnnual - (snap.taxable || 0);
+      const ok = snap.taxable !== null && ded.length >= 6 && Math.abs(sum - expected) < 1;
+      console.log(`RECON ${name} rows: ${rowsText}`);
+      console.log(`RECON ${name} math: sum=${sum} grossAnnual=${grossAnnual} taxable=${snap.taxable} expected=${expected} deductionRows=${ded.length} -> ${ok ? "OK" : "MISMATCH"}`);
+      return { ok, rowsText, sum, expected, taxable: snap.taxable, count: ded.length };
+    };
+    try {
+      const zero = await reconState("zero", {
+        "st-gross": "500000", "st-pension": "8", "st-rent": "0", "st-nhf": "0",
+        "st-nhis": "0", "st-life": "0", "st-other": "0", "st-bonus": "0",
+      });
+      const nonzero = await reconState("nonzero", {
+        "st-gross": "500000", "st-pension": "8", "st-rent": "2400000", "st-nhf": "5000",
+        "st-nhis": "2000", "st-life": "1000", "st-other": "0", "st-bonus": "0",
+      });
+      const detail = `zero(sum=${zero.sum} expected=${zero.expected} rows=${zero.count}) nonzero(sum=${nonzero.sum} expected=${nonzero.expected} rows=${nonzero.count} taxable=${nonzero.taxable}) nonzero rows: ${nonzero.rowsText}`;
+      R.recon = (zero.ok && nonzero.ok)
+        ? { status: "pass", detail }
+        : { status: "fail", detail };
+    } catch (e) { R.recon = rec("fail", `harness: ${e.message}`); }
+  }
+
   /* SWAP (currency-converter only), the King's own phone report: "when I
      swap currency with the swap icon below it doesn't change the currency
      instantly." The swap handler writes select values PROGRAMMATICALLY,
@@ -871,7 +934,7 @@ async function main() {
   }
 
   /* table + result file; non-zero exit on any failure. */
-  const ORDER = ["reset", "clear", "empty", "zero", "derived", "adversarial", "stale", "negnet", "swap", "rails", "console"];
+  const ORDER = ["reset", "clear", "empty", "zero", "derived", "adversarial", "stale", "negnet", "recon", "swap", "rails", "console"];
   let tp = 0, tf = 0, ts = 0;
   console.log("\n" + ["tool", ...ORDER].join(" | "));
   for (const slug of slugs) {

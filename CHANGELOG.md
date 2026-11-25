@@ -1,3 +1,14 @@
+## [0.7.113] - 2026-11-25: Salary-tax E8, trust surfaces
+
+A8 returned FAIL (2 HIGH, 5 MEDIUM, 5 LOW). E8 fixes the ten FIX items; L4/L5 stay HELD as carried site chrome.
+
+- **Receipt reconciliation (H1):** NHF, NHIS and life assurance now print their own annual rows when non-zero, so pension + NHF + NHIS + life + other reliefs + rent relief equals gross minus stated taxable income. A new `test:calc` `recon` contract failed on the pre-fix build (130 pass / 1 fail) and passes after the fix (131/0/7).
+- **Public citations (H2):** every internal `.txt:line` reference on the salary page is replaced with a verified public link; section numbering now matches the printed gazette (s.162(1)(t), s.195(g)), bands cite s.58 and Fourth Schedule, rent relief cites s.30(2)(a)(vi). Manager curl checks returned 200 for the NASS and NIPC gazettes, Podus ss.162/195/30, PenCom FAQ, FMBN NHF Act and FMINO minimum-wage source.
+- **Trust panel (M1–M4):** sources line, method/disclaimer, "estimate, not your payslip" with PAYE timing, allowances/bonus, payroll-written reliefs and the multiple-employer caveat, and a "why ₦300,000" note all sit beside the figure; every verification stamp is refreshed to 25 Nov 2026 with a page-level last-checked note.
+- **L1–L3:** the FMINO source sits next to the first ₦70,000 statement, the seed rationale is stated, and the pension shorthand now says "emoluments you enter".
+
+The native builder hit its iteration budget after the code and gates landed but before writing its report; the Manager verified the diff, all four gates, the pre/post reconciliation logs and every trust/E7 probe personally and wrote the leg report under his own signature. Gates: check 7/7 · check:ux 33/33 · build 84 · test:calc 131 pass / 0 fail / 7 skip · U+2014 0. One pre-existing `.txt:` citation in the unauthorized gross-to-net page is recorded as a deviation for a future leg.
+
 ## [0.7.112] - 2026-11-24: Salary-tax E7, mobile thumb flow
 
 A7 returned FAIL (2 HIGH, 3 MEDIUM, 1 LOW); E7 closes the six touch/reach issues and documents the seventh.
