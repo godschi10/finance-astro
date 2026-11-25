@@ -1,3 +1,13 @@
+## [0.7.116] - 2026-11-25: Salary-tax E11, comparison clarity
+
+A11 returned FAIL (1 HIGH, 1 MEDIUM, 1 LOW). E11 fixes the two copy findings; the last-time comparison stays HELD with the LAST-USED item.
+
+- When the old row wins, the verdict no longer claims a repealed regime "saves you" money. It now reads: "Under the old bands you would have kept ₦593/mo more; the new bands are the only ones in force." The FAQ's "old bands come out ahead" became "would have come out ahead". The seed's new-wins sentence is unchanged.
+- A visible legend under the comparison table now says "Best marks the higher take-home, not the lower tax", readable at 320 and 390.
+- No goal-comparison input was added: the figure-adjacent next action already links to the reverse tool and the 50-30-20 budget. No average benchmark was invented; it stays absent without a sourced, dated figure.
+
+Gates: check 7/7 · check:ux 33/33 · build 84 · test:calc 131 pass / 0 fail / 7 skip · U+2014 0 · E10 teaching/last-change intact. Delegation record: the native Hermes researcher and builder both failed at the model layer, and OpenCode is banned by the King's standing order; the Manager made this two-line copy fix directly and verified it. Gates green; live proof follows.
+
 ## [0.7.115] - 2026-11-25: Salary-tax E10, worked example teaches
 
 A10 returned FAIL (1 HIGH, 3 MEDIUM, 2 LOW); E10 closes all six.

@@ -21,7 +21,7 @@ const saveTxt = tie
   ? "Both regimes leave you with the same take-home."
   : newWins
     ? `You keep ₦${n(cmp.save_monthly)}/mo more under the new bands.`
-    : `The old bands save you ₦${n(-cmp.save_monthly)}/mo vs the new bands.`;
+    : `Under the old bands you would have kept ₦${n(-cmp.save_monthly)}/mo more; the new bands are the only ones in force.`;
 /* S5 item 2 ; the quick-check worked answers. Same engine, same 8%-pension /
    no-rent basis as the copy prose below (and as WP's server-computed answers
    at page-salary-tax-calculator.php:245-268), but computed HERE from the
@@ -37,7 +37,7 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
   { q: "Who pays zero PAYE?", a: "You pay no income tax on an employment if your gross income from that employment is at or below the national minimum wage (Nigeria Tax Act 2025, s.162(1)(t)). This is a different thing from the ₦800,000 zero-rate band, which applies to your taxable income once you are taxable. Last checked 25 Nov 2026 · <a href=\"https://nass.gov.ng/documents/download/11249\">Nigeria Tax Act 2025 gazette</a>: s.162(1)(t) and s.58 and Fourth Schedule" },
   { q: "How does rent relief work?", a: "20% of annual rent reduces taxable income, capped at ₦500,000 a year. Keep rent receipts. Last checked 25 Nov 2026 · <a href=\"https://repo.podus.ai/laws/nigeria-tax-act/section/30/\">Nigeria Tax Act 2025 s.30(2)(a)(vi)</a>" },
   { q: "How is a bonus taxed?", a: "A bonus is employment income, taxed on the day it is paid (NTA 2025 ss.4(2)(a), 26(2)). Enter it in the bonus field and we add it to your regular taxable income and charge only the extra tax, so a bonus pays at your marginal band rate rather than the top one. If the bonus lifts your gross above the national minimum wage, the minimum-wage exemption falls away (s.162(1)(t)): the first ₦800,000 of taxable income is still taxed at 0%. Last checked 25 Nov 2026 · <a href=\"https://nass.gov.ng/documents/download/11249\">Nigeria Tax Act 2025 gazette</a>: ss.4(2)(a), 26(2), 162(1)(t)" },
-  { q: "Old vs new: who wins?", a: "The new bands win for most salaries, especially with rent relief. Without rent, the old bands come out slightly ahead for gross pay of roughly ₦325k–₦535k a month (by at most about ₦1,000 a month), and again for very high earners. Note the old row is for comparison only: the Personal Income Tax Act it came from was repealed on 1 Jan 2026 (NTA 2025 s.195(g)), so no one is actually paid on it. Enter your salary and the comparison card shows your actual winner. Last checked 25 Nov 2026 · <a href=\"https://nass.gov.ng/documents/download/11249\">Nigeria Tax Act 2025 gazette</a>: s.195(g); old bands: <a href=\"https://fctirs.gov.ng/wp-content/uploads/2023/07/Personal-Income-Tax-Act.pdf\">PITA Cap. P8 LFN 2004</a>" },
+  { q: "Old vs new: who wins?", a: "The new bands win for most salaries, especially with rent relief. Without rent, the old bands would have come out slightly ahead for gross pay of roughly ₦325k–₦535k a month (by at most about ₦1,000 a month), and again for very high earners. Note the old row is for comparison only: the Personal Income Tax Act it came from was repealed on 1 Jan 2026 (NTA 2025 s.195(g)), so no one is actually paid on it. Enter your salary and the comparison card shows your actual winner. Last checked 25 Nov 2026 · <a href=\"https://nass.gov.ng/documents/download/11249\">Nigeria Tax Act 2025 gazette</a>: s.195(g); old bands: <a href=\"https://fctirs.gov.ng/wp-content/uploads/2023/07/Personal-Income-Tax-Act.pdf\">PITA Cap. P8 LFN 2004</a>" },
 ]}
   rawFaq
   badge="NTA 2025 · In force since 1 Jan 2026",
@@ -165,6 +165,7 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
 <tr id="st-row-old" class={oldWins ? "win" : ""}><td>Old (PITA, for comparison only, repealed 1 Jan 2026)<span class="btag" id="st-tag-old" style={oldWins ? "" : "display:none"}>Best</span></td><td class="n" id="st-old-tax">₦{n(cmp.old.tax_annual)}</td><td class="n" id="st-old-net">₦{n(cmp.old.net_monthly)}</td></tr>
 </tbody>
 </table></div>
+<p class="receipt-foot" id="st-best-legend"><strong>Best</strong> marks the higher take-home, not the lower tax.</p>
 <p class="bar-note" id="st-save" aria-label="New versus old bands verdict">{saveTxt} <span class="st-own" id="st-own-save" data-own>Ours, not yours: our worked example, not your figures.</span></p>
 <p class="receipt-foot" id="st-gap-note">At the seed, the new bands win by ₦347 a month, the minimum-case gap; that gap grows with rent relief and higher salaries.</p>
 <!-- E5 M1/M2/M3 ; ONE named live recovery notice. It moves into the offending
@@ -626,7 +627,7 @@ function render() {
       ? "Both regimes leave you with the same take-home."
       : nw
         ? `You keep ${n(saveFig)}/${saveUnit} more under the new bands.`
-        : `The old bands save you ${n(-saveFig)}/${saveUnit} vs the new bands.`;
+        : `Under the old bands you would have kept ${n(-saveFig)}/${saveUnit} more; the new bands are the only ones in force.`;
   if (ours) {
     const sm = document.createElement("span");
     sm.id = "st-own-save";
