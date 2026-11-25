@@ -1,3 +1,13 @@
+## [0.7.114] - 2026-11-25: Salary-tax E9, jargon sweep
+
+A9 returned FAIL (1 HIGH, 4 MEDIUM, 3 LOW); E9 closes all eight copy findings without touching a formula or gate.
+
+- PAYE is expanded at its first visible use in the period hint; PITA is expanded in the hero deck; "chargeable income" is removed in favour of one term, "taxable income", defined at first use as "what is left after these deductions".
+- The bonus effective rate is glossed as "(bonus tax ÷ bonus)"; the 13th-month label says "an extra month's pay"; the hero exemption carries "(no tax on pay at or below the minimum wage)"; the trust line says "reliefs claimed in writing" instead of "written claims".
+- Every field hint's instruction now ends before a line break, with the statute/date citation on its own line below it. The NRS/FIRS FAQ answer is split and its citations sit at the end.
+
+Gates: check 7/7 · check:ux 33/33 · build 84 · test:calc 131 pass / 0 fail / 7 skip · U+2014 0 · E8 reconciliation, public links, trust panel and stamps intact · phone 320/390 light+dark no overflow. Delegation record: native researcher died twice on model API failures and OpenCode fell back but stalled; the Manager performed the A9 audit directly and documented the rung failure in incidents. Native builder delivered E9 with a full report.
+
 ## [0.7.113] - 2026-11-25: Salary-tax E8, trust surfaces
 
 A8 returned FAIL (2 HIGH, 5 MEDIUM, 5 LOW). E8 fixes the ten FIX items; L4/L5 stay HELD as carried site chrome.
