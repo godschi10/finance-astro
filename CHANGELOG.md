@@ -1,3 +1,12 @@
+## [0.7.121] - 2026-11-26: Wordmark underline spacing refined
+
+Follow-up to 0.7.120 after pixel measurement: the phone underline still sat 8 px below the descenders and the desktop gap was uneven.
+
+- `.logo::after` bottom set to 2px and `.mlogo::after` bottom set to 10px. Pixel measurement of the rendered wordmark now shows a **2 px ink gap** on both desktop and phone (was 9–10 px before, 8 px on phone after 0.7.120).
+- Mobile dark-mode toggle remains the 36×36, 6 px-radius square matching search and menu.
+
+Gates: check 7/7 · check:ux 33/33 · build 84 · test:calc 131/0/7 · U+2014 0.
+
 ## [0.7.120] - 2026-11-26: Header brand alignment
 
 King's order: bring the wordmark underline close to "gwillchijioke" like the official brand, and make the mobile dark-mode toggle the same rounded square as search and menu.

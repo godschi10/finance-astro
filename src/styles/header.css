@@ -82,7 +82,7 @@
 .logo::after {
   content: '';
   position: absolute;
-  bottom: 4px;
+  bottom: 2px;
   left: 0;
   right: 0;
   height: 1.5px;
@@ -620,7 +620,7 @@
 .mlogo::after {
   content: '';
   position: absolute;
-  bottom: 4px;
+  bottom: 10px;
   left: 0;
   right: 0;
   height: 1.5px;
