@@ -1,3 +1,16 @@
+## [0.7.127] - 2026-11-26: Salary-tax E18, error recovery
+
+A18 found 4 HIGH, 1 MEDIUM and 1 LOW recovery defects.
+
+- **H1:** absurd bonus no longer claims "No figures are shown"; the regular ₦243,820 stays, bonus rows stay "–", and the comparison says "Bonus not priced."
+- **H2:** out-of-range now withholds every derived receipt cell (sub, pension, NHF/NHIS/life, reliefs, PAYE) instead of printing ₦0 tax/taxable beside "Out of range".
+- **H3:** pension above 100% is a real field error with `aria-invalid`, `aria-errormessage`, a notice at the field and a Go-to button; all figures withhold.
+- **H4:** the recovery scroll now works at any viewport, not only when the keyboard shrinks the view; error notice and button are scrolled fully into view.
+- **M1:** error copy uses visible labels only; no more `#st-rent`/`#st-nhf`/`#st-bonus` selectors in user text.
+- **L1:** withheld figures announce "Take-home: not available…" instead of "Take-home: – a month".
+
+Verified: all five error states have field + notice + button fully visible at 844 px; zero `#st-` strings; over-range ten dashes; pension 150 invalid and withheld. Gates: build 84 · check 7/7 · check:ux 33/33 · test:calc 131/0/7.
+
 ## [0.7.126] - 2026-11-26: Salary-tax E17, first-time plain language
 
 A17 found 1 HIGH, 3 MEDIUM and 3 LOW plain-language defects.

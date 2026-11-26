@@ -375,7 +375,7 @@ const ALL = ["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life"
    raw text is NEVER rewritten : only derived cells and notices react. */
 const DETAIL = ["st-pension", "st-rent", "st-nhf", "st-nhis", "st-life", "st-other", "st-bonus"];
 const BONUS_CEIL = 100000000;
-interface DetailState { id: string; malformed: boolean; minus: boolean; blank: boolean; absurd: boolean; }
+interface DetailState { id: string; malformed: boolean; minus: boolean; blank: boolean; absurd: boolean; overCap: boolean; }
 const detailClean = (txt: string): string => String(txt).replace(/[\u200B-\u200F\uFEFF]/g, "").replace(/[^\d.eE-]/g, "");
 function detailStateOf(id: string): DetailState {
   const txt = g(id).value;
@@ -384,12 +384,14 @@ function detailStateOf(id: string): DetailState {
   const malformed = !blank && /\d/.test(txt) && !Number.isFinite(Number(clean));
   const minus = !blank && /-/.test(clean);
   const absurd = id === "st-bonus" && !blank && !malformed && !minus && pm(txt) > BONUS_CEIL;
-  return { id, malformed, minus, blank, absurd };
+  const overCap = id === "st-pension" && !blank && !malformed && !minus && pm(txt) > 100;
+  return { id, malformed, minus, blank, absurd, overCap };
 }
-/* One line per offending field : the literal field id, the label the visitor
-   reads, and the concrete fix. No ₦ verdict rides in it. */
+/* One line per offending field : the label the visitor reads, and the concrete
+   fix. No internal selector, no ₦ verdict. */
 function detailFix(s: DetailState): string {
-  const who = `#${s.id} (${labelOf(s.id)})`;
+  const who = labelOf(s.id);
+  if (s.overCap) return `${who} is above 100%. Enter 100 or less.`;
   if (s.minus) return `${who} has a minus sign: digits only, no minus. Enter a positive number.`;
   if (s.malformed) return `${who} is not a figure we can read. Enter a plain number with at most one decimal point.`;
   if (s.absurd) return `${who} looks unusually large for a one-off amount. Enter a plausible bonus (digits only).`;
@@ -418,22 +420,22 @@ fixBtn.addEventListener("click", () => {
   el.focus();
   if (typeof el.select === "function") el.select();
 });
-/* E7 F5 ; on a shortened visual viewport the browser scrolls only the focused
-   field into view, leaving the recovery notice and its Go-to button below the
-   fold. Re-scroll to the notice (the field sits directly above it, so both stay
-   in view) when a keyboard-like shrink happens or an offender is focused in a
-   short viewport. No second live region, no state change, no focus steal. The
-   emulation limit stands: a real OS keyboard was never raised. */
+/* E7 F5, A18 H4 ; the browser scrolls only the focused field into view, so a
+   recovery notice inserted below it can sit entirely under the fold. Re-scroll
+   to the notice when it is not fully visible (keyboard shrink or not). The
+   field sits directly above it, so both stay in view. No second live region,
+   no state change, no focus steal. */
 function keepRecoveryInView(): void {
-  const vv = window.visualViewport;
-  if (!vv || vv.height >= 600) return;
   if (warnBox.hidden || !stOffender) return;
   const field = g(stOffender);
   if (document.activeElement !== field) return;
+  const vh = window.visualViewport?.height ?? window.innerHeight;
+  const box = warnBox.getBoundingClientRect();
+  if (box.top >= 0 && box.bottom <= vh - 8) return;
   requestAnimationFrame(() => {
     warnBox.scrollIntoView({ block: "nearest", behavior: "instant" });
     /* nearest leaves sub-pixel rounding at the fold; give the last row 8px. */
-    const over = warnBox.getBoundingClientRect().bottom - (vv.height - 8);
+    const over = warnBox.getBoundingClientRect().bottom - (vh - 8);
     if (over > 0) window.scrollBy({ top: over, behavior: "instant" });
   });
 }
@@ -473,12 +475,12 @@ function render() {
      Parser-blank details already dash through sfFig's blank deps, and the
      sentinel makes the hold uniform for digit-bearing garbage and minus signs. */
   const dStates = DETAIL.map(detailStateOf);
-  const dBad = dStates.filter((s) => s.malformed || s.minus || s.absurd);
+  const dBad = dStates.filter((s) => s.malformed || s.minus || s.absurd || s.overCap);
   const dBlank = dStates.filter((s) => s.blank);
   /* An absurd bonus gates only its own three cells ; it does not move the
-     regular take-home, which is not derived from the bonus. Malformed and
-     minus values withhold the whole receipt. */
-  const dHold = dStates.filter((s) => s.malformed || s.minus);
+     regular take-home, which is not derived from the bonus. Malformed, minus
+     and over-cap values withhold the whole receipt. */
+  const dHold = dStates.filter((s) => s.malformed || s.minus || s.overCap);
   /* One withheld dep id: every sfFig below dashes while any input is bad. */
   const HOLD = grossBad || dHold.length > 0 || dBlank.length > 0 ? ["__st_hold__"] : [];
   const penRaw = pm(g("st-pension").value);
@@ -505,18 +507,27 @@ function render() {
      the rail below names the fields to check ; never a silent clamp. */
   const netBad = (v: number) => !Number.isFinite(v) || v < 0;
   const netTxt = (v: number) => netBad(v) ? "Out of range" : n(v);
+  /* A18 H2 ; a refused take-home may not sit beside a priced tax line. When
+     the monthly net is out of range, every derived receipt cell withholds,
+     not just the headline. */
+  const RANGE = netBad(r.net_monthly) ? ["__st_range__"] : [];
   const fv = figValue();
   sfFig(fv, [...ALL, ...HOLD], netTxt(perNet(r)));
-  figBox.setAttribute("aria-label", `Take-home: ${(fv.textContent || "").trim()} ${stPeriod === "annual" ? "a year" : "a month"}`);
-  sfFig(t("st-sub"), [...ALL, ...HOLD], `Tax ${n(stPeriod === "annual" ? r.tax_annual : r.tax_monthly)}/${stPeriod === "annual" ? "yr" : "mo"} · taxable income (after deductions) ${n(r.taxable)}/yr${r.exempt && !grossBad ? " · EXEMPT (minimum wage)" : ""}`);
-  sfFig(t("st-pen"), ["st-gross", "st-pension", ...HOLD], n(r.pension_annual));
+  const figTxt = (fv.textContent || "").trim();
+  figBox.setAttribute("aria-label", figTxt === "–"
+    ? "Take-home: not available until the highlighted field is corrected."
+    : figTxt === "Out of range"
+      ? "Take-home: not available because deductions exceed gross."
+      : `Take-home: ${figTxt} ${stPeriod === "annual" ? "a year" : "a month"}`);
+  sfFig(t("st-sub"), [...ALL, ...HOLD, ...RANGE], `Tax ${n(stPeriod === "annual" ? r.tax_annual : r.tax_monthly)}/${stPeriod === "annual" ? "yr" : "mo"} · taxable income (after deductions) ${n(r.taxable)}/yr${r.exempt && !grossBad ? " · EXEMPT (minimum wage)" : ""}`);
+  sfFig(t("st-pen"), ["st-gross", "st-pension", ...HOLD, ...RANGE], n(r.pension_annual));
   /* E8b H1 ; the three deductions the engine subtracts but the receipt used to
      omit. They print only when the visitor entered a non-zero amount, so the
      seeded zero case stays clean. sfFig still dashes each one on a blank or
      malformed field, and the row hides when the value is genuinely zero. */
-  sfFig(t("st-nhf2"), ["st-gross", "st-nhf", ...HOLD], n(r.nhf_annual));
-  sfFig(t("st-nhis2"), ["st-gross", "st-nhis", ...HOLD], n(r.nhis_annual));
-  sfFig(t("st-life2"), ["st-gross", "st-life", ...HOLD], n(r.life_annual));
+  sfFig(t("st-nhf2"), ["st-gross", "st-nhf", ...HOLD, ...RANGE], n(r.nhf_annual));
+  sfFig(t("st-nhis2"), ["st-gross", "st-nhis", ...HOLD, ...RANGE], n(r.nhis_annual));
+  sfFig(t("st-life2"), ["st-gross", "st-life", ...HOLD, ...RANGE], n(r.life_annual));
   const dedRows: [string, number][] = [["st-nhf-row", nhf], ["st-nhis-row", nhis], ["st-life-row", life]];
   for (const [rowId, amount] of dedRows) {
     const row = document.getElementById(rowId);
@@ -529,9 +540,9 @@ function render() {
      gross the parser cannot read ("abc", "12,") makes the headline dash, and
      these two used to keep printing ₦0 because their own fields held "0".
      Adding st-gross dashes them with the headline; the typed value stays. */
-  sfFig(t("st-other2"), ["st-gross", "st-other", ...HOLD], n(r.other_annual));
-  sfFig(t("st-rel"), ["st-gross", "st-rent", ...HOLD], n(r.relief_annual));
-  sfFig(t("st-tax"), [...ALL, ...HOLD], n(r.tax_annual));
+  sfFig(t("st-other2"), ["st-gross", "st-other", ...HOLD, ...RANGE], n(r.other_annual));
+  sfFig(t("st-rel"), ["st-gross", "st-rent", ...HOLD, ...RANGE], n(r.relief_annual));
+  sfFig(t("st-tax"), [...ALL, ...HOLD, ...RANGE], n(r.tax_annual));
   /* BONUS BLOCK (P1-6 tail). The engine is payeBonusTax(gross, bonus, pen, nhf,
      rent, nhis, life, other) ; the same marginal-band machinery the vector gate
      already asserts (paye_bonus, paye_bonus_exempt_base). Nothing here restates a
@@ -616,9 +627,12 @@ function render() {
      detail dashes the line beside the other withheld cells. Gross keeps its
      shipped grammar verbatim. */
   const detailBad = dBad.length > 0;
+  const onlyBonusAbsurd = detailBad && dBad.every((s) => s.absurd);
   const detailBlankOnly = !detailBad && grossKnown && dBlank.length > 0;
   const detailVerdict = detailBad
-    ? `CANNOT SCORE. ${detailFix(dBad[0])} No verdict is shown until you do.`
+    ? onlyBonusAbsurd
+      ? `Bonus not priced. ${detailFix(dBad[0])} The regular take-home is unchanged; the bonus figures stay at – until you do.`
+      : `CANNOT SCORE. ${detailFix(dBad[0])} No verdict is shown until you do.`
     : detailBlankOnly
     ? "–"
     : "";
@@ -658,7 +672,10 @@ function render() {
        detail value that is still bad (M6). Cap rails stay on the normal path. */
     const offenders = detailBad ? dBad : dBlank;
     for (const s of offenders.slice(0, 3)) {
-      notes.push(detailFix(s) + (s.blank ? " No verdict is shown until you do." : " No figures or verdict are shown until you do."));
+      const tail = s.absurd
+        ? " The regular take-home is unchanged; the bonus figures stay at – until you do."
+        : s.blank ? " No verdict is shown until you do." : " No figures or verdict are shown until you do.";
+      notes.push(detailFix(s) + tail);
     }
     /* E6 F1 ; the notice may never hide the rest of the scope. Three named
        fields keep the E5 grammar byte-stable; every remaining empty/offending
@@ -679,10 +696,9 @@ function render() {
     const stNeg = sfNegative(["st-gross"]);
     if (stNeg) notes.push(stNeg);
     /* E5 L1 ; the cap rail now carries the fix, not just the fact. */
-    if (penRaw > 100) notes.push("Pension capped at 100%: at 100% there is no take-home. Enter 100 or less.");
     if (grossRaw > 100000000) notes.push("That gross looks unusually large: double-check the figure.");
     /* E5 L2 ; the refusal leads, the Act citation follows it. */
-    if (netBad(r.net_monthly)) notes.push("Out of range: pension, NHF, NHIS, life assurance and other reliefs add up to more than your gross, so no take-home can print. Check #st-nhf and the monthly deduction fields against your payslip.");
+    if (netBad(r.net_monthly)) notes.push("Out of range: pension, NHF, NHIS, life assurance and other reliefs add up to more than your gross, so no take-home can print. Check the NHF monthly field and the monthly deduction fields against your payslip.");
     if (nhfRaw > 15000) notes.push("The National Housing Fund contribution is 2.5% of your basic monthly salary, uncapped: the NHF Act sets no ceiling on the amount (confirm the figure your payroll applies). Last checked 25 Nov 2026 · NHF Act ss.4(a), 9(1) (Federal Mortgage Bank of Nigeria) · NTA s.30(2)(a)(i)");
     if (rentRaw * 0.2 > 500000) notes.push("Rent relief capped at ₦500,000/yr: the excess changes nothing. Enter your annual rent; capped relief is ₦500,000.");
   }
@@ -714,6 +730,7 @@ function render() {
   placeWarn(stOffender);
   warnBox.hidden = notes.length === 0;
   warnText.textContent = notes.join(" ");
+  keepRecoveryInView();
   /* #5 hard caps (v0.7.55) ; the INPUT-side inline nudge the fresh audit asked
      for, sitting with the fields it talks about. The v0.7.52 Out-of-range guard
      above stays untouched on the receipt rail; this fires earlier, at the
