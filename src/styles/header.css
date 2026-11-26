@@ -82,7 +82,7 @@
 .logo::after {
   content: '';
   position: absolute;
-  bottom: -3px;
+  bottom: 4px;
   left: 0;
   right: 0;
   height: 1.5px;
@@ -315,7 +315,19 @@
 [data-theme="dark"] .tp-seg:hover { background: rgba(245,158,11,.1); }
 [data-theme="dark"] .tp-seg[aria-pressed="true"] { background: var(--gold-b); color: var(--dark); }
 .tp--m { margin-left: 4px; }
-.tp--m .tp-btn { padding: 5px 8px; min-height: 44px; min-width: 44px; }
+/* King 2026-11-26 ; the mobile theme control matches the search and menu
+   buttons exactly: same 36px rounded square, icon only, no caret. */
+.tp--m .tp-btn {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0;
+  gap: 0;
+  justify-content: center;
+  border-radius: var(--r-sm);
+}
+.tp--m .tp-tx, .tp--m .tp-caret { display: none; }
 @media (max-width: 480px) {
   .tp-btn .tp-tx { display: none; }
   .tp-btn { padding: 5px 8px; min-height: 44px; min-width: 44px; }
@@ -608,7 +620,7 @@
 .mlogo::after {
   content: '';
   position: absolute;
-  bottom: -3px;
+  bottom: 4px;
   left: 0;
   right: 0;
   height: 1.5px;

@@ -1,3 +1,13 @@
+## [0.7.120] - 2026-11-26: Header brand alignment
+
+King's order: bring the wordmark underline close to "gwillchijioke" like the official brand, and make the mobile dark-mode toggle the same rounded square as search and menu.
+
+- `.logo::after` and `.mlogo::after` moved from `bottom: -3px` to `bottom: 4px` — the gradient now sits directly under the descenders with a small gap instead of floating 8–10 px below.
+- `.tp--m .tp-btn` is now 36×36 with `border-radius: var(--r-sm)` (6 px), padding 0, icon only, caret hidden — exactly matching `.msearch` and `.hbg`.
+- Verified at 390 and 1280, light and dark: underline tucked in; all three mobile buttons 36×36 with 6 px radius; identical on home, money-tools index, salary-tax and articles; zero horizontal overflow.
+
+Gates: check 7/7 · build 84 · check:ux 33/33 · test:calc 131/0/7 · U+2014 0.
+
 ## [0.7.119] - 2026-11-26: Salary-tax E14, share and explain
 
 A14 returned FAIL (2 HIGH, 1 MEDIUM, 1 LOW). E14 fixes all four.
