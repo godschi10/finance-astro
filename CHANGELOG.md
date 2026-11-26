@@ -1,3 +1,15 @@
+## [0.7.119] - 2026-11-26: Salary-tax E14, share and explain
+
+A14 returned FAIL (2 HIGH, 1 MEDIUM, 1 LOW). E14 fixes all four.
+
+- Copy and WhatsApp payloads now carry ownership and provenance: the seed says "Our worked example, not your figures"; typed figures say "Your figures, estimate only"; both add "Estimate, not tax advice. Nigeria Tax Act 2025, checked 25 Nov 2026."
+- The share URL now carries all eight salary fields (`gross, pension, rent, nhf, nhis, life, other, bonus`) and is synced synchronously on a Copy/Share click, so a fast click cannot attach the previous gross. A fresh load of a shared link reproduces the exact take-home.
+- Print hides the next-action and memory notes and the seed teaching line, leaving the receipt, sources, method, disclaimer and ownership state.
+
+Verified: seed clipboard carries the example line; typed clipboard carries "Your figures, estimate only"; shared link reproduces ₦350,240 with gross 450000, pension 10, rent 2400000, NHF 5000; print `#st-next` and `#st-memory-note` display none.
+
+Gates: check 7/7 · check:ux 33/33 · build 84 · test:calc 131 pass / 0 fail / 7 skip · U+2014 0. Delegation record: Hermes researcher/builder model layer still failing; OpenCode banned; Manager made E14 directly and verified it.
+
 ## [0.7.118] - 2026-11-26: Salary-tax E13, returning-visitor honesty
 
 A13 returned FAIL (2 HIGH, 1 MEDIUM held). E13 fixes both HIGHs.

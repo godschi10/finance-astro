@@ -87,7 +87,7 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
 <div class="field" data-cur="NGN"><label for="st-bonus">Bonus / 13th month (an extra month's pay) ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-bonus" type="text" value="0" inputmode="decimal"></span><p class="hint">A one-off bonus or 13th-month payment, taxed on the day it is paid. It is added on top of your regular taxable income and only the extra tax is charged, so it is taxed at your marginal band rate (the rate on the last naira you earn, not your average rate), not at the top rate.<br><em>Last checked 25 Nov 2026 · NTA ss.4(2)(a), 26(2), 162(1)(t) in the <a href="https://nass.gov.ng/documents/download/11249">Nigeria Tax Act 2025 gazette</a></em></p></div>
 </div>
 <p class="hint" id="st-dedwarn" hidden></p>
-<div class="receipt">
+<div class="receipt" data-share-note="Estimate, not tax advice. Nigeria Tax Act 2025, checked 25 Nov 2026.">
 <p class="receipt-lbl" id="st-lbl">Take-home monthly</p>
 <p class="receipt-fig" id="st-fig" aria-live="polite" aria-label={`Take-home: ₦${n(seed.net_monthly)} a month`}><span id="st-fig-v" aria-hidden="true">₦{n(seed.net_monthly)}</span></p>
 <p class="receipt-sub" id="st-sub">Tax ₦{n(seed.tax_monthly)}/mo · taxable income (after deductions) ₦{n(seed.taxable)}/yr{seed.exempt ? " · EXEMPT (minimum wage)" : ""}</p>
@@ -235,7 +235,7 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
 .st-seed-teach,.st-last-change{font-size:12px;line-height:1.6;color:#e8e0cc}
 .st-seed-teach strong,.st-last-change strong{color:#f5c26b}
 .st-last-change{font-weight:700;border-left:2px solid var(--gold-b);padding-left:8px;margin-top:8px}
-@media print{.st-trust-line,.st-trust-line strong,.st-trust-line a{color:#333!important}}
+@media print{.st-trust-line,.st-trust-line strong,.st-trust-line a{color:#333!important}#st-next,#st-memory-note,.st-seed-teach{display:none!important}}
 </style>
 <script>
 import { payeCalculate, payeCompare, payeBandBreakdown, payeBands2026, payeBonusTax } from "../../lib/salary-tax";
@@ -824,29 +824,49 @@ const urlGross = (raw: string): string | null => {
   if (!Number.isFinite(v) || v <= 0 || v > 100000000) return null;
   return String(v);
 };
+const URL_FIELDS: Array<[string, string]> = [
+  ["gross", "st-gross"], ["pension", "st-pension"], ["rent", "st-rent"], ["nhf", "st-nhf"],
+  ["nhis", "st-nhis"], ["life", "st-life"], ["other", "st-other"], ["bonus", "st-bonus"],
+];
 let urlTimer: ReturnType<typeof setTimeout> | undefined;
 function syncUrlNow(): void {
   const q = new URLSearchParams();
-  q.set("gross", g("st-gross").value.trim().slice(0, 40));
+  URL_FIELDS.forEach(([k, id]) => q.set(k, g(id).value.trim().slice(0, 40)));
   history.replaceState(null, "", `${location.pathname}?${q.toString()}`);
 }
 function syncUrl(): void {
   clearTimeout(urlTimer);
   urlTimer = setTimeout(syncUrlNow, 600);
 }
+/* E14 H2 ; copy/share must never read a URL the debounce has not caught up
+   with. Capture phase runs before the share handler's own click listener. */
+document.addEventListener("click", (e) => {
+  const el = e.target as Element | null;
+  if (el && el.closest(".sf-share")) syncUrlNow();
+}, true);
 (function applyUrlState(): void {
   if (!location.search) return;
   const u = new URLSearchParams(location.search);
-  const a = urlGross(u.get("gross") || "");
-  if (a !== null) {
-    g("st-gross").value = a;
-    g("st-gross").dispatchEvent(new Event("input", { bubbles: true }));
-    syncUrlNow();
-  } else {
-    history.replaceState(null, "", location.pathname);
-  }
+  let applied = false;
+  URL_FIELDS.forEach(([k, id]) => {
+    const raw = u.get(k);
+    if (raw === null) return;
+    const s = raw.trim().slice(0, 40);
+    if (k === "gross") {
+      const a = urlGross(s);
+      if (a === null) return;
+      g(id).value = a;
+    } else {
+      if (s === "" || pmBlank(s)) return;
+      g(id).value = s;
+    }
+    g(id).dispatchEvent(new Event("input", { bubbles: true }));
+    applied = true;
+  });
+  if (applied) syncUrlNow();
+  else history.replaceState(null, "", location.pathname);
 })();
-g("st-gross").addEventListener("input", syncUrl);
+URL_FIELDS.forEach(([, id]) => g(id).addEventListener("input", syncUrl));
 smartFields.register(TOOL_FIELDS["salary-tax-calculator"]);
 /* E13 H2 ; a restored pension rate on our example gross is a HYBRID, not the
    visitor's full answer. Say so beside the figure whenever a field was
