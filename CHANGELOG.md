@@ -1,3 +1,10 @@
+## [0.7.122] - 2026-11-26: Theme control labels and icon parity
+
+- The mobile dropdown labels are back: the hide rule now targets only the trigger's own `.tp-tx`/`.tp-caret`, not every `.tp-tx` inside the theme group. System, Light and Dark are visible again at 120×44 each.
+- The trigger icon is 16 px, matching the 15–16 px neighbours, so the highlighted button no longer looks visually smaller even though its 36×36 outer box was already equal.
+
+Gates: check 7/7 · check:ux 33/33 · build 84 · test:calc 131/0/7.
+
 ## [0.7.121] - 2026-11-26: Wordmark underline spacing refined
 
 Follow-up to 0.7.120 after pixel measurement: the phone underline still sat 8 px below the descenders and the desktop gap was uneven.

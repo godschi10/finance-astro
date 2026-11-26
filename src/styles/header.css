@@ -322,12 +322,15 @@
   height: 36px;
   min-width: 36px;
   min-height: 36px;
+  flex: 0 0 36px;
   padding: 0;
   gap: 0;
   justify-content: center;
   border-radius: var(--r-sm);
 }
-.tp--m .tp-tx, .tp--m .tp-caret { display: none; }
+/* Only the TRIGGER label/caret are hidden; the dropdown segments keep theirs. */
+.tp--m .tp-btn > .tp-tx, .tp--m .tp-btn > .tp-caret { display: none; }
+.tp--m .tp-btn .tp-ico svg { width: 16px; height: 16px; }
 @media (max-width: 480px) {
   .tp-btn .tp-tx { display: none; }
   .tp-btn { padding: 5px 8px; min-height: 44px; min-width: 44px; }
