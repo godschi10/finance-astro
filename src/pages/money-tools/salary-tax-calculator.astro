@@ -236,7 +236,7 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
    11px citation lines so both read at 320px, with a left rule marking the
    live line as a response to the visitor's own edit. */
 .st-seed-teach,.st-last-change{font-size:12px;line-height:1.6;color:#e8e0cc}
-.st-seed-teach[hidden],#st-gap-note[hidden]{display:none!important}
+.st-seed-teach[hidden],#st-gap-note[hidden],#st-next[hidden]{display:none!important}
 .st-seed-teach strong,.st-last-change strong{color:#f5c26b}
 .st-last-change{font-weight:700;border-left:2px solid var(--gold-b);padding-left:8px;margin-top:8px}
 @media print{.st-trust-line,.st-trust-line strong,.st-trust-line a{color:#333!important}#st-next,#st-memory-note,.st-seed-teach{display:none!important}}
@@ -397,6 +397,14 @@ function syncOwnership(): void {
   if (withheld) {
     if (rec) rec.hidden = true;
     if (cmp) cmp.hidden = true;
+    return;
+  }
+  const mixedBox = document.getElementById("st-mixed");
+  if (mixedBox && !mixedBox.hidden) {
+    if (rec) rec.hidden = true;
+    if (cmp) cmp.hidden = true;
+    const oldMixedSave = document.getElementById("st-own-save");
+    if (oldMixedSave) oldMixedSave.remove();
     return;
   }
   paintOwnership(ours, partial, sampleCount);
@@ -696,6 +704,11 @@ function render() {
       : nw
         ? `You keep ${n(saveFig)}/${saveUnit} more under the new bands.`
         : `Under the old bands you would have kept ${n(-saveFig)}/${saveUnit} more; the new bands are the only ones in force.`;
+  const nextBox = document.getElementById("st-next");
+  if (nextBox) {
+    const blocking = grossBad || detailBlankOnly || (detailBad && !onlyBonusAbsurd) || !grossKnown || netBad(r.net_monthly) || cmpBad;
+    nextBox.hidden = blocking;
+  }
   const notes: string[] = [];
   if (grossBad) {
     /* E2 H1/H3 ; one rail, the field named and the fix concrete. The absurd
@@ -903,6 +916,7 @@ document.addEventListener("click", (e) => {
   const el = e.target as Element | null;
   if (el && el.closest(".sf-share")) syncUrlNow();
 }, true);
+smartFields.register(TOOL_FIELDS["salary-tax-calculator"]);
 (function applyUrlState(): void {
   if (!location.search) return;
   const u = new URLSearchParams(location.search);
@@ -926,7 +940,9 @@ document.addEventListener("click", (e) => {
   else history.replaceState(null, "", location.pathname);
 })();
 URL_FIELDS.forEach(([, id]) => g(id).addEventListener("input", syncUrl));
-smartFields.register(TOOL_FIELDS["salary-tax-calculator"]);
+/* A20 R1 ; register must run BEFORE applyUrlState. The seed badges are painted
+   first, then the URL values replace them and their input events clear the
+   badges, so a shared link is not labelled as our worked example. */
 /* E13 H2 ; a restored pension rate on our example gross is a HYBRID, not the
    visitor's full answer. Say so beside the figure whenever a field was
    restored; cold load stays silent. */
@@ -935,6 +951,7 @@ if (mixedBox) {
   const restored = document.querySelector('.field[data-r]');
   if (restored) {
     mixedBox.hidden = false;
+    mixedBox.setAttribute("data-own", "");
     mixedBox.innerHTML = "<strong>Partly yours:</strong> only your pension rate was restored. Gross, rent and the deduction fields are not remembered, so check them before trusting this figure.";
   }
 }

@@ -1,3 +1,13 @@
+## [0.7.129] - 2026-11-26: Salary-tax E20, mid-program review fixes
+
+A20 re-measured A1–A19 on the live build: 18 promises held, 3 regressions found.
+
+- **R1 HIGH:** a shared URL with the visitor's values was painted with all eight Sample badges and said "Ours, not yours." Boot order fixed: `smartFields.register()` runs before `applyUrlState()`, so URL input events clear the seed badges. Shared load now has 0 Sample fields and "Your figures, estimate only."
+- **R2 MEDIUM:** "What next" stayed visible when the figure was "–" after invalid input or Clear. It now hides when gross/detail is bad, fields are blank, gross is unentered, or the result is out of range; it shows on a valid figure.
+- **R3 LOW:** memory restore showed two "Partly yours" notices. The specific `#st-mixed` note now suppresses the generic E19 marker; Copy/WhatsApp still says "Partly yours."
+
+Gates: build 84 · check 7/7 · check:ux 33/33 · test:calc 131/0/7. 320 px overflow 0.
+
 ## [0.7.128] - 2026-11-26: Salary-tax E19, confidence calibration
 
 A19 found 1 HIGH, 2 MEDIUM and 1 LOW ownership/confidence defects.
