@@ -92,6 +92,8 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
 <p class="receipt-fig" id="st-fig" aria-live="polite" aria-label={`Take-home: ₦${n(seed.net_monthly)} a month`}><span id="st-fig-v" aria-hidden="true">₦{n(seed.net_monthly)}</span></p>
 <p class="receipt-sub" id="st-sub">Tax ₦{n(seed.tax_monthly)}/mo · taxable income (after deductions) ₦{n(seed.taxable)}/yr{seed.exempt ? " · EXEMPT (minimum wage)" : ""}</p>
 <p class="hint" id="st-next"><strong>What next:</strong> spending this take-home? <a class="st-next-link" href={`${base}money-tools/50-30-20-budget-calculator/`}>Plan it with the 50-30-20 budget</a>. Chasing a target take-home? <a class="st-next-link" href={`${base}money-tools/gross-to-net-calculator/`}>Work back to the gross you need</a>.</p>
+<p class="receipt-foot" id="st-memory-note">Only your pension rate is remembered on this page. Gross, rent, NHF, NHIS, life assurance, other reliefs and bonus are never saved, so they return to the worked example.</p>
+<p class="receipt-foot" id="st-mixed" hidden></p>
 <!-- E8b M1-M4 / L1-L3 ; the legal basis and the limits sit BESIDE the figure.
      These are the public documents verified in the E8a source map. Section
      numbers stay as text and follow the printed gazette numbering. -->
@@ -846,6 +848,17 @@ function syncUrl(): void {
 })();
 g("st-gross").addEventListener("input", syncUrl);
 smartFields.register(TOOL_FIELDS["salary-tax-calculator"]);
+/* E13 H2 ; a restored pension rate on our example gross is a HYBRID, not the
+   visitor's full answer. Say so beside the figure whenever a field was
+   restored; cold load stays silent. */
+const mixedBox = t("st-mixed");
+if (mixedBox) {
+  const restored = document.querySelector('.field[data-r]');
+  if (restored) {
+    mixedBox.hidden = false;
+    mixedBox.innerHTML = "<strong>Partly yours:</strong> only your pension rate was restored. Gross, rent and the deduction fields are not remembered, so check them before trusting this figure.";
+  }
+}
 sfBind("salary-tax-calculator", gv);
 /* E10 M1 ; attached AFTER register so the cold-load restore() burst cannot
    print a change nobody made. Registered after the page's own render listener,

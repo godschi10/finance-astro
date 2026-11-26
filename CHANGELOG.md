@@ -1,3 +1,15 @@
+## [0.7.118] - 2026-11-26: Salary-tax E13, returning-visitor honesty
+
+A13 returned FAIL (2 HIGH, 1 MEDIUM held). E13 fixes both HIGHs.
+
+- **Memory scope (H1):** the shared disclosure no longer says "every calculator remembers your figures"; it says each calculator keeps only the figures it is allowed to keep, and that gross, rent and payroll deductions are never saved because a stale value would produce a wrong number. A page-local line states that only the pension rate is remembered here and the other seven fields return to the worked example.
+- **Hybrid result (H2):** when a field is restored, a visible "Partly yours" line beside the figure says only the pension rate was restored and the gross/deduction fields are not remembered, so the visitor must check them before trusting the figure. Cold load stays silent.
+- The LAST-USED date proposal remains HELD.
+
+Verified on a true return (fresh page, same storage): stored record is only `st-pension`; gross resets to ₦300,000, take-home ₦238,900, mixed line visible with the "Last used" pill. Cold load shows the memory note and no mixed line. Phone 320/390 zero overflow.
+
+Gates: check 7/7 · check:ux 33/33 · build 84 · test:calc 131 pass / 0 fail / 7 skip · U+2014 0. Delegation record: Hermes researcher/builder model layer still failing; OpenCode banned; Manager made E13 directly and verified it.
+
 ## [0.7.117] - 2026-11-25: Salary-tax E12, next-action clarity + FX re-check
 
 A12 returned FAIL (1 HIGH, 2 MEDIUM); E12 fixes all three.
