@@ -1,3 +1,14 @@
+## [0.7.131] - 2026-11-26: Salary-tax E22, low-numeracy path
+
+A22 found 1 HIGH, 1 MEDIUM and 2 LOW.
+
+- **H1:** annual rent accepted a monthly figure silently. Label is now "Annual rent (12 months) ₦"; hint gives "₦60,000 a month is ₦720,000 a year"; a soft rail appears when annual rent is less than one month's gross.
+- **M1:** all visible `₦k/₦m` shorthand expanded (hero, verified, FAQ, receipt foot, chips).
+- **L1:** pension hint adds "Leave 8 if you are not sure."
+- **L2:** chips now read "Example: ₦300,000 after tax" and stay 44 px high.
+
+320/390 overflow 0; zero shorthand in the rendered body. Gates: build 84 · check 7/7 · check:ux 33/33 · test:calc 131/0/7.
+
 ## [0.7.130] - 2026-11-26: Salary-tax E21, scenario scope
 
 A21 walked the calculator as a salary earner, a trader, a retiree and a student. 1 HIGH and 1 MEDIUM.
