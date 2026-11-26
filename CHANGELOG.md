@@ -1,3 +1,12 @@
+## [0.7.123] - 2026-11-26: Theme button matches neighbours on touch
+
+Root cause found: `article.css` has a `@media (pointer: coarse)` rule that enlarges `.msearch`, `.hbg` and `.mno-close` to 44×44 on touch devices, but the theme trigger was not in that list — so on the King's phone search/menu were 44 while the theme button stayed 36. That is why it only looked smaller on real touch devices and on article pages.
+
+- Added `.tp--m .tp-btn` to the coarse-pointer 44×44 rule and gave it matching `min-width/min-height/flex-basis`. On a touch profile at 390: theme, search and menu all 44×44 with 6 px radius, on the calculator and on an article page.
+- Dropdown labels remain System / Light / Dark at 120×44.
+
+Gates: check 7/7 · check:ux 33/33 · build 84 · test:calc 131/0/7.
+
 ## [0.7.122] - 2026-11-26: Theme control labels and icon parity
 
 - The mobile dropdown labels are back: the hide rule now targets only the trigger's own `.tp-tx`/`.tp-caret`, not every `.tp-tx` inside the theme group. System, Light and Dark are visible again at 120×44 each.

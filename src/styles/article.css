@@ -965,7 +965,10 @@
 
 /* ══ 4.8 @media (pointer: coarse) ;  touch ergonomics, style.css:3125-3144 ══ */
 @media (pointer: coarse) {
-  .msearch, .hbg, .mno-close { width: 44px; height: 44px; }
+  .msearch, .hbg, .mno-close, .tp--m .tp-btn { width: 44px; height: 44px; }
+  /* King 2026-11-26 ; article pages enlarge search/menu to 44 on touch, so the
+     theme trigger must grow with them instead of staying 36. */
+  .tp--m .tp-btn { min-width: 44px; min-height: 44px; flex: 0 0 44px; }
   .cp { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
   .pagination .page-numbers { min-width: 44px; height: 44px; }
   .cp-scroll-btn { width: 44px; height: 44px; }
