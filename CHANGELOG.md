@@ -1,3 +1,15 @@
+## [0.7.126] - 2026-11-26: Salary-tax E17, first-time plain language
+
+A17 found 1 HIGH, 3 MEDIUM and 3 LOW plain-language defects.
+
+- **H1:** the hero badge now says "Nigeria Tax Act 2025" instead of "NTA 2025"; no bare acronym before its expansion.
+- **M1:** the hero explains rent relief in plain words ("cuts the income you pay tax on by 20% of your yearly rent") at first use.
+- **M2:** the 61-word period paragraph is now 34 words and drops the "verdict"/"receipt" metaphors; "result" and "rows below" instead.
+- **M3:** "Pension %" → "Pension contribution %"; "Other reliefs monthly ₦" → "Other deductions monthly ₦".
+- **L1/L2:** "CPS" and "NRS" expanded at their citations.
+
+No clipping at 320 or 390; all labels fit. Gates: build 84 · check 7/7 · check:ux 33/33 · test:calc 131/0/7.
+
 ## [0.7.125] - 2026-11-26: Salary-tax E16, screen-reader journey
 
 A16 found 1 HIGH, 2 MEDIUM and 2 LOW accessibility defects in the accessibility tree.
