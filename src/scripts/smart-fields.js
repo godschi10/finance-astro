@@ -497,14 +497,19 @@ function shareText(receipt) {
   if (!lines.some((l) => /\d/.test(l))) {
     return title + ", no figures yet; enter your numbers and this tool works them out.\n" + url;
   }
-  /* E14 H1/M1 ; a shared receipt must carry its ownership and provenance.
-     The page's own [data-own] markers are the truth: visible = our example. */
-  const ownVisible = $$("[data-own]", receipt).some((n) => {
+  /* E14 H1/M1, A19 H1 ; a shared receipt must carry its ownership and
+     provenance. The page's own [data-own] markers are the truth: visible
+     "Ours" = our example, visible "Partly yours" = a hybrid. */
+  const ownNodes = $$("[data-own]", receipt).filter((n) => {
     if (n.hidden || n.closest("[hidden]")) return false;
     const s = getComputedStyle(n);
     return s.display !== "none" && s.visibility !== "hidden" && (n.textContent || "").trim() !== "";
   });
-  lines.push(ownVisible ? "Our worked example, not your figures." : "Your figures, estimate only.");
+  const ownVisible = ownNodes.length > 0;
+  const partialOwn = ownNodes.some((n) => /partly yours/i.test(n.textContent || ""));
+  lines.push(partialOwn
+    ? "Partly yours: your entered numbers plus our worked example for the rest."
+    : ownVisible ? "Our worked example, not your figures." : "Your figures, estimate only.");
   const note = (receipt.getAttribute("data-share-note") || "").trim();
   if (note) lines.push(note);
   return title + "\n" + lines.join("\n") + "\n" + url;

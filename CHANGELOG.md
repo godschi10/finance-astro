@@ -1,6 +1,18 @@
-## [0.7.127] - 2026-11-26: Salary-tax E18, error recovery
+## [0.7.128] - 2026-11-26: Salary-tax E19, confidence calibration
 
-A18 found 4 HIGH, 1 MEDIUM and 1 LOW recovery defects.
+A19 found 1 HIGH, 2 MEDIUM and 1 LOW ownership/confidence defects.
+
+- **H1:** a one-field edit is now marked "Partly yours: 1 field yours; 7 still hold our worked example." at the receipt, comparison and verdict; Copy/WhatsApp says "Partly yours" instead of "Your figures."
+- **M1:** ownership is badge-based, not value-based; typing the same number as the seed no longer leaves "Ours" on a receipt whose field badge has cleared.
+- **M2:** `#st-seed-teach` and `#st-gap-note` hide on the first non-seed edit; Reset restores them.
+- **L1:** a fully-typed receipt shows "Your figures, estimate only." at the figure while the shared text stays "Your figures."
+- Withheld figures show no ownership marker.
+
+Verified states at 390: seed = Ours; gross-only = Partly yours; all-typed = Your figures; gross=300000 = Partly yours. Copy payload matches each state. Gates: build 84 · check 7/7 · check:ux 33/33 · test:calc 131/0/7.
+
+## [0.7.127] - 2026-11-26: Salary-tax E4b, error-recovery regression
+
+A4b found 4 HIGH, 1 MEDIUM and 1 LOW recovery defects.
 
 - **H1:** absurd bonus no longer claims "No figures are shown"; the regular ₦243,820 stays, bonus rows stay "–", and the comparison says "Bonus not priced."
 - **H2:** out-of-range now withholds every derived receipt cell (sub, pension, NHF/NHIS/life, reliefs, PAYE) instead of printing ₦0 tax/taxable beside "Out of range".

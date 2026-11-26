@@ -236,6 +236,7 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
    11px citation lines so both read at 320px, with a left rule marking the
    live line as a response to the visitor's own edit. */
 .st-seed-teach,.st-last-change{font-size:12px;line-height:1.6;color:#e8e0cc}
+.st-seed-teach[hidden],#st-gap-note[hidden]{display:none!important}
 .st-seed-teach strong,.st-last-change strong{color:#f5c26b}
 .st-last-change{font-weight:700;border-left:2px solid var(--gold-b);padding-left:8px;margin-top:8px}
 @media print{.st-trust-line,.st-trust-line strong,.st-trust-line a{color:#333!important}#st-next,#st-memory-note,.st-seed-teach{display:none!important}}
@@ -354,15 +355,65 @@ const SEED_VALUES: Record<string, string> = {
   "st-nhis": "0", "st-life": "0", "st-other": "0", "st-bonus": "0",
 };
 function ownershipIsOurs(): boolean {
-  /* E5 M4 : exact seed strings, not parsed numbers. Any typed-but-unreadable
-     value stands all three markers down (regression against E4 H1). */
-  return Object.keys(SEED_VALUES).every((id) => g(id).value === SEED_VALUES[id]);
+  /* A19 H1/M1 ; the badge is the truth, not the string. A visitor who types
+     the same number as the seed has replaced our example, even though the
+     value is byte-identical; all eight field badges still present is the ONLY
+     all-ours state. */
+  const fields = [...document.querySelectorAll(".tgrid .field")];
+  return fields.length === 8 && fields.every((f) => f.hasAttribute("data-sd"));
 }
-function paintOwnership(ours: boolean): void {
+function paintOwnership(ours: boolean, partial: boolean, sampleCount: number): void {
   const rec = document.getElementById("st-own-rec") as HTMLElement | null;
   const cmp = document.getElementById("st-own-cmp") as HTMLElement | null;
-  if (rec) { rec.textContent = ours ? OWN : ""; rec.hidden = !ours; }
-  if (cmp) { cmp.textContent = ours ? OWN_SHORT : ""; cmp.hidden = !ours; }
+  const userCount = 8 - sampleCount;
+  const partialTxt = `Partly yours: ${userCount} field${userCount === 1 ? "" : "s"} yours; ${sampleCount} still hold our worked example.`;
+  if (rec) {
+    rec.textContent = ours ? OWN : partial ? partialTxt : "Your figures, estimate only.";
+    rec.hidden = false;
+    if (ours || partial) rec.setAttribute("data-own", "");
+    else rec.removeAttribute("data-own");
+  }
+  if (cmp) {
+    cmp.textContent = ours ? OWN_SHORT : partial ? "Partly yours." : "";
+    cmp.hidden = !(ours || partial);
+  }
+}
+/* A19 H1/M1 ; ownership is read AFTER smart-fields has updated the field
+   badges for this input. The badge is the truth: all eight = ours, some = a
+   hybrid, none = the visitor's. Withheld figures show no ownership marker. */
+function syncOwnership(): void {
+  const fields = [...document.querySelectorAll(".tgrid .field")];
+  const sampleCount = fields.filter((f) => f.hasAttribute("data-sd")).length;
+  const ours = ownershipIsOurs();
+  const partial = sampleCount > 0 && sampleCount < 8;
+  const figTxt = (document.getElementById("st-fig")?.textContent || "").trim();
+  const withheld = figTxt === "–" || figTxt === "Out of range";
+  const seedTeach = document.getElementById("st-seed-teach") as HTMLElement | null;
+  const gapNote = document.getElementById("st-gap-note") as HTMLElement | null;
+  if (seedTeach) seedTeach.hidden = !ours || withheld;
+  if (gapNote) gapNote.hidden = !ours || withheld;
+  const rec = document.getElementById("st-own-rec") as HTMLElement | null;
+  const cmp = document.getElementById("st-own-cmp") as HTMLElement | null;
+  if (withheld) {
+    if (rec) rec.hidden = true;
+    if (cmp) cmp.hidden = true;
+    return;
+  }
+  paintOwnership(ours, partial, sampleCount);
+  const save = t("st-save");
+  const old = document.getElementById("st-own-save");
+  if (old) old.remove();
+  if (ours || partial) {
+    const sm = document.createElement("span");
+    sm.id = "st-own-save";
+    sm.className = "st-own";
+    sm.setAttribute("data-own", "");
+    const userCount = 8 - sampleCount;
+    sm.textContent = ours
+      ? " Ours, not yours: our worked example, not your figures."
+      : ` Partly yours: ${userCount} field${userCount === 1 ? "" : "s"} yours; ${sampleCount} still hold our worked example.`;
+    save.appendChild(sm);
+  }
 }
 /* THE ZERO LAW: every figure below declares the ids it is derived from, so a
    relief the visitor never entered cannot print itself as a gold ₦0 deduction. */
@@ -616,12 +667,8 @@ function render() {
      save_monthly in the per-month view; the engine returns both). */
   const saveFig = stPeriod === "annual" ? c.save_annual : c.save_monthly;
   const saveUnit = stPeriod === "annual" ? "yr" : "mo";
-  /* E4 H1 ; the three ours-not-yours markers are a view of the delivered
-     example, not a permanent caption. Once any seed field is the visitor's,
-     paintOwnership clears the receipt and comparison markers and no marker is
-     appended to the verdict. */
-  const ours = ownershipIsOurs();
-  paintOwnership(ours);
+  /* A19 H1/M1 ; ownership is synced after smart-fields updates the badges. */
+  setTimeout(syncOwnership, 0);
   /* E5 H1/H2/H3 ; a bad or unreadable detail withholds the verdict too. A
      CANNOT SCORE sentence carries the fix but no ₦ conclusion ; a parser-blank
      detail dashes the line beside the other withheld cells. Gross keeps its
@@ -649,14 +696,6 @@ function render() {
       : nw
         ? `You keep ${n(saveFig)}/${saveUnit} more under the new bands.`
         : `Under the old bands you would have kept ${n(-saveFig)}/${saveUnit} more; the new bands are the only ones in force.`;
-  if (ours) {
-    const sm = document.createElement("span");
-    sm.id = "st-own-save";
-    sm.className = "st-own";
-    sm.setAttribute("data-own", "");
-    sm.textContent = " Ours, not yours: our worked example, not your figures.";
-    t("st-save").appendChild(sm);
-  }
   const notes: string[] = [];
   if (grossBad) {
     /* E2 H1/H3 ; one rail, the field named and the fix concrete. The absurd
