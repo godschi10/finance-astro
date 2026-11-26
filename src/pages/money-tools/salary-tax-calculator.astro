@@ -37,7 +37,8 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
   { q: "Who pays zero PAYE?", a: "You pay no income tax on an employment if your gross income from that employment is at or below the national minimum wage (Nigeria Tax Act 2025, s.162(1)(t)). This is a different thing from the ₦800,000 zero-rate band, which applies to your taxable income once you are taxable. Last checked 25 Nov 2026 · <a href=\"https://nass.gov.ng/documents/download/11249\">Nigeria Tax Act 2025 gazette</a>: s.162(1)(t) and s.58 and Fourth Schedule" },
   { q: "How does rent relief work?", a: "20% of annual rent reduces taxable income, capped at ₦500,000 a year. Keep rent receipts. Last checked 25 Nov 2026 · <a href=\"https://repo.podus.ai/laws/nigeria-tax-act/section/30/\">Nigeria Tax Act 2025 s.30(2)(a)(vi)</a>" },
   { q: "How is a bonus taxed?", a: "A bonus is employment income, taxed on the day it is paid (NTA 2025 ss.4(2)(a), 26(2)). Enter it in the bonus field and we add it to your regular taxable income and charge only the extra tax, so a bonus pays at your marginal band rate rather than the top one. If the bonus lifts your gross above the national minimum wage, the minimum-wage exemption falls away (s.162(1)(t)): the first ₦800,000 of taxable income is still taxed at 0%. Last checked 25 Nov 2026 · <a href=\"https://nass.gov.ng/documents/download/11249\">Nigeria Tax Act 2025 gazette</a>: ss.4(2)(a), 26(2), 162(1)(t)" },
-  { q: "Old vs new: who wins?", a: "The new bands win for most salaries, especially with rent relief. Without rent, the old bands would have come out slightly ahead for gross pay of roughly ₦325k–₦535k a month (by at most about ₦1,000 a month), and again for very high earners. Note the old row is for comparison only: the Personal Income Tax Act it came from was repealed on 1 Jan 2026 (NTA 2025 s.195(g)), so no one is actually paid on it. Enter your salary and the comparison card shows your actual winner. Last checked 25 Nov 2026 · <a href=\"https://nass.gov.ng/documents/download/11249\">Nigeria Tax Act 2025 gazette</a>: s.195(g); old bands: <a href=\"https://fctirs.gov.ng/wp-content/uploads/2023/07/Personal-Income-Tax-Act.pdf\">PITA Cap. P8 LFN 2004</a>" },
+  { q: "I'm self-employed, a trader or retired. Can I use this?", a: "This calculator estimates PAYE on salary from an employer. It does not model business profit, trading income, freelance fees or pension income: those are taxed under different rules, so do not enter them as gross salary. Ask a tax professional or your tax office how they apply to you." },
+  { q: "Old vs new: who wins?", a: "The new bands win for most salaries, especially with rent relief. Without rent, the old bands would have come out slightly ahead for gross pay of roughly ₦325k–₦535k a month (by at most about ₦1,000 a month), and again for very high earners. Note the old row is for comparison only: the Personal Income Tax Act it came from was repealed on 1 Jan 2026 (NTA 2025 s.195(g)), so no one is actually paid on it. Enter your salary and the comparison card shows your actual winner. Last checked 25 Nov 2026 · <a href=\"https://nass.gov.ng/documents/download/11249\">Nigeria Tax Act 2025 gazette</a>: s.195(g); old bands: <a href=\"https://fctirs.gov.ng/wp-content/uploads/2023/07/Personal-Income-Tax-Act.pdf\">PITA Cap. P8 LFN 2004</a>" }
 ]}
   rawFaq
   badge="Nigeria Tax Act 2025 · In force since 1 Jan 2026",
@@ -48,6 +49,7 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
   related={[{ href: `${base}articles/kuda-vs-traditional-banks-charges/`, title: artTitle("kuda-vs-traditional-banks-charges"), excerpt: "Card fees, failed-transfer reversals, and support tested: what digital banks actually save you." }]},
   disclaimer="This calculator is for informational guidance only and is not tax, financial or investment advice. Tax rules and personal circumstances vary, confirm your figures with a licensed tax professional.">
 <div class="fx-card">
+<p class="hint st-scope"><strong>Salary/employment PAYE only.</strong> Business, freelance and pension income are not covered.</p>
 <p class="echo" data-sf-card hidden>Nothing here is filled in for you. Enter your numbers and the receipt waits.</p>
 <!-- PERIOD TOGGLE (S5 item 5) ; the WP tax tools' Monthly/Annual switch
      (page-salary-tax-calculator.php:68-71, with the label-flip JS at
@@ -387,7 +389,7 @@ function syncOwnership(): void {
   const ours = ownershipIsOurs();
   const partial = sampleCount > 0 && sampleCount < 8;
   const figTxt = (document.getElementById("st-fig")?.textContent || "").trim();
-  const withheld = figTxt === "–" || figTxt === "Out of range";
+  const withheld = figTxt === "–" || figTxt === "No salary" || figTxt === "Out of range";
   const seedTeach = document.getElementById("st-seed-teach") as HTMLElement | null;
   const gapNote = document.getElementById("st-gap-note") as HTMLElement | null;
   if (seedTeach) seedTeach.hidden = !ours || withheld;
@@ -530,6 +532,10 @@ function render() {
   const grossNegative = grossEntered && grossRaw < 0;
   const grossAbsurd = grossEntered && grossRaw > 100000000;
   const grossBad = grossMalformed || grossNegative || grossAbsurd;
+  /* A21 M1 ; a typed 0 is "no salary", not a ₦0 take-home with an EXEMPT
+     verdict beside a demand to enter a gross above ₦0. Withhold the receipt
+     and keep the demand. */
+  const grossZero = grossEntered && grossRaw === 0;
   /* E5 H1/H2/H4 ; detail errors join the same withheld state as a bad gross.
      Parser-blank details already dash through sfFig's blank deps, and the
      sentinel makes the hold uniform for digit-bearing garbage and minus signs. */
@@ -541,7 +547,7 @@ function render() {
      and over-cap values withhold the whole receipt. */
   const dHold = dStates.filter((s) => s.malformed || s.minus || s.overCap);
   /* One withheld dep id: every sfFig below dashes while any input is bad. */
-  const HOLD = grossBad || dHold.length > 0 || dBlank.length > 0 ? ["__st_hold__"] : [];
+  const HOLD = grossBad || grossZero || dHold.length > 0 || dBlank.length > 0 ? ["__st_hold__"] : [];
   const penRaw = pm(g("st-pension").value);
   const rentRaw = pm(g("st-rent").value);
   const nhfRaw = pm(g("st-nhf").value);
@@ -571,13 +577,15 @@ function render() {
      not just the headline. */
   const RANGE = netBad(r.net_monthly) ? ["__st_range__"] : [];
   const fv = figValue();
-  sfFig(fv, [...ALL, ...HOLD], netTxt(perNet(r)));
+  sfFig(fv, [...ALL, ...(grossZero ? [] : HOLD)], grossZero ? "No salary" : netTxt(perNet(r)));
   const figTxt = (fv.textContent || "").trim();
   figBox.setAttribute("aria-label", figTxt === "–"
     ? "Take-home: not available until the highlighted field is corrected."
-    : figTxt === "Out of range"
-      ? "Take-home: not available because deductions exceed gross."
-      : `Take-home: ${figTxt} ${stPeriod === "annual" ? "a year" : "a month"}`);
+    : figTxt === "No salary"
+      ? "Take-home: not available because no salary was entered."
+      : figTxt === "Out of range"
+        ? "Take-home: not available because deductions exceed gross."
+        : `Take-home: ${figTxt} ${stPeriod === "annual" ? "a year" : "a month"}`);
   sfFig(t("st-sub"), [...ALL, ...HOLD, ...RANGE], `Tax ${n(stPeriod === "annual" ? r.tax_annual : r.tax_monthly)}/${stPeriod === "annual" ? "yr" : "mo"} · taxable income (after deductions) ${n(r.taxable)}/yr${r.exempt && !grossBad ? " · EXEMPT (minimum wage)" : ""}`);
   sfFig(t("st-pen"), ["st-gross", "st-pension", ...HOLD, ...RANGE], n(r.pension_annual));
   /* E8b H1 ; the three deductions the engine subtracts but the receipt used to
@@ -695,6 +703,8 @@ function render() {
     ? "CANNOT SCORE. Monthly gross ₦: enter a plain number above ₦0. No verdict is shown until you do."
     : detailVerdict
     ? detailVerdict
+    : grossZero
+    ? "Old vs new bands compared on your gross: enter it above."
     : !grossKnown
     ? "Old vs new bands compared on your gross: enter it above."
     : cmpBad
@@ -706,7 +716,7 @@ function render() {
         : `Under the old bands you would have kept ${n(-saveFig)}/${saveUnit} more; the new bands are the only ones in force.`;
   const nextBox = document.getElementById("st-next");
   if (nextBox) {
-    const blocking = grossBad || detailBlankOnly || (detailBad && !onlyBonusAbsurd) || !grossKnown || netBad(r.net_monthly) || cmpBad;
+    const blocking = grossBad || grossZero || detailBlankOnly || (detailBad && !onlyBonusAbsurd) || !grossKnown || netBad(r.net_monthly) || cmpBad;
     nextBox.hidden = blocking;
   }
   const notes: string[] = [];

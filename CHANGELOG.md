@@ -1,3 +1,13 @@
+## [0.7.130] - 2026-11-26: Salary-tax E21, scenario scope
+
+A21 walked the calculator as a salary earner, a trader, a retiree and a student. 1 HIGH and 1 MEDIUM.
+
+- **H1:** a trader and a retiree got a confident salary take-home with no scope warning. Added a visible pre-form line: "Salary/employment PAYE only. Business, freelance and pension income are not covered.", plus a FAQ for self-employed/trader/retired visitors.
+- **M1:** gross 0 printed ₦0 + "EXEMPT (minimum wage)" while demanding a gross above ₦0. Gross 0 now shows "No salary", dashes every derived cell, hides ownership/next action, and keeps the demand. The zero gate distinguishes it from empty.
+- Scope line 77 px at 390 / 102 px at 320, zero overflow.
+
+Gates: build 84 · check 7/7 · check:ux 33/33 · test:calc 131/0/7.
+
 ## [0.7.129] - 2026-11-26: Salary-tax E20, mid-program review fixes
 
 A20 re-measured A1–A19 on the live build: 18 promises held, 3 regressions found.
