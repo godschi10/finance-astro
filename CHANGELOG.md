@@ -1,3 +1,15 @@
+## [0.7.125] - 2026-11-26: Salary-tax E16, screen-reader journey
+
+A16 found 1 HIGH, 2 MEDIUM and 2 LOW accessibility defects in the accessibility tree.
+
+- **H1:** all eight field hints now have ids and each input has `aria-describedby`, so a screen reader hears the guidance, not just the label.
+- **M1:** the three tables now have visually hidden captions (quick-check answers, old vs new bands, band breakdown).
+- **M2:** invalid fields now carry `aria-errormessage="st-warn-text"` alongside `aria-invalid`; both clear when valid.
+- **L1:** jump buttons now announce their destination ("Jump to monthly gross field", etc.).
+- **L2:** gross error grammar fixed ("Monthly gross ₦ is not a figure we can read, so…").
+
+Verified in the AX tree: 8/8 field descriptions, 3/3 table names, 4/4 jump names, error attributes set and cleared, captions 1×1 px with zero overflow. Gates: build 84 · check 7/7 · check:ux 33/33 · test:calc 131/0/7.
+
 ## [0.7.124] - 2026-11-26: Astro toolchain updated to latest
 
 - `astro` 7.3.8 → **7.4.13** (latest on npm), `@astrojs/check` 0.9.10 → 0.9.12, `@astrojs/markdown-remark` 7.3.2 → 7.3.10, installed together to avoid version skew.

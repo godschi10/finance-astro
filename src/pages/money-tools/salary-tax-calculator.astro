@@ -67,24 +67,24 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
      figure, changes state, or steals focus except Gross, which focuses the
      field a thumb just chose. Gaps are wider than the 8px touch-slop floor. -->
 <div class="st-jump" role="group" aria-label="Jump to calculator controls">
-  <button type="button" class="st-jump-btn" data-st-jump="gross">Gross</button>
-  <button type="button" class="st-jump-btn" data-st-jump="period">Period</button>
-  <button type="button" class="st-jump-btn" data-st-jump="result">Result</button>
-  <button type="button" class="st-jump-btn" data-st-jump="clear">Clear</button>
+  <button type="button" class="st-jump-btn" data-st-jump="gross" aria-label="Jump to monthly gross field">Gross</button>
+  <button type="button" class="st-jump-btn" data-st-jump="period" aria-label="Jump to monthly or annual period control">Period</button>
+  <button type="button" class="st-jump-btn" data-st-jump="result" aria-label="Jump to take-home result">Result</button>
+  <button type="button" class="st-jump-btn" data-st-jump="clear" aria-label="Jump to clear and reset controls">Clear</button>
 </div>
 <p class="hint">Only the take-home figure and its label, the tax line under it, the verdict and the comparison table's take-home column follow this period. The four annual rows in the receipt are pension, other reliefs, rent relief and PAYE (pay-as-you-earn tax); they stay annual in both views. The calculator itself works in months; the per-year view reads the engine's own annual figures.</p>
 <p class="hint" id="st-legend">Marked <strong>Sample</strong> means the figure is our worked example, not your own: type over any field and its Sample marker disappears. Clear examples removes only what is still ours; numbers you typed stay.</p>
 <p class="hint" id="st-rule">Fill all eight fields - type 0 for anything you do not have.</p>
 <div class="tgrid c3">
 
-<div class="field" data-cur="NGN"><label for="st-gross">Monthly gross ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-gross" type="text" value="300000" inputmode="decimal"></span><p class="hint">Enter the monthly gross pay from your payslip (basic salary plus housing and transport allowances), before pension and tax come off. The 2026 bands are worked out from this figure.</p></div>
-<div class="field"><label for="st-pension">Pension %</label><input id="st-pension" type="text" max="100" value="8" inputmode="decimal"><p class="hint">Pension contributions are calculated on your <strong>monthly emoluments</strong> (your basic salary plus your housing and transport allowances) per the Pension Reform Act 2014: a minimum of 8% by you and 10% by your employer. Only the portion you actually contribute is deductible under the Nigeria Tax Act 2025.<br><em>Last checked 25 Nov 2026 · NTA <a href="https://repo.podus.ai/laws/nigeria-tax-act/section/30/">s.30(2)(a)(iii)</a> · <a href="https://www.pencom.gov.ng/wp-content/uploads/2018/04/FAQ-CPS-reviewed.-17-Apr.-2018.pdf">PenCom FAQ on the CPS</a> (8% employee, 10% employer minimum)</em></p></div>
-<div class="field" data-cur="NGN"><label for="st-rent">Annual rent ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-rent" type="text" value="0" inputmode="decimal"></span><p class="hint">Per year, not per month: enter the total rent you pay in a year. 20% of it comes off your taxable income (what is left after these deductions), capped at ₦500,000 a year.<br><em>Last checked 25 Nov 2026 · NTA <a href="https://repo.podus.ai/laws/nigeria-tax-act/section/30/">s.30(2)(a)(vi)</a></em></p></div>
-<div class="field" data-cur="NGN"><label for="st-nhf">NHF monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-nhf" type="text" value="0" inputmode="decimal"></span><p class="hint">National Housing Fund (NHF): a long-term housing savings deduction from your salary, usually 2.5% of basic monthly pay. It comes off your taxable income. Enter the monthly amount your payslip shows.<br><em>Last checked 25 Nov 2026 · <a href="https://fmbn.gov.ng/backend/storage/uploads/37UNgpzsyASabzhQCnHuyzFtIpnsfmW2ODvAmQSG.pdf">NHF Act s.4</a> (2.5% of basic monthly salary) · NTA <a href="https://repo.podus.ai/laws/nigeria-tax-act/section/30/">s.30(2)(a)(i)</a></em></p></div>
-<div class="field" data-cur="NGN"><label for="st-nhis">NHIS monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-nhis" type="text" value="0" inputmode="decimal"></span><p class="hint">National Health Insurance Scheme (NHIS): a health insurance deduction that comes off your taxable income. Enter the monthly amount your payslip shows; leave at ₦0 if your payslip does not show it.<br><em>Last checked 25 Nov 2026 · NTA <a href="https://repo.podus.ai/laws/nigeria-tax-act/section/30/">s.30(2)(a)(ii)</a></em></p></div>
-<div class="field" data-cur="NGN"><label for="st-life">Life assurance monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-life" type="text" value="0" inputmode="decimal"></span><p class="hint">Leave at ₦0 if your payslip doesn't show it: when filled, it comes off taxable income.<br><em>Last checked 25 Nov 2026 · NTA <a href="https://repo.podus.ai/laws/nigeria-tax-act/section/30/">s.30(2)(a)(v)</a></em></p></div>
-<div class="field" data-cur="NGN"><label for="st-other">Other reliefs monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-other" type="text" value="0" inputmode="decimal"></span><p class="hint">Anything else your payroll deducts that reduces taxable income under the Nigeria Tax Act 2025. Same field as our Net to Gross calculator, so both tools answer identically. Leave at ₦0 if none.<br><em>Last checked 25 Nov 2026 · NTA <a href="https://repo.podus.ai/laws/nigeria-tax-act/section/30/">s.30(2)(a)</a></em></p></div>
-<div class="field" data-cur="NGN"><label for="st-bonus">Bonus / 13th month (an extra month's pay) ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-bonus" type="text" value="0" inputmode="decimal"></span><p class="hint">A one-off bonus or 13th-month payment, taxed on the day it is paid. It is added on top of your regular taxable income and only the extra tax is charged, so it is taxed at your marginal band rate (the rate on the last naira you earn, not your average rate), not at the top rate.<br><em>Last checked 25 Nov 2026 · NTA ss.4(2)(a), 26(2), 162(1)(t) in the <a href="https://nass.gov.ng/documents/download/11249">Nigeria Tax Act 2025 gazette</a></em></p></div>
+<div class="field" data-cur="NGN"><label for="st-gross">Monthly gross ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-gross" type="text" value="300000" inputmode="decimal" aria-describedby="st-gross-hint"></span><p class="hint" id="st-gross-hint">Enter the monthly gross pay from your payslip (basic salary plus housing and transport allowances), before pension and tax come off. The 2026 bands are worked out from this figure.</p></div>
+<div class="field"><label for="st-pension">Pension %</label><input id="st-pension" type="text" max="100" value="8" inputmode="decimal" aria-describedby="st-pension-hint"><p class="hint" id="st-pension-hint">Pension contributions are calculated on your <strong>monthly emoluments</strong> (your basic salary plus your housing and transport allowances) per the Pension Reform Act 2014: a minimum of 8% by you and 10% by your employer. Only the portion you actually contribute is deductible under the Nigeria Tax Act 2025.<br><em>Last checked 25 Nov 2026 · NTA <a href="https://repo.podus.ai/laws/nigeria-tax-act/section/30/">s.30(2)(a)(iii)</a> · <a href="https://www.pencom.gov.ng/wp-content/uploads/2018/04/FAQ-CPS-reviewed.-17-Apr.-2018.pdf">PenCom FAQ on the CPS</a> (8% employee, 10% employer minimum)</em></p></div>
+<div class="field" data-cur="NGN"><label for="st-rent">Annual rent ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-rent" type="text" value="0" inputmode="decimal" aria-describedby="st-rent-hint"></span><p class="hint" id="st-rent-hint">Per year, not per month: enter the total rent you pay in a year. 20% of it comes off your taxable income (what is left after these deductions), capped at ₦500,000 a year.<br><em>Last checked 25 Nov 2026 · NTA <a href="https://repo.podus.ai/laws/nigeria-tax-act/section/30/">s.30(2)(a)(vi)</a></em></p></div>
+<div class="field" data-cur="NGN"><label for="st-nhf">NHF monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-nhf" type="text" value="0" inputmode="decimal" aria-describedby="st-nhf-hint"></span><p class="hint" id="st-nhf-hint">National Housing Fund (NHF): a long-term housing savings deduction from your salary, usually 2.5% of basic monthly pay. It comes off your taxable income. Enter the monthly amount your payslip shows.<br><em>Last checked 25 Nov 2026 · <a href="https://fmbn.gov.ng/backend/storage/uploads/37UNgpzsyASabzhQCnHuyzFtIpnsfmW2ODvAmQSG.pdf">NHF Act s.4</a> (2.5% of basic monthly salary) · NTA <a href="https://repo.podus.ai/laws/nigeria-tax-act/section/30/">s.30(2)(a)(i)</a></em></p></div>
+<div class="field" data-cur="NGN"><label for="st-nhis">NHIS monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-nhis" type="text" value="0" inputmode="decimal" aria-describedby="st-nhis-hint"></span><p class="hint" id="st-nhis-hint">National Health Insurance Scheme (NHIS): a health insurance deduction that comes off your taxable income. Enter the monthly amount your payslip shows; leave at ₦0 if your payslip does not show it.<br><em>Last checked 25 Nov 2026 · NTA <a href="https://repo.podus.ai/laws/nigeria-tax-act/section/30/">s.30(2)(a)(ii)</a></em></p></div>
+<div class="field" data-cur="NGN"><label for="st-life">Life assurance monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-life" type="text" value="0" inputmode="decimal" aria-describedby="st-life-hint"></span><p class="hint" id="st-life-hint">Leave at ₦0 if your payslip doesn't show it: when filled, it comes off taxable income.<br><em>Last checked 25 Nov 2026 · NTA <a href="https://repo.podus.ai/laws/nigeria-tax-act/section/30/">s.30(2)(a)(v)</a></em></p></div>
+<div class="field" data-cur="NGN"><label for="st-other">Other reliefs monthly ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-other" type="text" value="0" inputmode="decimal" aria-describedby="st-other-hint"></span><p class="hint" id="st-other-hint">Anything else your payroll deducts that reduces taxable income under the Nigeria Tax Act 2025. Same field as our Net to Gross calculator, so both tools answer identically. Leave at ₦0 if none.<br><em>Last checked 25 Nov 2026 · NTA <a href="https://repo.podus.ai/laws/nigeria-tax-act/section/30/">s.30(2)(a)</a></em></p></div>
+<div class="field" data-cur="NGN"><label for="st-bonus">Bonus / 13th month (an extra month's pay) ₦</label><span class="fi"><span class="fi-sym" aria-hidden="true">₦</span><input id="st-bonus" type="text" value="0" inputmode="decimal" aria-describedby="st-bonus-hint"></span><p class="hint" id="st-bonus-hint">A one-off bonus or 13th-month payment, taxed on the day it is paid. It is added on top of your regular taxable income and only the extra tax is charged, so it is taxed at your marginal band rate (the rate on the last naira you earn, not your average rate), not at the top rate.<br><em>Last checked 25 Nov 2026 · NTA ss.4(2)(a), 26(2), 162(1)(t) in the <a href="https://nass.gov.ng/documents/download/11249">Nigeria Tax Act 2025 gazette</a></em></p></div>
 </div>
 <p class="hint" id="st-dedwarn" hidden></p>
 <div class="receipt" data-share-note="Estimate, not tax advice. Nigeria Tax Act 2025, checked 25 Nov 2026.">
@@ -150,6 +150,7 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
 ))}
 </div>
 <div class="st-table-wrap"><table class="st-table" id="st-quickcheck">
+<caption class="screen-reader-text">Quick-check take-home for three example salaries</caption>
 <thead><tr><th>Gross salary</th><th class="n">Take-home /mo</th><th class="n">PAYE /yr</th></tr></thead>
 <tbody>
 {wk.map((w) => (
@@ -161,6 +162,7 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
 <div class="hr"></div>
 <h2 class="tool-h2">Old vs new bands</h2>
 <div class="st-table-wrap"><table class="st-table" id="st-cmp">
+<caption class="screen-reader-text">Old PITA bands versus the new 2026 bands</caption>
 <thead><tr><th>Regime</th><th class="n">Tax /yr</th><th class="n" id="st-cmp-net-h">Take-home /mo</th></tr></thead>
 <tbody>
 <tr id="st-row-new" class={newWins ? "win" : ""}><td>New (2026)<span class="btag" id="st-tag-new" style={newWins ? "" : "display:none"}>Best</span> <span class="st-own" id="st-own-cmp" data-own>Ours, not yours.</span></td><td class="n" id="st-new-tax">₦{n(cmp.new.tax_annual)}</td><td class="n" id="st-new-net">₦{n(cmp.new.net_monthly)}</td></tr>
@@ -180,6 +182,7 @@ const wkLabel = (gross: number) => (gross >= 1000000 ? `₦${gross / 1000000}m` 
 <div class="hr"></div>
 <h2 class="tool-h2">2026 band breakdown</h2>
 <div class="st-table-wrap"><table class="st-table" id="st-bands">
+<caption class="screen-reader-text">2026 tax bands, rate and tax per slice</caption>
 <thead><tr><th>Band</th><th class="n">Rate</th><th class="n">Slice ₦</th><th class="n">Tax ₦</th></tr></thead>
 <tbody>
 {bands.map((b) => (
@@ -645,9 +648,9 @@ function render() {
     /* E2 H1/H3 ; one rail, the field named and the fix concrete. The absurd
        case keeps its existing "double-check" warn verbatim above this line. */
     if (grossAbsurd) notes.push("That gross looks unusually large: double-check the figure.");
-    const why = grossNegative ? "a negative entry has no take-home to price."
-      : grossMalformed ? "that is not a figure we can read has no take-home to price."
-      : "a figure this large has no take-home we will price.";
+    const why = grossNegative ? "is negative, so there is no take-home to price."
+      : grossMalformed ? "is not a figure we can read, so there is no take-home to price."
+      : "is outside the range we will price.";
     notes.push(`Monthly gross ₦ ${why} Enter a plain number above ₦0 at a realistic monthly salary. No figures or verdict are shown until you do.`);
   } else if (detailBad || detailBlankOnly) {
     /* E5 H1/H2/H4 ; name each offending field with its concrete fix. The
@@ -699,8 +702,8 @@ function render() {
        { id: "st-life", v: life }, { id: "st-other", v: other }, { id: "st-rent", v: rent * 0.2 }]
         .sort((a, b) => b.v - a.v)[0] || { id: "" }).id
     : "";
-  for (const id of [...DETAIL, "st-gross"]) g(id).removeAttribute("aria-invalid");
-  for (const id of invalidIds) g(id).setAttribute("aria-invalid", "true");
+  for (const id of [...DETAIL, "st-gross"]) { g(id).removeAttribute("aria-invalid"); g(id).removeAttribute("aria-errormessage"); }
+  for (const id of invalidIds) { g(id).setAttribute("aria-invalid", "true"); g(id).setAttribute("aria-errormessage", "st-warn-text"); }
   /* E6 F3 ; in the pure waiting state the ONE named notice moves to the first
      field instead of sitting thousands of pixels below it on a phone. No second
      live region: the same #st-warn moves with its Go-to control to #st-gross. */
