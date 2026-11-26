@@ -1,6 +1,6 @@
 {
   "name": "finance-astro",
-  "version": "0.7.123",
+  "version": "0.7.124",
   "type": "module",
   "scripts": {
     "build": "node scripts/gen-og.mjs && node scripts/fetch-snapshot.mjs && astro build",
@@ -11,13 +11,13 @@
     "test:calc": "node scripts/calc-regress.mjs"
   },
   "dependencies": {
-    "@astrojs/markdown-remark": "^7.3.2",
-    "astro": "^7.3.8",
+    "@astrojs/markdown-remark": "7.3.10",
+    "astro": "7.4.13",
     "http-cache-semantics": "^4.3.0",
     "rehype-slug": "^6.0.0"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.10",
+    "@astrojs/check": "0.9.12",
     "esbuild": "^0.28.2",
     "playwright": "^1.64.0",
     "postcss": "^8.5.28",

@@ -1,3 +1,10 @@
+## [0.7.124] - 2026-11-26: Astro toolchain updated to latest
+
+- `astro` 7.3.8 → **7.4.13** (latest on npm), `@astrojs/check` 0.9.10 → 0.9.12, `@astrojs/markdown-remark` 7.3.2 → 7.3.10, installed together to avoid version skew.
+- Lockfile refreshed; 0 vulnerabilities.
+- Full gates on the upgraded toolchain: build **84 pages**, check 7/7, check:ux 33/33, test:calc **131 pass / 0 fail / 7 skip**.
+- TypeScript stays on 5.9.3 deliberately: npm's "latest" is 7.0.2, a major jump the Astro toolchain does not ask for.
+
 ## [0.7.123] - 2026-11-26: Theme button matches neighbours on touch
 
 Root cause found: `article.css` has a `@media (pointer: coarse)` rule that enlarges `.msearch`, `.hbg` and `.mno-close` to 44×44 on touch devices, but the theme trigger was not in that list — so on the King's phone search/menu were 44 while the theme button stayed 36. That is why it only looked smaller on real touch devices and on article pages.
