@@ -1,3 +1,15 @@
+## [0.7.117] - 2026-11-25: Salary-tax E12, next-action clarity + FX re-check
+
+A12 returned FAIL (1 HIGH, 2 MEDIUM); E12 fixes all three.
+
+- The "What next" action moved directly under the take-home figure, before the trust/sources panel. Gap from the figure dropped from 1,244 px to 83 px at 390.
+- The two choices now carry a decision rule: "spending this take-home? Plan it with the 50-30-20 budget. Chasing a target take-home? Work back to the gross you need."
+- Both next-step links are real controls with a 44 px minimum: 196–266 × 65.2 px at 320 and 390, zero overflow.
+
+The general maintained-staleness gate was also blocking: the FX parallel-premium table was 46 days old. Re-checked from live sources on 25 Nov 2026 (CBN official USD/NGN ₦1,394.12; parallel sell about ₦1,455; 4.4% premium inside the recorded 2.2–4.4% range), added the dated observation and refreshed the check date.
+
+Gates: check 7/7 · check:ux 33/33 · build 84 · test:calc 131 pass / 0 fail / 7 skip · U+2014 0 · E11/E10/E9/E8 regression intact. Delegation record: Hermes researcher/builder model layer still failing; OpenCode banned; Manager made the E12 change directly and verified it.
+
 ## [0.7.116] - 2026-11-25: Salary-tax E11, comparison clarity
 
 A11 returned FAIL (1 HIGH, 1 MEDIUM, 1 LOW). E11 fixes the two copy findings; the last-time comparison stays HELD with the LAST-USED item.

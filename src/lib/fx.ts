@@ -64,18 +64,19 @@ export interface FxParallelObservation {
   premium: number;
 }
 
-/** Observed street premium over the official rate, as recorded Jul–Oct 2026. */
+/** Observed street premium over the official rate, as recorded Jul–Nov 2026. */
 export const FX_PARALLEL_OBSERVATIONS: FxParallelObservation[] = [
   { date: "2026-10-07", premium: 0.023 },
   { date: "2026-10-08", premium: 0.044 },
   { date: "2026-10-11", premium: 0.029 },
+  { date: "2026-11-25", premium: 0.044 },
 ];
 
-/** The observed range the premium moved across, Jul–Oct 2026. */
+/** The observed range the premium moved across, Jul–Nov 2026. */
 export const FX_PARALLEL_SPREAD_RANGE = { low: 0.022, high: 0.044 };
 
 /** Date the range above was last re-checked ; printed on every consumer. */
-export const FX_PARALLEL_VERIFIED_ON = "2026-10-11";
+export const FX_PARALLEL_VERIFIED_ON = "2026-11-25";
 
 /** Point estimate for arithmetic ONLY: the midpoint of the observed range. */
 export const FX_PARALLEL_SPREAD_POINT = 0.033;
