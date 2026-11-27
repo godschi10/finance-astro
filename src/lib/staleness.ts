@@ -142,7 +142,7 @@ export function maintainedTables(): MaintainedTable[] {
     {
       id: "fx_history_seed",
       label: "USD→NGN build-time seed series (exchange-rate-history)",
-      verifiedOn: "2026-10-12",
+      verifiedOn: "2026-11-13",
       source: "src/data/fx-history-seed.ts (committed fx-snapshot build history)",
     },
   ];

@@ -1,3 +1,15 @@
+## [0.7.132] - 2026-11-26: Salary-tax E23, low-literacy path
+
+A23 found 2 HIGH and 1 LOW.
+
+- **H1:** specialist labels replaced with plain ones: "Monthly pay before tax ₦", "Housing fund monthly ₦", "Health insurance monthly ₦", "Life insurance monthly ₦".
+- **H2:** field hints now open with the action (pension 76→68 words, bonus 73→58, rent 57→44) and the result reads "Tax … a month · income you pay tax on … a year"; "EXEMPT (minimum wage)" → "no tax (at or below minimum wage)".
+- **L1:** error copy says "No answer" and "Cannot work this out yet." instead of "verdict"/"CANNOT SCORE".
+- Recon parser re-pinned to the new plain result string.
+- Maintained FX history seed refreshed with committed USD/NGN snapshots through 13 Nov 2026 (staleness gate was at 46 days).
+
+Gates: build 84 · check 7/7 · check:ux 33/33 · test:calc 131/0/7.
+
 ## [0.7.131] - 2026-11-26: Salary-tax E22, low-numeracy path
 
 A22 found 1 HIGH, 1 MEDIUM and 2 LOW.

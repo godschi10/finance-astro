@@ -24,7 +24,7 @@
 import type { FxPoint } from "../lib/fx-history";
 
 /** Date the seed was last refreshed from the feed (the newest dated point). */
-export const FX_HISTORY_SEED_VERIFIED_ON = "2026-10-12";
+export const FX_HISTORY_SEED_VERIFIED_ON = "2026-11-13";
 
 /** Provenance of every point ; printed so a reader knows where the seed is from. */
 export const FX_HISTORY_SEED_SOURCE =
@@ -44,4 +44,17 @@ export const FX_HISTORY_SEED: FxPoint[] = [
   { date: "2026-10-10", ngn: 1331.267014 },
   { date: "2026-10-11", ngn: 1330.995081 },
   { date: "2026-10-12", ngn: 1330.171897 },
+  { date: "2026-10-13", ngn: 1331.44261 },
+  { date: "2026-10-26", ngn: 1334.299722 },
+  { date: "2026-10-29", ngn: 1346.236888 },
+  { date: "2026-10-30", ngn: 1334.299722 },
+  { date: "2026-11-03", ngn: 1345.872636 },
+  { date: "2026-11-04", ngn: 1346.069771 },
+  { date: "2026-11-05", ngn: 1346.474525 },
+  { date: "2026-11-08", ngn: 1347.744892 },
+  { date: "2026-11-09", ngn: 1346.24421 },
+  { date: "2026-11-10", ngn: 1349.070025 },
+  { date: "2026-11-11", ngn: 1350.423654 },
+  { date: "2026-11-12", ngn: 1349.822603 },
+  { date: "2026-11-13", ngn: 1350.459083 },
 ];

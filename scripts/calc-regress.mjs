@@ -748,7 +748,7 @@ async function runTool(slug, base, fields) {
         hidden: !!r.hidden,
       }));
       const sub = ((document.getElementById("st-sub") || {}).textContent || "").trim();
-      const m = sub.match(/taxable income \\(after deductions\\)\\s*₦([\\d,]+)\\/yr/);
+      const m = sub.match(/income you pay tax on\\s*₦([\\d,]+)\\s*a year/);
       return { rows, sub, taxable: m ? Number(m[1].replace(/,/g, "")) : null };
     })()`;
     const RECON_DED_RE = /^(Pension|NHF|NHIS|Life assurance|Other reliefs|Rent relief)/i;
