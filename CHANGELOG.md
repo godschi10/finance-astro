@@ -1,3 +1,12 @@
+## [0.7.133] - 2026-11-27: Salary-tax E25, night use
+
+A25 found 1 HIGH.
+
+- **H1:** dark input boundaries were 1.06:1 (`#211f1a` border on `#1c1a15` fill); unfocused fields disappeared into the card at night. Scoped dark border set to `#8a7c63` = 4.26:1 against the fill, 4.81:1 against the page. Verified on all eight fields at 390 and 320; light theme unchanged.
+- Night proof: first paint dark (no flash), System follows OS light/dark without reload, `theme-color` matches, 329 text runs pass contrast, focus ring amber 2 px.
+
+Gates: build 84 · check 7/7 · check:ux 33/33 · test:calc 131/0/7.
+
 ## [0.7.132] - 2026-11-26: Salary-tax E23, low-literacy path
 
 A23 found 2 HIGH and 1 LOW.
