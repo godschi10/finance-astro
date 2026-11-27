@@ -1991,6 +1991,18 @@ earlyTyped.forEach((v, id) => {
    The fleet's copy is the authoritative one, so the server's stand-in goes. */
 const ssrCtx = document.querySelector("#bg-top .ctx[data-e18-ctx]");
 if (ssrCtx && document.querySelector("#bg-top .ctx:not([data-e18-ctx])")) ssrCtx.remove();
+/* A28 ; the salary calculator hands its take-home over as ?income=. Apply it
+   AFTER register so the budget's own remembered income cannot overwrite the
+   figure the visitor just chose on the salary page. */
+(function applyIncomeHandoff(): void {
+  const raw = new URLSearchParams(location.search).get("income");
+  if (!raw) return;
+  const value = Number(raw.replace(/,/g, "").trim());
+  const inc = document.getElementById("bg-inc") as HTMLInputElement | null;
+  if (!inc || !Number.isFinite(value) || value <= 0 || value > 100000000) return;
+  inc.value = String(Math.round(value));
+  inc.dispatchEvent(new Event("input", { bubbles: true }));
+})();
 sfBind("50-30-20-budget-calculator", gv);
 /* MF-7 ; tap-a-row to compare: the receipt rows answer with the fields they
    are derived from (the offer already lives at the Spent-on-needs field, so

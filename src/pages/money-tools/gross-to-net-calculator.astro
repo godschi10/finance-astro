@@ -225,6 +225,11 @@ function syncUrl(): void {
   clearTimeout(urlTimer);
   urlTimer = setTimeout(syncUrlNow, 600);
 }
+g("gn-net").addEventListener("input", syncUrl);
+smartFields.register(TOOL_FIELDS["gross-to-net-calculator"]);
+sfBind("gross-to-net-calculator", gv);
+/* A28/A27 ; register() normalizes to server defaults, so a ?gross= deep link
+   must apply AFTER it. This was silently wiped by the A27 boot normalization. */
 (function applyUrlState(): void {
   if (!location.search) return;
   const u = new URLSearchParams(location.search);
@@ -237,8 +242,5 @@ function syncUrl(): void {
     history.replaceState(null, "", location.pathname);
   }
 })();
-g("gn-net").addEventListener("input", syncUrl);
-smartFields.register(TOOL_FIELDS["gross-to-net-calculator"]);
-sfBind("gross-to-net-calculator", gv);
 render();
 </script>

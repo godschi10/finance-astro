@@ -516,6 +516,24 @@ function paintPeriod(): void {
   t("st-lbl").textContent = stPeriod === "annual" ? "Take-home per year" : "Take-home monthly";
   t("st-cmp-net-h").textContent = stPeriod === "annual" ? "Take-home /yr" : "Take-home /mo";
 }
+/* A28 ; "Plan this take-home" must actually carry it. Every salary -> budget
+   link gets a validated monthly income query; a blocked/withheld figure removes
+   the parameter so the budget never opens on a stale handoff. */
+function syncNextLinks(): void {
+  const fig = (document.getElementById("st-fig")?.textContent || "").trim();
+  const m = fig.match(/₦\s*([\d,]+)/);
+  const amount = m ? Number(m[1].replace(/,/g, "")) : 0;
+  const monthly = stPeriod === "annual" ? amount / 12 : amount;
+  document.querySelectorAll('a[href*="50-30-20-budget-calculator"],a[href*="gross-to-net-calculator"]').forEach((a) => {
+    const href = (a as HTMLAnchorElement).href;
+    const url = new URL(href, location.href);
+    const key = href.indexOf("50-30-20-budget-calculator") >= 0 ? "income" : "gross";
+    if (monthly > 0 && Number.isFinite(monthly)) url.searchParams.set(key, String(Math.round(monthly)));
+    else url.searchParams.delete(key);
+    (a as HTMLAnchorElement).href = url.toString();
+  });
+}
+
 function render() {
   paintPeriod();
   syncQcChips();
@@ -726,6 +744,7 @@ function render() {
     const blocking = grossBad || grossZero || detailBlankOnly || (detailBad && !onlyBonusAbsurd) || !grossKnown || netBad(r.net_monthly) || cmpBad;
     nextBox.hidden = blocking;
   }
+  syncNextLinks();
   const notes: string[] = [];
   if (grossBad) {
     /* E2 H1/H3 ; one rail, the field named and the fix concrete. The absurd

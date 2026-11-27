@@ -1,3 +1,15 @@
+## [0.7.135] - 2026-11-27: Salary-tax E28, cross-tool handoff
+
+A28 found 2 HIGH.
+
+- **H1:** salary "Plan this take-home" opened the 50/30/20 budget at its ₦250,000 sample. All salary→budget links now carry `?income=<visible monthly take-home>`; the budget validates and applies it after register (Sample cleared).
+- **H2:** salary→gross-to-net links carried nothing, and gross-to-net's `?gross=` deep link was wiped by E27's boot normalization. Salary links now carry `?gross=<take-home>`; gross-to-net applies the query after register.
+- Withheld figures remove the parameter rather than carrying a bad number.
+- Theme and Remember consent persist across salary → budget → savings; the salary handoff overrides a remembered budget income because it applies after register.
+- Budget→savings stays a generic link: the savings goal needs a target and opening balance the budget cannot know. Recorded as a limit.
+
+Gates: build 84 · check 7/7 · check:ux 33/33 · test:calc 131/0/7.
+
 ## [0.7.134] - 2026-11-27: Salary-tax E27, interruption recovery
 
 A27 found 2 HIGH and 1 MEDIUM in the shared smart-fields spine.
