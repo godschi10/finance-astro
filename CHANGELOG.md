@@ -1,3 +1,16 @@
+## [0.7.136] - 2026-11-27: Salary-tax E29, FAQ-as-help
+
+A29 found 2 HIGH, 2 MEDIUM, 1 LOW.
+
+- **H1:** no FAQ for gross vs take-home. Added "What should I enter as my monthly pay before tax?" (gross = basic + housing + transport, before pension/tax; not net).
+- **H2:** no FAQ for payslip mismatch. Added "Why doesn't this match my payslip?" (one-employer estimate, payroll order, bonus timing, second job).
+- **M1:** rent FAQ lacked the monthly→annual conversion; now includes ₦60,000/month = ₦720,000/year and the 20% cap.
+- **M2:** bonus FAQ used "marginal band rate" and 76+ words; rewritten in plain language.
+- **L1:** FAQPage JSON-LD carried raw `<a>` markup in `acceptedAnswer.text`; `faqText()` now strips tags for schema, visible links unchanged.
+- FAQ count 5 → 8. The FAQ remains below the article at y≈13,163; a jump link is recorded as a layout limit, not added.
+
+Gates: build 84 · check 7/7 · check:ux 33/33 · test:calc 131/0/7.
+
 ## [0.7.135] - 2026-11-27: Salary-tax E28, cross-tool handoff
 
 A28 found 2 HIGH.
