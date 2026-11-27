@@ -1,3 +1,14 @@
+## [0.7.140] - 2026-11-27: Salary-tax E34, error-message voice
+
+A34 found 2 HIGH and 1 MEDIUM.
+
+- **H1:** malformed gross `12.5.5` produced the headline "No salary". `grossZero` now requires `!grossBad`; malformed/negative/absurd input is withheld as `–`, not described as no salary. A typed `0` still says No salary.
+- **H2:** the NHF out-of-range rail carried the full NHF Act citation and Last checked date; replaced with "NHF has no statutory ceiling. Confirm the figure on your payslip; the 2.5% guide is in the field hint." The citation stays in the field hint/Sources.
+- **M1:** recovery text and Go-to button concatenated as "until you do.Go to …"; `warnText` now ends with a space.
+- Pension 150, bonus absurd and two-blank lines unchanged except the separator; pension `abc` stays a withheld summary with a human field rail.
+
+Gates: build 84 · check 7/7 · check:ux 33/33 · test:calc 131/0/7.
+
 ## [0.7.139] - 2026-11-27: Salary-tax E32, print/paper path
 
 A32 found 1 HIGH and 1 MEDIUM.
