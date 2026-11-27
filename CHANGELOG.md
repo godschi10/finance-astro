@@ -1,3 +1,14 @@
+## [0.7.137] - 2026-11-27: Salary-tax E30, disclosure honesty
+
+A30 found 2 HIGH and 1 MEDIUM.
+
+- **H1:** reload cleared the gross Sample badge, said "Partly yours: 1 field yours" and printed a last-change line for a change nobody made. `historyRepaint` now suppresses badge stripping and last-change during the A27 `pageshow` repaint; reload keeps all eight Sample badges and reads "Ours, not yours".
+- **H2:** "take-home -₦179,420/mo" read as a negative take-home. It now says "take-home down ₦179,420/mo" (or "up").
+- **M1:** "Use this" / quick-check values were counted as "yours" and survived Clear examples with no provenance. Offer fields now carry `data-shortcut` (`minimum-wage`) and chips `example`; ownership says "1 field from a shortcut"; last change is prefixed "Minimum-wage shortcut." or "Example chip."; typing over the field clears the marker. Clear examples copy now names shortcut/example values as staying.
+- Clear examples after a shortcut leaves a partial form with the fill-all-eight rule; recorded as a limit, not an extra notice.
+
+Gates: build 84 · check 7/7 · check:ux 33/33 · test:calc 131/0/7.
+
 ## [0.7.136] - 2026-11-27: Salary-tax E29, FAQ-as-help
 
 A29 found 2 HIGH, 2 MEDIUM, 1 LOW.

@@ -142,7 +142,7 @@ let TOOL = "", MEM = {}, OFFERS = [];
    It is the whole calculator, not just the seeds: Reset must also hand back the
    ₦0 relief rows a visitor may have typed into (salary-tax's st-rent, gross-to-net's
    gn-nhf) and the direction selects a page remembers (cc-from, dv-stock). */
-let CFG = {}, SNAP = [], resetting = false, storageReady = false;
+let CFG = {}, SNAP = [], resetting = false, storageReady = false, historyRepaint = false;
 
 /* The calculator region. .con is the shell's own content wrapper and the button row
    lives inside it, so the nearest .con above Reset IS the calculator, and it
@@ -405,6 +405,8 @@ function offer(o) {
     if (b.getAttribute("aria-disabled")) return;
     const i = el(o.field);
     if (!i) return;
+    const fld = i.closest(".field");
+    if (fld) fld.setAttribute("data-shortcut", o.provenance || "shortcut");
     writeInto(i, String(typeof o.use === "function" ? o.use() : o.use));
   });
   p.appendChild(s); p.appendChild(b);
@@ -614,7 +616,7 @@ function boot() {
     /* During a reset these input events are OURS, not the visitor's: the badge
        stripping and the dead-seed marking below are for a human typing, and
        would otherwise undo the SAMPLE state reset() has just re-armed. */
-    if (!resetting && f && f.hasAttribute("data-sd")) { mark(f, "", "", ""); if (i.id) dead.add(i.id); }
+    if (!resetting && !historyRepaint && f && f.hasAttribute("data-sd")) { mark(f, "", "", ""); if (i.id) dead.add(i.id); }
     /* A tool-written value is flagged derived and never persisted; a keystroke
        in that same field is the visitor taking it over, and clears the flag. */
     if (i.id) { if (writing) DERIVED.add(i.id); else DERIVED.delete(i.id); }
@@ -660,7 +662,10 @@ function repaintAfterHistory() {
   const type = nav && nav.type;
   const first = $$("input,select,textarea", scope()).find((n) => n.id && !/^(hidden|submit|button|reset|image)$/.test(n.type));
   if (!first) return;
-  first.dispatchEvent(new Event(first.tagName === "SELECT" ? "change" : "input", { bubbles: true }));
+  historyRepaint = true;
+  window.__sfHistoryRepaint = true;
+  try { first.dispatchEvent(new Event(first.tagName === "SELECT" ? "change" : "input", { bubbles: true })); }
+  finally { historyRepaint = false; window.__sfHistoryRepaint = false; }
 }
 window.addEventListener("load", () => { storageReady = true; });
 window.addEventListener("pageshow", (e) => {

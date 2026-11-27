@@ -508,7 +508,7 @@ export const TOOL_FIELDS: Record<string, SfTool> = {
     seeds: ["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life", "st-other", "st-bonus"],
     /* Statutory, sourced on the same field below, and law rather than a claim
        about the visitor: the one legal figure that can honestly be offered. */
-    derive: [{ field: "st-gross", use: 70000, text: "₦70,000 a month, the statutory minimum wage, where PAYE is nil." }],
+    derive: [{ field: "st-gross", use: 70000, provenance: "minimum-wage", text: "₦70,000 a month, the statutory minimum wage, where PAYE is nil." }],
     context: [{
       field: "st-gross",
       text: "The statutory minimum wage is ₦70,000 a month, signed into law in July 2024. At or below it there is no PAYE to pay, pension still applies.",

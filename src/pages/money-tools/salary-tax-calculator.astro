@@ -78,7 +78,7 @@ const wkLabel = (gross: number) => `₦${n(gross)}`;
   <button type="button" class="st-jump-btn" data-st-jump="clear" aria-label="Jump to clear and reset controls">Clear</button>
 </div>
 <p class="hint">Only the take-home figure, tax line, result and comparison table change with this switch. The four rows below (pension, other deductions, rent relief and PAYE, pay-as-you-earn tax) stay yearly.</p>
-<p class="hint" id="st-legend">Marked <strong>Sample</strong> means the figure is our worked example, not your own: type over any field and its Sample marker disappears. Clear examples removes only what is still ours; numbers you typed stay.</p>
+<p class="hint" id="st-legend">Marked <strong>Sample</strong> means the figure is our worked example, not your own: type over any field and its Sample marker disappears. Clear examples removes only what is still ours; numbers you typed, or loaded from a shortcut or example chip, stay.</p>
 <p class="hint" id="st-rule">Fill all eight fields - type 0 for anything you do not have.</p>
 <div class="tgrid c3">
 
@@ -196,7 +196,7 @@ const wkLabel = (gross: number) => `₦${n(gross)}`;
 </tbody>
 </table></div>
 <p class="bar-note" id="st-bands-note" hidden></p>
-<p class="bar-note">Clear examples removes the worked-example values; numbers you typed in stay as they are. Reset brings back the worked example.</p>
+<p class="bar-note">Clear examples removes the worked-example values; numbers you typed, or loaded from a shortcut or example chip, stay as they are. Reset brings back the worked example.</p>
 </ToolShell>
 <style>
 /* E7 F1 ; the Go-to-field control is a BUTTON, not a sentence, so it takes a
@@ -278,7 +278,7 @@ function hideLastChange(): void {
 }
 function lcDelta(v: number): string {
   if (Math.abs(v) < 0.5) return "take-home unchanged";
-  return `take-home ${v > 0 ? "+" : "-"}₦${formatGrouped(Math.abs(v), 0)}/mo`;
+  return `take-home ${v > 0 ? "up" : "down"} ₦${formatGrouped(Math.abs(v), 0)}/mo`;
 }
 function paintLastChange(id: string): void {
   const s = stSnapshot;
@@ -319,6 +319,8 @@ function paintLastChange(id: string): void {
     line = `Monthly gross ${n(gross)}: ${eff()}.`;
   }
   if (!line) { hideLastChange(); return; }
+  const src = g(id).closest(".field")?.getAttribute("data-shortcut");
+  if (src) line = (src === "minimum-wage" ? "Minimum-wage shortcut. " : "Example chip. ") + line;
   lcBox.textContent = line;
   lcBox.hidden = false;
 }
@@ -368,11 +370,13 @@ function ownershipIsOurs(): boolean {
   const fields = [...document.querySelectorAll(".tgrid .field")];
   return fields.length === 8 && fields.every((f) => f.hasAttribute("data-sd"));
 }
-function paintOwnership(ours: boolean, partial: boolean, sampleCount: number): void {
+function paintOwnership(ours: boolean, partial: boolean, sampleCount: number, shortcutCount = 0, typedCount = 8 - sampleCount): void {
   const rec = document.getElementById("st-own-rec") as HTMLElement | null;
   const cmp = document.getElementById("st-own-cmp") as HTMLElement | null;
-  const userCount = 8 - sampleCount;
-  const partialTxt = `Partly yours: ${userCount} field${userCount === 1 ? "" : "s"} yours; ${sampleCount} still hold our worked example.`;
+  const bits: string[] = [];
+  if (typedCount > 0) bits.push(`${typedCount} field${typedCount === 1 ? "" : "s"} yours`);
+  if (shortcutCount > 0) bits.push(`${shortcutCount} field${shortcutCount === 1 ? "" : "s"} from a shortcut`);
+  const partialTxt = `Partly yours: ${bits.join(", ")}; ${sampleCount} still hold our worked example.`;
   if (rec) {
     rec.textContent = ours ? OWN : partial ? partialTxt : "Your figures, estimate only.";
     rec.hidden = false;
@@ -390,6 +394,7 @@ function paintOwnership(ours: boolean, partial: boolean, sampleCount: number): v
 function syncOwnership(): void {
   const fields = [...document.querySelectorAll(".tgrid .field")];
   const sampleCount = fields.filter((f) => f.hasAttribute("data-sd")).length;
+  const shortcutCount = fields.filter((f) => f.hasAttribute("data-shortcut")).length;
   const ours = ownershipIsOurs();
   const partial = sampleCount > 0 && sampleCount < 8;
   const figTxt = (document.getElementById("st-fig")?.textContent || "").trim();
@@ -413,7 +418,7 @@ function syncOwnership(): void {
     if (oldMixedSave) oldMixedSave.remove();
     return;
   }
-  paintOwnership(ours, partial, sampleCount);
+  paintOwnership(ours, partial, sampleCount, shortcutCount, 8 - sampleCount - shortcutCount);
   const save = t("st-save");
   const old = document.getElementById("st-own-save");
   if (old) old.remove();
@@ -422,10 +427,13 @@ function syncOwnership(): void {
     sm.id = "st-own-save";
     sm.className = "st-own";
     sm.setAttribute("data-own", "");
-    const userCount = 8 - sampleCount;
+    const userCount = 8 - sampleCount - shortcutCount;
+    const bits: string[] = [];
+    if (userCount > 0) bits.push(`${userCount} field${userCount === 1 ? "" : "s"} yours`);
+    if (shortcutCount > 0) bits.push(`${shortcutCount} field${shortcutCount === 1 ? "" : "s"} from a shortcut`);
     sm.textContent = ours
       ? " Ours, not yours: our worked example, not your figures."
-      : ` Partly yours: ${userCount} field${userCount === 1 ? "" : "s"} yours; ${sampleCount} still hold our worked example.`;
+      : ` Partly yours: ${bits.join(", ")}; ${sampleCount} still hold our worked example.`;
     save.appendChild(sm);
   }
 }
@@ -878,6 +886,7 @@ function syncQcChips(): void {
 }
 for (const b of QC_CHIPS) {
   b.addEventListener("click", () => {
+    g("st-gross").closest(".field")?.setAttribute("data-shortcut", "example");
     g("st-gross").value = b.dataset.qcGross as string;
     g("st-gross").dispatchEvent(new Event("input", { bubbles: true }));
     const target = document.getElementById(b.dataset.qcGoto as string);
@@ -999,8 +1008,9 @@ sfBind("salary-tax-calculator", gv);
    print a change nobody made. Registered after the page's own render listener,
    so stSnapshot is already fresh when this one paints. */
 ["st-gross", "st-pension", "st-rent", "st-nhf", "st-nhis", "st-life", "st-other", "st-bonus"].forEach((id) =>
-  g(id).addEventListener("input", () => {
-    if (lcBlocked) { hideLastChange(); return; }
+  g(id).addEventListener("input", (e) => {
+    if (lcBlocked || (window as any).__sfHistoryRepaint) { hideLastChange(); return; }
+    if (e.isTrusted) g(id).closest(".field")?.removeAttribute("data-shortcut");
     paintLastChange(id);
   }));
 render();
