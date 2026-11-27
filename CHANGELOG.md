@@ -1,3 +1,14 @@
+## [0.7.134] - 2026-11-27: Salary-tax E27, interruption recovery
+
+A27 found 2 HIGH and 1 MEDIUM in the shared smart-fields spine.
+
+- **H1:** Reset and "Clear my saved numbers" were undone by reload: browser form restoration put pre-Reset values back, and the spine re-saved them. Boot now normalizes to server `defaultValue`/`defaultChecked`/`defaultSelected`, restores only consent-backed remembered fields, and does not persist a value equal to the server default.
+- **H2:** a back-forward return could pair new inputs with an old receipt (`460000/14` beside `₦229,060`). `pageshow` now repaints reload/back-forward states from the fields on screen; back_forward preserves the visitor's values, reload restores defaults plus remembered fields.
+- **M1:** browser-restored values bypassed the "never saved" copy when Remember was off. Server-default normalization now keeps gross/rent at the worked example on reload.
+- `storageReady` suppresses writes until load; dismissed-seed traces are cleared at register.
+
+Gates: build 84 · check 7/7 · check:ux 33/33 · test:calc 131/0/7.
+
 ## [0.7.133] - 2026-11-27: Salary-tax E25, night use
 
 A25 found 1 HIGH.

@@ -142,7 +142,7 @@ let TOOL = "", MEM = {}, OFFERS = [];
    It is the whole calculator, not just the seeds: Reset must also hand back the
    ₦0 relief rows a visitor may have typed into (salary-tax's st-rent, gross-to-net's
    gn-nhf) and the direction selects a page remembers (cc-from, dv-stock). */
-let CFG = {}, SNAP = [], resetting = false;
+let CFG = {}, SNAP = [], resetting = false, storageReady = false;
 
 /* The calculator region. .con is the shell's own content wrapper and the button row
    lives inside it, so the nearest .con above Reset IS the calculator, and it
@@ -155,7 +155,33 @@ function scope() {
 
 /* Snapshot the delivered state. `checked` for toggles, `value` for everything else;
    a control with no id is left alone ; nothing could address it. */
+function defaultOf(n) {
+  if (n.type === "checkbox" || n.type === "radio") return n.defaultChecked;
+  if (n.tagName === "SELECT") {
+    const o = Array.prototype.find.call(n.options, (opt) => opt.defaultSelected);
+    return o ? o.value : (n.options[0] ? n.options[0].value : "");
+  }
+  return n.defaultValue;
+}
+
+/* A27 ; browser form restoration can repaint a reloaded/back-forward page with
+   values the site never stored, bypassing the "Remember my numbers" consent and
+   handing Reset's work back after a reload. The server's value attribute is the
+   only honest default; use it before takeSnapshot(), then let restore() apply
+   the remembered fields on top. */
+function normalizeToDefaults() {
+  $$("input,select,textarea", scope()).forEach((n) => {
+    if (!n.id || n.id === "sf-remember" || /^(hidden|submit|button|reset|image)$/.test(n.type)) return;
+    if (n.type === "checkbox" || n.type === "radio") {
+      if (n.checked !== n.defaultChecked) n.checked = n.defaultChecked;
+      return;
+    }
+    const d = defaultOf(n);
+    if (String(n.value) !== String(d)) n.value = d;
+  });
+}
 function takeSnapshot() {
+  normalizeToDefaults();
   SNAP = $$("input,select,textarea", scope())
     .filter((n) => n.id && !/^(hidden|submit|button|reset|image)$/.test(n.type))
     .map((n) => ({ el: n, checked: /^(checkbox|radio)$/.test(n.type), value: /^(checkbox|radio)$/.test(n.type) ? n.checked : n.value }));
@@ -294,7 +320,7 @@ function mark(f, attr, text, title) {
 function save() {
   /* P2-8/D5: the opt-in is OFF by default ; no write at all while it is off.
      `resetting` stays first: during a reset, silence is the contract. */
-  if (!TOOL || resetting || !rememberOn()) return;
+  if (!TOOL || resetting || !storageReady || !rememberOn()) return;
   const v = {};
   /* A1-F4 ; an untouched seed is OURS, never memory. save() used to persist
      ANY non-empty remembered id, so typing into one field stored all six
@@ -303,7 +329,14 @@ function save() {
      still wears its SAMPLE badge has not been touched, so it is skipped: only
      what the visitor actually entered (badge gone, value present, not derived)
      is ever remembered. */
-  Object.keys(MEM).forEach((id) => { const w = wrap(id); if (w && w.hasAttribute("data-sd")) return; const s = MEM[id].value; if (s !== "" && !DERIVED.has(id)) v[id] = s; });
+  Object.keys(MEM).forEach((id) => {
+    const w = wrap(id); if (w && w.hasAttribute("data-sd")) return;
+    const s = MEM[id].value;
+    // A27 ; a default is already what a reload shows. Writing it back makes
+    // "Clear my saved numbers" look defeated on the next load for no gain.
+    if (w && !w.hasAttribute("data-r") && String(s) === String(defaultOf(MEM[id]))) return;
+    if (s !== "" && !DERIVED.has(id)) v[id] = s;
+  });
   try {
     if (Object.keys(v).length) localStorage.setItem(KEY(TOOL), JSON.stringify({ t: Date.now(), v }));
     else localStorage.removeItem(KEY(TOOL));
@@ -439,6 +472,8 @@ function clearExamples() {
 
 function register(cfg) {
   TOOL = cfg.tool || "";
+  dead.clear(); // A27: browser form restoration can fire input before register;
+                // clear its dismissed-seed traces so the delivered seeds stay ours.
   CFG = cfg;
   takeSnapshot(); // BEFORE restore(): this must capture the server's example
   MEM = {};
@@ -615,6 +650,33 @@ function boot() {
      the receipts are in the initial HTML, so module-eval time is soon enough. */
   initShare();
 }
+
+/* A27 ; a back-forward page can be restored with the browser's form values and
+   the old figure still on screen. Repaint once from the restored fields so the
+   receipt always belongs to what the visitor can see. Initial navigations are
+   left alone; reload/back-forward (and bfcache) are the interruption cases. */
+function repaintAfterHistory() {
+  const nav = performance.getEntriesByType("navigation")[0];
+  const type = nav && nav.type;
+  const first = $$("input,select,textarea", scope()).find((n) => n.id && !/^(hidden|submit|button|reset|image)$/.test(n.type));
+  if (!first) return;
+  first.dispatchEvent(new Event(first.tagName === "SELECT" ? "change" : "input", { bubbles: true }));
+}
+window.addEventListener("load", () => { storageReady = true; });
+window.addEventListener("pageshow", (e) => {
+  const nav = performance.getEntriesByType("navigation")[0];
+  if (!e.persisted && nav && nav.type !== "back_forward" && nav.type !== "reload") return;
+  setTimeout(() => {
+    if (!e.persisted && nav && nav.type === "reload") {
+      const t = el("sf-remember");
+      try { if (t) t.checked = localStorage.getItem(CONSENT) === "1"; } catch {}
+      normalizeToDefaults();
+      if (rememberOn()) restore();
+    }
+    repaintAfterHistory();
+    storageReady = true;
+  }, 0);
+});
 
 const smartFields = { register: register, markEmpty: markEmpty };
 if (typeof window !== "undefined") window.smartFields = smartFields;
