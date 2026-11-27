@@ -1,3 +1,15 @@
+## [0.7.139] - 2026-11-27: Salary-tax E32, print/paper path
+
+A32 found 1 HIGH and 1 MEDIUM.
+
+- **H1:** print carried dead screen controls: Monthly/Annual, GROSS/PERIOD/RESULT/CLEAR, Use this and the example chips. All are now hidden in print.
+- **M1:** print included the full 2,195 px article and eight FAQs — 8 A4 pages. `.fx-copy.art-body` is now hidden in print (specificity beats `article.css`'s `display:block!important`), giving a 5-page result-plus-method worksheet.
+- Added `break-inside:avoid` to the receipt/tables; print inputs are white with #111 text and #999 border.
+- Existing hides kept: ticker, header, drawer, footer, ads, `.sf-ctrls`, `.sf-share`, `#st-next`, `#st-memory-note`, `.st-seed-teach`.
+- Print is 0 visible buttons; monthly ₦352,700 and annual ₦4,195,200 both retain their labels and `/yr` units.
+
+Gates: build 84 · check 7/7 · check:ux 33/33 · test:calc 131/0/7.
+
 ## [0.7.138] - 2026-11-27: Salary-tax E31, toggle units
 
 A31 found 1 MEDIUM.
