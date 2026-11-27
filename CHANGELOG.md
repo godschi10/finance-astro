@@ -1,3 +1,12 @@
+## [0.7.138] - 2026-11-27: Salary-tax E31, toggle units
+
+A31 found 1 MEDIUM.
+
+- **M1:** the band table's "Slice ₦" and "Tax ₦" columns never said the figures are annual. Caption now says "annual tax per slice"; headers are "Slice ₦/yr" and "Tax ₦/yr". No values or layout changed.
+- Monthly/Annual otherwise verified: "Take-home monthly" ↔ "Take-home per year"; `/mo` ↔ `/yr` comparison; annual rent and monthly inputs stay explicit; Reset keeps the chosen period; quick-check table is explicit.
+
+Gates: build 84 · check 7/7 · check:ux 33/33 · test:calc 131/0/7.
+
 ## [0.7.137] - 2026-11-27: Salary-tax E30, disclosure honesty
 
 A30 found 2 HIGH and 1 MEDIUM.

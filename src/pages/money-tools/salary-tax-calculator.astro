@@ -187,8 +187,8 @@ const wkLabel = (gross: number) => `₦${n(gross)}`;
 <div class="hr"></div>
 <h2 class="tool-h2">2026 band breakdown</h2>
 <div class="st-table-wrap"><table class="st-table" id="st-bands">
-<caption class="screen-reader-text">2026 tax bands, rate and tax per slice</caption>
-<thead><tr><th>Band</th><th class="n">Rate</th><th class="n">Slice ₦</th><th class="n">Tax ₦</th></tr></thead>
+<caption class="screen-reader-text">2026 tax bands, rate and annual tax per slice</caption>
+<thead><tr><th>Band</th><th class="n">Rate</th><th class="n">Slice ₦/yr</th><th class="n">Tax ₦/yr</th></tr></thead>
 <tbody>
 {bands.map((b) => (
 <tr><td>₦{n(b.low)}{b.high === null ? "+" : ` – ₦${n(b.high)}`}</td><td class="n">{(b.rate * 100).toFixed(0)}%</td><td class="n">₦{n(b.slice)}</td><td class="n">₦{n(b.tax)}</td></tr>
