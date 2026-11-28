@@ -668,6 +668,19 @@ function repaintAfterHistory() {
   finally { historyRepaint = false; window.__sfHistoryRepaint = false; }
 }
 window.addEventListener("load", () => { storageReady = true; });
+/* A39 ; browser form restoration can strip the Sample badges before this
+   pageshow handler runs. Re-arm only untouched seed values: a restored
+   pension (data-r) and a shortcut stay theirs. */
+function rearmSeedBadges() {
+  (CFG.seeds || []).forEach((id) => {
+    const f = wrap(id), i = el(id);
+    if (!f || !i || f.hasAttribute("data-sd") || f.hasAttribute("data-r") || f.hasAttribute("data-shortcut")) return;
+    if (String(i.value) === String(defaultOf(i))) mark(f, "data-sd", "Sample", "Example, ours, not yours. Tap to replace it.");
+  });
+  paint();
+  syncClear();
+}
+
 window.addEventListener("pageshow", (e) => {
   const nav = performance.getEntriesByType("navigation")[0];
   if (!e.persisted && nav && nav.type !== "back_forward" && nav.type !== "reload") return;
@@ -679,6 +692,7 @@ window.addEventListener("pageshow", (e) => {
       if (rememberOn()) restore();
     }
     repaintAfterHistory();
+    rearmSeedBadges();
     storageReady = true;
   }, 0);
 });

@@ -1,6 +1,6 @@
 {
   "name": "finance-astro",
-  "version": "0.7.141",
+  "version": "0.7.142",
   "type": "module",
   "scripts": {
     "build": "node scripts/gen-og.mjs && node scripts/fetch-snapshot.mjs && astro build",
@@ -8,7 +8,8 @@
     "check": "node scripts/check.mjs",
     "check:types": "astro check",
     "check:ux": "node scripts/ux-parity.mjs",
-    "test:calc": "node scripts/calc-regress.mjs"
+    "test:calc": "node scripts/calc-regress.mjs && node scripts/salary-ux-contract.mjs",
+    "test:ux": "node scripts/salary-ux-contract.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "7.3.10",

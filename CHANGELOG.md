@@ -1,3 +1,14 @@
+## [0.7.142] - 2026-11-27: Salary-tax E39, suite-vs-human parity
+
+A39 found the salary UX grammar had no automated contract, and the existing UX parity gate was not in CI.
+
+- Added `scripts/salary-ux-contract.mjs`, **36 browser assertions**: seed/reload Sample badges and ownership, malformed gross, NHF rail length, shortcut provenance, empty-state aria/save/EXEMPT, reset period, annual units, budget/gross handoffs, 8 FAQs + plain schema, 320 figure fit, print controls/article hides.
+- Added `npm run test:ux`; folded the salary contract into the existing `test:calc` behavioural step so CI runs it without a workflow-file change (GitHub OAuth lacks workflow scope; `check:ux` stays a local gate).
+- The contract caught a real reload regression: browser form restoration stripped all eight Sample badges, so Clear examples had nothing to clear and the seed read "Your figures". `rearmSeedBadges()` restores only untouched seed values after history restore; restored pension/shortcut markers are left alone.
+- Remaining non-automated areas: A25 dark contrast, A26 touch/physical device, A37 decision trade-offs, A38 week-later human behaviour. Manual audits retained.
+
+Gates: build 84 · check 7/7 · check:ux 33/33 · test:calc 131/0/7 · test:ux 36/36.
+
 ## [0.7.141] - 2026-11-27: Salary-tax E35, empty-state voice
 
 A35 found 2 HIGH and 1 MEDIUM.
