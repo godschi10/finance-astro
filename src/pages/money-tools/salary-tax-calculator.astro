@@ -610,7 +610,9 @@ function render() {
   sfFig(fv, [...ALL, ...(grossZero ? [] : HOLD)], grossZero ? "No salary" : netTxt(perNet(r)));
   const figTxt = (fv.textContent || "").trim();
   figBox.setAttribute("aria-label", figTxt === "–"
-    ? "Take-home: not available until the highlighted field is corrected."
+    ? (grossBad || dBad.length > 0 || dHold.length > 0
+      ? "Take-home: not available until the highlighted field is corrected."
+      : "Take-home: enter your numbers to see it.")
     : figTxt === "No salary"
       ? "Take-home: not available because no salary was entered."
       : figTxt === "Out of range"
@@ -727,16 +729,16 @@ function render() {
       ? `Bonus not priced. ${detailFix(dBad[0])} The regular take-home is unchanged; the bonus figures stay at – until you do.`
       : `Cannot work this out yet. ${detailFix(dBad[0])} No answer is shown until you do.`
     : detailBlankOnly
-    ? "–"
+    ? "Fill the blank fields to compare the old and new bands."
     : "";
   t("st-save").textContent = grossBad
     ? "Cannot work this out yet. Monthly pay before tax: enter a plain number above ₦0. No answer is shown until you do."
     : detailVerdict
     ? detailVerdict
     : grossZero
-    ? "Old vs new bands compared on your gross: enter it above."
+    ? "Old vs new bands need a salary above ₦0."
     : !grossKnown
-    ? "Old vs new bands compared on your gross: enter it above."
+    ? "Old vs new bands wait for your gross."
     : cmpBad
       ? "Out of range: deductions exceed the gross you entered, so neither regime has a take-home to compare."
       : (!nw && !ow)
@@ -861,8 +863,8 @@ function render() {
     (tr.children[3] as HTMLElement).textContent = (grossBad || r.exempt) ? "–" : n(b.tax);
     tb.appendChild(tr);
   }
-  bandsNote.hidden = grossBad || !r.exempt;
-  bandsNote.textContent = r.exempt && !grossBad ? "EXEMPT (minimum wage): no PAYE is due, so band taxes are withheld. Slices show the pre-exemption bands maths." : "";
+  bandsNote.hidden = grossBad || !grossKnown || gross <= 0 || !r.exempt;
+  bandsNote.textContent = r.exempt && !grossBad && grossKnown && gross > 0 ? "EXEMPT (minimum wage): no PAYE is due, so band taxes are withheld. Slices show the pre-exemption bands maths." : "";
   /* E10 M1 ; the fresh snapshot the on-edit line reads. `bad` carries every
      withheld state, so an invalid or blank field can never produce a claim. */
   stSnapshot = { r, gross, pen, rent, nhf, nhis, life, other, bonus,

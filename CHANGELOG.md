@@ -1,3 +1,14 @@
+## [0.7.141] - 2026-11-27: Salary-tax E35, empty-state voice
+
+A35 found 2 HIGH and 1 MEDIUM.
+
+- **H1:** with every field blank, the band note printed "EXEMPT (minimum wage)". It now requires `grossKnown && gross > 0 && r.exempt`; the note still prints for a real entered gross ≤ ₦70,000.
+- **H2:** the dashed take-home aria-label said "until the highlighted field is corrected" in a waiting state. Blank states now say "Take-home: enter your numbers to see it."; malformed/error states keep the correction wording.
+- **M1:** `st-save` claimed "Old vs new bands compared…" with no gross, or just "–" with blank details. It now says "Old vs new bands wait for your gross", "need a salary above ₦0", or "Fill the blank fields to compare…".
+- All-filled state unchanged: ₦356,980, correct aria, real winner line.
+
+Gates: build 84 · check 7/7 · check:ux 33/33 · test:calc 131/0/7.
+
 ## [0.7.140] - 2026-11-27: Salary-tax E34, error-message voice
 
 A34 found 2 HIGH and 1 MEDIUM.
